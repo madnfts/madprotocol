@@ -1,4 +1,4 @@
-# MAD Smart Contracts v0.8
+# MAD Smart Contracts v0.8.9
 
 ```ts
 ///     ...     ..      ..                    ..
@@ -27,6 +27,7 @@
 │   │   ├── FactoryVerifier.sol
 │   │   └── Owned.sol
 │   ├── deployers
+│   │   ├── ERC1155Deployer.sol
 │   │   ├── ERC721Deployer.sol
 │   │   └── SplitterDeployer.sol
 │   ├── security
@@ -75,8 +76,10 @@
 │       ├── MerkleProof.sol
 │       ├── SafeTransferLib.sol
 │       └── Strings.sol
+├── MADFactory1155.sol
 ├── MADFactory721.sol
 ├── MADMarketplace721.sol
+├── MADRouter1155.sol
 ├── MADRouter721.sol
 ├── MAD.sol
 └── Types.sol

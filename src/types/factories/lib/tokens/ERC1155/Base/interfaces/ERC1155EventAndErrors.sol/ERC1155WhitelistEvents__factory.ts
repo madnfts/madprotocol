@@ -5,59 +5,14 @@
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
 import type {
-  ERC1155WhitelistEventsAndErrors,
-  ERC1155WhitelistEventsAndErrorsInterface,
-} from "../../../../../../../lib/tokens/ERC1155/Base/interfaces/ERC1155EventAndErrors.sol/ERC1155WhitelistEventsAndErrors";
+  ERC1155WhitelistEvents,
+  ERC1155WhitelistEventsInterface,
+} from "../../../../../../../lib/tokens/ERC1155/Base/interfaces/ERC1155EventAndErrors.sol/ERC1155WhitelistEvents";
 
 const _abi = [
   {
     inputs: [],
-    name: "AddressDenied",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "AlreadyClaimed",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "FreeClaimClosed",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "MaxFreeReached",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "MaxMintReached",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "MaxWhitelistReached",
-    type: "error",
-  },
-  {
-    inputs: [],
     name: "NotMintedYet",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "PublicMintClosed",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "WhitelistMintClosed",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "WrongPrice",
     type: "error",
   },
   {
@@ -190,21 +145,19 @@ const _abi = [
   },
 ];
 
-export class ERC1155WhitelistEventsAndErrors__factory {
+export class ERC1155WhitelistEvents__factory {
   static readonly abi = _abi;
-  static createInterface(): ERC1155WhitelistEventsAndErrorsInterface {
-    return new utils.Interface(
-      _abi
-    ) as ERC1155WhitelistEventsAndErrorsInterface;
+  static createInterface(): ERC1155WhitelistEventsInterface {
+    return new utils.Interface(_abi) as ERC1155WhitelistEventsInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): ERC1155WhitelistEventsAndErrors {
+  ): ERC1155WhitelistEvents {
     return new Contract(
       address,
       _abi,
       signerOrProvider
-    ) as ERC1155WhitelistEventsAndErrors;
+    ) as ERC1155WhitelistEvents;
   }
 }

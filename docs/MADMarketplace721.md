@@ -1,5 +1,13 @@
 # MADMarketplace721
 
+
+
+
+
+
+
+
+
 ## Methods
 
 ### MADFactory721
@@ -8,11 +16,16 @@
 function MADFactory721() external view returns (contract FactoryVerifier)
 ```
 
+
+
+
+
+
 #### Returns
 
-| Name | Type                     | Description |
-| ---- | ------------------------ | ----------- |
-| \_0  | contract FactoryVerifier | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | contract FactoryVerifier | undefined |
 
 ### bid
 
@@ -22,13 +35,13 @@ function bid(bytes32 _order) external payable
 
 Bidding function available for English Auction only.
 
-_Function Signature := 0x957bb1e0By default, bids must be at least 5% higher than the previous one.By default, auction will be extended in 5 minutes if last bid is placed 5 minutes prior to auction&#39;s end.5 minutes eq to 300 mined blocks since block mining time is expected to take 1s in the harmony blockchain._
+*Function Signature := 0x957bb1e0By default, bids must be at least 5% higher than the previous one.By default, auction will be extended in 5 minutes if last bid is placed 5 minutes prior to auction&#39;s end.5 minutes eq to 300 mined blocks since block mining time is expected to take 1s in the harmony blockchain.*
 
 #### Parameters
 
-| Name    | Type    | Description |
-| ------- | ------- | ----------- |
-| \_order | bytes32 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _order | bytes32 | undefined |
 
 ### buy
 
@@ -38,13 +51,13 @@ function buy(bytes32 _order) external payable
 
 Enables user to buy an nft for both Fixed Price and Dutch Auction listings
 
-_Function Signature := 0x9c9a1061_
+*Function Signature := 0x9c9a1061*
 
 #### Parameters
 
-| Name    | Type    | Description |
-| ------- | ------- | ----------- |
-| \_order | bytes32 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _order | bytes32 | undefined |
 
 ### cancelOrder
 
@@ -54,13 +67,13 @@ function cancelOrder(bytes32 _order) external nonpayable
 
 Enables sellers to withdraw their tokens.
 
-_Function Signature := 0x7489ec23Cancels order setting endBlock value to 0._
+*Function Signature := 0x7489ec23Cancels order setting endBlock value to 0.*
 
 #### Parameters
 
-| Name    | Type    | Description |
-| ------- | ------- | ----------- |
-| \_order | bytes32 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _order | bytes32 | undefined |
 
 ### claim
 
@@ -70,13 +83,13 @@ function claim(bytes32 _order) external nonpayable
 
 Pull method for NFT withdrawing in English Auction.
 
-_Function Signature := 0xbd66528aCallable by both the seller and the auction winner._
+*Function Signature := 0xbd66528aCallable by both the seller and the auction winner.*
 
 #### Parameters
 
-| Name    | Type    | Description |
-| ------- | ------- | ----------- |
-| \_order | bytes32 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _order | bytes32 | undefined |
 
 ### delOrder
 
@@ -86,16 +99,16 @@ function delOrder(bytes32 hash, contract IERC721 _token, uint256 _id, address _s
 
 Delete order function only callabe by contract&#39;s owner, when contract is paused, as security measure.
 
-_Function Signature := 0x0c026db9_
+*Function Signature := 0x0c026db9*
 
 #### Parameters
 
-| Name     | Type             | Description |
-| -------- | ---------------- | ----------- |
-| hash     | bytes32          | undefined   |
-| \_token  | contract IERC721 | undefined   |
-| \_id     | uint256          | undefined   |
-| \_seller | address          | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| hash | bytes32 | undefined |
+| _token | contract IERC721 | undefined |
+| _id | uint256 | undefined |
+| _seller | address | undefined |
 
 ### dutchAuction
 
@@ -105,17 +118,17 @@ function dutchAuction(contract IERC721 _token, uint256 _id, uint256 _startPrice,
 
 Dutch Auction listing order public pusher.
 
-_Function Signature := 0x205e409c_
+*Function Signature := 0x205e409c*
 
 #### Parameters
 
-| Name         | Type             | Description |
-| ------------ | ---------------- | ----------- |
-| \_token      | contract IERC721 | undefined   |
-| \_id         | uint256          | undefined   |
-| \_startPrice | uint256          | undefined   |
-| \_endPrice   | uint256          | undefined   |
-| \_endBlock   | uint256          | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _token | contract IERC721 | undefined |
+| _id | uint256 | undefined |
+| _startPrice | uint256 | undefined |
+| _endPrice | uint256 | undefined |
+| _endBlock | uint256 | undefined |
 
 ### englishAuction
 
@@ -125,16 +138,16 @@ function englishAuction(contract IERC721 _token, uint256 _id, uint256 _startPric
 
 English Auction listing order public pusher.
 
-_Function Signature := 0x47c4be17_
+*Function Signature := 0x47c4be17*
 
 #### Parameters
 
-| Name         | Type             | Description |
-| ------------ | ---------------- | ----------- |
-| \_token      | contract IERC721 | undefined   |
-| \_id         | uint256          | undefined   |
-| \_startPrice | uint256          | undefined   |
-| \_endBlock   | uint256          | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _token | contract IERC721 | undefined |
+| _id | uint256 | undefined |
+| _startPrice | uint256 | undefined |
+| _endBlock | uint256 | undefined |
 
 ### feePercent
 
@@ -142,11 +155,16 @@ _Function Signature := 0x47c4be17_
 function feePercent() external view returns (uint16)
 ```
 
+
+
+
+
+
 #### Returns
 
-| Name | Type   | Description |
-| ---- | ------ | ----------- |
-| \_0  | uint16 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint16 | undefined |
 
 ### fixedPrice
 
@@ -156,16 +174,16 @@ function fixedPrice(contract IERC721 _token, uint256 _id, uint256 _price, uint25
 
 Fixed Price listing order public pusher.
 
-_Function Signature := 0x40b78b0f_
+*Function Signature := 0x40b78b0f*
 
 #### Parameters
 
-| Name       | Type             | Description |
-| ---------- | ---------------- | ----------- |
-| \_token    | contract IERC721 | undefined   |
-| \_id       | uint256          | undefined   |
-| \_price    | uint256          | undefined   |
-| \_endBlock | uint256          | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _token | contract IERC721 | undefined |
+| _id | uint256 | undefined |
+| _price | uint256 | undefined |
+| _endBlock | uint256 | undefined |
 
 ### getCurrentPrice
 
@@ -175,19 +193,19 @@ function getCurrentPrice(bytes32 _order) external view returns (uint256)
 
 Works as price fetcher of listed tokens
 
-_Function Signature := 0x161e444eUsed for price fetching in buy function._
+*Function Signature := 0x161e444eUsed for price fetching in buy function.*
 
 #### Parameters
 
-| Name    | Type    | Description |
-| ------- | ------- | ----------- |
-| \_order | bytes32 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _order | bytes32 | undefined |
 
 #### Returns
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
 
 ### minAuctionIncrement
 
@@ -195,11 +213,16 @@ _Function Signature := 0x161e444eUsed for price fetching in buy function._
 function minAuctionIncrement() external view returns (uint256)
 ```
 
+
+
+
+
+
 #### Returns
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
 
 ### minBidValue
 
@@ -207,11 +230,16 @@ function minAuctionIncrement() external view returns (uint256)
 function minBidValue() external view returns (uint256)
 ```
 
+
+
+
+
+
 #### Returns
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
 
 ### minOrderDuration
 
@@ -219,11 +247,16 @@ function minBidValue() external view returns (uint256)
 function minOrderDuration() external view returns (uint256)
 ```
 
+
+
+
+
+
 #### Returns
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
 
 ### name
 
@@ -231,13 +264,16 @@ function minOrderDuration() external view returns (uint256)
 function name() external pure returns (string)
 ```
 
-_Function Signature := 0x06fdde03_
+
+
+*Function Signature := 0x06fdde03*
+
 
 #### Returns
 
-| Name | Type   | Description |
-| ---- | ------ | ----------- |
-| \_0  | string | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | string | undefined |
 
 ### onERC721Received
 
@@ -245,22 +281,24 @@ _Function Signature := 0x06fdde03_
 function onERC721Received(address, address, uint256, bytes) external nonpayable returns (bytes4)
 ```
 
-_Implementation of the {ERC721Receiver} abstract contract. Accepts all token transfers. Make sure the contract is able to use its token with {IERC721-safeTransferFrom}, {IERC721-approve} or {IERC721-setApprovalForAll}._
+
+
+*Implementation of the {ERC721Receiver} abstract contract. Accepts all token transfers. Make sure the contract is able to use its token with {IERC721-safeTransferFrom}, {IERC721-approve} or {IERC721-setApprovalForAll}.*
 
 #### Parameters
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | address | undefined   |
-| \_1  | address | undefined   |
-| \_2  | uint256 | undefined   |
-| \_3  | bytes   | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | undefined |
+| _1 | address | undefined |
+| _2 | uint256 | undefined |
+| _3 | bytes | undefined |
 
 #### Returns
 
-| Name | Type   | Description |
-| ---- | ------ | ----------- |
-| \_0  | bytes4 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | bytes4 | undefined |
 
 ### orderIdBySeller
 
@@ -268,20 +306,22 @@ _Implementation of the {ERC721Receiver} abstract contract. Accepts all token tra
 function orderIdBySeller(address, uint256) external view returns (bytes32)
 ```
 
-_seller =&gt; orderID_
+
+
+*seller =&gt; orderID*
 
 #### Parameters
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | address | undefined   |
-| \_1  | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | undefined |
+| _1 | uint256 | undefined |
 
 #### Returns
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | bytes32 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | bytes32 | undefined |
 
 ### orderIdByToken
 
@@ -291,21 +331,21 @@ function orderIdByToken(contract IERC721, uint256, uint256) external view return
 
 Mappings logic: token || seller =&gt; orderID =&gt; order details
 
-_token =&gt; orderID_
+*token =&gt; orderID*
 
 #### Parameters
 
-| Name | Type             | Description |
-| ---- | ---------------- | ----------- |
-| \_0  | contract IERC721 | undefined   |
-| \_1  | uint256          | undefined   |
-| \_2  | uint256          | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | contract IERC721 | undefined |
+| _1 | uint256 | undefined |
+| _2 | uint256 | undefined |
 
 #### Returns
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | bytes32 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | bytes32 | undefined |
 
 ### orderInfo
 
@@ -313,29 +353,31 @@ _token =&gt; orderID_
 function orderInfo(bytes32) external view returns (uint8 orderType, address seller, contract IERC721 token, uint256 tokenId, uint256 startPrice, uint256 endPrice, uint256 startBlock, uint256 endBlock, uint256 lastBidPrice, address lastBidder, bool isSold)
 ```
 
-_orderID =&gt; order details_
+
+
+*orderID =&gt; order details*
 
 #### Parameters
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | bytes32 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | bytes32 | undefined |
 
 #### Returns
 
-| Name         | Type             | Description |
-| ------------ | ---------------- | ----------- |
-| orderType    | uint8            | undefined   |
-| seller       | address          | undefined   |
-| token        | contract IERC721 | undefined   |
-| tokenId      | uint256          | undefined   |
-| startPrice   | uint256          | undefined   |
-| endPrice     | uint256          | undefined   |
-| startBlock   | uint256          | undefined   |
-| endBlock     | uint256          | undefined   |
-| lastBidPrice | uint256          | undefined   |
-| lastBidder   | address          | undefined   |
-| isSold       | bool             | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| orderType | uint8 | undefined |
+| seller | address | undefined |
+| token | contract IERC721 | undefined |
+| tokenId | uint256 | undefined |
+| startPrice | uint256 | undefined |
+| endPrice | uint256 | undefined |
+| startBlock | uint256 | undefined |
+| endBlock | uint256 | undefined |
+| lastBidPrice | uint256 | undefined |
+| lastBidder | address | undefined |
+| isSold | bool | undefined |
 
 ### owner
 
@@ -343,11 +385,16 @@ _orderID =&gt; order details_
 function owner() external view returns (address)
 ```
 
+
+
+
+
+
 #### Returns
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | undefined |
 
 ### pause
 
@@ -357,7 +404,8 @@ function pause() external nonpayable
 
 Paused state initializer for security risk mitigation pratice.
 
-_Function Signature := 0x8456cb59_
+*Function Signature := 0x8456cb59*
+
 
 ### paused
 
@@ -365,11 +413,16 @@ _Function Signature := 0x8456cb59_
 function paused() external view returns (bool)
 ```
 
+
+
+
+
+
 #### Returns
 
 | Name | Type | Description |
-| ---- | ---- | ----------- |
-| \_0  | bool | undefined   |
+|---|---|---|
+| _0 | bool | undefined |
 
 ### recipient
 
@@ -377,11 +430,16 @@ function paused() external view returns (bool)
 function recipient() external view returns (address)
 ```
 
+
+
+
+
+
 #### Returns
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | undefined |
 
 ### sellerOrderLength
 
@@ -391,19 +449,19 @@ function sellerOrderLength(address _seller) external view returns (uint256)
 
 Everything in storage can be fetch through the getters natively provided by all public mappings.
 
-_This public getter serve as a hook to ease frontend fetching whilst estimating `orderIdBySeller` indexes by length.Function Signature := 0x8aae982a_
+*This public getter serve as a hook to ease frontend fetching whilst estimating `orderIdBySeller` indexes by length.Function Signature := 0x8aae982a*
 
 #### Parameters
 
-| Name     | Type    | Description |
-| -------- | ------- | ----------- |
-| \_seller | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _seller | address | undefined |
 
 #### Returns
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
 
 ### setFactory
 
@@ -411,13 +469,15 @@ _This public getter serve as a hook to ease frontend fetching whilst estimating 
 function setFactory(contract FactoryVerifier _factory) external nonpayable
 ```
 
-_`MADFactory` instance setter.Function Signature := 0x612990fe_
+
+
+*`MADFactory` instance setter.Function Signature := 0x612990fe*
 
 #### Parameters
 
-| Name      | Type                     | Description |
-| --------- | ------------------------ | ----------- |
-| \_factory | contract FactoryVerifier | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _factory | contract FactoryVerifier | undefined |
 
 ### setOwner
 
@@ -425,13 +485,15 @@ _`MADFactory` instance setter.Function Signature := 0x612990fe_
 function setOwner(address newOwner) external nonpayable
 ```
 
-_Function Signature := 0x13af4035_
+
+
+*Function Signature := 0x13af4035*
 
 #### Parameters
 
-| Name     | Type    | Description |
-| -------- | ------- | ----------- |
-| newOwner | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newOwner | address | undefined |
 
 ### setRecipient
 
@@ -441,13 +503,13 @@ function setRecipient(address _recipient) external nonpayable
 
 Enables the contract&#39;s owner to change recipient address.
 
-_Function Signature := 0x3bbed4a0_
+*Function Signature := 0x3bbed4a0*
 
 #### Parameters
 
-| Name        | Type    | Description |
-| ----------- | ------- | ----------- |
-| \_recipient | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _recipient | address | undefined |
 
 ### tokenOrderLength
 
@@ -457,20 +519,20 @@ function tokenOrderLength(contract IERC721 _token, uint256 _id) external view re
 
 Everything in storage can be fetch through the getters natively provided by all public mappings.
 
-_This public getter serve as a hook to ease frontend fetching whilst estimating `orderIdByToken` indexes by length.Function Signature := 0x8c5ac795_
+*This public getter serve as a hook to ease frontend fetching whilst estimating `orderIdByToken` indexes by length.Function Signature := 0x8c5ac795*
 
 #### Parameters
 
-| Name    | Type             | Description |
-| ------- | ---------------- | ----------- |
-| \_token | contract IERC721 | undefined   |
-| \_id    | uint256          | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _token | contract IERC721 | undefined |
+| _id | uint256 | undefined |
 
 #### Returns
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
 
 ### unpause
 
@@ -480,7 +542,8 @@ function unpause() external nonpayable
 
 Unpaused state initializer for security risk mitigation pratice.
 
-_Function Signature := 0x3f4ba83a_
+*Function Signature := 0x3f4ba83a*
+
 
 ### updateSettings
 
@@ -490,15 +553,15 @@ function updateSettings(uint256 _minAuctionIncrement, uint256 _minOrderDuration,
 
 Marketplace config setter.
 
-_Function Signature := 0x0465c563Time tracking criteria based on `blocknumber`._
+*Function Signature := 0x0465c563Time tracking criteria based on `blocknumber`.*
 
 #### Parameters
 
-| Name                  | Type    | Description                                |
-| --------------------- | ------- | ------------------------------------------ |
-| \_minAuctionIncrement | uint256 | Min. time threshold for Auction extension. |
-| \_minOrderDuration    | uint256 | Min. order listing duration                |
-| \_minBidValue         | uint256 | Min. value for a bid to be considered.     |
+| Name | Type | Description |
+|---|---|---|
+| _minAuctionIncrement | uint256 | Min. time threshold for Auction extension. |
+| _minOrderDuration | uint256 | Min. order listing duration |
+| _minBidValue | uint256 | Min. value for a bid to be considered. |
 
 ### withdraw
 
@@ -506,7 +569,12 @@ _Function Signature := 0x0465c563Time tracking criteria based on `blocknumber`._
 function withdraw() external nonpayable
 ```
 
-_Function Signature := 0x3ccfd60b_
+
+
+*Function Signature := 0x3ccfd60b*
+
+
+
 
 ## Events
 
@@ -516,13 +584,17 @@ _Function Signature := 0x3ccfd60b_
 event AuctionSettingsUpdated(uint256 indexed newMinDuration, uint256 indexed newIncrement, uint256 indexed newMinBidValue)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                     | Type    | Description |
-| ------------------------ | ------- | ----------- |
-| newMinDuration `indexed` | uint256 | undefined   |
-| newIncrement `indexed`   | uint256 | undefined   |
-| newMinBidValue `indexed` | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newMinDuration `indexed` | uint256 | undefined |
+| newIncrement `indexed` | uint256 | undefined |
+| newMinBidValue `indexed` | uint256 | undefined |
 
 ### Bid
 
@@ -530,15 +602,19 @@ event AuctionSettingsUpdated(uint256 indexed newMinDuration, uint256 indexed new
 event Bid(contract IERC721 indexed token, uint256 id, bytes32 indexed hash, address bidder, uint256 bidPrice)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name            | Type             | Description |
-| --------------- | ---------------- | ----------- |
-| token `indexed` | contract IERC721 | undefined   |
-| id              | uint256          | undefined   |
-| hash `indexed`  | bytes32          | undefined   |
-| bidder          | address          | undefined   |
-| bidPrice        | uint256          | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| token `indexed` | contract IERC721 | undefined |
+| id  | uint256 | undefined |
+| hash `indexed` | bytes32 | undefined |
+| bidder  | address | undefined |
+| bidPrice  | uint256 | undefined |
 
 ### CancelOrder
 
@@ -546,14 +622,18 @@ event Bid(contract IERC721 indexed token, uint256 id, bytes32 indexed hash, addr
 event CancelOrder(contract IERC721 indexed token, uint256 id, bytes32 indexed hash, address seller)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name            | Type             | Description |
-| --------------- | ---------------- | ----------- |
-| token `indexed` | contract IERC721 | undefined   |
-| id              | uint256          | undefined   |
-| hash `indexed`  | bytes32          | undefined   |
-| seller          | address          | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| token `indexed` | contract IERC721 | undefined |
+| id  | uint256 | undefined |
+| hash `indexed` | bytes32 | undefined |
+| seller  | address | undefined |
 
 ### Claim
 
@@ -561,16 +641,20 @@ event CancelOrder(contract IERC721 indexed token, uint256 id, bytes32 indexed ha
 event Claim(contract IERC721 indexed token, uint256 id, bytes32 indexed hash, address seller, address taker, uint256 price)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name            | Type             | Description |
-| --------------- | ---------------- | ----------- |
-| token `indexed` | contract IERC721 | undefined   |
-| id              | uint256          | undefined   |
-| hash `indexed`  | bytes32          | undefined   |
-| seller          | address          | undefined   |
-| taker           | address          | undefined   |
-| price           | uint256          | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| token `indexed` | contract IERC721 | undefined |
+| id  | uint256 | undefined |
+| hash `indexed` | bytes32 | undefined |
+| seller  | address | undefined |
+| taker  | address | undefined |
+| price  | uint256 | undefined |
 
 ### FactoryUpdated
 
@@ -578,11 +662,15 @@ event Claim(contract IERC721 indexed token, uint256 id, bytes32 indexed hash, ad
 event FactoryUpdated(contract FactoryVerifier indexed newFactory)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                 | Type                     | Description |
-| -------------------- | ------------------------ | ----------- |
-| newFactory `indexed` | contract FactoryVerifier | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newFactory `indexed` | contract FactoryVerifier | undefined |
 
 ### MakeOrder
 
@@ -590,14 +678,18 @@ event FactoryUpdated(contract FactoryVerifier indexed newFactory)
 event MakeOrder(contract IERC721 indexed token, uint256 id, bytes32 indexed hash, address seller)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name            | Type             | Description |
-| --------------- | ---------------- | ----------- |
-| token `indexed` | contract IERC721 | undefined   |
-| id              | uint256          | undefined   |
-| hash `indexed`  | bytes32          | undefined   |
-| seller          | address          | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| token `indexed` | contract IERC721 | undefined |
+| id  | uint256 | undefined |
+| hash `indexed` | bytes32 | undefined |
+| seller  | address | undefined |
 
 ### OwnerUpdated
 
@@ -605,12 +697,16 @@ event MakeOrder(contract IERC721 indexed token, uint256 id, bytes32 indexed hash
 event OwnerUpdated(address indexed user, address indexed newOwner)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name               | Type    | Description |
-| ------------------ | ------- | ----------- |
-| user `indexed`     | address | undefined   |
-| newOwner `indexed` | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| user `indexed` | address | undefined |
+| newOwner `indexed` | address | undefined |
 
 ### Paused
 
@@ -618,11 +714,15 @@ event OwnerUpdated(address indexed user, address indexed newOwner)
 event Paused(address account)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name    | Type    | Description |
-| ------- | ------- | ----------- |
-| account | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| account  | address | undefined |
 
 ### Unpaused
 
@@ -630,11 +730,17 @@ event Paused(address account)
 event Unpaused(address account)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name    | Type    | Description |
-| ------- | ------- | ----------- |
-| account | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| account  | address | undefined |
+
+
 
 ## Errors
 
@@ -644,7 +750,10 @@ event Unpaused(address account)
 error AccessDenied()
 ```
 
-_0x4ca88867_
+
+
+*0x4ca88867*
+
 
 ### BidExists
 
@@ -652,7 +761,10 @@ _0x4ca88867_
 error BidExists()
 ```
 
-_0x3e0827ab_
+
+
+*0x3e0827ab*
+
 
 ### CanceledOrder
 
@@ -660,7 +772,10 @@ _0x3e0827ab_
 error CanceledOrder()
 ```
 
-_0xdf9428da_
+
+
+*0xdf9428da*
+
 
 ### EAOnly
 
@@ -668,7 +783,10 @@ _0xdf9428da_
 error EAOnly()
 ```
 
-_0xffc96cb0_
+
+
+*0xffc96cb0*
+
 
 ### ExceedsMaxEP
 
@@ -676,7 +794,10 @@ _0xffc96cb0_
 error ExceedsMaxEP()
 ```
 
-_0x70f8f33a_
+
+
+*0x70f8f33a*
+
 
 ### InvalidBidder
 
@@ -684,7 +805,10 @@ _0x70f8f33a_
 error InvalidBidder()
 ```
 
-_0x0863b103_
+
+
+*0x0863b103*
+
 
 ### NeedMoreTime
 
@@ -692,7 +816,10 @@ _0x0863b103_
 error NeedMoreTime()
 ```
 
-_0x921dbfec_
+
+
+*0x921dbfec*
+
 
 ### NotBuyable
 
@@ -700,7 +827,10 @@ _0x921dbfec_
 error NotBuyable()
 ```
 
-_0x07ae5744_
+
+
+*0x07ae5744*
+
 
 ### SoldToken
 
@@ -708,7 +838,10 @@ _0x07ae5744_
 error SoldToken()
 ```
 
-_0xf88b07a3_
+
+
+*0xf88b07a3*
+
 
 ### Timeout
 
@@ -716,7 +849,10 @@ _0xf88b07a3_
 error Timeout()
 ```
 
-_0x2af0c7f8_
+
+
+*0x2af0c7f8*
+
 
 ### TransferFailed
 
@@ -724,7 +860,10 @@ _0x2af0c7f8_
 error TransferFailed()
 ```
 
-_0x90b8ec18_
+
+
+*0x90b8ec18*
+
 
 ### WrongPrice
 
@@ -732,4 +871,9 @@ _0x90b8ec18_
 error WrongPrice()
 ```
 
-_0xf7760f25_
+
+
+*0xf7760f25*
+
+
+

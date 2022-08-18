@@ -1,4 +1,4 @@
-# MADFactory721
+# MADFactory1155
 
 
 
@@ -51,7 +51,7 @@ function ambWhitelist(address) external view returns (bool)
 ### colInfo
 
 ```solidity
-function colInfo(bytes32) external view returns (address creator, enum Types.ERC721Type colType, bytes32 colSalt, uint256 blocknumber, address splitter)
+function colInfo(bytes32) external view returns (address creator, enum Types.ERC1155Type colType, bytes32 colSalt, uint256 blocknumber, address splitter)
 ```
 
 
@@ -69,7 +69,7 @@ function colInfo(bytes32) external view returns (address creator, enum Types.ERC
 | Name | Type | Description |
 |---|---|---|
 | creator | address | undefined |
-| colType | enum Types.ERC721Type | undefined |
+| colType | enum Types.ERC1155Type | undefined |
 | colSalt | bytes32 | undefined |
 | blocknumber | uint256 | undefined |
 | splitter | address | undefined |
@@ -77,10 +77,10 @@ function colInfo(bytes32) external view returns (address creator, enum Types.ERC
 ### createCollection
 
 ```solidity
-function createCollection(uint8 _tokenType, string _tokenSalt, string _name, string _symbol, uint256 _price, uint256 _maxSupply, string _baseURI, address _splitter) external nonpayable
+function createCollection(uint8 _tokenType, string _tokenSalt, uint256 _price, uint256 _maxSupply, string _uri, address _splitter) external nonpayable
 ```
 
-Core public ERC721 token types deployment pusher.
+Core public ERC1155 token types deployment pusher.
 
 *Function Sighash := 0x73fd6808Args passed as params in this function serve as common denominator for all token types.Extra config options must be set directly by through token type specific functions in `MADRouter` contract.Frontend must attent that salt values must have common pattern so to not replicate same output.*
 
@@ -90,11 +90,9 @@ Core public ERC721 token types deployment pusher.
 |---|---|---|
 | _tokenType | uint8 | Values legend: 0=Minimal; 1=Basic; 2=Whitelist; 3=Lazy. |
 | _tokenSalt | string | Nonce/Entropy factor used by CREATE3 method to generate collection deployment address. Must be always different to avoid address collision. |
-| _name | string | Name of the collection to be deployed. |
-| _symbol | string | Symbol of the collection to be deployed. |
 | _price | uint256 | Public mint price of the collection to be deployed. |
 | _maxSupply | uint256 | Maximum supply of tokens to be minted of the collection to be deployed (Not used for ERC721Minimal token type, since it always equals to one). |
-| _baseURI | string | The URL + CID to be added the tokenID and suffix (.json) by the tokenURI function in the collection to be deployed (baseURI used as tokenURI itself for the ERC721Minimal token type). |
+| _uri | string | The URL + CID to be added the tokenID and suffix (.json) by the tokenURI function in the collection to be deployed (baseURI used as tokenURI itself for the ERC721Minimal token type). |
 | _splitter | address | Previously deployed Splitter implementation so to validate and attach to collection. |
 
 ### creatorAuth
@@ -522,10 +520,10 @@ event AmbassadorDeleted(address indexed removedAmb)
 |---|---|---|
 | removedAmb `indexed` | address | undefined |
 
-### ERC721BasicCreated
+### ERC1155BasicCreated
 
 ```solidity
-event ERC721BasicCreated(address indexed newSplitter, address indexed newCollection, address indexed newCreator)
+event ERC1155BasicCreated(address indexed newSplitter, address indexed newCollection, address indexed newCreator)
 ```
 
 
@@ -540,10 +538,10 @@ event ERC721BasicCreated(address indexed newSplitter, address indexed newCollect
 | newCollection `indexed` | address | undefined |
 | newCreator `indexed` | address | undefined |
 
-### ERC721LazyCreated
+### ERC1155LazyCreated
 
 ```solidity
-event ERC721LazyCreated(address indexed newSplitter, address indexed newCollection, address indexed newCreator)
+event ERC1155LazyCreated(address indexed newSplitter, address indexed newCollection, address indexed newCreator)
 ```
 
 
@@ -558,10 +556,10 @@ event ERC721LazyCreated(address indexed newSplitter, address indexed newCollecti
 | newCollection `indexed` | address | undefined |
 | newCreator `indexed` | address | undefined |
 
-### ERC721MinimalCreated
+### ERC1155MinimalCreated
 
 ```solidity
-event ERC721MinimalCreated(address indexed newSplitter, address indexed newCollection, address indexed newCreator)
+event ERC1155MinimalCreated(address indexed newSplitter, address indexed newCollection, address indexed newCreator)
 ```
 
 
@@ -576,10 +574,10 @@ event ERC721MinimalCreated(address indexed newSplitter, address indexed newColle
 | newCollection `indexed` | address | undefined |
 | newCreator `indexed` | address | undefined |
 
-### ERC721WhitelistCreated
+### ERC1155WhitelistCreated
 
 ```solidity
-event ERC721WhitelistCreated(address indexed newSplitter, address indexed newCollection, address indexed newCreator)
+event ERC1155WhitelistCreated(address indexed newSplitter, address indexed newCollection, address indexed newCreator)
 ```
 
 

@@ -12,7 +12,7 @@ interface ERC1155MinimalEvents {
     event PublicMintStateSet(bool indexed newPublicMintState);
 }
 
-interface ERC1155BasicEventsAndErrors {
+interface ERC1155BasicEvents {
     ////////////////////////////////////////////////////////////////
     //                           EVENTS                           //
     ////////////////////////////////////////////////////////////////
@@ -26,17 +26,17 @@ interface ERC1155BasicEventsAndErrors {
     //                           ERRORS                           //
     ////////////////////////////////////////////////////////////////
 
-    /// @dev 0x2d0a3f8e
-    error PublicMintClosed();
-    /// @dev 0xd05cb609
-    error MaxSupplyReached();
     /// @dev 0xbad086ea
     error NotMintedYet();
-    /// @dev 0xf7760f25
-    error WrongPrice();
+    // /// @dev 0x2d0a3f8e
+    // error PublicMintClosed();
+    // /// @dev 0xd05cb609
+    // error MaxSupplyReached();
+    // /// @dev 0xf7760f25
+    // error WrongPrice();
 }
 
-interface ERC1155WhitelistEventsAndErrors {
+interface ERC1155WhitelistEvents {
     ////////////////////////////////////////////////////////////////
     //                           EVENTS                           //
     ////////////////////////////////////////////////////////////////
@@ -57,7 +57,6 @@ interface ERC1155WhitelistEventsAndErrors {
     event FreeConfigSet(
         uint256 newFreeAmount,
         uint256 indexed newMaxFree,
-        // uint256 indexed newFreeSupply,
         bytes32 indexed newMerkleRoot
     );
 
@@ -65,26 +64,26 @@ interface ERC1155WhitelistEventsAndErrors {
     //                           ERRORS                           //
     ////////////////////////////////////////////////////////////////
 
-    /// @dev 0x2d0a3f8e
-    error PublicMintClosed();
-    /// @dev 0x700a6c1f
-    error WhitelistMintClosed();
-    /// @dev 0xf44170cb
-    error FreeClaimClosed();
-    /// @dev 0xfc3fc71f
-    error MaxMintReached();
-    /// @dev 0xf90c1bdb
-    error MaxFreeReached();
-    /// @dev 0xa554e6e1
-    error MaxWhitelistReached();
-    /// @dev 0x646cf558
-    error AlreadyClaimed();
-    /// @dev 0xf7760f25
-    error WrongPrice();
     /// @dev 0xbad086ea
     error NotMintedYet();
-    /// @dev 0x3b8474be
-    error AddressDenied();
+    // /// @dev 0x2d0a3f8e
+    // error PublicMintClosed();
+    // /// @dev 0x700a6c1f
+    // error WhitelistMintClosed();
+    // /// @dev 0xf44170cb
+    // error FreeClaimClosed();
+    // /// @dev 0xfc3fc71f
+    // error MaxMintReached();
+    // /// @dev 0xf90c1bdb
+    // error MaxFreeReached();
+    // /// @dev 0xa554e6e1
+    // error MaxWhitelistReached();
+    // /// @dev 0x646cf558
+    // error AlreadyClaimed();
+    // /// @dev 0xf7760f25
+    // error WrongPrice();
+    // /// @dev 0x3b8474be
+    // error AddressDenied();
 }
 
 interface ERC1155LazyEventsAndErrors {

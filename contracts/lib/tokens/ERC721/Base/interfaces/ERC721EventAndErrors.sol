@@ -26,14 +26,14 @@ interface ERC721BasicEvents {
     //                           ERRORS                           //
     ////////////////////////////////////////////////////////////////
 
-    /// @dev 0x2d0a3f8e
-    // error PublicMintClosed();
-    /// @dev 0xd05cb609
-    // error MaxSupplyReached();
-    /// @dev 0xbad086ea
-    // error NotMintedYet();
-    /// @dev 0xf7760f25
-    // error WrongPrice();
+    // /// @dev 0x2d0a3f8e
+    // // error PublicMintClosed();
+    // /// @dev 0xd05cb609
+    // // error MaxSupplyReached();
+    // /// @dev 0xbad086ea
+    // // error NotMintedYet();
+    // /// @dev 0xf7760f25
+    // // error WrongPrice();
 }
 
 interface ERC721WhitelistEvents {
@@ -57,7 +57,6 @@ interface ERC721WhitelistEvents {
     event FreeConfigSet(
         uint256 newFreeAmount,
         uint256 indexed newMaxFree,
-        // uint256 indexed newFreeSupply,
         bytes32 indexed newMerkleRoot
     );
 

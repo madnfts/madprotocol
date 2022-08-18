@@ -11,16 +11,16 @@ import { MAD } from "./MAD.sol";
 import { RouterEvents, FactoryVerifier } from "./EventsAndErrors.sol";
 
 import { ERC20 } from "./lib/tokens/ERC20.sol";
-import { ERC721Minimal } from "./lib/tokens/ERC721/Impl/ERC721Minimal.sol";
-import { ERC721Basic } from "./lib/tokens/ERC721/Impl/ERC721Basic.sol";
-import { ERC721Whitelist } from "./lib/tokens/ERC721/Impl/ERC721Whitelist.sol";
-import { ERC721Lazy } from "./lib/tokens/ERC721/Impl/ERC721Lazy.sol";
+import { ERC1155Minimal } from "./lib/tokens/ERC1155/Impl/ERC1155Minimal.sol";
+import { ERC1155Basic } from "./lib/tokens/ERC1155/Impl/ERC1155Basic.sol";
+import { ERC1155Whitelist } from "./lib/tokens/ERC1155/Impl/ERC1155Whitelist.sol";
+import { ERC1155Lazy } from "./lib/tokens/ERC1155/Impl/ERC1155Lazy.sol";
 
 import { ReentrancyGuard } from "./lib/security/ReentrancyGuard.sol";
 import { Pausable } from "./lib/security/Pausable.sol";
 import { Owned } from "./lib/auth/Owned.sol";
 
-contract MADRouter721 is
+contract MADRouter1155 is
     MAD,
     RouterEvents,
     Owned(msg.sender),
@@ -45,25 +45,25 @@ contract MADRouter721 is
     //                           STORAGE                          //
     ////////////////////////////////////////////////////////////////
 
-    FactoryVerifier public MADFactory721;
+    FactoryVerifier public MADFactory1155;
 
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
     constructor(FactoryVerifier _factory) {
-        MADFactory721 = _factory;
+        MADFactory1155 = _factory;
     }
 
     ////////////////////////////////////////////////////////////////
     //                       CREATOR SETTINGS                     //
     ////////////////////////////////////////////////////////////////
 
-    /// @notice Collection `baseURI` setter.
+    /// @notice Collection `_uri` setter.
     /// @dev Only available for Basic, Whitelist and Lazy token types.
     /// @dev Function Sighash := 0x4328bd00
-    /// @dev Events logged by each tokens' `BaseURISet` functions.
-    function setBase(address _token, string memory _baseURI)
+    /// @dev Events logged by each tokens' functions.
+    function setURI(address _token, string memory _uri)
         external
         nonReentrant
         whenNotPaused
@@ -73,22 +73,22 @@ contract MADRouter721 is
         );
 
         if (_tokenType == 1) {
-            ERC721Basic(_token).setBaseURI(_baseURI);
-            emit BaseURI(_colID, _baseURI);
+            ERC1155Basic(_token).setURI(_uri);
+            emit BaseURI(_colID, _uri);
         } else if (_tokenType == 2) {
-            ERC721Whitelist(_token).setBaseURI(_baseURI);
-            emit BaseURI(_colID, _baseURI);
+            ERC1155Whitelist(_token).setURI(_uri);
+            emit BaseURI(_colID, _uri);
         } else if (_tokenType > 2) {
-            ERC721Lazy(_token).setBaseURI(_baseURI);
-            emit BaseURI(_colID, _baseURI);
+            ERC1155Lazy(_token).setURI(_uri);
+            emit BaseURI(_colID, _uri);
         } else {
             revert("INVALID_TYPE");
         }
     }
 
-    /// @notice `ERC721Whitelist` whitelist config setter.
+    /// @notice `ERC1155Whitelist` whitelist config setter.
     /// @dev Function Sighash := 0xa123c38d
-    /// @dev Event emitted by `ERC721Whitelist`
+    /// @dev Event emitted by `ERC1155Whitelist`
     /// token implementation contracts.
     function whitelistSettings(
         address _token,
@@ -101,7 +101,7 @@ contract MADRouter721 is
             uint8 _tokenType
         ) = _tokenRender(_token);
         if (_tokenType == 2) {
-            ERC721Whitelist(_token).whitelistConfig(
+            ERC1155Whitelist(_token).whitelistConfig(
                 _price,
                 _supply,
                 _root
@@ -109,9 +109,9 @@ contract MADRouter721 is
         } else revert("INVALID_TYPE");
     }
 
-    /// @notice `ERC721Whitelist` free claim config setter.
+    /// @notice `ERC1155Whitelist` free claim config setter.
     /// @dev Function Sighash := 0xcab2e41f
-    /// @dev Event emitted by `ERC721Whitelist`
+    /// @dev Event emitted by `ERC1155Whitelist`
     /// token implementation contracts.
     function freeSettings(
         address _token,
@@ -124,7 +124,7 @@ contract MADRouter721 is
             uint8 _tokenType
         ) = _tokenRender(_token);
         if (_tokenType == 2) {
-            ERC721Whitelist(_token).freeConfig(
+            ERC1155Whitelist(_token).freeConfig(
                 _freeAmount,
                 _maxFree,
                 _claimRoot
@@ -132,7 +132,7 @@ contract MADRouter721 is
         } else revert("INVALID_TYPE");
     }
 
-    /// @notice `ERC721Minimal` creator mint function handler.
+    /// @notice `ERC1155Minimal` creator mint function handler.
     /// @dev Function Sighash := 0x42a42752
     function minimalSafeMint(address _token, address _to)
         external
@@ -141,13 +141,13 @@ contract MADRouter721 is
     {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType != 0) revert("INVALID_TYPE");
-        ERC721Minimal(_token).safeMint(_to);
+        ERC1155Minimal(_token).safeMint(_to);
     }
 
     /// @notice Global token burn controller/single pusher for all token types.
     /// @dev Function Sighash := 0xba36b92d
     /// @param _ids The token IDs of each token to be burnt;
-    /// should be left empty for the `ERC721Minimal` type.
+    /// should be left empty for the `ERC1155Minimal` type.
     /// @dev Transfer events emitted by nft implementation contracts.
     function burn(address _token, uint256[] memory _ids)
         external
@@ -160,13 +160,37 @@ contract MADRouter721 is
         ) = _tokenRender(_token);
 
         _tokenType < 1
-            ? ERC721Minimal(_token).burn()
+            ? ERC1155Minimal(_token).burn()
             : _tokenType == 1
-            ? ERC721Basic(_token).burn(_ids)
+            ? ERC1155Basic(_token).burn(_ids)
             : _tokenType == 2
-            ? ERC721Whitelist(_token).burn(_ids)
+            ? ERC1155Whitelist(_token).burn(_ids)
             : _tokenType > 2
-            ? ERC721Lazy(_token).burn(_ids)
+            ? ERC1155Lazy(_token).burn(_ids)
+            : revert("INVALID_TYPE");
+    }
+
+    /// @notice Global token batch burn controller/single pusher for all token types.
+    /// @dev Function Sighash := 0xba36b92d
+    /// @param _ids The token IDs of each token to be burnt;
+    /// should be left empty for the `ERC1155Minimal` type.
+    /// @dev Transfer events emitted by nft implementation contracts.
+    function batchBurn(address _token, address _from, uint256[] memory _ids)
+        external
+        nonReentrant
+        whenNotPaused
+    {
+        (
+            ,
+            uint8 _tokenType
+        ) = _tokenRender(_token);
+
+        _tokenType == 1
+            ? ERC1155Basic(_token).burnBatch(_from, _ids)
+            : _tokenType == 2
+            ? ERC1155Whitelist(_token).burnBatch(_from, _ids)
+            : _tokenType > 2
+            ? ERC1155Lazy(_token).burnBatch(_from, _ids)
             : revert("INVALID_TYPE");
     }
 
@@ -205,7 +229,7 @@ contract MADRouter721 is
         }
     }
 
-    /// @notice `ERC721Whitelist` mint to creator function handler.
+    /// @notice `ERC1155Whitelist` mint to creator function handler.
     /// @dev Function Sighash := 0x182ee485
     function creatorMint(address _token, uint256 _amount)
         external
@@ -214,12 +238,26 @@ contract MADRouter721 is
     {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType == 2) {
-            ERC721Whitelist(_token).mintToCreator(_amount);
+            ERC1155Whitelist(_token).mintToCreator(_amount);
         }
         else revert("INVALID_TYPE");
     }
 
-    /// @notice `ERC721Whitelist` gift tokens function handler.
+    /// @notice `ERC1155Whitelist` batch mint to creator function handler.
+    /// @dev Function Sighash := 0x182ee485
+    function creatorBatchMint(address _token, uint256[] memory _ids)
+        external
+        nonReentrant
+        whenNotPaused
+    {
+        (, uint8 _tokenType) = _tokenRender(_token);
+        if (_tokenType == 2) {
+            ERC1155Whitelist(_token).mintBatchToCreator(_ids);
+        }
+        else revert("INVALID_TYPE");
+    }
+
+    /// @notice `ERC1155Whitelist` gift tokens function handler.
     /// @dev Function Sighash := 0x67b5a642
     function gift(
         address _token,
@@ -227,7 +265,7 @@ contract MADRouter721 is
     ) external nonReentrant whenNotPaused {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType == 2) {
-            ERC721Whitelist(_token).giftTokens(_addresses);
+            ERC1155Whitelist(_token).giftTokens(_addresses);
         } else revert("INVALID_TYPE");
     }
 
@@ -235,14 +273,14 @@ contract MADRouter721 is
     //                       CREATOR WITHDRAW                     //
     ////////////////////////////////////////////////////////////////
 
-    /// @notice Withdraw both ERC20 and ONE from ERC721 contract's balance.
+    /// @notice Withdraw both ERC20 and ONE from ERC1155 contract's balance.
     /// @dev Function Sighash := 0x9547ed5d
     /// @dev Leave `_token` param empty for withdrawing eth only.
     /// @dev No withdraw min needs to be passed as params, since
     /// all balance from the token's contract is emptied.
     function withdraw(
         address _token,
-        ERC20 _erc20
+        ERC20 _erc20 
     ) external nonReentrant whenNotPaused {
         (bytes32 _colID, uint8 _tokenType) = _tokenRender(
             _token
@@ -251,9 +289,9 @@ contract MADRouter721 is
         if (_tokenType < 1) {
             address(_erc20) != address(0) &&
                 _erc20.balanceOf(_token) != 0
-                ? ERC721Minimal(_token).withdrawERC20(_erc20)
+                ? ERC1155Minimal(_token).withdrawERC20(_erc20)
                 : _token.balance != 0
-                ? ERC721Minimal(_token).withdraw()
+                ? ERC1155Minimal(_token).withdraw()
                 : revert("NO_FUNDS");
 
             emit TokenFundsWithdrawn(
@@ -266,9 +304,9 @@ contract MADRouter721 is
         if (_tokenType == 1) {
             address(_erc20) != address(0) &&
                 _erc20.balanceOf(_token) != 0
-                ? ERC721Basic(_token).withdrawERC20(_erc20)
+                ? ERC1155Basic(_token).withdrawERC20(_erc20)
                 : _token.balance != 0
-                ? ERC721Basic(_token).withdraw()
+                ? ERC1155Basic(_token).withdraw()
                 : revert("NO_FUNDS");
 
             emit TokenFundsWithdrawn(
@@ -281,11 +319,11 @@ contract MADRouter721 is
         if (_tokenType == 2) {
             address(_erc20) != address(0) &&
                 _erc20.balanceOf(_token) != 0
-                ? ERC721Whitelist(_token).withdrawERC20(
+                ? ERC1155Whitelist(_token).withdrawERC20(
                     _erc20
                 )
                 : _token.balance != 0
-                ? ERC721Whitelist(_token).withdraw()
+                ? ERC1155Whitelist(_token).withdraw()
                 : revert("NO_FUNDS");
 
             emit TokenFundsWithdrawn(
@@ -298,9 +336,9 @@ contract MADRouter721 is
         if (_tokenType > 2) {
             address(_erc20) != address(0) &&
                 _erc20.balanceOf(_token) != 0
-                ? ERC721Lazy(_token).withdrawERC20(_erc20)
+                ? ERC1155Lazy(_token).withdrawERC20(_erc20)
                 : _token.balance != 0
-                ? ERC721Lazy(_token).withdraw()
+                ? ERC1155Lazy(_token).withdraw()
                 : revert("NO_FUNDS");
 
             emit TokenFundsWithdrawn(
@@ -324,9 +362,9 @@ contract MADRouter721 is
         view
         returns (bytes32 colID, uint8 tokenType)
     {
-        colID = MADFactory721.getColID(_token);
-        MADFactory721.creatorCheck(colID);
-        tokenType = MADFactory721.typeChecker(colID);
+        colID = MADFactory1155.getColID(_token);
+        MADFactory1155.creatorCheck(colID);
+        tokenType = MADFactory1155.typeChecker(colID);
     }
 
     /// @notice Internal function helper for resolving `PublicMintState` path.
@@ -337,11 +375,11 @@ contract MADRouter721 is
         bool _state
     ) internal {
         if (_tokenType < 1) {
-            ERC721Minimal(_token).setPublicMintState(_state);
+            ERC1155Minimal(_token).setPublicMintState(_state);
         } else if (_tokenType == 1) {
-            ERC721Basic(_token).setPublicMintState(_state);
+            ERC1155Basic(_token).setPublicMintState(_state);
         } else if (_tokenType == 2) {
-            ERC721Whitelist(_token).setPublicMintState(
+            ERC1155Whitelist(_token).setPublicMintState(
                 _state
             );
         } else revert("INVALID_TYPE");
@@ -352,10 +390,10 @@ contract MADRouter721 is
     function _stateType1(
         uint8 _tokenType,
         address _token,
-        bool _state 
+        bool _state
     ) internal {
         if (_tokenType == 2) {
-            ERC721Whitelist(_token).setWhitelistMintState(
+            ERC1155Whitelist(_token).setWhitelistMintState(
                 _state
             );
         } else revert("INVALID_TYPE");
@@ -369,7 +407,7 @@ contract MADRouter721 is
         bool _state 
     ) internal {
         if (_tokenType == 2) {
-            ERC721Whitelist(_token).setFreeClaimState(_state);
+            ERC1155Whitelist(_token).setFreeClaimState(_state);
         } else revert("INVALID_TYPE");
     }
 
@@ -384,7 +422,7 @@ contract MADRouter721 is
         external
         onlyOwner
     {
-        ERC721Lazy(_token).setSigner(_signer);
+        ERC1155Lazy(_token).setSigner(_signer);
     }
 
     /// @notice Paused state initializer for security risk mitigation pratice.

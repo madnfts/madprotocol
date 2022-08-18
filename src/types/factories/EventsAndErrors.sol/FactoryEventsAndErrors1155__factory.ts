@@ -5,9 +5,9 @@
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
 import type {
-  FactoryEventsAndErrors,
-  FactoryEventsAndErrorsInterface,
-} from "../../EventsAndErrors.sol/FactoryEventsAndErrors";
+  FactoryEventsAndErrors1155,
+  FactoryEventsAndErrors1155Interface,
+} from "../../EventsAndErrors.sol/FactoryEventsAndErrors1155";
 
 const _abi = [
   {
@@ -63,7 +63,7 @@ const _abi = [
         type: "address",
       },
     ],
-    name: "ERC721BasicCreated",
+    name: "ERC1155BasicCreated",
     type: "event",
   },
   {
@@ -88,7 +88,7 @@ const _abi = [
         type: "address",
       },
     ],
-    name: "ERC721LazyCreated",
+    name: "ERC1155LazyCreated",
     type: "event",
   },
   {
@@ -113,7 +113,7 @@ const _abi = [
         type: "address",
       },
     ],
-    name: "ERC721MinimalCreated",
+    name: "ERC1155MinimalCreated",
     type: "event",
   },
   {
@@ -138,7 +138,7 @@ const _abi = [
         type: "address",
       },
     ],
-    name: "ERC721WhitelistCreated",
+    name: "ERC1155WhitelistCreated",
     type: "event",
   },
   {
@@ -213,19 +213,19 @@ const _abi = [
   },
 ];
 
-export class FactoryEventsAndErrors__factory {
+export class FactoryEventsAndErrors1155__factory {
   static readonly abi = _abi;
-  static createInterface(): FactoryEventsAndErrorsInterface {
-    return new utils.Interface(_abi) as FactoryEventsAndErrorsInterface;
+  static createInterface(): FactoryEventsAndErrors1155Interface {
+    return new utils.Interface(_abi) as FactoryEventsAndErrors1155Interface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): FactoryEventsAndErrors {
+  ): FactoryEventsAndErrors1155 {
     return new Contract(
       address,
       _abi,
       signerOrProvider
-    ) as FactoryEventsAndErrors;
+    ) as FactoryEventsAndErrors1155;
   }
 }

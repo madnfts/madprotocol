@@ -1,5 +1,14 @@
 # ERC721BasicEvents
 
+
+
+
+
+
+
+
+
+
 ## Events
 
 ### BaseURISet
@@ -8,11 +17,15 @@
 event BaseURISet(string indexed newBaseURI)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                 | Type   | Description |
-| -------------------- | ------ | ----------- |
-| newBaseURI `indexed` | string | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newBaseURI `indexed` | string | undefined |
 
 ### PublicMintStateSet
 
@@ -20,11 +33,15 @@ event BaseURISet(string indexed newBaseURI)
 event PublicMintStateSet(bool indexed newPublicState)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                     | Type | Description |
-| ------------------------ | ---- | ----------- |
-| newPublicState `indexed` | bool | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newPublicState `indexed` | bool | undefined |
 
 ### RoyaltyFeeSet
 
@@ -32,11 +49,15 @@ event PublicMintStateSet(bool indexed newPublicState)
 event RoyaltyFeeSet(uint256 indexed newRoyaltyFee)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                    | Type    | Description |
-| ----------------------- | ------- | ----------- |
-| newRoyaltyFee `indexed` | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newRoyaltyFee `indexed` | uint256 | undefined |
 
 ### RoyaltyRecipientSet
 
@@ -44,8 +65,15 @@ event RoyaltyFeeSet(uint256 indexed newRoyaltyFee)
 event RoyaltyRecipientSet(address indexed newRecipient)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                   | Type    | Description |
-| ---------------------- | ------- | ----------- |
-| newRecipient `indexed` | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newRecipient `indexed` | address | undefined |
+
+
+

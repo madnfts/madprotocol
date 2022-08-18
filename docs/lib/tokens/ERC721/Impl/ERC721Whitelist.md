@@ -1,5 +1,13 @@
 # ERC721Whitelist
 
+
+
+
+
+
+
+
+
 ## Methods
 
 ### approve
@@ -8,12 +16,16 @@
 function approve(address spender, uint256 id) external nonpayable
 ```
 
+
+
+
+
 #### Parameters
 
-| Name    | Type    | Description |
-| ------- | ------- | ----------- |
-| spender | address | undefined   |
-| id      | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| spender | address | undefined |
+| id | uint256 | undefined |
 
 ### balanceOf
 
@@ -21,17 +33,21 @@ function approve(address spender, uint256 id) external nonpayable
 function balanceOf(address owner) external view returns (uint256)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name  | Type    | Description |
-| ----- | ------- | ----------- |
-| owner | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| owner | address | undefined |
 
 #### Returns
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
 
 ### burn
 
@@ -39,11 +55,15 @@ function balanceOf(address owner) external view returns (uint256)
 function burn(uint256[] ids) external nonpayable
 ```
 
+
+
+
+
 #### Parameters
 
-| Name | Type      | Description |
-| ---- | --------- | ----------- |
-| ids  | uint256[] | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| ids | uint256[] | undefined |
 
 ### claimFree
 
@@ -51,11 +71,15 @@ function burn(uint256[] ids) external nonpayable
 function claimFree(bytes32[] merkleProof) external nonpayable
 ```
 
+
+
+
+
 #### Parameters
 
-| Name        | Type      | Description |
-| ----------- | --------- | ----------- |
-| merkleProof | bytes32[] | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| merkleProof | bytes32[] | undefined |
 
 ### claimListMerkleRoot
 
@@ -63,11 +87,16 @@ function claimFree(bytes32[] merkleProof) external nonpayable
 function claimListMerkleRoot() external view returns (bytes32)
 ```
 
+
+
+
+
+
 #### Returns
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | bytes32 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | bytes32 | undefined |
 
 ### claimed
 
@@ -75,19 +104,21 @@ function claimListMerkleRoot() external view returns (bytes32)
 function claimed(address) external view returns (bool)
 ```
 
-_Stores the amount of whitelist minted tokens of an address.For fetching purposes and max free claim control._
+
+
+*Stores the amount of whitelist minted tokens of an address.For fetching purposes and max free claim control.*
 
 #### Parameters
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | undefined |
 
 #### Returns
 
 | Name | Type | Description |
-| ---- | ---- | ----------- |
-| \_0  | bool | undefined   |
+|---|---|---|
+| _0 | bool | undefined |
 
 ### freeAmount
 
@@ -95,13 +126,16 @@ _Stores the amount of whitelist minted tokens of an address.For fetching purpose
 function freeAmount() external view returns (uint256)
 ```
 
-_Default amount to be claimed as free in a collection._
+
+
+*Default amount to be claimed as free in a collection.*
+
 
 #### Returns
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
 
 ### freeClaimState
 
@@ -109,13 +143,16 @@ _Default amount to be claimed as free in a collection._
 function freeClaimState() external view returns (bool)
 ```
 
-_default := false._
+
+
+*default := false.*
+
 
 #### Returns
 
 | Name | Type | Description |
-| ---- | ---- | ----------- |
-| \_0  | bool | undefined   |
+|---|---|---|
+| _0 | bool | undefined |
 
 ### freeConfig
 
@@ -123,13 +160,17 @@ _default := false._
 function freeConfig(uint256 _freeAmount, uint256 _maxFree, bytes32 _claimListMerkleRoot) external nonpayable
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                  | Type    | Description |
-| --------------------- | ------- | ----------- |
-| \_freeAmount          | uint256 | undefined   |
-| \_maxFree             | uint256 | undefined   |
-| \_claimListMerkleRoot | bytes32 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _freeAmount | uint256 | undefined |
+| _maxFree | uint256 | undefined |
+| _claimListMerkleRoot | bytes32 | undefined |
 
 ### freeSupply
 
@@ -137,11 +178,16 @@ function freeConfig(uint256 _freeAmount, uint256 _maxFree, bytes32 _claimListMer
 function freeSupply() external view returns (uint256)
 ```
 
+
+
+
+
+
 #### Returns
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
 
 ### getApproved
 
@@ -149,17 +195,21 @@ function freeSupply() external view returns (uint256)
 function getApproved(uint256) external view returns (address)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
 
 #### Returns
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | undefined |
 
 ### getBaseURI
 
@@ -167,11 +217,16 @@ function getApproved(uint256) external view returns (address)
 function getBaseURI() external view returns (string)
 ```
 
+
+
+
+
+
 #### Returns
 
-| Name | Type   | Description |
-| ---- | ------ | ----------- |
-| \_0  | string | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | string | undefined |
 
 ### giftTokens
 
@@ -179,13 +234,15 @@ function getBaseURI() external view returns (string)
 function giftTokens(address[] addresses) external nonpayable
 ```
 
-_Mints one token per address._
+
+
+*Mints one token per address.*
 
 #### Parameters
 
-| Name      | Type      | Description |
-| --------- | --------- | ----------- |
-| addresses | address[] | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| addresses | address[] | undefined |
 
 ### isApprovedForAll
 
@@ -193,18 +250,22 @@ _Mints one token per address._
 function isApprovedForAll(address, address) external view returns (bool)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | address | undefined   |
-| \_1  | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | undefined |
+| _1 | address | undefined |
 
 #### Returns
 
 | Name | Type | Description |
-| ---- | ---- | ----------- |
-| \_0  | bool | undefined   |
+|---|---|---|
+| _0 | bool | undefined |
 
 ### maxFree
 
@@ -212,11 +273,16 @@ function isApprovedForAll(address, address) external view returns (bool)
 function maxFree() external view returns (uint256)
 ```
 
+
+
+
+
+
 #### Returns
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
 
 ### maxSupply
 
@@ -224,11 +290,16 @@ function maxFree() external view returns (uint256)
 function maxSupply() external view returns (uint256)
 ```
 
+
+
+
+
+
 #### Returns
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
 
 ### maxWhitelistSupply
 
@@ -236,11 +307,16 @@ function maxSupply() external view returns (uint256)
 function maxWhitelistSupply() external view returns (uint256)
 ```
 
+
+
+
+
+
 #### Returns
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
 
 ### mint
 
@@ -248,11 +324,15 @@ function maxWhitelistSupply() external view returns (uint256)
 function mint(uint256 amount) external payable
 ```
 
+
+
+
+
 #### Parameters
 
-| Name   | Type    | Description |
-| ------ | ------- | ----------- |
-| amount | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| amount | uint256 | undefined |
 
 ### mintToCreator
 
@@ -260,11 +340,15 @@ function mint(uint256 amount) external payable
 function mintToCreator(uint256 amount) external nonpayable
 ```
 
+
+
+
+
 #### Parameters
 
-| Name   | Type    | Description |
-| ------ | ------- | ----------- |
-| amount | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| amount | uint256 | undefined |
 
 ### name
 
@@ -272,11 +356,16 @@ function mintToCreator(uint256 amount) external nonpayable
 function name() external view returns (string)
 ```
 
+
+
+
+
+
 #### Returns
 
-| Name | Type   | Description |
-| ---- | ------ | ----------- |
-| \_0  | string | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | string | undefined |
 
 ### onERC721Received
 
@@ -284,20 +373,24 @@ function name() external view returns (string)
 function onERC721Received(address, address, uint256, bytes) external nonpayable returns (bytes4)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | address | undefined   |
-| \_1  | address | undefined   |
-| \_2  | uint256 | undefined   |
-| \_3  | bytes   | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | undefined |
+| _1 | address | undefined |
+| _2 | uint256 | undefined |
+| _3 | bytes | undefined |
 
 #### Returns
 
-| Name | Type   | Description |
-| ---- | ------ | ----------- |
-| \_0  | bytes4 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | bytes4 | undefined |
 
 ### owner
 
@@ -305,11 +398,16 @@ function onERC721Received(address, address, uint256, bytes) external nonpayable 
 function owner() external view returns (address)
 ```
 
+
+
+
+
+
 #### Returns
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | undefined |
 
 ### ownerOf
 
@@ -317,17 +415,21 @@ function owner() external view returns (address)
 function ownerOf(uint256 id) external view returns (address owner)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| id   | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| id | uint256 | undefined |
 
 #### Returns
 
-| Name  | Type    | Description |
-| ----- | ------- | ----------- |
-| owner | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| owner | address | undefined |
 
 ### publicMintState
 
@@ -335,13 +437,16 @@ function ownerOf(uint256 id) external view returns (address owner)
 function publicMintState() external view returns (bool)
 ```
 
-_default := false._
+
+
+*default := false.*
+
 
 #### Returns
 
 | Name | Type | Description |
-| ---- | ---- | ----------- |
-| \_0  | bool | undefined   |
+|---|---|---|
+| _0 | bool | undefined |
 
 ### publicPrice
 
@@ -349,11 +454,16 @@ _default := false._
 function publicPrice() external view returns (uint256)
 ```
 
+
+
+
+
+
 #### Returns
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
 
 ### royaltyInfo
 
@@ -361,19 +471,23 @@ function publicPrice() external view returns (uint256)
 function royaltyInfo(uint256 tokenId, uint256 salePrice) external view returns (address receiver, uint256 royaltyAmount)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name      | Type    | Description |
-| --------- | ------- | ----------- |
-| tokenId   | uint256 | undefined   |
-| salePrice | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| tokenId | uint256 | undefined |
+| salePrice | uint256 | undefined |
 
 #### Returns
 
-| Name          | Type    | Description |
-| ------------- | ------- | ----------- |
-| receiver      | address | undefined   |
-| royaltyAmount | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| receiver | address | undefined |
+| royaltyAmount | uint256 | undefined |
 
 ### safeTransferFrom
 
@@ -381,13 +495,17 @@ function royaltyInfo(uint256 tokenId, uint256 salePrice) external view returns (
 function safeTransferFrom(address from, address to, uint256 id) external nonpayable
 ```
 
+
+
+
+
 #### Parameters
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| from | address | undefined   |
-| to   | address | undefined   |
-| id   | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| from | address | undefined |
+| to | address | undefined |
+| id | uint256 | undefined |
 
 ### safeTransferFrom
 
@@ -395,14 +513,18 @@ function safeTransferFrom(address from, address to, uint256 id) external nonpaya
 function safeTransferFrom(address from, address to, uint256 id, bytes data) external nonpayable
 ```
 
+
+
+
+
 #### Parameters
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| from | address | undefined   |
-| to   | address | undefined   |
-| id   | uint256 | undefined   |
-| data | bytes   | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| from | address | undefined |
+| to | address | undefined |
+| id | uint256 | undefined |
+| data | bytes | undefined |
 
 ### setApprovalForAll
 
@@ -410,12 +532,16 @@ function safeTransferFrom(address from, address to, uint256 id, bytes data) exte
 function setApprovalForAll(address operator, bool approved) external nonpayable
 ```
 
+
+
+
+
 #### Parameters
 
-| Name     | Type    | Description |
-| -------- | ------- | ----------- |
-| operator | address | undefined   |
-| approved | bool    | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| operator | address | undefined |
+| approved | bool | undefined |
 
 ### setBaseURI
 
@@ -423,11 +549,15 @@ function setApprovalForAll(address operator, bool approved) external nonpayable
 function setBaseURI(string _baseURI) external nonpayable
 ```
 
+
+
+
+
 #### Parameters
 
-| Name      | Type   | Description |
-| --------- | ------ | ----------- |
-| \_baseURI | string | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _baseURI | string | undefined |
 
 ### setFreeClaimState
 
@@ -435,11 +565,15 @@ function setBaseURI(string _baseURI) external nonpayable
 function setFreeClaimState(bool _freeClaimState) external nonpayable
 ```
 
+
+
+
+
 #### Parameters
 
-| Name             | Type | Description |
-| ---------------- | ---- | ----------- |
-| \_freeClaimState | bool | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _freeClaimState | bool | undefined |
 
 ### setOwner
 
@@ -447,11 +581,15 @@ function setFreeClaimState(bool _freeClaimState) external nonpayable
 function setOwner(address newOwner) external nonpayable
 ```
 
+
+
+
+
 #### Parameters
 
-| Name     | Type    | Description |
-| -------- | ------- | ----------- |
-| newOwner | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newOwner | address | undefined |
 
 ### setPublicMintState
 
@@ -459,11 +597,15 @@ function setOwner(address newOwner) external nonpayable
 function setPublicMintState(bool _publicMintState) external nonpayable
 ```
 
+
+
+
+
 #### Parameters
 
-| Name              | Type | Description |
-| ----------------- | ---- | ----------- |
-| \_publicMintState | bool | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _publicMintState | bool | undefined |
 
 ### setWhitelistMintState
 
@@ -471,11 +613,15 @@ function setPublicMintState(bool _publicMintState) external nonpayable
 function setWhitelistMintState(bool _whitelistMintState) external nonpayable
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                 | Type | Description |
-| -------------------- | ---- | ----------- |
-| \_whitelistMintState | bool | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _whitelistMintState | bool | undefined |
 
 ### splitter
 
@@ -483,11 +629,16 @@ function setWhitelistMintState(bool _whitelistMintState) external nonpayable
 function splitter() external view returns (contract SplitterImpl)
 ```
 
+
+
+
+
+
 #### Returns
 
-| Name | Type                  | Description |
-| ---- | --------------------- | ----------- |
-| \_0  | contract SplitterImpl | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | contract SplitterImpl | undefined |
 
 ### supportsInterface
 
@@ -495,17 +646,21 @@ function splitter() external view returns (contract SplitterImpl)
 function supportsInterface(bytes4 interfaceId) external pure returns (bool)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name        | Type   | Description |
-| ----------- | ------ | ----------- |
-| interfaceId | bytes4 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| interfaceId | bytes4 | undefined |
 
 #### Returns
 
 | Name | Type | Description |
-| ---- | ---- | ----------- |
-| \_0  | bool | undefined   |
+|---|---|---|
+| _0 | bool | undefined |
 
 ### symbol
 
@@ -513,11 +668,16 @@ function supportsInterface(bytes4 interfaceId) external pure returns (bool)
 function symbol() external view returns (string)
 ```
 
+
+
+
+
+
 #### Returns
 
-| Name | Type   | Description |
-| ---- | ------ | ----------- |
-| \_0  | string | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | string | undefined |
 
 ### tokenURI
 
@@ -525,17 +685,21 @@ function symbol() external view returns (string)
 function tokenURI(uint256 id) external view returns (string)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| id   | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| id | uint256 | undefined |
 
 #### Returns
 
-| Name | Type   | Description |
-| ---- | ------ | ----------- |
-| \_0  | string | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | string | undefined |
 
 ### totalSupply
 
@@ -543,11 +707,16 @@ function tokenURI(uint256 id) external view returns (string)
 function totalSupply() external view returns (uint256)
 ```
 
+
+
+
+
+
 #### Returns
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
 
 ### transferFrom
 
@@ -555,13 +724,17 @@ function totalSupply() external view returns (uint256)
 function transferFrom(address from, address to, uint256 id) external nonpayable
 ```
 
+
+
+
+
 #### Parameters
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| from | address | undefined   |
-| to   | address | undefined   |
-| id   | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| from | address | undefined |
+| to | address | undefined |
+| id | uint256 | undefined |
 
 ### whitelistConfig
 
@@ -569,13 +742,17 @@ function transferFrom(address from, address to, uint256 id) external nonpayable
 function whitelistConfig(uint256 _price, uint256 _supply, bytes32 _root) external nonpayable
 ```
 
+
+
+
+
 #### Parameters
 
-| Name     | Type    | Description |
-| -------- | ------- | ----------- |
-| \_price  | uint256 | undefined   |
-| \_supply | uint256 | undefined   |
-| \_root   | bytes32 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _price | uint256 | undefined |
+| _supply | uint256 | undefined |
+| _root | bytes32 | undefined |
 
 ### whitelistMerkleRoot
 
@@ -583,11 +760,16 @@ function whitelistConfig(uint256 _price, uint256 _supply, bytes32 _root) externa
 function whitelistMerkleRoot() external view returns (bytes32)
 ```
 
+
+
+
+
+
 #### Returns
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | bytes32 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | bytes32 | undefined |
 
 ### whitelistMint
 
@@ -595,12 +777,16 @@ function whitelistMerkleRoot() external view returns (bytes32)
 function whitelistMint(uint8 amount, bytes32[] merkleProof) external payable
 ```
 
+
+
+
+
 #### Parameters
 
-| Name        | Type      | Description |
-| ----------- | --------- | ----------- |
-| amount      | uint8     | undefined   |
-| merkleProof | bytes32[] | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| amount | uint8 | undefined |
+| merkleProof | bytes32[] | undefined |
 
 ### whitelistMintState
 
@@ -608,13 +794,16 @@ function whitelistMint(uint8 amount, bytes32[] merkleProof) external payable
 function whitelistMintState() external view returns (bool)
 ```
 
-_default := false._
+
+
+*default := false.*
+
 
 #### Returns
 
 | Name | Type | Description |
-| ---- | ---- | ----------- |
-| \_0  | bool | undefined   |
+|---|---|---|
+| _0 | bool | undefined |
 
 ### whitelistMinted
 
@@ -622,13 +811,16 @@ _default := false._
 function whitelistMinted() external view returns (uint256)
 ```
 
-_Current whitelist supply._
+
+
+*Current whitelist supply.*
+
 
 #### Returns
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
 
 ### whitelistPrice
 
@@ -636,11 +828,16 @@ _Current whitelist supply._
 function whitelistPrice() external view returns (uint256)
 ```
 
+
+
+
+
+
 #### Returns
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
 
 ### withdraw
 
@@ -648,17 +845,28 @@ function whitelistPrice() external view returns (uint256)
 function withdraw() external nonpayable
 ```
 
+
+
+
+
+
 ### withdrawERC20
 
 ```solidity
 function withdrawERC20(contract ERC20 _token) external nonpayable
 ```
 
+
+
+
+
 #### Parameters
 
-| Name    | Type           | Description |
-| ------- | -------------- | ----------- |
-| \_token | contract ERC20 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _token | contract ERC20 | undefined |
+
+
 
 ## Events
 
@@ -668,13 +876,17 @@ function withdrawERC20(contract ERC20 _token) external nonpayable
 event Approval(address indexed owner, address indexed spender, uint256 indexed id)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name              | Type    | Description |
-| ----------------- | ------- | ----------- |
-| owner `indexed`   | address | undefined   |
-| spender `indexed` | address | undefined   |
-| id `indexed`      | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| owner `indexed` | address | undefined |
+| spender `indexed` | address | undefined |
+| id `indexed` | uint256 | undefined |
 
 ### ApprovalForAll
 
@@ -682,13 +894,17 @@ event Approval(address indexed owner, address indexed spender, uint256 indexed i
 event ApprovalForAll(address indexed owner, address indexed operator, bool approved)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name               | Type    | Description |
-| ------------------ | ------- | ----------- |
-| owner `indexed`    | address | undefined   |
-| operator `indexed` | address | undefined   |
-| approved           | bool    | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| owner `indexed` | address | undefined |
+| operator `indexed` | address | undefined |
+| approved  | bool | undefined |
 
 ### BaseURISet
 
@@ -696,11 +912,15 @@ event ApprovalForAll(address indexed owner, address indexed operator, bool appro
 event BaseURISet(string indexed newBaseURI)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                 | Type   | Description |
-| -------------------- | ------ | ----------- |
-| newBaseURI `indexed` | string | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newBaseURI `indexed` | string | undefined |
 
 ### FreeClaimStateSet
 
@@ -708,11 +928,15 @@ event BaseURISet(string indexed newBaseURI)
 event FreeClaimStateSet(bool indexed freeClaimState)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                     | Type | Description |
-| ------------------------ | ---- | ----------- |
-| freeClaimState `indexed` | bool | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| freeClaimState `indexed` | bool | undefined |
 
 ### FreeConfigSet
 
@@ -720,13 +944,17 @@ event FreeClaimStateSet(bool indexed freeClaimState)
 event FreeConfigSet(uint256 newFreeAmount, uint256 indexed newMaxFree, bytes32 indexed newMerkleRoot)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                    | Type    | Description |
-| ----------------------- | ------- | ----------- |
-| newFreeAmount           | uint256 | undefined   |
-| newMaxFree `indexed`    | uint256 | undefined   |
-| newMerkleRoot `indexed` | bytes32 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newFreeAmount  | uint256 | undefined |
+| newMaxFree `indexed` | uint256 | undefined |
+| newMerkleRoot `indexed` | bytes32 | undefined |
 
 ### OwnerUpdated
 
@@ -734,12 +962,16 @@ event FreeConfigSet(uint256 newFreeAmount, uint256 indexed newMaxFree, bytes32 i
 event OwnerUpdated(address indexed user, address indexed newOwner)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name               | Type    | Description |
-| ------------------ | ------- | ----------- |
-| user `indexed`     | address | undefined   |
-| newOwner `indexed` | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| user `indexed` | address | undefined |
+| newOwner `indexed` | address | undefined |
 
 ### PublicMintStateSet
 
@@ -747,11 +979,15 @@ event OwnerUpdated(address indexed user, address indexed newOwner)
 event PublicMintStateSet(bool indexed newPublicState)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                     | Type | Description |
-| ------------------------ | ---- | ----------- |
-| newPublicState `indexed` | bool | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newPublicState `indexed` | bool | undefined |
 
 ### RoyaltyFeeSet
 
@@ -759,11 +995,15 @@ event PublicMintStateSet(bool indexed newPublicState)
 event RoyaltyFeeSet(uint256 indexed newRoyaltyFee)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                    | Type    | Description |
-| ----------------------- | ------- | ----------- |
-| newRoyaltyFee `indexed` | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newRoyaltyFee `indexed` | uint256 | undefined |
 
 ### RoyaltyRecipientSet
 
@@ -771,11 +1011,15 @@ event RoyaltyFeeSet(uint256 indexed newRoyaltyFee)
 event RoyaltyRecipientSet(address indexed newRecipient)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                   | Type    | Description |
-| ---------------------- | ------- | ----------- |
-| newRecipient `indexed` | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newRecipient `indexed` | address | undefined |
 
 ### Transfer
 
@@ -783,13 +1027,17 @@ event RoyaltyRecipientSet(address indexed newRecipient)
 event Transfer(address indexed from, address indexed to, uint256 indexed id)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name           | Type    | Description |
-| -------------- | ------- | ----------- |
-| from `indexed` | address | undefined   |
-| to `indexed`   | address | undefined   |
-| id `indexed`   | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| from `indexed` | address | undefined |
+| to `indexed` | address | undefined |
+| id `indexed` | uint256 | undefined |
 
 ### WhitelistConfigSet
 
@@ -797,13 +1045,17 @@ event Transfer(address indexed from, address indexed to, uint256 indexed id)
 event WhitelistConfigSet(uint256 indexed newWhitelistPrice, uint256 indexed newMaxWhitelistSupply, bytes32 indexed newMerkleRoot)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                            | Type    | Description |
-| ------------------------------- | ------- | ----------- |
-| newWhitelistPrice `indexed`     | uint256 | undefined   |
-| newMaxWhitelistSupply `indexed` | uint256 | undefined   |
-| newMerkleRoot `indexed`         | bytes32 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newWhitelistPrice `indexed` | uint256 | undefined |
+| newMaxWhitelistSupply `indexed` | uint256 | undefined |
+| newMerkleRoot `indexed` | bytes32 | undefined |
 
 ### WhitelistMintStateSet
 
@@ -811,8 +1063,15 @@ event WhitelistConfigSet(uint256 indexed newWhitelistPrice, uint256 indexed newM
 event WhitelistMintStateSet(bool indexed newWhitelistState)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                        | Type | Description |
-| --------------------------- | ---- | ----------- |
-| newWhitelistState `indexed` | bool | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newWhitelistState `indexed` | bool | undefined |
+
+
+

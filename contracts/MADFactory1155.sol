@@ -6,16 +6,16 @@ pragma solidity 0.8.4;
 import { MAD } from "./MAD.sol";
 
 import { 
-    FactoryEventsAndErrors721, 
+    FactoryEventsAndErrors1155, 
     FactoryVerifier 
 } from "./EventsAndErrors.sol";
 
 import { 
-    ERC721MinimalDeployer, 
-    ERC721BasicDeployer,
-    ERC721WhitelistDeployer,
-    ERC721LazyDeployer
-} from "./lib/deployers/ERC721Deployer.sol";
+    ERC1155MinimalDeployer, 
+    ERC1155BasicDeployer,
+    ERC1155WhitelistDeployer,
+    ERC1155LazyDeployer
+} from "./lib/deployers/ERC1155Deployer.sol";
 
 import { SplitterDeployer } from "./lib/deployers/SplitterDeployer.sol";
 
@@ -34,8 +34,8 @@ DISCLAIMER:
 This contract hasn't been audited yet. Most likely contains unexpected bugs. Don't trust your funds to be held by this code before the final thoroughly tested and audited version release.
 */
 
-contract MADFactory721 is MAD,
-    FactoryEventsAndErrors721,
+contract MADFactory1155 is MAD,
+    FactoryEventsAndErrors1155,
     FactoryVerifier,
     ReentrancyGuard,
     DCPrevent(),
@@ -43,7 +43,7 @@ contract MADFactory721 is MAD,
     Pausable
 {
     using Types for Types.ERC721Type;
-    using Types for Types.Collection721;
+    using Types for Types.Collection1155;
     using Types for Types.SplitterConfig;
     using Bytes32AddressLib for address;
     using Bytes32AddressLib for bytes32;
@@ -70,7 +70,7 @@ contract MADFactory721 is MAD,
     
     /// @dev `colIDs` are derived from adding 12 bytes of zeros to an collection's address.
     /// @dev colID => colInfo(salt/type/addr/time/splitter)
-    mapping(bytes32 => Types.Collection721) public colInfo;
+    mapping(bytes32 => Types.Collection1155) public colInfo;
 
     /// @dev Maps an collection creator, of type address, to an array of `colIDs`.
     mapping(address => bytes32[]) public  userTokens;
@@ -190,7 +190,6 @@ contract MADFactory721 is MAD,
             );
 
         } else { 
-            // revert SplitterFail();
             assembly {
                 mstore(0x00, 0x00adecf0)
                 revert(0x1c, 0x04)
@@ -199,7 +198,7 @@ contract MADFactory721 is MAD,
         }
     }
 
-    /// @notice Core public ERC721 token types deployment pusher.
+    /// @notice Core public ERC1155 token types deployment pusher.
     /// @dev Function Sighash := 0x73fd6808
     /// @dev Args passed as params in this function serve as common denominator for all token types.
     /// @dev Extra config options must be set directly by through token type specific functions in `MADRouter` contract.
@@ -208,22 +207,18 @@ contract MADFactory721 is MAD,
     /// 0=Minimal; 1=Basic; 2=Whitelist; 3=Lazy.
     /// @param _tokenSalt Nonce/Entropy factor used by CREATE3 method
     /// to generate collection deployment address. Must be always different to avoid address collision.
-    /// @param _name Name of the collection to be deployed.
-    /// @param _symbol Symbol of the collection to be deployed.
     /// @param _price Public mint price of the collection to be deployed.
     /// @param _maxSupply Maximum supply of tokens to be minted of the collection to be deployed
     /// (Not used for ERC721Minimal token type, since it always equals to one).
-    /// @param _baseURI The URL + CID to be added the tokenID and suffix (.json) by the tokenURI function
+    /// @param _uri The URL + CID to be added the tokenID and suffix (.json) by the tokenURI function
     /// in the collection to be deployed (baseURI used as tokenURI itself for the ERC721Minimal token type).
     /// @param _splitter Previously deployed Splitter implementation so to validate and attach to collection.
     function createCollection(
         uint8 _tokenType,
         string memory _tokenSalt,
-        string memory _name,
-        string memory _symbol,
         uint256 _price,
         uint256 _maxSupply,
-        string memory _baseURI,
+        string memory _uri,
         address _splitter
     )
         external
@@ -235,11 +230,9 @@ contract MADFactory721 is MAD,
 
         if (_tokenType < 1) {
         (bytes32 tokenSalt, address deployed) = 
-            ERC721MinimalDeployer._721MinimalDeploy(
+            ERC1155MinimalDeployer._1155MinimalDeploy(
                 _tokenSalt,
-                _name,
-                _symbol,
-                _baseURI,
+                _uri,
                 _price,
                 _splitter,
                 router
@@ -248,15 +241,15 @@ contract MADFactory721 is MAD,
         bytes32 colId = deployed.fillLast12Bytes();
         userTokens[tx.origin].push(colId);
 
-        colInfo[colId] = Types.Collection721(
+        colInfo[colId] = Types.Collection1155(
             tx.origin,
-            Types.ERC721Type.ERC721Minimal,
+            Types.ERC1155Type.ERC1155Minimal,
             tokenSalt,
             block.number,
             _splitter
         );
 
-        emit ERC721MinimalCreated(
+        emit ERC1155MinimalCreated(
             _splitter,
             deployed,
             tx.origin
@@ -264,11 +257,9 @@ contract MADFactory721 is MAD,
         }
         if (_tokenType == 1) {
             (bytes32 tokenSalt, address deployed) = 
-            ERC721BasicDeployer._721BasicDeploy(
+            ERC1155BasicDeployer._1155BasicDeploy(
                 _tokenSalt,
-                _name,
-                _symbol,
-                _baseURI,
+                _uri,
                 _price,
                 _maxSupply,
                 _splitter,
@@ -278,15 +269,15 @@ contract MADFactory721 is MAD,
         bytes32 colId = deployed.fillLast12Bytes();
         userTokens[tx.origin].push(colId);
 
-        colInfo[colId] = Types.Collection721(
+        colInfo[colId] = Types.Collection1155(
             tx.origin,
-            Types.ERC721Type.ERC721Basic,
+            Types.ERC1155Type.ERC1155Basic,
             tokenSalt,
             block.number,
             _splitter
         );
 
-        emit ERC721BasicCreated(
+        emit ERC1155BasicCreated(
             _splitter,
             deployed,
             tx.origin
@@ -294,11 +285,9 @@ contract MADFactory721 is MAD,
         }
         if (_tokenType == 2) {
             (bytes32 tokenSalt, address deployed) = 
-            ERC721WhitelistDeployer._721WhitelistDeploy(
+            ERC1155WhitelistDeployer._1155WhitelistDeploy(
                 _tokenSalt,
-                _name,
-                _symbol,
-                _baseURI,
+                _uri,
                 _price,
                 _maxSupply,
                 _splitter,
@@ -308,15 +297,15 @@ contract MADFactory721 is MAD,
         bytes32 colId = deployed.fillLast12Bytes();
         userTokens[tx.origin].push(colId);
 
-        colInfo[colId] = Types.Collection721(
+        colInfo[colId] = Types.Collection1155(
             tx.origin,
-            Types.ERC721Type.ERC721Whitelist,
+            Types.ERC1155Type.ERC1155Whitelist,
             tokenSalt,
             block.number,
             _splitter
         );
 
-        emit ERC721WhitelistCreated(
+        emit ERC1155WhitelistCreated(
             _splitter,
             deployed,
             tx.origin
@@ -324,11 +313,9 @@ contract MADFactory721 is MAD,
         }
         if (_tokenType > 2) {
             (bytes32 tokenSalt, address deployed) = 
-            ERC721LazyDeployer._721LazyDeploy(
+            ERC1155LazyDeployer._1155LazyDeploy(
                     _tokenSalt,
-                    _name,
-                    _symbol,
-                    _baseURI,
+                    _uri,
                     _splitter,
                     router,
                     signer
@@ -337,15 +324,15 @@ contract MADFactory721 is MAD,
         bytes32 colId = deployed.fillLast12Bytes();
         userTokens[tx.origin].push(colId);
 
-        colInfo[colId] = Types.Collection721(
+        colInfo[colId] = Types.Collection1155(
             tx.origin,
-            Types.ERC721Type.ERC721Lazy,
+            Types.ERC1155Type.ERC1155Lazy,
             tokenSalt,
             block.number,
             _splitter
         );
 
-        emit ERC721LazyCreated(
+        emit ERC1155LazyCreated(
             _splitter,
             deployed,
             tx.origin
@@ -461,7 +448,7 @@ contract MADFactory721 is MAD,
     /// @inheritdoc FactoryVerifier
     function typeChecker(bytes32 _colID) external override(FactoryVerifier) view returns(uint8 pointer) {
         _isRouter();
-        Types.Collection721 storage col = colInfo[_colID];
+        Types.Collection1155 storage col = colInfo[_colID];
         
         assembly {
             let x := sload(col.slot)
@@ -549,7 +536,7 @@ contract MADFactory721 is MAD,
     returns(address creator, bool check) 
     {
         _isRouter();
-        Types.Collection721 storage col = colInfo[_colID];
+        Types.Collection1155 storage col = colInfo[_colID];
         
         assembly {
             let x := sload(col.slot)

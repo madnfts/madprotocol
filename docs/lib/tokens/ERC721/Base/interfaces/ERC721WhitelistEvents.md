@@ -1,5 +1,14 @@
 # ERC721WhitelistEvents
 
+
+
+
+
+
+
+
+
+
 ## Events
 
 ### BaseURISet
@@ -8,11 +17,15 @@
 event BaseURISet(string indexed newBaseURI)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                 | Type   | Description |
-| -------------------- | ------ | ----------- |
-| newBaseURI `indexed` | string | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newBaseURI `indexed` | string | undefined |
 
 ### FreeClaimStateSet
 
@@ -20,11 +33,15 @@ event BaseURISet(string indexed newBaseURI)
 event FreeClaimStateSet(bool indexed freeClaimState)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                     | Type | Description |
-| ------------------------ | ---- | ----------- |
-| freeClaimState `indexed` | bool | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| freeClaimState `indexed` | bool | undefined |
 
 ### FreeConfigSet
 
@@ -32,13 +49,17 @@ event FreeClaimStateSet(bool indexed freeClaimState)
 event FreeConfigSet(uint256 newFreeAmount, uint256 indexed newMaxFree, bytes32 indexed newMerkleRoot)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                    | Type    | Description |
-| ----------------------- | ------- | ----------- |
-| newFreeAmount           | uint256 | undefined   |
-| newMaxFree `indexed`    | uint256 | undefined   |
-| newMerkleRoot `indexed` | bytes32 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newFreeAmount  | uint256 | undefined |
+| newMaxFree `indexed` | uint256 | undefined |
+| newMerkleRoot `indexed` | bytes32 | undefined |
 
 ### PublicMintStateSet
 
@@ -46,11 +67,15 @@ event FreeConfigSet(uint256 newFreeAmount, uint256 indexed newMaxFree, bytes32 i
 event PublicMintStateSet(bool indexed newPublicState)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                     | Type | Description |
-| ------------------------ | ---- | ----------- |
-| newPublicState `indexed` | bool | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newPublicState `indexed` | bool | undefined |
 
 ### RoyaltyFeeSet
 
@@ -58,11 +83,15 @@ event PublicMintStateSet(bool indexed newPublicState)
 event RoyaltyFeeSet(uint256 indexed newRoyaltyFee)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                    | Type    | Description |
-| ----------------------- | ------- | ----------- |
-| newRoyaltyFee `indexed` | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newRoyaltyFee `indexed` | uint256 | undefined |
 
 ### RoyaltyRecipientSet
 
@@ -70,11 +99,15 @@ event RoyaltyFeeSet(uint256 indexed newRoyaltyFee)
 event RoyaltyRecipientSet(address indexed newRecipient)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                   | Type    | Description |
-| ---------------------- | ------- | ----------- |
-| newRecipient `indexed` | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newRecipient `indexed` | address | undefined |
 
 ### WhitelistConfigSet
 
@@ -82,13 +115,17 @@ event RoyaltyRecipientSet(address indexed newRecipient)
 event WhitelistConfigSet(uint256 indexed newWhitelistPrice, uint256 indexed newMaxWhitelistSupply, bytes32 indexed newMerkleRoot)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                            | Type    | Description |
-| ------------------------------- | ------- | ----------- |
-| newWhitelistPrice `indexed`     | uint256 | undefined   |
-| newMaxWhitelistSupply `indexed` | uint256 | undefined   |
-| newMerkleRoot `indexed`         | bytes32 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newWhitelistPrice `indexed` | uint256 | undefined |
+| newMaxWhitelistSupply `indexed` | uint256 | undefined |
+| newMerkleRoot `indexed` | bytes32 | undefined |
 
 ### WhitelistMintStateSet
 
@@ -96,8 +133,15 @@ event WhitelistConfigSet(uint256 indexed newWhitelistPrice, uint256 indexed newM
 event WhitelistMintStateSet(bool indexed newWhitelistState)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                        | Type | Description |
-| --------------------------- | ---- | ----------- |
-| newWhitelistState `indexed` | bool | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newWhitelistState `indexed` | bool | undefined |
+
+
+

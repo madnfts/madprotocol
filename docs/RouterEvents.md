@@ -1,5 +1,14 @@
 # RouterEvents
 
+
+
+
+
+
+
+
+
+
 ## Events
 
 ### BaseURI
@@ -8,12 +17,16 @@
 event BaseURI(bytes32 indexed _id, string indexed _baseURI)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                | Type    | Description |
-| ------------------- | ------- | ----------- |
-| \_id `indexed`      | bytes32 | undefined   |
-| \_baseURI `indexed` | string  | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _id `indexed` | bytes32 | undefined |
+| _baseURI `indexed` | string | undefined |
 
 ### FreeClaimState
 
@@ -21,13 +34,17 @@ event BaseURI(bytes32 indexed _id, string indexed _baseURI)
 event FreeClaimState(bytes32 indexed _id, uint8 indexed _type, bool indexed _state)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name              | Type    | Description |
-| ----------------- | ------- | ----------- |
-| \_id `indexed`    | bytes32 | undefined   |
-| \_type `indexed`  | uint8   | undefined   |
-| \_state `indexed` | bool    | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _id `indexed` | bytes32 | undefined |
+| _type `indexed` | uint8 | undefined |
+| _state `indexed` | bool | undefined |
 
 ### PublicMintState
 
@@ -35,13 +52,17 @@ event FreeClaimState(bytes32 indexed _id, uint8 indexed _type, bool indexed _sta
 event PublicMintState(bytes32 indexed _id, uint8 indexed _type, bool indexed _state)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name              | Type    | Description |
-| ----------------- | ------- | ----------- |
-| \_id `indexed`    | bytes32 | undefined   |
-| \_type `indexed`  | uint8   | undefined   |
-| \_state `indexed` | bool    | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _id `indexed` | bytes32 | undefined |
+| _type `indexed` | uint8 | undefined |
+| _state `indexed` | bool | undefined |
 
 ### TokenFundsWithdrawn
 
@@ -49,13 +70,17 @@ event PublicMintState(bytes32 indexed _id, uint8 indexed _type, bool indexed _st
 event TokenFundsWithdrawn(bytes32 indexed _id, uint8 indexed _type, address indexed _payee)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name              | Type    | Description |
-| ----------------- | ------- | ----------- |
-| \_id `indexed`    | bytes32 | undefined   |
-| \_type `indexed`  | uint8   | undefined   |
-| \_payee `indexed` | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _id `indexed` | bytes32 | undefined |
+| _type `indexed` | uint8 | undefined |
+| _payee `indexed` | address | undefined |
 
 ### WhitelistMintState
 
@@ -63,10 +88,17 @@ event TokenFundsWithdrawn(bytes32 indexed _id, uint8 indexed _type, address inde
 event WhitelistMintState(bytes32 indexed _id, uint8 indexed _type, bool indexed _state)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name              | Type    | Description |
-| ----------------- | ------- | ----------- |
-| \_id `indexed`    | bytes32 | undefined   |
-| \_type `indexed`  | uint8   | undefined   |
-| \_state `indexed` | bool    | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _id `indexed` | bytes32 | undefined |
+| _type `indexed` | uint8 | undefined |
+| _state `indexed` | bool | undefined |
+
+
+

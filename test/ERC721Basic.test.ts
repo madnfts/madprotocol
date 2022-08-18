@@ -11,7 +11,6 @@ import { ethers, network, waffle } from "hardhat";
 import {
   ERC721Basic,
   MockERC20,
-  Reentrancy,
   SplitterImpl,
 } from "../src/types";
 import { BasicErrors } from "./utils/errors";
@@ -28,10 +27,6 @@ import {
   getInterfaceID,
 } from "./utils/interfaces";
 
-/* 
-TO DOS:
-- reentrancy
-*/
 
 // hint:
 // import { base64 } from "ethers/lib/utils";
@@ -198,19 +193,6 @@ describe("ERC721Basic", () => {
   });
 
   describe("Mint", async () => {
-    // it("Should revert if reentrancy is attempted", async () => {
-    //   const Attacker = await ethers.getContractFactory(
-    //     "Reentrancy"
-    //   );
-    //   await basic.setPublicMintState(true);
-    //   const attacker = await Attacker.deploy(basic.address, 10);
-    //   const a = new Attacker.signer;
-    //   const attack = basic.connect(attacker.address).mint(1);
-    // //   const tx = basic.connect(attacker.address).onERC721Received(acc01.address, acc02.address, 1, "0x123");
-
-    //   await expect(attack).to.be.revertedWith(BasicErrors.Reentrancy);
-    // });
-
     it("Should revert if public mint is turned off", async () => {
       const tx = basic.connect(acc01).mint(1);
 

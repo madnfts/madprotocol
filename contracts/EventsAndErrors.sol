@@ -4,8 +4,9 @@ pragma solidity 0.8.4;
 
 import { FactoryVerifier } from "./lib/auth/FactoryVerifier.sol";
 import { IERC721 } from "./Types.sol";
+import { IERC1155 } from "./Types.sol";
 
-interface FactoryEventsAndErrors {
+interface FactoryEventsAndErrors721 {
     ////////////////////////////////////////////////////////////////
     //                           EVENTS                           //
     ////////////////////////////////////////////////////////////////
@@ -27,25 +28,21 @@ interface FactoryEventsAndErrors {
         address indexed newSplitter,
         address indexed newCollection,
         address indexed newCreator
-        // Types.ERC721Type colType
     );
     event ERC721BasicCreated(
         address indexed newSplitter,
         address indexed newCollection,
         address indexed newCreator
-        // Types.ERC721Type colType
     );
     event ERC721WhitelistCreated(
         address indexed newSplitter,
         address indexed newCollection,
         address indexed newCreator
-        // Types.ERC721Type colType
     );
     event ERC721LazyCreated(
         address indexed newSplitter,
         address indexed newCollection,
         address indexed newCreator
-        // Types.ERC721Type colType
     );
 
     ////////////////////////////////////////////////////////////////
@@ -54,8 +51,53 @@ interface FactoryEventsAndErrors {
 
     /// @dev 0x00adecf0
     error SplitterFail();
-    /// @dev 0x3ececff8
-    // error PushFailed();
+}
+
+interface FactoryEventsAndErrors1155 {
+    ////////////////////////////////////////////////////////////////
+    //                           EVENTS                           //
+    ////////////////////////////////////////////////////////////////
+
+    event AmbassadorAdded(address indexed whitelistedAmb);
+    event AmbassadorDeleted(address indexed removedAmb);
+    event MarketplaceUpdated(address indexed newMarket);
+    event RouterUpdated(address indexed newRouter);
+    event SignerUpdated(address indexed newSigner);
+
+    event SplitterCreated(
+        address indexed creator,
+        uint256[] shares,
+        address[] payees,
+        address splitter
+    );
+
+    event ERC1155MinimalCreated(
+        address indexed newSplitter,
+        address indexed newCollection,
+        address indexed newCreator
+    );
+    event ERC1155BasicCreated(
+        address indexed newSplitter,
+        address indexed newCollection,
+        address indexed newCreator
+    );
+    event ERC1155WhitelistCreated(
+        address indexed newSplitter,
+        address indexed newCollection,
+        address indexed newCreator
+    );
+    event ERC1155LazyCreated(
+        address indexed newSplitter,
+        address indexed newCollection,
+        address indexed newCreator
+    );
+
+    ////////////////////////////////////////////////////////////////
+    //                           ERRORS                           //
+    ////////////////////////////////////////////////////////////////
+
+    /// @dev 0x00adecf0
+    error SplitterFail();
 }
 
 interface MarketplaceEventsAndErrors {

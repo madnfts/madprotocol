@@ -719,12 +719,12 @@ describe("ERC1155Basic", () => {
       await basic.setPublicMintState(true);
       await basic.connect(acc01).mint(1, { value: price });
       const tx = await basic.callStatic.uri(1);
-      const fail = basic.callStatic.uri(2);
+      // const fail = basic.callStatic.uri(2);
 
       expect(tx).to.be.ok;
       expect(tx).to.eq("ipfs://cid/1.json");
 
-      await expect(fail).to.be.revertedWith(
+      await expect(basic.uri(2)).to.be.revertedWith(
         BasicErrors.NotMintedYet,
       );
     });

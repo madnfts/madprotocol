@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.4;
 
-import { ERC1155BasicEventsAndErrors } from "../Base/interfaces/ERC1155EventAndErrors.sol";
+import { ERC1155BasicEvents } from "../Base/interfaces/ERC1155EventAndErrors.sol";
 import { ERC1155B as ERC1155, ERC1155TokenReceiver } from "../Base/ERC1155B.sol";
 import { ERC2981 } from "../../common/ERC2981.sol";
 import { ERC20 } from "../../ERC20.sol";
@@ -17,7 +17,7 @@ import { SafeTransferLib } from "../../../utils/SafeTransferLib.sol";
 contract ERC1155Basic is
     ERC1155,
     ERC2981,
-    ERC1155BasicEventsAndErrors,
+    ERC1155BasicEvents,
     ERC1155TokenReceiver,
     Owned,
     ReentrancyGuard
@@ -44,18 +44,18 @@ contract ERC1155Basic is
     ////////////////////////////////////////////////////////////////
 
     modifier publicMintAccess() {
-        if (!publicMintState) revert PublicMintClosed();
+        if (!publicMintState) revert("PublicMintClosed");
         _;
     }
 
     modifier hasReachedMax(uint256 amount) {
         if (totalSupply() + amount > maxSupply)
-            revert MaxSupplyReached();
+            revert("MaxSupplyReached");
         _;
     }
 
     modifier priceCheck(uint256 _price, uint256 amount) {
-        if (_price * amount != msg.value) revert WrongPrice();
+        if (_price * amount != msg.value) revert("WrongPrice");
         _;
     }
 
@@ -219,9 +219,9 @@ contract ERC1155Basic is
     ////////////////////////////////////////////////////////////////
 
     function _mintBatchCheck(uint256 _amount) private view {
-        if (price * _amount != msg.value) revert WrongPrice();
+        if (price * _amount != msg.value) revert("WrongPrice");
         if (totalSupply() + _amount > maxSupply)
-            revert MaxSupplyReached();
+            revert("MaxSupplyReached");
     }
 
     function _nextId() private returns (uint256) {
@@ -244,7 +244,13 @@ contract ERC1155Basic is
         override
         returns (string memory)
     {
-        if (id > totalSupply()) revert NotMintedYet();
+        if (id > totalSupply()) {
+        // revert("NotMintedYet");
+            assembly {
+                mstore(0x00, 0xbad086ea)
+                revert(0x1c, 0x04)
+            }
+        }
         return
             string(
                 abi.encodePacked(

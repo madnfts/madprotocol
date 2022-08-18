@@ -30,7 +30,7 @@ contract MADMarketplace721 is
     Owned(msg.sender),
     Pausable
 {
-    using Types for Types.Order;
+    using Types for Types.Order721;
 
     /// @dev Function Signature := 0x06fdde03
     function name()
@@ -61,7 +61,7 @@ contract MADMarketplace721 is
     /// @dev seller => orderID
     mapping(address => bytes32[]) public orderIdBySeller;
     /// @dev orderID => order details
-    mapping(bytes32 => Types.Order) public orderInfo;
+    mapping(bytes32 => Types.Order721) public orderInfo;
 
     uint16 public constant feePercent = 20000;
     uint256 public minOrderDuration;
@@ -146,7 +146,7 @@ contract MADMarketplace721 is
     {
         if (msg.value == 0) revert WrongPrice();
 
-        Types.Order storage order = orderInfo[_order];
+        Types.Order721 storage order = orderInfo[_order];
         uint256 endBlock = order.endBlock;
         uint256 lastBidPrice = order.lastBidPrice;
         address lastBidder = order.lastBidder;
@@ -191,7 +191,7 @@ contract MADMarketplace721 is
         payable
         whenNotPaused
     {
-        Types.Order storage order = orderInfo[_order];
+        Types.Order721 storage order = orderInfo[_order];
         uint256 endBlock = order.endBlock;
         if (endBlock == 0) revert CanceledOrder();
         if (endBlock <= block.number) revert Timeout();
@@ -305,7 +305,7 @@ contract MADMarketplace721 is
     /// @dev Function Signature := 0xbd66528a
     /// @dev Callable by both the seller and the auction winner.
     function claim(bytes32 _order) external whenNotPaused {
-        Types.Order storage order = orderInfo[_order];
+        Types.Order721 storage order = orderInfo[_order];
 
         address seller = order.seller;
         address lastBidder = order.lastBidder;
@@ -422,7 +422,7 @@ contract MADMarketplace721 is
     /// @dev Function Signature := 0x7489ec23
     /// @dev Cancels order setting endBlock value to 0.
     function cancelOrder(bytes32 _order) external {
-        Types.Order storage order = orderInfo[_order];
+        Types.Order721 storage order = orderInfo[_order];
         if (order.seller != msg.sender) revert AccessDenied();
         if (order.lastBidPrice != 0) revert BidExists();
         if (order.isSold == true) revert SoldToken();
@@ -559,7 +559,7 @@ contract MADMarketplace721 is
         if (_startPrice == 0) revert WrongPrice();
 
         bytes32 hash = _hash(_token, _id, msg.sender);
-        orderInfo[hash] = Types.Order(
+        orderInfo[hash] = Types.Order721(
             _orderType,
             msg.sender,
             _token,
@@ -622,7 +622,7 @@ contract MADMarketplace721 is
         view
         returns (uint256)
     {
-        Types.Order storage order = orderInfo[_order];
+        Types.Order721 storage order = orderInfo[_order];
         uint8 orderType = order.orderType;
         // Fixed Price
         if (orderType == 0) {

@@ -4,6 +4,7 @@ pragma solidity 0.8.4;
 
 import { SplitterImpl } from "./lib/splitter/SplitterImpl.sol";
 import { IERC721 } from "./lib/tokens/ERC721/Base/interfaces/IERC721.sol";
+import { IERC1155 } from "./lib/tokens/ERC1155/Base/interfaces/IERC1155.sol";
 
 // prettier-ignore
 library Types {
@@ -13,10 +14,25 @@ library Types {
         ERC721Whitelist,  // := 2
         ERC721Lazy        // := 3
     }
+    
+    enum ERC1155Type {
+        ERC1155Minimal,    // := 0
+        ERC1155Basic,      // := 1
+        ERC1155Whitelist,  // := 2
+        ERC1155Lazy        // := 3
+    }
 
-    struct Collection {
+    struct Collection721 {
         address creator;
         Types.ERC721Type colType;
+        bytes32 colSalt;
+        uint256 blocknumber;
+        address splitter;
+    }
+
+    struct Collection1155 {
+        address creator;
+        Types.ERC1155Type colType;
         bytes32 colSalt;
         uint256 blocknumber;
         address splitter;
@@ -47,11 +63,29 @@ library Types {
     /// @param orderType Values legend:
     /// 0=Fixed Price; 1=Dutch Auction; 2=English Auction.
     /// @param endBlock Equals to canceled order when value is set to 0.
-    struct Order {
+    struct Order721 {
         uint8 orderType;
         address seller;
         IERC721 token;
         uint256 tokenId;
+        uint256 startPrice;
+        uint256 endPrice;
+        uint256 startBlock;
+        uint256 endBlock;
+        uint256 lastBidPrice;
+        address lastBidder;
+        bool isSold;
+    }
+
+    /// @param orderType Values legend:
+    /// 0=Fixed Price; 1=Dutch Auction; 2=English Auction.
+    /// @param endBlock Equals to canceled order when value is set to 0.
+    struct Order1155 {
+        uint8 orderType;
+        address seller;
+        IERC1155 token;
+        uint256 tokenId;
+        uint256 amount;
         uint256 startPrice;
         uint256 endPrice;
         uint256 startBlock;

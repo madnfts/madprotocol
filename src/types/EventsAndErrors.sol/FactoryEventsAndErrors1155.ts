@@ -12,16 +12,16 @@ import type {
   PromiseOrValue,
 } from "../common";
 
-export interface FactoryEventsAndErrorsInterface extends utils.Interface {
+export interface FactoryEventsAndErrors1155Interface extends utils.Interface {
   functions: {};
 
   events: {
     "AmbassadorAdded(address)": EventFragment;
     "AmbassadorDeleted(address)": EventFragment;
-    "ERC721BasicCreated(address,address,address)": EventFragment;
-    "ERC721LazyCreated(address,address,address)": EventFragment;
-    "ERC721MinimalCreated(address,address,address)": EventFragment;
-    "ERC721WhitelistCreated(address,address,address)": EventFragment;
+    "ERC1155BasicCreated(address,address,address)": EventFragment;
+    "ERC1155LazyCreated(address,address,address)": EventFragment;
+    "ERC1155MinimalCreated(address,address,address)": EventFragment;
+    "ERC1155WhitelistCreated(address,address,address)": EventFragment;
     "MarketplaceUpdated(address)": EventFragment;
     "RouterUpdated(address)": EventFragment;
     "SignerUpdated(address)": EventFragment;
@@ -30,10 +30,10 @@ export interface FactoryEventsAndErrorsInterface extends utils.Interface {
 
   getEvent(nameOrSignatureOrTopic: "AmbassadorAdded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "AmbassadorDeleted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ERC721BasicCreated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ERC721LazyCreated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ERC721MinimalCreated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ERC721WhitelistCreated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ERC1155BasicCreated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ERC1155LazyCreated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ERC1155MinimalCreated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ERC1155WhitelistCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MarketplaceUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RouterUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SignerUpdated"): EventFragment;
@@ -61,57 +61,57 @@ export type AmbassadorDeletedEvent = TypedEvent<
 export type AmbassadorDeletedEventFilter =
   TypedEventFilter<AmbassadorDeletedEvent>;
 
-export interface ERC721BasicCreatedEventObject {
+export interface ERC1155BasicCreatedEventObject {
   newSplitter: string;
   newCollection: string;
   newCreator: string;
 }
-export type ERC721BasicCreatedEvent = TypedEvent<
+export type ERC1155BasicCreatedEvent = TypedEvent<
   [string, string, string],
-  ERC721BasicCreatedEventObject
+  ERC1155BasicCreatedEventObject
 >;
 
-export type ERC721BasicCreatedEventFilter =
-  TypedEventFilter<ERC721BasicCreatedEvent>;
+export type ERC1155BasicCreatedEventFilter =
+  TypedEventFilter<ERC1155BasicCreatedEvent>;
 
-export interface ERC721LazyCreatedEventObject {
+export interface ERC1155LazyCreatedEventObject {
   newSplitter: string;
   newCollection: string;
   newCreator: string;
 }
-export type ERC721LazyCreatedEvent = TypedEvent<
+export type ERC1155LazyCreatedEvent = TypedEvent<
   [string, string, string],
-  ERC721LazyCreatedEventObject
+  ERC1155LazyCreatedEventObject
 >;
 
-export type ERC721LazyCreatedEventFilter =
-  TypedEventFilter<ERC721LazyCreatedEvent>;
+export type ERC1155LazyCreatedEventFilter =
+  TypedEventFilter<ERC1155LazyCreatedEvent>;
 
-export interface ERC721MinimalCreatedEventObject {
+export interface ERC1155MinimalCreatedEventObject {
   newSplitter: string;
   newCollection: string;
   newCreator: string;
 }
-export type ERC721MinimalCreatedEvent = TypedEvent<
+export type ERC1155MinimalCreatedEvent = TypedEvent<
   [string, string, string],
-  ERC721MinimalCreatedEventObject
+  ERC1155MinimalCreatedEventObject
 >;
 
-export type ERC721MinimalCreatedEventFilter =
-  TypedEventFilter<ERC721MinimalCreatedEvent>;
+export type ERC1155MinimalCreatedEventFilter =
+  TypedEventFilter<ERC1155MinimalCreatedEvent>;
 
-export interface ERC721WhitelistCreatedEventObject {
+export interface ERC1155WhitelistCreatedEventObject {
   newSplitter: string;
   newCollection: string;
   newCreator: string;
 }
-export type ERC721WhitelistCreatedEvent = TypedEvent<
+export type ERC1155WhitelistCreatedEvent = TypedEvent<
   [string, string, string],
-  ERC721WhitelistCreatedEventObject
+  ERC1155WhitelistCreatedEventObject
 >;
 
-export type ERC721WhitelistCreatedEventFilter =
-  TypedEventFilter<ERC721WhitelistCreatedEvent>;
+export type ERC1155WhitelistCreatedEventFilter =
+  TypedEventFilter<ERC1155WhitelistCreatedEvent>;
 
 export interface MarketplaceUpdatedEventObject {
   newMarket: string;
@@ -151,12 +151,12 @@ export type SplitterCreatedEvent = TypedEvent<
 
 export type SplitterCreatedEventFilter = TypedEventFilter<SplitterCreatedEvent>;
 
-export interface FactoryEventsAndErrors extends BaseContract {
+export interface FactoryEventsAndErrors1155 extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: FactoryEventsAndErrorsInterface;
+  interface: FactoryEventsAndErrors1155Interface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -196,49 +196,49 @@ export interface FactoryEventsAndErrors extends BaseContract {
       removedAmb?: PromiseOrValue<string> | null
     ): AmbassadorDeletedEventFilter;
 
-    "ERC721BasicCreated(address,address,address)"(
+    "ERC1155BasicCreated(address,address,address)"(
       newSplitter?: PromiseOrValue<string> | null,
       newCollection?: PromiseOrValue<string> | null,
       newCreator?: PromiseOrValue<string> | null
-    ): ERC721BasicCreatedEventFilter;
-    ERC721BasicCreated(
+    ): ERC1155BasicCreatedEventFilter;
+    ERC1155BasicCreated(
       newSplitter?: PromiseOrValue<string> | null,
       newCollection?: PromiseOrValue<string> | null,
       newCreator?: PromiseOrValue<string> | null
-    ): ERC721BasicCreatedEventFilter;
+    ): ERC1155BasicCreatedEventFilter;
 
-    "ERC721LazyCreated(address,address,address)"(
+    "ERC1155LazyCreated(address,address,address)"(
       newSplitter?: PromiseOrValue<string> | null,
       newCollection?: PromiseOrValue<string> | null,
       newCreator?: PromiseOrValue<string> | null
-    ): ERC721LazyCreatedEventFilter;
-    ERC721LazyCreated(
+    ): ERC1155LazyCreatedEventFilter;
+    ERC1155LazyCreated(
       newSplitter?: PromiseOrValue<string> | null,
       newCollection?: PromiseOrValue<string> | null,
       newCreator?: PromiseOrValue<string> | null
-    ): ERC721LazyCreatedEventFilter;
+    ): ERC1155LazyCreatedEventFilter;
 
-    "ERC721MinimalCreated(address,address,address)"(
+    "ERC1155MinimalCreated(address,address,address)"(
       newSplitter?: PromiseOrValue<string> | null,
       newCollection?: PromiseOrValue<string> | null,
       newCreator?: PromiseOrValue<string> | null
-    ): ERC721MinimalCreatedEventFilter;
-    ERC721MinimalCreated(
+    ): ERC1155MinimalCreatedEventFilter;
+    ERC1155MinimalCreated(
       newSplitter?: PromiseOrValue<string> | null,
       newCollection?: PromiseOrValue<string> | null,
       newCreator?: PromiseOrValue<string> | null
-    ): ERC721MinimalCreatedEventFilter;
+    ): ERC1155MinimalCreatedEventFilter;
 
-    "ERC721WhitelistCreated(address,address,address)"(
+    "ERC1155WhitelistCreated(address,address,address)"(
       newSplitter?: PromiseOrValue<string> | null,
       newCollection?: PromiseOrValue<string> | null,
       newCreator?: PromiseOrValue<string> | null
-    ): ERC721WhitelistCreatedEventFilter;
-    ERC721WhitelistCreated(
+    ): ERC1155WhitelistCreatedEventFilter;
+    ERC1155WhitelistCreated(
       newSplitter?: PromiseOrValue<string> | null,
       newCollection?: PromiseOrValue<string> | null,
       newCreator?: PromiseOrValue<string> | null
-    ): ERC721WhitelistCreatedEventFilter;
+    ): ERC1155WhitelistCreatedEventFilter;
 
     "MarketplaceUpdated(address)"(
       newMarket?: PromiseOrValue<string> | null

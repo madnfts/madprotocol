@@ -1,12 +1,1 @@
 # ERC1155MinimalDeployer
-
-
-
-
-
-
-
-
-
-
-

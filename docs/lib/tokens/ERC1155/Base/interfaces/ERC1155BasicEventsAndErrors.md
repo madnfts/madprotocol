@@ -1,14 +1,5 @@
 # ERC1155BasicEventsAndErrors
 
-
-
-
-
-
-
-
-
-
 ## Events
 
 ### BaseURISet
@@ -17,15 +8,11 @@
 event BaseURISet(string indexed newBaseURI)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newBaseURI `indexed` | string | undefined |
+| Name                 | Type   | Description |
+| -------------------- | ------ | ----------- |
+| newBaseURI `indexed` | string | undefined   |
 
 ### PublicMintStateSet
 
@@ -33,15 +20,11 @@ event BaseURISet(string indexed newBaseURI)
 event PublicMintStateSet(bool indexed newPublicState)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newPublicState `indexed` | bool | undefined |
+| Name                     | Type | Description |
+| ------------------------ | ---- | ----------- |
+| newPublicState `indexed` | bool | undefined   |
 
 ### RoyaltyFeeSet
 
@@ -49,15 +32,11 @@ event PublicMintStateSet(bool indexed newPublicState)
 event RoyaltyFeeSet(uint256 indexed newRoyaltyFee)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newRoyaltyFee `indexed` | uint256 | undefined |
+| Name                    | Type    | Description |
+| ----------------------- | ------- | ----------- |
+| newRoyaltyFee `indexed` | uint256 | undefined   |
 
 ### RoyaltyRecipientSet
 
@@ -65,17 +44,11 @@ event RoyaltyFeeSet(uint256 indexed newRoyaltyFee)
 event RoyaltyRecipientSet(address indexed newRecipient)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newRecipient `indexed` | address | undefined |
-
-
+| Name                   | Type    | Description |
+| ---------------------- | ------- | ----------- |
+| newRecipient `indexed` | address | undefined   |
 
 ## Errors
 
@@ -85,10 +58,7 @@ event RoyaltyRecipientSet(address indexed newRecipient)
 error MaxSupplyReached()
 ```
 
-
-
-*0xd05cb609*
-
+_0xd05cb609_
 
 ### NotMintedYet
 
@@ -96,10 +66,7 @@ error MaxSupplyReached()
 error NotMintedYet()
 ```
 
-
-
-*0xbad086ea*
-
+_0xbad086ea_
 
 ### PublicMintClosed
 
@@ -107,10 +74,7 @@ error NotMintedYet()
 error PublicMintClosed()
 ```
 
-
-
-*0x2d0a3f8e*
-
+_0x2d0a3f8e_
 
 ### WrongPrice
 
@@ -118,9 +82,4 @@ error PublicMintClosed()
 error WrongPrice()
 ```
 
-
-
-*0xf7760f25*
-
-
-
+_0xf7760f25_

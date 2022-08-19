@@ -2,6 +2,11 @@
 
 pragma solidity 0.8.4;
 
+/* 
+DISCLAIMER: 
+This contract hasn't been audited yet. Most likely contains unexpected bugs. 
+Don't trust your funds to be held by this code before the final thoroughly tested and audited version release.
+*/
 
 import { MAD } from "./MAD.sol";
 
@@ -25,14 +30,8 @@ import { ReentrancyGuard } from "./lib/security/ReentrancyGuard.sol";
 import { DCPrevent } from "./lib/security/DCPrevent.sol";
 import { Types, SplitterImpl } from "./Types.sol";
 
-
 import { CREATE3, Bytes32AddressLib } from "./lib/utils/CREATE3.sol";
 
-
-/* 
-DISCLAIMER: 
-This contract hasn't been audited yet. Most likely contains unexpected bugs. Don't trust your funds to be held by this code before the final thoroughly tested and audited version release.
-*/
 
 contract MADFactory721 is MAD,
     FactoryEventsAndErrors721,

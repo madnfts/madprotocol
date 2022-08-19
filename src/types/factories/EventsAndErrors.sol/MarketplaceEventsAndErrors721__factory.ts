@@ -5,9 +5,9 @@
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
 import type {
-  MarketplaceEventsAndErrors,
-  MarketplaceEventsAndErrorsInterface,
-} from "../../EventsAndErrors.sol/MarketplaceEventsAndErrors";
+  MarketplaceEventsAndErrors721,
+  MarketplaceEventsAndErrors721Interface,
+} from "../../EventsAndErrors.sol/MarketplaceEventsAndErrors721";
 
 const _abi = [
   {
@@ -252,19 +252,19 @@ const _abi = [
   },
 ];
 
-export class MarketplaceEventsAndErrors__factory {
+export class MarketplaceEventsAndErrors721__factory {
   static readonly abi = _abi;
-  static createInterface(): MarketplaceEventsAndErrorsInterface {
-    return new utils.Interface(_abi) as MarketplaceEventsAndErrorsInterface;
+  static createInterface(): MarketplaceEventsAndErrors721Interface {
+    return new utils.Interface(_abi) as MarketplaceEventsAndErrors721Interface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): MarketplaceEventsAndErrors {
+  ): MarketplaceEventsAndErrors721 {
     return new Contract(
       address,
       _abi,
       signerOrProvider
-    ) as MarketplaceEventsAndErrors;
+    ) as MarketplaceEventsAndErrors721;
   }
 }

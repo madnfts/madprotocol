@@ -19,7 +19,8 @@ import type {
   PromiseOrValue,
 } from "../common";
 
-export interface MarketplaceEventsAndErrorsInterface extends utils.Interface {
+export interface MarketplaceEventsAndErrors721Interface
+  extends utils.Interface {
   functions: {};
 
   events: {
@@ -117,12 +118,12 @@ export type MakeOrderEvent = TypedEvent<
 
 export type MakeOrderEventFilter = TypedEventFilter<MakeOrderEvent>;
 
-export interface MarketplaceEventsAndErrors extends BaseContract {
+export interface MarketplaceEventsAndErrors721 extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: MarketplaceEventsAndErrorsInterface;
+  interface: MarketplaceEventsAndErrors721Interface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

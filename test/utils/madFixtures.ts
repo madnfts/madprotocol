@@ -1,15 +1,18 @@
-import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+// import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+// import { BigNumber, Signer } from "ethers";
 import { Fixture } from "ethereum-waffle";
-import { BigNumber, Signer } from "ethers";
 import { ethers } from "hardhat";
 
 import {
   MADFactory721,
+  MADFactory1155,
   MADMarketplace721,
+  MADMarketplace1155,
   MADRouter721,
+  MADRouter1155,
 } from "../../src/types";
 import { getSignerAddrs } from "./fixtures";
-import { MADFixture721 } from "./interfaces";
+import { MADFixture721, MADFixture1155 } from "./interfaces";
 
 // export const allSigners = ethers.getSigners();
 export const dead = ethers.constants.AddressZero;
@@ -18,6 +21,12 @@ export const mFixture721: Fixture<MADFixture721> =
   async function (): Promise<MADFixture721> {
     const { f721, m721, r721 } = await madFixture721();
     return { f721, m721, r721 };
+  };
+
+export const mFixture1155: Fixture<MADFixture1155> =
+  async function (): Promise<MADFixture1155> {
+    const { f1155, m1155, r1155 } = await madFixture1155();
+    return { f1155, m1155, r1155 };
   };
 
 async function madFixture721(): Promise<MADFixture721> {
@@ -88,4 +97,74 @@ async function madFixture721(): Promise<MADFixture721> {
   await m721.setFactory(f721.address);
 
   return { f721, m721, r721 };
+}
+
+async function madFixture1155(): Promise<MADFixture1155> {
+  const SplitterDeployer = await ethers.getContractFactory(
+    "SplitterDeployer",
+  );
+  const splDep = await SplitterDeployer.deploy();
+
+  const MinimalDeployer = await ethers.getContractFactory(
+    "ERC1155MinimalDeployer",
+  );
+  const minDep = await MinimalDeployer.deploy();
+
+  const BasicDeployer = await ethers.getContractFactory(
+    "ERC1155BasicDeployer",
+  );
+  const basDep = await BasicDeployer.deploy();
+
+  const WhitelistDeployer = await ethers.getContractFactory(
+    "ERC1155WhitelistDeployer",
+  );
+  const wlDep = await WhitelistDeployer.deploy();
+
+  const LazyDeployer = await ethers.getContractFactory(
+    "ERC1155LazyDeployer",
+  );
+  const lazyDep = await LazyDeployer.deploy();
+
+  const Factory = await ethers.getContractFactory(
+    "MADFactory1155",
+    {
+      libraries: {
+        ERC1155MinimalDeployer: minDep.address,
+        ERC1155BasicDeployer: basDep.address,
+        ERC1155WhitelistDeployer: wlDep.address,
+        ERC1155LazyDeployer: lazyDep.address,
+        SplitterDeployer: splDep.address,
+      },
+    },
+  );
+  const Marketplace = await ethers.getContractFactory(
+    "MADMarketplace1155",
+  );
+  const Router = await ethers.getContractFactory(
+    "MADRouter1155",
+  );
+
+  const allSigners = await ethers.getSigners();
+  const owner = getSignerAddrs(1, allSigners);
+
+  const m1155 = (await Marketplace.deploy(
+    owner[0],
+    300,
+    dead,
+  )) as MADMarketplace1155;
+
+  const f1155 = (await Factory.deploy(
+    m1155.address,
+    ethers.constants.AddressZero,
+    owner[0],
+  )) as MADFactory1155;
+
+  const r1155 = (await Router.deploy(
+    f1155.address,
+  )) as MADRouter1155;
+
+  await f1155.setRouter(r1155.address);
+  await m1155.setFactory(f1155.address);
+
+  return { f1155, m1155, r1155 };
 }

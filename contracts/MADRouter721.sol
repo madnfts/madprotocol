@@ -2,7 +2,8 @@
 
 /* 
 DISCLAIMER: 
-This contract hasn't been audited yet. Most likely contains unexpected bugs. Don't trust your funds to be held by this code before the final thoroughly tested and audited version release.
+This contract hasn't been audited yet. Most likely contains unexpected bugs. 
+Don't trust your funds to be held by this code before the final thoroughly tested and audited version release.
 */
 
 pragma solidity 0.8.4;
@@ -96,10 +97,7 @@ contract MADRouter721 is
         uint256 _supply,
         bytes32 _root
     ) external nonReentrant whenNotPaused {
-        (
-            ,
-            uint8 _tokenType
-        ) = _tokenRender(_token);
+        (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType == 2) {
             ERC721Whitelist(_token).whitelistConfig(
                 _price,
@@ -119,10 +117,7 @@ contract MADRouter721 is
         uint256 _maxFree,
         bytes32 _claimRoot
     ) external nonReentrant whenNotPaused {
-        (
-            ,
-            uint8 _tokenType
-        ) = _tokenRender(_token);
+        (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType == 2) {
             ERC721Whitelist(_token).freeConfig(
                 _freeAmount,
@@ -154,10 +149,7 @@ contract MADRouter721 is
         nonReentrant
         whenNotPaused
     {
-        (
-            ,
-            uint8 _tokenType
-        ) = _tokenRender(_token);
+        (, uint8 _tokenType) = _tokenRender(_token);
 
         _tokenType < 1
             ? ERC721Minimal(_token).burn()
@@ -215,8 +207,7 @@ contract MADRouter721 is
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType == 2) {
             ERC721Whitelist(_token).mintToCreator(_amount);
-        }
-        else revert("INVALID_TYPE");
+        } else revert("INVALID_TYPE");
     }
 
     /// @notice `ERC721Whitelist` gift tokens function handler.
@@ -240,10 +231,11 @@ contract MADRouter721 is
     /// @dev Leave `_token` param empty for withdrawing eth only.
     /// @dev No withdraw min needs to be passed as params, since
     /// all balance from the token's contract is emptied.
-    function withdraw(
-        address _token,
-        ERC20 _erc20
-    ) external nonReentrant whenNotPaused {
+    function withdraw(address _token, ERC20 _erc20)
+        external
+        nonReentrant
+        whenNotPaused
+    {
         (bytes32 _colID, uint8 _tokenType) = _tokenRender(
             _token
         );
@@ -352,7 +344,7 @@ contract MADRouter721 is
     function _stateType1(
         uint8 _tokenType,
         address _token,
-        bool _state 
+        bool _state
     ) internal {
         if (_tokenType == 2) {
             ERC721Whitelist(_token).setWhitelistMintState(
@@ -366,7 +358,7 @@ contract MADRouter721 is
     function _stateType2(
         uint8 _tokenType,
         address _token,
-        bool _state 
+        bool _state
     ) internal {
         if (_tokenType == 2) {
             ERC721Whitelist(_token).setFreeClaimState(_state);

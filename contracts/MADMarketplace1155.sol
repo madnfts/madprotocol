@@ -12,21 +12,21 @@ Don't trust your funds to be held by this code before the final thoroughly teste
 /// (https://github.com/TheGreatHB/NFTEX/blob/main/contracts/NFTEX.sol)
 
 import { MAD } from "./MAD.sol";
-import { MarketplaceEventsAndErrors721, FactoryVerifier, IERC721 } from "./EventsAndErrors.sol";
+import { MarketplaceEventsAndErrors1155, FactoryVerifier, IERC1155 } from "./EventsAndErrors.sol";
 import { Types } from "./Types.sol";
 import { Pausable } from "./lib/security/Pausable.sol";
 import { Owned } from "./lib/auth/Owned.sol";
-import { ERC721Holder } from "./lib/tokens/ERC721/Base/utils/ERC721Holder.sol";
+import { ERC1155Holder } from "./lib/tokens/ERC1155/Base/utils/ERC1155Holder.sol";
 import { SafeTransferLib } from "./lib/utils/SafeTransferLib.sol";
 
-contract MADMarketplace721 is
+contract MADMarketplace1155 is
     MAD,
-    MarketplaceEventsAndErrors721,
-    ERC721Holder,
+    MarketplaceEventsAndErrors1155,
+    ERC1155Holder,
     Owned(msg.sender),
     Pausable
 {
-    using Types for Types.Order721;
+    using Types for Types.Order1155;
 
     /// @dev Function Signature := 0x06fdde03
     function name()
@@ -49,15 +49,13 @@ contract MADMarketplace721 is
     // uint256 constant NAME_SLOT =
     // 0x8b30951df380b6b10da747e1167dd8e40bf8604c88c75b245dc172767f3b7320;
 
-    /// @notice Mappings logic:
-    /// token || seller => orderID => order details
-    /// @dev token => orderID
-    mapping(IERC721 => mapping(uint256 => bytes32[]))
+    /// @dev token => id => amount => orderID[]
+    mapping(IERC1155 => mapping(uint256 => mapping(uint256 => bytes32[])))
         public orderIdByToken;
     /// @dev seller => orderID
     mapping(address => bytes32[]) public orderIdBySeller;
     /// @dev orderID => order details
-    mapping(bytes32 => Types.Order721) public orderInfo;
+    mapping(bytes32 => Types.Order1155) public orderInfo;
 
     uint16 public constant feePercent = 20000;
     uint256 public minOrderDuration;
@@ -65,7 +63,7 @@ contract MADMarketplace721 is
     uint256 public minBidValue;
 
     address public recipient;
-    FactoryVerifier public MADFactory721;
+    FactoryVerifier public MADFactory1155;
 
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
@@ -81,7 +79,7 @@ contract MADMarketplace721 is
         minAuctionIncrement = 300; // 5min
         minBidValue = 20; // 5% (1/20th)
 
-        MADFactory721 = _factory;
+        MADFactory1155 = _factory;
     }
 
     ////////////////////////////////////////////////////////////////
@@ -91,19 +89,29 @@ contract MADMarketplace721 is
     /// @notice Fixed Price listing order public pusher.
     /// @dev Function Signature := 0x40b78b0f
     function fixedPrice(
-        IERC721 _token,
+        IERC1155 _token,
         uint256 _id,
+        uint256 _amount,
         uint256 _price,
         uint256 _endBlock
     ) public whenNotPaused {
-        _makeOrder(0, _token, _id, _price, 0, _endBlock);
+        _makeOrder(
+            0,
+            _token,
+            _id,
+            _amount,
+            _price,
+            0,
+            _endBlock
+        );
     }
 
     /// @notice Dutch Auction listing order public pusher.
     /// @dev Function Signature := 0x205e409c
     function dutchAuction(
-        IERC721 _token,
+        IERC1155 _token,
         uint256 _id,
+        uint256 _amount,
         uint256 _startPrice,
         uint256 _endPrice,
         uint256 _endBlock
@@ -113,6 +121,7 @@ contract MADMarketplace721 is
             1,
             _token,
             _id,
+            _amount,
             _startPrice,
             _endPrice,
             _endBlock
@@ -122,12 +131,21 @@ contract MADMarketplace721 is
     /// @notice English Auction listing order public pusher.
     /// @dev Function Signature := 0x47c4be17
     function englishAuction(
-        IERC721 _token,
+        IERC1155 _token,
         uint256 _id,
+        uint256 _amount,
         uint256 _startPrice,
         uint256 _endBlock
     ) public whenNotPaused {
-        _makeOrder(2, _token, _id, _startPrice, 0, _endBlock);
+        _makeOrder(
+            2,
+            _token,
+            _id,
+            _amount,
+            _startPrice,
+            0,
+            _endBlock
+        );
     }
 
     /// @notice Bidding function available for English Auction only.
@@ -142,7 +160,7 @@ contract MADMarketplace721 is
     {
         if (msg.value == 0) revert WrongPrice();
 
-        Types.Order721 storage order = orderInfo[_order];
+        Types.Order1155 storage order = orderInfo[_order];
         uint256 endBlock = order.endBlock;
         uint256 lastBidPrice = order.lastBidPrice;
         address lastBidder = order.lastBidder;
@@ -174,6 +192,7 @@ contract MADMarketplace721 is
         emit Bid(
             order.token,
             order.tokenId,
+            order.amount,
             _order,
             msg.sender,
             msg.value
@@ -187,7 +206,7 @@ contract MADMarketplace721 is
         payable
         whenNotPaused
     {
-        Types.Order721 storage order = orderInfo[_order];
+        Types.Order1155 storage order = orderInfo[_order];
         uint256 endBlock = order.endBlock;
         if (endBlock == 0) revert CanceledOrder();
         if (endBlock <= block.number) revert Timeout();
@@ -201,11 +220,11 @@ contract MADMarketplace721 is
         order.isSold = true;
 
         // address _seller = order.seller;
-        IERC721 _token = order.token;
+        IERC1155 _token = order.token;
 
         // path for inhouse minted tokens
         if (
-            MADFactory721.creatorAuth(
+            MADFactory1155.creatorAuth(
                 address(_token),
                 order.seller
             ) == true
@@ -284,12 +303,15 @@ contract MADMarketplace721 is
         order.token.safeTransferFrom(
             address(this),
             msg.sender,
-            order.tokenId
+            order.tokenId,
+            order.amount,
+            ""
         );
 
         emit Claim(
             order.token,
             order.tokenId,
+            order.amount,
             _order,
             order.seller,
             msg.sender,
@@ -301,7 +323,7 @@ contract MADMarketplace721 is
     /// @dev Function Signature := 0xbd66528a
     /// @dev Callable by both the seller and the auction winner.
     function claim(bytes32 _order) external whenNotPaused {
-        Types.Order721 storage order = orderInfo[_order];
+        Types.Order1155 storage order = orderInfo[_order];
 
         address seller = order.seller;
         address lastBidder = order.lastBidder;
@@ -313,18 +335,19 @@ contract MADMarketplace721 is
         if (block.number <= order.endBlock)
             revert NeedMoreTime();
 
-        IERC721 token = order.token;
+        IERC1155 token = order.token;
         uint256 tokenId = order.tokenId;
+        uint256 amount = order.amount;
         uint256 lastBidPrice = order.lastBidPrice;
 
         order.isSold = true;
 
         // address _seller = order.seller;
-        IERC721 _token = order.token;
+        IERC1155 _token = order.token;
 
         // path for inhouse minted tokens
         if (
-            MADFactory721.creatorAuth(
+            MADFactory1155.creatorAuth(
                 address(_token),
                 order.seller
             ) == true
@@ -401,12 +424,15 @@ contract MADMarketplace721 is
         token.safeTransferFrom(
             address(this),
             lastBidder,
-            tokenId
+            tokenId,
+            amount,
+            ""
         );
 
         emit Claim(
             token,
             tokenId,
+            amount,
             _order,
             seller,
             lastBidder,
@@ -418,23 +444,32 @@ contract MADMarketplace721 is
     /// @dev Function Signature := 0x7489ec23
     /// @dev Cancels order setting endBlock value to 0.
     function cancelOrder(bytes32 _order) external {
-        Types.Order721 storage order = orderInfo[_order];
+        Types.Order1155 storage order = orderInfo[_order];
         if (order.seller != msg.sender) revert AccessDenied();
         if (order.lastBidPrice != 0) revert BidExists();
         if (order.isSold == true) revert SoldToken();
 
-        IERC721 token = order.token;
+        IERC1155 token = order.token;
         uint256 tokenId = order.tokenId;
+        uint256 amount = order.amount;
 
         order.endBlock = 0;
 
         token.safeTransferFrom(
             address(this),
             msg.sender,
-            tokenId
+            tokenId,
+            amount,
+            ""
         );
 
-        emit CancelOrder(token, tokenId, _order, msg.sender);
+        emit CancelOrder(
+            token,
+            tokenId,
+            amount,
+            _order,
+            msg.sender
+        );
     }
 
     receive() external payable {}
@@ -449,7 +484,7 @@ contract MADMarketplace721 is
         public
         onlyOwner
     {
-        MADFactory721 = _factory;
+        MADFactory1155 = _factory;
 
         emit FactoryUpdated(_factory);
     }
@@ -519,16 +554,23 @@ contract MADMarketplace721 is
     /// @dev Function Signature := 0x0c026db9
     function delOrder(
         bytes32 hash,
-        IERC721 _token,
+        IERC1155 _token,
         uint256 _id,
+        uint256 _amount,
         address _seller
     ) external onlyOwner whenPaused {
         delete orderInfo[hash];
-        delete orderIdByToken[_token][_id];
+        delete orderIdByToken[_token][_id][_amount];
         delete orderIdBySeller[_seller];
 
         // test if token is properly transfered back to it's owner
-        _token.safeTransferFrom(address(this), _seller, _id);
+        _token.safeTransferFrom(
+            address(this),
+            _seller,
+            _id,
+            _amount,
+            ""
+        );
     }
 
     ////////////////////////////////////////////////////////////////
@@ -542,8 +584,9 @@ contract MADMarketplace721 is
     /// @param _endBlock Equals to canceled order when value is set to 0.
     function _makeOrder(
         uint8 _orderType,
-        IERC721 _token,
+        IERC1155 _token,
         uint256 _id,
+        uint256 _amount,
         uint256 _startPrice,
         uint256 _endPrice,
         uint256 _endBlock
@@ -554,12 +597,18 @@ contract MADMarketplace721 is
         ) revert NeedMoreTime();
         if (_startPrice == 0) revert WrongPrice();
 
-        bytes32 hash = _hash(_token, _id, msg.sender);
-        orderInfo[hash] = Types.Order721(
+        bytes32 hash = _hash(
+            _token,
+            _id,
+            _amount,
+            msg.sender
+        );
+        orderInfo[hash] = Types.Order1155(
             _orderType,
             msg.sender,
             _token,
             _id,
+            _amount,
             _startPrice,
             _endPrice,
             block.number,
@@ -568,23 +617,32 @@ contract MADMarketplace721 is
             address(0),
             false
         );
-        orderIdByToken[_token][_id].push(hash);
+        orderIdByToken[_token][_id][_amount].push(hash);
         orderIdBySeller[msg.sender].push(hash);
 
         _token.safeTransferFrom(
             msg.sender,
             address(this),
-            _id
+            _id,
+            _amount,
+            ""
         );
 
-        emit MakeOrder(_token, _id, hash, msg.sender);
+        emit MakeOrder(
+            _token,
+            _id,
+            _amount,
+            hash,
+            msg.sender
+        );
     }
 
     /// @notice Provides hash of an order used as an order info pointer
     /// @dev Function Signature := 0x3b1ce0d2
     function _hash(
-        IERC721 _token,
+        IERC1155 _token,
         uint256 _id,
+        uint256 _amount,
         address _seller
     ) internal view returns (bytes32) {
         return
@@ -593,18 +651,11 @@ contract MADMarketplace721 is
                     block.number,
                     _token,
                     _id,
+                    _amount,
                     _seller
                 )
             );
     }
-
-    // function _transferONE(address to, uint256 value)
-    //     internal
-    // {
-    //     if (msg.value <= 0x00) revert TransferFailed();
-    //     (bool success, ) = to.call{ value: value }("");
-    //     if (!success) revert TransferFailed();
-    // }
 
     ////////////////////////////////////////////////////////////////
     //                           VIEW FX                          //
@@ -618,7 +669,7 @@ contract MADMarketplace721 is
         view
         returns (uint256)
     {
-        Types.Order721 storage order = orderInfo[_order];
+        Types.Order1155 storage order = orderInfo[_order];
         uint8 orderType = order.orderType;
         // Fixed Price
         if (orderType == 0) {
@@ -648,12 +699,12 @@ contract MADMarketplace721 is
     /// @dev This public getter serve as a hook to ease frontend
     /// fetching whilst estimating `orderIdByToken` indexes by length.
     /// @dev Function Signature := 0x8c5ac795
-    function tokenOrderLength(IERC721 _token, uint256 _id)
-        external
-        view
-        returns (uint256)
-    {
-        return orderIdByToken[_token][_id].length;
+    function tokenOrderLength(
+        IERC1155 _token,
+        uint256 _id,
+        uint256 _amount
+    ) external view returns (uint256) {
+        return orderIdByToken[_token][_id][_amount].length;
     }
 
     /// @notice Everything in storage can be fetch through the

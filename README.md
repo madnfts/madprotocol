@@ -78,6 +78,7 @@
 │       └── Strings.sol
 ├── MADFactory1155.sol
 ├── MADFactory721.sol
+├── MADMarketplace1155.sol
 ├── MADMarketplace721.sol
 ├── MADRouter1155.sol
 ├── MADRouter721.sol

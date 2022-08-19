@@ -71,7 +71,8 @@ contract ERC1155Whitelist is
     }
 
     modifier whitelistMintAccess() {
-        if (!whitelistMintState) revert("WhitelistMintClosed");
+        if (!whitelistMintState)
+            revert("WhitelistMintClosed");
         _;
     }
 
@@ -105,7 +106,8 @@ contract ERC1155Whitelist is
     }
 
     modifier priceCheck(uint256 _price, uint256 amount) {
-        if (_price * amount != msg.value) revert("WrongPrice");
+        if (_price * amount != msg.value)
+            revert("WrongPrice");
         _;
     }
 
@@ -515,7 +517,7 @@ contract ERC1155Whitelist is
         if (
             totalSupply() + amount >
             maxSupply - maxWhitelistSupply - maxFree
-        ) revert ("MaxMintReached");
+        ) revert("MaxMintReached");
         if (publicPrice * amount != msg.value)
             revert("WrongPrice");
     }
@@ -544,14 +546,14 @@ contract ERC1155Whitelist is
         override
         returns (string memory)
     {
-        if (id > totalSupply()) { 
-        // revert("NotMintedYet");
+        if (id > totalSupply()) {
+            // revert("NotMintedYet");
             assembly {
                 mstore(0x00, 0xbad086ea)
                 revert(0x1c, 0x04)
             }
         }
-        
+
         return
             string(
                 abi.encodePacked(

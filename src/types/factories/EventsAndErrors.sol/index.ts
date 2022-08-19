@@ -3,5 +3,6 @@
 /* eslint-disable */
 export { FactoryEventsAndErrors1155__factory } from "./FactoryEventsAndErrors1155__factory";
 export { FactoryEventsAndErrors721__factory } from "./FactoryEventsAndErrors721__factory";
-export { MarketplaceEventsAndErrors__factory } from "./MarketplaceEventsAndErrors__factory";
+export { MarketplaceEventsAndErrors1155__factory } from "./MarketplaceEventsAndErrors1155__factory";
+export { MarketplaceEventsAndErrors721__factory } from "./MarketplaceEventsAndErrors721__factory";
 export { RouterEvents__factory } from "./RouterEvents__factory";

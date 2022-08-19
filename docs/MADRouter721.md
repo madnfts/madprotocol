@@ -1,13 +1,5 @@
 # MADRouter721
 
-
-
-
-
-
-
-
-
 ## Methods
 
 ### MADFactory721
@@ -16,16 +8,11 @@
 function MADFactory721() external view returns (contract FactoryVerifier)
 ```
 
-
-
-
-
-
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | contract FactoryVerifier | undefined |
+| Name | Type                     | Description |
+| ---- | ------------------------ | ----------- |
+| \_0  | contract FactoryVerifier | undefined   |
 
 ### burn
 
@@ -35,14 +22,14 @@ function burn(address _token, uint256[] _ids) external nonpayable
 
 Global token burn controller/single pusher for all token types.
 
-*Function Sighash := 0xba36b92dTransfer events emitted by nft implementation contracts.*
+_Function Sighash := 0xba36b92dTransfer events emitted by nft implementation contracts._
 
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _token | address | undefined |
-| _ids | uint256[] | The token IDs of each token to be burnt; should be left empty for the `ERC721Minimal` type. |
+| Name    | Type      | Description                                                                                 |
+| ------- | --------- | ------------------------------------------------------------------------------------------- |
+| \_token | address   | undefined                                                                                   |
+| \_ids   | uint256[] | The token IDs of each token to be burnt; should be left empty for the `ERC721Minimal` type. |
 
 ### creatorMint
 
@@ -52,14 +39,14 @@ function creatorMint(address _token, uint256 _amount) external nonpayable
 
 `ERC721Whitelist` mint to creator function handler.
 
-*Function Sighash := 0x182ee485*
+_Function Sighash := 0x182ee485_
 
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _token | address | undefined |
-| _amount | uint256 | undefined |
+| Name     | Type    | Description |
+| -------- | ------- | ----------- |
+| \_token  | address | undefined   |
+| \_amount | uint256 | undefined   |
 
 ### freeSettings
 
@@ -69,16 +56,16 @@ function freeSettings(address _token, uint256 _freeAmount, uint256 _maxFree, byt
 
 `ERC721Whitelist` free claim config setter.
 
-*Function Sighash := 0xcab2e41fEvent emitted by `ERC721Whitelist` token implementation contracts.*
+_Function Sighash := 0xcab2e41fEvent emitted by `ERC721Whitelist` token implementation contracts._
 
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _token | address | undefined |
-| _freeAmount | uint256 | undefined |
-| _maxFree | uint256 | undefined |
-| _claimRoot | bytes32 | undefined |
+| Name         | Type    | Description |
+| ------------ | ------- | ----------- |
+| \_token      | address | undefined   |
+| \_freeAmount | uint256 | undefined   |
+| \_maxFree    | uint256 | undefined   |
+| \_claimRoot  | bytes32 | undefined   |
 
 ### gift
 
@@ -88,14 +75,14 @@ function gift(address _token, address[] _addresses) external nonpayable
 
 `ERC721Whitelist` gift tokens function handler.
 
-*Function Sighash := 0x67b5a642*
+_Function Sighash := 0x67b5a642_
 
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _token | address | undefined |
-| _addresses | address[] | undefined |
+| Name        | Type      | Description |
+| ----------- | --------- | ----------- |
+| \_token     | address   | undefined   |
+| \_addresses | address[] | undefined   |
 
 ### minimalSafeMint
 
@@ -105,14 +92,14 @@ function minimalSafeMint(address _token, address _to) external nonpayable
 
 `ERC721Minimal` creator mint function handler.
 
-*Function Sighash := 0x42a42752*
+_Function Sighash := 0x42a42752_
 
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _token | address | undefined |
-| _to | address | undefined |
+| Name    | Type    | Description |
+| ------- | ------- | ----------- |
+| \_token | address | undefined   |
+| \_to    | address | undefined   |
 
 ### name
 
@@ -120,16 +107,13 @@ function minimalSafeMint(address _token, address _to) external nonpayable
 function name() external pure returns (string)
 ```
 
-
-
-*Function Sighash := 0x06fdde03*
-
+_Function Sighash := 0x06fdde03_
 
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | string | undefined |
+| Name | Type   | Description |
+| ---- | ------ | ----------- |
+| \_0  | string | undefined   |
 
 ### owner
 
@@ -137,16 +121,11 @@ function name() external pure returns (string)
 function owner() external view returns (address)
 ```
 
-
-
-
-
-
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | address | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | address | undefined   |
 
 ### pause
 
@@ -156,8 +135,7 @@ function pause() external nonpayable
 
 Paused state initializer for security risk mitigation pratice.
 
-*Function Sighash := 0x8456cb59*
-
+_Function Sighash := 0x8456cb59_
 
 ### paused
 
@@ -165,16 +143,11 @@ Paused state initializer for security risk mitigation pratice.
 function paused() external view returns (bool)
 ```
 
-
-
-
-
-
 #### Returns
 
 | Name | Type | Description |
-|---|---|---|
-| _0 | bool | undefined |
+| ---- | ---- | ----------- |
+| \_0  | bool | undefined   |
 
 ### setBase
 
@@ -184,14 +157,14 @@ function setBase(address _token, string _baseURI) external nonpayable
 
 Collection `baseURI` setter.
 
-*Only available for Basic, Whitelist and Lazy token types.Function Sighash := 0x4328bd00Events logged by each tokens&#39; `BaseURISet` functions.*
+_Only available for Basic, Whitelist and Lazy token types.Function Sighash := 0x4328bd00Events logged by each tokens&#39; `BaseURISet` functions._
 
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _token | address | undefined |
-| _baseURI | string | undefined |
+| Name      | Type    | Description |
+| --------- | ------- | ----------- |
+| \_token   | address | undefined   |
+| \_baseURI | string  | undefined   |
 
 ### setMintState
 
@@ -201,15 +174,15 @@ function setMintState(address _token, bool _state, uint8 _stateType) external no
 
 Global MintState setter/controller with switch cases/control flow handling conditioned by both `_stateType` and `_tokenType`.
 
-*Function Sighash := 0xab9acd57Events logged by each tokens&#39; `setState` functions.*
+_Function Sighash := 0xab9acd57Events logged by each tokens&#39; `setState` functions._
 
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _token | address | undefined |
-| _state | bool | undefined |
-| _stateType | uint8 | Values legend: 0 := PublicMintState (minimal, basic, whitelist); 1 := WhitelistMintState (whitelist); 2 := FreeClaimState (whitelist). |
+| Name        | Type    | Description                                                                                                                            |
+| ----------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| \_token     | address | undefined                                                                                                                              |
+| \_state     | bool    | undefined                                                                                                                              |
+| \_stateType | uint8   | Values legend: 0 := PublicMintState (minimal, basic, whitelist); 1 := WhitelistMintState (whitelist); 2 := FreeClaimState (whitelist). |
 
 ### setOwner
 
@@ -217,15 +190,11 @@ Global MintState setter/controller with switch cases/control flow handling condi
 function setOwner(address newOwner) external nonpayable
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newOwner | address | undefined |
+| Name     | Type    | Description |
+| -------- | ------- | ----------- |
+| newOwner | address | undefined   |
 
 ### setSigner
 
@@ -235,14 +204,14 @@ function setSigner(address _token, address _signer) external nonpayable
 
 Change the address used for lazy minting voucher validation.
 
-*Function Sighash := 0x17f9fad1Event emitted by token contract.*
+_Function Sighash := 0x17f9fad1Event emitted by token contract._
 
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _token | address | undefined |
-| _signer | address | undefined |
+| Name     | Type    | Description |
+| -------- | ------- | ----------- |
+| \_token  | address | undefined   |
+| \_signer | address | undefined   |
 
 ### unpause
 
@@ -252,8 +221,7 @@ function unpause() external nonpayable
 
 Unpaused state initializer for security risk mitigation pratice.
 
-*Function Sighash := 0x3f4ba83a*
-
+_Function Sighash := 0x3f4ba83a_
 
 ### whitelistSettings
 
@@ -263,16 +231,16 @@ function whitelistSettings(address _token, uint256 _price, uint256 _supply, byte
 
 `ERC721Whitelist` whitelist config setter.
 
-*Function Sighash := 0xa123c38dEvent emitted by `ERC721Whitelist` token implementation contracts.*
+_Function Sighash := 0xa123c38dEvent emitted by `ERC721Whitelist` token implementation contracts._
 
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _token | address | undefined |
-| _price | uint256 | undefined |
-| _supply | uint256 | undefined |
-| _root | bytes32 | undefined |
+| Name     | Type    | Description |
+| -------- | ------- | ----------- |
+| \_token  | address | undefined   |
+| \_price  | uint256 | undefined   |
+| \_supply | uint256 | undefined   |
+| \_root   | bytes32 | undefined   |
 
 ### withdraw
 
@@ -282,16 +250,14 @@ function withdraw(address _token, contract ERC20 _erc20) external nonpayable
 
 Withdraw both ERC20 and ONE from ERC721 contract&#39;s balance.
 
-*Function Sighash := 0x9547ed5dLeave `_token` param empty for withdrawing eth only.No withdraw min needs to be passed as params, since all balance from the token&#39;s contract is emptied.*
+_Function Sighash := 0x9547ed5dLeave `_token` param empty for withdrawing eth only.No withdraw min needs to be passed as params, since all balance from the token&#39;s contract is emptied._
 
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _token | address | undefined |
-| _erc20 | contract ERC20 | undefined |
-
-
+| Name    | Type           | Description |
+| ------- | -------------- | ----------- |
+| \_token | address        | undefined   |
+| \_erc20 | contract ERC20 | undefined   |
 
 ## Events
 
@@ -301,16 +267,12 @@ Withdraw both ERC20 and ONE from ERC721 contract&#39;s balance.
 event BaseURI(bytes32 indexed _id, string indexed _baseURI)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _id `indexed` | bytes32 | undefined |
-| _baseURI `indexed` | string | undefined |
+| Name                | Type    | Description |
+| ------------------- | ------- | ----------- |
+| \_id `indexed`      | bytes32 | undefined   |
+| \_baseURI `indexed` | string  | undefined   |
 
 ### FreeClaimState
 
@@ -318,17 +280,13 @@ event BaseURI(bytes32 indexed _id, string indexed _baseURI)
 event FreeClaimState(bytes32 indexed _id, uint8 indexed _type, bool indexed _state)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _id `indexed` | bytes32 | undefined |
-| _type `indexed` | uint8 | undefined |
-| _state `indexed` | bool | undefined |
+| Name              | Type    | Description |
+| ----------------- | ------- | ----------- |
+| \_id `indexed`    | bytes32 | undefined   |
+| \_type `indexed`  | uint8   | undefined   |
+| \_state `indexed` | bool    | undefined   |
 
 ### OwnerUpdated
 
@@ -336,16 +294,12 @@ event FreeClaimState(bytes32 indexed _id, uint8 indexed _type, bool indexed _sta
 event OwnerUpdated(address indexed user, address indexed newOwner)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| user `indexed` | address | undefined |
-| newOwner `indexed` | address | undefined |
+| Name               | Type    | Description |
+| ------------------ | ------- | ----------- |
+| user `indexed`     | address | undefined   |
+| newOwner `indexed` | address | undefined   |
 
 ### Paused
 
@@ -353,15 +307,11 @@ event OwnerUpdated(address indexed user, address indexed newOwner)
 event Paused(address account)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| account  | address | undefined |
+| Name    | Type    | Description |
+| ------- | ------- | ----------- |
+| account | address | undefined   |
 
 ### PublicMintState
 
@@ -369,17 +319,13 @@ event Paused(address account)
 event PublicMintState(bytes32 indexed _id, uint8 indexed _type, bool indexed _state)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _id `indexed` | bytes32 | undefined |
-| _type `indexed` | uint8 | undefined |
-| _state `indexed` | bool | undefined |
+| Name              | Type    | Description |
+| ----------------- | ------- | ----------- |
+| \_id `indexed`    | bytes32 | undefined   |
+| \_type `indexed`  | uint8   | undefined   |
+| \_state `indexed` | bool    | undefined   |
 
 ### TokenFundsWithdrawn
 
@@ -387,17 +333,13 @@ event PublicMintState(bytes32 indexed _id, uint8 indexed _type, bool indexed _st
 event TokenFundsWithdrawn(bytes32 indexed _id, uint8 indexed _type, address indexed _payee)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _id `indexed` | bytes32 | undefined |
-| _type `indexed` | uint8 | undefined |
-| _payee `indexed` | address | undefined |
+| Name              | Type    | Description |
+| ----------------- | ------- | ----------- |
+| \_id `indexed`    | bytes32 | undefined   |
+| \_type `indexed`  | uint8   | undefined   |
+| \_payee `indexed` | address | undefined   |
 
 ### Unpaused
 
@@ -405,15 +347,11 @@ event TokenFundsWithdrawn(bytes32 indexed _id, uint8 indexed _type, address inde
 event Unpaused(address account)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| account  | address | undefined |
+| Name    | Type    | Description |
+| ------- | ------- | ----------- |
+| account | address | undefined   |
 
 ### WhitelistMintState
 
@@ -421,17 +359,10 @@ event Unpaused(address account)
 event WhitelistMintState(bytes32 indexed _id, uint8 indexed _type, bool indexed _state)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _id `indexed` | bytes32 | undefined |
-| _type `indexed` | uint8 | undefined |
-| _state `indexed` | bool | undefined |
-
-
-
+| Name              | Type    | Description |
+| ----------------- | ------- | ----------- |
+| \_id `indexed`    | bytes32 | undefined   |
+| \_type `indexed`  | uint8   | undefined   |
+| \_state `indexed` | bool    | undefined   |

@@ -11342,9 +11342,9 @@ fsevents@~2.1.1:
   languageName: node
   linkType: hard
 
-"mad@workspace:.":
+"mad-contracts@workspace:.":
   version: 0.0.0-use.local
-  resolution: "mad@workspace:."
+  resolution: "mad-contracts@workspace:."
   dependencies:
     "@commitlint/cli": ^17.0.2
     "@commitlint/config-conventional": ^17.0.2

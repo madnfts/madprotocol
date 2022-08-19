@@ -21,9 +21,13 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.FactoryEventsAndErrors721__factory>;
     getContractFactory(
-      name: "MarketplaceEventsAndErrors",
+      name: "MarketplaceEventsAndErrors1155",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.MarketplaceEventsAndErrors__factory>;
+    ): Promise<Contracts.MarketplaceEventsAndErrors1155__factory>;
+    getContractFactory(
+      name: "MarketplaceEventsAndErrors721",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MarketplaceEventsAndErrors721__factory>;
     getContractFactory(
       name: "RouterEvents",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -193,6 +197,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MADFactory721__factory>;
     getContractFactory(
+      name: "MADMarketplace1155",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MADMarketplace1155__factory>;
+    getContractFactory(
       name: "MADMarketplace721",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MADMarketplace721__factory>;
@@ -216,10 +224,15 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.FactoryEventsAndErrors721>;
     getContractAt(
-      name: "MarketplaceEventsAndErrors",
+      name: "MarketplaceEventsAndErrors1155",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.MarketplaceEventsAndErrors>;
+    ): Promise<Contracts.MarketplaceEventsAndErrors1155>;
+    getContractAt(
+      name: "MarketplaceEventsAndErrors721",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MarketplaceEventsAndErrors721>;
     getContractAt(
       name: "RouterEvents",
       address: string,
@@ -430,6 +443,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.MADFactory721>;
+    getContractAt(
+      name: "MADMarketplace1155",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MADMarketplace1155>;
     getContractAt(
       name: "MADMarketplace721",
       address: string,

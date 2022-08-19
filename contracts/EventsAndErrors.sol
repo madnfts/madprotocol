@@ -100,7 +100,7 @@ interface FactoryEventsAndErrors1155 {
     error SplitterFail();
 }
 
-interface MarketplaceEventsAndErrors {
+interface MarketplaceEventsAndErrors721 {
     ////////////////////////////////////////////////////////////////
     //                           EVENTS                           //
     ////////////////////////////////////////////////////////////////
@@ -135,6 +135,81 @@ interface MarketplaceEventsAndErrors {
     event Claim(
         IERC721 indexed token,
         uint256 id,
+        bytes32 indexed hash,
+        address seller,
+        address taker,
+        uint256 price
+    );
+
+    ////////////////////////////////////////////////////////////////
+    //                           ERRORS                           //
+    ////////////////////////////////////////////////////////////////
+
+    /// @dev 0xf7760f25
+    error WrongPrice();
+    /// @dev 0x90b8ec18
+    error TransferFailed();
+    /// @dev 0x0863b103
+    error InvalidBidder();
+    /// @dev 0xdf9428da
+    error CanceledOrder();
+    /// @dev 0x70f8f33a
+    error ExceedsMaxEP();
+    /// @dev 0x4ca88867
+    error AccessDenied();
+    /// @dev 0x921dbfec
+    error NeedMoreTime();
+    /// @dev 0x07ae5744
+    error NotBuyable();
+    /// @dev 0x3e0827ab
+    error BidExists();
+    /// @dev 0xf88b07a3
+    error SoldToken();
+    /// @dev 0x2af0c7f8
+    error Timeout();
+    /// @dev 0xffc96cb0
+    error EAOnly();
+}
+
+interface MarketplaceEventsAndErrors1155 {
+    ////////////////////////////////////////////////////////////////
+    //                           EVENTS                           //
+    ////////////////////////////////////////////////////////////////
+
+    event FactoryUpdated(FactoryVerifier indexed newFactory);
+
+    event AuctionSettingsUpdated(
+        uint256 indexed newMinDuration,
+        uint256 indexed newIncrement,
+        uint256 indexed newMinBidValue
+    );
+
+    event MakeOrder(
+        IERC1155 indexed token,
+        uint256 id,
+        uint256 amount,
+        bytes32 indexed hash,
+        address seller
+    );
+    event CancelOrder(
+        IERC1155 indexed token,
+        uint256 id,
+        uint256 amount,
+        bytes32 indexed hash,
+        address seller
+    );
+    event Bid(
+        IERC1155 indexed token,
+        uint256 id,
+        uint256 amount,
+        bytes32 indexed hash,
+        address bidder,
+        uint256 bidPrice
+    );
+    event Claim(
+        IERC1155 indexed token,
+        uint256 id,
+        uint256 amount,
         bytes32 indexed hash,
         address seller,
         address taker,

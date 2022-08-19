@@ -16,8 +16,11 @@ import {
   IERC1155__factory,
   IERC2981__factory,
   MADFactory721,
+  MADFactory1155,
   MADMarketplace721,
+  MADMarketplace1155,
   MADRouter721,
+  MADRouter1155,
   MockERC20,
   MockERC2981,
   SplitterImpl,
@@ -101,6 +104,11 @@ export interface MADFixture721 {
   f721: MADFactory721;
   m721: MADMarketplace721;
   r721: MADRouter721;
+}
+export interface MADFixture1155 {
+  f1155: MADFactory1155;
+  m1155: MADMarketplace1155;
+  r1155: MADRouter1155;
 }
 
 // exported consts

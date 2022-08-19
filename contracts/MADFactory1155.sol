@@ -2,6 +2,11 @@
 
 pragma solidity 0.8.4;
 
+/* 
+DISCLAIMER: 
+This contract hasn't been audited yet. Most likely contains unexpected bugs. 
+Don't trust your funds to be held by this code before the final thoroughly tested and audited version release.
+*/
 
 import { MAD } from "./MAD.sol";
 
@@ -25,15 +30,9 @@ import { ReentrancyGuard } from "./lib/security/ReentrancyGuard.sol";
 import { DCPrevent } from "./lib/security/DCPrevent.sol";
 import { Types, SplitterImpl } from "./Types.sol";
 
-
 import { CREATE3, Bytes32AddressLib } from "./lib/utils/CREATE3.sol";
 
-
-/* 
-DISCLAIMER: 
-This contract hasn't been audited yet. Most likely contains unexpected bugs. Don't trust your funds to be held by this code before the final thoroughly tested and audited version release.
-*/
-
+// prettier-ignore
 contract MADFactory1155 is MAD,
     FactoryEventsAndErrors1155,
     FactoryVerifier,
@@ -61,7 +60,6 @@ contract MADFactory1155 is MAD,
             return(0x20, 0x60)
         }
     }
-
 
     ////////////////////////////////////////////////////////////////
     //                           STORAGE                          //
@@ -209,9 +207,9 @@ contract MADFactory1155 is MAD,
     /// to generate collection deployment address. Must be always different to avoid address collision.
     /// @param _price Public mint price of the collection to be deployed.
     /// @param _maxSupply Maximum supply of tokens to be minted of the collection to be deployed
-    /// (Not used for ERC721Minimal token type, since it always equals to one).
+    /// (Not used for ERC1155Minimal token type, since it always equals to one).
     /// @param _uri The URL + CID to be added the tokenID and suffix (.json) by the tokenURI function
-    /// in the collection to be deployed (baseURI used as tokenURI itself for the ERC721Minimal token type).
+    /// in the collection to be deployed (baseURI used as tokenURI itself for the ERC1155Minimal token type).
     /// @param _splitter Previously deployed Splitter implementation so to validate and attach to collection.
     function createCollection(
         uint8 _tokenType,
@@ -503,7 +501,6 @@ contract MADFactory1155 is MAD,
     }
 
     /// @inheritdoc FactoryVerifier
-    // prettier-ignore
     function creatorAuth(address _token, address _user) 
         external 
         override(FactoryVerifier) 

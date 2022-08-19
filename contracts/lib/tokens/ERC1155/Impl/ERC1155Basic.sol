@@ -55,7 +55,8 @@ contract ERC1155Basic is
     }
 
     modifier priceCheck(uint256 _price, uint256 amount) {
-        if (_price * amount != msg.value) revert("WrongPrice");
+        if (_price * amount != msg.value)
+            revert("WrongPrice");
         _;
     }
 
@@ -219,7 +220,8 @@ contract ERC1155Basic is
     ////////////////////////////////////////////////////////////////
 
     function _mintBatchCheck(uint256 _amount) private view {
-        if (price * _amount != msg.value) revert("WrongPrice");
+        if (price * _amount != msg.value)
+            revert("WrongPrice");
         if (totalSupply() + _amount > maxSupply)
             revert("MaxSupplyReached");
     }
@@ -245,7 +247,7 @@ contract ERC1155Basic is
         returns (string memory)
     {
         if (id > totalSupply()) {
-        // revert("NotMintedYet");
+            // revert("NotMintedYet");
             assembly {
                 mstore(0x00, 0xbad086ea)
                 revert(0x1c, 0x04)

@@ -8,6 +8,7 @@ export type { lib };
 export type { MAD } from "./MAD";
 export type { MADFactory1155 } from "./MADFactory1155";
 export type { MADFactory721 } from "./MADFactory721";
+export type { MADMarketplace1155 } from "./MADMarketplace1155";
 export type { MADMarketplace721 } from "./MADMarketplace721";
 export type { MADRouter1155 } from "./MADRouter1155";
 export type { MADRouter721 } from "./MADRouter721";
@@ -16,8 +17,10 @@ export type { FactoryEventsAndErrors1155 } from "./EventsAndErrors.sol/FactoryEv
 export { FactoryEventsAndErrors1155__factory } from "./factories/EventsAndErrors.sol/FactoryEventsAndErrors1155__factory";
 export type { FactoryEventsAndErrors721 } from "./EventsAndErrors.sol/FactoryEventsAndErrors721";
 export { FactoryEventsAndErrors721__factory } from "./factories/EventsAndErrors.sol/FactoryEventsAndErrors721__factory";
-export type { MarketplaceEventsAndErrors } from "./EventsAndErrors.sol/MarketplaceEventsAndErrors";
-export { MarketplaceEventsAndErrors__factory } from "./factories/EventsAndErrors.sol/MarketplaceEventsAndErrors__factory";
+export type { MarketplaceEventsAndErrors1155 } from "./EventsAndErrors.sol/MarketplaceEventsAndErrors1155";
+export { MarketplaceEventsAndErrors1155__factory } from "./factories/EventsAndErrors.sol/MarketplaceEventsAndErrors1155__factory";
+export type { MarketplaceEventsAndErrors721 } from "./EventsAndErrors.sol/MarketplaceEventsAndErrors721";
+export { MarketplaceEventsAndErrors721__factory } from "./factories/EventsAndErrors.sol/MarketplaceEventsAndErrors721__factory";
 export type { RouterEvents } from "./EventsAndErrors.sol/RouterEvents";
 export { RouterEvents__factory } from "./factories/EventsAndErrors.sol/RouterEvents__factory";
 export type { FactoryVerifier } from "./lib/auth/FactoryVerifier";
@@ -95,6 +98,7 @@ export { ERC721Whitelist__factory } from "./factories/lib/tokens/ERC721/Impl/ERC
 export { MAD__factory } from "./factories/MAD__factory";
 export { MADFactory1155__factory } from "./factories/MADFactory1155__factory";
 export { MADFactory721__factory } from "./factories/MADFactory721__factory";
+export { MADMarketplace1155__factory } from "./factories/MADMarketplace1155__factory";
 export { MADMarketplace721__factory } from "./factories/MADMarketplace721__factory";
 export { MADRouter1155__factory } from "./factories/MADRouter1155__factory";
 export { MADRouter721__factory } from "./factories/MADRouter721__factory";

@@ -1,14 +1,5 @@
 # ERC721MinimalEvents
 
-
-
-
-
-
-
-
-
-
 ## Events
 
 ### PublicMintStateSet
@@ -17,15 +8,11 @@
 event PublicMintStateSet(bool indexed newPublicMintState)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newPublicMintState `indexed` | bool | undefined |
+| Name                         | Type | Description |
+| ---------------------------- | ---- | ----------- |
+| newPublicMintState `indexed` | bool | undefined   |
 
 ### RoyaltyFeeSet
 
@@ -33,15 +20,11 @@ event PublicMintStateSet(bool indexed newPublicMintState)
 event RoyaltyFeeSet(uint256 indexed newRoyaltyFee)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newRoyaltyFee `indexed` | uint256 | undefined |
+| Name                    | Type    | Description |
+| ----------------------- | ------- | ----------- |
+| newRoyaltyFee `indexed` | uint256 | undefined   |
 
 ### RoyaltyRecipientSet
 
@@ -49,15 +32,8 @@ event RoyaltyFeeSet(uint256 indexed newRoyaltyFee)
 event RoyaltyRecipientSet(address indexed newRecipient)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newRecipient `indexed` | address | undefined |
-
-
-
+| Name                   | Type    | Description |
+| ---------------------- | ------- | ----------- |
+| newRecipient `indexed` | address | undefined   |

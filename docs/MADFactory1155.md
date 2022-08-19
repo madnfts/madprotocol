@@ -72,14 +72,14 @@ _Function Sighash := 0x73fd6808Args passed as params in this function serve as c
 
 #### Parameters
 
-| Name        | Type    | Description                                                                                                                                                                            |
-| ----------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| \_tokenType | uint8   | Values legend: 0=Minimal; 1=Basic; 2=Whitelist; 3=Lazy.                                                                                                                                |
-| \_tokenSalt | string  | Nonce/Entropy factor used by CREATE3 method to generate collection deployment address. Must be always different to avoid address collision.                                            |
-| \_price     | uint256 | Public mint price of the collection to be deployed.                                                                                                                                    |
-| \_maxSupply | uint256 | Maximum supply of tokens to be minted of the collection to be deployed (Not used for ERC721Minimal token type, since it always equals to one).                                         |
-| \_uri       | string  | The URL + CID to be added the tokenID and suffix (.json) by the tokenURI function in the collection to be deployed (baseURI used as tokenURI itself for the ERC721Minimal token type). |
-| \_splitter  | address | Previously deployed Splitter implementation so to validate and attach to collection.                                                                                                   |
+| Name        | Type    | Description                                                                                                                                                                             |
+| ----------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| \_tokenType | uint8   | Values legend: 0=Minimal; 1=Basic; 2=Whitelist; 3=Lazy.                                                                                                                                 |
+| \_tokenSalt | string  | Nonce/Entropy factor used by CREATE3 method to generate collection deployment address. Must be always different to avoid address collision.                                             |
+| \_price     | uint256 | Public mint price of the collection to be deployed.                                                                                                                                     |
+| \_maxSupply | uint256 | Maximum supply of tokens to be minted of the collection to be deployed (Not used for ERC1155Minimal token type, since it always equals to one).                                         |
+| \_uri       | string  | The URL + CID to be added the tokenID and suffix (.json) by the tokenURI function in the collection to be deployed (baseURI used as tokenURI itself for the ERC1155Minimal token type). |
+| \_splitter  | address | Previously deployed Splitter implementation so to validate and attach to collection.                                                                                                    |
 
 ### creatorAuth
 

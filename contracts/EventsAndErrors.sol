@@ -3,8 +3,7 @@
 pragma solidity 0.8.4;
 
 import { FactoryVerifier } from "./lib/auth/FactoryVerifier.sol";
-import { IERC721 } from "./Types.sol";
-import { IERC1155 } from "./Types.sol";
+import { IERC721, IERC1155 } from "./Types.sol";
 
 interface FactoryEventsAndErrors721 {
     ////////////////////////////////////////////////////////////////

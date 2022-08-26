@@ -8,18 +8,18 @@ import { IERC1155 } from "./lib/tokens/ERC1155/Base/interfaces/IERC1155.sol";
 
 // prettier-ignore
 library Types {
-    enum ERC721Type {
-        ERC721Minimal,    // := 0
-        ERC721Basic,      // := 1
-        ERC721Whitelist,  // := 2
-        ERC721Lazy        // := 3
+    enum ERC721Type {     /// @dev Values:
+        ERC721Minimal,    /// := 0
+        ERC721Basic,      /// := 1
+        ERC721Whitelist,  /// := 2
+        ERC721Lazy        /// := 3
     }
     
-    enum ERC1155Type {
-        ERC1155Minimal,    // := 0
-        ERC1155Basic,      // := 1
-        ERC1155Whitelist,  // := 2
-        ERC1155Lazy        // := 3
+    enum ERC1155Type {     /// @dev Values: 
+        ERC1155Minimal,    /// := 0
+        ERC1155Basic,      /// := 1
+        ERC1155Whitelist,  /// := 2
+        ERC1155Lazy        /// := 3
     }
 
     struct Collection721 {
@@ -63,36 +63,36 @@ library Types {
     /// @param orderType Values legend:
     /// 0=Fixed Price; 1=Dutch Auction; 2=English Auction.
     /// @param endBlock Equals to canceled order when value is set to 0.
-    struct Order721 {
-        uint256 tokenId;
-        uint256 startPrice;
-        uint256 endPrice;
-        uint256 startBlock;
-        uint256 endBlock;
-        uint256 lastBidPrice;
-        address lastBidder;
-        IERC721 token;
-        address seller;
-        uint8 orderType;
-        bool isSold;
+    struct Order721 {         /// @dev Storage: 
+        uint256 tokenId;      /// order.slot
+        uint256 startPrice;   /// add(order.slot, 1)  
+        uint256 endPrice;     /// add(order.slot, 2)  
+        uint256 startBlock;   /// add(order.slot, 3)  
+        uint256 endBlock;     /// add(order.slot, 4)   
+        uint256 lastBidPrice; /// add(order.slot, 5)          
+        address lastBidder;   /// add(order.slot, 6)
+        IERC721 token;        /// add(order.slot, 7)     
+        address seller;       /// add(order.slot, 8)),shr(20, not(0))  
+        uint8 orderType;      /// shr(160,sload(add(order.slot, 8)))  
+        bool isSold;          /// shr(168,sload(add(order.slot, 8)))
     }
 
     /// @param orderType Values legend:
     /// 0=Fixed Price; 1=Dutch Auction; 2=English Auction.
     /// @param endBlock Equals to canceled order when value is set to 0.
-    struct Order1155 {
-        uint256 tokenId;
-        uint256 amount; 
-        uint256 startPrice;
-        uint256 endPrice;
-        uint256 startBlock;
-        uint256 endBlock;
-        uint256 lastBidPrice;
-        address lastBidder;
-        IERC1155 token;
-        address seller;
-        uint8 orderType;
-        bool isSold;
+    struct Order1155 {        /// @dev Storage:
+        uint256 tokenId;      /// order.slot              
+        uint256 amount;       /// add(order.slot, 1)           
+        uint256 startPrice;   /// add(order.slot, 2)
+        uint256 endPrice;     /// add(order.slot, 3)
+        uint256 startBlock;   /// add(order.slot, 4)
+        uint256 endBlock;     /// add(order.slot, 5)  
+        uint256 lastBidPrice; /// add(order.slot, 6)               
+        address lastBidder;   /// add(order.slot, 7)
+        IERC1155 token;       /// add(order.slot, 8)  
+        address seller;       /// add(order.slot, 9)),shr(20, not(0))
+        uint8 orderType;      /// shr(160,sload(add(order.slot, 9)))
+        bool isSold;          /// shr(168,sload(add(order.slot, 9)))
     }
 }
 

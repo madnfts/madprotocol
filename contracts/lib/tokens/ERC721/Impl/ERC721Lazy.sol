@@ -70,7 +70,6 @@ contract ERC721Lazy is
     ) ERC721(_name, _symbol) Owned(_router) {
         _CHAIN_ID_OG = block.chainid;
         _DOMAIN_SEPARATOR_OG = computeDS();
-        // setSigner(_signer);
         signer = _signer;
         baseURI = _baseURI;
         splitter = _splitter;

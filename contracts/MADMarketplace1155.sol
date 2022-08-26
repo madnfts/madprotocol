@@ -176,7 +176,7 @@ contract MADMarketplace1155 is
         // 1s blocktime
         assembly {
             let endBlock := and(
-                sload(add(order.slot, 4)),
+                sload(add(order.slot, 5)),
                 shr(32, not(0))
             )
             if gt(
@@ -187,10 +187,10 @@ contract MADMarketplace1155 is
                     endBlock,
                     sload(minAuctionIncrement.slot)
                 )
-                sstore(add(order.slot, 4), inc)
+                sstore(add(order.slot, 5), inc)
             }
-            sstore(add(order.slot, 6), caller())
-            sstore(add(order.slot, 5), callvalue())
+            sstore(add(order.slot, 7), caller())
+            sstore(add(order.slot, 6), callvalue())
         }
         if (lastBidPrice != 0) {
             SafeTransferLib.safeTransferETH(
@@ -899,33 +899,33 @@ contract MADMarketplace1155 is
         assembly {
             let orderType := shr(
                 160,
-                sload(add(order.slot, 8))
+                sload(add(order.slot, 9))
             )
             mstore(0x80, orderType)
             switch mload(0x80)
             // Fixed Price
             case 0 {
                 price := and(
-                    sload(add(order.slot, 1)),
+                    sload(add(order.slot, 2)),
                     shr(32, not(0))
                 )
             }
             // Ductch Auction
             case 1 {
                 let _startPrice := and(
-                    sload(add(order.slot, 1)),
-                    shr(32, not(0))
-                )
-                let _startBlock := and(
-                    sload(add(order.slot, 3)),
-                    shr(32, not(0))
-                )
-                let _endPrice := and(
                     sload(add(order.slot, 2)),
                     shr(32, not(0))
                 )
-                let _endBlock := and(
+                let _startBlock := and(
                     sload(add(order.slot, 4)),
+                    shr(32, not(0))
+                )
+                let _endPrice := and(
+                    sload(add(order.slot, 3)),
+                    shr(32, not(0))
+                )
+                let _endBlock := and(
+                    sload(add(order.slot, 5)),
                     shr(32, not(0))
                 )
                 let _tick := div(
@@ -940,13 +940,13 @@ contract MADMarketplace1155 is
             // English Auction
             case 2 {
                 let lastBidPrice := and(
-                    sload(add(order.slot, 5)),
+                    sload(add(order.slot, 6)),
                     shr(32, not(0))
                 )
                 switch iszero(lastBidPrice)
                 case 1 {
                     price := and(
-                        sload(add(order.slot, 1)),
+                        sload(add(order.slot, 2)),
                         shr(32, not(0))
                     )
                 }

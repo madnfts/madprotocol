@@ -74,13 +74,14 @@ contract ERC1155Lazy is
     ) Owned(_router) {
         _CHAIN_ID_OG = block.chainid;
         _DOMAIN_SEPARATOR_OG = computeDS();
-        setSigner(_signer);
+        signer = _signer;
         _uri = __uri;
         splitter = _splitter;
 
         _royaltyFee = _fraction;
         _royaltyRecipient = payable(splitter);
 
+        emit SignerUpdated(_signer);
         emit RoyaltyFeeSet(_royaltyFee);
         emit RoyaltyRecipientSet(_royaltyRecipient);
     }

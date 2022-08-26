@@ -540,7 +540,7 @@ export interface ERC1155Lazy extends BaseContract {
     ): Promise<[string]>;
 
     royaltyInfo(
-      tokenId: PromiseOrValue<BigNumberish>,
+      arg0: PromiseOrValue<BigNumberish>,
       salePrice: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
@@ -690,7 +690,7 @@ export interface ERC1155Lazy extends BaseContract {
   ): Promise<string>;
 
   royaltyInfo(
-    tokenId: PromiseOrValue<BigNumberish>,
+    arg0: PromiseOrValue<BigNumberish>,
     salePrice: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<
@@ -840,7 +840,7 @@ export interface ERC1155Lazy extends BaseContract {
     ): Promise<string>;
 
     royaltyInfo(
-      tokenId: PromiseOrValue<BigNumberish>,
+      arg0: PromiseOrValue<BigNumberish>,
       salePrice: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
@@ -1075,7 +1075,7 @@ export interface ERC1155Lazy extends BaseContract {
     ): Promise<BigNumber>;
 
     royaltyInfo(
-      tokenId: PromiseOrValue<BigNumberish>,
+      arg0: PromiseOrValue<BigNumberish>,
       salePrice: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1224,7 +1224,7 @@ export interface ERC1155Lazy extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     royaltyInfo(
-      tokenId: PromiseOrValue<BigNumberish>,
+      arg0: PromiseOrValue<BigNumberish>,
       salePrice: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

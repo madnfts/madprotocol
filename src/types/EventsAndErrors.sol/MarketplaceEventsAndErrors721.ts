@@ -30,6 +30,7 @@ export interface MarketplaceEventsAndErrors721Interface
     "Claim(address,uint256,bytes32,address,address,uint256)": EventFragment;
     "FactoryUpdated(address)": EventFragment;
     "MakeOrder(address,uint256,bytes32,address)": EventFragment;
+    "RecipientUpdated(address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "AuctionSettingsUpdated"): EventFragment;
@@ -38,6 +39,7 @@ export interface MarketplaceEventsAndErrors721Interface
   getEvent(nameOrSignatureOrTopic: "Claim"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FactoryUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MakeOrder"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RecipientUpdated"): EventFragment;
 }
 
 export interface AuctionSettingsUpdatedEventObject {
@@ -117,6 +119,17 @@ export type MakeOrderEvent = TypedEvent<
 >;
 
 export type MakeOrderEventFilter = TypedEventFilter<MakeOrderEvent>;
+
+export interface RecipientUpdatedEventObject {
+  newRecipient: string;
+}
+export type RecipientUpdatedEvent = TypedEvent<
+  [string],
+  RecipientUpdatedEventObject
+>;
+
+export type RecipientUpdatedEventFilter =
+  TypedEventFilter<RecipientUpdatedEvent>;
 
 export interface MarketplaceEventsAndErrors721 extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -224,6 +237,13 @@ export interface MarketplaceEventsAndErrors721 extends BaseContract {
       hash?: PromiseOrValue<BytesLike> | null,
       seller?: null
     ): MakeOrderEventFilter;
+
+    "RecipientUpdated(address)"(
+      newRecipient?: PromiseOrValue<string> | null
+    ): RecipientUpdatedEventFilter;
+    RecipientUpdated(
+      newRecipient?: PromiseOrValue<string> | null
+    ): RecipientUpdatedEventFilter;
   };
 
   estimateGas: {};

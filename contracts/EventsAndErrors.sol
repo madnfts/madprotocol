@@ -106,6 +106,7 @@ interface MarketplaceEventsAndErrors721 {
     ////////////////////////////////////////////////////////////////
 
     event FactoryUpdated(FactoryVerifier indexed newFactory);
+    event RecipientUpdated(address indexed newRecipient);
 
     event AuctionSettingsUpdated(
         uint256 indexed newMinDuration,
@@ -177,6 +178,7 @@ interface MarketplaceEventsAndErrors1155 {
     ////////////////////////////////////////////////////////////////
 
     event FactoryUpdated(FactoryVerifier indexed newFactory);
+    event RecipientUpdated(address indexed newRecipient);
 
     event AuctionSettingsUpdated(
         uint256 indexed newMinDuration,

@@ -1,4 +1,6 @@
-# ERC721Minimal
+# MockERC721
+
+_Solmate (https://github.com/transmissions11/solmate/blob/main/src/test/utils/mocks/MockERC721.sol)_
 
 ## Methods
 
@@ -36,10 +38,14 @@ function balanceOf(address owner) external view returns (uint256)
 ### burn
 
 ```solidity
-function burn() external nonpayable
+function burn(uint256 tokenId) external nonpayable
 ```
 
-_Can&#39;t be reburnt since `minted` is not updated to false._
+#### Parameters
+
+| Name    | Type    | Description |
+| ------- | ------- | ----------- |
+| tokenId | uint256 | undefined   |
 
 ### getApproved
 
@@ -78,6 +84,19 @@ function isApprovedForAll(address, address) external view returns (bool)
 | ---- | ---- | ----------- |
 | \_0  | bool | undefined   |
 
+### mint
+
+```solidity
+function mint(address to, uint256 tokenId) external nonpayable
+```
+
+#### Parameters
+
+| Name    | Type    | Description |
+| ------- | ------- | ----------- |
+| to      | address | undefined   |
+| tokenId | uint256 | undefined   |
+
 ### name
 
 ```solidity
@@ -89,39 +108,6 @@ function name() external view returns (string)
 | Name | Type   | Description |
 | ---- | ------ | ----------- |
 | \_0  | string | undefined   |
-
-### onERC721Received
-
-```solidity
-function onERC721Received(address, address, uint256, bytes) external nonpayable returns (bytes4)
-```
-
-#### Parameters
-
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | address | undefined   |
-| \_1  | address | undefined   |
-| \_2  | uint256 | undefined   |
-| \_3  | bytes   | undefined   |
-
-#### Returns
-
-| Name | Type   | Description |
-| ---- | ------ | ----------- |
-| \_0  | bytes4 | undefined   |
-
-### owner
-
-```solidity
-function owner() external view returns (address)
-```
-
-#### Returns
-
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | address | undefined   |
 
 ### ownerOf
 
@@ -141,71 +127,32 @@ function ownerOf(uint256 id) external view returns (address owner)
 | ----- | ------- | ----------- |
 | owner | address | undefined   |
 
-### price
+### safeMint
 
 ```solidity
-function price() external view returns (uint256)
-```
-
-#### Returns
-
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | uint256 | undefined   |
-
-### publicMint
-
-```solidity
-function publicMint() external payable
-```
-
-### publicMintState
-
-```solidity
-function publicMintState() external view returns (bool)
-```
-
-_default := false_
-
-#### Returns
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| \_0  | bool | undefined   |
-
-### royaltyInfo
-
-```solidity
-function royaltyInfo(uint256, uint256 salePrice) external view returns (address receiver, uint256 royaltyAmount)
+function safeMint(address to, uint256 tokenId, bytes data) external nonpayable
 ```
 
 #### Parameters
 
-| Name      | Type    | Description |
-| --------- | ------- | ----------- |
-| \_0       | uint256 | undefined   |
-| salePrice | uint256 | undefined   |
-
-#### Returns
-
-| Name          | Type    | Description |
-| ------------- | ------- | ----------- |
-| receiver      | address | undefined   |
-| royaltyAmount | uint256 | undefined   |
+| Name    | Type    | Description |
+| ------- | ------- | ----------- |
+| to      | address | undefined   |
+| tokenId | uint256 | undefined   |
+| data    | bytes   | undefined   |
 
 ### safeMint
 
 ```solidity
-function safeMint(address to) external nonpayable
+function safeMint(address to, uint256 tokenId) external nonpayable
 ```
-
-_Can&#39;t be reminted if already minted, due to boolean._
 
 #### Parameters
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| to   | address | undefined   |
+| Name    | Type    | Description |
+| ------- | ------- | ----------- |
+| to      | address | undefined   |
+| tokenId | uint256 | undefined   |
 
 ### safeTransferFrom
 
@@ -249,46 +196,10 @@ function setApprovalForAll(address operator, bool approved) external nonpayable
 | operator | address | undefined   |
 | approved | bool    | undefined   |
 
-### setOwner
-
-```solidity
-function setOwner(address newOwner) external nonpayable
-```
-
-#### Parameters
-
-| Name     | Type    | Description |
-| -------- | ------- | ----------- |
-| newOwner | address | undefined   |
-
-### setPublicMintState
-
-```solidity
-function setPublicMintState(bool _publicMintState) external nonpayable
-```
-
-#### Parameters
-
-| Name              | Type | Description |
-| ----------------- | ---- | ----------- |
-| \_publicMintState | bool | undefined   |
-
-### splitter
-
-```solidity
-function splitter() external view returns (contract SplitterImpl)
-```
-
-#### Returns
-
-| Name | Type                  | Description |
-| ---- | --------------------- | ----------- |
-| \_0  | contract SplitterImpl | undefined   |
-
 ### supportsInterface
 
 ```solidity
-function supportsInterface(bytes4 interfaceId) external pure returns (bool)
+function supportsInterface(bytes4 interfaceId) external view returns (bool)
 ```
 
 #### Parameters
@@ -318,14 +229,14 @@ function symbol() external view returns (string)
 ### tokenURI
 
 ```solidity
-function tokenURI(uint256 id) external view returns (string)
+function tokenURI(uint256) external pure returns (string)
 ```
 
 #### Parameters
 
 | Name | Type    | Description |
 | ---- | ------- | ----------- |
-| id   | uint256 | undefined   |
+| \_0  | uint256 | undefined   |
 
 #### Returns
 
@@ -346,24 +257,6 @@ function transferFrom(address from, address to, uint256 id) external nonpayable
 | from | address | undefined   |
 | to   | address | undefined   |
 | id   | uint256 | undefined   |
-
-### withdraw
-
-```solidity
-function withdraw() external nonpayable
-```
-
-### withdrawERC20
-
-```solidity
-function withdrawERC20(contract ERC20 _token) external nonpayable
-```
-
-#### Parameters
-
-| Name    | Type           | Description |
-| ------- | -------------- | ----------- |
-| \_token | contract ERC20 | undefined   |
 
 ## Events
 
@@ -394,55 +287,6 @@ event ApprovalForAll(address indexed owner, address indexed operator, bool appro
 | owner `indexed`    | address | undefined   |
 | operator `indexed` | address | undefined   |
 | approved           | bool    | undefined   |
-
-### OwnerUpdated
-
-```solidity
-event OwnerUpdated(address indexed user, address indexed newOwner)
-```
-
-#### Parameters
-
-| Name               | Type    | Description |
-| ------------------ | ------- | ----------- |
-| user `indexed`     | address | undefined   |
-| newOwner `indexed` | address | undefined   |
-
-### PublicMintStateSet
-
-```solidity
-event PublicMintStateSet(bool indexed newPublicMintState)
-```
-
-#### Parameters
-
-| Name                         | Type | Description |
-| ---------------------------- | ---- | ----------- |
-| newPublicMintState `indexed` | bool | undefined   |
-
-### RoyaltyFeeSet
-
-```solidity
-event RoyaltyFeeSet(uint256 indexed newRoyaltyFee)
-```
-
-#### Parameters
-
-| Name                    | Type    | Description |
-| ----------------------- | ------- | ----------- |
-| newRoyaltyFee `indexed` | uint256 | undefined   |
-
-### RoyaltyRecipientSet
-
-```solidity
-event RoyaltyRecipientSet(address indexed newRecipient)
-```
-
-#### Parameters
-
-| Name                   | Type    | Description |
-| ---------------------- | ------- | ----------- |
-| newRecipient `indexed` | address | undefined   |
 
 ### Transfer
 

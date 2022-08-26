@@ -348,6 +348,7 @@ export interface MADMarketplace1155Interface extends utils.Interface {
     "MakeOrder(address,uint256,uint256,bytes32,address)": EventFragment;
     "OwnerUpdated(address,address)": EventFragment;
     "Paused(address)": EventFragment;
+    "RecipientUpdated(address)": EventFragment;
     "Unpaused(address)": EventFragment;
   };
 
@@ -359,6 +360,7 @@ export interface MADMarketplace1155Interface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "MakeOrder"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnerUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RecipientUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
 }
 
@@ -462,6 +464,17 @@ export type PausedEvent = TypedEvent<[string], PausedEventObject>;
 
 export type PausedEventFilter = TypedEventFilter<PausedEvent>;
 
+export interface RecipientUpdatedEventObject {
+  newRecipient: string;
+}
+export type RecipientUpdatedEvent = TypedEvent<
+  [string],
+  RecipientUpdatedEventObject
+>;
+
+export type RecipientUpdatedEventFilter =
+  TypedEventFilter<RecipientUpdatedEvent>;
+
 export interface UnpausedEventObject {
   account: string;
 }
@@ -560,7 +573,7 @@ export interface MADMarketplace1155 extends BaseContract {
     getCurrentPrice(
       _order: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<[BigNumber] & { price: BigNumber }>;
 
     minAuctionIncrement(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -607,22 +620,19 @@ export interface MADMarketplace1155 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<
       [
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        string,
+        string,
+        string,
         number,
-        string,
-        string,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        string,
         boolean
       ] & {
-        orderType: number;
-        seller: string;
-        token: string;
         tokenId: BigNumber;
         amount: BigNumber;
         startPrice: BigNumber;
@@ -631,6 +641,9 @@ export interface MADMarketplace1155 extends BaseContract {
         endBlock: BigNumber;
         lastBidPrice: BigNumber;
         lastBidder: string;
+        token: string;
+        seller: string;
+        orderType: number;
         isSold: boolean;
       }
     >;
@@ -799,22 +812,19 @@ export interface MADMarketplace1155 extends BaseContract {
     overrides?: CallOverrides
   ): Promise<
     [
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      string,
+      string,
+      string,
       number,
-      string,
-      string,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      string,
       boolean
     ] & {
-      orderType: number;
-      seller: string;
-      token: string;
       tokenId: BigNumber;
       amount: BigNumber;
       startPrice: BigNumber;
@@ -823,6 +833,9 @@ export interface MADMarketplace1155 extends BaseContract {
       endBlock: BigNumber;
       lastBidPrice: BigNumber;
       lastBidder: string;
+      token: string;
+      seller: string;
+      orderType: number;
       isSold: boolean;
     }
   >;
@@ -991,22 +1004,19 @@ export interface MADMarketplace1155 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<
       [
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        string,
+        string,
+        string,
         number,
-        string,
-        string,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        string,
         boolean
       ] & {
-        orderType: number;
-        seller: string;
-        token: string;
         tokenId: BigNumber;
         amount: BigNumber;
         startPrice: BigNumber;
@@ -1015,6 +1025,9 @@ export interface MADMarketplace1155 extends BaseContract {
         endBlock: BigNumber;
         lastBidPrice: BigNumber;
         lastBidder: string;
+        token: string;
+        seller: string;
+        orderType: number;
         isSold: boolean;
       }
     >;
@@ -1162,6 +1175,13 @@ export interface MADMarketplace1155 extends BaseContract {
 
     "Paused(address)"(account?: null): PausedEventFilter;
     Paused(account?: null): PausedEventFilter;
+
+    "RecipientUpdated(address)"(
+      newRecipient?: PromiseOrValue<string> | null
+    ): RecipientUpdatedEventFilter;
+    RecipientUpdated(
+      newRecipient?: PromiseOrValue<string> | null
+    ): RecipientUpdatedEventFilter;
 
     "Unpaused(address)"(account?: null): UnpausedEventFilter;
     Unpaused(account?: null): UnpausedEventFilter;

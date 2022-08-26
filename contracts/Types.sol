@@ -64,9 +64,6 @@ library Types {
     /// 0=Fixed Price; 1=Dutch Auction; 2=English Auction.
     /// @param endBlock Equals to canceled order when value is set to 0.
     struct Order721 {
-        uint8 orderType;
-        address seller;
-        IERC721 token;
         uint256 tokenId;
         uint256 startPrice;
         uint256 endPrice;
@@ -74,6 +71,9 @@ library Types {
         uint256 endBlock;
         uint256 lastBidPrice;
         address lastBidder;
+        IERC721 token;
+        address seller;
+        uint8 orderType;
         bool isSold;
     }
 
@@ -81,24 +81,23 @@ library Types {
     /// 0=Fixed Price; 1=Dutch Auction; 2=English Auction.
     /// @param endBlock Equals to canceled order when value is set to 0.
     struct Order1155 {
-        uint8 orderType;
-        address seller;
-        IERC1155 token;
         uint256 tokenId;
-        uint256 amount;
+        uint256 amount; 
         uint256 startPrice;
         uint256 endPrice;
         uint256 startBlock;
         uint256 endBlock;
         uint256 lastBidPrice;
         address lastBidder;
+        IERC1155 token;
+        address seller;
+        uint8 orderType;
         bool isSold;
     }
 }
 
 /* 
-    ├─ type: ContractDefinition
-    ├─ name: Types
+├─ name: Types
     ├─ baseContracts
     ├─ subNodes
     │  ├─ 0
@@ -118,8 +117,24 @@ library Types {
     │  │        ├─ type: EnumValue
     │  │        └─ name: ERC721Lazy
     │  ├─ 1
+    │  │  ├─ type: EnumDefinition
+    │  │  ├─ name: ERC1155Type
+    │  │  └─ members
+    │  │     ├─ 0
+    │  │     │  ├─ type: EnumValue
+    │  │     │  └─ name: ERC1155Minimal
+    │  │     ├─ 1
+    │  │     │  ├─ type: EnumValue
+    │  │     │  └─ name: ERC1155Basic
+    │  │     ├─ 2
+    │  │     │  ├─ type: EnumValue
+    │  │     │  └─ name: ERC1155Whitelist
+    │  │     └─ 3
+    │  │        ├─ type: EnumValue
+    │  │        └─ name: ERC1155Lazy
+    │  ├─ 2
     │  │  ├─ type: StructDefinition
-    │  │  ├─ name: Collection
+    │  │  ├─ name: Collection721
     │  │  └─ members
     │  │     ├─ 0
     │  │     │  ├─ type: VariableDeclaration
@@ -179,8 +194,9 @@ library Types {
     │  │     └─ 4
     │  │        ├─ type: VariableDeclaration
     │  │        ├─ typeName
-    │  │        │  ├─ type: UserDefinedTypeName
-    │  │        │  └─ namePath: SplitterImpl
+    │  │        │  ├─ type: ElementaryTypeName
+    │  │        │  ├─ name: address
+    │  │        │  └─ stateMutability
     │  │        ├─ name: splitter
     │  │        ├─ identifier
     │  │        │  ├─ type: Identifier
@@ -189,15 +205,89 @@ library Types {
     │  │        ├─ isStateVar: false
     │  │        ├─ isIndexed: false
     │  │        └─ expression
-    │  ├─ 2
+    │  ├─ 3
+    │  │  ├─ type: StructDefinition
+    │  │  ├─ name: Collection1155
+    │  │  └─ members
+    │  │     ├─ 0
+    │  │     │  ├─ type: VariableDeclaration
+    │  │     │  ├─ typeName
+    │  │     │  │  ├─ type: ElementaryTypeName
+    │  │     │  │  ├─ name: address
+    │  │     │  │  └─ stateMutability
+    │  │     │  ├─ name: creator
+    │  │     │  ├─ identifier
+    │  │     │  │  ├─ type: Identifier
+    │  │     │  │  └─ name: creator
+    │  │     │  ├─ storageLocation
+    │  │     │  ├─ isStateVar: false
+    │  │     │  ├─ isIndexed: false
+    │  │     │  └─ expression
+    │  │     ├─ 1
+    │  │     │  ├─ type: VariableDeclaration
+    │  │     │  ├─ typeName
+    │  │     │  │  ├─ type: UserDefinedTypeName
+    │  │     │  │  └─ namePath: Types.ERC1155Type
+    │  │     │  ├─ name: colType
+    │  │     │  ├─ identifier
+    │  │     │  │  ├─ type: Identifier
+    │  │     │  │  └─ name: colType
+    │  │     │  ├─ storageLocation
+    │  │     │  ├─ isStateVar: false
+    │  │     │  ├─ isIndexed: false
+    │  │     │  └─ expression
+    │  │     ├─ 2
+    │  │     │  ├─ type: VariableDeclaration
+    │  │     │  ├─ typeName
+    │  │     │  │  ├─ type: ElementaryTypeName
+    │  │     │  │  ├─ name: bytes32
+    │  │     │  │  └─ stateMutability
+    │  │     │  ├─ name: colSalt
+    │  │     │  ├─ identifier
+    │  │     │  │  ├─ type: Identifier
+    │  │     │  │  └─ name: colSalt
+    │  │     │  ├─ storageLocation
+    │  │     │  ├─ isStateVar: false
+    │  │     │  ├─ isIndexed: false
+    │  │     │  └─ expression
+    │  │     ├─ 3
+    │  │     │  ├─ type: VariableDeclaration
+    │  │     │  ├─ typeName
+    │  │     │  │  ├─ type: ElementaryTypeName
+    │  │     │  │  ├─ name: uint256
+    │  │     │  │  └─ stateMutability
+    │  │     │  ├─ name: blocknumber
+    │  │     │  ├─ identifier
+    │  │     │  │  ├─ type: Identifier
+    │  │     │  │  └─ name: blocknumber
+    │  │     │  ├─ storageLocation
+    │  │     │  ├─ isStateVar: false
+    │  │     │  ├─ isIndexed: false
+    │  │     │  └─ expression
+    │  │     └─ 4
+    │  │        ├─ type: VariableDeclaration
+    │  │        ├─ typeName
+    │  │        │  ├─ type: ElementaryTypeName
+    │  │        │  ├─ name: address
+    │  │        │  └─ stateMutability
+    │  │        ├─ name: splitter
+    │  │        ├─ identifier
+    │  │        │  ├─ type: Identifier
+    │  │        │  └─ name: splitter
+    │  │        ├─ storageLocation
+    │  │        ├─ isStateVar: false
+    │  │        ├─ isIndexed: false
+    │  │        └─ expression
+    │  ├─ 4
     │  │  ├─ type: StructDefinition
     │  │  ├─ name: SplitterConfig
     │  │  └─ members
     │  │     ├─ 0
     │  │     │  ├─ type: VariableDeclaration
     │  │     │  ├─ typeName
-    │  │     │  │  ├─ type: UserDefinedTypeName
-    │  │     │  │  └─ namePath: SplitterImpl
+    │  │     │  │  ├─ type: ElementaryTypeName
+    │  │     │  │  ├─ name: address
+    │  │     │  │  └─ stateMutability
     │  │     │  ├─ name: splitter
     │  │     │  ├─ identifier
     │  │     │  │  ├─ type: Identifier
@@ -262,7 +352,7 @@ library Types {
     │  │        ├─ isStateVar: false
     │  │        ├─ isIndexed: false
     │  │        └─ expression
-    │  ├─ 3
+    │  ├─ 5
     │  │  ├─ type: StructDefinition
     │  │  ├─ name: Voucher
     │  │  └─ members
@@ -325,52 +415,231 @@ library Types {
     │  │        ├─ isStateVar: false
     │  │        ├─ isIndexed: false
     │  │        └─ expression
-    │  └─ 4
+    │  ├─ 6
+    │  │  ├─ type: StructDefinition
+    │  │  ├─ name: UserBatch
+    │  │  └─ members
+    │  │     ├─ 0
+    │  │     │  ├─ type: VariableDeclaration
+    │  │     │  ├─ typeName
+    │  │     │  │  ├─ type: ElementaryTypeName
+    │  │     │  │  ├─ name: bytes32
+    │  │     │  │  └─ stateMutability
+    │  │     │  ├─ name: voucherId
+    │  │     │  ├─ identifier
+    │  │     │  │  ├─ type: Identifier
+    │  │     │  │  └─ name: voucherId
+    │  │     │  ├─ storageLocation
+    │  │     │  ├─ isStateVar: false
+    │  │     │  ├─ isIndexed: false
+    │  │     │  └─ expression
+    │  │     ├─ 1
+    │  │     │  ├─ type: VariableDeclaration
+    │  │     │  ├─ typeName
+    │  │     │  │  ├─ type: ArrayTypeName
+    │  │     │  │  ├─ baseTypeName
+    │  │     │  │  │  ├─ type: ElementaryTypeName
+    │  │     │  │  │  ├─ name: uint256
+    │  │     │  │  │  └─ stateMutability
+    │  │     │  │  └─ length
+    │  │     │  ├─ name: ids
+    │  │     │  ├─ identifier
+    │  │     │  │  ├─ type: Identifier
+    │  │     │  │  └─ name: ids
+    │  │     │  ├─ storageLocation
+    │  │     │  ├─ isStateVar: false
+    │  │     │  ├─ isIndexed: false
+    │  │     │  └─ expression
+    │  │     ├─ 2
+    │  │     │  ├─ type: VariableDeclaration
+    │  │     │  ├─ typeName
+    │  │     │  │  ├─ type: ElementaryTypeName
+    │  │     │  │  ├─ name: uint256
+    │  │     │  │  └─ stateMutability
+    │  │     │  ├─ name: price
+    │  │     │  ├─ identifier
+    │  │     │  │  ├─ type: Identifier
+    │  │     │  │  └─ name: price
+    │  │     │  ├─ storageLocation
+    │  │     │  ├─ isStateVar: false
+    │  │     │  ├─ isIndexed: false
+    │  │     │  └─ expression
+    │  │     └─ 3
+    │  │        ├─ type: VariableDeclaration
+    │  │        ├─ typeName
+    │  │        │  ├─ type: ElementaryTypeName
+    │  │        │  ├─ name: address
+    │  │        │  └─ stateMutability
+    │  │        ├─ name: user
+    │  │        ├─ identifier
+    │  │        │  ├─ type: Identifier
+    │  │        │  └─ name: user
+    │  │        ├─ storageLocation
+    │  │        ├─ isStateVar: false
+    │  │        ├─ isIndexed: false
+    │  │        └─ expression
+    │  ├─ 7
+    │  │  ├─ type: StructDefinition
+    │  │  ├─ name: Order721
+    │  │  └─ members
+    │  │     ├─ 0
+    │  │     │  ├─ type: VariableDeclaration
+    │  │     │  ├─ typeName
+    │  │     │  │  ├─ type: ElementaryTypeName
+    │  │     │  │  ├─ name: uint256
+    │  │     │  │  └─ stateMutability
+    │  │     │  ├─ name: tokenId
+    │  │     │  ├─ identifier
+    │  │     │  │  ├─ type: Identifier
+    │  │     │  │  └─ name: tokenId
+    │  │     │  ├─ storageLocation
+    │  │     │  ├─ isStateVar: false
+    │  │     │  ├─ isIndexed: false
+    │  │     │  └─ expression
+    │  │     ├─ 1
+    │  │     │  ├─ type: VariableDeclaration
+    │  │     │  ├─ typeName
+    │  │     │  │  ├─ type: ElementaryTypeName
+    │  │     │  │  ├─ name: uint256
+    │  │     │  │  └─ stateMutability
+    │  │     │  ├─ name: startPrice
+    │  │     │  ├─ identifier
+    │  │     │  │  ├─ type: Identifier
+    │  │     │  │  └─ name: startPrice
+    │  │     │  ├─ storageLocation
+    │  │     │  ├─ isStateVar: false
+    │  │     │  ├─ isIndexed: false
+    │  │     │  └─ expression
+    │  │     ├─ 2
+    │  │     │  ├─ type: VariableDeclaration
+    │  │     │  ├─ typeName
+    │  │     │  │  ├─ type: ElementaryTypeName
+    │  │     │  │  ├─ name: uint256
+    │  │     │  │  └─ stateMutability
+    │  │     │  ├─ name: endPrice
+    │  │     │  ├─ identifier
+    │  │     │  │  ├─ type: Identifier
+    │  │     │  │  └─ name: endPrice
+    │  │     │  ├─ storageLocation
+    │  │     │  ├─ isStateVar: false
+    │  │     │  ├─ isIndexed: false
+    │  │     │  └─ expression
+    │  │     ├─ 3
+    │  │     │  ├─ type: VariableDeclaration
+    │  │     │  ├─ typeName
+    │  │     │  │  ├─ type: ElementaryTypeName
+    │  │     │  │  ├─ name: uint256
+    │  │     │  │  └─ stateMutability
+    │  │     │  ├─ name: startBlock
+    │  │     │  ├─ identifier
+    │  │     │  │  ├─ type: Identifier
+    │  │     │  │  └─ name: startBlock
+    │  │     │  ├─ storageLocation
+    │  │     │  ├─ isStateVar: false
+    │  │     │  ├─ isIndexed: false
+    │  │     │  └─ expression
+    │  │     ├─ 4
+    │  │     │  ├─ type: VariableDeclaration
+    │  │     │  ├─ typeName
+    │  │     │  │  ├─ type: ElementaryTypeName
+    │  │     │  │  ├─ name: uint256
+    │  │     │  │  └─ stateMutability
+    │  │     │  ├─ name: endBlock
+    │  │     │  ├─ identifier
+    │  │     │  │  ├─ type: Identifier
+    │  │     │  │  └─ name: endBlock
+    │  │     │  ├─ storageLocation
+    │  │     │  ├─ isStateVar: false
+    │  │     │  ├─ isIndexed: false
+    │  │     │  └─ expression
+    │  │     ├─ 5
+    │  │     │  ├─ type: VariableDeclaration
+    │  │     │  ├─ typeName
+    │  │     │  │  ├─ type: ElementaryTypeName
+    │  │     │  │  ├─ name: uint256
+    │  │     │  │  └─ stateMutability
+    │  │     │  ├─ name: lastBidPrice
+    │  │     │  ├─ identifier
+    │  │     │  │  ├─ type: Identifier
+    │  │     │  │  └─ name: lastBidPrice
+    │  │     │  ├─ storageLocation
+    │  │     │  ├─ isStateVar: false
+    │  │     │  ├─ isIndexed: false
+    │  │     │  └─ expression
+    │  │     ├─ 6
+    │  │     │  ├─ type: VariableDeclaration
+    │  │     │  ├─ typeName
+    │  │     │  │  ├─ type: ElementaryTypeName
+    │  │     │  │  ├─ name: address
+    │  │     │  │  └─ stateMutability
+    │  │     │  ├─ name: lastBidder
+    │  │     │  ├─ identifier
+    │  │     │  │  ├─ type: Identifier
+    │  │     │  │  └─ name: lastBidder
+    │  │     │  ├─ storageLocation
+    │  │     │  ├─ isStateVar: false
+    │  │     │  ├─ isIndexed: false
+    │  │     │  └─ expression
+    │  │     ├─ 7
+    │  │     │  ├─ type: VariableDeclaration
+    │  │     │  ├─ typeName
+    │  │     │  │  ├─ type: UserDefinedTypeName
+    │  │     │  │  └─ namePath: IERC721
+    │  │     │  ├─ name: token
+    │  │     │  ├─ identifier
+    │  │     │  │  ├─ type: Identifier
+    │  │     │  │  └─ name: token
+    │  │     │  ├─ storageLocation
+    │  │     │  ├─ isStateVar: false
+    │  │     │  ├─ isIndexed: false
+    │  │     │  └─ expression
+    │  │     ├─ 8
+    │  │     │  ├─ type: VariableDeclaration
+    │  │     │  ├─ typeName
+    │  │     │  │  ├─ type: ElementaryTypeName
+    │  │     │  │  ├─ name: address
+    │  │     │  │  └─ stateMutability
+    │  │     │  ├─ name: seller
+    │  │     │  ├─ identifier
+    │  │     │  │  ├─ type: Identifier
+    │  │     │  │  └─ name: seller
+    │  │     │  ├─ storageLocation
+    │  │     │  ├─ isStateVar: false
+    │  │     │  ├─ isIndexed: false
+    │  │     │  └─ expression
+    │  │     ├─ 9
+    │  │     │  ├─ type: VariableDeclaration
+    │  │     │  ├─ typeName
+    │  │     │  │  ├─ type: ElementaryTypeName
+    │  │     │  │  ├─ name: uint8
+    │  │     │  │  └─ stateMutability
+    │  │     │  ├─ name: orderType
+    │  │     │  ├─ identifier
+    │  │     │  │  ├─ type: Identifier
+    │  │     │  │  └─ name: orderType
+    │  │     │  ├─ storageLocation
+    │  │     │  ├─ isStateVar: false
+    │  │     │  ├─ isIndexed: false
+    │  │     │  └─ expression
+    │  │     └─ 10
+    │  │        ├─ type: VariableDeclaration
+    │  │        ├─ typeName
+    │  │        │  ├─ type: ElementaryTypeName
+    │  │        │  ├─ name: bool
+    │  │        │  └─ stateMutability
+    │  │        ├─ name: isSold
+    │  │        ├─ identifier
+    │  │        │  ├─ type: Identifier
+    │  │        │  └─ name: isSold
+    │  │        ├─ storageLocation
+    │  │        ├─ isStateVar: false
+    │  │        ├─ isIndexed: false
+    │  │        └─ expression
+    │  └─ 8
     │     ├─ type: StructDefinition
-    │     ├─ name: Order
+    │     ├─ name: Order1155
     │     └─ members
     │        ├─ 0
-    │        │  ├─ type: VariableDeclaration
-    │        │  ├─ typeName
-    │        │  │  ├─ type: ElementaryTypeName
-    │        │  │  ├─ name: uint8
-    │        │  │  └─ stateMutability
-    │        │  ├─ name: orderType
-    │        │  ├─ identifier
-    │        │  │  ├─ type: Identifier
-    │        │  │  └─ name: orderType
-    │        │  ├─ storageLocation
-    │        │  ├─ isStateVar: false
-    │        │  ├─ isIndexed: false
-    │        │  └─ expression
-    │        ├─ 1
-    │        │  ├─ type: VariableDeclaration
-    │        │  ├─ typeName
-    │        │  │  ├─ type: ElementaryTypeName
-    │        │  │  ├─ name: address
-    │        │  │  └─ stateMutability
-    │        │  ├─ name: seller
-    │        │  ├─ identifier
-    │        │  │  ├─ type: Identifier
-    │        │  │  └─ name: seller
-    │        │  ├─ storageLocation
-    │        │  ├─ isStateVar: false
-    │        │  ├─ isIndexed: false
-    │        │  └─ expression
-    │        ├─ 2
-    │        │  ├─ type: VariableDeclaration
-    │        │  ├─ typeName
-    │        │  │  ├─ type: UserDefinedTypeName
-    │        │  │  └─ namePath: IERC721
-    │        │  ├─ name: token
-    │        │  ├─ identifier
-    │        │  │  ├─ type: Identifier
-    │        │  │  └─ name: token
-    │        │  ├─ storageLocation
-    │        │  ├─ isStateVar: false
-    │        │  ├─ isIndexed: false
-    │        │  └─ expression
-    │        ├─ 3
     │        │  ├─ type: VariableDeclaration
     │        │  ├─ typeName
     │        │  │  ├─ type: ElementaryTypeName
@@ -384,7 +653,21 @@ library Types {
     │        │  ├─ isStateVar: false
     │        │  ├─ isIndexed: false
     │        │  └─ expression
-    │        ├─ 4
+    │        ├─ 1
+    │        │  ├─ type: VariableDeclaration
+    │        │  ├─ typeName
+    │        │  │  ├─ type: ElementaryTypeName
+    │        │  │  ├─ name: uint256
+    │        │  │  └─ stateMutability
+    │        │  ├─ name: amount
+    │        │  ├─ identifier
+    │        │  │  ├─ type: Identifier
+    │        │  │  └─ name: amount
+    │        │  ├─ storageLocation
+    │        │  ├─ isStateVar: false
+    │        │  ├─ isIndexed: false
+    │        │  └─ expression
+    │        ├─ 2
     │        │  ├─ type: VariableDeclaration
     │        │  ├─ typeName
     │        │  │  ├─ type: ElementaryTypeName
@@ -398,7 +681,7 @@ library Types {
     │        │  ├─ isStateVar: false
     │        │  ├─ isIndexed: false
     │        │  └─ expression
-    │        ├─ 5
+    │        ├─ 3
     │        │  ├─ type: VariableDeclaration
     │        │  ├─ typeName
     │        │  │  ├─ type: ElementaryTypeName
@@ -412,7 +695,7 @@ library Types {
     │        │  ├─ isStateVar: false
     │        │  ├─ isIndexed: false
     │        │  └─ expression
-    │        ├─ 6
+    │        ├─ 4
     │        │  ├─ type: VariableDeclaration
     │        │  ├─ typeName
     │        │  │  ├─ type: ElementaryTypeName
@@ -426,7 +709,7 @@ library Types {
     │        │  ├─ isStateVar: false
     │        │  ├─ isIndexed: false
     │        │  └─ expression
-    │        ├─ 7
+    │        ├─ 5
     │        │  ├─ type: VariableDeclaration
     │        │  ├─ typeName
     │        │  │  ├─ type: ElementaryTypeName
@@ -440,7 +723,7 @@ library Types {
     │        │  ├─ isStateVar: false
     │        │  ├─ isIndexed: false
     │        │  └─ expression
-    │        ├─ 8
+    │        ├─ 6
     │        │  ├─ type: VariableDeclaration
     │        │  ├─ typeName
     │        │  │  ├─ type: ElementaryTypeName
@@ -454,7 +737,7 @@ library Types {
     │        │  ├─ isStateVar: false
     │        │  ├─ isIndexed: false
     │        │  └─ expression
-    │        ├─ 9
+    │        ├─ 7
     │        │  ├─ type: VariableDeclaration
     │        │  ├─ typeName
     │        │  │  ├─ type: ElementaryTypeName
@@ -468,7 +751,48 @@ library Types {
     │        │  ├─ isStateVar: false
     │        │  ├─ isIndexed: false
     │        │  └─ expression
-    │        └─ 10
+    │        ├─ 8
+    │        │  ├─ type: VariableDeclaration
+    │        │  ├─ typeName
+    │        │  │  ├─ type: UserDefinedTypeName
+    │        │  │  └─ namePath: IERC1155
+    │        │  ├─ name: token
+    │        │  ├─ identifier
+    │        │  │  ├─ type: Identifier
+    │        │  │  └─ name: token
+    │        │  ├─ storageLocation
+    │        │  ├─ isStateVar: false
+    │        │  ├─ isIndexed: false
+    │        │  └─ expression
+    │        ├─ 9
+    │        │  ├─ type: VariableDeclaration
+    │        │  ├─ typeName
+    │        │  │  ├─ type: ElementaryTypeName
+    │        │  │  ├─ name: address
+    │        │  │  └─ stateMutability
+    │        │  ├─ name: seller
+    │        │  ├─ identifier
+    │        │  │  ├─ type: Identifier
+    │        │  │  └─ name: seller
+    │        │  ├─ storageLocation
+    │        │  ├─ isStateVar: false
+    │        │  ├─ isIndexed: false
+    │        │  └─ expression
+    │        ├─ 10
+    │        │  ├─ type: VariableDeclaration
+    │        │  ├─ typeName
+    │        │  │  ├─ type: ElementaryTypeName
+    │        │  │  ├─ name: uint8
+    │        │  │  └─ stateMutability
+    │        │  ├─ name: orderType
+    │        │  ├─ identifier
+    │        │  │  ├─ type: Identifier
+    │        │  │  └─ name: orderType
+    │        │  ├─ storageLocation
+    │        │  ├─ isStateVar: false
+    │        │  ├─ isIndexed: false
+    │        │  └─ expression
+    │        └─ 11
     │           ├─ type: VariableDeclaration
     │           ├─ typeName
     │           │  ├─ type: ElementaryTypeName

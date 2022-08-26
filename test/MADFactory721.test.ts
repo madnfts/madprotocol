@@ -15,28 +15,33 @@ import {
   MADRouter721,
 } from "../src/types";
 import { FactoryErrors } from "./utils/errors";
-import { dead, mFixture721 } from "./utils/madFixtures";
+import {
+  Collection,
+  SplitterConfig,
+  dead,
+  mFixture721,
+} from "./utils/madFixtures";
 
 const createFixtureLoader = waffle.createFixtureLoader;
 
 describe("MADFactory721", () => {
   type WalletWithAddress = Wallet & SignerWithAddress;
 
-  type SplitterConfig = {
-    splitter: string;
-    splitterSalt: string;
-    ambassador: string;
-    ambShare: BigNumber;
-    valid: boolean;
-  };
+  // type SplitterConfig = {
+  //   splitter: string;
+  //   splitterSalt: string;
+  //   ambassador: string;
+  //   ambShare: BigNumber;
+  //   valid: boolean;
+  // };
 
-  type Collection = {
-    creator: string;
-    colType: number;
-    colSalt: string;
-    blocknumber: BigNumber;
-    splitter: string;
-  };
+  // type Collection = {
+  //   creator: string;
+  //   colType: number;
+  //   colSalt: string;
+  //   blocknumber: BigNumber;
+  //   splitter: string;
+  // };
 
   // contract deployer/admin
   let owner: WalletWithAddress;
@@ -838,7 +843,7 @@ describe("MADFactory721", () => {
       await min.connect(acc02).approve(m721.address, 1);
       await m721
         .connect(acc02)
-        .fixedPrice(minAddr, 1, price, blocknum + 300);
+        .fixedPrice(minAddr, 1, price, blocknum + 400);
       await mine(296);
       const orderID = await m721.callStatic.orderIdBySeller(
         acc02.address,

@@ -430,7 +430,7 @@ export interface ERC721Minimal extends BaseContract {
     publicMintState(overrides?: CallOverrides): Promise<[boolean]>;
 
     royaltyInfo(
-      tokenId: PromiseOrValue<BigNumberish>,
+      arg0: PromiseOrValue<BigNumberish>,
       salePrice: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
@@ -556,7 +556,7 @@ export interface ERC721Minimal extends BaseContract {
   publicMintState(overrides?: CallOverrides): Promise<boolean>;
 
   royaltyInfo(
-    tokenId: PromiseOrValue<BigNumberish>,
+    arg0: PromiseOrValue<BigNumberish>,
     salePrice: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<
@@ -678,7 +678,7 @@ export interface ERC721Minimal extends BaseContract {
     publicMintState(overrides?: CallOverrides): Promise<boolean>;
 
     royaltyInfo(
-      tokenId: PromiseOrValue<BigNumberish>,
+      arg0: PromiseOrValue<BigNumberish>,
       salePrice: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
@@ -868,7 +868,7 @@ export interface ERC721Minimal extends BaseContract {
     publicMintState(overrides?: CallOverrides): Promise<BigNumber>;
 
     royaltyInfo(
-      tokenId: PromiseOrValue<BigNumberish>,
+      arg0: PromiseOrValue<BigNumberish>,
       salePrice: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -993,7 +993,7 @@ export interface ERC721Minimal extends BaseContract {
     publicMintState(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     royaltyInfo(
-      tokenId: PromiseOrValue<BigNumberish>,
+      arg0: PromiseOrValue<BigNumberish>,
       salePrice: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

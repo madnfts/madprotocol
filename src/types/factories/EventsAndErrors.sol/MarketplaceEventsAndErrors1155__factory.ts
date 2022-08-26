@@ -274,6 +274,19 @@ const _abi = [
     name: "MakeOrder",
     type: "event",
   },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "newRecipient",
+        type: "address",
+      },
+    ],
+    name: "RecipientUpdated",
+    type: "event",
+  },
 ];
 
 export class MarketplaceEventsAndErrors1155__factory {

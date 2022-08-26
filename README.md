@@ -39,6 +39,7 @@
 │   ├── test
 │   │   ├── erc20-mock.sol
 │   │   ├── erc2981-mock.sol
+│   │   ├── erc721-mock.sol
 │   │   └── test-interfaces.sol
 │   ├── tokens
 │   │   ├── common

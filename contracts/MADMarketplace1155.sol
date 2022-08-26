@@ -52,12 +52,14 @@ contract MADMarketplace1155 is
     /// @dev token => id => amount => orderID[]
     mapping(IERC1155 => mapping(uint256 => mapping(uint256 => bytes32[])))
         public orderIdByToken;
+
     /// @dev seller => orderID
     mapping(address => bytes32[]) public orderIdBySeller;
+
     /// @dev orderID => order details
     mapping(bytes32 => Types.Order1155) public orderInfo;
 
-    uint16 public constant feePercent = 20000;
+    uint16 public constant feePercent = 200;
     uint256 public minOrderDuration;
     uint256 public minAuctionIncrement;
     uint256 public minBidValue;
@@ -74,12 +76,13 @@ contract MADMarketplace1155 is
         uint256 _minOrderDuration,
         FactoryVerifier _factory
     ) {
-        recipient = _recipient;
-        minOrderDuration = _minOrderDuration;
-        minAuctionIncrement = 300; // 5min
-        minBidValue = 20; // 5% (1/20th)
-
-        MADFactory1155 = _factory;
+        setFactory(_factory);
+        setRecipient(_recipient);
+        updateSettings(
+            300, // 5 min
+            _minOrderDuration,
+            20 // 5% (1/20th)
+        );
     }
 
     ////////////////////////////////////////////////////////////////
@@ -116,7 +119,7 @@ contract MADMarketplace1155 is
         uint256 _endPrice,
         uint256 _endBlock
     ) public whenNotPaused {
-        if (_startPrice <= _endPrice) revert ExceedsMaxEP();
+        _exceedsMaxEP(_startPrice, _endPrice);
         _makeOrder(
             1,
             _token,
@@ -158,36 +161,43 @@ contract MADMarketplace1155 is
         payable
         whenNotPaused
     {
-        if (msg.value == 0) revert WrongPrice();
-
         Types.Order1155 storage order = orderInfo[_order];
-        uint256 endBlock = order.endBlock;
+
         uint256 lastBidPrice = order.lastBidPrice;
-        address lastBidder = order.lastBidder;
 
-        if (order.orderType != 2) revert EAOnly();
-        if (endBlock == 0) revert CanceledOrder();
-        if (block.number > endBlock) revert Timeout();
-        if (order.seller == msg.sender)
-            revert InvalidBidder();
-
-        if (
-            msg.value <
-            lastBidPrice + (lastBidPrice / minBidValue)
-        ) revert WrongPrice();
+        _bidChecks(
+            order.orderType,
+            order.endBlock,
+            order.seller,
+            lastBidPrice,
+            order.startPrice
+        );
 
         // 1s blocktime
-        if (block.number > endBlock - minAuctionIncrement) {
-            order.endBlock = endBlock + minAuctionIncrement;
+        assembly {
+            let endBlock := and(
+                sload(add(order.slot, 4)),
+                shr(32, not(0))
+            )
+            if gt(
+                number(),
+                sub(endBlock, sload(minAuctionIncrement.slot))
+            ) {
+                let inc := add(
+                    endBlock,
+                    sload(minAuctionIncrement.slot)
+                )
+                sstore(add(order.slot, 4), inc)
+            }
+            sstore(add(order.slot, 6), caller())
+            sstore(add(order.slot, 5), callvalue())
         }
-
-        order.lastBidder = msg.sender;
-        order.lastBidPrice = msg.value;
-
-        SafeTransferLib.safeTransferETH(
-            lastBidder,
-            lastBidPrice
-        );
+        if (lastBidPrice != 0) {
+            SafeTransferLib.safeTransferETH(
+                order.lastBidder,
+                lastBidPrice
+            );
+        }
 
         emit Bid(
             order.token,
@@ -199,7 +209,8 @@ contract MADMarketplace1155 is
         );
     }
 
-    /// @notice Enables user to buy an nft for both Fixed Price and Dutch Auction listings
+    /// @notice Enables user to buy an nft for both Fixed Price and Dutch Auction listings.
+    /// @dev Price overrunning not accepted in fixed price and dutch auction.
     /// @dev Function Signature := 0x9c9a1061
     function buy(bytes32 _order)
         external
@@ -207,116 +218,51 @@ contract MADMarketplace1155 is
         whenNotPaused
     {
         Types.Order1155 storage order = orderInfo[_order];
-        uint256 endBlock = order.endBlock;
-        if (endBlock == 0) revert CanceledOrder();
-        if (endBlock <= block.number) revert Timeout();
-        if (order.orderType == 2) revert NotBuyable();
-        if (order.isSold == true) revert SoldToken();
+
+        _buyChecks(
+            order.endBlock,
+            order.orderType,
+            order.isSold
+        );
 
         uint256 currentPrice = getCurrentPrice(_order);
-        // price overrunning not accepted in fixed price and dutch auction
         if (msg.value != currentPrice) revert WrongPrice();
 
         order.isSold = true;
 
-        // address _seller = order.seller;
-        IERC1155 _token = order.token;
-
         // path for inhouse minted tokens
         if (
             MADFactory1155.creatorAuth(
-                address(_token),
+                address(order.token),
                 order.seller
             ) == true
         ) {
-            // load royalty info query to mem
-            address _receiver;
-            uint256 _amount;
-            (_receiver, _amount) = _token.royaltyInfo(
-                order.tokenId,
-                currentPrice
-            );
-
-            // transfer royalties
-            SafeTransferLib.safeTransferETH(
-                _receiver,
-                _amount
-            );
-
-            // transfer remaining value to seller
-            SafeTransferLib.safeTransferETH(
-                payable(order.seller),
-                currentPrice - _amount
-            );
-
-            // path for external tokens
-        } else {
+            _intPath(order, currentPrice, _order, msg.sender);
+        }
+        // path for external tokens
+        else {
             // case for external tokens with ERC2981 support
             if (
-                _token.supportsInterface(0x2a55205a) == true
+                order.token.supportsInterface(0x2a55205a) ==
+                true
             ) {
-                // load royalty info query to mem
-                address _receiver;
-                uint256 _amount;
-                (_receiver, _amount) = _token.royaltyInfo(
-                    order.tokenId,
-                    currentPrice
+                _extPath0(
+                    order,
+                    currentPrice,
+                    _order,
+                    msg.sender
                 );
-
-                // transfer royalties
-                SafeTransferLib.safeTransferETH(
-                    payable(_receiver),
-                    _amount
-                );
-
-                // update price and transfer fee to recipient
-                currentPrice = currentPrice - _amount;
-                uint256 fee = (currentPrice * feePercent) /
-                    10000;
-                SafeTransferLib.safeTransferETH(
-                    payable(recipient),
-                    fee
-                );
-
-                // transfer remaining value to seller
-                SafeTransferLib.safeTransferETH(
-                    payable(order.seller),
-                    currentPrice - fee
-                );
-
-                // case for external tokens without ERC2981 support
-            } else {
-                uint256 fee = (currentPrice * feePercent) /
-                    10000;
-                SafeTransferLib.safeTransferETH(
-                    payable(recipient),
-                    fee
-                );
-                SafeTransferLib.safeTransferETH(
-                    payable(order.seller),
-                    currentPrice - fee
+            }
+            // case for external tokens without ERC2981 support
+            else {
+                _extPath1(
+                    order,
+                    currentPrice,
+                    _order,
+                    msg.sender
                 );
             }
         }
-
-        // transfer token and emit event
-        order.token.safeTransferFrom(
-            address(this),
-            msg.sender,
-            order.tokenId,
-            order.amount,
-            ""
-        );
-
-        emit Claim(
-            order.token,
-            order.tokenId,
-            order.amount,
-            _order,
-            order.seller,
-            msg.sender,
-            currentPrice
-        );
     }
 
     /// @notice Pull method for NFT withdrawing in English Auction.
@@ -325,119 +271,53 @@ contract MADMarketplace1155 is
     function claim(bytes32 _order) external whenNotPaused {
         Types.Order1155 storage order = orderInfo[_order];
 
-        address seller = order.seller;
-        address lastBidder = order.lastBidder;
-
-        if (order.isSold == true) revert SoldToken();
-        if (seller != msg.sender || lastBidder != msg.sender)
-            revert AccessDenied();
-        if (order.orderType != 2) revert EAOnly();
-        if (block.number <= order.endBlock)
-            revert NeedMoreTime();
-
-        IERC1155 token = order.token;
-        uint256 tokenId = order.tokenId;
-        uint256 amount = order.amount;
-        uint256 lastBidPrice = order.lastBidPrice;
+        _isBidderOrSeller(order.lastBidder, order.seller);
+        _claimChecks(
+            order.isSold,
+            order.orderType,
+            order.endBlock
+        );
 
         order.isSold = true;
-
-        // address _seller = order.seller;
-        IERC1155 _token = order.token;
 
         // path for inhouse minted tokens
         if (
             MADFactory1155.creatorAuth(
-                address(_token),
+                address(order.token),
                 order.seller
             ) == true
         ) {
-            // load royalty info query to mem
-            address _receiver;
-            uint256 _amount;
-            (_receiver, _amount) = _token.royaltyInfo(
-                order.tokenId,
-                lastBidPrice
+            _intPath(
+                order,
+                order.lastBidPrice,
+                _order,
+                order.lastBidder
             );
-
-            // transfer royalties
-            SafeTransferLib.safeTransferETH(
-                _receiver,
-                _amount
-            );
-
-            // transfer remaining value to seller
-            SafeTransferLib.safeTransferETH(
-                payable(order.seller),
-                lastBidPrice - _amount
-            );
-
-            // path for external tokens
-        } else {
+        }
+        // path for external tokens
+        else {
             // case for external tokens with ERC2981 support
             if (
-                _token.supportsInterface(0x2a55205a) == true
+                order.token.supportsInterface(0x2a55205a) ==
+                true
             ) {
-                // load royalty info query to mem
-                address _receiver;
-                uint256 _amount;
-                (_receiver, _amount) = _token.royaltyInfo(
-                    order.tokenId,
-                    lastBidPrice
+                _extPath0(
+                    order,
+                    order.lastBidPrice,
+                    _order,
+                    order.lastBidder
                 );
-
-                // transfer royalties
-                SafeTransferLib.safeTransferETH(
-                    payable(_receiver),
-                    _amount
-                );
-
-                // update price and transfer fee to recipient
-                uint256 newPrice = lastBidPrice - _amount;
-                uint256 fee = (newPrice * feePercent) / 10000;
-                SafeTransferLib.safeTransferETH(
-                    payable(recipient),
-                    fee
-                );
-
-                // transfer remaining value to seller
-                SafeTransferLib.safeTransferETH(
-                    payable(order.seller),
-                    newPrice - fee
-                );
-
-                // case for external tokens without ERC2981 support
-            } else {
-                uint256 fee = (lastBidPrice * feePercent) /
-                    10000;
-                SafeTransferLib.safeTransferETH(
-                    payable(recipient),
-                    fee
-                );
-                SafeTransferLib.safeTransferETH(
-                    payable(order.seller),
-                    lastBidPrice - fee
+            }
+            // case for external tokens without ERC2981 support
+            else {
+                _extPath1(
+                    order,
+                    order.lastBidPrice,
+                    _order,
+                    order.lastBidder
                 );
             }
         }
-
-        token.safeTransferFrom(
-            address(this),
-            lastBidder,
-            tokenId,
-            amount,
-            ""
-        );
-
-        emit Claim(
-            token,
-            tokenId,
-            amount,
-            _order,
-            seller,
-            lastBidder,
-            lastBidPrice
-        );
     }
 
     /// @notice Enables sellers to withdraw their tokens.
@@ -445,9 +325,11 @@ contract MADMarketplace1155 is
     /// @dev Cancels order setting endBlock value to 0.
     function cancelOrder(bytes32 _order) external {
         Types.Order1155 storage order = orderInfo[_order];
-        if (order.seller != msg.sender) revert AccessDenied();
-        if (order.lastBidPrice != 0) revert BidExists();
-        if (order.isSold == true) revert SoldToken();
+        _cancelOrderChecks(
+            order.seller,
+            order.isSold,
+            order.lastBidPrice
+        );
 
         IERC1155 token = order.token;
         uint256 tokenId = order.tokenId;
@@ -484,8 +366,10 @@ contract MADMarketplace1155 is
         public
         onlyOwner
     {
-        MADFactory1155 = _factory;
-
+        assembly {
+            // MADFactory1155 = _factory;
+            sstore(MADFactory1155.slot, _factory)
+        }
         emit FactoryUpdated(_factory);
     }
 
@@ -500,13 +384,22 @@ contract MADMarketplace1155 is
         uint256 _minOrderDuration,
         uint256 _minBidValue
     ) public onlyOwner {
-        minOrderDuration = _minOrderDuration;
-        minAuctionIncrement = _minAuctionIncrement;
-        minBidValue = _minBidValue;
+        // minOrderDuration = _minOrderDuration;
+        // minAuctionIncrement = _minAuctionIncrement;
+        // minBidValue = _minBidValue;
+        assembly {
+            sstore(minOrderDuration.slot, _minOrderDuration)
+            sstore(
+                minAuctionIncrement.slot,
+                _minAuctionIncrement
+            )
+            sstore(minBidValue.slot, _minBidValue)
+        }
+
         emit AuctionSettingsUpdated(
-            minOrderDuration,
-            minAuctionIncrement,
-            minBidValue
+            _minOrderDuration,
+            _minAuctionIncrement,
+            _minBidValue
         );
     }
 
@@ -525,10 +418,15 @@ contract MADMarketplace1155 is
     /// @notice Enables the contract's owner to change recipient address.
     /// @dev Function Signature := 0x3bbed4a0
     function setRecipient(address _recipient)
-        external
+        public
         onlyOwner
     {
-        recipient = _recipient;
+        // recipient = _recipient;
+        assembly {
+            sstore(recipient.slot, _recipient)
+        }
+
+        emit RecipientUpdated(_recipient);
     }
 
     /// @dev Function Signature := 0x13af4035
@@ -537,7 +435,10 @@ contract MADMarketplace1155 is
         override
         onlyOwner
     {
-        owner = newOwner;
+        // owner = newOwner;
+        assembly {
+            sstore(owner.slot, newOwner)
+        }
 
         emit OwnerUpdated(msg.sender, newOwner);
     }
@@ -563,7 +464,6 @@ contract MADMarketplace1155 is
         delete orderIdByToken[_token][_id][_amount];
         delete orderIdBySeller[_seller];
 
-        // test if token is properly transfered back to it's owner
         _token.safeTransferFrom(
             address(this),
             _seller,
@@ -591,11 +491,7 @@ contract MADMarketplace1155 is
         uint256 _endPrice,
         uint256 _endBlock
     ) internal {
-        if (
-            _endBlock <= block.number &&
-            _endBlock - block.number < minOrderDuration
-        ) revert NeedMoreTime();
-        if (_startPrice == 0) revert WrongPrice();
+        _makeOrderChecks(_endBlock, _startPrice);
 
         bytes32 hash = _hash(
             _token,
@@ -604,9 +500,6 @@ contract MADMarketplace1155 is
             msg.sender
         );
         orderInfo[hash] = Types.Order1155(
-            _orderType,
-            msg.sender,
-            _token,
             _id,
             _amount,
             _startPrice,
@@ -615,6 +508,9 @@ contract MADMarketplace1155 is
             _endBlock,
             0,
             address(0),
+            _token,
+            msg.sender,
+            _orderType,
             false
         );
         orderIdByToken[_token][_id][_amount].push(hash);
@@ -657,8 +553,337 @@ contract MADMarketplace1155 is
             );
     }
 
+    function _intPath(
+        Types.Order1155 storage _order,
+        uint256 _price,
+        bytes32 _orderId,
+        address _to
+    ) internal {
+        // load royalty info query to mem
+        (address _receiver, uint256 _amount) = _order
+            .token
+            .royaltyInfo(_order.tokenId, _price);
+        // transfer royalties
+        SafeTransferLib.safeTransferETH(_receiver, _amount);
+        // transfer remaining value to seller
+        SafeTransferLib.safeTransferETH(
+            payable(_order.seller),
+            _price - _amount
+        );
+        // transfer token and emit event
+        _order.token.safeTransferFrom(
+            address(this),
+            _to,
+            _order.tokenId,
+            _order.amount,
+            ""
+        );
+        emit Claim(
+            _order.token,
+            _order.tokenId,
+            _order.amount,
+            _orderId,
+            _order.seller,
+            _to,
+            _price
+        );
+    }
+
+    function _extPath0(
+        Types.Order1155 storage _order,
+        uint256 _price,
+        bytes32 _orderId,
+        address _to
+    ) internal {
+        // load royalty info query to mem
+        (address _receiver, uint256 _amount) = _order
+            .token
+            .royaltyInfo(_order.tokenId, _price);
+        // transfer royalties
+        SafeTransferLib.safeTransferETH(
+            payable(_receiver),
+            _amount
+        );
+        // update price and transfer fee to recipient
+        uint256 fee = ((_price - _amount) * feePercent) /
+            10000;
+        SafeTransferLib.safeTransferETH(
+            payable(recipient),
+            fee
+        );
+        // transfer remaining value to seller
+        SafeTransferLib.safeTransferETH(
+            payable(_order.seller),
+            (_price - _amount) - fee
+        );
+        // transfer token and emit event
+        _order.token.safeTransferFrom(
+            address(this),
+            _to,
+            _order.tokenId,
+            _order.amount,
+            ""
+        );
+        emit Claim(
+            _order.token,
+            _order.tokenId,
+            _order.amount,
+            _orderId,
+            _order.seller,
+            _to,
+            _price
+        );
+    }
+
+    function _extPath1(
+        Types.Order1155 storage _order,
+        uint256 _price,
+        bytes32 _orderId,
+        address _to
+    ) internal {
+        uint256 fee = (_price * feePercent) / 10000;
+        SafeTransferLib.safeTransferETH(
+            payable(recipient),
+            fee
+        );
+        SafeTransferLib.safeTransferETH(
+            payable(_order.seller),
+            _price - fee
+        );
+        // transfer token and emit event
+        _order.token.safeTransferFrom(
+            address(this),
+            _to,
+            _order.tokenId,
+            _order.amount,
+            ""
+        );
+        emit Claim(
+            _order.token,
+            _order.tokenId,
+            _order.amount,
+            _orderId,
+            _order.seller,
+            _to,
+            _price
+        );
+    }
+
     ////////////////////////////////////////////////////////////////
-    //                           VIEW FX                          //
+    //                        PRIVATE FX                          //
+    ////////////////////////////////////////////////////////////////
+
+    function _exceedsMaxEP(
+        uint256 _startPrice,
+        uint256 _endPrice
+    ) private pure {
+        assembly {
+            // ExceedsMaxEP()
+            if iszero(
+                iszero(
+                    or(
+                        eq(_startPrice, _endPrice),
+                        lt(_startPrice, _endPrice)
+                    )
+                )
+            ) {
+                mstore(0x00, 0x70f8f33a)
+                revert(0x1c, 0x04)
+            }
+        }
+    }
+
+    function _isBidderOrSeller(
+        address _bidder,
+        address _seller
+    ) private view {
+        assembly {
+            // AccessDenied()
+            if iszero(
+                or(
+                    eq(caller(), _seller),
+                    eq(caller(), _bidder)
+                )
+            ) {
+                mstore(0x00, 0x4ca88867)
+                revert(0x1c, 0x04)
+            }
+        }
+    }
+
+    function _makeOrderChecks(
+        uint256 _endBlock,
+        uint256 _startPrice
+    ) private view {
+        assembly {
+            // NeedMoreTime()
+            if iszero(
+                iszero(
+                    or(
+                        or(
+                            eq(number(), _endBlock),
+                            lt(_endBlock, number())
+                        ),
+                        lt(
+                            sub(_endBlock, number()),
+                            sload(minOrderDuration.slot)
+                        )
+                    )
+                )
+            ) {
+                mstore(0x00, 0x921dbfec)
+                revert(0x1c, 0x04)
+            }
+            // WrongPrice()
+            if iszero(_startPrice) {
+                mstore(0x00, 0xf7760f25)
+                revert(0x1c, 0x04)
+            }
+        }
+    }
+
+    function _cancelOrderChecks(
+        address _seller,
+        bool _isSold,
+        uint256 _lastBidPrice
+    ) private view {
+        assembly {
+            // AccessDenied()
+            if iszero(eq(_seller, caller())) {
+                mstore(0x00, 0x4ca88867)
+                revert(0x1c, 0x04)
+            }
+            // SoldToken()
+            if iszero(iszero(_isSold)) {
+                mstore(0x00, 0xf88b07a3)
+                revert(0x1c, 0x04)
+            }
+            // BidExists()
+            if iszero(iszero(_lastBidPrice)) {
+                mstore(0x00, 0x3e0827ab)
+                revert(0x1c, 0x04)
+            }
+        }
+    }
+
+    function _bidChecks(
+        uint8 _orderType,
+        uint256 _endBlock,
+        address _seller,
+        uint256 _lastBidPrice,
+        uint256 _startPrice
+    ) private view {
+        assembly {
+            // EAOnly()
+            if iszero(eq(_orderType, 2)) {
+                mstore(0x00, 0xffc96cb0)
+                revert(0x1c, 0x04)
+            }
+            // CanceledOrder()
+            if iszero(_endBlock) {
+                mstore(0x00, 0xdf9428da)
+                revert(0x1c, 0x04)
+            }
+            // Timeout()
+            if gt(number(), _endBlock) {
+                mstore(0x00, 0x2af0c7f8)
+                revert(0x1c, 0x04)
+            }
+            // InvalidBidder()
+            if eq(caller(), _seller) {
+                mstore(0x00, 0x0863b103)
+                revert(0x1c, 0x04)
+            }
+            // WrongPrice()
+            switch iszero(_lastBidPrice)
+            case 0 {
+                if lt(
+                    callvalue(),
+                    add(
+                        _lastBidPrice,
+                        div(
+                            _lastBidPrice,
+                            sload(minBidValue.slot)
+                        )
+                    )
+                ) {
+                    mstore(0x00, 0xf7760f25)
+                    revert(0x1c, 0x04)
+                }
+            }
+            case 1 {
+                if or(
+                    iszero(callvalue()),
+                    lt(callvalue(), _startPrice)
+                ) {
+                    mstore(0x00, 0xf7760f25)
+                    revert(0x1c, 0x04)
+                }
+            }
+        }
+    }
+
+    function _buyChecks(
+        uint256 _endBlock,
+        uint8 _orderType,
+        bool _isSold
+    ) private view {
+        assembly {
+            // CanceledOrder()
+            if iszero(_endBlock) {
+                mstore(0x00, 0xdf9428da)
+                revert(0x1c, 0x04)
+            }
+            // Timeout()
+            if or(
+                eq(number(), _endBlock),
+                lt(_endBlock, number())
+            ) {
+                mstore(0x00, 0x2af0c7f8)
+                revert(0x1c, 0x04)
+            }
+            // NotBuyable()
+            if eq(_orderType, 0x02) {
+                mstore(0x00, 0x07ae5744)
+                revert(0x1c, 0x04)
+            }
+            // SoldToken()
+            if iszero(iszero(_isSold)) {
+                mstore(0x00, 0xf88b07a3)
+                revert(0x1c, 0x04)
+            }
+        }
+    }
+
+    function _claimChecks(
+        bool _isSold,
+        uint8 _orderType,
+        uint256 _endBlock
+    ) private view {
+        assembly {
+            // SoldToken()
+            if iszero(iszero(_isSold)) {
+                mstore(0x00, 0xf88b07a3)
+                revert(0x1c, 0x04)
+            }
+            // EAOnly()
+            if iszero(eq(_orderType, 0x02)) {
+                mstore(0x00, 0xffc96cb0)
+                revert(0x1c, 0x04)
+            }
+            // NeedMoreTime()
+            if or(
+                eq(number(), _endBlock),
+                lt(number(), _endBlock)
+            ) {
+                mstore(0x00, 0x921dbfec)
+                revert(0x1c, 0x04)
+            }
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////
+    //                   PUBLIC/EXTERNAL GETTERS                  //
     ////////////////////////////////////////////////////////////////
 
     /// @notice Works as price fetcher of listed tokens
@@ -667,30 +892,68 @@ contract MADMarketplace1155 is
     function getCurrentPrice(bytes32 _order)
         public
         view
-        returns (uint256)
+        returns (uint256 price)
     {
         Types.Order1155 storage order = orderInfo[_order];
-        uint8 orderType = order.orderType;
-        // Fixed Price
-        if (orderType == 0) {
-            return order.startPrice;
-            // English Auction
-        } else if (orderType == 2) {
-            uint256 lastBidPrice = order.lastBidPrice;
-            return
-                lastBidPrice == 0
-                    ? order.startPrice
-                    : lastBidPrice;
-        } else {
+
+        assembly {
+            let orderType := shr(
+                160,
+                sload(add(order.slot, 8))
+            )
+            mstore(0x80, orderType)
+            switch mload(0x80)
+            // Fixed Price
+            case 0 {
+                price := and(
+                    sload(add(order.slot, 1)),
+                    shr(32, not(0))
+                )
+            }
             // Ductch Auction
-            uint256 _startPrice = order.startPrice;
-            uint256 _startBlock = order.startBlock;
-            uint256 tickPerBlock = (_startPrice -
-                order.endPrice) /
-                (order.endBlock - _startBlock);
-            return
-                _startPrice -
-                ((block.number - _startBlock) * tickPerBlock);
+            case 1 {
+                let _startPrice := and(
+                    sload(add(order.slot, 1)),
+                    shr(32, not(0))
+                )
+                let _startBlock := and(
+                    sload(add(order.slot, 3)),
+                    shr(32, not(0))
+                )
+                let _endPrice := and(
+                    sload(add(order.slot, 2)),
+                    shr(32, not(0))
+                )
+                let _endBlock := and(
+                    sload(add(order.slot, 4)),
+                    shr(32, not(0))
+                )
+                let _tick := div(
+                    sub(_startPrice, _endPrice),
+                    sub(_endBlock, _startBlock)
+                )
+                price := sub(
+                    _startPrice,
+                    mul(sub(number(), _startBlock), _tick)
+                )
+            }
+            // English Auction
+            case 2 {
+                let lastBidPrice := and(
+                    sload(add(order.slot, 5)),
+                    shr(32, not(0))
+                )
+                switch iszero(lastBidPrice)
+                case 1 {
+                    price := and(
+                        sload(add(order.slot, 1)),
+                        shr(32, not(0))
+                    )
+                }
+                case 0 {
+                    price := lastBidPrice
+                }
+            }
         }
     }
 

@@ -743,7 +743,7 @@ export interface ERC721Whitelist extends BaseContract {
     publicPrice(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     royaltyInfo(
-      tokenId: PromiseOrValue<BigNumberish>,
+      arg0: PromiseOrValue<BigNumberish>,
       salePrice: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
@@ -947,7 +947,7 @@ export interface ERC721Whitelist extends BaseContract {
   publicPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
   royaltyInfo(
-    tokenId: PromiseOrValue<BigNumberish>,
+    arg0: PromiseOrValue<BigNumberish>,
     salePrice: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<
@@ -1151,7 +1151,7 @@ export interface ERC721Whitelist extends BaseContract {
     publicPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
     royaltyInfo(
-      tokenId: PromiseOrValue<BigNumberish>,
+      arg0: PromiseOrValue<BigNumberish>,
       salePrice: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<
@@ -1462,7 +1462,7 @@ export interface ERC721Whitelist extends BaseContract {
     publicPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
     royaltyInfo(
-      tokenId: PromiseOrValue<BigNumberish>,
+      arg0: PromiseOrValue<BigNumberish>,
       salePrice: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1669,7 +1669,7 @@ export interface ERC721Whitelist extends BaseContract {
     publicPrice(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     royaltyInfo(
-      tokenId: PromiseOrValue<BigNumberish>,
+      arg0: PromiseOrValue<BigNumberish>,
       salePrice: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

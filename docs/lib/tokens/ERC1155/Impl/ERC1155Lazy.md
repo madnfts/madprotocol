@@ -219,14 +219,14 @@ function ownerOf(uint256) external view returns (address)
 ### royaltyInfo
 
 ```solidity
-function royaltyInfo(uint256 tokenId, uint256 salePrice) external view returns (address receiver, uint256 royaltyAmount)
+function royaltyInfo(uint256, uint256 salePrice) external view returns (address receiver, uint256 royaltyAmount)
 ```
 
 #### Parameters
 
 | Name      | Type    | Description |
 | --------- | ------- | ----------- |
-| tokenId   | uint256 | undefined   |
+| \_0       | uint256 | undefined   |
 | salePrice | uint256 | undefined   |
 
 #### Returns

@@ -12,7 +12,7 @@ abstract contract ERC2981 {
     address internal _royaltyRecipient;
 
     // solhint-disable-line no-unused-vars
-    function royaltyInfo(uint256 tokenId, uint256 salePrice)
+    function royaltyInfo(uint256, uint256 salePrice)
         public
         view
         virtual

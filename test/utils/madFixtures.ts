@@ -1,6 +1,7 @@
 // import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 // import { BigNumber, Signer } from "ethers";
 import { Fixture } from "ethereum-waffle";
+import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
 
 import {
@@ -14,8 +15,64 @@ import {
 import { getSignerAddrs } from "./fixtures";
 import { MADFixture721, MADFixture1155 } from "./interfaces";
 
-// export const allSigners = ethers.getSigners();
+// types
+export type OrderDetails721 = {
+  orderType: number;
+  seller: string;
+  token: string;
+  tokenId: BigNumber;
+  startPrice: BigNumber;
+  endPrice: BigNumber;
+  startBlock: BigNumber;
+  endBlock: BigNumber;
+  lastBidPrice: BigNumber;
+  lastBidder: string;
+  isSold: boolean;
+};
+export type OrderDetails1155 = {
+  orderType: number;
+  seller: string;
+  token: string;
+  tokenId: BigNumber;
+  amount: BigNumber;
+  startPrice: BigNumber;
+  endPrice: BigNumber;
+  startBlock: BigNumber;
+  endBlock: BigNumber;
+  lastBidPrice: BigNumber;
+  lastBidder: string;
+  isSold: boolean;
+};
+export type SplitterConfig = {
+  splitter: string;
+  splitterSalt: string;
+  ambassador: string;
+  ambShare: BigNumber;
+  valid: boolean;
+};
+export type Collection = {
+  creator: string;
+  colType: number;
+  colSalt: string;
+  blocknumber: BigNumber;
+  splitter: string;
+};
+
+// exported consts
 export const dead = ethers.constants.AddressZero;
+
+export const getOrderId = (
+  blocknum: number,
+  _token: string,
+  _id: number,
+  _seller: string,
+): string => {
+  const _hash = ethers.utils.solidityKeccak256(
+    ["uint256", "address", "uint256", "address"],
+    [blocknum, _token, _id, _seller],
+  );
+  return _hash;
+};
 
 export const mFixture721: Fixture<MADFixture721> =
   async function (): Promise<MADFixture721> {
@@ -29,6 +86,7 @@ export const mFixture1155: Fixture<MADFixture1155> =
     return { f1155, m1155, r1155 };
   };
 
+// async functions
 async function madFixture721(): Promise<MADFixture721> {
   const SplitterDeployer = await ethers.getContractFactory(
     "SplitterDeployer",

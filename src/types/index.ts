@@ -35,6 +35,8 @@ export type { MockERC20 } from "./lib/test/erc20-mock.sol/MockERC20";
 export { MockERC20__factory } from "./factories/lib/test/erc20-mock.sol/MockERC20__factory";
 export type { MockERC2981 } from "./lib/test/erc2981-mock.sol/MockERC2981";
 export { MockERC2981__factory } from "./factories/lib/test/erc2981-mock.sol/MockERC2981__factory";
+export type { MockERC721 } from "./lib/test/erc721-mock.sol/MockERC721";
+export { MockERC721__factory } from "./factories/lib/test/erc721-mock.sol/MockERC721__factory";
 export type { IERC1155 } from "./lib/test/test-interfaces.sol/IERC1155";
 export { IERC1155__factory } from "./factories/lib/test/test-interfaces.sol/IERC1155__factory";
 export type { IERC1155Metadata } from "./lib/test/test-interfaces.sol/IERC1155Metadata";

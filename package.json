@@ -75,7 +75,7 @@
     "build-factory": "sol-merger --remove-comments \"./contracts/MADFactory721.sol\" ./build",
     "deploy:devnet": "hardhat run scripts/devnetDeploy.ts --network devnet",
     "compile:watch": "nodemon --watch contracts/{INSERT_CONTRACT}.sol --exec 'npx hardhat compile'",
-    "test:watch": "nodemon --watch test/{INSERT_TEST}.test.ts --exec 'npx hardhat test'",
+    "test:watch": "nodemon --watch test/MADMarketplace721.test.ts --exec 'npx hardhat test'",
     "clean": "shx rm -rf ./artifacts ./cache ./coverage ./src/types ./coverage.json",
     "commit": "git-cz",
     "compile": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat compile",

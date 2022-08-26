@@ -36,9 +36,9 @@ _Function Signature := 0x957bb1e0By default, bids must be at least 5% higher tha
 function buy(bytes32 _order) external payable
 ```
 
-Enables user to buy an nft for both Fixed Price and Dutch Auction listings
+Enables user to buy an nft for both Fixed Price and Dutch Auction listings.
 
-_Function Signature := 0x9c9a1061_
+_Price overrunning not accepted in fixed price and dutch auction.Function Signature := 0x9c9a1061_
 
 #### Parameters
 
@@ -170,7 +170,7 @@ _Function Signature := 0x40b78b0f_
 ### getCurrentPrice
 
 ```solidity
-function getCurrentPrice(bytes32 _order) external view returns (uint256)
+function getCurrentPrice(bytes32 _order) external view returns (uint256 price)
 ```
 
 Works as price fetcher of listed tokens
@@ -185,9 +185,9 @@ _Function Signature := 0x161e444eUsed for price fetching in buy function._
 
 #### Returns
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | uint256 | undefined   |
+| Name  | Type    | Description |
+| ----- | ------- | ----------- |
+| price | uint256 | undefined   |
 
 ### minAuctionIncrement
 
@@ -289,9 +289,7 @@ _seller =&gt; orderID_
 function orderIdByToken(contract IERC721, uint256, uint256) external view returns (bytes32)
 ```
 
-Mappings logic: token || seller =&gt; orderID =&gt; order details
-
-_token =&gt; orderID_
+_token =&gt; id =&gt; orderID[]_
 
 #### Parameters
 
@@ -310,7 +308,7 @@ _token =&gt; orderID_
 ### orderInfo
 
 ```solidity
-function orderInfo(bytes32) external view returns (uint8 orderType, address seller, contract IERC721 token, uint256 tokenId, uint256 startPrice, uint256 endPrice, uint256 startBlock, uint256 endBlock, uint256 lastBidPrice, address lastBidder, bool isSold)
+function orderInfo(bytes32) external view returns (uint256 tokenId, uint256 startPrice, uint256 endPrice, uint256 startBlock, uint256 endBlock, uint256 lastBidPrice, address lastBidder, contract IERC721 token, address seller, uint8 orderType, bool isSold)
 ```
 
 _orderID =&gt; order details_
@@ -325,9 +323,6 @@ _orderID =&gt; order details_
 
 | Name         | Type             | Description |
 | ------------ | ---------------- | ----------- |
-| orderType    | uint8            | undefined   |
-| seller       | address          | undefined   |
-| token        | contract IERC721 | undefined   |
 | tokenId      | uint256          | undefined   |
 | startPrice   | uint256          | undefined   |
 | endPrice     | uint256          | undefined   |
@@ -335,6 +330,9 @@ _orderID =&gt; order details_
 | endBlock     | uint256          | undefined   |
 | lastBidPrice | uint256          | undefined   |
 | lastBidder   | address          | undefined   |
+| token        | contract IERC721 | undefined   |
+| seller       | address          | undefined   |
+| orderType    | uint8            | undefined   |
 | isSold       | bool             | undefined   |
 
 ### owner
@@ -623,6 +621,18 @@ event Paused(address account)
 | Name    | Type    | Description |
 | ------- | ------- | ----------- |
 | account | address | undefined   |
+
+### RecipientUpdated
+
+```solidity
+event RecipientUpdated(address indexed newRecipient)
+```
+
+#### Parameters
+
+| Name                   | Type    | Description |
+| ---------------------- | ------- | ----------- |
+| newRecipient `indexed` | address | undefined   |
 
 ### Unpaused
 

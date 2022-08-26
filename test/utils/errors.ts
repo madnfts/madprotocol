@@ -61,14 +61,15 @@ export enum SplitterErrors {
 }
 
 export enum MarketplaceErrors {
-  Unauthorized = "UNAUTHORIZED",
-  WrongPrice = "WrongPrice(0)",
   TransferFailed = "TransferFailed",
-  InvalidBidder = "InvalidBidder",
+  NotAuthorized = "NOT_AUTHORIZED",
   CanceledOrder = "CanceledOrder",
+  InvalidBidder = "InvalidBidder",
+  Unauthorized = "UNAUTHORIZED",
   ExceedsMaxEP = "ExceedsMaxEP",
-  AccessDenied = "AccessDenied",
   NeedMoreTime = "NeedMoreTime",
+  AccessDenied = "AccessDenied",
+  WrongPrice = "WrongPrice",
   NotBuyable = "NotBuyable",
   BidExists = "BidExists",
   SoldToken = "SoldToken",
@@ -76,6 +77,7 @@ export enum MarketplaceErrors {
   EAOnly = "EAOnly",
   Paused = "PAUSED",
   Unpaused = "UNPAUSED",
+  WrongFrom = "WRONG_FROM",
 }
 
 export enum FactoryErrors {

@@ -95,6 +95,18 @@ event MakeOrder(contract IERC1155 indexed token, uint256 id, uint256 amount, byt
 | hash `indexed`  | bytes32           | undefined   |
 | seller          | address           | undefined   |
 
+### RecipientUpdated
+
+```solidity
+event RecipientUpdated(address indexed newRecipient)
+```
+
+#### Parameters
+
+| Name                   | Type    | Description |
+| ---------------------- | ------- | ----------- |
+| newRecipient `indexed` | address | undefined   |
+
 ## Errors
 
 ### AccessDenied

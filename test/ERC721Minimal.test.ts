@@ -1,3 +1,5 @@
+import "@nomicfoundation/hardhat-chai-matchers";
+import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import {
@@ -6,15 +8,15 @@ import {
   ContractTransaction,
   Wallet,
 } from "ethers";
-import { ethers, network, waffle } from "hardhat";
+import { ethers, network } from "hardhat";
 
 import {
-  ERC721Minimal, //   ERC721Minimal__factory,
-  MockERC20, //   SplitterImpl__factory,
+  ERC721Minimal,
+  MockERC20,
   SplitterImpl,
 } from "../src/types";
 import { MinimalErrors } from "./utils/errors";
-import { smFixture721, tokenFixture } from "./utils/fixtures";
+import { minimalFixture721 } from "./utils/fixtures";
 import {
   ERC165Interface,
   ERC721Interface,
@@ -25,8 +27,6 @@ import {
 
 // hint:
 // import { BinaryLike, BinaryToTextEncoding, Encoding } from "crypto";
-
-const createFixtureLoader = waffle.createFixtureLoader;
 
 describe("ERC721Minimal", () => {
   /* 
@@ -57,7 +57,7 @@ describe("ERC721Minimal", () => {
 
   let splitter: SplitterImpl;
   let minimal: ERC721Minimal;
-  let erc20: MockERC20;
+  // let erc20: MockERC20;
 
   // let tx:ContractTransaction;
   // let rc:ContractReceipt;
@@ -67,24 +67,17 @@ describe("ERC721Minimal", () => {
   const price: BigNumber = ethers.utils.parseEther("1");
   // const magicvalue = [0o1100110,0o1101100,0o1100001,0o1100111];
 
-  let loadFixture: ReturnType<typeof createFixtureLoader>;
-
   before("Set signers and reset network", async () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [owner, amb, mad, acc01, acc02] = await (
-      ethers as any
-    ).getSigners();
-    loadFixture = createFixtureLoader([
-      owner,
-      amb,
-      mad,
-      acc01,
-      acc02,
-    ]);
+    [owner, amb, mad, acc01, acc02] =
+      await // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (ethers as any).getSigners();
+
     await network.provider.send("hardhat_reset");
   });
   beforeEach("Load deployment fixtures", async () => {
-    ({ minimal, splitter } = await loadFixture(smFixture721));
+    ({ minimal, splitter } = await loadFixture(
+      minimalFixture721,
+    ));
   });
 
   describe("Init", async () => {
@@ -194,7 +187,8 @@ describe("ERC721Minimal", () => {
         .connect(owner)
         .safeMint(acc02.address);
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        minimal,
         MinimalErrors.AlreadyMinted,
       );
     });
@@ -287,7 +281,10 @@ describe("ERC721Minimal", () => {
 
       await expect(
         minimal.connect(acc01).publicMint(),
-      ).to.be.revertedWith(MinimalErrors.PublicMintOff);
+      ).to.be.revertedWithCustomError(
+        minimal,
+        MinimalErrors.PublicMintOff,
+      );
     });
 
     it("Should revert if price is wrong", async () => {
@@ -298,7 +295,10 @@ describe("ERC721Minimal", () => {
         minimal
           .connect(acc02)
           .publicMint({ value: 10100111001 }),
-      ).to.be.revertedWith(MinimalErrors.WrongPrice);
+      ).to.be.revertedWithCustomError(
+        minimal,
+        MinimalErrors.WrongPrice,
+      );
     });
 
     it("Should revert if already minted", async () => {
@@ -310,7 +310,10 @@ describe("ERC721Minimal", () => {
 
       await expect(
         minimal.connect(acc01).publicMint({ value: price }),
-      ).to.be.revertedWith(MinimalErrors.AlreadyMinted);
+      ).to.be.revertedWithCustomError(
+        minimal,
+        MinimalErrors.AlreadyMinted,
+      );
     });
 
     it("Should mint, update storage and emit events", async () => {
@@ -384,7 +387,14 @@ describe("ERC721Minimal", () => {
     });
 
     it("Should withdraw contract's ERC20s", async () => {
-      ({ erc20 } = await loadFixture(tokenFixture));
+      // ({ erc20 } = await loadFixture(erc20Fixture));
+      const ERC20 = await ethers.getContractFactory(
+        "MockERC20",
+      );
+      const erc20 = (await ERC20.deploy(
+        BigNumber.from(2).pow(255),
+      )) as MockERC20;
+
       await erc20.mint(minimal.address, price);
       const bal = await erc20.callStatic.balanceOf(
         minimal.address,
@@ -421,28 +431,32 @@ describe("ERC721Minimal", () => {
     it("Should revert if ID is not 1", async () => {
       // const { minimal } = await minimalFixture();
 
-      await expect(minimal.tokenURI(2)).to.be.revertedWith(
+      await expect(
+        minimal.tokenURI(2),
+      ).to.be.revertedWithCustomError(
+        minimal,
         MinimalErrors.InvalidId,
       );
     });
-    //   // should it be better to remove this??
-    //   // if (!minted) revert("NOT_MINTED");
     it("Should revert if token was not minted", async () => {
       // const { minimal } = await minimalFixture();
 
-      await expect(minimal.tokenURI(1)).to.be.revertedWith(
-        MinimalErrors.NotMinted,
+      await expect(
+        minimal.tokenURI(1),
+      ).to.be.revertedWithCustomError(
+        minimal,
+        MinimalErrors.NotMintedBytes4,
       );
     });
 
     it("Should retrieve tokenURI", async () => {
       // const { minimal } = await minimalFixture();
       await minimal.connect(owner).safeMint(acc01.address);
-      const tx = await minimal.tokenURI(1);
+      const tx = await minimal.callStatic.tokenURI(1);
       const uri: string = "ipfs://cid/id.json";
 
       expect(tx).to.be.ok;
-      await expect(uri).to.eq(tx);
+      expect(uri).to.eq(tx);
     });
   });
 

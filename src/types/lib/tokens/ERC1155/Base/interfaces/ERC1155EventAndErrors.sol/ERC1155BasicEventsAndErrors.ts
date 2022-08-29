@@ -18,22 +18,31 @@ import type {
   PromiseOrValue,
 } from "../../../../../../common";
 
-export interface ERC1155MinimalEventsInterface extends utils.Interface {
+export interface ERC1155BasicEventsAndErrorsInterface extends utils.Interface {
   functions: {};
 
   events: {
+    "BaseURISet(string)": EventFragment;
     "PublicMintStateSet(bool)": EventFragment;
     "RoyaltyFeeSet(uint256)": EventFragment;
     "RoyaltyRecipientSet(address)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "BaseURISet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PublicMintStateSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoyaltyFeeSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoyaltyRecipientSet"): EventFragment;
 }
 
+export interface BaseURISetEventObject {
+  newBaseURI: string;
+}
+export type BaseURISetEvent = TypedEvent<[string], BaseURISetEventObject>;
+
+export type BaseURISetEventFilter = TypedEventFilter<BaseURISetEvent>;
+
 export interface PublicMintStateSetEventObject {
-  newPublicMintState: boolean;
+  newPublicState: boolean;
 }
 export type PublicMintStateSetEvent = TypedEvent<
   [boolean],
@@ -64,12 +73,12 @@ export type RoyaltyRecipientSetEvent = TypedEvent<
 export type RoyaltyRecipientSetEventFilter =
   TypedEventFilter<RoyaltyRecipientSetEvent>;
 
-export interface ERC1155MinimalEvents extends BaseContract {
+export interface ERC1155BasicEventsAndErrors extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: ERC1155MinimalEventsInterface;
+  interface: ERC1155BasicEventsAndErrorsInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -95,11 +104,18 @@ export interface ERC1155MinimalEvents extends BaseContract {
   callStatic: {};
 
   filters: {
+    "BaseURISet(string)"(
+      newBaseURI?: PromiseOrValue<string> | null
+    ): BaseURISetEventFilter;
+    BaseURISet(
+      newBaseURI?: PromiseOrValue<string> | null
+    ): BaseURISetEventFilter;
+
     "PublicMintStateSet(bool)"(
-      newPublicMintState?: PromiseOrValue<boolean> | null
+      newPublicState?: PromiseOrValue<boolean> | null
     ): PublicMintStateSetEventFilter;
     PublicMintStateSet(
-      newPublicMintState?: PromiseOrValue<boolean> | null
+      newPublicState?: PromiseOrValue<boolean> | null
     ): PublicMintStateSetEventFilter;
 
     "RoyaltyFeeSet(uint256)"(

@@ -1,24 +1,31 @@
+import "@nomicfoundation/hardhat-chai-matchers";
+import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
-import { BigNumber, Contract, Wallet } from "ethers";
-import { ethers, network, waffle } from "hardhat";
+import {
+  BigNumber,
+  /* Contract, */
+  Wallet,
+} from "ethers";
+import { ethers, network } from "hardhat";
 
 import {
   MockERC20,
-  MockERC20__factory, // SplitterBase,
+  MockERC20__factory,
   SplitterImpl,
   SplitterImpl__factory,
 } from "../src/types";
 import { SplitterErrors } from "./utils/errors";
-import { spFixture, tokenFixture } from "./utils/fixtures";
-
-const createFixtureLoader = waffle.createFixtureLoader;
+import {
+  splitterFixture,
+  /* , erc20Fixture */
+} from "./utils/fixtures";
 
 describe("Splitter", () => {
   type WalletWithAddress = Wallet & SignerWithAddress;
   // type SplitterType = SplitterImpl & SplitterBase;
   let splitter: SplitterImpl;
-  let erc20: MockERC20 & Contract;
+  // let erc20: MockERC20 & Contract;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let res: any;
@@ -36,8 +43,6 @@ describe("Splitter", () => {
   let acc01: WalletWithAddress;
   let acc02: WalletWithAddress;
 
-  let loadFixture: ReturnType<typeof createFixtureLoader>;
-
   const fundAmount: BigNumber =
     ethers.utils.parseEther("10000");
   const price: BigNumber = ethers.utils.parseEther("1");
@@ -47,17 +52,11 @@ describe("Splitter", () => {
     [owner, amb, mad, acc01, acc02] =
       await // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (ethers as any).getSigners();
-    loadFixture = createFixtureLoader([
-      owner,
-      amb,
-      mad,
-      acc01,
-      acc02,
-    ]);
+
     await network.provider.send("hardhat_reset");
   });
   beforeEach("Load deployment fixtures", async () => {
-    ({ splitter } = await loadFixture(spFixture));
+    ({ splitter } = await loadFixture(splitterFixture));
   });
 
   describe("Init", async () => {
@@ -204,7 +203,13 @@ describe("Splitter", () => {
       ).to.be.revertedWith(SplitterErrors.DeniedAccount);
     });
     it("should revert if account has no ERC20 shares to claim", async () => {
-      ({ erc20 } = await loadFixture(tokenFixture));
+      // ({ erc20 } = await loadFixture(erc20Fixture))
+      const ERC20 = await ethers.getContractFactory(
+        "MockERC20",
+      );
+      const erc20 = (await ERC20.deploy(
+        BigNumber.from(2).pow(255),
+      )) as MockERC20;
 
       await expect(
         splitter["release(address,address)"](

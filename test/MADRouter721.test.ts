@@ -1,12 +1,13 @@
-// import { mine } from "@nomicfoundation/hardhat-network-helpers";
 import {
   SignTypedDataVersion,
   signTypedData,
 } from "@metamask/eth-sig-util";
+import "@nomicfoundation/hardhat-chai-matchers";
+import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { BigNumber, Wallet } from "ethers";
-import { ethers, network, waffle } from "hardhat";
+import { artifacts, ethers, network } from "hardhat";
 
 import {
   MADFactory721,
@@ -16,12 +17,9 @@ import {
 } from "../src/types";
 import { RouterErrors } from "./utils/errors";
 import {
-  getSignerAddrs,
-  tokenFixture,
+  getSignerAddrs, // erc20Fixture,
 } from "./utils/fixtures";
-import { dead, mFixture721 } from "./utils/madFixtures";
-
-const createFixtureLoader = waffle.createFixtureLoader;
+import { dead, madFixture721B } from "./utils/madFixtures";
 
 describe("MADRouter721", () => {
   type WalletWithAddress = Wallet & SignerWithAddress;
@@ -39,41 +37,31 @@ describe("MADRouter721", () => {
   let acc01: WalletWithAddress;
   let acc02: WalletWithAddress;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let res: any;
-
   let f721: MADFactory721;
   let m721: MADMarketplace721;
   let r721: MADRouter721;
-  let erc20: MockERC20;
+  // let erc20: MockERC20;
 
-  const fundAmount: BigNumber =
-    ethers.utils.parseEther("10000");
   const price: BigNumber = ethers.utils.parseEther("1");
 
-  let loadFixture: ReturnType<typeof createFixtureLoader>;
-
   before("Set signers and reset network", async () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [owner, amb, mad, acc01, acc02] = await (
-      ethers as any
-    ).getSigners();
-    loadFixture = createFixtureLoader([
-      owner,
-      amb,
-      mad,
-      acc01,
-      acc02,
-    ]);
+    [owner, amb, mad, acc01, acc02] =
+      await // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (ethers as any).getSigners();
+
     await network.provider.send("hardhat_reset");
   });
   beforeEach("Load deployment fixtures", async () => {
-    ({ f721, m721, r721 } = await loadFixture(mFixture721));
+    ({ f721, m721, r721 } = await loadFixture(
+      madFixture721B,
+    ));
+    await r721.deployed();
+    await m721.deployed();
+    await f721.deployed();
   });
 
   describe("Init", async () => {
     it("Router should initialize", async () => {
-      await r721.deployed();
       expect(r721).to.be.ok;
 
       // check each global var
@@ -151,15 +139,26 @@ describe("MADRouter721", () => {
         .setBase(basicAddr, "null");
 
       expect(tx).to.be.ok;
-      expect(tx)
+      await expect(tx)
         .to.emit(r721, "BaseURI")
         .withArgs(colID, "null");
       expect(await basic.callStatic.getBaseURI()).to.eq(
         "null",
       );
+      const verArt = await artifacts.readArtifact(
+        "FactoryVerifier",
+      );
+      const ver = new ethers.Contract(
+        f721.address,
+        verArt.abi,
+        ethers.provider,
+      );
       await expect(
         r721.connect(acc01).setBase(basicAddr, "void"),
-      ).to.be.revertedWith(RouterErrors.AccessDenied);
+      ).to.be.revertedWithCustomError(
+        ver,
+        RouterErrors.AccessDenied,
+      );
     });
     it("Should set baseURI for 721Whitelist collection type", async () => {
       await f721.addAmbassador(amb.address);
@@ -194,13 +193,24 @@ describe("MADRouter721", () => {
         .setBase(wlAddr, "null");
 
       expect(tx).to.be.ok;
-      expect(tx)
+      await expect(tx)
         .to.emit(r721, "BaseURI")
         .withArgs(colID, "null");
       expect(await wl.callStatic.getBaseURI()).to.eq("null");
+      const verArt = await artifacts.readArtifact(
+        "FactoryVerifier",
+      );
+      const ver = new ethers.Contract(
+        f721.address,
+        verArt.abi,
+        ethers.provider,
+      );
       await expect(
         r721.connect(acc01).setBase(wlAddr, "void"),
-      ).to.be.revertedWith(RouterErrors.AccessDenied);
+      ).to.be.revertedWithCustomError(
+        ver,
+        RouterErrors.AccessDenied,
+      );
     });
     it("Should set baseURI for 721Lazy collection type", async () => {
       await f721.addAmbassador(amb.address);
@@ -235,15 +245,26 @@ describe("MADRouter721", () => {
         .setBase(lazyAddr, "null");
 
       expect(tx).to.be.ok;
-      expect(tx)
+      await expect(tx)
         .to.emit(r721, "BaseURI")
         .withArgs(colID, "null");
       expect(await lazy.callStatic.getBaseURI()).to.eq(
         "null",
       );
+      const verArt = await artifacts.readArtifact(
+        "FactoryVerifier",
+      );
+      const ver = new ethers.Contract(
+        f721.address,
+        verArt.abi,
+        ethers.provider,
+      );
       await expect(
         r721.connect(acc01).setBase(lazyAddr, "void"),
-      ).to.be.revertedWith(RouterErrors.AccessDenied);
+      ).to.be.revertedWithCustomError(
+        ver,
+        RouterErrors.AccessDenied,
+      );
     });
   });
   describe("Whitelist Settings", async () => {
@@ -439,8 +460,19 @@ describe("MADRouter721", () => {
           splAddr,
         );
       const tx = r721.minimalSafeMint(wlAddr, acc01.address);
+      const verArt = await artifacts.readArtifact(
+        "FactoryVerifier",
+      );
+      const ver = new ethers.Contract(
+        f721.address,
+        verArt.abi,
+        ethers.provider,
+      );
 
-      expect(tx).to.be.revertedWith(RouterErrors.InvalidType);
+      await expect(tx).to.be.revertedWithCustomError(
+        ver,
+        RouterErrors.AccessDenied,
+      );
     });
     it("Should call safeMint for 721Minimal collection type", async () => {
       await f721.addAmbassador(amb.address);
@@ -478,16 +510,30 @@ describe("MADRouter721", () => {
       expect(await min.callStatic.ownerOf(1)).to.eq(
         acc01.address,
       );
+      const verArt = await artifacts.readArtifact(
+        "FactoryVerifier",
+      );
+      const ver = new ethers.Contract(
+        f721.address,
+        verArt.abi,
+        ethers.provider,
+      );
       await expect(
         r721
           .connect(mad)
           .minimalSafeMint(minAddr, acc02.address),
-      ).to.be.revertedWith(RouterErrors.AccessDenied);
+      ).to.be.revertedWithCustomError(
+        ver,
+        RouterErrors.AccessDenied,
+      );
       await expect(
         r721
           .connect(acc02)
           .minimalSafeMint(minAddr, acc02.address),
-      ).to.be.revertedWith("ALREADY_MINTED");
+      ).to.be.revertedWithCustomError(
+        min,
+        RouterErrors.AlreadyMinted,
+      );
     });
   });
   describe("Burn", async () => {
@@ -524,12 +570,22 @@ describe("MADRouter721", () => {
         .setMintState(minAddr, true, 0);
       await min.connect(acc01).publicMint({ value: price });
       const tx = await r721.connect(acc02).burn(minAddr, []);
-
+      const verArt = await artifacts.readArtifact(
+        "FactoryVerifier",
+      );
+      const ver = new ethers.Contract(
+        f721.address,
+        verArt.abi,
+        ethers.provider,
+      );
       expect(tx).to.be.ok;
       expect(
         await min.callStatic.balanceOf(acc01.address),
       ).to.eq(0);
-      await expect(r721.burn(minAddr, [])).to.be.revertedWith(
+      await expect(
+        r721.burn(minAddr, []),
+      ).to.be.revertedWithCustomError(
+        ver,
         RouterErrors.AccessDenied,
       );
     });
@@ -573,9 +629,20 @@ describe("MADRouter721", () => {
       expect(
         await basic.callStatic.balanceOf(acc01.address),
       ).to.eq(0);
+      const verArt = await artifacts.readArtifact(
+        "FactoryVerifier",
+      );
+      const ver = new ethers.Contract(
+        f721.address,
+        verArt.abi,
+        ethers.provider,
+      );
       await expect(
         r721.burn(basicAddr, [1]),
-      ).to.be.revertedWith(RouterErrors.AccessDenied);
+      ).to.be.revertedWithCustomError(
+        ver,
+        RouterErrors.AccessDenied,
+      );
     });
     it("Should burn tokens for 721Whitelist collection type", async () => {
       const root = ethers.utils.keccak256(
@@ -612,17 +679,29 @@ describe("MADRouter721", () => {
         .freeSettings(wl.address, 1, 10, root);
       await r721.connect(acc02).creatorMint(wlAddr, 1);
       const tx = await r721.connect(acc02).burn(wlAddr, [1]);
-
+      const verArt = await artifacts.readArtifact(
+        "FactoryVerifier",
+      );
+      const ver = new ethers.Contract(
+        f721.address,
+        verArt.abi,
+        ethers.provider,
+      );
       expect(tx).to.be.ok;
       expect(
         await wl.callStatic.balanceOf(acc02.address),
       ).to.eq(0);
-      await expect(r721.burn(wlAddr, [1])).to.be.revertedWith(
+      await expect(
+        r721.burn(wlAddr, [1]),
+      ).to.be.revertedWithCustomError(
+        ver,
         RouterErrors.AccessDenied,
       );
     });
     it("Should burn tokens for 721Lazy collection type", async () => {
+      const signer = ethers.Wallet.createRandom();
       await f721.addAmbassador(amb.address);
+      await f721.setSigner(await signer.getAddress());
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -654,12 +733,6 @@ describe("MADRouter721", () => {
       const usrs = [owner.address, acc02.address];
       const vId = ethers.utils.keccak256(
         ethers.utils.toUtf8Bytes("voucher"),
-      );
-      const signer = ethers.Wallet.createRandom();
-      const signerAddr = await signer.getAddress();
-      const newSigner = await r721.setSigner(
-        lazyAddr,
-        signerAddr,
       );
       const pk = Buffer.from(
         signer.privateKey.slice(2),
@@ -719,13 +792,24 @@ describe("MADRouter721", () => {
       const tx = await r721
         .connect(acc02)
         .burn(lazyAddr, [1, 2]);
+      const verArt = await artifacts.readArtifact(
+        "FactoryVerifier",
+      );
+      const ver = new ethers.Contract(
+        f721.address,
+        verArt.abi,
+        ethers.provider,
+      );
 
       expect(tx).to.be.ok;
       expect(await lazy.balanceOf(acc02.address)).to.eq(0);
       expect(await lazy.balanceOf(owner.address)).to.eq(0);
       await expect(
         r721.burn(lazyAddr, [1]),
-      ).to.be.revertedWith(RouterErrors.AccessDenied);
+      ).to.be.revertedWithCustomError(
+        ver,
+        RouterErrors.AccessDenied,
+      );
     });
   });
   describe("Set MintState", async () => {
@@ -760,10 +844,10 @@ describe("MADRouter721", () => {
           "ipfs://cid/id.json",
           splAddr,
         );
-      const min = await ethers.getContractAt(
-        "ERC721Minimal",
-        minAddr,
-      );
+      // const min = await ethers.getContractAt(
+      // "ERC721Minimal",
+      // minAddr,
+      // );
       const tx = r721
         .connect(acc02)
         .setMintState(minAddr, true, 2);
@@ -860,16 +944,32 @@ describe("MADRouter721", () => {
       expect(await wl.callStatic.publicMintState()).to.eq(
         true,
       );
-
+      const verArt = await artifacts.readArtifact(
+        "FactoryVerifier",
+      );
+      const ver = new ethers.Contract(
+        f721.address,
+        verArt.abi,
+        ethers.provider,
+      );
       await expect(
         r721.connect(acc01).setMintState(minAddr, true, 0),
-      ).to.be.revertedWith(RouterErrors.AccessDenied);
+      ).to.be.revertedWithCustomError(
+        ver,
+        RouterErrors.AccessDenied,
+      );
       await expect(
         r721.connect(acc01).setMintState(basicAddr, true, 0),
-      ).to.be.revertedWith(RouterErrors.AccessDenied);
+      ).to.be.revertedWithCustomError(
+        ver,
+        RouterErrors.AccessDenied,
+      );
       await expect(
         r721.connect(acc01).setMintState(wlAddr, true, 0),
-      ).to.be.revertedWith(RouterErrors.AccessDenied);
+      ).to.be.revertedWithCustomError(
+        ver,
+        RouterErrors.AccessDenied,
+      );
     });
     it("Should set whitelistMintState for whitelist colType", async () => {
       await f721.addAmbassador(amb.address);
@@ -906,10 +1006,20 @@ describe("MADRouter721", () => {
       expect(await wl.callStatic.whitelistMintState()).to.eq(
         true,
       );
-
+      const verArt = await artifacts.readArtifact(
+        "FactoryVerifier",
+      );
+      const ver = new ethers.Contract(
+        f721.address,
+        verArt.abi,
+        ethers.provider,
+      );
       await expect(
         r721.connect(acc01).setMintState(wlAddr, true, 1),
-      ).to.be.revertedWith(RouterErrors.AccessDenied);
+      ).to.be.revertedWithCustomError(
+        ver,
+        RouterErrors.AccessDenied,
+      );
     });
     it("Should set freeClaimState for whitelist colType", async () => {
       await f721.addAmbassador(amb.address);
@@ -946,10 +1056,20 @@ describe("MADRouter721", () => {
       expect(await wl.callStatic.freeClaimState()).to.eq(
         true,
       );
-
+      const verArt = await artifacts.readArtifact(
+        "FactoryVerifier",
+      );
+      const ver = new ethers.Contract(
+        f721.address,
+        verArt.abi,
+        ethers.provider,
+      );
       await expect(
         r721.connect(acc01).setMintState(wlAddr, true, 2),
-      ).to.be.revertedWith(RouterErrors.AccessDenied);
+      ).to.be.revertedWithCustomError(
+        ver,
+        RouterErrors.AccessDenied,
+      );
     });
   });
   describe("Whitelist Creator Mint", async () => {
@@ -1052,10 +1172,10 @@ describe("MADRouter721", () => {
       const basicAddr = await f721.callStatic.getDeployedAddr(
         "BasicSalt",
       );
-      const basic = await ethers.getContractAt(
-        "ERC721Basic",
-        basicAddr,
-      );
+      // const basic = await ethers.getContractAt(
+      // "ERC721Basic",
+      // basicAddr,
+      // );
       const addrs = [owner.address, mad.address];
       await expect(
         r721.connect(acc02).gift(basicAddr, addrs),
@@ -1111,7 +1231,14 @@ describe("MADRouter721", () => {
   });
   describe("Creator Withdraw", async () => {
     it("Should withdraw balance and ERC20 for all colTypes", async () => {
-      ({ erc20 } = await loadFixture(tokenFixture));
+      // ({ erc20 } = await loadFixture(erc20Fixture));
+      const ERC20 = await ethers.getContractFactory(
+        "MockERC20",
+      );
+      const erc20 = (await ERC20.deploy(
+        BigNumber.from(2).pow(255),
+      )) as MockERC20;
+
       await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
@@ -1359,6 +1486,21 @@ describe("MADRouter721", () => {
         newUser,
       );
       const newBal4 = await erc20.balanceOf(newUser);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // const Verifier:any = await ethers.getContractAt(
+      // "FactoryVerifier",
+      // m721.address
+      // );
+      // const iver = await Verifier.deploy();
+
+      const verArt = await artifacts.readArtifact(
+        "FactoryVerifier",
+      );
+      const ver = new ethers.Contract(
+        f721.address,
+        verArt.abi,
+        ethers.provider,
+      );
 
       expect(tx1).to.be.ok;
       expect(tx2).to.be.ok;
@@ -1369,7 +1511,10 @@ describe("MADRouter721", () => {
         r721
           .connect(acc01)
           .withdraw(min.address, erc20.address),
-      ).to.be.revertedWith(RouterErrors.AccessDenied);
+      ).to.be.revertedWithCustomError(
+        ver,
+        RouterErrors.AccessDenied,
+      );
       await expect(
         r721
           .connect(acc02)
@@ -1388,7 +1533,10 @@ describe("MADRouter721", () => {
         r721
           .connect(acc01)
           .withdraw(basic.address, erc20.address),
-      ).to.be.revertedWith(RouterErrors.AccessDenied);
+      ).to.be.revertedWithCustomError(
+        ver,
+        RouterErrors.AccessDenied,
+      );
       await expect(
         r721
           .connect(mad)
@@ -1407,7 +1555,10 @@ describe("MADRouter721", () => {
         r721
           .connect(acc01)
           .withdraw(wl.address, erc20.address),
-      ).to.be.revertedWith(RouterErrors.AccessDenied);
+      ).to.be.revertedWithCustomError(
+        ver,
+        RouterErrors.AccessDenied,
+      );
       await expect(
         r721.connect(amb).withdraw(wl.address, erc20.address),
       ).to.be.revertedWith(RouterErrors.NoFunds);
@@ -1424,7 +1575,10 @@ describe("MADRouter721", () => {
         r721
           .connect(acc01)
           .withdraw(lazy.address, erc20.address),
-      ).to.be.revertedWith(RouterErrors.AccessDenied);
+      ).to.be.revertedWithCustomError(
+        ver,
+        RouterErrors.AccessDenied,
+      );
       await expect(
         r721
           .connect(await ethers.getSigner(newUser))

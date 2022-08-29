@@ -2,23 +2,20 @@
 
 pragma solidity 0.8.4;
 
-import { ERC1155MinimalEvents } from "../Base/interfaces/ERC1155EventAndErrors.sol";
+import { ERC1155MinimalEventsAndErrors } from "../Base/interfaces/ERC1155EventAndErrors.sol";
 import { ERC1155B as ERC1155, ERC1155TokenReceiver } from "../Base/ERC1155B.sol";
 import { ERC2981 } from "../../common/ERC2981.sol";
 import { ERC20 } from "../../ERC20.sol";
 import { SplitterImpl } from "../../../splitter/SplitterImpl.sol";
-
-// import { ReentrancyGuard } from "../../../security/ReentrancyGuard.sol";
 import { Owned } from "../../../auth/Owned.sol";
 import { SafeTransferLib } from "../../../utils/SafeTransferLib.sol";
 
 contract ERC1155Minimal is
     ERC1155,
     ERC2981,
-    ERC1155MinimalEvents,
+    ERC1155MinimalEventsAndErrors,
     ERC1155TokenReceiver,
     Owned
-    // ReentrancyGuard
 {
     ////////////////////////////////////////////////////////////////
     //                           STORAGE                          //
@@ -60,7 +57,7 @@ contract ERC1155Minimal is
 
     /// @dev Can't be reminted if already minted, due to boolean.
     function safeMint(address to) external onlyOwner {
-        if (minted == true) revert("ALREADY_MINTED");
+        if (minted == true) revert AlreadyMinted();
 
         minted = true;
         _mint(to, 1, "");
@@ -100,9 +97,9 @@ contract ERC1155Minimal is
     ////////////////////////////////////////////////////////////////
 
     function publicMint() external payable {
-        if (!publicMintState) revert("PUBLICMINT_OFF");
-        require(msg.value == price, "WRONG_PRICE");
-        if (minted == true) revert("ALREADY_MINTED");
+        if (!publicMintState) revert PublicMintOff();
+        if (msg.value != price) revert WrongPrice();
+        if (minted == true) revert AlreadyMinted();
 
         minted = true;
         _mint(msg.sender, 1, "");
@@ -119,8 +116,8 @@ contract ERC1155Minimal is
         override
         returns (string memory)
     {
-        require(id == 1, "INVALID_ID");
-        if (!minted) revert("NOT_MINTED");
+        if (id != 1) revert InvalidId();
+        if (!minted) revert NotMinted();
         return _uri;
     }
 

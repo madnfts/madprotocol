@@ -5,8 +5,10 @@ import {
   signTypedData,
 } from "@metamask/eth-sig-util";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { Fixture } from "ethereum-waffle";
-import { BigNumber, Signer } from "ethers";
+import {
+  /* BigNumber, */
+  Signer,
+} from "ethers";
 import { ethers } from "hardhat";
 import keccak256 from "keccak256";
 import { MerkleTree } from "merkletreejs";
@@ -19,15 +21,13 @@ import {
   ERC1155Basic,
   ERC1155Lazy,
   ERC1155Minimal,
-  ERC1155Whitelist,
-  MockERC20,
+  ERC1155Whitelist, // MockERC20,
   MockERC2981,
   SplitterImpl,
 } from "../../src/types";
 import {
   BasicFixture721,
-  BasicFixture1155,
-  ERC20Fixture,
+  BasicFixture1155, // ERC20Fixture,
   LazyFixture721,
   LazyFixture1155,
   MinimalFixture721,
@@ -90,133 +90,124 @@ export const padBuffer = (addr: any) => {
   );
 };
 
-export const tokenFixture: Fixture<ERC20Fixture> =
-  async function (): Promise<ERC20Fixture> {
-    const { erc20 } = await erc20Fixture();
-    return { erc20 };
-  };
-export const royaltiesFixture: Fixture<RoyaltiesFixture> =
-  async function (): Promise<RoyaltiesFixture> {
-    const { erc2981 } = await erc2981Fixture();
-    return { erc2981 };
-  };
-export const spFixture: Fixture<SplitterFixture> =
-  async function (): Promise<SplitterFixture> {
-    const { splitter } = await splitterFixture();
-    return { splitter };
-  };
-export const smFixture721: Fixture<SplitterAndMinimal721> =
-  async function (): Promise<SplitterAndMinimal721> {
-    const { minimal, splitter } = await minimalFixture721();
-    return { splitter, minimal };
-  };
-export const sbFixture721: Fixture<SplitterAndBasic721> =
-  async function (): Promise<SplitterAndBasic721> {
-    const { basic, splitter } = await basicFixture721();
-    return { splitter, basic };
-  };
-export const wlFixture721: Fixture<SplitterAndWhitelist721> =
-  async function (): Promise<SplitterAndWhitelist721> {
-    const { wl, splitter, proof, wrongProof, merkleRoot } =
-      await whitelistFixture721();
-    return { splitter, wl, proof, wrongProof, merkleRoot };
-  };
-export const lzFixture721: Fixture<SplitterAndLazy721> =
-  async function (): Promise<SplitterAndLazy721> {
-    const {
-      splitter,
-      lazy,
-      // domainHashHex,
-      // digestHex,
-      signature,
-      signerAddr,
-      signer,
-      recover,
-      domainCheck,
-      wrongSig,
-      sigSplit,
-      // digest,
-      voucher,
-    } = await lazyFixture721();
-    return {
-      splitter,
-      lazy,
-      // domainHashHex,
-      // digestHex,
-      signature,
-      signerAddr,
-      signer,
-      recover,
-      domainCheck,
-      wrongSig,
-      sigSplit,
-      // digest,
-      voucher,
-    };
-  };
-export const smFixture1155: Fixture<SplitterAndMinimal1155> =
-  async function (): Promise<SplitterAndMinimal1155> {
-    const { minimal, splitter } = await minimalFixture1155();
-    return { splitter, minimal };
-  };
-export const sbFixture1155: Fixture<SplitterAndBasic1155> =
-  async function (): Promise<SplitterAndBasic1155> {
-    const { basic, splitter } = await basicFixture1155();
-    return { splitter, basic };
-  };
-export const wlFixture1155: Fixture<SplitterAndWhitelist1155> =
-  async function (): Promise<SplitterAndWhitelist1155> {
-    const { wl, splitter, proof, wrongProof, merkleRoot } =
-      await whitelistFixture1155();
-    return { splitter, wl, proof, wrongProof, merkleRoot };
-  };
-export const lzFixture1155: Fixture<SplitterAndLazy1155> =
-  async function (): Promise<SplitterAndLazy1155> {
-    const {
-      splitter,
-      lazy,
-      vSig,
-      vSigSplit,
-      vRecover,
-      ubSig,
-      ubSigSplit,
-      ubRecover,
-      signerAddr,
-      signer,
-      domainCheck,
-      wrongSig,
-      voucher,
-      userBatch,
-    } = await lazyFixture1155();
-    return {
-      splitter,
-      lazy,
-      vSig,
-      vSigSplit,
-      vRecover,
-      ubSig,
-      ubSigSplit,
-      ubRecover,
-      signerAddr,
-      signer,
-      domainCheck,
-      wrongSig,
-      voucher,
-      userBatch,
-    };
-  };
+// export const tokenFixture: Fixture<ERC20Fixture> =
+//   async function (): Promise<ERC20Fixture> {
+//     const { erc20 } = await erc20Fixture();
+//     return { erc20 };
+//   };
+// export const royaltiesFixture: Fixture<RoyaltiesFixture> =
+//   async function (): Promise<RoyaltiesFixture> {
+//     const { erc2981 } = await erc2981Fixture();
+//     return { erc2981 };
+//   };
+// export const spFixture: Fixture<SplitterFixture> =
+//   async function (): Promise<SplitterFixture> {
+//     const { splitter } = await splitterFixture();
+//     return { splitter };
+//   };
+// export const smFixture721: Fixture<SplitterAndMinimal721> =
+//   async function (): Promise<SplitterAndMinimal721> {
+//     const { minimal, splitter } = await minimalFixture721();
+//     return { splitter, minimal };
+//   };
+// export const sbFixture721: Fixture<SplitterAndBasic721> =
+//   async function (): Promise<SplitterAndBasic721> {
+//     const { basic, splitter } = await basicFixture721();
+//     return { splitter, basic };
+//   };
+// export const wlFixture721: Fixture<SplitterAndWhitelist721> =
+//   async function (): Promise<SplitterAndWhitelist721> {
+//     const { wl, splitter, proof, wrongProof, merkleRoot } =
+//       await whitelistFixture721();
+//     return { splitter, wl, proof, wrongProof, merkleRoot };
+//   };
+// export const lzFixture721: Fixture<SplitterAndLazy721> =
+//   async function (): Promise<SplitterAndLazy721> {
+//     const {
+//       splitter,
+//       lazy,
+//       // domainHashHex,
+//       // digestHex,
+//       signature,
+//       signerAddr,
+//       signer,
+//       recover,
+//       domainCheck,
+//       wrongSig,
+//       sigSplit,
+//       // digest,
+//       voucher,
+//     } = await lazyFixture721();
+//     return {
+//       splitter,
+//       lazy,
+//       // domainHashHex,
+//       // digestHex,
+//       signature,
+//       signerAddr,
+//       signer,
+//       recover,
+//       domainCheck,
+//       wrongSig,
+//       sigSplit,
+//       // digest,
+//       voucher,
+//     };
+//   };
+// export const smFixture1155: Fixture<SplitterAndMinimal1155> =
+//   async function (): Promise<SplitterAndMinimal1155> {
+//     const { minimal, splitter } = await minimalFixture1155();
+//     return { splitter, minimal };
+//   };
+// export const sbFixture1155: Fixture<SplitterAndBasic1155> =
+//   async function (): Promise<SplitterAndBasic1155> {
+//     const { basic, splitter } = await basicFixture1155();
+//     return { splitter, basic };
+//   };
+// export const wlFixture1155: Fixture<SplitterAndWhitelist1155> =
+//   async function (): Promise<SplitterAndWhitelist1155> {
+//     const { wl, splitter, proof, wrongProof, merkleRoot } =
+//       await whitelistFixture1155();
+//     return { splitter, wl, proof, wrongProof, merkleRoot };
+//   };
+// export const lzFixture1155: Fixture<SplitterAndLazy1155> =
+//   async function (): Promise<SplitterAndLazy1155> {
+//     const {
+//       splitter,
+//       lazy,
+//       vSig,
+//       vSigSplit,
+//       vRecover,
+//       ubSig,
+//       ubSigSplit,
+//       ubRecover,
+//       signerAddr,
+//       signer,
+//       domainCheck,
+//       wrongSig,
+//       voucher,
+//       userBatch,
+//     } = await lazyFixture1155();
+//     return {
+//       splitter,
+//       lazy,
+//       vSig,
+//       vSigSplit,
+//       vRecover,
+//       ubSig,
+//       ubSigSplit,
+//       ubRecover,
+//       signerAddr,
+//       signer,
+//       domainCheck,
+//       wrongSig,
+//       voucher,
+//       userBatch,
+//     };
+//   };
 
-// async functions
-async function erc20Fixture(): Promise<ERC20Fixture> {
-  const ERC20 = await ethers.getContractFactory("MockERC20");
-
-  const erc20 = (await ERC20.deploy(
-    BigNumber.from(2).pow(255),
-  )) as MockERC20;
-
-  return { erc20 };
-}
-async function erc2981Fixture(): Promise<RoyaltiesFixture> {
+// exported async functions
+export async function erc2981Fixture(): Promise<RoyaltiesFixture> {
   const [owner] = await ethers.getSigners();
   const ERC2981 = await ethers.getContractFactory(
     "MockERC2981",
@@ -230,7 +221,17 @@ async function erc2981Fixture(): Promise<RoyaltiesFixture> {
   return { erc2981 };
 }
 
-async function splitterFixture(): Promise<SplitterFixture> {
+// export async function erc20Fixture(): Promise<ERC20Fixture> {
+//   const ERC20 = await ethers.getContractFactory("MockERC20");
+
+//   const erc20 = (await ERC20.deploy(
+//     BigNumber.from(2).pow(255),
+//   )) as MockERC20;
+
+// return { erc20 };
+// }
+
+export async function splitterFixture(): Promise<SplitterFixture> {
   const Splitter = await ethers.getContractFactory(
     "SplitterImpl",
   );
@@ -246,7 +247,7 @@ async function splitterFixture(): Promise<SplitterFixture> {
   return { splitter };
 }
 
-async function minimalFixture721(): Promise<SplitterAndMinimal721> {
+export async function minimalFixture721(): Promise<SplitterAndMinimal721> {
   const Splitter = await ethers.getContractFactory(
     "SplitterImpl",
   );
@@ -275,7 +276,7 @@ async function minimalFixture721(): Promise<SplitterAndMinimal721> {
   return { minimal, splitter };
 }
 
-async function basicFixture721(): Promise<SplitterAndBasic721> {
+export async function basicFixture721(): Promise<SplitterAndBasic721> {
   const Splitter = await ethers.getContractFactory(
     "SplitterImpl",
   );
@@ -305,7 +306,7 @@ async function basicFixture721(): Promise<SplitterAndBasic721> {
   return { basic, splitter };
 }
 
-async function whitelistFixture721(): Promise<SplitterAndWhitelist721> {
+export async function whitelistFixture721(): Promise<SplitterAndWhitelist721> {
   const Splitter = await ethers.getContractFactory(
     "SplitterImpl",
   );
@@ -377,7 +378,7 @@ async function whitelistFixture721(): Promise<SplitterAndWhitelist721> {
   };
 }
 
-async function lazyFixture721(): Promise<SplitterAndLazy721> {
+export async function lazyFixture721(): Promise<SplitterAndLazy721> {
   const Splitter = await ethers.getContractFactory(
     "SplitterImpl",
   );
@@ -524,7 +525,7 @@ async function lazyFixture721(): Promise<SplitterAndLazy721> {
   };
 }
 
-async function minimalFixture1155(): Promise<SplitterAndMinimal1155> {
+export async function minimalFixture1155(): Promise<SplitterAndMinimal1155> {
   const Splitter = await ethers.getContractFactory(
     "SplitterImpl",
   );
@@ -551,7 +552,7 @@ async function minimalFixture1155(): Promise<SplitterAndMinimal1155> {
   return { minimal, splitter };
 }
 
-async function basicFixture1155(): Promise<SplitterAndBasic1155> {
+export async function basicFixture1155(): Promise<SplitterAndBasic1155> {
   const Splitter = await ethers.getContractFactory(
     "SplitterImpl",
   );
@@ -579,7 +580,7 @@ async function basicFixture1155(): Promise<SplitterAndBasic1155> {
   return { basic, splitter };
 }
 
-async function whitelistFixture1155(): Promise<SplitterAndWhitelist1155> {
+export async function whitelistFixture1155(): Promise<SplitterAndWhitelist1155> {
   const Splitter = await ethers.getContractFactory(
     "SplitterImpl",
   );
@@ -648,7 +649,7 @@ async function whitelistFixture1155(): Promise<SplitterAndWhitelist1155> {
   };
 }
 
-async function lazyFixture1155(): Promise<SplitterAndLazy1155> {
+export async function lazyFixture1155(): Promise<SplitterAndLazy1155> {
   const Splitter = await ethers.getContractFactory(
     "SplitterImpl",
   );

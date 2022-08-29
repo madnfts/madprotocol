@@ -1,34 +1,32 @@
+import "@nomicfoundation/hardhat-chai-matchers";
+import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { BigNumber, Wallet } from "ethers";
-import { ethers, network, waffle } from "hardhat";
+import { ethers, network } from "hardhat";
 
 import { MockERC2981 } from "../src/types";
-import { royaltiesFixture } from "./utils/fixtures";
+import { erc2981Fixture } from "./utils/fixtures";
 import {
   ERC165Interface,
   ERC2981Interface,
   getInterfaceID,
 } from "./utils/interfaces";
 
-const createFixtureLoader = waffle.createFixtureLoader;
-
 describe("Royalties", () => {
   type WalletWithAddress = Wallet & SignerWithAddress;
   let owner: WalletWithAddress;
   let acc01: WalletWithAddress;
   let erc2981: MockERC2981;
-  let loadFixture: ReturnType<typeof createFixtureLoader>;
   const price: BigNumber = ethers.utils.parseEther("1");
 
   before("Set signers and reset network", async () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [owner, acc01] = await (ethers as any).getSigners();
-    loadFixture = createFixtureLoader([owner, acc01]);
     await network.provider.send("hardhat_reset");
   });
   beforeEach("Load deployment fixtures", async () => {
-    ({ erc2981 } = await loadFixture(royaltiesFixture));
+    ({ erc2981 } = await loadFixture(erc2981Fixture));
   });
 
   it("Royalties should initialize", async () => {

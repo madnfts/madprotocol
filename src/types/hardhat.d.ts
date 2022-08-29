@@ -97,21 +97,21 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC1155TokenReceiver__factory>;
     getContractFactory(
-      name: "ERC1155BasicEvents",
+      name: "ERC1155BasicEventsAndErrors",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC1155BasicEvents__factory>;
+    ): Promise<Contracts.ERC1155BasicEventsAndErrors__factory>;
     getContractFactory(
       name: "ERC1155LazyEventsAndErrors",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC1155LazyEventsAndErrors__factory>;
     getContractFactory(
-      name: "ERC1155MinimalEvents",
+      name: "ERC1155MinimalEventsAndErrors",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC1155MinimalEvents__factory>;
+    ): Promise<Contracts.ERC1155MinimalEventsAndErrors__factory>;
     getContractFactory(
-      name: "ERC1155WhitelistEvents",
+      name: "ERC1155WhitelistEventsAndErrors",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC1155WhitelistEvents__factory>;
+    ): Promise<Contracts.ERC1155WhitelistEventsAndErrors__factory>;
     getContractFactory(
       name: "IERC1155",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -149,21 +149,21 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC721TokenReceiver__factory>;
     getContractFactory(
-      name: "ERC721BasicEvents",
+      name: "ERC721BasicEventsAndErrors",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC721BasicEvents__factory>;
+    ): Promise<Contracts.ERC721BasicEventsAndErrors__factory>;
     getContractFactory(
       name: "ERC721LazyEventsAndErrors",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC721LazyEventsAndErrors__factory>;
     getContractFactory(
-      name: "ERC721MinimalEvents",
+      name: "ERC721MinimalEventsAndErrors",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC721MinimalEvents__factory>;
+    ): Promise<Contracts.ERC721MinimalEventsAndErrors__factory>;
     getContractFactory(
-      name: "ERC721WhitelistEvents",
+      name: "ERC721WhitelistEventsAndErrors",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC721WhitelistEvents__factory>;
+    ): Promise<Contracts.ERC721WhitelistEventsAndErrors__factory>;
     getContractFactory(
       name: "IERC721",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -188,6 +188,10 @@ declare module "hardhat/types/runtime" {
       name: "ERC721Whitelist",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC721Whitelist__factory>;
+    getContractFactory(
+      name: "Counters",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Counters__factory>;
     getContractFactory(
       name: "MAD",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -323,25 +327,25 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ERC1155TokenReceiver>;
     getContractAt(
-      name: "ERC1155BasicEvents",
+      name: "ERC1155BasicEventsAndErrors",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.ERC1155BasicEvents>;
+    ): Promise<Contracts.ERC1155BasicEventsAndErrors>;
     getContractAt(
       name: "ERC1155LazyEventsAndErrors",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC1155LazyEventsAndErrors>;
     getContractAt(
-      name: "ERC1155MinimalEvents",
+      name: "ERC1155MinimalEventsAndErrors",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.ERC1155MinimalEvents>;
+    ): Promise<Contracts.ERC1155MinimalEventsAndErrors>;
     getContractAt(
-      name: "ERC1155WhitelistEvents",
+      name: "ERC1155WhitelistEventsAndErrors",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.ERC1155WhitelistEvents>;
+    ): Promise<Contracts.ERC1155WhitelistEventsAndErrors>;
     getContractAt(
       name: "IERC1155",
       address: string,
@@ -388,25 +392,25 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ERC721TokenReceiver>;
     getContractAt(
-      name: "ERC721BasicEvents",
+      name: "ERC721BasicEventsAndErrors",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.ERC721BasicEvents>;
+    ): Promise<Contracts.ERC721BasicEventsAndErrors>;
     getContractAt(
       name: "ERC721LazyEventsAndErrors",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC721LazyEventsAndErrors>;
     getContractAt(
-      name: "ERC721MinimalEvents",
+      name: "ERC721MinimalEventsAndErrors",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.ERC721MinimalEvents>;
+    ): Promise<Contracts.ERC721MinimalEventsAndErrors>;
     getContractAt(
-      name: "ERC721WhitelistEvents",
+      name: "ERC721WhitelistEventsAndErrors",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.ERC721WhitelistEvents>;
+    ): Promise<Contracts.ERC721WhitelistEventsAndErrors>;
     getContractAt(
       name: "IERC721",
       address: string,
@@ -437,6 +441,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC721Whitelist>;
+    getContractAt(
+      name: "Counters",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Counters>;
     getContractAt(
       name: "MAD",
       address: string,

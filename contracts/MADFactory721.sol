@@ -32,7 +32,6 @@ import { Types, SplitterImpl } from "./Types.sol";
 
 import { CREATE3, Bytes32AddressLib } from "./lib/utils/CREATE3.sol";
 
-
 contract MADFactory721 is MAD,
     FactoryEventsAndErrors721,
     FactoryVerifier,

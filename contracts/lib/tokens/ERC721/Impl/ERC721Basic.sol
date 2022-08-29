@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.4;
 
-import { ERC721BasicEvents } from "../Base/interfaces/ERC721EventAndErrors.sol";
+import { ERC721BasicEventsAndErrors } from "../Base/interfaces/ERC721EventAndErrors.sol";
 import { ERC721, ERC721TokenReceiver } from "../Base/ERC721.sol";
 import { ERC2981 } from "../../common/ERC2981.sol";
 import { ERC20 } from "../../ERC20.sol";
@@ -17,7 +17,7 @@ import { SafeTransferLib } from "../../../utils/SafeTransferLib.sol";
 contract ERC721Basic is
     ERC721,
     ERC2981,
-    ERC721BasicEvents,
+    ERC721BasicEventsAndErrors,
     ERC721TokenReceiver,
     Owned,
     ReentrancyGuard
@@ -44,19 +44,18 @@ contract ERC721Basic is
     ////////////////////////////////////////////////////////////////
 
     modifier publicMintAccess() {
-        if (!publicMintState) revert("PublicMintClosed");
+        if (!publicMintState) revert PublicMintClosed();
         _;
     }
 
     modifier hasReachedMax(uint256 amount) {
         if (liveSupply.current() + amount > maxSupply)
-            revert("MaxSupplyReached");
+            revert MaxSupplyReached();
         _;
     }
 
     modifier priceCheck(uint256 _price, uint256 amount) {
-        if (_price * amount != msg.value)
-            revert("WrongPrice");
+        if (_price * amount != msg.value) revert WrongPrice();
         _;
     }
 
@@ -121,8 +120,9 @@ contract ERC721Basic is
         }
         assembly {
             if lt(i, len) {
-                mstore(0x00, "LOOP_OVERFLOW")
-                revert(0x00, 0x20)
+                // LoopOverflow()
+                mstore(0x00, 0xdfb035c9)
+                revert(0x1c, 0x04)
             }
         }
         // Transfer event emited by parent ERC721 contract
@@ -163,14 +163,15 @@ contract ERC721Basic is
                 ++i;
             }
         }
-        // assembly overflow check
+
         assembly {
             if lt(i, amount) {
-                mstore(0x00, "LOOP_OVERFLOW")
-                revert(0x00, 0x20)
+                // LoopOverflow()
+                mstore(0x00, 0xdfb035c9)
+                revert(0x1c, 0x04)
             }
         }
-        // emit transfer event in parent ERC721 contract
+        // Transfer event emited by parent ERC721 contract
     }
 
     ////////////////////////////////////////////////////////////////
@@ -201,7 +202,7 @@ contract ERC721Basic is
         override
         returns (string memory)
     {
-        if (id > totalSupply()) revert("NotMintedYet");
+        if (id > totalSupply()) revert NotMintedYet();
         return
             string(
                 abi.encodePacked(

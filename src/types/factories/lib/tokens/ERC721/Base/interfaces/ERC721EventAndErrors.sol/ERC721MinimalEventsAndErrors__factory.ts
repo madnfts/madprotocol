@@ -5,11 +5,36 @@
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
 import type {
-  ERC721MinimalEvents,
-  ERC721MinimalEventsInterface,
-} from "../../../../../../../lib/tokens/ERC721/Base/interfaces/ERC721EventAndErrors.sol/ERC721MinimalEvents";
+  ERC721MinimalEventsAndErrors,
+  ERC721MinimalEventsAndErrorsInterface,
+} from "../../../../../../../lib/tokens/ERC721/Base/interfaces/ERC721EventAndErrors.sol/ERC721MinimalEventsAndErrors";
 
 const _abi = [
+  {
+    inputs: [],
+    name: "AlreadyMinted",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "InvalidId",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "NotMinted",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "PublicMintOff",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "WrongPrice",
+    type: "error",
+  },
   {
     anonymous: false,
     inputs: [
@@ -51,15 +76,19 @@ const _abi = [
   },
 ];
 
-export class ERC721MinimalEvents__factory {
+export class ERC721MinimalEventsAndErrors__factory {
   static readonly abi = _abi;
-  static createInterface(): ERC721MinimalEventsInterface {
-    return new utils.Interface(_abi) as ERC721MinimalEventsInterface;
+  static createInterface(): ERC721MinimalEventsAndErrorsInterface {
+    return new utils.Interface(_abi) as ERC721MinimalEventsAndErrorsInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): ERC721MinimalEvents {
-    return new Contract(address, _abi, signerOrProvider) as ERC721MinimalEvents;
+  ): ERC721MinimalEventsAndErrors {
+    return new Contract(
+      address,
+      _abi,
+      signerOrProvider
+    ) as ERC721MinimalEventsAndErrors;
   }
 }

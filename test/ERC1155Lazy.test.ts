@@ -1,3 +1,5 @@
+import "@nomicfoundation/hardhat-chai-matchers";
+import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import {
@@ -7,7 +9,7 @@ import {
   Signature,
   Wallet,
 } from "ethers";
-import { ethers, network, waffle } from "hardhat";
+import { ethers, network } from "hardhat";
 
 import {
   ERC1155Lazy,
@@ -16,8 +18,7 @@ import {
 } from "../src/types";
 import { LazyErrors } from "./utils/errors";
 import {
-  lzFixture1155,
-  tokenFixture,
+  lazyFixture1155, // erc20Fixture,
 } from "./utils/fixtures";
 import {
   ERC165Interface,
@@ -28,8 +29,6 @@ import {
   Voucher,
   getInterfaceID,
 } from "./utils/interfaces";
-
-const createFixtureLoader = waffle.createFixtureLoader;
 
 describe("ERC1155Lazy", () => {
   /* 
@@ -79,20 +78,12 @@ describe("ERC1155Lazy", () => {
   const price: BigNumber = ethers.utils.parseEther("1");
   const amount: BigNumber = ethers.BigNumber.from(30);
 
-  let loadFixture: ReturnType<typeof createFixtureLoader>;
-
   before("Set signers and reset network", async () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [owner, amb, mad, acc01, acc02] = await (
       ethers as any
     ).getSigners();
-    loadFixture = createFixtureLoader([
-      owner,
-      amb,
-      mad,
-      acc01,
-      acc02,
-    ]);
+
     await network.provider.send("hardhat_reset");
   });
   beforeEach("Load deployment fixtures", async () => {
@@ -111,7 +102,7 @@ describe("ERC1155Lazy", () => {
       wrongSig,
       voucher,
       userBatch,
-    } = await loadFixture(lzFixture1155));
+    } = await loadFixture(lazyFixture1155));
   });
 
   describe("Init", async () => {
@@ -255,7 +246,8 @@ describe("ERC1155Lazy", () => {
         { value: price.mul(amount) },
       );
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        lazy,
         LazyErrors.UsedVoucher,
       );
     });
@@ -269,7 +261,8 @@ describe("ERC1155Lazy", () => {
         { value: price.mul(amount) },
       );
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        lazy,
         LazyErrors.InvalidSigner,
       );
     });
@@ -282,7 +275,8 @@ describe("ERC1155Lazy", () => {
         { value: price },
       );
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        lazy,
         LazyErrors.WrongPrice,
       );
     });
@@ -379,7 +373,8 @@ describe("ERC1155Lazy", () => {
         { value: price.mul(ethers.BigNumber.from(3)) },
       );
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        lazy,
         LazyErrors.UsedVoucher,
       );
     });
@@ -393,7 +388,8 @@ describe("ERC1155Lazy", () => {
         { value: price.mul(ethers.BigNumber.from(3)) },
       );
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        lazy,
         LazyErrors.InvalidSigner,
       );
     });
@@ -406,7 +402,8 @@ describe("ERC1155Lazy", () => {
         { value: price },
       );
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        lazy,
         LazyErrors.WrongPrice,
       );
     });
@@ -428,7 +425,14 @@ describe("ERC1155Lazy", () => {
       );
     });
     it("Should withdraw and update balances", async () => {
-      ({ erc20 } = await loadFixture(tokenFixture));
+      // ({ erc20 } = await loadFixture(erc20Fixture));
+      const ERC20 = await ethers.getContractFactory(
+        "MockERC20",
+      );
+      const erc20 = (await ERC20.deploy(
+        BigNumber.from(2).pow(255),
+      )) as MockERC20;
+
       await lazy.lazyMint(
         voucher,
         vSigSplit.v,
@@ -496,7 +500,13 @@ describe("ERC1155Lazy", () => {
       );
     });
     it("Should revert if ids length is less than 2", async () => {
-      await expect(lazy.burn([1])).to.be.revertedWith(
+      const Counters = await ethers.getContractFactory(
+        "Counters",
+      );
+      await expect(
+        lazy.burn([1]),
+      ).to.be.revertedWithCustomError(
+        Counters,
         LazyErrors.DecrementOverflow,
       );
     });
@@ -739,7 +749,10 @@ describe("ERC1155Lazy", () => {
       expect(tx).to.eq("ipfs://cid/1.json");
       await expect(
         lazy.callStatic.uri(777),
-      ).to.be.revertedWith(LazyErrors.NotMintedYet);
+      ).to.be.revertedWithCustomError(
+        lazy,
+        LazyErrors.NotMintedYet,
+      );
     });
     it("Should support interfaces", async () => {
       const erc165 =

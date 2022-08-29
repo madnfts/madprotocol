@@ -1,12 +1,9 @@
+import "@nomicfoundation/hardhat-chai-matchers";
+import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
-import {
-  BigNumber,
-  /*   ContractReceipt,
-ContractTransaction, */
-  Wallet,
-} from "ethers";
-import { ethers, network, waffle } from "hardhat";
+import { BigNumber, Wallet } from "ethers";
+import { ethers, network } from "hardhat";
 
 import {
   ERC721Basic,
@@ -15,9 +12,7 @@ import {
 } from "../src/types";
 import { BasicErrors } from "./utils/errors";
 import {
-  sbFixture721,
-  tokenFixture,
-  /* randomSigners */
+  basicFixture721, // erc20Fixture,
 } from "./utils/fixtures";
 import {
   ERC165Interface,
@@ -29,8 +24,6 @@ import {
 
 // hint:
 // import { base64 } from "ethers/lib/utils";
-
-const createFixtureLoader = waffle.createFixtureLoader;
 
 describe("ERC721Basic", () => {
   /* 
@@ -61,10 +54,7 @@ describe("ERC721Basic", () => {
 
   let splitter: SplitterImpl;
   let basic: ERC721Basic;
-  let erc20: MockERC20;
-
-  // let tx:ContractTransaction;
-  // let rc:ContractReceipt;
+  // let erc20: MockERC20;
 
   const fundAmount: BigNumber =
     ethers.utils.parseEther("10000");
@@ -72,24 +62,18 @@ describe("ERC721Basic", () => {
   const change =
     "VmlydHVhbGx5IGV2ZXJ5dGhpbmcgaXMgcGx1bmRlcmVkLCBidXQgYWJzb2x1dGVseSBldmVyeXRoaW5nIGlzIGZyZWUu";
 
-  let loadFixture: ReturnType<typeof createFixtureLoader>;
-
   before("Set signers and reset network", async () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [owner, amb, mad, acc01, acc02] = await (
       ethers as any
     ).getSigners();
-    loadFixture = createFixtureLoader([
-      owner,
-      amb,
-      mad,
-      acc01,
-      acc02,
-    ]);
+
     await network.provider.send("hardhat_reset");
   });
   beforeEach("Load deployment fixtures", async () => {
-    ({ basic, splitter } = await loadFixture(sbFixture721));
+    ({ basic, splitter } = await loadFixture(
+      basicFixture721,
+    ));
   });
 
   describe("Init", async () => {
@@ -195,7 +179,8 @@ describe("ERC721Basic", () => {
     it("Should revert if public mint is turned off", async () => {
       const tx = basic.connect(acc01).mint(1);
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        basic,
         BasicErrors.PublicMintClosed,
       );
     });
@@ -210,7 +195,8 @@ describe("ERC721Basic", () => {
         .connect(acc02)
         .mint(1, { value: price });
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        basic,
         BasicErrors.MaxSupplyReached,
       );
     });
@@ -219,7 +205,8 @@ describe("ERC721Basic", () => {
       await basic.setPublicMintState(true);
       const tx = basic.connect(acc02).mint(1, { value: 0 });
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        basic,
         BasicErrors.WrongPrice,
       );
     });
@@ -300,7 +287,13 @@ describe("ERC721Basic", () => {
       );
     });
     it("Should revert if ids length is less than 2", async () => {
-      await expect(basic.burn([1])).to.be.revertedWith(
+      const Counters = await ethers.getContractFactory(
+        "Counters",
+      );
+      await expect(
+        basic.burn([1]),
+      ).to.be.revertedWithCustomError(
+        Counters,
         BasicErrors.DecrementOverflow,
       );
     });
@@ -380,7 +373,14 @@ describe("ERC721Basic", () => {
     });
 
     it("Should withdraw contract's ERC20s", async () => {
-      ({ erc20 } = await loadFixture(tokenFixture));
+      // ({ erc20 } = await loadFixture(erc20Fixture));
+      const ERC20 = await ethers.getContractFactory(
+        "MockERC20",
+      );
+      const erc20 = (await ERC20.deploy(
+        BigNumber.from(2).pow(255),
+      )) as MockERC20;
+
       await erc20.mint(basic.address, price);
       const bal = await erc20.callStatic.balanceOf(
         basic.address,
@@ -420,7 +420,8 @@ describe("ERC721Basic", () => {
       expect(tx).to.be.ok;
       expect(tx).to.eq("ipfs://cid/1.json");
 
-      await expect(fail).to.be.revertedWith(
+      await expect(fail).to.be.revertedWithCustomError(
+        basic,
         BasicErrors.NotMintedYet,
       );
     });

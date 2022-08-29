@@ -5,18 +5,56 @@
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
 import type {
-  ERC1155MinimalEvents,
-  ERC1155MinimalEventsInterface,
-} from "../../../../../../../lib/tokens/ERC1155/Base/interfaces/ERC1155EventAndErrors.sol/ERC1155MinimalEvents";
+  ERC721BasicEventsAndErrors,
+  ERC721BasicEventsAndErrorsInterface,
+} from "../../../../../../../lib/tokens/ERC721/Base/interfaces/ERC721EventAndErrors.sol/ERC721BasicEventsAndErrors";
 
 const _abi = [
+  {
+    inputs: [],
+    name: "LoopOverflow",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "MaxSupplyReached",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "NotMintedYet",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "PublicMintClosed",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "WrongPrice",
+    type: "error",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "string",
+        name: "newBaseURI",
+        type: "string",
+      },
+    ],
+    name: "BaseURISet",
+    type: "event",
+  },
   {
     anonymous: false,
     inputs: [
       {
         indexed: true,
         internalType: "bool",
-        name: "newPublicMintState",
+        name: "newPublicState",
         type: "bool",
       },
     ],
@@ -51,19 +89,19 @@ const _abi = [
   },
 ];
 
-export class ERC1155MinimalEvents__factory {
+export class ERC721BasicEventsAndErrors__factory {
   static readonly abi = _abi;
-  static createInterface(): ERC1155MinimalEventsInterface {
-    return new utils.Interface(_abi) as ERC1155MinimalEventsInterface;
+  static createInterface(): ERC721BasicEventsAndErrorsInterface {
+    return new utils.Interface(_abi) as ERC721BasicEventsAndErrorsInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): ERC1155MinimalEvents {
+  ): ERC721BasicEventsAndErrors {
     return new Contract(
       address,
       _abi,
       signerOrProvider
-    ) as ERC1155MinimalEvents;
+    ) as ERC721BasicEventsAndErrors;
   }
 }

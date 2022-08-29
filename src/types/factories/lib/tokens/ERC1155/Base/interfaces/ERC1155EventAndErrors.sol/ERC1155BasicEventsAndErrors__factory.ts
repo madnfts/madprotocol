@@ -5,11 +5,36 @@
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
 import type {
-  ERC721BasicEvents,
-  ERC721BasicEventsInterface,
-} from "../../../../../../../lib/tokens/ERC721/Base/interfaces/ERC721EventAndErrors.sol/ERC721BasicEvents";
+  ERC1155BasicEventsAndErrors,
+  ERC1155BasicEventsAndErrorsInterface,
+} from "../../../../../../../lib/tokens/ERC1155/Base/interfaces/ERC1155EventAndErrors.sol/ERC1155BasicEventsAndErrors";
 
 const _abi = [
+  {
+    inputs: [],
+    name: "LoopOverflow",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "MaxSupplyReached",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "NotMintedYet",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "PublicMintClosed",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "WrongPrice",
+    type: "error",
+  },
   {
     anonymous: false,
     inputs: [
@@ -64,15 +89,19 @@ const _abi = [
   },
 ];
 
-export class ERC721BasicEvents__factory {
+export class ERC1155BasicEventsAndErrors__factory {
   static readonly abi = _abi;
-  static createInterface(): ERC721BasicEventsInterface {
-    return new utils.Interface(_abi) as ERC721BasicEventsInterface;
+  static createInterface(): ERC1155BasicEventsAndErrorsInterface {
+    return new utils.Interface(_abi) as ERC1155BasicEventsAndErrorsInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): ERC721BasicEvents {
-    return new Contract(address, _abi, signerOrProvider) as ERC721BasicEvents;
+  ): ERC1155BasicEventsAndErrors {
+    return new Contract(
+      address,
+      _abi,
+      signerOrProvider
+    ) as ERC1155BasicEventsAndErrors;
   }
 }

@@ -19,7 +19,8 @@ import type {
   PromiseOrValue,
 } from "../../../../../../common";
 
-export interface ERC721WhitelistEventsInterface extends utils.Interface {
+export interface ERC1155WhitelistEventsAndErrorsInterface
+  extends utils.Interface {
   functions: {};
 
   events: {
@@ -129,12 +130,12 @@ export type WhitelistMintStateSetEvent = TypedEvent<
 export type WhitelistMintStateSetEventFilter =
   TypedEventFilter<WhitelistMintStateSetEvent>;
 
-export interface ERC721WhitelistEvents extends BaseContract {
+export interface ERC1155WhitelistEventsAndErrors extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: ERC721WhitelistEventsInterface;
+  interface: ERC1155WhitelistEventsAndErrorsInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

@@ -1,11 +1,9 @@
+import "@nomicfoundation/hardhat-chai-matchers";
+import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
-import {
-  BigNumber, // ContractReceipt,
-  // ContractTransaction,
-  Wallet,
-} from "ethers";
-import { ethers, network, waffle } from "hardhat";
+import { BigNumber, Wallet } from "ethers";
+import { ethers, network } from "hardhat";
 
 import {
   ERC1155Basic,
@@ -14,8 +12,7 @@ import {
 } from "../src/types";
 import { BasicErrors } from "./utils/errors";
 import {
-  sbFixture1155,
-  tokenFixture,
+  basicFixture1155, // erc20Fixture,
 } from "./utils/fixtures";
 import {
   ERC165Interface,
@@ -24,8 +21,6 @@ import {
   ERC2981Interface,
   getInterfaceID,
 } from "./utils/interfaces";
-
-const createFixtureLoader = waffle.createFixtureLoader;
 
 describe("ERC1155Basic", () => {
   /* 
@@ -56,10 +51,7 @@ describe("ERC1155Basic", () => {
 
   let splitter: SplitterImpl;
   let basic: ERC1155Basic;
-  let erc20: MockERC20;
-
-  // let tx:ContractTransaction;
-  // let rc:ContractReceipt;
+  // let erc20: MockERC20;
 
   const fundAmount: BigNumber =
     ethers.utils.parseEther("10000");
@@ -67,23 +59,17 @@ describe("ERC1155Basic", () => {
   const change =
     "VmlydHVhbGx5IGV2ZXJ5dGhpbmcgaXMgcGx1bmRlcmVkLCBidXQgYWJzb2x1dGVseSBldmVyeXRoaW5nIGlzIGZyZWUu";
 
-  let loadFixture: ReturnType<typeof createFixtureLoader>;
-
   before("Set signers and reset network", async () => {
     [owner, amb, mad, acc01, acc02] =
       await // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (ethers as any).getSigners();
-    loadFixture = createFixtureLoader([
-      owner,
-      amb,
-      mad,
-      acc01,
-      acc02,
-    ]);
+
     await network.provider.send("hardhat_reset");
   });
   beforeEach("Load deployment fixtures", async () => {
-    ({ basic, splitter } = await loadFixture(sbFixture1155));
+    ({ basic, splitter } = await loadFixture(
+      basicFixture1155,
+    ));
   });
 
   describe("Init", async () => {
@@ -183,7 +169,8 @@ describe("ERC1155Basic", () => {
     it("Should revert if public mint is turned off", async () => {
       const tx = basic.connect(acc01).mint(1);
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        basic,
         BasicErrors.PublicMintClosed,
       );
     });
@@ -198,7 +185,8 @@ describe("ERC1155Basic", () => {
         .connect(acc02)
         .mint(1, { value: price });
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        basic,
         BasicErrors.MaxSupplyReached,
       );
     });
@@ -207,7 +195,8 @@ describe("ERC1155Basic", () => {
       await basic.setPublicMintState(true);
       const tx = basic.connect(acc02).mint(1, { value: 0 });
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        basic,
         BasicErrors.WrongPrice,
       );
     });
@@ -274,18 +263,19 @@ describe("ERC1155Basic", () => {
         .connect(mad)
         .mintBatch(id, { value: price });
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        basic,
         BasicErrors.MaxSupplyReached,
       );
     });
     it("Should revert if public mint is turned off", async () => {
-      // await basic.setPublicMintState(true);
       const id = [25];
       const tx = basic
         .connect(acc01)
         .mint(id, { value: price });
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        basic,
         BasicErrors.PublicMintClosed,
       );
     });
@@ -297,7 +287,8 @@ describe("ERC1155Basic", () => {
         value: price.mul(amount),
       });
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        basic,
         BasicErrors.WrongPrice,
       );
     });
@@ -463,7 +454,13 @@ describe("ERC1155Basic", () => {
       );
     });
     it("Should revert if ids length is less than 2", async () => {
-      await expect(basic.burn([1])).to.be.revertedWith(
+      const counters = await ethers.getContractFactory(
+        "Counters",
+      );
+      await expect(
+        basic.burn([1]),
+      ).to.be.revertedWithCustomError(
+        counters,
         BasicErrors.DecrementOverflow,
       );
     });
@@ -685,7 +682,14 @@ describe("ERC1155Basic", () => {
     });
 
     it("Should withdraw contract's ERC20s", async () => {
-      ({ erc20 } = await loadFixture(tokenFixture));
+      // ({ erc20 } = await loadFixture(erc20Fixture));
+      const ERC20 = await ethers.getContractFactory(
+        "MockERC20",
+      );
+      const erc20 = (await ERC20.deploy(
+        BigNumber.from(2).pow(255),
+      )) as MockERC20;
+
       await erc20.mint(basic.address, price);
       const bal = await erc20.callStatic.balanceOf(
         basic.address,
@@ -719,12 +723,14 @@ describe("ERC1155Basic", () => {
       await basic.setPublicMintState(true);
       await basic.connect(acc01).mint(1, { value: price });
       const tx = await basic.callStatic.uri(1);
-      // const fail = basic.callStatic.uri(2);
 
       expect(tx).to.be.ok;
       expect(tx).to.eq("ipfs://cid/1.json");
 
-      await expect(basic.uri(2)).to.be.revertedWith(
+      await expect(
+        basic.uri(2),
+      ).to.be.revertedWithCustomError(
+        basic,
         BasicErrors.NotMintedYet,
       );
     });

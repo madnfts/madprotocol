@@ -1,22 +1,19 @@
+import "@nomicfoundation/hardhat-chai-matchers";
+import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-// import { MerkleTree } from "merkletreejs";
-// import  keccak256  from "keccak256";
 import { expect } from "chai";
 import { BigNumber, Wallet } from "ethers";
-import { ethers, network, waffle } from "hardhat";
+import { ethers, network } from "hardhat";
 
 import {
   ERC721Whitelist,
   MockERC20,
-  /* Reentrancy  */
   SplitterImpl,
 } from "../src/types";
 import { WhitelistErrors } from "./utils/errors";
 import {
-  getSignerAddrs,
-  tokenFixture, // randomSigners,
-  // padBuffer,
-  wlFixture721,
+  getSignerAddrs, // erc20Fixture,
+  whitelistFixture721,
 } from "./utils/fixtures";
 import {
   ERC165Interface,
@@ -25,8 +22,6 @@ import {
   ERC2981Interface,
   getInterfaceID,
 } from "./utils/interfaces";
-
-const createFixtureLoader = waffle.createFixtureLoader;
 
 describe("ERC721Whitelist", () => {
   /* 
@@ -57,7 +52,7 @@ describe("ERC721Whitelist", () => {
 
   let splitter: SplitterImpl;
   let wl: ERC721Whitelist;
-  let erc20: MockERC20;
+  // let erc20: MockERC20;
   let merkleRoot: string;
   let proof: string[];
   let wrongProof: string[];
@@ -71,25 +66,16 @@ describe("ERC721Whitelist", () => {
     ethers.utils.parseEther("10000");
   const price: BigNumber = ethers.utils.parseEther("1");
 
-  let loadFixture: ReturnType<typeof createFixtureLoader>;
-
   before("Set signers and reset network", async () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [owner, amb, mad, acc01, acc02] = await (
-      ethers as any
-    ).getSigners();
-    loadFixture = createFixtureLoader([
-      owner,
-      amb,
-      mad,
-      acc01,
-      acc02,
-    ]);
+    [owner, amb, mad, acc01, acc02] =
+      await // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (ethers as any).getSigners();
+
     await network.provider.send("hardhat_reset");
   });
   beforeEach("Load deployment fixtures", async () => {
     ({ wl, splitter, proof, wrongProof, merkleRoot } =
-      await loadFixture(wlFixture721));
+      await loadFixture(whitelistFixture721));
   });
 
   describe("Init", async () => {
@@ -269,13 +255,14 @@ describe("ERC721Whitelist", () => {
       const tx = wl.mint(ethers.constants.NegativeOne);
       const tx2 = wl.mint(over);
 
-      await expect(tx).to.be.reverted;
-      await expect(tx2).to.be.reverted;
+      await expect(tx).to.be.reverted.revertedWithoutReason;
+      await expect(tx2).to.be.reverted.revertedWithoutReason;
     });
     it("Should revert if public mint state is off", async () => {
       const tx = wl.connect(acc02).mint(1, { value: price });
 
-      await expect(tx).be.revertedWith(
+      await expect(tx).be.revertedWithCustomError(
+        wl,
         WhitelistErrors.PublicMintClosed,
       );
     });
@@ -290,7 +277,8 @@ describe("ERC721Whitelist", () => {
         .mint(890, { value: price.mul(amount) });
       const tx = wl.connect(acc02).mint(1, { value: price });
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        wl,
         WhitelistErrors.MaxMintReached,
       );
     });
@@ -298,7 +286,8 @@ describe("ERC721Whitelist", () => {
       await wl.setPublicMintState(true);
       const tx = wl.connect(acc02).mint(1);
 
-      await expect(tx).be.revertedWith(
+      await expect(tx).be.revertedWithCustomError(
+        wl,
         WhitelistErrors.WrongPrice,
       );
     });
@@ -339,7 +328,6 @@ describe("ERC721Whitelist", () => {
 
   describe("Whitelist mint", async () => {
     it("Should revert if value under/overflows", async () => {
-      // ({ proof } = await loadFixture(wlFixture721));
       await wl.setWhitelistMintState(true);
       const tx = wl.whitelistMint(
         ethers.constants.NegativeOne,
@@ -347,14 +335,14 @@ describe("ERC721Whitelist", () => {
       );
       const tx2 = wl.whitelistMint(256, proof);
 
-      await expect(tx).to.be.reverted;
-      await expect(tx2).to.be.reverted;
+      await expect(tx).to.be.revertedWithoutReason;
+      await expect(tx2).to.be.revertedWithoutReason;
     });
     it("Should revert if whitelist mint state is off", async () => {
-      // ({ proof } = await loadFixture(wlFixture721));
       const tx = wl.whitelistMint(1, proof);
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        wl,
         WhitelistErrors.WhitelistMintClosed,
       );
     });
@@ -374,7 +362,8 @@ describe("ERC721Whitelist", () => {
         .whitelistMint(1, proof, { value: price });
 
       expect(await wl.callStatic.totalSupply()).to.eq(990);
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        wl,
         WhitelistErrors.MaxWhitelistReached,
       );
     });
@@ -382,7 +371,8 @@ describe("ERC721Whitelist", () => {
       await wl.setWhitelistMintState(true);
       const tx = wl.connect(owner).whitelistMint(1, proof);
 
-      await expect(tx).be.revertedWith(
+      await expect(tx).be.revertedWithCustomError(
+        wl,
         WhitelistErrors.WrongPrice,
       );
     });
@@ -409,7 +399,8 @@ describe("ERC721Whitelist", () => {
         .connect(acc01)
         .whitelistMint(1, wrongProof, { value: price });
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        wl,
         WhitelistErrors.AddressDenied,
       );
     });
@@ -461,7 +452,8 @@ describe("ERC721Whitelist", () => {
     it("Should revert if free claim state is off", async () => {
       const tx = wl.claimFree(proof);
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        wl,
         WhitelistErrors.FreeClaimClosed,
       );
     });
@@ -483,7 +475,8 @@ describe("ERC721Whitelist", () => {
 
       expect(await wl.callStatic.totalSupply()).to.eq(1000);
       expect(tx).to.be.ok;
-      await expect(fail).to.be.revertedWith(
+      await expect(fail).to.be.revertedWithCustomError(
+        wl,
         WhitelistErrors.MaxFreeReached,
       );
     });
@@ -491,7 +484,8 @@ describe("ERC721Whitelist", () => {
       await wl.setFreeClaimState(true);
       const tx = wl.connect(acc01).claimFree(wrongProof);
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        wl,
         WhitelistErrors.AddressDenied,
       );
     });
@@ -500,7 +494,8 @@ describe("ERC721Whitelist", () => {
       await wl.claimFree(proof);
       const tx = wl.claimFree(proof);
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        wl,
         WhitelistErrors.AlreadyClaimed,
       );
     });
@@ -547,7 +542,10 @@ describe("ERC721Whitelist", () => {
       await expect(
         wl.connect(acc01).mintToCreator(100),
       ).to.be.revertedWith(WhitelistErrors.Unauthorized);
-      await expect(wl.mintToCreator(10)).to.be.revertedWith(
+      await expect(
+        wl.mintToCreator(10),
+      ).to.be.revertedWithCustomError(
+        wl,
         WhitelistErrors.MaxFreeReached,
       );
     });
@@ -581,13 +579,22 @@ describe("ERC721Whitelist", () => {
       await expect(
         wl.connect(acc01).giftTokens(gifted),
       ).to.be.revertedWith(WhitelistErrors.Unauthorized);
-      await expect(wl.mintToCreator(10)).to.be.revertedWith(
+      await expect(
+        wl.mintToCreator(10),
+      ).to.be.revertedWithCustomError(
+        wl,
         WhitelistErrors.MaxFreeReached,
       );
-      await expect(wl.claimFree(proof)).to.be.revertedWith(
+      await expect(
+        wl.claimFree(proof),
+      ).to.be.revertedWithCustomError(
+        wl,
         WhitelistErrors.MaxFreeReached,
       );
-      await expect(wl.giftTokens(gifted)).to.be.revertedWith(
+      await expect(
+        wl.giftTokens(gifted),
+      ).to.be.revertedWithCustomError(
+        wl,
         WhitelistErrors.MaxFreeReached,
       );
     });
@@ -613,7 +620,13 @@ describe("ERC721Whitelist", () => {
       );
     });
     it("Should revert if ids length is less than 2", async () => {
-      await expect(wl.burn([1])).to.be.revertedWith(
+      const Counters = await ethers.getContractFactory(
+        "Counters",
+      );
+      await expect(
+        wl.burn([1]),
+      ).to.be.revertedWithCustomError(
+        Counters,
         WhitelistErrors.DecrementOverflow,
       );
     });
@@ -688,7 +701,10 @@ describe("ERC721Whitelist", () => {
       expect(tx).to.eq("ipfs://cid/1.json");
       await expect(
         wl.callStatic.tokenURI(2),
-      ).to.be.revertedWith(WhitelistErrors.NotMintedYet);
+      ).to.be.revertedWithCustomError(
+        wl,
+        WhitelistErrors.NotMintedYet,
+      );
     });
 
     it("Should support interfaces", async () => {
@@ -723,7 +739,6 @@ describe("ERC721Whitelist", () => {
 
   describe("Withdrawing", async () => {
     it("Should revert if not the owner", async () => {
-      // const { minimal } = await minimalFixture();
       await wl.connect(owner).setPublicMintState(true);
       await wl.connect(acc02).mint(1, { value: price });
 
@@ -733,7 +748,6 @@ describe("ERC721Whitelist", () => {
     });
 
     it("Should update balances of contract and owner", async () => {
-      // const { minimal } = await minimalFixture();
       await wl.connect(owner).setPublicMintState(true);
       await wl.connect(acc02).mint(1, { value: price });
       const oldOwnerBal = await ethers.provider.getBalance(
@@ -754,7 +768,13 @@ describe("ERC721Whitelist", () => {
     });
 
     it("Should withdraw contract's ERC20s", async () => {
-      ({ erc20 } = await loadFixture(tokenFixture));
+      const ERC20 = await ethers.getContractFactory(
+        "MockERC20",
+      );
+      const erc20 = (await ERC20.deploy(
+        BigNumber.from(2).pow(255),
+      )) as MockERC20;
+
       await erc20.mint(wl.address, price);
       const bal = await erc20.callStatic.balanceOf(
         wl.address,

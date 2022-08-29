@@ -485,7 +485,7 @@ export interface ERC721Minimal extends BaseContract {
     tokenURI(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[string]>;
+    ): Promise<[string] & { _uri: string }>;
 
     transferFrom(
       from: PromiseOrValue<string>,

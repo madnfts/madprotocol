@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.4;
 
-import { ERC1155BasicEvents } from "../Base/interfaces/ERC1155EventAndErrors.sol";
+import { ERC1155BasicEventsAndErrors } from "../Base/interfaces/ERC1155EventAndErrors.sol";
 import { ERC1155B as ERC1155, ERC1155TokenReceiver } from "../Base/ERC1155B.sol";
 import { ERC2981 } from "../../common/ERC2981.sol";
 import { ERC20 } from "../../ERC20.sol";
@@ -17,7 +17,7 @@ import { SafeTransferLib } from "../../../utils/SafeTransferLib.sol";
 contract ERC1155Basic is
     ERC1155,
     ERC2981,
-    ERC1155BasicEvents,
+    ERC1155BasicEventsAndErrors,
     ERC1155TokenReceiver,
     Owned,
     ReentrancyGuard
@@ -44,19 +44,18 @@ contract ERC1155Basic is
     ////////////////////////////////////////////////////////////////
 
     modifier publicMintAccess() {
-        if (!publicMintState) revert("PublicMintClosed");
+        if (!publicMintState) revert PublicMintClosed();
         _;
     }
 
     modifier hasReachedMax(uint256 amount) {
         if (totalSupply() + amount > maxSupply)
-            revert("MaxSupplyReached");
+            revert MaxSupplyReached();
         _;
     }
 
     modifier priceCheck(uint256 _price, uint256 amount) {
-        if (_price * amount != msg.value)
-            revert("WrongPrice");
+        if (_price * amount != msg.value) revert WrongPrice();
         _;
     }
 
@@ -115,8 +114,8 @@ contract ERC1155Basic is
         }
         assembly {
             if lt(i, len) {
-                mstore(0x00, "LOOP_OVERFLOW")
-                revert(0x00, 0x20)
+                mstore(0x00, 0xdfb035c9)
+                revert(0x1c, 0x04)
             }
         }
         // Transfer events emited by parent ERC1155 contract
@@ -137,8 +136,8 @@ contract ERC1155Basic is
         }
         assembly {
             if lt(i, len) {
-                mstore(0x00, "LOOP_OVERFLOW")
-                revert(0x00, 0x20)
+                mstore(0x00, 0xdfb035c9)
+                revert(0x1c, 0x04)
             }
         }
         _batchBurn(from, ids);
@@ -182,8 +181,8 @@ contract ERC1155Basic is
         // assembly overflow check
         assembly {
             if lt(i, amount) {
-                mstore(0x00, "LOOP_OVERFLOW")
-                revert(0x00, 0x20)
+                mstore(0x00, 0xdfb035c9)
+                revert(0x1c, 0x04)
             }
         }
         // Transfer events emited by parent ERC1155 contract
@@ -207,8 +206,8 @@ contract ERC1155Basic is
         }
         assembly {
             if lt(i, len) {
-                mstore(0x00, "LOOP_OVERFLOW")
-                revert(0x00, 0x20)
+                mstore(0x00, 0xdfb035c9)
+                revert(0x1c, 0x04)
             }
         }
         _batchMint(msg.sender, ids, "");
@@ -220,10 +219,9 @@ contract ERC1155Basic is
     ////////////////////////////////////////////////////////////////
 
     function _mintBatchCheck(uint256 _amount) private view {
-        if (price * _amount != msg.value)
-            revert("WrongPrice");
+        if (price * _amount != msg.value) revert WrongPrice();
         if (totalSupply() + _amount > maxSupply)
-            revert("MaxSupplyReached");
+            revert MaxSupplyReached();
     }
 
     function _nextId() private returns (uint256) {

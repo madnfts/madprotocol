@@ -1,7 +1,9 @@
+import "@nomicfoundation/hardhat-chai-matchers";
+import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { BigNumber, Wallet } from "ethers";
-import { ethers, network, waffle } from "hardhat";
+import { ethers, network } from "hardhat";
 
 import {
   ERC1155Whitelist,
@@ -10,9 +12,8 @@ import {
 } from "../src/types";
 import { WhitelistErrors } from "./utils/errors";
 import {
-  getSignerAddrs,
-  tokenFixture,
-  wlFixture1155,
+  getSignerAddrs, // erc20Fixture,
+  whitelistFixture1155,
 } from "./utils/fixtures";
 import {
   ERC165Interface,
@@ -21,8 +22,6 @@ import {
   ERC2981Interface,
   getInterfaceID,
 } from "./utils/interfaces";
-
-const createFixtureLoader = waffle.createFixtureLoader;
 
 describe("ERC1155Whitelist", () => {
   /*
@@ -53,7 +52,7 @@ describe("ERC1155Whitelist", () => {
 
   let splitter: SplitterImpl;
   let wl: ERC1155Whitelist;
-  let erc20: MockERC20;
+  // let erc20: MockERC20;
   let merkleRoot: string;
   let proof: string[];
   let wrongProof: string[];
@@ -62,24 +61,16 @@ describe("ERC1155Whitelist", () => {
     ethers.utils.parseEther("10000");
   const price: BigNumber = ethers.utils.parseEther("1");
 
-  let loadFixture: ReturnType<typeof createFixtureLoader>;
-
   before("Set signers and reset network", async () => {
     [owner, amb, mad, acc01, acc02] =
       await // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (ethers as any).getSigners();
-    loadFixture = createFixtureLoader([
-      owner,
-      amb,
-      mad,
-      acc01,
-      acc02,
-    ]);
+
     await network.provider.send("hardhat_reset");
   });
   beforeEach("Load deployment fixtures", async () => {
     ({ wl, splitter, proof, wrongProof, merkleRoot } =
-      await loadFixture(wlFixture1155));
+      await loadFixture(whitelistFixture1155));
   });
 
   describe("Init", async () => {
@@ -253,13 +244,14 @@ describe("ERC1155Whitelist", () => {
       const tx = wl.mint(ethers.constants.NegativeOne);
       const tx2 = wl.mint(over);
 
-      await expect(tx).to.be.reverted;
-      await expect(tx2).to.be.reverted;
+      await expect(tx).to.be.revertedWithoutReason;
+      await expect(tx2).to.be.revertedWithoutReason;
     });
     it("Should revert if public mint state is off", async () => {
       const tx = wl.connect(acc02).mint(1, { value: price });
 
-      await expect(tx).be.revertedWith(
+      await expect(tx).be.revertedWithCustomError(
+        wl,
         WhitelistErrors.PublicMintClosed,
       );
     });
@@ -274,7 +266,8 @@ describe("ERC1155Whitelist", () => {
         .mint(890, { value: price.mul(amount) });
       const tx = wl.connect(acc02).mint(1, { value: price });
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        wl,
         WhitelistErrors.MaxMintReached,
       );
     });
@@ -282,7 +275,8 @@ describe("ERC1155Whitelist", () => {
       await wl.setPublicMintState(true);
       const tx = wl.connect(acc02).mint(1);
 
-      await expect(tx).be.revertedWith(
+      await expect(tx).be.revertedWithCustomError(
+        wl,
         WhitelistErrors.WrongPrice,
       );
     });
@@ -333,7 +327,8 @@ describe("ERC1155Whitelist", () => {
         .connect(mad)
         .mintBatch(id, { value: price });
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        wl,
         WhitelistErrors.MaxMintReached,
       );
     });
@@ -341,7 +336,8 @@ describe("ERC1155Whitelist", () => {
       const id = [25];
       const tx = wl.connect(acc01).mint(id, { value: price });
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        wl,
         WhitelistErrors.PublicMintClosed,
       );
     });
@@ -353,7 +349,8 @@ describe("ERC1155Whitelist", () => {
         value: price.mul(amount),
       });
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        wl,
         WhitelistErrors.WrongPrice,
       );
     });
@@ -497,13 +494,14 @@ describe("ERC1155Whitelist", () => {
       );
       const tx2 = wl.whitelistMint(256, proof);
 
-      await expect(tx).to.be.reverted;
-      await expect(tx2).to.be.reverted;
+      await expect(tx).to.be.revertedWithoutReason;
+      await expect(tx2).to.be.revertedWithoutReason;
     });
     it("Should revert if whitelist mint state is off", async () => {
       const tx = wl.whitelistMint(1, proof);
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        wl,
         WhitelistErrors.WhitelistMintClosed,
       );
     });
@@ -523,7 +521,8 @@ describe("ERC1155Whitelist", () => {
         .whitelistMint(1, proof, { value: price });
 
       expect(await wl.callStatic.totalSupply()).to.eq(990);
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        wl,
         WhitelistErrors.MaxWhitelistReached,
       );
     });
@@ -531,7 +530,8 @@ describe("ERC1155Whitelist", () => {
       await wl.setWhitelistMintState(true);
       const tx = wl.connect(owner).whitelistMint(1, proof);
 
-      await expect(tx).be.revertedWith(
+      await expect(tx).be.revertedWithCustomError(
+        wl,
         WhitelistErrors.WrongPrice,
       );
     });
@@ -541,7 +541,8 @@ describe("ERC1155Whitelist", () => {
         .connect(acc01)
         .whitelistMint(1, wrongProof, { value: price });
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        wl,
         WhitelistErrors.AddressDenied,
       );
     });
@@ -597,13 +598,14 @@ describe("ERC1155Whitelist", () => {
         proof,
       );
 
-      await expect(tx).to.be.reverted;
-      await expect(tx2).to.be.reverted;
+      await expect(tx).to.be.revertedWithoutReason;
+      await expect(tx2).to.be.revertedWithoutReason;
     });
     it("Should revert if whitelist mint state is off", async () => {
       const tx = wl.whitelistMintBatch([1], proof);
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        wl,
         WhitelistErrors.WhitelistMintClosed,
       );
     });
@@ -623,7 +625,8 @@ describe("ERC1155Whitelist", () => {
         .whitelistMintBatch([1], proof, { value: price });
 
       expect(await wl.callStatic.totalSupply()).to.eq(990);
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        wl,
         WhitelistErrors.MaxWhitelistReached,
       );
     });
@@ -633,7 +636,8 @@ describe("ERC1155Whitelist", () => {
         .connect(owner)
         .whitelistMintBatch([1], proof);
 
-      await expect(tx).be.revertedWith(
+      await expect(tx).be.revertedWithCustomError(
+        wl,
         WhitelistErrors.WrongPrice,
       );
     });
@@ -645,7 +649,8 @@ describe("ERC1155Whitelist", () => {
           value: price,
         });
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        wl,
         WhitelistErrors.AddressDenied,
       );
     });
@@ -699,7 +704,8 @@ describe("ERC1155Whitelist", () => {
     it("Should revert if free claim state is off", async () => {
       const tx = wl.claimFree(proof);
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        wl,
         WhitelistErrors.FreeClaimClosed,
       );
     });
@@ -721,7 +727,8 @@ describe("ERC1155Whitelist", () => {
 
       expect(await wl.callStatic.totalSupply()).to.eq(1000);
       expect(tx).to.be.ok;
-      await expect(fail).to.be.revertedWith(
+      await expect(fail).to.be.revertedWithCustomError(
+        wl,
         WhitelistErrors.MaxFreeReached,
       );
     });
@@ -729,7 +736,8 @@ describe("ERC1155Whitelist", () => {
       await wl.setFreeClaimState(true);
       const tx = wl.connect(acc01).claimFree(wrongProof);
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        wl,
         WhitelistErrors.AddressDenied,
       );
     });
@@ -738,7 +746,8 @@ describe("ERC1155Whitelist", () => {
       await wl.claimFree(proof);
       const tx = wl.claimFree(proof);
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        wl,
         WhitelistErrors.AlreadyClaimed,
       );
     });
@@ -799,13 +808,22 @@ describe("ERC1155Whitelist", () => {
       await expect(
         wl.connect(acc01).giftTokens(gifted),
       ).to.be.revertedWith(WhitelistErrors.Unauthorized);
-      await expect(wl.mintToCreator(10)).to.be.revertedWith(
+      await expect(
+        wl.mintToCreator(10),
+      ).to.be.revertedWithCustomError(
+        wl,
         WhitelistErrors.MaxFreeReached,
       );
-      await expect(wl.claimFree(proof)).to.be.revertedWith(
+      await expect(
+        wl.claimFree(proof),
+      ).to.be.revertedWithCustomError(
+        wl,
         WhitelistErrors.MaxFreeReached,
       );
-      await expect(wl.giftTokens(gifted)).to.be.revertedWith(
+      await expect(
+        wl.giftTokens(gifted),
+      ).to.be.revertedWithCustomError(
+        wl,
         WhitelistErrors.MaxFreeReached,
       );
     });
@@ -829,7 +847,10 @@ describe("ERC1155Whitelist", () => {
       await expect(
         wl.connect(acc01).mintToCreator(100),
       ).to.be.revertedWith(WhitelistErrors.Unauthorized);
-      await expect(wl.mintToCreator(10)).to.be.revertedWith(
+      await expect(
+        wl.mintToCreator(10),
+      ).to.be.revertedWithCustomError(
+        wl,
         WhitelistErrors.MaxFreeReached,
       );
     });
@@ -849,7 +870,10 @@ describe("ERC1155Whitelist", () => {
       await expect(
         wl.connect(acc01).mintBatchToCreator([100]),
       ).to.be.revertedWith(WhitelistErrors.Unauthorized);
-      await expect(wl.mintToCreator(1)).to.be.revertedWith(
+      await expect(
+        wl.mintToCreator(1),
+      ).to.be.revertedWithCustomError(
+        wl,
         WhitelistErrors.MaxFreeReached,
       );
     });
@@ -879,7 +903,13 @@ describe("ERC1155Whitelist", () => {
       );
     });
     it("Should revert if ids length is less than 2", async () => {
-      await expect(wl.burn([1])).to.be.revertedWith(
+      const Counters = await ethers.getContractFactory(
+        "Counters",
+      );
+      await expect(
+        wl.burn([1]),
+      ).to.be.revertedWithCustomError(
+        Counters,
         WhitelistErrors.DecrementOverflow,
       );
     });
@@ -1101,7 +1131,13 @@ describe("ERC1155Whitelist", () => {
     });
 
     it("Should withdraw contract's ERC20s", async () => {
-      ({ erc20 } = await loadFixture(tokenFixture));
+      const ERC20 = await ethers.getContractFactory(
+        "MockERC20",
+      );
+      const erc20 = (await ERC20.deploy(
+        BigNumber.from(2).pow(255),
+      )) as MockERC20;
+
       await erc20.mint(wl.address, price);
       const bal = await erc20.callStatic.balanceOf(
         wl.address,
@@ -1140,7 +1176,8 @@ describe("ERC1155Whitelist", () => {
       expect(tx).to.be.ok;
       expect(tx).to.eq("ipfs://cid/1.json");
 
-      await expect(fail).to.be.revertedWith(
+      await expect(fail).to.be.revertedWithCustomError(
+        wl,
         WhitelistErrors.NotMintedYet,
       );
     });

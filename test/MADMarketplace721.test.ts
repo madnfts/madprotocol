@@ -1,8 +1,6 @@
+import "@nomicfoundation/hardhat-chai-matchers";
 import {
-  SignTypedDataVersion,
-  signTypedData,
-} from "@metamask/eth-sig-util";
-import {
+  loadFixture,
   mine,
   mineUpTo,
 } from "@nomicfoundation/hardhat-network-helpers";
@@ -14,32 +12,30 @@ import {
   ContractTransaction,
   Wallet,
 } from "ethers";
-import { ethers, network, waffle } from "hardhat";
+import { artifacts, ethers, network } from "hardhat";
+import keccak256 from "keccak256";
+import { MerkleTree } from "merkletreejs";
 
 import {
   ERC721Whitelist,
   MADFactory721,
   MADMarketplace721,
   MADRouter721,
-  MockERC20,
-  SplitterImpl,
+  SplitterImpl, // MockERC20,
+  // SplitterImpl,
 } from "../src/types";
 import { MarketplaceErrors } from "./utils/errors";
 import {
-  getSignerAddrs,
-  tokenFixture,
-  wlFixture721,
+  // erc20Fixture,
+  // whitelistFixture721,
+  padBuffer,
 } from "./utils/fixtures";
 import {
   OrderDetails721,
   dead,
   getOrderId,
-  mFixture721,
+  madFixture721C,
 } from "./utils/madFixtures";
-
-// import { TransactionReceipt } from "@ethersproject/providers";
-
-const createFixtureLoader = waffle.createFixtureLoader;
 
 describe("MADMarketplace721", () => {
   type WalletWithAddress = Wallet & SignerWithAddress;
@@ -57,44 +53,35 @@ describe("MADMarketplace721", () => {
   let acc01: WalletWithAddress;
   let acc02: WalletWithAddress;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let res: any;
-
   let f721: MADFactory721;
   let m721: MADMarketplace721;
   let r721: MADRouter721;
-  let erc20: MockERC20;
-  let splitter: SplitterImpl;
-  let wl: ERC721Whitelist;
-  let whitelist: ERC721Whitelist;
+  // let erc20: MockERC20;
+  // let splitter: SplitterImpl;
+  // let wl: ERC721Whitelist;
+  // let whitelist: ERC721Whitelist;
 
-  const fundAmount: BigNumber =
-    ethers.utils.parseEther("10000");
   const price: BigNumber = ethers.utils.parseEther("1");
-
-  let loadFixture: ReturnType<typeof createFixtureLoader>;
 
   before("Set signers and reset network", async () => {
     [owner, amb, mad, acc01, acc02] =
       await // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (ethers as any).getSigners();
-    loadFixture = createFixtureLoader([
-      owner,
-      amb,
-      mad,
-      acc01,
-      acc02,
-    ]);
+
     await network.provider.send("hardhat_reset");
   });
   beforeEach("Load deployment fixtures", async () => {
-    ({ f721, m721, r721 } = await loadFixture(mFixture721));
-    // ({ /* splitter, */ wl } = await loadFixture(wlFixture721));
+    ({ f721, m721, r721 } = await loadFixture(
+      madFixture721C,
+    ));
+    await r721.deployed();
+    await m721.deployed();
+    await f721.deployed();
   });
 
   describe("Init", async () => {
     it("Marketplace should initialize", async () => {
-      await m721.deployed();
+      // await m721.deployed();
       expect(m721).to.be.ok;
 
       // check each global var
@@ -307,10 +294,10 @@ describe("MADMarketplace721", () => {
       expect(cBal2).to.eq(1);
       await expect(
         m721.callStatic.orderIdBySeller(acc02.address, 0),
-      ).to.be.revertedWith("null");
+      ).to.be.revertedWithoutReason;
       await expect(
         m721.callStatic.orderIdByToken(min.address, 1, 0),
-      ).to.be.revertedWith("null");
+      ).to.be.revertedWithoutReason;
       expect(orderInfo.orderType).to.eq(_null.orderType);
       expect(orderInfo.seller).to.eq(_null.seller);
       expect(orderInfo.token).to.eq(_null.token);
@@ -411,12 +398,18 @@ describe("MADMarketplace721", () => {
         m721
           .connect(acc02)
           .fixedPrice(min.address, 1, price, 0),
-      ).to.be.revertedWith(MarketplaceErrors.NeedMoreTime);
+      ).to.be.revertedWithCustomError(
+        m721,
+        MarketplaceErrors.NeedMoreTime,
+      );
       await expect(
         m721
           .connect(acc02)
           .fixedPrice(min.address, 1, price, bn),
-      ).to.be.revertedWith(MarketplaceErrors.NeedMoreTime);
+      ).to.be.revertedWithCustomError(
+        m721,
+        MarketplaceErrors.NeedMoreTime,
+      );
     });
     it("Should revert if price is invalid", async () => {
       await m721.updateSettings(300, 10, 20);
@@ -455,7 +448,10 @@ describe("MADMarketplace721", () => {
         m721
           .connect(acc02)
           .fixedPrice(min.address, 1, 0, 300),
-      ).to.be.revertedWith(MarketplaceErrors.WrongPrice);
+      ).to.be.revertedWithCustomError(
+        m721,
+        MarketplaceErrors.WrongPrice,
+      );
     });
     it("Should list fixed price order, update storage and emit event", async () => {
       await m721.updateSettings(300, 10, 20);
@@ -893,12 +889,18 @@ describe("MADMarketplace721", () => {
         m721
           .connect(acc02)
           .dutchAuction(min.address, 1, price, 0, 300),
-      ).to.be.revertedWith(MarketplaceErrors.NeedMoreTime);
+      ).to.be.revertedWithCustomError(
+        m721,
+        MarketplaceErrors.NeedMoreTime,
+      );
       await expect(
         m721
           .connect(acc02)
           .dutchAuction(min.address, 1, price, 0, bn),
-      ).to.be.revertedWith(MarketplaceErrors.NeedMoreTime);
+      ).to.be.revertedWithCustomError(
+        m721,
+        MarketplaceErrors.NeedMoreTime,
+      );
     });
     it("Should revert if startPrice is invalid", async () => {
       await m721.updateSettings(300, 10, 20);
@@ -937,12 +939,18 @@ describe("MADMarketplace721", () => {
         m721
           .connect(acc02)
           .dutchAuction(min.address, 1, 2, 3, 300),
-      ).to.be.revertedWith(MarketplaceErrors.ExceedsMaxEP);
+      ).to.be.revertedWithCustomError(
+        m721,
+        MarketplaceErrors.ExceedsMaxEP,
+      );
       await expect(
         m721
           .connect(acc02)
           .dutchAuction(min.address, 1, 3, 3, 700),
-      ).to.be.revertedWith(MarketplaceErrors.ExceedsMaxEP);
+      ).to.be.revertedWithCustomError(
+        m721,
+        MarketplaceErrors.ExceedsMaxEP,
+      );
     });
     it("Should list dutch auction order, update storage and emit event", async () => {
       await m721.updateSettings(300, 10, 20);
@@ -1380,12 +1388,18 @@ describe("MADMarketplace721", () => {
         m721
           .connect(acc02)
           .englishAuction(min.address, 1, price, 300),
-      ).to.be.revertedWith(MarketplaceErrors.NeedMoreTime);
+      ).to.be.revertedWithCustomError(
+        m721,
+        MarketplaceErrors.NeedMoreTime,
+      );
       await expect(
         m721
           .connect(acc02)
           .englishAuction(min.address, 1, price, bn),
-      ).to.be.revertedWith(MarketplaceErrors.NeedMoreTime);
+      ).to.be.revertedWithCustomError(
+        m721,
+        MarketplaceErrors.NeedMoreTime,
+      );
     });
     it("Should revert if startPrice is invalid", async () => {
       await m721.updateSettings(300, 10, 20);
@@ -1424,7 +1438,10 @@ describe("MADMarketplace721", () => {
         m721
           .connect(acc02)
           .englishAuction(min.address, 1, 0, 300),
-      ).to.be.revertedWith(MarketplaceErrors.WrongPrice);
+      ).to.be.revertedWithCustomError(
+        m721,
+        MarketplaceErrors.WrongPrice,
+      );
     });
     it("Should list english auction order, update storage and emit event", async () => {
       await m721.updateSettings(300, 10, 20);
@@ -1831,7 +1848,10 @@ describe("MADMarketplace721", () => {
 
       await expect(
         m721.connect(acc01).bid(eaOrderId),
-      ).to.be.revertedWith(MarketplaceErrors.WrongPrice);
+      ).to.be.revertedWithCustomError(
+        m721,
+        MarketplaceErrors.WrongPrice,
+      );
       await m721.connect(mad).bid(eaOrderId, {
         value: price.mul(ethers.constants.Two),
       });
@@ -1839,7 +1859,10 @@ describe("MADMarketplace721", () => {
         m721.connect(acc01).bid(eaOrderId, {
           value: price.mul(ethers.constants.Two),
         }),
-      ).to.be.revertedWith(MarketplaceErrors.WrongPrice);
+      ).to.be.revertedWithCustomError(
+        m721,
+        MarketplaceErrors.WrongPrice,
+      );
     });
     it("Should revert if not English Auction", async () => {
       await m721.updateSettings(300, 10, 20);
@@ -1886,7 +1909,10 @@ describe("MADMarketplace721", () => {
       );
       await expect(
         m721.connect(acc01).bid(orderId, { value: price }),
-      ).to.be.revertedWith(MarketplaceErrors.EAOnly);
+      ).to.be.revertedWithCustomError(
+        m721,
+        MarketplaceErrors.EAOnly,
+      );
     });
     it("Should revert if order was canceled", async () => {
       await m721.updateSettings(300, 10, 20);
@@ -1936,7 +1962,10 @@ describe("MADMarketplace721", () => {
 
       await expect(
         m721.connect(acc01).bid(orderId),
-      ).to.be.revertedWith(MarketplaceErrors.CanceledOrder);
+      ).to.be.revertedWithCustomError(
+        m721,
+        MarketplaceErrors.CanceledOrder,
+      );
     });
     it("Should revert if order has timed out", async () => {
       await m721.updateSettings(300, 10, 20);
@@ -1986,7 +2015,10 @@ describe("MADMarketplace721", () => {
 
       await expect(
         m721.connect(acc01).bid(orderId),
-      ).to.be.revertedWith(MarketplaceErrors.Timeout);
+      ).to.be.revertedWithCustomError(
+        m721,
+        MarketplaceErrors.Timeout,
+      );
     });
     it("Should revert if bidder is the seller", async () => {
       // create order and revert by connecting the seller to the bid fx
@@ -2035,7 +2067,10 @@ describe("MADMarketplace721", () => {
 
       await expect(
         m721.connect(acc02).bid(orderId),
-      ).to.be.revertedWith(MarketplaceErrors.InvalidBidder);
+      ).to.be.revertedWithCustomError(
+        m721,
+        MarketplaceErrors.InvalidBidder,
+      );
     });
     it("Should bid, update storage and emit events", async () => {
       await m721.updateSettings(300, 10, 20);
@@ -2171,7 +2206,10 @@ describe("MADMarketplace721", () => {
 
       await expect(
         m721.connect(acc01).buy(fpOrderId),
-      ).to.be.revertedWith(MarketplaceErrors.WrongPrice);
+      ).to.be.revertedWithCustomError(
+        m721,
+        MarketplaceErrors.WrongPrice,
+      );
     });
     it("Should revert if order is an English Auction", async () => {
       await m721.updateSettings(20, 10, 20);
@@ -2219,7 +2257,10 @@ describe("MADMarketplace721", () => {
 
       await expect(
         m721.connect(acc01).buy(orderId),
-      ).to.be.revertedWith(MarketplaceErrors.NotBuyable);
+      ).to.be.revertedWithCustomError(
+        m721,
+        MarketplaceErrors.NotBuyable,
+      );
     });
     it("Should revert if order was canceled", async () => {
       await m721.updateSettings(300, 10, 20);
@@ -2269,7 +2310,10 @@ describe("MADMarketplace721", () => {
 
       await expect(
         m721.connect(acc01).buy(orderId),
-      ).to.be.revertedWith(MarketplaceErrors.CanceledOrder);
+      ).to.be.revertedWithCustomError(
+        m721,
+        MarketplaceErrors.CanceledOrder,
+      );
     });
     it("Should revert if order has timed out", async () => {
       await m721.updateSettings(300, 10, 20);
@@ -2319,7 +2363,10 @@ describe("MADMarketplace721", () => {
 
       await expect(
         m721.connect(acc01).buy(orderId),
-      ).to.be.revertedWith(MarketplaceErrors.Timeout);
+      ).to.be.revertedWithCustomError(
+        m721,
+        MarketplaceErrors.Timeout,
+      );
     });
     it("Should revert if token has already been sold", async () => {
       await m721.updateSettings(300, 10, 20);
@@ -2371,7 +2418,10 @@ describe("MADMarketplace721", () => {
 
       await expect(
         m721.connect(amb).buy(fpOrderId),
-      ).to.be.revertedWith(MarketplaceErrors.SoldToken);
+      ).to.be.revertedWithCustomError(
+        m721,
+        MarketplaceErrors.SoldToken,
+      );
     });
     it("Should buy inhouse minted tokens, update storage and emit events", async () => {
       // fixed price order
@@ -2940,6 +2990,14 @@ describe("MADMarketplace721", () => {
       );
 
       const bidVal1 = await price.mul(ethers.constants.Two);
+      const verArt = await artifacts.readArtifact(
+        "FactoryVerifier",
+      );
+      const ver = new ethers.Contract(
+        f721.address,
+        verArt.abi,
+        ethers.provider,
+      );
 
       await m721
         .connect(mad)
@@ -2947,7 +3005,10 @@ describe("MADMarketplace721", () => {
 
       await expect(
         m721.connect(acc01).claim(eaOrderId),
-      ).to.be.revertedWith(MarketplaceErrors.AccessDenied);
+      ).to.be.revertedWithCustomError(
+        ver,
+        MarketplaceErrors.AccessDenied,
+      );
     });
     it("Should revert if token has already been claimed", async () => {
       await m721.updateSettings(300, 10, 20);
@@ -3005,7 +3066,10 @@ describe("MADMarketplace721", () => {
 
       await expect(
         m721.connect(acc02).claim(orderId),
-      ).to.be.revertedWith(MarketplaceErrors.SoldToken);
+      ).to.be.revertedWithCustomError(
+        m721,
+        MarketplaceErrors.SoldToken,
+      );
     });
     it("Should revert if orderType is not an english auction", async () => {
       await m721.updateSettings(300, 10, 20);
@@ -3044,7 +3108,10 @@ describe("MADMarketplace721", () => {
 
       await expect(
         m721.connect(acc02).claim(fpOrderId),
-      ).to.be.revertedWith(MarketplaceErrors.EAOnly);
+      ).to.be.revertedWithCustomError(
+        m721,
+        MarketplaceErrors.EAOnly,
+      );
     });
     it("Should revert if auction hasn't ended", async () => {
       await m721.updateSettings(300, 10, 20);
@@ -3095,7 +3162,10 @@ describe("MADMarketplace721", () => {
 
       await expect(
         m721.connect(acc02).claim(orderId),
-      ).to.be.revertedWith(MarketplaceErrors.NeedMoreTime);
+      ).to.be.revertedWithCustomError(
+        m721,
+        MarketplaceErrors.NeedMoreTime,
+      );
     });
     it("Should claim inhouse minted tokens, update storage and emit events", async () => {
       await m721.updateSettings(300, 10, 20);
@@ -3447,7 +3517,10 @@ describe("MADMarketplace721", () => {
 
       await expect(
         m721.connect(acc02).cancelOrder(orderId),
-      ).to.be.revertedWith(MarketplaceErrors.SoldToken);
+      ).to.be.revertedWithCustomError(
+        m721,
+        MarketplaceErrors.SoldToken,
+      );
     });
     it("Should revert due to already sold dutch auction order", async () => {
       await m721.updateSettings(300, 10, 20);
@@ -3506,7 +3579,10 @@ describe("MADMarketplace721", () => {
         .buy(orderId, { value: daPrice });
       await expect(
         m721.connect(acc02).cancelOrder(orderId),
-      ).to.be.revertedWith(MarketplaceErrors.SoldToken);
+      ).to.be.revertedWithCustomError(
+        m721,
+        MarketplaceErrors.SoldToken,
+      );
     });
     it("Should revert due to already sold english auction order", async () => {
       await m721.updateSettings(300, 10, 20);
@@ -3557,7 +3633,10 @@ describe("MADMarketplace721", () => {
       await mineUpTo(600);
       await expect(
         m721.connect(acc02).cancelOrder(orderId),
-      ).to.be.revertedWith(MarketplaceErrors.BidExists);
+      ).to.be.revertedWithCustomError(
+        m721,
+        MarketplaceErrors.BidExists,
+      );
 
       await m721
         .connect(acc02)
@@ -3566,7 +3645,10 @@ describe("MADMarketplace721", () => {
         );
       await expect(
         m721.connect(acc02).cancelOrder(orderId),
-      ).to.be.revertedWith(MarketplaceErrors.SoldToken);
+      ).to.be.revertedWithCustomError(
+        m721,
+        MarketplaceErrors.SoldToken,
+      );
     });
 
     // `BidExists` error only valid for english auction listings
@@ -3621,10 +3703,21 @@ describe("MADMarketplace721", () => {
       const storage: OrderDetails721 =
         await m721.callStatic.orderInfo(orderId);
       const endBlock = storage.endBlock;
+      const verArt = await artifacts.readArtifact(
+        "FactoryVerifier",
+      );
+      const ver = new ethers.Contract(
+        f721.address,
+        verArt.abi,
+        ethers.provider,
+      );
 
       await expect(
         m721.connect(acc01).cancelOrder(orderId),
-      ).to.be.revertedWith(MarketplaceErrors.AccessDenied);
+      ).to.be.revertedWithCustomError(
+        ver,
+        MarketplaceErrors.AccessDenied,
+      );
 
       await expect(tx)
         .to.be.ok.and.to.emit(m721, "CancelOrder")
@@ -3690,10 +3783,21 @@ describe("MADMarketplace721", () => {
       const storage: OrderDetails721 =
         await m721.callStatic.orderInfo(orderId);
       const endBlock = storage.endBlock;
+      const verArt = await artifacts.readArtifact(
+        "FactoryVerifier",
+      );
+      const ver = new ethers.Contract(
+        f721.address,
+        verArt.abi,
+        ethers.provider,
+      );
 
       await expect(
         m721.connect(acc01).cancelOrder(orderId),
-      ).to.be.revertedWith(MarketplaceErrors.AccessDenied);
+      ).to.be.revertedWithCustomError(
+        ver,
+        MarketplaceErrors.AccessDenied,
+      );
 
       await expect(tx)
         .to.be.ok.and.to.emit(m721, "CancelOrder")
@@ -3759,10 +3863,21 @@ describe("MADMarketplace721", () => {
       const storage: OrderDetails721 =
         await m721.callStatic.orderInfo(orderId);
       const endBlock = storage.endBlock;
+      const verArt = await artifacts.readArtifact(
+        "FactoryVerifier",
+      );
+      const ver = new ethers.Contract(
+        f721.address,
+        verArt.abi,
+        ethers.provider,
+      );
 
       await expect(
         m721.connect(acc01).cancelOrder(orderId),
-      ).to.be.revertedWith(MarketplaceErrors.AccessDenied);
+      ).to.be.revertedWithCustomError(
+        ver,
+        MarketplaceErrors.AccessDenied,
+      );
 
       await expect(tx)
         .to.be.ok.and.to.emit(m721, "CancelOrder")
@@ -3928,7 +4043,72 @@ describe("MADMarketplace721", () => {
   describe("Price Fetch", async () => {
     it("Should fetch order's current price", async () => {
       await m721.updateSettings(300, 10, 20);
-      ({ wl } = await loadFixture(wlFixture721));
+      // ({ wl } = await loadFixture(whitelistFixture721));
+      const Splitter = await ethers.getContractFactory(
+        "SplitterImpl",
+      );
+      const [owner, amb, mad /*,  acc01, acc02 */] =
+        await ethers.getSigners();
+      const payees = [
+        mad.address,
+        amb.address,
+        owner.address,
+      ];
+      const shares = [10, 20, 70];
+
+      const splitter = (await Splitter.deploy(
+        payees,
+        shares,
+      )) as SplitterImpl;
+
+      const WL = await ethers.getContractFactory(
+        "ERC721Whitelist",
+      );
+
+      const signers = await ethers.getSigners();
+      const whitelisted = signers.slice(0, 2);
+      // const notwhitelisted = signers.slice(3, 5);
+
+      const leaves = whitelisted.map(account =>
+        padBuffer(account.address),
+      );
+      const tree = new MerkleTree(leaves, keccak256, {
+        sort: true,
+      });
+      const merkleRoot: string = tree.getHexRoot();
+      // const proof: string[] = tree.getHexProof(
+      //   // whitelisted[0] == owner
+      //   padBuffer(whitelisted[0].address),
+      // );
+
+      // // const rSigner = randomSigners(1);
+      // // const signer = rSigner.at(0);
+      // const wrongProof: string[] = tree.getHexProof(
+      //   // notwhitelisted[0] == acc01
+      //   padBuffer(notwhitelisted[0].address),
+      // );
+
+      const wl = (await WL.deploy(
+        "721Whitelist",
+        "WHITELIST",
+        "ipfs://cid/",
+        ethers.utils.parseEther("1"),
+        1000,
+        splitter.address,
+        750,
+        owner.address,
+      )) as ERC721Whitelist;
+
+      // asynchronous contract calls
+      /* const wlConfig:ContractTransaction = */
+      await wl.whitelistConfig(
+        ethers.utils.parseEther("1"),
+        100,
+        merkleRoot,
+      );
+      // we pass the merkle root of the same addresses for test economy
+      /* const freeConfig:ContractTransaction =  */
+      await wl.freeConfig(1, 10, merkleRoot);
       await wl.giftTokens([
         mad.address,
         acc01.address,

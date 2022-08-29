@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.4;
 
-import { ERC721WhitelistEvents } from "../Base/interfaces/ERC721EventAndErrors.sol";
+import { ERC721WhitelistEventsAndErrors } from "../Base/interfaces/ERC721EventAndErrors.sol";
 import { ERC721, ERC721TokenReceiver } from "../Base/ERC721.sol";
 import { ERC2981 } from "../../common/ERC2981.sol";
 import { ERC20 } from "../../ERC20.sol";
@@ -18,7 +18,7 @@ import { SafeTransferLib } from "../../../utils/SafeTransferLib.sol";
 contract ERC721Whitelist is
     ERC721,
     ERC2981,
-    ERC721WhitelistEvents,
+    ERC721WhitelistEventsAndErrors,
     ERC721TokenReceiver,
     Owned,
     ReentrancyGuard
@@ -66,18 +66,17 @@ contract ERC721Whitelist is
     ////////////////////////////////////////////////////////////////
 
     modifier publicMintAccess() {
-        if (!publicMintState) revert("PublicMintClosed");
+        if (!publicMintState) revert PublicMintClosed();
         _;
     }
 
     modifier whitelistMintAccess() {
-        if (!whitelistMintState)
-            revert("WhitelistMintClosed");
+        if (!whitelistMintState) revert WhitelistMintClosed();
         _;
     }
 
     modifier freeClaimAccess() {
-        if (!freeClaimState) revert("FreeClaimClosed");
+        if (!freeClaimState) revert FreeClaimClosed();
         _;
     }
 
@@ -85,29 +84,28 @@ contract ERC721Whitelist is
         if (
             liveSupply.current() + amount >
             maxSupply - maxWhitelistSupply - maxFree
-        ) revert("MaxMintReached");
+        ) revert MaxMintReached();
         _;
     }
 
     modifier canMintFree(uint256 amount) {
         if (freeSupply + amount > maxFree)
-            revert("MaxFreeReached");
+            revert MaxFreeReached();
         if (liveSupply.current() + amount > maxSupply)
-            revert("MaxMintReached");
+            revert MaxMintReached();
         _;
     }
 
     modifier whitelistMax(uint8 amount) {
         if (whitelistMinted + amount > maxWhitelistSupply)
-            revert("MaxWhitelistReached");
+            revert MaxWhitelistReached();
         if (liveSupply.current() + amount > maxSupply)
-            revert("MaxMintReached");
+            revert MaxMintReached();
         _;
     }
 
     modifier priceCheck(uint256 _price, uint256 amount) {
-        if (_price * amount != msg.value)
-            revert("WrongPrice");
+        if (_price * amount != msg.value) revert WrongPrice();
         _;
     }
 
@@ -121,7 +119,7 @@ contract ERC721Whitelist is
                 root,
                 bytes32(uint256(uint160(msg.sender)))
             )
-        ) revert("AddressDenied");
+        ) revert AddressDenied();
         _;
     }
 
@@ -234,8 +232,8 @@ contract ERC721Whitelist is
         // assembly overflow check
         assembly {
             if lt(i, len) {
-                mstore(0x00, "LOOP_OVERFLOW")
-                revert(0x00, 0x20)
+                mstore(0x00, 0xdfb035c9)
+                revert(0x1c, 0x04)
             }
         }
         // Transfer event emited by parent ERC721 contract
@@ -257,8 +255,8 @@ contract ERC721Whitelist is
         }
         assembly {
             if lt(i, amount) {
-                mstore(0x00, "LOOP_OVERFLOW")
-                revert(0x00, 0x20)
+                mstore(0x00, 0xdfb035c9)
+                revert(0x1c, 0x04)
             }
         }
         // Transfer event emitted in parent ERC721 contract
@@ -282,8 +280,8 @@ contract ERC721Whitelist is
         }
         assembly {
             if lt(i, amountGifted) {
-                mstore(0x00, "LOOP_OVERFLOW")
-                revert(0x00, 0x20)
+                mstore(0x00, 0xdfb035c9)
+                revert(0x1c, 0x04)
             }
         }
         // Transfer event emitted in parent ERC721 contract
@@ -326,8 +324,8 @@ contract ERC721Whitelist is
 
         assembly {
             if lt(i, amount) {
-                mstore(0x00, "LOOP_OVERFLOW")
-                revert(0x00, 0x20)
+                mstore(0x00, 0xdfb035c9)
+                revert(0x1c, 0x04)
             }
         }
 
@@ -359,8 +357,8 @@ contract ERC721Whitelist is
         // assembly overflow check
         assembly {
             if lt(i, amount) {
-                mstore(0x00, "LOOP_OVERFLOW")
-                revert(0x00, 0x20)
+                mstore(0x00, 0xdfb035c9)
+                revert(0x1c, 0x04)
             }
         }
         // Transfer event emitted in parent ERC721 contract
@@ -373,17 +371,16 @@ contract ERC721Whitelist is
         canMintFree(freeAmount)
     {
         if (claimed[msg.sender] == true)
-            revert("AlreadyClaimed");
+            revert AlreadyClaimed();
 
         unchecked {
             claimed[msg.sender] = true;
             freeSupply += freeAmount;
         }
 
-        uint256 j; /* = 0; */
+        uint256 j;
         while (j < freeAmount) {
             _safeMint(msg.sender, _nextId());
-            // j++;
             unchecked {
                 ++j;
             }
@@ -391,8 +388,8 @@ contract ERC721Whitelist is
         // assembly overflow check
         assembly {
             if lt(j, sload(freeAmount.slot)) {
-                mstore(0x00, "LOOP_OVERFLOW")
-                revert(0x00, 0x20)
+                mstore(0x00, 0xdfb035c9)
+                revert(0x1c, 0x04)
             }
         }
         // Transfer event emitted in parent ERC721 contract
@@ -426,7 +423,7 @@ contract ERC721Whitelist is
         override
         returns (string memory)
     {
-        if (id > totalSupply()) revert("NotMintedYet");
+        if (id > totalSupply()) revert NotMintedYet();
         return
             string(
                 abi.encodePacked(

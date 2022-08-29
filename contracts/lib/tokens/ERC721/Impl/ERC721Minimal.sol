@@ -2,13 +2,13 @@
 
 pragma solidity 0.8.4;
 
-import { ERC721MinimalEvents } from "../Base/interfaces/ERC721EventAndErrors.sol";
+import { ERC721MinimalEventsAndErrors } from "../Base/interfaces/ERC721EventAndErrors.sol";
 import { ERC721, ERC721TokenReceiver } from "../Base/ERC721.sol";
 import { ERC2981 } from "../../common/ERC2981.sol";
 import { ERC20 } from "../../ERC20.sol";
 import { SplitterImpl } from "../../../splitter/SplitterImpl.sol";
 
-// import { ReentrancyGuard } from "../../../security/ReentrancyGuard.sol";
+import { ReentrancyGuard } from "../../../security/ReentrancyGuard.sol";
 import { Owned } from "../../../auth/Owned.sol";
 import { SafeTransferLib } from "../../../utils/SafeTransferLib.sol";
 
@@ -16,9 +16,9 @@ contract ERC721Minimal is
     ERC721,
     ERC2981,
     ERC721TokenReceiver,
-    ERC721MinimalEvents,
-    Owned
-    // ReentrancyGuard
+    ERC721MinimalEventsAndErrors,
+    Owned,
+    ReentrancyGuard
 {
     ////////////////////////////////////////////////////////////////
     //                           STORAGE                          //
@@ -62,9 +62,10 @@ contract ERC721Minimal is
 
     /// @dev Can't be reminted if already minted, due to boolean.
     function safeMint(address to) external onlyOwner {
-        if (minted == true) revert("ALREADY_MINTED");
+        if (minted == true) revert AlreadyMinted();
 
         minted = true;
+
         _safeMint(to, 1);
     }
 
@@ -101,12 +102,13 @@ contract ERC721Minimal is
     //                           USER FX                          //
     ////////////////////////////////////////////////////////////////
 
-    function publicMint() external payable {
-        if (!publicMintState) revert("PUBLICMINT_OFF");
-        require(msg.value == price, "WRONG_PRICE");
-        if (minted == true) revert("ALREADY_MINTED");
+    function publicMint() external payable nonReentrant {
+        if (!publicMintState) revert PublicMintOff();
+        if (msg.value != price) revert WrongPrice();
+        if (minted == true) revert AlreadyMinted();
 
         minted = true;
+
         _safeMint(msg.sender, 1);
     }
 
@@ -119,10 +121,10 @@ contract ERC721Minimal is
         view
         virtual
         override
-        returns (string memory)
+        returns (string memory _uri)
     {
-        require(id == 1, "INVALID_ID");
-        if (!minted) revert("NOT_MINTED");
+        if (id != 1) revert InvalidId();
+        if (!minted) revert NotMinted();
         return _tokenURI;
     }
 

@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.4;
 
-import { ERC1155WhitelistEvents } from "../Base/interfaces/ERC1155EventAndErrors.sol";
+import { ERC1155WhitelistEventsAndErrors } from "../Base/interfaces/ERC1155EventAndErrors.sol";
 import { ERC1155B as ERC1155, ERC1155TokenReceiver } from "../Base/ERC1155B.sol";
 import { ERC2981 } from "../../common/ERC2981.sol";
 import { ERC20 } from "../../ERC20.sol";
@@ -18,7 +18,7 @@ import { SafeTransferLib } from "../../../utils/SafeTransferLib.sol";
 contract ERC1155Whitelist is
     ERC1155,
     ERC2981,
-    ERC1155WhitelistEvents,
+    ERC1155WhitelistEventsAndErrors,
     ERC1155TokenReceiver,
     Owned,
     ReentrancyGuard
@@ -66,18 +66,17 @@ contract ERC1155Whitelist is
     ////////////////////////////////////////////////////////////////
 
     modifier publicMintAccess() {
-        if (!publicMintState) revert("PublicMintClosed");
+        if (!publicMintState) revert PublicMintClosed();
         _;
     }
 
     modifier whitelistMintAccess() {
-        if (!whitelistMintState)
-            revert("WhitelistMintClosed");
+        if (!whitelistMintState) revert WhitelistMintClosed();
         _;
     }
 
     modifier freeClaimAccess() {
-        if (!freeClaimState) revert("FreeClaimClosed");
+        if (!freeClaimState) revert FreeClaimClosed();
         _;
     }
 
@@ -85,29 +84,28 @@ contract ERC1155Whitelist is
         if (
             totalSupply() + amount >
             maxSupply - maxWhitelistSupply - maxFree
-        ) revert("MaxMintReached");
+        ) revert MaxMintReached();
         _;
     }
 
     modifier canMintFree(uint256 amount) {
         if (freeSupply + amount > maxFree)
-            revert("MaxFreeReached");
+            revert MaxFreeReached();
         if (totalSupply() + amount > maxSupply)
-            revert("MaxMintReached");
+            revert MaxMintReached();
         _;
     }
 
     modifier whitelistMax(uint8 amount) {
         if (whitelistMinted + amount > maxWhitelistSupply)
-            revert("MaxWhitelistReached");
+            revert MaxWhitelistReached();
         if (totalSupply() + amount > maxSupply)
-            revert("MaxMintReached");
+            revert MaxMintReached();
         _;
     }
 
     modifier priceCheck(uint256 _price, uint256 amount) {
-        if (_price * amount != msg.value)
-            revert("WrongPrice");
+        if (_price * amount != msg.value) revert WrongPrice();
         _;
     }
 
@@ -121,7 +119,7 @@ contract ERC1155Whitelist is
                 root,
                 bytes32(uint256(uint160(msg.sender)))
             )
-        ) revert("AddressDenied");
+        ) revert AddressDenied();
         _;
     }
 
@@ -227,8 +225,8 @@ contract ERC1155Whitelist is
         }
         assembly {
             if lt(i, len) {
-                mstore(0x00, "LOOP_OVERFLOW")
-                revert(0x00, 0x20)
+                mstore(0x00, 0xdfb035c9)
+                revert(0x1c, 0x04)
             }
         }
         // Transfer events emited by parent ERC1155 contract
@@ -250,12 +248,12 @@ contract ERC1155Whitelist is
         }
         assembly {
             if lt(i, len) {
-                mstore(0x00, "LOOP_OVERFLOW")
-                revert(0x00, 0x20)
+                mstore(0x00, 0xdfb035c9)
+                revert(0x1c, 0x04)
             }
         }
         _batchBurn(from, ids);
-        // Transfer event emited by parent ERC1155 contract
+        // Transfer events emited by parent ERC1155 contract
     }
 
     function mintToCreator(uint256 amount)
@@ -274,11 +272,11 @@ contract ERC1155Whitelist is
         }
         assembly {
             if lt(i, amount) {
-                mstore(0x00, "LOOP_OVERFLOW")
-                revert(0x00, 0x20)
+                mstore(0x00, 0xdfb035c9)
+                revert(0x1c, 0x04)
             }
         }
-        // Transfer event emitted in parent ERC1155 contract
+        // Transfer events emited by parent ERC1155 contract
     }
 
     function mintBatchToCreator(uint256[] memory ids)
@@ -298,12 +296,12 @@ contract ERC1155Whitelist is
         }
         assembly {
             if lt(i, len) {
-                mstore(0x00, "LOOP_OVERFLOW")
-                revert(0x00, 0x20)
+                mstore(0x00, 0xdfb035c9)
+                revert(0x1c, 0x04)
             }
         }
         _batchMint(tx.origin, ids, "");
-        // Transfer event emitted in parent ERC1155 contract
+        // Transfer event emitted by parent ERC1155 contract
     }
 
     /// @dev Mints one token per address.
@@ -324,11 +322,11 @@ contract ERC1155Whitelist is
         }
         assembly {
             if lt(i, amountGifted) {
-                mstore(0x00, "LOOP_OVERFLOW")
-                revert(0x00, 0x20)
+                mstore(0x00, 0xdfb035c9)
+                revert(0x1c, 0x04)
             }
         }
-        // transfer event emitted in parent ERC1155 contract
+        // Transfer events emitted by parent ERC1155 contract
     }
 
     function withdraw() external onlyOwner {
@@ -368,12 +366,12 @@ contract ERC1155Whitelist is
 
         assembly {
             if lt(i, amount) {
-                mstore(0x00, "LOOP_OVERFLOW")
-                revert(0x00, 0x20)
+                mstore(0x00, 0xdfb035c9)
+                revert(0x1c, 0x04)
             }
         }
 
-        // Transfer event emitted in parent ERC1155 contract
+        // Transfer events emitted by parent ERC1155 contract
     }
 
     function mintBatch(uint256[] memory ids)
@@ -393,12 +391,12 @@ contract ERC1155Whitelist is
         }
         assembly {
             if lt(i, len) {
-                mstore(0x00, "LOOP_OVERFLOW")
-                revert(0x00, 0x20)
+                mstore(0x00, 0xdfb035c9)
+                revert(0x1c, 0x04)
             }
         }
         _batchMint(msg.sender, ids, "");
-        // Transfer event emitted in parent ERC1155 contract
+        // Transfer event emitted by parent ERC1155 contract
     }
 
     function whitelistMint(
@@ -426,11 +424,11 @@ contract ERC1155Whitelist is
         // assembly overflow check
         assembly {
             if lt(i, amount) {
-                mstore(0x00, "LOOP_OVERFLOW")
-                revert(0x00, 0x20)
+                mstore(0x00, 0xdfb035c9)
+                revert(0x1c, 0x04)
             }
         }
-        // Transfer event emitted in parent ERC1155 contract
+        // Transfer events emitted by parent ERC1155 contract
     }
 
     function whitelistMintBatch(
@@ -455,8 +453,8 @@ contract ERC1155Whitelist is
         // assembly overflow check
         assembly {
             if lt(i, len) {
-                mstore(0x00, "LOOP_OVERFLOW")
-                revert(0x00, 0x20)
+                mstore(0x00, 0xdfb035c9)
+                revert(0x1c, 0x04)
             }
         }
         _batchMint(msg.sender, ids, "");
@@ -470,14 +468,13 @@ contract ERC1155Whitelist is
         canMintFree(freeAmount)
     {
         if (claimed[msg.sender] == true)
-            revert("AlreadyClaimed");
-
+            revert AlreadyClaimed();
         unchecked {
             claimed[msg.sender] = true;
             freeSupply += freeAmount;
         }
 
-        uint256 j; /* = 0; */
+        uint256 j;
         while (j < freeAmount) {
             _mint(msg.sender, _nextId(), "");
             unchecked {
@@ -487,11 +484,11 @@ contract ERC1155Whitelist is
         // assembly overflow check
         assembly {
             if lt(j, sload(freeAmount.slot)) {
-                mstore(0x00, "LOOP_OVERFLOW")
-                revert(0x00, 0x20)
+                mstore(0x00, 0xdfb035c9)
+                revert(0x1c, 0x04)
             }
         }
-        // Transfer event emitted in parent ERC1155 contract
+        // Transfer events emitted by parent ERC1155 contract
     }
 
     ////////////////////////////////////////////////////////////////
@@ -508,27 +505,27 @@ contract ERC1155Whitelist is
         view
     {
         if (freeSupply + _amount > maxFree)
-            revert("MaxFreeReached");
+            revert MaxFreeReached();
         if (totalSupply() + _amount > maxSupply)
-            revert("MaxMintReached");
+            revert MaxMintReached();
     }
 
     function _canBatchMint(uint256 amount) private view {
         if (
             totalSupply() + amount >
             maxSupply - maxWhitelistSupply - maxFree
-        ) revert("MaxMintReached");
+        ) revert MaxMintReached();
         if (publicPrice * amount != msg.value)
-            revert("WrongPrice");
+            revert WrongPrice();
     }
 
     function _canWhitelistBatch(uint256 amount) private view {
         if (whitelistPrice * amount != msg.value)
-            revert("WrongPrice");
+            revert WrongPrice();
         if (whitelistMinted + amount > maxWhitelistSupply)
-            revert("MaxWhitelistReached");
+            revert MaxWhitelistReached();
         if (totalSupply() + amount > maxSupply)
-            revert("MaxMintReached");
+            revert MaxMintReached();
     }
 
     ////////////////////////////////////////////////////////////////

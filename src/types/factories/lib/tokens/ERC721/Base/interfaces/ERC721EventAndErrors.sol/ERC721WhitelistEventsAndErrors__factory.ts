@@ -5,11 +5,66 @@
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
 import type {
-  ERC721WhitelistEvents,
-  ERC721WhitelistEventsInterface,
-} from "../../../../../../../lib/tokens/ERC721/Base/interfaces/ERC721EventAndErrors.sol/ERC721WhitelistEvents";
+  ERC721WhitelistEventsAndErrors,
+  ERC721WhitelistEventsAndErrorsInterface,
+} from "../../../../../../../lib/tokens/ERC721/Base/interfaces/ERC721EventAndErrors.sol/ERC721WhitelistEventsAndErrors";
 
 const _abi = [
+  {
+    inputs: [],
+    name: "AddressDenied",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "AlreadyClaimed",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "FreeClaimClosed",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "LoopOverflow",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "MaxFreeReached",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "MaxMintReached",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "MaxWhitelistReached",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "NotMintedYet",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "PublicMintClosed",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "WhitelistMintClosed",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "WrongPrice",
+    type: "error",
+  },
   {
     anonymous: false,
     inputs: [
@@ -140,19 +195,19 @@ const _abi = [
   },
 ];
 
-export class ERC721WhitelistEvents__factory {
+export class ERC721WhitelistEventsAndErrors__factory {
   static readonly abi = _abi;
-  static createInterface(): ERC721WhitelistEventsInterface {
-    return new utils.Interface(_abi) as ERC721WhitelistEventsInterface;
+  static createInterface(): ERC721WhitelistEventsAndErrorsInterface {
+    return new utils.Interface(_abi) as ERC721WhitelistEventsAndErrorsInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): ERC721WhitelistEvents {
+  ): ERC721WhitelistEventsAndErrors {
     return new Contract(
       address,
       _abi,
       signerOrProvider
-    ) as ERC721WhitelistEvents;
+    ) as ERC721WhitelistEventsAndErrors;
   }
 }

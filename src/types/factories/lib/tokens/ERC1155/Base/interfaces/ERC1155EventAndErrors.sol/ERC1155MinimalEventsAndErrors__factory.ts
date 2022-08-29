@@ -5,14 +5,34 @@
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
 import type {
-  ERC1155BasicEvents,
-  ERC1155BasicEventsInterface,
-} from "../../../../../../../lib/tokens/ERC1155/Base/interfaces/ERC1155EventAndErrors.sol/ERC1155BasicEvents";
+  ERC1155MinimalEventsAndErrors,
+  ERC1155MinimalEventsAndErrorsInterface,
+} from "../../../../../../../lib/tokens/ERC1155/Base/interfaces/ERC1155EventAndErrors.sol/ERC1155MinimalEventsAndErrors";
 
 const _abi = [
   {
     inputs: [],
-    name: "NotMintedYet",
+    name: "AlreadyMinted",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "InvalidId",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "NotMinted",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "PublicMintOff",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "WrongPrice",
     type: "error",
   },
   {
@@ -20,21 +40,8 @@ const _abi = [
     inputs: [
       {
         indexed: true,
-        internalType: "string",
-        name: "newBaseURI",
-        type: "string",
-      },
-    ],
-    name: "BaseURISet",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
         internalType: "bool",
-        name: "newPublicState",
+        name: "newPublicMintState",
         type: "bool",
       },
     ],
@@ -69,15 +76,19 @@ const _abi = [
   },
 ];
 
-export class ERC1155BasicEvents__factory {
+export class ERC1155MinimalEventsAndErrors__factory {
   static readonly abi = _abi;
-  static createInterface(): ERC1155BasicEventsInterface {
-    return new utils.Interface(_abi) as ERC1155BasicEventsInterface;
+  static createInterface(): ERC1155MinimalEventsAndErrorsInterface {
+    return new utils.Interface(_abi) as ERC1155MinimalEventsAndErrorsInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): ERC1155BasicEvents {
-    return new Contract(address, _abi, signerOrProvider) as ERC1155BasicEvents;
+  ): ERC1155MinimalEventsAndErrors {
+    return new Contract(
+      address,
+      _abi,
+      signerOrProvider
+    ) as ERC1155MinimalEventsAndErrors;
   }
 }

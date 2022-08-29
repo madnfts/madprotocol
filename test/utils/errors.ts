@@ -1,15 +1,16 @@
 export enum MinimalErrors {
   TransferFailed = "TRANSFER_FAILED",
-  AlreadyMinted = "ALREADY_MINTED",
-  PublicMintOff = "PUBLICMINT_OFF",
+  AlreadyMinted = "AlreadyMinted",
+  PublicMintOff = "PublicMintOff",
   Unauthorized = "UNAUTHORIZED",
-  WrongPrice = "WRONG_PRICE",
-  InvalidId = "INVALID_ID",
+  WrongPrice = "WrongPrice",
+  InvalidId = "InvalidId",
   NotMinted = "NOT_MINTED",
+  NotMintedBytes4 = "NotMinted",
 }
 
 export enum BasicErrors {
-  DecrementOverflow = "DECREMENT_OVERFLOW",
+  DecrementOverflow = "DecOverflow",
   PublicMintClosed = "PublicMintClosed",
   MaxSupplyReached = "MaxSupplyReached",
   TransferFailed = "TRANSFER_FAILED",
@@ -24,7 +25,7 @@ export enum BasicErrors {
 export enum WhitelistErrors {
   WhitelistMintClosed = "WhitelistMintClosed",
   MaxWhitelistReached = "MaxWhitelistReached",
-  DecrementOverflow = "DECREMENT_OVERFLOW",
+  DecrementOverflow = "DecOverflow",
   PublicMintClosed = "PublicMintClosed",
   FreeClaimClosed = "FreeClaimClosed",
   TransferFailed = "TRANSFER_FAILED",
@@ -40,7 +41,7 @@ export enum WhitelistErrors {
 }
 
 export enum LazyErrors {
-  DecrementOverflow = "DECREMENT_OVERFLOW",
+  DecrementOverflow = "DecOverflow",
   InvalidSigner = "InvalidSigner",
   NotMintedYet = "NotMintedYet",
   Unauthorized = "UNAUTHORIZED",
@@ -67,17 +68,17 @@ export enum MarketplaceErrors {
   InvalidBidder = "InvalidBidder",
   Unauthorized = "UNAUTHORIZED",
   ExceedsMaxEP = "ExceedsMaxEP",
-  NeedMoreTime = "NeedMoreTime",
   AccessDenied = "AccessDenied",
+  NeedMoreTime = "NeedMoreTime",
   WrongPrice = "WrongPrice",
   NotBuyable = "NotBuyable",
-  BidExists = "BidExists",
-  SoldToken = "SoldToken",
-  Timeout = "Timeout",
-  EAOnly = "EAOnly",
-  Paused = "PAUSED",
-  Unpaused = "UNPAUSED",
   WrongFrom = "WRONG_FROM",
+  SoldToken = "SoldToken",
+  BidExists = "BidExists",
+  Unpaused = "UNPAUSED",
+  Timeout = "Timeout",
+  Paused = "PAUSED",
+  EAOnly = "EAOnly",
 }
 
 export enum FactoryErrors {
@@ -92,10 +93,12 @@ export enum FactoryErrors {
 }
 
 export enum RouterErrors {
+  AlreadyMinted = "AlreadyMinted",
   WithdrawFailed = "WITHDRAW_FAILED",
   Unauthorized = "UNAUTHORIZED",
   AccessDenied = "AccessDenied",
   InvalidType = "INVALID_TYPE",
+  InvalidTypeBytes4 = "InvalidType",
   NoFunds = "NO_FUNDS",
   Paused = "PAUSED",
 }

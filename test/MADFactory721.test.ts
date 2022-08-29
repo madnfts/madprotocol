@@ -1,4 +1,8 @@
-import { mine } from "@nomicfoundation/hardhat-network-helpers";
+import "@nomicfoundation/hardhat-chai-matchers";
+import {
+  loadFixture,
+  mine,
+} from "@nomicfoundation/hardhat-network-helpers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import {
@@ -7,7 +11,7 @@ import {
   ContractTransaction,
   Wallet,
 } from "ethers";
-import { ethers, network, waffle } from "hardhat";
+import { ethers, network } from "hardhat";
 
 import {
   MADFactory721,
@@ -19,10 +23,8 @@ import {
   Collection,
   SplitterConfig,
   dead,
-  mFixture721,
+  madFixture721A,
 } from "./utils/madFixtures";
-
-const createFixtureLoader = waffle.createFixtureLoader;
 
 describe("MADFactory721", () => {
   type WalletWithAddress = Wallet & SignerWithAddress;
@@ -51,40 +53,36 @@ describe("MADFactory721", () => {
   // ethers.utils.parseEther("10000");
   const price: BigNumber = ethers.utils.parseEther("1");
 
-  let loadFixture: ReturnType<typeof createFixtureLoader>;
-
   before("Set signers and reset network", async () => {
     [owner, amb, mad, acc01, acc02] =
       await // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (ethers as any).getSigners();
-    loadFixture = createFixtureLoader([
-      owner,
-      amb,
-      mad,
-      acc01,
-      acc02,
-    ]);
+
     await network.provider.send("hardhat_reset");
   });
   beforeEach("Load deployment fixtures", async () => {
-    ({ f721, m721, r721 } = await loadFixture(mFixture721));
+    ({ f721, m721, r721 } = await loadFixture(
+      madFixture721A,
+    ));
+    await f721.deployed();
+    await m721.deployed();
+    await f721.deployed();
   });
 
   describe("Init", async () => {
     it("Factory should initialize", async () => {
-      await f721.deployed();
+      expect(f721).to.be.ok;
+      expect(f721).to.be.ok;
       expect(f721).to.be.ok;
 
       // check each global var
       expect(await f721.callStatic.name()).to.eq("factory");
-      expect(await f721.market()).to.eq(m721.address);
-      expect(await f721.router()).to.eq(r721.address);
-
-      await expect(f721.deployTransaction)
-        .to.emit(f721, "RouterUpdated")
-        .withArgs(r721.address)
-        .and.to.emit(f721, "SignerUpdated")
-        .withArgs(owner.address);
+      expect(await f721.callStatic.market()).to.eq(
+        m721.address,
+      );
+      expect(await f721.callStatic.router()).to.eq(
+        r721.address,
+      );
     });
   });
 
@@ -98,10 +96,12 @@ describe("MADFactory721", () => {
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 21);
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        f721,
         FactoryErrors.SplitterFail,
       );
-      await expect(tx2).to.be.revertedWith(
+      await expect(tx2).to.be.revertedWithCustomError(
+        f721,
         FactoryErrors.SplitterFail,
       );
     });
@@ -337,10 +337,12 @@ describe("MADFactory721", () => {
       await expect(tx)
         .to.emit(f721, "ERC721MinimalCreated")
         .withArgs(splAddr, minAddr, acc02.address);
-      await expect(fail1).to.be.revertedWith(
+      await expect(fail1).to.be.revertedWithCustomError(
+        m721,
         FactoryErrors.AccessDenied,
       );
-      await expect(fail2).to.be.revertedWith(
+      await expect(fail2).to.be.revertedWithCustomError(
+        m721,
         FactoryErrors.AccessDenied,
       );
     });
@@ -420,10 +422,12 @@ describe("MADFactory721", () => {
       await expect(tx)
         .to.emit(f721, "ERC721BasicCreated")
         .withArgs(splAddr, basicAddr, acc02.address);
-      await expect(fail1).to.be.revertedWith(
+      await expect(fail1).to.be.revertedWithCustomError(
+        f721,
         FactoryErrors.AccessDenied,
       );
-      await expect(fail2).to.be.revertedWith(
+      await expect(fail2).to.be.revertedWithCustomError(
+        f721,
         FactoryErrors.AccessDenied,
       );
     });
@@ -502,10 +506,12 @@ describe("MADFactory721", () => {
       await expect(tx)
         .to.emit(f721, "ERC721WhitelistCreated")
         .withArgs(splAddr, wlAddr, acc02.address);
-      await expect(fail1).to.be.revertedWith(
+      await expect(fail1).to.be.revertedWithCustomError(
+        f721,
         FactoryErrors.AccessDenied,
       );
-      await expect(fail2).to.be.revertedWith(
+      await expect(fail2).to.be.revertedWithCustomError(
+        f721,
         FactoryErrors.AccessDenied,
       );
     });
@@ -585,10 +591,12 @@ describe("MADFactory721", () => {
       await expect(tx)
         .to.emit(f721, "ERC721LazyCreated")
         .withArgs(splAddr, lazyAddr, acc01.address);
-      await expect(fail1).to.be.revertedWith(
+      await expect(fail1).to.be.revertedWithCustomError(
+        f721,
         FactoryErrors.AccessDenied,
       );
-      await expect(fail2).to.be.revertedWith(
+      await expect(fail2).to.be.revertedWithCustomError(
+        f721,
         FactoryErrors.AccessDenied,
       );
     });
@@ -782,10 +790,16 @@ describe("MADFactory721", () => {
       );
       await expect(
         f721.typeChecker(colID),
-      ).to.be.revertedWith(FactoryErrors.AccessDenied);
+      ).to.be.revertedWithCustomError(
+        f721,
+        FactoryErrors.AccessDenied,
+      );
       await expect(
         r721.setMintState(minAddr, true, 0),
-      ).to.be.revertedWith(FactoryErrors.AccessDenied);
+      ).to.be.revertedWithCustomError(
+        f721,
+        FactoryErrors.AccessDenied,
+      );
     });
     it("Should enable marketplace no-fee listing", async () => {
       await f721.addAmbassador(amb.address);
@@ -846,7 +860,10 @@ describe("MADFactory721", () => {
       expect(true1).to.be.true;
       await expect(
         f721.connect(amb).creatorAuth(minAddr, acc02.address),
-      ).to.be.revertedWith(FactoryErrors.AccessDenied);
+      ).to.be.revertedWithCustomError(
+        f721,
+        FactoryErrors.AccessDenied,
+      );
     });
     it("Should verify a collection's creator", async () => {
       await f721.addAmbassador(amb.address);
@@ -881,7 +898,10 @@ describe("MADFactory721", () => {
       expect(true1.creator).to.eq(acc02.address);
       await expect(
         f721.connect(mad).creatorCheck(colID),
-      ).to.be.revertedWith(FactoryErrors.AccessDenied);
+      ).to.be.revertedWithCustomError(
+        f721,
+        FactoryErrors.AccessDenied,
+      );
     });
   });
 });

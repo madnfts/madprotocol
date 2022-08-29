@@ -18,7 +18,7 @@ import type {
   PromiseOrValue,
 } from "../../../../../../common";
 
-export interface ERC721BasicEventsInterface extends utils.Interface {
+export interface ERC721BasicEventsAndErrorsInterface extends utils.Interface {
   functions: {};
 
   events: {
@@ -73,12 +73,12 @@ export type RoyaltyRecipientSetEvent = TypedEvent<
 export type RoyaltyRecipientSetEventFilter =
   TypedEventFilter<RoyaltyRecipientSetEvent>;
 
-export interface ERC721BasicEvents extends BaseContract {
+export interface ERC721BasicEventsAndErrors extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: ERC721BasicEventsInterface;
+  interface: ERC721BasicEventsAndErrorsInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

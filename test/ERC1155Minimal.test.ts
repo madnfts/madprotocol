@@ -1,3 +1,5 @@
+import "@nomicfoundation/hardhat-chai-matchers";
+import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import {
@@ -6,7 +8,7 @@ import {
   ContractTransaction,
   Wallet,
 } from "ethers";
-import { ethers, network, waffle } from "hardhat";
+import { ethers, network } from "hardhat";
 
 import {
   ERC1155Minimal,
@@ -15,8 +17,7 @@ import {
 } from "../src/types";
 import { MinimalErrors } from "./utils/errors";
 import {
-  smFixture1155,
-  tokenFixture,
+  minimalFixture1155, // erc20Fixture,
 } from "./utils/fixtures";
 import {
   ERC165Interface,
@@ -25,8 +26,6 @@ import {
   ERC2981Interface,
   getInterfaceID,
 } from "./utils/interfaces";
-
-const createFixtureLoader = waffle.createFixtureLoader;
 
 describe("ERC1155Minimal", () => {
   /* 
@@ -57,7 +56,7 @@ describe("ERC1155Minimal", () => {
 
   let splitter: SplitterImpl;
   let minimal: ERC1155Minimal;
-  let erc20: MockERC20;
+  // let erc20: MockERC20;
 
   // let tx:ContractTransaction;
   // let rc:ContractReceipt;
@@ -66,25 +65,16 @@ describe("ERC1155Minimal", () => {
     ethers.utils.parseEther("10000");
   const price: BigNumber = ethers.utils.parseEther("1");
 
-  let loadFixture: ReturnType<typeof createFixtureLoader>;
-
   before("Set signers and reset network", async () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [owner, amb, mad, acc01, acc02] = await (
-      ethers as any
-    ).getSigners();
-    loadFixture = createFixtureLoader([
-      owner,
-      amb,
-      mad,
-      acc01,
-      acc02,
-    ]);
+    [owner, amb, mad, acc01, acc02] =
+      await // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (ethers as any).getSigners();
+
     await network.provider.send("hardhat_reset");
   });
   beforeEach("Load deployment fixtures", async () => {
     ({ minimal, splitter } = await loadFixture(
-      smFixture1155,
+      minimalFixture1155,
     ));
   });
 
@@ -190,7 +180,8 @@ describe("ERC1155Minimal", () => {
         .connect(owner)
         .safeMint(acc02.address);
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        minimal,
         MinimalErrors.AlreadyMinted,
       );
     });
@@ -277,7 +268,10 @@ describe("ERC1155Minimal", () => {
     it("Should revert if public mint is off", async () => {
       await expect(
         minimal.connect(acc01).publicMint(),
-      ).to.be.revertedWith(MinimalErrors.PublicMintOff);
+      ).to.be.revertedWithCustomError(
+        minimal,
+        MinimalErrors.PublicMintOff,
+      );
     });
 
     it("Should revert if price is wrong", async () => {
@@ -287,7 +281,10 @@ describe("ERC1155Minimal", () => {
         minimal
           .connect(acc02)
           .publicMint({ value: 10100111001 }),
-      ).to.be.revertedWith(MinimalErrors.WrongPrice);
+      ).to.be.revertedWithCustomError(
+        minimal,
+        MinimalErrors.WrongPrice,
+      );
     });
 
     it("Should revert if already minted", async () => {
@@ -298,7 +295,10 @@ describe("ERC1155Minimal", () => {
 
       await expect(
         minimal.connect(acc01).publicMint({ value: price }),
-      ).to.be.revertedWith(MinimalErrors.AlreadyMinted);
+      ).to.be.revertedWithCustomError(
+        minimal,
+        MinimalErrors.AlreadyMinted,
+      );
     });
 
     it("Should mint, update storage and emit events", async () => {
@@ -374,7 +374,14 @@ describe("ERC1155Minimal", () => {
     });
 
     it("Should withdraw contract's ERC20s", async () => {
-      ({ erc20 } = await loadFixture(tokenFixture));
+      // ({ erc20 } = await loadFixture(erc20Fixture));
+      const ERC20 = await ethers.getContractFactory(
+        "MockERC20",
+      );
+      const erc20 = (await ERC20.deploy(
+        BigNumber.from(2).pow(255),
+      )) as MockERC20;
+
       await erc20.mint(minimal.address, price);
       const bal = await erc20.callStatic.balanceOf(
         minimal.address,
@@ -405,13 +412,19 @@ describe("ERC1155Minimal", () => {
   });
   describe("Token URI", async () => {
     it("Should revert if ID is not 1", async () => {
-      await expect(minimal.uri(2)).to.be.revertedWith(
+      await expect(
+        minimal.uri(2),
+      ).to.be.revertedWithCustomError(
+        minimal,
         MinimalErrors.InvalidId,
       );
     });
     it("Should revert if token was not minted", async () => {
-      await expect(minimal.uri(1)).to.be.revertedWith(
-        MinimalErrors.NotMinted,
+      await expect(
+        minimal.uri(1),
+      ).to.be.revertedWithCustomError(
+        minimal,
+        MinimalErrors.NotMintedBytes4,
       );
     });
 

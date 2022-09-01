@@ -58,7 +58,7 @@ export type Collection = {
 // exported consts
 export const dead = ethers.constants.AddressZero;
 
-export const getOrderId = (
+export const getOrderId721 = (
   blocknum: number,
   _token: string,
   _id: number,
@@ -67,6 +67,20 @@ export const getOrderId = (
   const _hash = ethers.utils.solidityKeccak256(
     ["uint256", "address", "uint256", "address"],
     [blocknum, _token, _id, _seller],
+  );
+  return _hash;
+};
+
+export const getOrderId1155 = (
+  blocknum: number,
+  _token: string,
+  _id: number,
+  _amount: number,
+  _seller: string,
+): string => {
+  const _hash = ethers.utils.solidityKeccak256(
+    ["uint256", "address", "uint256", "uint256", "address"],
+    [blocknum, _token, _id, _amount, _seller],
   );
   return _hash;
 };

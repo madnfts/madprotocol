@@ -4,8 +4,6 @@ pragma solidity 0.8.4;
 
 import { ERC721 } from "../tokens/ERC721/Base/ERC721.sol";
 
-/// @author Solmate (https://github.com/transmissions11/solmate/blob/main/src/test/utils/mocks/MockERC721.sol)
-
 contract MockERC721 is ERC721 {
     constructor(string memory _name, string memory _symbol)
         ERC721(_name, _symbol)
@@ -19,29 +17,7 @@ contract MockERC721 is ERC721 {
         returns (string memory)
     {}
 
-    function mint(address to, uint256 tokenId)
-        public
-        virtual
-    {
+    function mint(address to, uint256 tokenId) public {
         _mint(to, tokenId);
-    }
-
-    function burn(uint256 tokenId) public virtual {
-        _burn(tokenId);
-    }
-
-    function safeMint(address to, uint256 tokenId)
-        public
-        virtual
-    {
-        _safeMint(to, tokenId);
-    }
-
-    function safeMint(
-        address to,
-        uint256 tokenId,
-        bytes memory data
-    ) public virtual {
-        _safeMint(to, tokenId, data);
     }
 }

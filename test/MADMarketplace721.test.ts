@@ -21,19 +21,14 @@ import {
   MADFactory721,
   MADMarketplace721,
   MADRouter721,
-  SplitterImpl, // MockERC20,
-  // SplitterImpl,
+  SplitterImpl,
 } from "../src/types";
 import { MarketplaceErrors } from "./utils/errors";
-import {
-  // erc20Fixture,
-  // whitelistFixture721,
-  padBuffer,
-} from "./utils/fixtures";
+import { padBuffer } from "./utils/fixtures";
 import {
   OrderDetails721,
   dead,
-  getOrderId,
+  getOrderId721,
   madFixture721C,
 } from "./utils/madFixtures";
 
@@ -247,7 +242,7 @@ describe("MADMarketplace721", () => {
         );
       const rc: ContractReceipt = await fixepPrice.wait();
       const bn = rc.blockNumber;
-      const orderId = getOrderId(
+      const orderId = getOrderId721(
         bn,
         minAddr,
         1,
@@ -505,7 +500,7 @@ describe("MADMarketplace721", () => {
         isSold: false,
       };
 
-      const fpOrderId = getOrderId(
+      const fpOrderId = getOrderId721(
         fpBn,
         min.address,
         1,
@@ -634,31 +629,31 @@ describe("MADMarketplace721", () => {
       const fpRc5: ContractReceipt = await fpTx5.wait();
       const fpBn5 = fpRc5.blockNumber;
 
-      const fpOrderId1 = getOrderId(
+      const fpOrderId1 = getOrderId721(
         fpBn1,
         whitelist.address,
         1,
         mad.address,
       );
-      const fpOrderId2 = getOrderId(
+      const fpOrderId2 = getOrderId721(
         fpBn2,
         whitelist.address,
         2,
         acc01.address,
       );
-      const fpOrderId3 = getOrderId(
+      const fpOrderId3 = getOrderId721(
         fpBn3,
         whitelist.address,
         3,
         acc02.address,
       );
-      const fpOrderId4 = getOrderId(
+      const fpOrderId4 = getOrderId721(
         fpBn4,
         whitelist.address,
         4,
         owner.address,
       );
-      const fpOrderId5 = getOrderId(
+      const fpOrderId5 = getOrderId721(
         fpBn5,
         whitelist.address,
         5,
@@ -1004,7 +999,7 @@ describe("MADMarketplace721", () => {
         isSold: false,
       };
 
-      const daOrderId = getOrderId(
+      const daOrderId = getOrderId721(
         daBn,
         min.address,
         1,
@@ -1133,31 +1128,31 @@ describe("MADMarketplace721", () => {
       const daRc5: ContractReceipt = await daTx5.wait();
       const daBn5 = daRc5.blockNumber;
 
-      const daOrderId1 = getOrderId(
+      const daOrderId1 = getOrderId721(
         daBn1,
         whitelist.address,
         1,
         mad.address,
       );
-      const daOrderId2 = getOrderId(
+      const daOrderId2 = getOrderId721(
         daBn2,
         whitelist.address,
         2,
         acc01.address,
       );
-      const daOrderId3 = getOrderId(
+      const daOrderId3 = getOrderId721(
         daBn3,
         whitelist.address,
         3,
         acc02.address,
       );
-      const daOrderId4 = getOrderId(
+      const daOrderId4 = getOrderId721(
         daBn4,
         whitelist.address,
         4,
         owner.address,
       );
-      const daOrderId5 = getOrderId(
+      const daOrderId5 = getOrderId721(
         daBn5,
         whitelist.address,
         5,
@@ -1495,7 +1490,7 @@ describe("MADMarketplace721", () => {
         isSold: false,
       };
 
-      const eaOrderId = getOrderId(
+      const eaOrderId = getOrderId721(
         eaBn,
         min.address,
         1,
@@ -1624,31 +1619,31 @@ describe("MADMarketplace721", () => {
       const eaRc5: ContractReceipt = await eaTx5.wait();
       const eaBn5 = eaRc5.blockNumber;
 
-      const eaOrderId1 = getOrderId(
+      const eaOrderId1 = getOrderId721(
         eaBn1,
         whitelist.address,
         1,
         mad.address,
       );
-      const eaOrderId2 = getOrderId(
+      const eaOrderId2 = getOrderId721(
         eaBn2,
         whitelist.address,
         2,
         acc01.address,
       );
-      const eaOrderId3 = getOrderId(
+      const eaOrderId3 = getOrderId721(
         eaBn3,
         whitelist.address,
         3,
         acc02.address,
       );
-      const eaOrderId4 = getOrderId(
+      const eaOrderId4 = getOrderId721(
         eaBn4,
         whitelist.address,
         4,
         owner.address,
       );
-      const eaOrderId5 = getOrderId(
+      const eaOrderId5 = getOrderId721(
         eaBn5,
         whitelist.address,
         5,
@@ -1839,7 +1834,7 @@ describe("MADMarketplace721", () => {
 
       await mine(13);
 
-      const eaOrderId = getOrderId(
+      const eaOrderId = getOrderId721(
         eaBn,
         min.address,
         1,
@@ -1901,7 +1896,7 @@ describe("MADMarketplace721", () => {
         .dutchAuction(min.address, 1, price, 0, 300);
       const daRc: ContractReceipt = await daTx.wait();
       const daBn = daRc.blockNumber;
-      const orderId = getOrderId(
+      const orderId = getOrderId721(
         daBn,
         min.address,
         1,
@@ -1951,7 +1946,7 @@ describe("MADMarketplace721", () => {
         .englishAuction(min.address, 1, price, 300);
       const eaRc: ContractReceipt = await eaTx.wait();
       const eaBn = eaRc.blockNumber;
-      const orderId = getOrderId(
+      const orderId = getOrderId721(
         eaBn,
         min.address,
         1,
@@ -2004,7 +1999,7 @@ describe("MADMarketplace721", () => {
         .englishAuction(min.address, 1, price, 300);
       const eaRc: ContractReceipt = await eaTx.wait();
       const eaBn = eaRc.blockNumber;
-      const orderId = getOrderId(
+      const orderId = getOrderId721(
         eaBn,
         min.address,
         1,
@@ -2021,7 +2016,6 @@ describe("MADMarketplace721", () => {
       );
     });
     it("Should revert if bidder is the seller", async () => {
-      // create order and revert by connecting the seller to the bid fx
       await m721.updateSettings(300, 10, 20);
       await f721.addAmbassador(amb.address);
       await f721
@@ -2058,7 +2052,7 @@ describe("MADMarketplace721", () => {
         .englishAuction(min.address, 1, price, 300);
       const eaRc: ContractReceipt = await eaTx.wait();
       const eaBn = eaRc.blockNumber;
-      const orderId = getOrderId(
+      const orderId = getOrderId721(
         eaBn,
         min.address,
         1,
@@ -2112,7 +2106,7 @@ describe("MADMarketplace721", () => {
 
       await mine(13);
 
-      const eaOrderId = getOrderId(
+      const eaOrderId = getOrderId721(
         eaBn,
         min.address,
         1,
@@ -2197,7 +2191,7 @@ describe("MADMarketplace721", () => {
         .fixedPrice(min.address, 1, price, 300);
       const fpRc: ContractReceipt = await fpTx.wait();
       const fpBn = fpRc.blockNumber;
-      const fpOrderId = getOrderId(
+      const fpOrderId = getOrderId721(
         fpBn,
         min.address,
         1,
@@ -2248,7 +2242,7 @@ describe("MADMarketplace721", () => {
         .englishAuction(min.address, 1, price, 300);
       const eaRc: ContractReceipt = await eaTx.wait();
       const eaBn = eaRc.blockNumber;
-      const orderId = getOrderId(
+      const orderId = getOrderId721(
         eaBn,
         min.address,
         1,
@@ -2299,7 +2293,7 @@ describe("MADMarketplace721", () => {
         .dutchAuction(min.address, 1, price, 0, 300);
       const daRc: ContractReceipt = await daTx.wait();
       const daBn = daRc.blockNumber;
-      const orderId = getOrderId(
+      const orderId = getOrderId721(
         daBn,
         min.address,
         1,
@@ -2352,7 +2346,7 @@ describe("MADMarketplace721", () => {
         .dutchAuction(min.address, 1, price, 0, 300);
       const daRc: ContractReceipt = await daTx.wait();
       const daBn = daRc.blockNumber;
-      const orderId = getOrderId(
+      const orderId = getOrderId721(
         daBn,
         min.address,
         1,
@@ -2405,7 +2399,7 @@ describe("MADMarketplace721", () => {
         .fixedPrice(min.address, 1, price, 300);
       const fpRc: ContractReceipt = await fpTx.wait();
       const fpBn = fpRc.blockNumber;
-      const fpOrderId = getOrderId(
+      const fpOrderId = getOrderId721(
         fpBn,
         min.address,
         1,
@@ -2462,7 +2456,7 @@ describe("MADMarketplace721", () => {
         .fixedPrice(min.address, 1, price, 300);
       const fpRc: ContractReceipt = await fpTx.wait();
       const fpBn = fpRc.blockNumber;
-      const fpOrderId = getOrderId(
+      const fpOrderId = getOrderId721(
         fpBn,
         min.address,
         1,
@@ -2503,7 +2497,7 @@ describe("MADMarketplace721", () => {
         .dutchAuction(basic.address, 1, price, 0, 300);
       const daRc: ContractReceipt = await daTx.wait();
       const daBn = daRc.blockNumber;
-      const daOrderId = getOrderId(
+      const daOrderId = getOrderId721(
         daBn,
         basic.address,
         1,
@@ -2689,7 +2683,7 @@ describe("MADMarketplace721", () => {
         .fixedPrice(min.address, 1, price, 300);
       const fpRc: ContractReceipt = await fpTx.wait();
       const fpBn = fpRc.blockNumber;
-      const fpOrderId = getOrderId(
+      const fpOrderId = getOrderId721(
         fpBn,
         min.address,
         1,
@@ -2734,7 +2728,7 @@ describe("MADMarketplace721", () => {
         .dutchAuction(basic.address, 1, price, 0, 300);
       const daRc: ContractReceipt = await daTx.wait();
       const daBn = daRc.blockNumber;
-      const daOrderId = getOrderId(
+      const daOrderId = getOrderId721(
         daBn,
         basic.address,
         1,
@@ -2761,13 +2755,6 @@ describe("MADMarketplace721", () => {
         [acc01, acc02],
         ["-370786516853932600", daPrice.sub(daRoyalty[1])],
       );
-      // const fpRoyalty = await min.royaltyInfo(1, price);
-      // await expect(() =>
-      //   m721.connect(acc01).buy(fpOrderId, { value: price }),
-      // ).to.changeEtherBalances(
-      //   [acc01, acc02],
-      //   ["-1000000000000000000", price.sub(fpRoyalty[1])],
-      // );
 
       expect(
         await ethers.provider.getBalance(splitter.address),
@@ -2801,7 +2788,7 @@ describe("MADMarketplace721", () => {
         .fixedPrice(extToken.address, 1, price, 300);
       const fpRc: ContractReceipt = await fpTx.wait();
       const fpBn = fpRc.blockNumber;
-      const fpOrderId = getOrderId(
+      const fpOrderId = getOrderId721(
         fpBn,
         extToken.address,
         1,
@@ -2829,7 +2816,7 @@ describe("MADMarketplace721", () => {
         .dutchAuction(extToken.address, 2, price, 0, 300);
       const daRc: ContractReceipt = await daTx.wait();
       const daBn = daRc.blockNumber;
-      const daOrderId = getOrderId(
+      const daOrderId = getOrderId721(
         daBn,
         extToken.address,
         2,
@@ -2885,7 +2872,7 @@ describe("MADMarketplace721", () => {
         .fixedPrice(extToken.address, 1, price, 300);
       const fpRc: ContractReceipt = await fpTx.wait();
       const fpBn = fpRc.blockNumber;
-      const fpOrderId = getOrderId(
+      const fpOrderId = getOrderId721(
         fpBn,
         extToken.address,
         1,
@@ -2909,7 +2896,7 @@ describe("MADMarketplace721", () => {
         .dutchAuction(extToken.address, 2, price, 0, 300);
       const daRc: ContractReceipt = await daTx.wait();
       const daBn = daRc.blockNumber;
-      const daOrderId = getOrderId(
+      const daOrderId = getOrderId721(
         daBn,
         extToken.address,
         2,
@@ -2982,7 +2969,7 @@ describe("MADMarketplace721", () => {
 
       await mine(13);
 
-      const eaOrderId = getOrderId(
+      const eaOrderId = getOrderId721(
         eaBn,
         min.address,
         1,
@@ -3047,7 +3034,7 @@ describe("MADMarketplace721", () => {
         .englishAuction(min.address, 1, price, 300);
       const eaRc: ContractReceipt = await eaTx.wait();
       const eaBn = eaRc.blockNumber;
-      const orderId = getOrderId(
+      const orderId = getOrderId721(
         eaBn,
         min.address,
         1,
@@ -3099,7 +3086,7 @@ describe("MADMarketplace721", () => {
         .fixedPrice(extToken.address, 1, price, 300);
       const fpRc: ContractReceipt = await fpTx.wait();
       const fpBn = fpRc.blockNumber;
-      const fpOrderId = getOrderId(
+      const fpOrderId = getOrderId721(
         fpBn,
         extToken.address,
         1,
@@ -3150,7 +3137,7 @@ describe("MADMarketplace721", () => {
         .englishAuction(min.address, 1, price, 300);
       const eaRc: ContractReceipt = await eaTx.wait();
       const eaBn = eaRc.blockNumber;
-      const orderId = getOrderId(
+      const orderId = getOrderId721(
         eaBn,
         min.address,
         1,
@@ -3204,7 +3191,7 @@ describe("MADMarketplace721", () => {
         .englishAuction(min.address, 1, price, 300);
       const eaRc: ContractReceipt = await eaTx.wait();
       const eaBn = eaRc.blockNumber;
-      const orderId = getOrderId(
+      const orderId = getOrderId721(
         eaBn,
         min.address,
         1,
@@ -3330,7 +3317,7 @@ describe("MADMarketplace721", () => {
         .englishAuction(min.address, 1, price, 300);
       const eaRc: ContractReceipt = await eaTx.wait();
       const eaBn = eaRc.blockNumber;
-      const orderId = getOrderId(
+      const orderId = getOrderId721(
         eaBn,
         min.address,
         1,
@@ -3385,7 +3372,7 @@ describe("MADMarketplace721", () => {
         .englishAuction(extToken.address, 1, price, 300);
       const eaRc: ContractReceipt = await eaTx.wait();
       const eaBn = eaRc.blockNumber;
-      const orderId = getOrderId(
+      const orderId = getOrderId721(
         eaBn,
         extToken.address,
         1,
@@ -3435,7 +3422,7 @@ describe("MADMarketplace721", () => {
         .englishAuction(extToken.address, 1, price, 300);
       const eaRc: ContractReceipt = await eaTx.wait();
       const eaBn = eaRc.blockNumber;
-      const orderId = getOrderId(
+      const orderId = getOrderId721(
         eaBn,
         extToken.address,
         1,
@@ -3504,7 +3491,7 @@ describe("MADMarketplace721", () => {
         .fixedPrice(min.address, 1, price, 300);
       const fpRc: ContractReceipt = await fpTx.wait();
       const fpBn = fpRc.blockNumber;
-      const orderId = getOrderId(
+      const orderId = getOrderId721(
         fpBn,
         min.address,
         1,
@@ -3559,7 +3546,7 @@ describe("MADMarketplace721", () => {
         .dutchAuction(min.address, 1, price, 0, 300);
       const daRc: ContractReceipt = await daTx.wait();
       const daBn = daRc.blockNumber;
-      const orderId = getOrderId(
+      const orderId = getOrderId721(
         daBn,
         min.address,
         1,
@@ -3621,7 +3608,7 @@ describe("MADMarketplace721", () => {
         .englishAuction(min.address, 1, price, 300);
       const eaRc: ContractReceipt = await eaTx.wait();
       const eaBn = eaRc.blockNumber;
-      const orderId = getOrderId(
+      const orderId = getOrderId721(
         eaBn,
         min.address,
         1,
@@ -3689,7 +3676,7 @@ describe("MADMarketplace721", () => {
         .fixedPrice(min.address, 1, price, 300);
       const fpRc: ContractReceipt = await fpTx.wait();
       const fpBn = fpRc.blockNumber;
-      const orderId = getOrderId(
+      const orderId = getOrderId721(
         fpBn,
         min.address,
         1,
@@ -3769,7 +3756,7 @@ describe("MADMarketplace721", () => {
         .dutchAuction(min.address, 1, price, 0, 300);
       const daRc: ContractReceipt = await daTx.wait();
       const daBn = daRc.blockNumber;
-      const orderId = getOrderId(
+      const orderId = getOrderId721(
         daBn,
         min.address,
         1,
@@ -3849,7 +3836,7 @@ describe("MADMarketplace721", () => {
         .englishAuction(min.address, 1, price, 300);
       const eaRc: ContractReceipt = await eaTx.wait();
       const eaBn = eaRc.blockNumber;
-      const orderId = getOrderId(
+      const orderId = getOrderId721(
         eaBn,
         min.address,
         1,
@@ -4132,7 +4119,7 @@ describe("MADMarketplace721", () => {
 
       const fpRc: ContractReceipt = await fpTx.wait();
       const fpBn = fpRc.blockNumber;
-      const fpOrderId = getOrderId(
+      const fpOrderId = getOrderId721(
         fpBn,
         wl.address,
         1,
@@ -4140,7 +4127,7 @@ describe("MADMarketplace721", () => {
       );
       const daRc: ContractReceipt = await daTx.wait();
       const daBn = daRc.blockNumber;
-      const daOrderId = getOrderId(
+      const daOrderId = getOrderId721(
         daBn,
         wl.address,
         2,
@@ -4148,7 +4135,7 @@ describe("MADMarketplace721", () => {
       );
       const eaRc: ContractReceipt = await eaTx.wait();
       const eaBn = eaRc.blockNumber;
-      const eaOrderId = getOrderId(
+      const eaOrderId = getOrderId721(
         eaBn,
         wl.address,
         3,

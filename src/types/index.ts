@@ -31,6 +31,8 @@ export type { Pausable } from "./lib/security/Pausable";
 export { Pausable__factory } from "./factories/lib/security/Pausable__factory";
 export type { SplitterImpl } from "./lib/splitter/SplitterImpl";
 export { SplitterImpl__factory } from "./factories/lib/splitter/SplitterImpl__factory";
+export type { MockERC1155 } from "./lib/test/erc1155-mock.sol/MockERC1155";
+export { MockERC1155__factory } from "./factories/lib/test/erc1155-mock.sol/MockERC1155__factory";
 export type { MockERC20 } from "./lib/test/erc20-mock.sol/MockERC20";
 export { MockERC20__factory } from "./factories/lib/test/erc20-mock.sol/MockERC20__factory";
 export type { MockERC2981 } from "./lib/test/erc2981-mock.sol/MockERC2981";

@@ -49,6 +49,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.SplitterImpl__factory>;
     getContractFactory(
+      name: "MockERC1155",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MockERC1155__factory>;
+    getContractFactory(
       name: "MockERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MockERC20__factory>;
@@ -266,6 +270,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.SplitterImpl>;
+    getContractAt(
+      name: "MockERC1155",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MockERC1155>;
     getContractAt(
       name: "MockERC20",
       address: string,

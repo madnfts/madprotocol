@@ -243,7 +243,11 @@ contract MADMarketplace1155 is
         else {
             // case for external tokens with ERC2981 support
             if (
-                order.token.supportsInterface(0x2a55205a) ==
+                ERC165Check(address(order.token)) == true &&
+                interfaceCheck(
+                    address(order.token),
+                    0x2a55205a
+                ) ==
                 true
             ) {
                 _extPath0(
@@ -298,7 +302,11 @@ contract MADMarketplace1155 is
         else {
             // case for external tokens with ERC2981 support
             if (
-                order.token.supportsInterface(0x2a55205a) ==
+                ERC165Check(address(order.token)) == true &&
+                interfaceCheck(
+                    address(order.token),
+                    0x2a55205a
+                ) ==
                 true
             ) {
                 _extPath0(
@@ -551,6 +559,49 @@ contract MADMarketplace1155 is
                     _seller
                 )
             );
+    }
+
+    /// @notice Modified from OpenZeppelin Contracts
+    /// (v4.4.1 - utils/introspection/ERC165Checker.sol)
+    /// (https://github.com/OpenZeppelin/openzeppelin-contracts)
+    function interfaceCheck(
+        address account,
+        bytes4 interfaceId
+    ) internal view returns (bool) {
+        bytes memory encodedParams = abi.encodeWithSelector(
+            IERC1155.supportsInterface.selector,
+            interfaceId
+        );
+        bool success;
+        uint256 returnSize;
+        uint256 returnValue;
+        assembly {
+            success := staticcall(
+                30000,
+                account,
+                add(encodedParams, 0x20),
+                mload(encodedParams),
+                0x00,
+                0x20
+            )
+            returnSize := returndatasize()
+            returnValue := mload(0x00)
+        }
+        return
+            success && returnSize >= 0x20 && returnValue > 0;
+    }
+
+    /// @notice Modified from OpenZeppelin Contracts
+    /// (v4.4.1 - utils/introspection/ERC165Checker.sol)
+    /// (https://github.com/OpenZeppelin/openzeppelin-contracts)
+    function ERC165Check(address account)
+        internal
+        view
+        returns (bool)
+    {
+        return
+            interfaceCheck(account, 0x01ffc9a7) &&
+            !interfaceCheck(account, 0xffffffff);
     }
 
     function _intPath(

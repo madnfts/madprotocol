@@ -1,4 +1,4 @@
-# MAD Smart Contracts v0.8.9
+# MAD Smart Contracts v0.9
 
 ```ts
 ///     ...     ..      ..                    ..

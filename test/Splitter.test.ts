@@ -2,11 +2,7 @@ import "@nomicfoundation/hardhat-chai-matchers";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
-import {
-  BigNumber,
-  /* Contract, */
-  Wallet,
-} from "ethers";
+import { BigNumber, Wallet } from "ethers";
 import { ethers, network } from "hardhat";
 
 import {
@@ -16,16 +12,11 @@ import {
   SplitterImpl__factory,
 } from "../src/types";
 import { SplitterErrors } from "./utils/errors";
-import {
-  splitterFixture,
-  /* , erc20Fixture */
-} from "./utils/fixtures";
+import { splitterFixture } from "./utils/fixtures";
 
 describe("Splitter", () => {
   type WalletWithAddress = Wallet & SignerWithAddress;
-  // type SplitterType = SplitterImpl & SplitterBase;
   let splitter: SplitterImpl;
-  // let erc20: MockERC20 & Contract;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let res: any;
@@ -203,7 +194,6 @@ describe("Splitter", () => {
       ).to.be.revertedWith(SplitterErrors.DeniedAccount);
     });
     it("should revert if account has no ERC20 shares to claim", async () => {
-      // ({ erc20 } = await loadFixture(erc20Fixture))
       const ERC20 = await ethers.getContractFactory(
         "MockERC20",
       );

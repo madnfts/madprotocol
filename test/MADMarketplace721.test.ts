@@ -4030,12 +4030,10 @@ describe("MADMarketplace721", () => {
   describe("Price Fetch", async () => {
     it("Should fetch order's current price", async () => {
       await m721.updateSettings(300, 10, 20);
-      // ({ wl } = await loadFixture(whitelistFixture721));
       const Splitter = await ethers.getContractFactory(
         "SplitterImpl",
       );
-      const [owner, amb, mad /*,  acc01, acc02 */] =
-        await ethers.getSigners();
+      const [owner, amb, mad] = await ethers.getSigners();
       const payees = [
         mad.address,
         amb.address,
@@ -4054,7 +4052,6 @@ describe("MADMarketplace721", () => {
 
       const signers = await ethers.getSigners();
       const whitelisted = signers.slice(0, 2);
-      // const notwhitelisted = signers.slice(3, 5);
 
       const leaves = whitelisted.map(account =>
         padBuffer(account.address),
@@ -4063,17 +4060,6 @@ describe("MADMarketplace721", () => {
         sort: true,
       });
       const merkleRoot: string = tree.getHexRoot();
-      // const proof: string[] = tree.getHexProof(
-      //   // whitelisted[0] == owner
-      //   padBuffer(whitelisted[0].address),
-      // );
-
-      // // const rSigner = randomSigners(1);
-      // // const signer = rSigner.at(0);
-      // const wrongProof: string[] = tree.getHexProof(
-      //   // notwhitelisted[0] == acc01
-      //   padBuffer(notwhitelisted[0].address),
-      // );
 
       const wl = (await WL.deploy(
         "721Whitelist",
@@ -4086,15 +4072,11 @@ describe("MADMarketplace721", () => {
         owner.address,
       )) as ERC721Whitelist;
 
-      // asynchronous contract calls
-      /* const wlConfig:ContractTransaction = */
       await wl.whitelistConfig(
         ethers.utils.parseEther("1"),
         100,
         merkleRoot,
       );
-      // we pass the merkle root of the same addresses for test economy
-      /* const freeConfig:ContractTransaction =  */
       await wl.freeConfig(1, 10, merkleRoot);
       await wl.giftTokens([
         mad.address,
@@ -4164,7 +4146,6 @@ describe("MADMarketplace721", () => {
       expect(
         await m721.callStatic.getCurrentPrice(eaOrderId),
       ).to.eq(price.mul(ethers.constants.Two));
-      // await network.provider.send("hardhat_reset");
     });
   });
 });

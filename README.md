@@ -37,6 +37,7 @@
 │   ├── splitter
 │   │   └── SplitterImpl.sol
 │   ├── test
+│   │   ├── erc1155-mock.sol
 │   │   ├── erc20-mock.sol
 │   │   ├── erc2981-mock.sol
 │   │   ├── erc721-mock.sol

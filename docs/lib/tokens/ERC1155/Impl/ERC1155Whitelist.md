@@ -867,6 +867,62 @@ event WhitelistMintStateSet(bool indexed newWhitelistState)
 
 ## Errors
 
+### AddressDenied
+
+```solidity
+error AddressDenied()
+```
+
+_0x3b8474be_
+
+### AlreadyClaimed
+
+```solidity
+error AlreadyClaimed()
+```
+
+_0x646cf558_
+
+### FreeClaimClosed
+
+```solidity
+error FreeClaimClosed()
+```
+
+_0xf44170cb_
+
+### LoopOverflow
+
+```solidity
+error LoopOverflow()
+```
+
+_0xdfb035c9_
+
+### MaxFreeReached
+
+```solidity
+error MaxFreeReached()
+```
+
+_0xf90c1bdb_
+
+### MaxMintReached
+
+```solidity
+error MaxMintReached()
+```
+
+_0xfc3fc71f_
+
+### MaxWhitelistReached
+
+```solidity
+error MaxWhitelistReached()
+```
+
+_0xa554e6e1_
+
 ### NotMintedYet
 
 ```solidity
@@ -874,3 +930,27 @@ error NotMintedYet()
 ```
 
 _0xbad086ea_
+
+### PublicMintClosed
+
+```solidity
+error PublicMintClosed()
+```
+
+_0x2d0a3f8e_
+
+### WhitelistMintClosed
+
+```solidity
+error WhitelistMintClosed()
+```
+
+_0x700a6c1f_
+
+### WrongPrice
+
+```solidity
+error WrongPrice()
+```
+
+_0xf7760f25_

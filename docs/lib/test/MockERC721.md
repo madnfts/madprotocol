@@ -1,7 +1,5 @@
 # MockERC721
 
-_Solmate (https://github.com/transmissions11/solmate/blob/main/src/test/utils/mocks/MockERC721.sol)_
-
 ## Methods
 
 ### approve
@@ -34,18 +32,6 @@ function balanceOf(address owner) external view returns (uint256)
 | Name | Type    | Description |
 | ---- | ------- | ----------- |
 | \_0  | uint256 | undefined   |
-
-### burn
-
-```solidity
-function burn(uint256 tokenId) external nonpayable
-```
-
-#### Parameters
-
-| Name    | Type    | Description |
-| ------- | ------- | ----------- |
-| tokenId | uint256 | undefined   |
 
 ### getApproved
 
@@ -126,33 +112,6 @@ function ownerOf(uint256 id) external view returns (address owner)
 | Name  | Type    | Description |
 | ----- | ------- | ----------- |
 | owner | address | undefined   |
-
-### safeMint
-
-```solidity
-function safeMint(address to, uint256 tokenId, bytes data) external nonpayable
-```
-
-#### Parameters
-
-| Name    | Type    | Description |
-| ------- | ------- | ----------- |
-| to      | address | undefined   |
-| tokenId | uint256 | undefined   |
-| data    | bytes   | undefined   |
-
-### safeMint
-
-```solidity
-function safeMint(address to, uint256 tokenId) external nonpayable
-```
-
-#### Parameters
-
-| Name    | Type    | Description |
-| ------- | ------- | ----------- |
-| to      | address | undefined   |
-| tokenId | uint256 | undefined   |
 
 ### safeTransferFrom
 

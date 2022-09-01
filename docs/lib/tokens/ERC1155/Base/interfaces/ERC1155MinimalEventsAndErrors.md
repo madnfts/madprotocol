@@ -1,4 +1,4 @@
-# ERC721MinimalEvents
+# ERC1155MinimalEventsAndErrors
 
 ## Events
 
@@ -37,3 +37,45 @@ event RoyaltyRecipientSet(address indexed newRecipient)
 | Name                   | Type    | Description |
 | ---------------------- | ------- | ----------- |
 | newRecipient `indexed` | address | undefined   |
+
+## Errors
+
+### AlreadyMinted
+
+```solidity
+error AlreadyMinted()
+```
+
+_0xddefae28_
+
+### InvalidId
+
+```solidity
+error InvalidId()
+```
+
+_0xdfa1a408_
+
+### NotMinted
+
+```solidity
+error NotMinted()
+```
+
+_0x4d5e5fb3_
+
+### PublicMintOff
+
+```solidity
+error PublicMintOff()
+```
+
+_0x50eb1142_
+
+### WrongPrice
+
+```solidity
+error WrongPrice()
+```
+
+_0xf7760f25_

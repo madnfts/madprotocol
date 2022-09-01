@@ -1,4 +1,4 @@
-# ERC721BasicEvents
+# ERC721BasicEventsAndErrors
 
 ## Events
 
@@ -49,3 +49,45 @@ event RoyaltyRecipientSet(address indexed newRecipient)
 | Name                   | Type    | Description |
 | ---------------------- | ------- | ----------- |
 | newRecipient `indexed` | address | undefined   |
+
+## Errors
+
+### LoopOverflow
+
+```solidity
+error LoopOverflow()
+```
+
+_0xdfb035c9_
+
+### MaxSupplyReached
+
+```solidity
+error MaxSupplyReached()
+```
+
+_0xd05cb609_
+
+### NotMintedYet
+
+```solidity
+error NotMintedYet()
+```
+
+_0xbad086ea_
+
+### PublicMintClosed
+
+```solidity
+error PublicMintClosed()
+```
+
+_0x2d0a3f8e_
+
+### WrongPrice
+
+```solidity
+error WrongPrice()
+```
+
+_0xf7760f25_

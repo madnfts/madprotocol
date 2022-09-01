@@ -318,7 +318,7 @@ function symbol() external view returns (string)
 ### tokenURI
 
 ```solidity
-function tokenURI(uint256 id) external view returns (string)
+function tokenURI(uint256 id) external view returns (string _uri)
 ```
 
 #### Parameters
@@ -329,9 +329,9 @@ function tokenURI(uint256 id) external view returns (string)
 
 #### Returns
 
-| Name | Type   | Description |
-| ---- | ------ | ----------- |
-| \_0  | string | undefined   |
+| Name  | Type   | Description |
+| ----- | ------ | ----------- |
+| \_uri | string | undefined   |
 
 ### transferFrom
 
@@ -457,3 +457,45 @@ event Transfer(address indexed from, address indexed to, uint256 indexed id)
 | from `indexed` | address | undefined   |
 | to `indexed`   | address | undefined   |
 | id `indexed`   | uint256 | undefined   |
+
+## Errors
+
+### AlreadyMinted
+
+```solidity
+error AlreadyMinted()
+```
+
+_0xddefae28_
+
+### InvalidId
+
+```solidity
+error InvalidId()
+```
+
+_0xdfa1a408_
+
+### NotMinted
+
+```solidity
+error NotMinted()
+```
+
+_0x4d5e5fb3_
+
+### PublicMintOff
+
+```solidity
+error PublicMintOff()
+```
+
+_0x50eb1142_
+
+### WrongPrice
+
+```solidity
+error WrongPrice()
+```
+
+_0xf7760f25_

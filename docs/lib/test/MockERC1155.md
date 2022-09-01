@@ -1,4 +1,4 @@
-# ERC1155Basic
+# MockERC1155
 
 ## Methods
 
@@ -40,46 +40,18 @@ function balanceOfBatch(address[] owners, uint256[] ids) external view returns (
 | -------- | --------- | ----------- |
 | balances | uint256[] | undefined   |
 
-### burn
+### batchMint
 
 ```solidity
-function burn(uint256[] ids) external nonpayable
+function batchMint(address to, uint256[] ids) external nonpayable
 ```
-
-_Burns an arbitrary length array of ids of different owners._
 
 #### Parameters
 
 | Name | Type      | Description |
 | ---- | --------- | ----------- |
+| to   | address   | undefined   |
 | ids  | uint256[] | undefined   |
-
-### burnBatch
-
-```solidity
-function burnBatch(address from, uint256[] ids) external nonpayable
-```
-
-_Burns an arbitrary length array of ids owned by a single account._
-
-#### Parameters
-
-| Name | Type      | Description |
-| ---- | --------- | ----------- |
-| from | address   | undefined   |
-| ids  | uint256[] | undefined   |
-
-### getURI
-
-```solidity
-function getURI() external view returns (string)
-```
-
-#### Returns
-
-| Name | Type   | Description |
-| ---- | ------ | ----------- |
-| \_0  | string | undefined   |
 
 ### isApprovedForAll
 
@@ -100,45 +72,18 @@ function isApprovedForAll(address, address) external view returns (bool)
 | ---- | ---- | ----------- |
 | \_0  | bool | undefined   |
 
-### maxSupply
-
-```solidity
-function maxSupply() external view returns (uint256)
-```
-
-_Capped max supply._
-
-#### Returns
-
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | uint256 | undefined   |
-
 ### mint
 
 ```solidity
-function mint(uint256 amount) external payable
+function mint(address to, uint256 id) external nonpayable
 ```
 
 #### Parameters
 
-| Name   | Type    | Description |
-| ------ | ------- | ----------- |
-| amount | uint256 | undefined   |
-
-### mintBatch
-
-```solidity
-function mintBatch(uint256[] ids) external payable
-```
-
-_Enables public minting of an arbitrary length array of specific ids._
-
-#### Parameters
-
-| Name | Type      | Description |
-| ---- | --------- | ----------- |
-| ids  | uint256[] | undefined   |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| to   | address | undefined   |
+| id   | uint256 | undefined   |
 
 ### onERC1155BatchReceived
 
@@ -214,52 +159,6 @@ function ownerOf(uint256) external view returns (address)
 | ---- | ------- | ----------- |
 | \_0  | address | undefined   |
 
-### price
-
-```solidity
-function price() external view returns (uint256)
-```
-
-#### Returns
-
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | uint256 | undefined   |
-
-### publicMintState
-
-```solidity
-function publicMintState() external view returns (bool)
-```
-
-_default := false._
-
-#### Returns
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| \_0  | bool | undefined   |
-
-### royaltyInfo
-
-```solidity
-function royaltyInfo(uint256, uint256 salePrice) external view returns (address receiver, uint256 royaltyAmount)
-```
-
-#### Parameters
-
-| Name      | Type    | Description |
-| --------- | ------- | ----------- |
-| \_0       | uint256 | undefined   |
-| salePrice | uint256 | undefined   |
-
-#### Returns
-
-| Name          | Type    | Description |
-| ------------- | ------- | ----------- |
-| receiver      | address | undefined   |
-| royaltyAmount | uint256 | undefined   |
-
 ### safeBatchTransferFrom
 
 ```solidity
@@ -317,42 +216,6 @@ function setOwner(address newOwner) external nonpayable
 | -------- | ------- | ----------- |
 | newOwner | address | undefined   |
 
-### setPublicMintState
-
-```solidity
-function setPublicMintState(bool _publicMintState) external nonpayable
-```
-
-#### Parameters
-
-| Name              | Type | Description |
-| ----------------- | ---- | ----------- |
-| \_publicMintState | bool | undefined   |
-
-### setURI
-
-```solidity
-function setURI(string __uri) external nonpayable
-```
-
-#### Parameters
-
-| Name    | Type   | Description |
-| ------- | ------ | ----------- |
-| \_\_uri | string | undefined   |
-
-### splitter
-
-```solidity
-function splitter() external view returns (contract SplitterImpl)
-```
-
-#### Returns
-
-| Name | Type                  | Description |
-| ---- | --------------------- | ----------- |
-| \_0  | contract SplitterImpl | undefined   |
-
 ### supportsInterface
 
 ```solidity
@@ -371,53 +234,23 @@ function supportsInterface(bytes4 interfaceId) external pure returns (bool)
 | ---- | ---- | ----------- |
 | \_0  | bool | undefined   |
 
-### totalSupply
-
-```solidity
-function totalSupply() external view returns (uint256)
-```
-
-#### Returns
-
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | uint256 | undefined   |
-
 ### uri
 
 ```solidity
-function uri(uint256 id) external view returns (string)
+function uri(uint256) external pure returns (string)
 ```
 
 #### Parameters
 
 | Name | Type    | Description |
 | ---- | ------- | ----------- |
-| id   | uint256 | undefined   |
+| \_0  | uint256 | undefined   |
 
 #### Returns
 
 | Name | Type   | Description |
 | ---- | ------ | ----------- |
 | \_0  | string | undefined   |
-
-### withdraw
-
-```solidity
-function withdraw() external nonpayable
-```
-
-### withdrawERC20
-
-```solidity
-function withdrawERC20(contract ERC20 _token) external nonpayable
-```
-
-#### Parameters
-
-| Name    | Type           | Description |
-| ------- | -------------- | ----------- |
-| \_token | contract ERC20 | undefined   |
 
 ## Events
 
@@ -435,18 +268,6 @@ event ApprovalForAll(address indexed owner, address indexed operator, bool appro
 | operator `indexed` | address | undefined   |
 | approved           | bool    | undefined   |
 
-### BaseURISet
-
-```solidity
-event BaseURISet(string indexed newBaseURI)
-```
-
-#### Parameters
-
-| Name                 | Type   | Description |
-| -------------------- | ------ | ----------- |
-| newBaseURI `indexed` | string | undefined   |
-
 ### OwnerUpdated
 
 ```solidity
@@ -459,42 +280,6 @@ event OwnerUpdated(address indexed user, address indexed newOwner)
 | ------------------ | ------- | ----------- |
 | user `indexed`     | address | undefined   |
 | newOwner `indexed` | address | undefined   |
-
-### PublicMintStateSet
-
-```solidity
-event PublicMintStateSet(bool indexed newPublicState)
-```
-
-#### Parameters
-
-| Name                     | Type | Description |
-| ------------------------ | ---- | ----------- |
-| newPublicState `indexed` | bool | undefined   |
-
-### RoyaltyFeeSet
-
-```solidity
-event RoyaltyFeeSet(uint256 indexed newRoyaltyFee)
-```
-
-#### Parameters
-
-| Name                    | Type    | Description |
-| ----------------------- | ------- | ----------- |
-| newRoyaltyFee `indexed` | uint256 | undefined   |
-
-### RoyaltyRecipientSet
-
-```solidity
-event RoyaltyRecipientSet(address indexed newRecipient)
-```
-
-#### Parameters
-
-| Name                   | Type    | Description |
-| ---------------------- | ------- | ----------- |
-| newRecipient `indexed` | address | undefined   |
 
 ### TransferBatch
 
@@ -540,45 +325,3 @@ event URI(string value, uint256 indexed id)
 | ------------ | ------- | ----------- |
 | value        | string  | undefined   |
 | id `indexed` | uint256 | undefined   |
-
-## Errors
-
-### LoopOverflow
-
-```solidity
-error LoopOverflow()
-```
-
-_0xdfb035c9_
-
-### MaxSupplyReached
-
-```solidity
-error MaxSupplyReached()
-```
-
-_0xd05cb609_
-
-### NotMintedYet
-
-```solidity
-error NotMintedYet()
-```
-
-_0xbad086ea_
-
-### PublicMintClosed
-
-```solidity
-error PublicMintClosed()
-```
-
-_0x2d0a3f8e_
-
-### WrongPrice
-
-```solidity
-error WrongPrice()
-```
-
-_0xf7760f25_

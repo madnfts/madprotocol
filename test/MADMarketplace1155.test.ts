@@ -213,7 +213,6 @@ describe("MADMarketplace1155", () => {
           "cid/id.json",
           splAddr,
         );
-      // const colID = await f1155.callStatic.getColID(minAddr);
       const min = await ethers.getContractAt(
         "ERC1155Minimal",
         minAddr,
@@ -4039,6 +4038,287 @@ describe("MADMarketplace1155", () => {
       await expect(
         m1155.connect(acc02).cancelOrder(orderId),
       ).to.be.revertedWith(MarketplaceErrors.WrongFrom);
+    });
+  });
+  describe("Public Helpers", async () => {
+    it("Should fetch the length of orderIds for a token", async () => {
+      await m1155.updateSettings(300, 10, 20);
+      await f1155.addAmbassador(amb.address);
+      await f1155
+        .connect(acc02)
+        .splitterCheck("MADSplitter1", amb.address, 20);
+      const splAddr = await f1155.callStatic.getDeployedAddr(
+        "MADSplitter1",
+      );
+      await f1155
+        .connect(acc02)
+        .createCollection(
+          2,
+          "salt",
+          price,
+          1000,
+          "ipfs://cid/",
+          splAddr,
+        );
+
+      const wlAddr = await f1155.callStatic.getDeployedAddr(
+        "salt",
+      );
+
+      const whitelist = await ethers.getContractAt(
+        "ERC1155Whitelist",
+        wlAddr,
+      );
+
+      const root = ethers.utils.keccak256(
+        ethers.utils.toUtf8Bytes("root"),
+      );
+
+      await r1155
+        .connect(acc02)
+        .freeSettings(wlAddr, 1, 10, root);
+
+      await r1155
+        .connect(acc02)
+        .gift(wlAddr, [
+          mad.address,
+          acc01.address,
+          acc02.address,
+        ]);
+      await whitelist
+        .connect(mad)
+        .setApprovalForAll(m1155.address, true);
+      await whitelist
+        .connect(acc01)
+        .setApprovalForAll(m1155.address, true);
+      await whitelist
+        .connect(acc02)
+        .setApprovalForAll(m1155.address, true);
+
+      const fpTx = await m1155
+        .connect(mad)
+        .fixedPrice(whitelist.address, 1, 1, price, 300);
+      const daTx = await m1155
+        .connect(acc01)
+        .dutchAuction(whitelist.address, 2, 1, price, 0, 300);
+      const eaTx = await m1155
+        .connect(acc02)
+        .englishAuction(whitelist.address, 3, 1, price, 300);
+
+      const tx1 = await m1155.callStatic.tokenOrderLength(
+        whitelist.address,
+        1,
+        1,
+      );
+      const tx2 = await m1155.callStatic.tokenOrderLength(
+        whitelist.address,
+        2,
+        1,
+      );
+      const tx3 = await m1155.callStatic.tokenOrderLength(
+        whitelist.address,
+        3,
+        1,
+      );
+
+      expect(fpTx).to.be.ok;
+      expect(eaTx).to.be.ok;
+      expect(daTx).to.be.ok;
+
+      expect(tx1).to.be.ok.and.to.eq(1);
+      expect(tx2).to.be.ok.and.to.eq(1);
+      expect(tx3).to.be.ok.and.to.eq(1);
+    });
+    it("Should fetch the length of orderIds for a seller", async () => {
+      await m1155.updateSettings(300, 10, 20);
+      await f1155.addAmbassador(amb.address);
+      await f1155
+        .connect(acc02)
+        .splitterCheck("MADSplitter1", amb.address, 20);
+      const splAddr = await f1155.callStatic.getDeployedAddr(
+        "MADSplitter1",
+      );
+      await f1155
+        .connect(acc02)
+        .createCollection(
+          2,
+          "salt",
+          price,
+          1000,
+          "ipfs://cid/",
+          splAddr,
+        );
+
+      const wlAddr = await f1155.callStatic.getDeployedAddr(
+        "salt",
+      );
+
+      const whitelist = await ethers.getContractAt(
+        "ERC1155Whitelist",
+        wlAddr,
+      );
+
+      const root = ethers.utils.keccak256(
+        ethers.utils.toUtf8Bytes("root"),
+      );
+
+      await r1155
+        .connect(acc02)
+        .freeSettings(wlAddr, 1, 10, root);
+
+      await r1155.connect(acc02).creatorMint(wlAddr, 3);
+      await whitelist
+        .connect(acc02)
+        .setApprovalForAll(m1155.address, true);
+
+      const fpTx = await m1155
+        .connect(acc02)
+        .fixedPrice(whitelist.address, 1, 1, price, 300);
+      const daTx = await m1155
+        .connect(acc02)
+        .dutchAuction(whitelist.address, 2, 1, price, 0, 300);
+      const eaTx = await m1155
+        .connect(acc02)
+        .englishAuction(whitelist.address, 3, 1, price, 300);
+
+      const tx = await m1155.callStatic.sellerOrderLength(
+        acc02.address,
+      );
+
+      expect(fpTx).to.be.ok;
+      expect(eaTx).to.be.ok;
+      expect(daTx).to.be.ok;
+
+      expect(tx).to.be.ok.and.to.eq(3);
+    });
+  });
+  describe("Price Fetch", async () => {
+    it("Should fetch order's current price", async () => {
+      await m1155.updateSettings(300, 10, 20);
+      const Splitter = await ethers.getContractFactory(
+        "SplitterImpl",
+      );
+      const [owner, amb, mad] = await ethers.getSigners();
+      const payees = [
+        mad.address,
+        amb.address,
+        owner.address,
+      ];
+      const shares = [10, 20, 70];
+
+      const splitter = (await Splitter.deploy(
+        payees,
+        shares,
+      )) as SplitterImpl;
+
+      const WL = await ethers.getContractFactory(
+        "ERC1155Whitelist",
+      );
+
+      const signers = await ethers.getSigners();
+      const whitelisted = signers.slice(0, 2);
+
+      const leaves = whitelisted.map(account =>
+        padBuffer(account.address),
+      );
+      const tree = new MerkleTree(leaves, keccak256, {
+        sort: true,
+      });
+      const merkleRoot: string = tree.getHexRoot();
+
+      const wl = (await WL.deploy(
+        "ipfs://cid/",
+        ethers.utils.parseEther("1"),
+        1000,
+        splitter.address,
+        750,
+        owner.address,
+      )) as ERC1155Whitelist;
+
+      await wl.whitelistConfig(
+        ethers.utils.parseEther("1"),
+        100,
+        merkleRoot,
+      );
+
+      await wl.freeConfig(1, 10, merkleRoot);
+      await wl.giftTokens([
+        mad.address,
+        acc01.address,
+        acc02.address,
+      ]);
+      await wl
+        .connect(mad)
+        .setApprovalForAll(m1155.address, true);
+      await wl
+        .connect(acc01)
+        .setApprovalForAll(m1155.address, true);
+      await wl
+        .connect(acc02)
+        .setApprovalForAll(m1155.address, true);
+
+      // `price` is constant in FP
+      const fpTx: ContractTransaction = await m1155
+        .connect(mad)
+        .fixedPrice(wl.address, 1, 1, price, 300);
+      await mineUpTo(100);
+      const daTx: ContractTransaction = await m1155
+        .connect(acc01)
+        .dutchAuction(wl.address, 2, 1, price, 0, 300);
+      const eaTx: ContractTransaction = await m1155
+        .connect(acc02)
+        .englishAuction(wl.address, 3, 1, price, 300);
+
+      const fpRc: ContractReceipt = await fpTx.wait();
+      const fpBn = fpRc.blockNumber;
+      const fpOrderId = getOrderId1155(
+        fpBn,
+        wl.address,
+        1,
+        1,
+        mad.address,
+      );
+      const daRc: ContractReceipt = await daTx.wait();
+      const daBn = daRc.blockNumber;
+      const daOrderId = getOrderId1155(
+        daBn,
+        wl.address,
+        2,
+        1,
+        acc01.address,
+      );
+      const eaRc: ContractReceipt = await eaTx.wait();
+      const eaBn = eaRc.blockNumber;
+      const eaOrderId = getOrderId1155(
+        eaBn,
+        wl.address,
+        3,
+        1,
+        acc02.address,
+      );
+
+      // update EA `lastBidPrice`
+      await m1155.connect(amb).bid(eaOrderId, {
+        value: price.mul(ethers.constants.Two),
+      });
+
+      await mineUpTo(200);
+
+      // simulate DA pricing math with ts
+      const delta = ethers.BigNumber.from(300 - daBn);
+      const tick = price.div(delta);
+      const dec = ethers.BigNumber.from(99).mul(tick);
+      const daPrice = price.sub(dec);
+
+      expect(
+        await m1155.callStatic.getCurrentPrice(daOrderId),
+      ).to.eq(daPrice);
+      expect(
+        await m1155.callStatic.getCurrentPrice(fpOrderId),
+      ).to.eq(price);
+      expect(
+        await m1155.callStatic.getCurrentPrice(eaOrderId),
+      ).to.eq(price.mul(ethers.constants.Two));
     });
   });
 });

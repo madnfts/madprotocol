@@ -42,15 +42,10 @@ describe("MADFactory721", () => {
   let acc01: WalletWithAddress;
   let acc02: WalletWithAddress;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  // let res: any;
-
   let f721: MADFactory721;
   let m721: MADMarketplace721;
   let r721: MADRouter721;
 
-  // const fundAmount: BigNumber =
-  // ethers.utils.parseEther("10000");
   const price: BigNumber = ethers.utils.parseEther("1");
 
   before("Set signers and reset network", async () => {
@@ -106,7 +101,6 @@ describe("MADFactory721", () => {
       );
     });
     it("Should revert if creator and owner are the same", async () => {
-      // await f721.addAmbassador(amb.address);
       const tx = f721
         .connect(owner)
         .splitterCheck("MADSplitter1", dead, 0);
@@ -128,7 +122,6 @@ describe("MADFactory721", () => {
       );
     });
     it("Should deploy splitter without ambassador, update storage and emit events", async () => {
-      // await f721.addAmbassador(amb.address);
       const tx: ContractTransaction = await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", dead, 0);

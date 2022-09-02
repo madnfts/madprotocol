@@ -85,18 +85,6 @@ export const getOrderId1155 = (
   return _hash;
 };
 
-// export const mFixture721: Fixture<MADFixture721> =
-//   async function (): Promise<MADFixture721> {
-//     const { f721, m721, r721 } = await madFixture721();
-//     return { f721, m721, r721 };
-//   };
-
-// export const mFixture1155: Fixture<MADFixture1155> =
-//   async function (): Promise<MADFixture1155> {
-//     const { f1155, m1155, r1155 } = await madFixture1155();
-//     return { f1155, m1155, r1155 };
-//   };
-
 // exported async functions
 export async function madFixture721A(): Promise<MADFixture721> {
   const SplitterDeployer = await ethers.getContractFactory(

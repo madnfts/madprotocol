@@ -369,6 +369,20 @@ contract MADRouter721 is
     //                         OWNER FX                           //
     ////////////////////////////////////////////////////////////////
 
+    /// @dev Function Signature := 0x13af4035
+    function setOwner(address newOwner)
+        public
+        override
+        onlyOwner
+    {
+        // owner = newOwner;
+        assembly {
+            sstore(owner.slot, newOwner)
+        }
+
+        emit OwnerUpdated(msg.sender, newOwner);
+    }
+
     /// @notice Change the address used for lazy minting voucher validation.
     /// @dev Function Sighash := 0x17f9fad1
     /// @dev Event emitted by token contract.

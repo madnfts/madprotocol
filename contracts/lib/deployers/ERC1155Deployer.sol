@@ -17,7 +17,8 @@ library ERC1155MinimalDeployer {
         string memory _uri,
         uint256 _price,
         address _splitter,
-        address _router
+        address _router,
+        uint256 _royalty
     ) public returns (bytes32 tokenSalt, address deployed) {
         SplitterImpl splitter = SplitterImpl(
             payable(_splitter)
@@ -31,7 +32,7 @@ library ERC1155MinimalDeployer {
                     _uri,
                     _price,
                     splitter,
-                    750, // fixed 7.5% royalties
+                    _royalty,
                     _router
                 )
             ),
@@ -47,7 +48,8 @@ library ERC1155BasicDeployer {
         uint256 _price,
         uint256 _maxSupply,
         address _splitter,
-        address _router
+        address _router,
+        uint256 _royalty
     ) public returns (bytes32 tokenSalt, address deployed) {
         SplitterImpl splitter = SplitterImpl(
             payable(_splitter)
@@ -62,7 +64,7 @@ library ERC1155BasicDeployer {
                     _price,
                     _maxSupply,
                     splitter,
-                    750, // fixed 7.5% royalties
+                    _royalty,
                     _router
                 )
             ),
@@ -78,7 +80,8 @@ library ERC1155WhitelistDeployer {
         uint256 _price,
         uint256 _maxSupply,
         address _splitter,
-        address _router
+        address _router,
+        uint256 _royalty
     ) public returns (bytes32 tokenSalt, address deployed) {
         SplitterImpl splitter = SplitterImpl(
             payable(_splitter)
@@ -93,7 +96,7 @@ library ERC1155WhitelistDeployer {
                     _price,
                     _maxSupply,
                     splitter,
-                    750, // fixed 7.5% royalties
+                    _royalty,
                     _router
                 )
             ),
@@ -108,7 +111,8 @@ library ERC1155LazyDeployer {
         string memory _uri,
         address _splitter,
         address _router,
-        address _signer
+        address _signer,
+        uint256 _royalty
     ) public returns (bytes32 tokenSalt, address deployed) {
         SplitterImpl splitter = SplitterImpl(
             payable(_splitter)
@@ -121,7 +125,7 @@ library ERC1155LazyDeployer {
                 abi.encode(
                     _uri,
                     splitter,
-                    750, // fixed 7.5% royalties
+                    _royalty,
                     _router,
                     _signer
                 )

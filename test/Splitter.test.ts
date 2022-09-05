@@ -1,5 +1,8 @@
 import "@nomicfoundation/hardhat-chai-matchers";
-import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
+import {
+  loadFixture,
+  setBalance,
+} from "@nomicfoundation/hardhat-network-helpers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { BigNumber, Wallet } from "ethers";
@@ -57,23 +60,23 @@ describe("Splitter", () => {
       expect(await splitter.callStatic.totalShares()).to.eq(
         100,
       );
-      expect(await splitter.callStatic.payee(0)).to.eq(
+      expect(await splitter.callStatic._payees(0)).to.eq(
         mad.address,
       );
-      expect(await splitter.callStatic.payee(1)).to.eq(
+      expect(await splitter.callStatic._payees(1)).to.eq(
         amb.address,
       );
-      expect(await splitter.callStatic.payee(2)).to.eq(
+      expect(await splitter.callStatic._payees(2)).to.eq(
         owner.address,
       );
       expect(
-        await splitter.callStatic.shares(mad.address),
+        await splitter.callStatic._shares(mad.address),
       ).to.eq(10);
       expect(
-        await splitter.callStatic.shares(amb.address),
+        await splitter.callStatic._shares(amb.address),
       ).to.eq(20);
       expect(
-        await splitter.callStatic.shares(owner.address),
+        await splitter.callStatic._shares(owner.address),
       ).to.eq(70);
     });
     it("accounts have been funded", async () => {
@@ -106,7 +109,8 @@ describe("Splitter", () => {
       )) as SplitterImpl__factory;
       const tx = Splitter.deploy([], []);
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        Splitter,
         SplitterErrors.NoPayees,
       );
     });
@@ -119,7 +123,8 @@ describe("Splitter", () => {
         [20, 30],
       );
 
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        Splitter,
         SplitterErrors.LengthMismatch,
       );
     });
@@ -131,7 +136,8 @@ describe("Splitter", () => {
         [owner.address, acc01.address],
         [20, 30, 40],
       );
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        Splitter,
         SplitterErrors.LengthMismatch,
       );
     });
@@ -143,7 +149,8 @@ describe("Splitter", () => {
         [mad.address, dead],
         [20, 30],
       );
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        Splitter,
         SplitterErrors.DeadAddress,
       );
     });
@@ -155,7 +162,8 @@ describe("Splitter", () => {
         [mad.address, acc01.address],
         [20, 0],
       );
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        Splitter,
         SplitterErrors.InvalidShare,
       );
     });
@@ -167,7 +175,8 @@ describe("Splitter", () => {
         [mad.address, mad.address],
         [20, 30],
       );
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        Splitter,
         SplitterErrors.AlreadyPayee,
       );
     });
@@ -179,19 +188,26 @@ describe("Splitter", () => {
         [mad.address, mad.address],
         [20, 30],
       );
-      await expect(tx).to.be.revertedWith(
+      await expect(tx).to.be.revertedWithCustomError(
+        Splitter,
         SplitterErrors.AlreadyPayee,
       );
     });
     it("should revert if account has no shares to claim", async () => {
       await expect(
         splitter["release(address)"](acc02.address),
-      ).to.be.revertedWith(SplitterErrors.NoShares);
+      ).to.be.revertedWithCustomError(
+        splitter,
+        SplitterErrors.NoShares,
+      );
     });
     it("should revert if there are no funds to claim", async () => {
       await expect(
         splitter["release(address)"](amb.address),
-      ).to.be.revertedWith(SplitterErrors.DeniedAccount);
+      ).to.be.revertedWithCustomError(
+        splitter,
+        SplitterErrors.DeniedAccount,
+      );
     });
     it("should revert if account has no ERC20 shares to claim", async () => {
       const ERC20 = await ethers.getContractFactory(
@@ -206,7 +222,10 @@ describe("Splitter", () => {
           erc20.address,
           acc01.address,
         ),
-      ).to.be.revertedWith(SplitterErrors.NoShares);
+      ).to.be.revertedWithCustomError(
+        splitter,
+        SplitterErrors.NoShares,
+      );
     });
     it("should revert if there is no ERC20 to claim", async () => {
       const ERC20 = (await ethers.getContractFactory(
@@ -219,18 +238,34 @@ describe("Splitter", () => {
           erc20.address,
           owner.address,
         ),
-      ).to.be.revertedWith(SplitterErrors.DeniedAccount);
+      ).to.be.revertedWithCustomError(
+        splitter,
+        SplitterErrors.DeniedAccount,
+      );
     });
   });
   describe("Receive Payments", async () => {
-    it("should accept value", async () => {
-      await owner.sendTransaction({
-        to: splitter.address,
-        value: price,
-      });
+    it("should accept value and autodistribute to payees", async () => {
+      const payees = [mad, amb, owner];
+      const ten = ethers.BigNumber.from(10);
+      const values = [
+        price.mul(ethers.constants.One).div(ten),
+        price.mul(ethers.constants.Two).div(ten),
+        price.mul(ethers.BigNumber.from(7)).div(ten),
+      ];
+
+      await expect(() =>
+        acc02.sendTransaction({
+          to: splitter.address,
+          value: price,
+        }),
+      ).to.changeEtherBalances(payees, values);
+      expect(
+        await splitter.callStatic["totalReleased()"](),
+      ).to.eq(price);
       expect(
         await ethers.provider.getBalance(splitter.address),
-      ).to.eq(price);
+      ).to.eq(ethers.constants.Zero);
     });
     it("should accept ERC20", async () => {
       const ERC20 = (await ethers.getContractFactory(
@@ -248,10 +283,8 @@ describe("Splitter", () => {
   });
   describe("Release Payments", async () => {
     it("should release value to payee", async () => {
-      await owner.sendTransaction({
-        to: splitter.address,
-        value: price,
-      });
+      await setBalance(splitter.address, price);
+
       const bal1 = await ethers.provider.getBalance(
         mad.address,
       );
@@ -276,6 +309,19 @@ describe("Splitter", () => {
       expect(
         await splitter.callStatic["totalReleased()"](),
       ).to.be.eq(amount);
+    });
+    it("should release all pending balance to payees", async () => {
+      const payees = [mad, amb, owner];
+      const ten = ethers.BigNumber.from(10);
+      const values = [
+        price.mul(ethers.constants.One).div(ten),
+        price.mul(ethers.constants.Two).div(ten),
+        price.mul(ethers.BigNumber.from(7)).div(ten),
+      ];
+      await setBalance(splitter.address, price);
+      await expect(() =>
+        splitter.connect(owner)["releaseAll"](),
+      ).to.changeEtherBalances(payees, values);
     });
     it("should release ERC20 to payee", async () => {
       const ERC20 = (await ethers.getContractFactory(

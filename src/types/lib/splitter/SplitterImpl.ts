@@ -29,14 +29,16 @@ import type {
 
 export interface SplitterImplInterface extends utils.Interface {
   functions: {
-    "payee(uint256)": FunctionFragment;
+    "_payees(uint256)": FunctionFragment;
+    "_shares(address)": FunctionFragment;
+    "payeesLength()": FunctionFragment;
     "releasable(address)": FunctionFragment;
     "releasable(address,address)": FunctionFragment;
     "release(address)": FunctionFragment;
     "release(address,address)": FunctionFragment;
+    "releaseAll()": FunctionFragment;
     "released(address,address)": FunctionFragment;
     "released(address)": FunctionFragment;
-    "shares(address)": FunctionFragment;
     "totalReleased(address)": FunctionFragment;
     "totalReleased()": FunctionFragment;
     "totalShares()": FunctionFragment;
@@ -44,22 +46,32 @@ export interface SplitterImplInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "payee"
+      | "_payees"
+      | "_shares"
+      | "payeesLength"
       | "releasable(address)"
       | "releasable(address,address)"
       | "release(address)"
       | "release(address,address)"
+      | "releaseAll"
       | "released(address,address)"
       | "released(address)"
-      | "shares"
       | "totalReleased(address)"
       | "totalReleased()"
       | "totalShares"
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "payee",
+    functionFragment: "_payees",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_shares",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "payeesLength",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "releasable(address)",
@@ -78,15 +90,15 @@ export interface SplitterImplInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "releaseAll",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "released(address,address)",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "released(address)",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "shares",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -102,7 +114,12 @@ export interface SplitterImplInterface extends utils.Interface {
     values?: undefined
   ): string;
 
-  decodeFunctionResult(functionFragment: "payee", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "_payees", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "_shares", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "payeesLength",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "releasable(address)",
     data: BytesLike
@@ -119,6 +136,7 @@ export interface SplitterImplInterface extends utils.Interface {
     functionFragment: "release(address,address)",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "releaseAll", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "released(address,address)",
     data: BytesLike
@@ -127,7 +145,6 @@ export interface SplitterImplInterface extends utils.Interface {
     functionFragment: "released(address)",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "shares", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalReleased(address)",
     data: BytesLike
@@ -227,10 +244,17 @@ export interface SplitterImpl extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    payee(
-      index: PromiseOrValue<BigNumberish>,
+    _payees(
+      arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
+
+    _shares(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    payeesLength(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "releasable(address)"(
       account: PromiseOrValue<string>,
@@ -254,6 +278,10 @@ export interface SplitterImpl extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    releaseAll(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     "released(address,address)"(
       token: PromiseOrValue<string>,
       account: PromiseOrValue<string>,
@@ -261,11 +289,6 @@ export interface SplitterImpl extends BaseContract {
     ): Promise<[BigNumber]>;
 
     "released(address)"(
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    shares(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
@@ -280,10 +303,17 @@ export interface SplitterImpl extends BaseContract {
     totalShares(overrides?: CallOverrides): Promise<[BigNumber]>;
   };
 
-  payee(
-    index: PromiseOrValue<BigNumberish>,
+  _payees(
+    arg0: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string>;
+
+  _shares(
+    arg0: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  payeesLength(overrides?: CallOverrides): Promise<BigNumber>;
 
   "releasable(address)"(
     account: PromiseOrValue<string>,
@@ -307,6 +337,10 @@ export interface SplitterImpl extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  releaseAll(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   "released(address,address)"(
     token: PromiseOrValue<string>,
     account: PromiseOrValue<string>,
@@ -314,11 +348,6 @@ export interface SplitterImpl extends BaseContract {
   ): Promise<BigNumber>;
 
   "released(address)"(
-    account: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  shares(
     account: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
@@ -333,10 +362,17 @@ export interface SplitterImpl extends BaseContract {
   totalShares(overrides?: CallOverrides): Promise<BigNumber>;
 
   callStatic: {
-    payee(
-      index: PromiseOrValue<BigNumberish>,
+    _payees(
+      arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    _shares(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    payeesLength(overrides?: CallOverrides): Promise<BigNumber>;
 
     "releasable(address)"(
       account: PromiseOrValue<string>,
@@ -360,6 +396,8 @@ export interface SplitterImpl extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    releaseAll(overrides?: CallOverrides): Promise<void>;
+
     "released(address,address)"(
       token: PromiseOrValue<string>,
       account: PromiseOrValue<string>,
@@ -367,11 +405,6 @@ export interface SplitterImpl extends BaseContract {
     ): Promise<BigNumber>;
 
     "released(address)"(
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    shares(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -418,10 +451,17 @@ export interface SplitterImpl extends BaseContract {
   };
 
   estimateGas: {
-    payee(
-      index: PromiseOrValue<BigNumberish>,
+    _payees(
+      arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    _shares(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    payeesLength(overrides?: CallOverrides): Promise<BigNumber>;
 
     "releasable(address)"(
       account: PromiseOrValue<string>,
@@ -445,6 +485,10 @@ export interface SplitterImpl extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    releaseAll(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     "released(address,address)"(
       token: PromiseOrValue<string>,
       account: PromiseOrValue<string>,
@@ -452,11 +496,6 @@ export interface SplitterImpl extends BaseContract {
     ): Promise<BigNumber>;
 
     "released(address)"(
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    shares(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -472,10 +511,17 @@ export interface SplitterImpl extends BaseContract {
   };
 
   populateTransaction: {
-    payee(
-      index: PromiseOrValue<BigNumberish>,
+    _payees(
+      arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    _shares(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    payeesLength(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "releasable(address)"(
       account: PromiseOrValue<string>,
@@ -499,6 +545,10 @@ export interface SplitterImpl extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    releaseAll(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     "released(address,address)"(
       token: PromiseOrValue<string>,
       account: PromiseOrValue<string>,
@@ -506,11 +556,6 @@ export interface SplitterImpl extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     "released(address)"(
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    shares(
       account: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

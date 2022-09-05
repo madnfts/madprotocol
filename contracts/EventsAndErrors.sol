@@ -10,8 +10,8 @@ interface FactoryEventsAndErrors721 {
     //                           EVENTS                           //
     ////////////////////////////////////////////////////////////////
 
-    event AmbassadorAdded(address indexed whitelistedAmb);
-    event AmbassadorDeleted(address indexed removedAmb);
+    // event AmbassadorAdded(address indexed whitelistedAmb);
+    // event AmbassadorDeleted(address indexed removedAmb);
     event MarketplaceUpdated(address indexed newMarket);
     event RouterUpdated(address indexed newRouter);
     event SignerUpdated(address indexed newSigner);
@@ -50,6 +50,8 @@ interface FactoryEventsAndErrors721 {
 
     /// @dev 0x00adecf0
     error SplitterFail();
+    /// @dev 0xe0e54ced
+    error InvalidRoyalty();
 }
 
 interface FactoryEventsAndErrors1155 {
@@ -57,8 +59,8 @@ interface FactoryEventsAndErrors1155 {
     //                           EVENTS                           //
     ////////////////////////////////////////////////////////////////
 
-    event AmbassadorAdded(address indexed whitelistedAmb);
-    event AmbassadorDeleted(address indexed removedAmb);
+    // event AmbassadorAdded(address indexed whitelistedAmb);
+    // event AmbassadorDeleted(address indexed removedAmb);
     event MarketplaceUpdated(address indexed newMarket);
     event RouterUpdated(address indexed newRouter);
     event SignerUpdated(address indexed newSigner);
@@ -97,6 +99,8 @@ interface FactoryEventsAndErrors1155 {
 
     /// @dev 0x00adecf0
     error SplitterFail();
+    /// @dev 0xe0e54ced
+    error InvalidRoyalty();
 }
 
 interface MarketplaceEventsAndErrors721 {

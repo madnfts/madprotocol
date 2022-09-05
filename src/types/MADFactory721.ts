@@ -29,13 +29,10 @@ import type {
 
 export interface MADFactory721Interface extends utils.Interface {
   functions: {
-    "addAmbassador(address)": FunctionFragment;
-    "ambWhitelist(address)": FunctionFragment;
     "colInfo(bytes32)": FunctionFragment;
-    "createCollection(uint8,string,string,string,uint256,uint256,string,address)": FunctionFragment;
+    "createCollection(uint8,string,string,string,uint256,uint256,string,address,uint256)": FunctionFragment;
     "creatorAuth(address,address)": FunctionFragment;
     "creatorCheck(bytes32)": FunctionFragment;
-    "delAmbassador(address)": FunctionFragment;
     "getColID(address)": FunctionFragment;
     "getDeployedAddr(string)": FunctionFragment;
     "getIDsLength(address)": FunctionFragment;
@@ -58,13 +55,10 @@ export interface MADFactory721Interface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "addAmbassador"
-      | "ambWhitelist"
       | "colInfo"
       | "createCollection"
       | "creatorAuth"
       | "creatorCheck"
-      | "delAmbassador"
       | "getColID"
       | "getDeployedAddr"
       | "getIDsLength"
@@ -86,14 +80,6 @@ export interface MADFactory721Interface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "addAmbassador",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "ambWhitelist",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "colInfo",
     values: [PromiseOrValue<BytesLike>]
   ): string;
@@ -107,7 +93,8 @@ export interface MADFactory721Interface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
-      PromiseOrValue<string>
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
     ]
   ): string;
   encodeFunctionData(
@@ -117,10 +104,6 @@ export interface MADFactory721Interface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "creatorCheck",
     values: [PromiseOrValue<BytesLike>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "delAmbassador",
-    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "getColID",
@@ -178,14 +161,6 @@ export interface MADFactory721Interface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "addAmbassador",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "ambWhitelist",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "colInfo", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "createCollection",
@@ -197,10 +172,6 @@ export interface MADFactory721Interface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "creatorCheck",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "delAmbassador",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getColID", data: BytesLike): Result;
@@ -238,8 +209,6 @@ export interface MADFactory721Interface extends utils.Interface {
   decodeFunctionResult(functionFragment: "userTokens", data: BytesLike): Result;
 
   events: {
-    "AmbassadorAdded(address)": EventFragment;
-    "AmbassadorDeleted(address)": EventFragment;
     "ERC721BasicCreated(address,address,address)": EventFragment;
     "ERC721LazyCreated(address,address,address)": EventFragment;
     "ERC721MinimalCreated(address,address,address)": EventFragment;
@@ -253,8 +222,6 @@ export interface MADFactory721Interface extends utils.Interface {
     "Unpaused(address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "AmbassadorAdded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "AmbassadorDeleted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ERC721BasicCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ERC721LazyCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ERC721MinimalCreated"): EventFragment;
@@ -267,27 +234,6 @@ export interface MADFactory721Interface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "SplitterCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
 }
-
-export interface AmbassadorAddedEventObject {
-  whitelistedAmb: string;
-}
-export type AmbassadorAddedEvent = TypedEvent<
-  [string],
-  AmbassadorAddedEventObject
->;
-
-export type AmbassadorAddedEventFilter = TypedEventFilter<AmbassadorAddedEvent>;
-
-export interface AmbassadorDeletedEventObject {
-  removedAmb: string;
-}
-export type AmbassadorDeletedEvent = TypedEvent<
-  [string],
-  AmbassadorDeletedEventObject
->;
-
-export type AmbassadorDeletedEventFilter =
-  TypedEventFilter<AmbassadorDeletedEvent>;
 
 export interface ERC721BasicCreatedEventObject {
   newSplitter: string;
@@ -431,16 +377,6 @@ export interface MADFactory721 extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    addAmbassador(
-      _whitelistedAmb: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    ambWhitelist(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
     colInfo(
       arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -463,6 +399,7 @@ export interface MADFactory721 extends BaseContract {
       _maxSupply: PromiseOrValue<BigNumberish>,
       _baseURI: PromiseOrValue<string>,
       _splitter: PromiseOrValue<string>,
+      _royalty: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -476,11 +413,6 @@ export interface MADFactory721 extends BaseContract {
       _colID: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[string, boolean] & { creator: string; check: boolean }>;
-
-    delAmbassador(
-      _removedAmb: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
 
     getColID(
       _colAddress: PromiseOrValue<string>,
@@ -568,16 +500,6 @@ export interface MADFactory721 extends BaseContract {
     ): Promise<[string]>;
   };
 
-  addAmbassador(
-    _whitelistedAmb: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  ambWhitelist(
-    arg0: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
   colInfo(
     arg0: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
@@ -600,6 +522,7 @@ export interface MADFactory721 extends BaseContract {
     _maxSupply: PromiseOrValue<BigNumberish>,
     _baseURI: PromiseOrValue<string>,
     _splitter: PromiseOrValue<string>,
+    _royalty: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -613,11 +536,6 @@ export interface MADFactory721 extends BaseContract {
     _colID: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<[string, boolean] & { creator: string; check: boolean }>;
-
-  delAmbassador(
-    _removedAmb: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
 
   getColID(
     _colAddress: PromiseOrValue<string>,
@@ -705,16 +623,6 @@ export interface MADFactory721 extends BaseContract {
   ): Promise<string>;
 
   callStatic: {
-    addAmbassador(
-      _whitelistedAmb: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    ambWhitelist(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
     colInfo(
       arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -737,6 +645,7 @@ export interface MADFactory721 extends BaseContract {
       _maxSupply: PromiseOrValue<BigNumberish>,
       _baseURI: PromiseOrValue<string>,
       _splitter: PromiseOrValue<string>,
+      _royalty: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -750,11 +659,6 @@ export interface MADFactory721 extends BaseContract {
       _colID: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[string, boolean] & { creator: string; check: boolean }>;
-
-    delAmbassador(
-      _removedAmb: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     getColID(
       _colAddress: PromiseOrValue<string>,
@@ -839,20 +743,6 @@ export interface MADFactory721 extends BaseContract {
   };
 
   filters: {
-    "AmbassadorAdded(address)"(
-      whitelistedAmb?: PromiseOrValue<string> | null
-    ): AmbassadorAddedEventFilter;
-    AmbassadorAdded(
-      whitelistedAmb?: PromiseOrValue<string> | null
-    ): AmbassadorAddedEventFilter;
-
-    "AmbassadorDeleted(address)"(
-      removedAmb?: PromiseOrValue<string> | null
-    ): AmbassadorDeletedEventFilter;
-    AmbassadorDeleted(
-      removedAmb?: PromiseOrValue<string> | null
-    ): AmbassadorDeletedEventFilter;
-
     "ERC721BasicCreated(address,address,address)"(
       newSplitter?: PromiseOrValue<string> | null,
       newCollection?: PromiseOrValue<string> | null,
@@ -948,16 +838,6 @@ export interface MADFactory721 extends BaseContract {
   };
 
   estimateGas: {
-    addAmbassador(
-      _whitelistedAmb: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    ambWhitelist(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     colInfo(
       arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -972,6 +852,7 @@ export interface MADFactory721 extends BaseContract {
       _maxSupply: PromiseOrValue<BigNumberish>,
       _baseURI: PromiseOrValue<string>,
       _splitter: PromiseOrValue<string>,
+      _royalty: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -984,11 +865,6 @@ export interface MADFactory721 extends BaseContract {
     creatorCheck(
       _colID: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    delAmbassador(
-      _removedAmb: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     getColID(
@@ -1070,16 +946,6 @@ export interface MADFactory721 extends BaseContract {
   };
 
   populateTransaction: {
-    addAmbassador(
-      _whitelistedAmb: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    ambWhitelist(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     colInfo(
       arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -1094,6 +960,7 @@ export interface MADFactory721 extends BaseContract {
       _maxSupply: PromiseOrValue<BigNumberish>,
       _baseURI: PromiseOrValue<string>,
       _splitter: PromiseOrValue<string>,
+      _royalty: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1106,11 +973,6 @@ export interface MADFactory721 extends BaseContract {
     creatorCheck(
       _colID: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    delAmbassador(
-      _removedAmb: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     getColID(

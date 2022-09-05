@@ -4,25 +4,57 @@ _This contract assumes that ERC20 tokens will behave similarly to native tokens 
 
 ## Methods
 
-### payee
+### \_payees
 
 ```solidity
-function payee(uint256 index) external view returns (address)
+function _payees(uint256) external view returns (address)
 ```
-
-_Getter for the address of the payee number `index`._
 
 #### Parameters
 
-| Name  | Type    | Description |
-| ----- | ------- | ----------- |
-| index | uint256 | undefined   |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | uint256 | undefined   |
 
 #### Returns
 
 | Name | Type    | Description |
 | ---- | ------- | ----------- |
 | \_0  | address | undefined   |
+
+### \_shares
+
+```solidity
+function _shares(address) external view returns (uint256)
+```
+
+_Native public getters provided._
+
+#### Parameters
+
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | address | undefined   |
+
+#### Returns
+
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | uint256 | undefined   |
+
+### payeesLength
+
+```solidity
+function payeesLength() external view returns (uint256)
+```
+
+_Getter for `_payees.length`._
+
+#### Returns
+
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | uint256 | undefined   |
 
 ### releasable
 
@@ -50,7 +82,7 @@ _Getter for the amount of payee&#39;s releasable Ether._
 function releasable(contract ERC20 token, address account) external view returns (uint256)
 ```
 
-_Getter for the amount of payee&#39;s releasable `token` tokens. `token` should be the address of an ERC20 contract._
+_Getter for the amount of payee&#39;s releasable `token` tokens.`token` should be the address of an ERC20 contract._
 
 #### Parameters
 
@@ -94,6 +126,14 @@ _Triggers a transfer to `account` of the amount of `token` tokens they are owed,
 | token   | contract ERC20 | undefined   |
 | account | address        | undefined   |
 
+### releaseAll
+
+```solidity
+function releaseAll() external nonpayable
+```
+
+_Release all pending withdrawals._
+
 ### released
 
 ```solidity
@@ -135,33 +175,13 @@ _Getter for the amount of Ether already released to a payee._
 | ---- | ------- | ----------- |
 | \_0  | uint256 | undefined   |
 
-### shares
-
-```solidity
-function shares(address account) external view returns (uint256)
-```
-
-_Getter for the amount of shares held by an account._
-
-#### Parameters
-
-| Name    | Type    | Description |
-| ------- | ------- | ----------- |
-| account | address | undefined   |
-
-#### Returns
-
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | uint256 | undefined   |
-
 ### totalReleased
 
 ```solidity
 function totalReleased(contract ERC20 token) external view returns (uint256)
 ```
 
-_Getter for the total amount of `token` already released. `token` should be the address of an ERC20 contract._
+_Getter for the total amount of `token` already released.`token` should be the address of an ERC20 contract._
 
 #### Parameters
 
@@ -208,16 +228,16 @@ _Getter for the total shares held by payees._
 ### ERC20PaymentReleased
 
 ```solidity
-event ERC20PaymentReleased(contract ERC20 indexed token, address to, uint256 amount)
+event ERC20PaymentReleased(address indexed token, address to, uint256 amount)
 ```
 
 #### Parameters
 
-| Name            | Type           | Description |
-| --------------- | -------------- | ----------- |
-| token `indexed` | contract ERC20 | undefined   |
-| to              | address        | undefined   |
-| amount          | uint256        | undefined   |
+| Name            | Type    | Description |
+| --------------- | ------- | ----------- |
+| token `indexed` | address | undefined   |
+| to              | address | undefined   |
+| amount          | uint256 | undefined   |
 
 ### PayeeAdded
 
@@ -257,3 +277,61 @@ event PaymentReleased(address to, uint256 amount)
 | ------ | ------- | ----------- |
 | to     | address | undefined   |
 | amount | uint256 | undefined   |
+
+## Errors
+
+### AlreadyPayee
+
+```solidity
+error AlreadyPayee()
+```
+
+_0x42b50ca2_
+
+### DeadAddress
+
+```solidity
+error DeadAddress()
+```
+
+_0x84ff3e1b_
+
+### DeniedAccount
+
+```solidity
+error DeniedAccount()
+```
+
+_0xb8e10e7e_
+
+### InvalidShare
+
+```solidity
+error InvalidShare()
+```
+
+_0x100d5f74_
+
+### LengthMismatch
+
+```solidity
+error LengthMismatch()
+```
+
+_0xff633a38_
+
+### NoPayees
+
+```solidity
+error NoPayees()
+```
+
+_0x7b21919d_
+
+### NoShares
+
+```solidity
+error NoShares()
+```
+
+_0xb317087b_

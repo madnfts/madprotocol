@@ -79,7 +79,7 @@ contract MADFactory1155 is MAD,
         public splitterInfo;
 
     /// @dev Stores authorized ambassador addresses to be opted as shareholders of splitter contracts.  
-    mapping(address => bool) public ambWhitelist;
+    // mapping(address => bool) public ambWhitelist;
 
     /// @dev Instance of `MADRouter` being passed as parameter of collection's constructor.
     address public router;
@@ -158,7 +158,8 @@ contract MADFactory1155 is MAD,
         } else if (
             _ambShare != 0 && 
             _ambShare < 21 &&
-            ambWhitelist[_ambassador] == true
+            _ambassador != address(0)
+            // ambWhitelist[_ambassador] == true
         ) {
             address[] memory _payees = _payeesBuffer(_ambassador, owner);
             uint256[] memory _shares = _sharesBuffer(_ambShare); 
@@ -211,13 +212,15 @@ contract MADFactory1155 is MAD,
     /// @param _uri The URL + CID to be added the tokenID and suffix (.json) by the tokenURI function
     /// in the collection to be deployed (baseURI used as tokenURI itself for the ERC1155Minimal token type).
     /// @param _splitter Previously deployed Splitter implementation so to validate and attach to collection.
+    /// @param _royalty Ranges in between 0%-10%, in percentage basis points, accepted (Min tick := 25).
     function createCollection(
         uint8 _tokenType,
         string memory _tokenSalt,
         uint256 _price,
         uint256 _maxSupply,
         string memory _uri,
-        address _splitter
+        address _splitter,
+        uint256 _royalty
     )
         external
         nonReentrant
@@ -225,6 +228,7 @@ contract MADFactory1155 is MAD,
         whenNotPaused
     {
         _limiter(_tokenType, _splitter);
+        _royaltyLocker(_royalty);
 
         if (_tokenType < 1) {
         (bytes32 tokenSalt, address deployed) = 
@@ -233,7 +237,8 @@ contract MADFactory1155 is MAD,
                 _uri,
                 _price,
                 _splitter,
-                router
+                router,
+                _royalty
             );
 
         bytes32 colId = deployed.fillLast12Bytes();
@@ -261,7 +266,8 @@ contract MADFactory1155 is MAD,
                 _price,
                 _maxSupply,
                 _splitter,
-                router
+                router,
+                _royalty
             );
 
         bytes32 colId = deployed.fillLast12Bytes();
@@ -289,7 +295,8 @@ contract MADFactory1155 is MAD,
                 _price,
                 _maxSupply,
                 _splitter,
-                router
+                router,
+                _royalty
             );
 
         bytes32 colId = deployed.fillLast12Bytes();
@@ -316,7 +323,8 @@ contract MADFactory1155 is MAD,
                     _uri,
                     _splitter,
                     router,
-                    signer
+                    signer,
+                    _royalty
             );
 
         bytes32 colId = deployed.fillLast12Bytes();
@@ -341,6 +349,20 @@ contract MADFactory1155 is MAD,
     ////////////////////////////////////////////////////////////////
     //                         OWNER FX                           //
     ////////////////////////////////////////////////////////////////
+
+        /// @dev Function Signature := 0x13af4035
+    function setOwner(address newOwner)
+        public
+        override
+        onlyOwner
+    {
+        // owner = newOwner;
+        assembly {
+            sstore(owner.slot, newOwner)
+        }
+
+        emit OwnerUpdated(msg.sender, newOwner);
+    }
     
     /// @dev `MADMarketplace` instance setter.
     /// @dev Function Sighash := 
@@ -374,39 +396,39 @@ contract MADFactory1155 is MAD,
         emit SignerUpdated(_signer);
     }
 
-    /// @dev Add address to ambassador whitelist.
-    /// @dev Function Sighash := 0x295c25d5
-    function addAmbassador(address _whitelistedAmb)
-        public
-        onlyOwner
-    {
-        // ambWhitelist[_whitelistedAmb] = true;
-        assembly {
-            mstore(0x00, _whitelistedAmb)
-            mstore(0x20, ambWhitelist.slot)
-            let ambSlot := keccak256(0x00, 0x40)
-            sstore(ambSlot, 1)
-        }
+    // /// @dev Add address to ambassador whitelist.
+    // /// @dev Function Sighash := 0x295c25d5
+    // function addAmbassador(address _whitelistedAmb)
+    //     public
+    //     onlyOwner
+    // {
+    //     // ambWhitelist[_whitelistedAmb] = true;
+    //     assembly {
+    //         mstore(0x00, _whitelistedAmb)
+    //         mstore(0x20, ambWhitelist.slot)
+    //         let ambSlot := keccak256(0x00, 0x40)
+    //         sstore(ambSlot, 1)
+    //     }
 
-        emit AmbassadorAdded(_whitelistedAmb);
-    }
+    //     emit AmbassadorAdded(_whitelistedAmb);
+    // }
 
-    /// @dev Delete address from ambassador whitelist.
-    /// @dev Function Sighash := 0xf2d0e148
-    function delAmbassador(address _removedAmb)
-        public
-        onlyOwner
-    {
-        // delete ambWhitelist[_removedAmb];
-        assembly {
-            mstore(0x00, _removedAmb)
-            mstore(0x20, ambWhitelist.slot)
-            let ambSlot := keccak256(0x00, 0x40)
-            sstore(ambSlot, 0)
-        }
+    // /// @dev Delete address from ambassador whitelist.
+    // /// @dev Function Sighash := 0xf2d0e148
+    // function delAmbassador(address _removedAmb)
+    //     public
+    //     onlyOwner
+    // {
+    //     // delete ambWhitelist[_removedAmb];
+    //     assembly {
+    //         mstore(0x00, _removedAmb)
+    //         mstore(0x20, ambWhitelist.slot)
+    //         let ambSlot := keccak256(0x00, 0x40)
+    //         sstore(ambSlot, 0)
+    //     }
 
-        emit AmbassadorDeleted(_removedAmb);
-    }
+    //     emit AmbassadorDeleted(_removedAmb);
+    // }
 
     /// @notice Paused state initializer for security risk mitigation pratice.
     /// @dev Function Sighash := 0x8456cb59
@@ -455,7 +477,11 @@ contract MADFactory1155 is MAD,
     }
 
     /// @dev Builds payees dynamic sized array buffer for `splitterCheck` cases.
-    function _payeesBuffer(address amb, address castedAddr) internal view returns (address[] memory memOffset) {
+    function _payeesBuffer(address amb, address castedAddr) 
+    internal 
+    view 
+    returns (address[] memory memOffset) 
+    {
         if (amb == address(0)) {
             assembly {
                 memOffset := mload(0x40)
@@ -478,7 +504,11 @@ contract MADFactory1155 is MAD,
     }
 
     /// @dev Builds shares dynamic sized array buffer for `splitterCheck` cases.
-    function _sharesBuffer(uint256 _ambShare) internal pure returns (uint256[] memory memOffset) {
+    function _sharesBuffer(uint256 _ambShare) 
+    internal 
+    pure 
+    returns (uint256[] memory memOffset) 
+    {
         if (_ambShare == 0) {
             assembly {
                 memOffset := mload(0x40)
@@ -537,7 +567,7 @@ contract MADFactory1155 is MAD,
         
         assembly {
             let x := sload(col.slot)
-            // get the first 20 bytes of storage slot
+            // bitmask to get the first 20 bytes of storage slot
             creator := and(x, 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
 
             if eq(creator, origin()) {
@@ -589,6 +619,20 @@ contract MADFactory1155 is MAD,
                 mstore(0x00,0x4ca8886700000000000000000000000000000000000000000000000000000000)
                 revert(0,4)
             }
+        }
+    }
+
+    function _royaltyLocker(uint256 _share) 
+    private 
+    pure
+    {
+        assembly {
+            if or(
+                gt(_share,0x3E8),
+                iszero(iszero(mod(_share,0x19)))) {
+                    mstore(0x00, 0xe0e54ced)
+                    revert(0x1c, 0x04)
+                }
         }
     }
 

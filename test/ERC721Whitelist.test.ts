@@ -111,13 +111,13 @@ describe("ERC721Whitelist", () => {
       expect(await splitter.callStatic.totalShares()).to.eq(
         100,
       );
-      expect(await splitter.callStatic.payee(0)).to.eq(
+      expect(await splitter.callStatic._payees(0)).to.eq(
         mad.address,
       );
-      expect(await splitter.callStatic.payee(1)).to.eq(
+      expect(await splitter.callStatic._payees(1)).to.eq(
         amb.address,
       );
-      expect(await splitter.callStatic.payee(2)).to.eq(
+      expect(await splitter.callStatic._payees(2)).to.eq(
         owner.address,
       );
 
@@ -750,47 +750,73 @@ describe("ERC721Whitelist", () => {
     it("Should update balances of contract and owner", async () => {
       await wl.connect(owner).setPublicMintState(true);
       await wl.connect(acc02).mint(1, { value: price });
-      const oldOwnerBal = await ethers.provider.getBalance(
-        wl.address,
-      );
-      const oldContractBal = await ethers.provider.getBalance(
+      const addrs = [
+        mad.address,
+        amb.address,
         owner.address,
-      );
-      const tx = await wl.withdraw();
+        wl.address,
+      ];
+      const shares = [
+        ethers.BigNumber.from(1000),
+        ethers.BigNumber.from(2000),
+        ethers.BigNumber.from(7000),
+      ];
+      const vals = [
+        shares[0].mul(price).div(10_000),
+        shares[1].mul(price).div(10_000),
+        shares[2].mul(price).div(10_000),
+        "-1000000000000000000",
+      ];
 
-      expect(tx).to.be.ok;
-      expect(oldOwnerBal).to.be.below(
-        await ethers.provider.getBalance(owner.address),
-      );
-      expect(oldContractBal).to.be.above(
+      await expect(() =>
+        wl.withdraw(),
+      ).to.changeEtherBalances(addrs, vals);
+
+      expect(
         await ethers.provider.getBalance(wl.address),
-      );
+      ).to.eq(ethers.constants.Zero);
     });
 
     it("Should withdraw contract's ERC20s", async () => {
+      const prevBal = BigNumber.from(2).pow(255);
+      const payees = [
+        mad.address,
+        amb.address,
+        owner.address,
+      ];
+      const shares = [
+        ethers.BigNumber.from(1000),
+        ethers.BigNumber.from(2000),
+        ethers.BigNumber.from(7000),
+      ];
+      const vals = [
+        shares[0].mul(price).div(10_000),
+        shares[1].mul(price).div(10_000),
+        shares[2].mul(price).div(10_000).add(prevBal),
+      ];
       const ERC20 = await ethers.getContractFactory(
         "MockERC20",
       );
       const erc20 = (await ERC20.deploy(
-        BigNumber.from(2).pow(255),
+        prevBal,
       )) as MockERC20;
 
       await erc20.mint(wl.address, price);
-      const bal = await erc20.callStatic.balanceOf(
-        wl.address,
-      );
-      const balOwner = await erc20.callStatic.balanceOf(
-        owner.address,
-      );
-      const tx = await wl.withdrawERC20(erc20.address);
 
+      const tx = await wl.withdrawERC20(erc20.address);
       expect(tx).to.be.ok;
-      expect(await erc20.balanceOf(wl.address)).to.eq(
-        bal.sub(price),
-      );
-      expect(await erc20.balanceOf(owner.address)).to.eq(
-        balOwner.add(price),
-      );
+      expect(
+        await erc20.callStatic.balanceOf(payees[0]),
+      ).to.eq(vals[0]);
+      expect(
+        await erc20.callStatic.balanceOf(payees[1]),
+      ).to.eq(vals[1]);
+      expect(
+        await erc20.callStatic.balanceOf(payees[2]),
+      ).to.eq(vals[2]);
+      expect(
+        await erc20.callStatic.balanceOf(wl.address),
+      ).to.eq(ethers.constants.Zero);
     });
   });
 });

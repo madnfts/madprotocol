@@ -21,6 +21,5 @@ library SplitterDeployer {
             ),
             0
         );
-        // return SplitterImpl(payable(deployed));
     }
 }

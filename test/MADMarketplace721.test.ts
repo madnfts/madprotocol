@@ -1,4 +1,5 @@
 import "@nomicfoundation/hardhat-chai-matchers";
+// import "hardhat-tracer";
 import {
   loadFixture,
   mine,
@@ -12,7 +13,12 @@ import {
   ContractTransaction,
   Wallet,
 } from "ethers";
-import { artifacts, ethers, network } from "hardhat";
+import {
+  artifacts,
+  ethers,
+  network,
+  /* , tracer  */
+} from "hardhat";
 import keccak256 from "keccak256";
 import { MerkleTree } from "merkletreejs";
 
@@ -196,7 +202,7 @@ describe("MADMarketplace721", () => {
     it("Should delete order", async () => {
       await m721.updateSettings(300, 10, 20);
       const zero = ethers.constants.Zero;
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -217,6 +223,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       // const colID = await f721.callStatic.getColID(minAddr);
       const min = await ethers.getContractAt(
@@ -315,7 +322,7 @@ describe("MADMarketplace721", () => {
   describe("Fixed Price Listing", async () => {
     it("Should revert if transaction approval hasn't been set", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -336,6 +343,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -357,7 +365,7 @@ describe("MADMarketplace721", () => {
       ).to.be.revertedWith(MarketplaceErrors.NotAuthorized);
     });
     it("Should revert if duration is less than min allowed", async () => {
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -378,6 +386,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -408,7 +417,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if price is invalid", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -429,6 +438,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -450,7 +460,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should list fixed price order, update storage and emit event", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -471,6 +481,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -547,7 +558,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should handle multiple fixed price orders", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -565,6 +576,7 @@ describe("MADMarketplace721", () => {
           1000,
           "ipfs://cid/",
           splAddr,
+          750,
         );
 
       const wlAddr = await f721.callStatic.getDeployedAddr(
@@ -806,7 +818,7 @@ describe("MADMarketplace721", () => {
   describe("Dutch Auction Listing", async () => {
     it("Should revert if transaction approval hasn't been set", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -827,6 +839,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -848,7 +861,7 @@ describe("MADMarketplace721", () => {
       ).to.be.revertedWith(MarketplaceErrors.NotAuthorized);
     });
     it("Should revert if duration is less than min allowed", async () => {
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -869,6 +882,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -899,7 +913,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if startPrice is invalid", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -920,6 +934,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -949,7 +964,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should list dutch auction order, update storage and emit event", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -970,6 +985,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -1046,7 +1062,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should handle multiple dutch auction orders", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -1064,6 +1080,7 @@ describe("MADMarketplace721", () => {
           1000,
           "ipfs://cid/",
           splAddr,
+          750,
         );
 
       const wlAddr = await f721.callStatic.getDeployedAddr(
@@ -1305,7 +1322,7 @@ describe("MADMarketplace721", () => {
   describe("English Auction Listing", async () => {
     it("Should revert if transaction approval hasn't been set", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -1326,6 +1343,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -1347,7 +1365,7 @@ describe("MADMarketplace721", () => {
       ).to.be.revertedWith(MarketplaceErrors.NotAuthorized);
     });
     it("Should revert if duration is less than min allowed", async () => {
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -1368,6 +1386,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -1398,7 +1417,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if startPrice is invalid", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -1419,6 +1438,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -1440,7 +1460,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should list english auction order, update storage and emit event", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -1461,6 +1481,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -1537,7 +1558,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should handle multiple english auction orders", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -1555,6 +1576,7 @@ describe("MADMarketplace721", () => {
           1000,
           "ipfs://cid/",
           splAddr,
+          750,
         );
 
       const wlAddr = await f721.callStatic.getDeployedAddr(
@@ -1796,7 +1818,7 @@ describe("MADMarketplace721", () => {
   describe("Bidding", async () => {
     it("Should revert if price is wrong", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -1817,6 +1839,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -1861,7 +1884,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if not English Auction", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -1882,6 +1905,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -1911,7 +1935,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if order was canceled", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -1932,6 +1956,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -1964,7 +1989,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if order has timed out", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -1985,6 +2010,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2017,7 +2043,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if bidder is the seller", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -2038,6 +2064,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2068,7 +2095,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should bid, update storage and emit events", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -2089,6 +2116,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2156,7 +2184,7 @@ describe("MADMarketplace721", () => {
   describe("Buying", async () => {
     it("Should revert if price is wrong", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -2177,6 +2205,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2207,7 +2236,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if order is an English Auction", async () => {
       await m721.updateSettings(20, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -2228,6 +2257,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2258,7 +2288,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if order was canceled", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -2279,6 +2309,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2311,7 +2342,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if order has timed out", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -2332,6 +2363,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2364,7 +2396,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if token has already been sold", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -2385,6 +2417,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2420,7 +2453,7 @@ describe("MADMarketplace721", () => {
     it("Should buy inhouse minted tokens, update storage and emit events", async () => {
       // fixed price order
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -2442,6 +2475,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2482,6 +2516,7 @@ describe("MADMarketplace721", () => {
           1,
           "ipfs://cid/",
           splAddr,
+          750,
         );
       const basic = await ethers.getContractAt(
         "ERC721Basic",
@@ -2510,8 +2545,8 @@ describe("MADMarketplace721", () => {
       const delta = ethers.BigNumber.from(300 - daBn);
       // tick = (startPrice(price) - endPrice(0)) / (endBlock - startBlock)
       const tick = price.div(delta);
-      // 201 - 33 = 168
-      const dec = ethers.BigNumber.from(168).mul(tick);
+      // 202 - 33 = 169
+      const dec = ethers.BigNumber.from(169).mul(tick);
       const daPrice = price.sub(dec);
 
       const daBuy = await m721
@@ -2644,17 +2679,16 @@ describe("MADMarketplace721", () => {
     });
     it("Should verify inhouse minted tokens balance changes", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
-      const splitter = await ethers.getContractAt(
-        "SplitterImpl",
-        splAddr,
-      );
+      // const splitter = await ethers.getContractAt(
+      //   "SplitterImpl",
+      //   splAddr,
+      // );
       const minAddr = await f721.callStatic.getDeployedAddr(
         "MinSalt",
       );
@@ -2669,6 +2703,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2695,7 +2730,12 @@ describe("MADMarketplace721", () => {
         m721.connect(acc01).buy(fpOrderId, { value: price }),
       ).to.changeEtherBalances(
         [acc01, acc02],
-        ["-1000000000000000000", price.sub(fpRoyalty[1])],
+        [
+          "-1000000000000000000",
+          price
+            .sub(fpRoyalty[1])
+            .add(fpRoyalty[1].mul(7000).div(10_000)),
+        ],
       );
 
       // dutch auction order
@@ -2713,6 +2753,7 @@ describe("MADMarketplace721", () => {
           1,
           "ipfs://cid/",
           splAddr,
+          750,
         );
       const basic = await ethers.getContractAt(
         "ERC721Basic",
@@ -2741,8 +2782,8 @@ describe("MADMarketplace721", () => {
       const delta = ethers.BigNumber.from(300 - daBn);
       // tick = (startPrice(price) - endPrice(0)) / (endBlock - startBlock)
       const tick = price.div(delta);
-      // 201 - 33 = 168
-      const dec = ethers.BigNumber.from(168).mul(tick);
+      // 202 - 33 = 169
+      const dec = ethers.BigNumber.from(169).mul(tick);
       const daPrice = price.sub(dec);
 
       const daRoyalty = await basic.royaltyInfo(1, daPrice);
@@ -2753,12 +2794,13 @@ describe("MADMarketplace721", () => {
           .buy(daOrderId, { value: daPrice }),
       ).to.changeEtherBalances(
         [acc01, acc02],
-        ["-370786516853932600", daPrice.sub(daRoyalty[1])],
+        [
+          "-369402985074626959",
+          daPrice
+            .sub(daRoyalty[1])
+            .add(daRoyalty[1].mul(7000).div(10_000)),
+        ],
       );
-
-      expect(
-        await ethers.provider.getBalance(splitter.address),
-      ).to.eq(fpRoyalty[1].add(daRoyalty[1]));
     });
     it("Should buy third party minted tokens with ERC2981 support", async () => {
       await m721.updateSettings(300, 10, 20);
@@ -2801,7 +2843,7 @@ describe("MADMarketplace721", () => {
       );
       const cPrice = price.sub(fpRoyalty[1]);
       const fpFee = cPrice
-        .mul(ethers.BigNumber.from(200))
+        .mul(ethers.BigNumber.from(250))
         .div(ethers.BigNumber.from(10000));
 
       await expect(() =>
@@ -2839,7 +2881,7 @@ describe("MADMarketplace721", () => {
       );
       const cPrice2 = daPrice.sub(daRoyalty[1]);
       const daFee = cPrice2
-        .mul(ethers.BigNumber.from(200))
+        .mul(ethers.BigNumber.from(250))
         .div(ethers.BigNumber.from(10000));
 
       await expect(() =>
@@ -2881,7 +2923,7 @@ describe("MADMarketplace721", () => {
       await mine(10);
 
       const fpFee = price
-        .mul(ethers.BigNumber.from(200))
+        .mul(ethers.BigNumber.from(250))
         .div(ethers.BigNumber.from(10000));
 
       await expect(() =>
@@ -2914,7 +2956,7 @@ describe("MADMarketplace721", () => {
       const daPrice = price.sub(dec);
 
       const daFee = daPrice
-        .mul(ethers.BigNumber.from(200))
+        .mul(ethers.BigNumber.from(250))
         .div(ethers.BigNumber.from(10000));
 
       await expect(() =>
@@ -2931,7 +2973,7 @@ describe("MADMarketplace721", () => {
   describe("Claim", async () => {
     it("Should revert if caller is seller or bidder", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -2952,6 +2994,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2999,7 +3042,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if token has already been claimed", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -3020,6 +3063,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -3102,7 +3146,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if auction hasn't ended", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -3123,6 +3167,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -3156,7 +3201,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should claim inhouse minted tokens, update storage and emit events", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -3177,6 +3222,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -3277,7 +3323,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should verify inhouse minted tokens balance changes", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -3299,6 +3345,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -3341,11 +3388,15 @@ describe("MADMarketplace721", () => {
         m721.connect(acc01).claim(orderId),
       ).to.changeEtherBalances(
         [acc02],
-        [bidVal.sub(eaRoyalty[1])],
+        [
+          bidVal
+            .sub(eaRoyalty[1])
+            .add(eaRoyalty[1].mul(7000).div(10_000)),
+        ],
       );
       expect(
         await ethers.provider.getBalance(splitter.address),
-      ).to.eq(eaRoyalty[1]);
+      ).to.eq(ethers.constants.Zero);
     });
     it("Should claim third party minted tokens with ERC2981 support", async () => {
       await m721.updateSettings(300, 10, 20);
@@ -3391,7 +3442,7 @@ describe("MADMarketplace721", () => {
 
       const cPrice = bidVal.sub(eaRoyalty[1]);
       const fee = cPrice
-        .mul(ethers.BigNumber.from(200))
+        .mul(ethers.BigNumber.from(250))
         .div(ethers.BigNumber.from(10000));
 
       expect(
@@ -3439,7 +3490,7 @@ describe("MADMarketplace721", () => {
 
       const eaPrice = bidVal;
       const fee = eaPrice
-        .mul(ethers.BigNumber.from(200))
+        .mul(ethers.BigNumber.from(250))
         .div(ethers.BigNumber.from(10000));
 
       expect(
@@ -3456,7 +3507,7 @@ describe("MADMarketplace721", () => {
   describe("Order Cancelling", async () => {
     it("Should revert due to already sold fixed price order", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -3477,6 +3528,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -3511,7 +3563,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert due to already sold dutch auction order", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -3532,6 +3584,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -3558,7 +3611,7 @@ describe("MADMarketplace721", () => {
       // simulate DA pricing math with ts
       const delta = ethers.BigNumber.from(300 - daBn);
       const tick = price.div(delta);
-      const dec = ethers.BigNumber.from(184).mul(tick);
+      const dec = ethers.BigNumber.from(185).mul(tick);
       const daPrice = price.sub(dec);
 
       await m721
@@ -3573,7 +3626,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert due to already sold english auction order", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -3594,6 +3647,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -3641,7 +3695,7 @@ describe("MADMarketplace721", () => {
     // `BidExists` error only valid for english auction listings
     it("Should cancel fixed price order", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -3662,6 +3716,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -3721,7 +3776,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should cancel dutch auction order", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -3742,6 +3797,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -3801,7 +3857,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should cancel english auction order", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -3822,6 +3878,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -3883,7 +3940,7 @@ describe("MADMarketplace721", () => {
   describe("Public Helpers", async () => {
     it("Should fetch the length of orderIds for a token", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -3901,6 +3958,7 @@ describe("MADMarketplace721", () => {
           1000,
           "ipfs://cid/",
           splAddr,
+          750,
         );
 
       const wlAddr = await f721.callStatic.getDeployedAddr(
@@ -3964,7 +4022,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should fetch the length of orderIds for a seller", async () => {
       await m721.updateSettings(300, 10, 20);
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -3982,6 +4040,7 @@ describe("MADMarketplace721", () => {
           1000,
           "ipfs://cid/",
           splAddr,
+          750,
         );
 
       const wlAddr = await f721.callStatic.getDeployedAddr(

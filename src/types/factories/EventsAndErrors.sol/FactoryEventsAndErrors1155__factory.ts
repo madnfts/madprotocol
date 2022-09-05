@@ -12,34 +12,13 @@ import type {
 const _abi = [
   {
     inputs: [],
-    name: "SplitterFail",
+    name: "InvalidRoyalty",
     type: "error",
   },
   {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "whitelistedAmb",
-        type: "address",
-      },
-    ],
-    name: "AmbassadorAdded",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "removedAmb",
-        type: "address",
-      },
-    ],
-    name: "AmbassadorDeleted",
-    type: "event",
+    inputs: [],
+    name: "SplitterFail",
+    type: "error",
   },
   {
     anonymous: false,

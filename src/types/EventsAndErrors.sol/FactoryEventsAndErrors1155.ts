@@ -16,8 +16,6 @@ export interface FactoryEventsAndErrors1155Interface extends utils.Interface {
   functions: {};
 
   events: {
-    "AmbassadorAdded(address)": EventFragment;
-    "AmbassadorDeleted(address)": EventFragment;
     "ERC1155BasicCreated(address,address,address)": EventFragment;
     "ERC1155LazyCreated(address,address,address)": EventFragment;
     "ERC1155MinimalCreated(address,address,address)": EventFragment;
@@ -28,8 +26,6 @@ export interface FactoryEventsAndErrors1155Interface extends utils.Interface {
     "SplitterCreated(address,uint256[],address[],address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "AmbassadorAdded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "AmbassadorDeleted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ERC1155BasicCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ERC1155LazyCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ERC1155MinimalCreated"): EventFragment;
@@ -39,27 +35,6 @@ export interface FactoryEventsAndErrors1155Interface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "SignerUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SplitterCreated"): EventFragment;
 }
-
-export interface AmbassadorAddedEventObject {
-  whitelistedAmb: string;
-}
-export type AmbassadorAddedEvent = TypedEvent<
-  [string],
-  AmbassadorAddedEventObject
->;
-
-export type AmbassadorAddedEventFilter = TypedEventFilter<AmbassadorAddedEvent>;
-
-export interface AmbassadorDeletedEventObject {
-  removedAmb: string;
-}
-export type AmbassadorDeletedEvent = TypedEvent<
-  [string],
-  AmbassadorDeletedEventObject
->;
-
-export type AmbassadorDeletedEventFilter =
-  TypedEventFilter<AmbassadorDeletedEvent>;
 
 export interface ERC1155BasicCreatedEventObject {
   newSplitter: string;
@@ -182,20 +157,6 @@ export interface FactoryEventsAndErrors1155 extends BaseContract {
   callStatic: {};
 
   filters: {
-    "AmbassadorAdded(address)"(
-      whitelistedAmb?: PromiseOrValue<string> | null
-    ): AmbassadorAddedEventFilter;
-    AmbassadorAdded(
-      whitelistedAmb?: PromiseOrValue<string> | null
-    ): AmbassadorAddedEventFilter;
-
-    "AmbassadorDeleted(address)"(
-      removedAmb?: PromiseOrValue<string> | null
-    ): AmbassadorDeletedEventFilter;
-    AmbassadorDeleted(
-      removedAmb?: PromiseOrValue<string> | null
-    ): AmbassadorDeletedEventFilter;
-
     "ERC1155BasicCreated(address,address,address)"(
       newSplitter?: PromiseOrValue<string> | null,
       newCollection?: PromiseOrValue<string> | null,

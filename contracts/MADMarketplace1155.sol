@@ -59,7 +59,7 @@ contract MADMarketplace1155 is
     /// @dev orderID => order details
     mapping(bytes32 => Types.Order1155) public orderInfo;
 
-    uint16 public constant feePercent = 200;
+    uint16 public constant feePercent = 250;
     uint256 public minOrderDuration;
     uint256 public minAuctionIncrement;
     uint256 public minBidValue;

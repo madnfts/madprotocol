@@ -208,6 +208,8 @@ _Function Sighash := 0xab9acd57Events logged by each tokens&#39; `setState` func
 function setOwner(address newOwner) external nonpayable
 ```
 
+_Function Signature := 0x13af4035_
+
 #### Parameters
 
 | Name     | Type    | Description |

@@ -52,13 +52,13 @@ export enum LazyErrors {
 }
 
 export enum SplitterErrors {
-  LengthMismatch = "LENGTH_MISMATCH",
-  DeniedAccount = "DENIED_ACCOUNT",
-  AlreadyPayee = "ALREADY_PAYEE",
-  InvalidShare = "INVALID_SHARE",
-  DeadAddress = "DEAD_ADDRESS",
-  NoPayees = "NO_PAYEES",
-  NoShares = "NO_SHARES",
+  LengthMismatch = "LengthMismatch",
+  DeniedAccount = "DeniedAccount",
+  AlreadyPayee = "AlreadyPayee",
+  InvalidShare = "InvalidShare",
+  DeadAddress = "DeadAddress",
+  NoPayees = "NoPayees",
+  NoShares = "NoShares",
 }
 
 export enum MarketplaceErrors {

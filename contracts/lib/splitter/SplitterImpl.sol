@@ -6,9 +6,10 @@
 
 pragma solidity 0.8.4;
 
+import { SplitterEventsAndErrors } from "./SplitterEventsAndErrors.sol";
 import "../utils/SafeTransferLib.sol";
 
-// import "./Address.sol";
+// prettier-ignore
 
 /// @notice The split can be in equal parts or in any other arbitrary proportion.
 /// The way this is specified is by assigning each account to a number of shares.
@@ -23,60 +24,198 @@ import "../utils/SafeTransferLib.sol";
 /// Rebasing tokens, and tokens that apply fees during transfers, are likely to not be supported
 /// as expected. If in doubt, we encourage you to run tests before sending real value to this contract.
 
-contract SplitterImpl {
-    event PayeeAdded(address account, uint256 shares);
-    event PaymentReleased(address to, uint256 amount);
-    event PaymentReceived(address from, uint256 amount);
-    event ERC20PaymentReleased(
-        ERC20 indexed token,
-        address to,
-        uint256 amount
-    );
+contract SplitterImpl is SplitterEventsAndErrors {
+
+    ////////////////////////////////////////////////////////////////
+    //                           STORAGE                          //
+    ////////////////////////////////////////////////////////////////
 
     uint256 private _totalShares;
     uint256 private _totalReleased;
 
-    mapping(address => uint256) private _shares;
     mapping(address => uint256) private _released;
-    address[] private _payees;
-
     mapping(ERC20 => uint256) private _erc20TotalReleased;
     mapping(ERC20 => mapping(address => uint256))
         private _erc20Released;
 
-    /// @dev Creates an instance of `PaymentSplitter` where each account in `payees`
-    /// is assigned the number of shares at the matching position in the `shares` array.
-    /// @dev All addresses in `payees` must be non-zero. Both arrays must have the same
-    /// non-zero length, and there must be no duplicates in `payees`.
+    /// @dev Native public getters provided.
+    mapping(address => uint256) public _shares;
+    address[] public _payees;
+
+
+    ////////////////////////////////////////////////////////////////
+    //                         CONSTRUCTOR                        //
+    ////////////////////////////////////////////////////////////////
+
+    /// @notice Creates an instance of `PaymentSplitter` where 
+    /// each account in `payees` is assigned the number of 
+    /// shares at the matching position in the `shares` array.
+    /// @dev All addresses in `payees` must be non-zero. Both 
+    /// arrays must have the same non-zero length, and there 
+    /// must be no duplicates in `payees`.
+    /// @dev No risk of loop overflow since payees are bounded 
+    /// by factory parameters.
     constructor(
         address[] memory payees,
         uint256[] memory shares_
     ) payable {
-        require(
-            payees.length == shares_.length,
-            "LENGTH_MISMATCH"
-        );
-        require(
-            payees.length != 0, /* > 0 */
-            "NO_PAYEES"
-        );
+        uint256 pLen = payees.length;
+        uint256 sLen = shares_.length;
+
+        if (pLen != sLen) 
+            revert LengthMismatch();
+        if (pLen == 0) 
+            revert NoPayees();
+        
         uint256 i;
-        uint256 len = payees.length;
-        for (i; i < len; ) {
-            _addPayee(payees[i], shares_[i]);
+        for (i; i < pLen; ) {
+            _addPayee(
+                payees[i], shares_[i]);
             unchecked {
                 ++i;
             }
         }
-        // no risk of loop overflow since payees are bounded by factory parameters
     }
 
-    /// @dev The Ether received will be logged with {PaymentReceived} events.
-    /// Note that these events are not fully reliable: it's possible for a contract
-    /// to receive Ether without triggering this function. This only affects the
-    /// reliability of the events, and not the actual splitting of Ether.
-    receive() external payable virtual {
-        emit PaymentReceived(msg.sender, msg.value);
+    ////////////////////////////////////////////////////////////////
+    //                         RECEIVE LOGIC                      //
+    ////////////////////////////////////////////////////////////////
+
+    /// @notice Push receive logic that Liquidates pending 
+    /// releasable balances each time it receives funds.
+    /// @dev The Ether received will be logged with 
+    /// {PaymentReceived} events.
+    /// @dev Note that these events are not fully reliable: 
+    /// it's possible for a contract to receive Ether 
+    /// without triggering this function. All releasable 
+    /// balances can also be released by public pull methods.
+    receive() external payable {
+        releaseAll();
+        emit PaymentReceived(
+            msg.sender, 
+            msg.value
+        );
+    }
+
+    ////////////////////////////////////////////////////////////////
+    //                       PUBLIC PULL FX                       //
+    ////////////////////////////////////////////////////////////////
+
+    /// @dev Triggers a transfer to `account` of the amount of 
+    /// Ether they are owed, according to their percentage of 
+    /// the total shares and their previous withdrawals.
+    function release(address payable account) public {
+        if (_shares[account] == 0) 
+            revert NoShares();
+        uint256 payment = 
+            releasable(account);
+        if (payment == 0) 
+            revert DeniedAccount();
+
+        _released[account] += payment;
+        _totalReleased += payment;
+
+        SafeTransferLib.safeTransferETH(
+            account, 
+            payment
+        );
+
+        emit PaymentReleased(
+            account, 
+            payment
+        );
+    }
+
+    /// @dev Release all pending withdrawals.
+    function releaseAll() public {
+        uint256 len = _payees.length;
+        uint256 i;
+
+        for ( i; i < len; ) {
+            address addr = _payees[i];
+            uint256 rel = 
+                releasable(_payees[i]);
+            if (rel != 0) {
+                release(payable(addr));
+            } unchecked { ++i; }
+        }
+    }
+
+    /// @dev Triggers a transfer to `account` of the amount of `token` tokens
+    /// they are owed, according to their percentage of the total shares and
+    /// their previous withdrawals. `token` must be the address of an ERC20 contract.
+    function release(ERC20 token, address account)
+        public
+    {
+        if (_shares[account] == 0) 
+                revert NoShares();
+        uint256 payment = 
+            releasable(token, account);
+        if (payment == 0) 
+                revert DeniedAccount();
+
+        _erc20Released[token][account] += payment;
+        _erc20TotalReleased[token] += payment;
+
+        SafeTransferLib.safeTransfer(
+            token, 
+            account, 
+            payment
+        );
+
+        emit ERC20PaymentReleased(
+            address(token), 
+            account, 
+            payment
+        );
+    }
+
+    ////////////////////////////////////////////////////////////////
+    //                       PRIVATE HELPERS                      //
+    ////////////////////////////////////////////////////////////////
+    
+    /// @dev internal logic for computing the pending payment of 
+    /// an `account`, given the token historical balances and 
+    /// already released amounts.
+    function _pendingPayment(
+        address account,
+        uint256 totalReceived,
+        uint256 alreadyReleased
+    ) private view returns (uint256) {
+        return
+            (totalReceived * 
+            _shares[account]) /
+            _totalShares -
+            alreadyReleased;
+    }
+
+    /// @dev Add a new payee to the contract.
+    /// @param account The address of the payee to add.
+    /// @param shares_ The number of shares owned by the payee.
+    function _addPayee(address account, uint256 shares_)
+        private
+    {
+        if (account == address(0)) 
+            revert DeadAddress();
+        if (shares_ == 0) 
+            revert InvalidShare();
+        if (_shares[account] != 0) 
+            revert AlreadyPayee();
+
+        _payees.push(account);
+        _shares[account] = shares_;
+        _totalShares = _totalShares + shares_;
+
+        emit PayeeAdded(account, shares_);
+    }
+
+    ////////////////////////////////////////////////////////////////
+    //                        PUBLIC GETTERS                      //
+    ////////////////////////////////////////////////////////////////
+
+    /// @dev Getter for `_payees.length`.
+    function payeesLength() public view returns (uint256) {
+        return _payees.length;
     }
 
     /// @dev Getter for the total shares held by payees.
@@ -89,8 +228,9 @@ contract SplitterImpl {
         return _totalReleased;
     }
 
-    /// @dev Getter for the total amount of `token` already released.
-    /// `token` should be the address of an ERC20 contract.
+    /// @dev Getter for the total amount of `token` 
+    /// already released.
+    /// @dev `token` should be the address of an ERC20 contract.
     function totalReleased(ERC20 token)
         public
         view
@@ -99,16 +239,8 @@ contract SplitterImpl {
         return _erc20TotalReleased[token];
     }
 
-    /// @dev Getter for the amount of shares held by an account.
-    function shares(address account)
-        public
-        view
-        returns (uint256)
-    {
-        return _shares[account];
-    }
-
-    /// @dev Getter for the amount of Ether already released to a payee.
+    /// @dev Getter for the amount of Ether already 
+    /// released to a payee.
     function released(address account)
         public
         view
@@ -117,23 +249,15 @@ contract SplitterImpl {
         return _released[account];
     }
 
-    /// @dev Getter for the amount of `token` tokens already released to a payee.
-    /// `token` should be the address of an ERC20 contract.
+    /// @dev Getter for the amount of `token` tokens already 
+    /// released to a payee. 
+    /// @dev `token` should be the address of an ERC20 contract.
     function released(ERC20 token, address account)
         public
         view
         returns (uint256)
     {
         return _erc20Released[token][account];
-    }
-
-    /// @dev Getter for the address of the payee number `index`.
-    function payee(uint256 index)
-        public
-        view
-        returns (address)
-    {
-        return _payees[index];
     }
 
     /// @dev Getter for the amount of payee's releasable Ether.
@@ -152,8 +276,9 @@ contract SplitterImpl {
             );
     }
 
-    /// @dev Getter for the amount of payee's releasable `token` tokens.
-    /// `token` should be the address of an ERC20 contract.
+    /// @dev Getter for the amount of payee's releasable 
+    /// `token` tokens.
+    /// @dev `token` should be the address of an ERC20 contract.
     function releasable(ERC20 token, address account)
         public
         view
@@ -168,88 +293,5 @@ contract SplitterImpl {
                 totalReceived,
                 released(token, account)
             );
-    }
-
-    /// @dev Triggers a transfer to `account` of the amount of Ether they are owed,
-    /// according to their percentage of the total shares and their previous withdrawals.
-    function release(address payable account) public virtual {
-        require(
-            _shares[account] != 0, /* > 0 */
-            "NO_SHARES"
-        );
-
-        uint256 payment = releasable(account);
-
-        require(payment != 0, "DENIED_ACCOUNT");
-        // require(
-        //     address(this).balance >= payment,
-        //     "INSUFFICIENT_BALANCE"
-        // );
-
-        _released[account] += payment;
-        _totalReleased += payment;
-
-        // Address.sendValue(account, payment);
-        SafeTransferLib.safeTransferETH(account, payment);
-        emit PaymentReleased(account, payment);
-    }
-
-    /// @dev Triggers a transfer to `account` of the amount of `token` tokens
-    /// they are owed, according to their percentage of the total shares and
-    /// their previous withdrawals. `token` must be the address of an ERC20 contract.
-    function release(ERC20 token, address account)
-        public
-        virtual
-    {
-        require(
-            _shares[account] != 0, /* > 0 */
-            "NO_SHARES"
-        );
-
-        uint256 payment = releasable(token, account);
-
-        require(payment != 0, "DENIED_ACCOUNT");
-        // require(
-        //     token.balanceOf(address(this)) >= payment,
-        //     "INSUFFICIENT_BALANCE"
-        // );
-
-        _erc20Released[token][account] += payment;
-        _erc20TotalReleased[token] += payment;
-
-        SafeTransferLib.safeTransfer(token, account, payment);
-        emit ERC20PaymentReleased(token, account, payment);
-    }
-
-    /// @dev internal logic for computing the pending payment of an `account`,
-    /// given the token historical balances and already released amounts.
-    function _pendingPayment(
-        address account,
-        uint256 totalReceived,
-        uint256 alreadyReleased
-    ) private view returns (uint256) {
-        return
-            (totalReceived * _shares[account]) /
-            _totalShares -
-            alreadyReleased;
-    }
-
-    /// @dev Add a new payee to the contract.
-    /// @param account The address of the payee to add.
-    /// @param shares_ The number of shares owned by the payee.
-    function _addPayee(address account, uint256 shares_)
-        private
-    {
-        require(account != address(0), "DEAD_ADDRESS");
-        require(
-            shares_ != 0, /* > 0 */
-            "INVALID_SHARE"
-        );
-        require(_shares[account] == 0, "ALREADY_PAYEE");
-
-        _payees.push(account);
-        _shares[account] = shares_;
-        _totalShares = _totalShares + shares_;
-        emit PayeeAdded(account, shares_);
     }
 }

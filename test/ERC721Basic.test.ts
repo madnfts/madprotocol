@@ -95,13 +95,13 @@ describe("ERC721Basic", () => {
       expect(await splitter.callStatic.totalShares()).to.eq(
         100,
       );
-      expect(await splitter.callStatic.payee(0)).to.eq(
+      expect(await splitter.callStatic._payees(0)).to.eq(
         mad.address,
       );
-      expect(await splitter.callStatic.payee(1)).to.eq(
+      expect(await splitter.callStatic._payees(1)).to.eq(
         amb.address,
       );
-      expect(await splitter.callStatic.payee(2)).to.eq(
+      expect(await splitter.callStatic._payees(2)).to.eq(
         owner.address,
       );
       await expect(await basic.deployTransaction)
@@ -346,26 +346,34 @@ describe("ERC721Basic", () => {
 
   describe("Withdraw", async () => {
     it("Should withdraw contract's funds", async () => {
-      const amount = ethers.BigNumber.from(999);
       await basic.setPublicMintState(true);
-      await basic
-        .connect(acc02)
-        .mint(999, { value: price.mul(amount) });
-      const oldOwnerBal = await ethers.provider.getBalance(
-        basic.address,
-      );
-      const oldContractBal = await ethers.provider.getBalance(
-        owner.address,
-      );
-      const tx = await basic.withdraw();
+      await basic.connect(acc02).mint(1, { value: price });
 
-      expect(tx).to.be.ok;
-      expect(oldOwnerBal).to.be.below(
-        await ethers.provider.getBalance(owner.address),
-      );
-      expect(oldContractBal).to.be.above(
+      const addrs = [
+        mad.address,
+        amb.address,
+        owner.address,
+        basic.address,
+      ];
+      const shares = [
+        ethers.BigNumber.from(1000),
+        ethers.BigNumber.from(2000),
+        ethers.BigNumber.from(7000),
+      ];
+      const vals = [
+        shares[0].mul(price).div(10_000),
+        shares[1].mul(price).div(10_000),
+        shares[2].mul(price).div(10_000),
+        "-1000000000000000000",
+      ];
+
+      await expect(() =>
+        basic.withdraw(),
+      ).to.changeEtherBalances(addrs, vals);
+
+      expect(
         await ethers.provider.getBalance(basic.address),
-      );
+      ).to.eq(ethers.constants.Zero);
 
       await expect(
         basic.connect(acc01).withdraw(),
@@ -373,30 +381,45 @@ describe("ERC721Basic", () => {
     });
 
     it("Should withdraw contract's ERC20s", async () => {
-      // ({ erc20 } = await loadFixture(erc20Fixture));
+      const prevBal = BigNumber.from(2).pow(255);
+      const payees = [
+        mad.address,
+        amb.address,
+        owner.address,
+      ];
+      const shares = [
+        ethers.BigNumber.from(1000),
+        ethers.BigNumber.from(2000),
+        ethers.BigNumber.from(7000),
+      ];
+      const vals = [
+        shares[0].mul(price).div(10_000),
+        shares[1].mul(price).div(10_000),
+        shares[2].mul(price).div(10_000).add(prevBal),
+      ];
       const ERC20 = await ethers.getContractFactory(
         "MockERC20",
       );
       const erc20 = (await ERC20.deploy(
-        BigNumber.from(2).pow(255),
+        prevBal,
       )) as MockERC20;
 
       await erc20.mint(basic.address, price);
-      const bal = await erc20.callStatic.balanceOf(
-        basic.address,
-      );
-      const balOwner = await erc20.callStatic.balanceOf(
-        owner.address,
-      );
-      const tx = await basic.withdrawERC20(erc20.address);
 
+      const tx = await basic.withdrawERC20(erc20.address);
       expect(tx).to.be.ok;
-      expect(await erc20.balanceOf(basic.address)).to.eq(
-        bal.sub(price),
-      );
-      expect(await erc20.balanceOf(owner.address)).to.eq(
-        balOwner.add(price),
-      );
+      expect(
+        await erc20.callStatic.balanceOf(payees[0]),
+      ).to.eq(vals[0]);
+      expect(
+        await erc20.callStatic.balanceOf(payees[1]),
+      ).to.eq(vals[1]);
+      expect(
+        await erc20.callStatic.balanceOf(payees[2]),
+      ).to.eq(vals[2]);
+      expect(
+        await erc20.callStatic.balanceOf(basic.address),
+      ).to.eq(ethers.constants.Zero);
     });
   });
 

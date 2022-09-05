@@ -71,7 +71,7 @@ describe("MADRouter1155", () => {
   });
   describe("Set URI", async () => {
     it("Should revert for invalid collection type", async () => {
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -90,6 +90,7 @@ describe("MADRouter1155", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC1155Minimal",
@@ -104,7 +105,7 @@ describe("MADRouter1155", () => {
       );
     });
     it("Should set URI for 1155Basic collection type", async () => {
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -122,6 +123,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
+          750,
         );
       const colID = await f1155.callStatic.getColID(
         basicAddr,
@@ -155,7 +157,7 @@ describe("MADRouter1155", () => {
       );
     });
     it("Should set URI for 1155Whitelist collection type", async () => {
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -174,6 +176,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
+          750,
         );
       const colID = await f1155.callStatic.getColID(wlAddr);
       const wl = await ethers.getContractAt(
@@ -205,7 +208,7 @@ describe("MADRouter1155", () => {
       );
     });
     it("Should set URI for 1155Lazy collection type", async () => {
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -224,6 +227,7 @@ describe("MADRouter1155", () => {
           ethers.constants.Zero,
           "ipfs://cid/",
           splAddr,
+          750,
         );
       const colID = await f1155.callStatic.getColID(lazyAddr);
       const lazy = await ethers.getContractAt(
@@ -260,7 +264,7 @@ describe("MADRouter1155", () => {
       const root = ethers.utils.keccak256(
         ethers.utils.toUtf8Bytes("fakeRoot"),
       );
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -279,6 +283,7 @@ describe("MADRouter1155", () => {
           ethers.constants.Zero,
           "ipfs://cid/",
           splAddr,
+          750,
         );
       // const colID = await f1155.callStatic.getColID(lazyAddr);
       const lazy = await ethers.getContractAt(
@@ -297,7 +302,7 @@ describe("MADRouter1155", () => {
       const root = ethers.utils.keccak256(
         ethers.utils.toUtf8Bytes("fakeRoot"),
       );
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -316,6 +321,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
+          750,
         );
       // const colID = await f1155.callStatic.getColID(wlAddr);
       const wl = await ethers.getContractAt(
@@ -343,7 +349,7 @@ describe("MADRouter1155", () => {
       const root = ethers.utils.keccak256(
         ethers.utils.toUtf8Bytes("fakeRoot"),
       );
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -362,6 +368,7 @@ describe("MADRouter1155", () => {
           ethers.constants.Zero,
           "ipfs://cid/",
           splAddr,
+          750,
         );
       const lazy = await ethers.getContractAt(
         "ERC1155Lazy",
@@ -379,7 +386,7 @@ describe("MADRouter1155", () => {
       const root = ethers.utils.keccak256(
         ethers.utils.toUtf8Bytes("fakeRoot"),
       );
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -398,6 +405,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
+          750,
         );
       const wl = await ethers.getContractAt(
         "ERC1155Whitelist",
@@ -417,7 +425,7 @@ describe("MADRouter1155", () => {
   });
   describe("Minimal SafeMint", async () => {
     it("Should revert for invalid collection type", async () => {
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -436,6 +444,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
+          750,
         );
       const tx = r1155.minimalSafeMint(wlAddr, acc01.address);
       const verArt = await artifacts.readArtifact(
@@ -453,7 +462,7 @@ describe("MADRouter1155", () => {
       );
     });
     it("Should call safeMint for 1155Minimal collection type", async () => {
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -472,6 +481,7 @@ describe("MADRouter1155", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC1155Minimal",
@@ -513,7 +523,7 @@ describe("MADRouter1155", () => {
   });
   describe("Burn", async () => {
     it("Should burn token for 1155Minimal collection type", async () => {
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -532,6 +542,7 @@ describe("MADRouter1155", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
+          750,
         );
       // const colID = await f1155.callStatic.getColID(minAddr);
       const min = await ethers.getContractAt(
@@ -563,7 +574,7 @@ describe("MADRouter1155", () => {
       );
     });
     it("Should burn tokens for 1155Basic collection type", async () => {
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -581,6 +592,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
+          750,
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -617,7 +629,7 @@ describe("MADRouter1155", () => {
       const root = ethers.utils.keccak256(
         ethers.utils.toUtf8Bytes("fakeRoot"),
       );
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -636,6 +648,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
+          750,
         );
       const wl = await ethers.getContractAt(
         "ERC1155Whitelist",
@@ -667,7 +680,7 @@ describe("MADRouter1155", () => {
     });
     it("Should burn tokens for 1155Lazy collection type", async () => {
       const signer = ethers.Wallet.createRandom();
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155.setSigner(await signer.getAddress());
       await f1155
         .connect(acc02)
@@ -687,6 +700,7 @@ describe("MADRouter1155", () => {
           ethers.constants.Zero,
           "ipfs://cid/",
           splAddr,
+          750,
         );
       const lazy = await ethers.getContractAt(
         "ERC1155Lazy",
@@ -779,7 +793,7 @@ describe("MADRouter1155", () => {
   });
   describe("Batch Burn", async () => {
     it("Should revert for invalid collection type", async () => {
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -798,6 +812,7 @@ describe("MADRouter1155", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC1155Minimal",
@@ -815,7 +830,7 @@ describe("MADRouter1155", () => {
       ).to.be.revertedWith(RouterErrors.InvalidType);
     });
     it("Should batch burn token for 1155Basic collection type", async () => {
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -833,6 +848,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
+          750,
         );
       const pmul = await ethers.BigNumber.from(4);
       const basic = await ethers.getContractAt(
@@ -881,7 +897,7 @@ describe("MADRouter1155", () => {
       const root = ethers.utils.keccak256(
         ethers.utils.toUtf8Bytes("fakeRoot"),
       );
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -900,6 +916,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
+          750,
         );
       const wl = await ethers.getContractAt(
         "ERC1155Whitelist",
@@ -936,7 +953,7 @@ describe("MADRouter1155", () => {
     });
     it("Should batch burn tokens for 1155Lazy collection type", async () => {
       const signer = ethers.Wallet.createRandom();
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155.setSigner(await signer.getAddress());
       await f1155
         .connect(acc02)
@@ -956,6 +973,7 @@ describe("MADRouter1155", () => {
           ethers.constants.Zero,
           "ipfs://cid/",
           splAddr,
+          750,
         );
       const lazy = await ethers.getContractAt(
         "ERC1155Lazy",
@@ -1057,7 +1075,7 @@ describe("MADRouter1155", () => {
       );
     });
     it("Should revert for invalid tokenType", async () => {
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -1076,6 +1094,7 @@ describe("MADRouter1155", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
+          750,
         );
       const tx = r1155
         .connect(acc02)
@@ -1086,7 +1105,7 @@ describe("MADRouter1155", () => {
       );
     });
     it("Should set publicMintState for minimal, basic and whitelist colTypes", async () => {
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -1110,6 +1129,7 @@ describe("MADRouter1155", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC1155Minimal",
@@ -1124,6 +1144,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
+          750,
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -1138,6 +1159,7 @@ describe("MADRouter1155", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
+          750,
         );
       const wl = await ethers.getContractAt(
         "ERC1155Whitelist",
@@ -1194,7 +1216,7 @@ describe("MADRouter1155", () => {
       );
     });
     it("Should set whitelistMintState for whitelist colType", async () => {
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -1210,6 +1232,7 @@ describe("MADRouter1155", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
+          750,
         );
       const wlAddr = await f1155.callStatic.getDeployedAddr(
         "WhiteSalt",
@@ -1242,7 +1265,7 @@ describe("MADRouter1155", () => {
       );
     });
     it("Should set freeClaimState for whitelist colType", async () => {
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -1258,6 +1281,7 @@ describe("MADRouter1155", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
+          750,
         );
       const wlAddr = await f1155.callStatic.getDeployedAddr(
         "WhiteSalt",
@@ -1292,7 +1316,7 @@ describe("MADRouter1155", () => {
   });
   describe("Whitelist Creator Mint", async () => {
     it("Should revert for invalid coltype", async () => {
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -1308,6 +1332,7 @@ describe("MADRouter1155", () => {
           100,
           "ipfs://cid/",
           splAddr,
+          750,
         );
       const basicAddr =
         await f1155.callStatic.getDeployedAddr("BasicSalt");
@@ -1321,7 +1346,7 @@ describe("MADRouter1155", () => {
       ).to.be.revertedWith(RouterErrors.InvalidType);
     });
     it("Should mint to creator", async () => {
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -1337,6 +1362,7 @@ describe("MADRouter1155", () => {
           100,
           "ipfs://cid/",
           splAddr,
+          750,
         );
       const wlAddr = await f1155.callStatic.getDeployedAddr(
         "WhiteSalt",
@@ -1365,7 +1391,7 @@ describe("MADRouter1155", () => {
   });
   describe("Whitelist Creator Batch Mint", async () => {
     it("Should revert for invalid coltype", async () => {
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -1381,6 +1407,7 @@ describe("MADRouter1155", () => {
           100,
           "ipfs://cid/",
           splAddr,
+          750,
         );
       const basicAddr =
         await f1155.callStatic.getDeployedAddr("BasicSalt");
@@ -1396,7 +1423,7 @@ describe("MADRouter1155", () => {
       ).to.be.revertedWith(RouterErrors.InvalidType);
     });
     it("Should batch mint to creator", async () => {
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -1412,6 +1439,7 @@ describe("MADRouter1155", () => {
           100,
           "ipfs://cid/",
           splAddr,
+          750,
         );
       const basicAddr =
         await f1155.callStatic.getDeployedAddr("BasicSalt");
@@ -1425,7 +1453,7 @@ describe("MADRouter1155", () => {
       ).to.be.revertedWith(RouterErrors.InvalidType);
     });
     it("Should mint to creator", async () => {
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -1441,6 +1469,7 @@ describe("MADRouter1155", () => {
           100,
           "ipfs://cid/",
           splAddr,
+          750,
         );
       const wlAddr = await f1155.callStatic.getDeployedAddr(
         "WhiteSalt",
@@ -1469,7 +1498,7 @@ describe("MADRouter1155", () => {
   });
   describe("Whitelist token gifting", async () => {
     it("Should revert for invalid coltype", async () => {
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -1485,6 +1514,7 @@ describe("MADRouter1155", () => {
           100,
           "ipfs://cid/",
           splAddr,
+          750,
         );
       const basicAddr =
         await f1155.callStatic.getDeployedAddr("BasicSalt");
@@ -1494,7 +1524,7 @@ describe("MADRouter1155", () => {
       ).to.be.revertedWith(RouterErrors.InvalidType);
     });
     it("Should gift tokens", async () => {
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -1510,6 +1540,7 @@ describe("MADRouter1155", () => {
           100,
           "ipfs://cid/",
           splAddr,
+          750,
         );
       const wlAddr = await f1155.callStatic.getDeployedAddr(
         "WhiteSalt",
@@ -1543,15 +1574,14 @@ describe("MADRouter1155", () => {
   });
   describe("Creator Withdraw", async () => {
     it("Should withdraw balance and ERC20 for all colTypes", async () => {
-      // ({ erc20 } = await loadFixture(erc20Fixture));
+      const prevBal = BigNumber.from(2).pow(255);
       const ERC20 = await ethers.getContractFactory(
         "MockERC20",
       );
       const erc20 = (await ERC20.deploy(
-        BigNumber.from(2).pow(255),
+        prevBal,
       )) as MockERC20;
 
-      await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -1570,6 +1600,7 @@ describe("MADRouter1155", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC1155Minimal",
@@ -1613,6 +1644,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           madSpl,
+          750,
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -1656,6 +1688,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           ambSpl,
+          750,
         );
       const wl = await ethers.getContractAt(
         "ERC1155Whitelist",
@@ -1705,6 +1738,7 @@ describe("MADRouter1155", () => {
           ethers.constants.Zero,
           "ipfs://cid/",
           userSpl,
+          750,
         );
       const lazy = await ethers.getContractAt(
         "ERC1155Lazy",
@@ -1801,7 +1835,9 @@ describe("MADRouter1155", () => {
       expect(tx1).to.be.ok;
       expect(tx2).to.be.ok;
       expect(bal1).to.be.lt(newBal1);
-      expect(price).to.be.eq(newBal2.sub(bal2));
+      expect(price.mul(7000).div(10_000)).to.be.eq(
+        newBal2.sub(bal2),
+      );
 
       await expect(
         r1155
@@ -1889,7 +1925,21 @@ describe("MADRouter1155", () => {
       ).to.be.revertedWith(RouterErrors.NoFunds);
     });
   });
-  describe("Pause", async () => {
+  describe("Only Owner", async () => {
+    it("Should update contract's owner", async () => {
+      const tx = await r1155.setOwner(mad.address);
+
+      expect(tx).to.be.ok;
+      await expect(tx)
+        .to.emit(r1155, "OwnerUpdated")
+        .withArgs(owner.address, mad.address);
+      expect(await r1155.callStatic.owner()).to.eq(
+        mad.address,
+      );
+      await expect(
+        r1155.connect(acc02).setOwner(acc01.address),
+      ).to.be.revertedWith(RouterErrors.Unauthorized);
+    });
     it("Should initialize paused and unpaused states", async () => {
       const root = ethers.utils.keccak256(
         ethers.utils.toUtf8Bytes("root"),

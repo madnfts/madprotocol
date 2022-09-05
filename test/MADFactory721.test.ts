@@ -82,24 +82,24 @@ describe("MADFactory721", () => {
   });
 
   describe("Splitter check", async () => {
-    it("Should revert if wrong ambassador or ambShare is provided", async () => {
-      await f721.addAmbassador(amb.address);
-      const tx = f721
-        .connect(acc02)
-        .splitterCheck("MADSplitter1", acc01.address, 20);
-      const tx2 = f721
-        .connect(acc02)
-        .splitterCheck("MADSplitter1", amb.address, 21);
+    // it("Should revert if wrong ambassador or ambShare is provided", async () => {
+    //   await f721.addAmbassador(amb.address);
+    //   const tx = f721
+    //     .connect(acc02)
+    //     .splitterCheck("MADSplitter1", acc01.address, 20);
+    //   const tx2 = f721
+    //     .connect(acc02)
+    //     .splitterCheck("MADSplitter1", amb.address, 21);
 
-      await expect(tx).to.be.revertedWithCustomError(
-        f721,
-        FactoryErrors.SplitterFail,
-      );
-      await expect(tx2).to.be.revertedWithCustomError(
-        f721,
-        FactoryErrors.SplitterFail,
-      );
-    });
+    //   await expect(tx).to.be.revertedWithCustomError(
+    //     f721,
+    //     FactoryErrors.SplitterFail,
+    //   );
+    //   await expect(tx2).to.be.revertedWithCustomError(
+    //     f721,
+    //     FactoryErrors.SplitterFail,
+    //   );
+    // });
     it("Should revert if creator and owner are the same", async () => {
       const tx = f721
         .connect(owner)
@@ -148,10 +148,10 @@ describe("MADFactory721", () => {
         "SplitterImpl",
         addr,
       );
-      const ownerShares = await instance.callStatic.shares(
+      const ownerShares = await instance.callStatic._shares(
         owner.address,
       );
-      const creatorShares = await instance.callStatic.shares(
+      const creatorShares = await instance.callStatic._shares(
         acc02.address,
       );
 
@@ -182,7 +182,7 @@ describe("MADFactory721", () => {
       expect(storage.valid).to.eq(true);
     });
     it("Should deploy splitter with ambassador, update storage and emit events", async () => {
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       const tx: ContractTransaction = await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -210,13 +210,13 @@ describe("MADFactory721", () => {
         "SplitterImpl",
         addr,
       );
-      const ownerShares = await instance.callStatic.shares(
+      const ownerShares = await instance.callStatic._shares(
         owner.address,
       );
-      const ambShares = await instance.callStatic.shares(
+      const ambShares = await instance.callStatic._shares(
         amb.address,
       );
-      const creatorShares = await instance.callStatic.shares(
+      const creatorShares = await instance.callStatic._shares(
         acc02.address,
       );
 
@@ -256,7 +256,7 @@ describe("MADFactory721", () => {
   });
   describe("Create collection", async () => {
     it("Should deploy ERC721Minimal, update storage and emit events", async () => {
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -277,6 +277,7 @@ describe("MADFactory721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const colID = await f721.callStatic.getColID(minAddr);
       const storage = await f721.callStatic.userTokens(
@@ -297,6 +298,7 @@ describe("MADFactory721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
 
       const fail2 = f721
@@ -310,6 +312,7 @@ describe("MADFactory721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
 
       expect(tx).to.be.ok;
@@ -341,7 +344,7 @@ describe("MADFactory721", () => {
     });
 
     it("Should deploy ERC721Basic, update storage and emit events", async () => {
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -362,6 +365,7 @@ describe("MADFactory721", () => {
           1000,
           "ipfs://cid/",
           splAddr,
+          750,
         );
       const colID = await f721.callStatic.getColID(basicAddr);
       const storage = await f721.callStatic.userTokens(
@@ -382,6 +386,7 @@ describe("MADFactory721", () => {
           1000,
           "ipfs://cid/",
           splAddr,
+          750,
         );
 
       const fail2 = f721
@@ -395,6 +400,7 @@ describe("MADFactory721", () => {
           1000,
           "ipfs://cid/",
           splAddr,
+          750,
         );
 
       expect(tx).to.be.ok;
@@ -425,7 +431,7 @@ describe("MADFactory721", () => {
       );
     });
     it("Should deploy ERC721Whitelist, update storage and emit events", async () => {
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -446,6 +452,7 @@ describe("MADFactory721", () => {
           1000,
           "ipfs://cid/",
           splAddr,
+          750,
         );
       const colID = await f721.callStatic.getColID(wlAddr);
       const storage = await f721.callStatic.userTokens(
@@ -466,6 +473,7 @@ describe("MADFactory721", () => {
           1000,
           "ipfs://cid/",
           splAddr,
+          750,
         );
 
       const fail2 = f721
@@ -479,6 +487,7 @@ describe("MADFactory721", () => {
           1000,
           "ipfs://cid/",
           splAddr,
+          750,
         );
 
       expect(tx).to.be.ok;
@@ -509,7 +518,7 @@ describe("MADFactory721", () => {
       );
     });
     it("Should deploy ERC721Lazy, update storage and emit events", async () => {
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc01)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -527,6 +536,7 @@ describe("MADFactory721", () => {
           ethers.constants.Zero,
           "ipfs://cid/",
           splAddr,
+          750,
         );
       const lazyAddr = await f721.callStatic.getDeployedAddr(
         "LazySalt",
@@ -551,6 +561,7 @@ describe("MADFactory721", () => {
           0,
           "ipfs://cid/",
           splAddr,
+          750,
         );
 
       const fail2 = f721
@@ -564,6 +575,7 @@ describe("MADFactory721", () => {
           0,
           "ipfs://cid/",
           splAddr,
+          750,
         );
 
       expect(tx).to.be.ok;
@@ -596,6 +608,20 @@ describe("MADFactory721", () => {
   });
   // `router` and `signer` setters tested in init.
   describe("Only owner functions", async () => {
+    it("Should update contract's owner", async () => {
+      const tx = await f721.setOwner(mad.address);
+
+      expect(tx).to.be.ok;
+      await expect(tx)
+        .to.emit(f721, "OwnerUpdated")
+        .withArgs(owner.address, mad.address);
+      expect(await f721.callStatic.owner()).to.eq(
+        mad.address,
+      );
+      await expect(
+        f721.connect(acc02).setOwner(acc01.address),
+      ).to.be.revertedWith(FactoryErrors.Unauthorized);
+    });
     it("Should set new marketplace instance", async () => {
       const curAuth = await f721.callStatic.market();
       const tx = await f721
@@ -614,35 +640,35 @@ describe("MADFactory721", () => {
         .to.emit(f721, "MarketplaceUpdated")
         .withArgs(owner.address);
     });
-    it("Should add address to ambassador whitelist", async () => {
-      const tx = await f721.addAmbassador(amb.address);
-      const check = f721.callStatic.ambWhitelist(amb.address);
+    // it("Should add address to ambassador whitelist", async () => {
+    //   const tx = await f721.addAmbassador(amb.address);
+    //   const check = f721.callStatic.ambWhitelist(amb.address);
 
-      expect(tx).to.be.ok;
-      expect(await check).to.be.true;
-      await expect(tx)
-        .to.emit(f721, "AmbassadorAdded")
-        .withArgs(amb.address);
-      await expect(
-        f721.connect(acc02).addAmbassador(acc01.address),
-      ).to.be.revertedWith(FactoryErrors.Unauthorized);
-    });
-    it("Should delete address from ambassador whitelist", async () => {
-      await f721.addAmbassador(amb.address);
-      await f721.addAmbassador(mad.address);
+    //   expect(tx).to.be.ok;
+    //   expect(await check).to.be.true;
+    //   await expect(tx)
+    //     .to.emit(f721, "AmbassadorAdded")
+    //     .withArgs(amb.address);
+    //   await expect(
+    //     f721.connect(acc02).addAmbassador(acc01.address),
+    //   ).to.be.revertedWith(FactoryErrors.Unauthorized);
+    // });
+    // it("Should delete address from ambassador whitelist", async () => {
+    //   await f721.addAmbassador(amb.address);
+    //   await f721.addAmbassador(mad.address);
 
-      const tx = await f721.delAmbassador(amb.address);
-      const check = f721.callStatic.ambWhitelist(amb.address);
+    //   const tx = await f721.delAmbassador(amb.address);
+    //   const check = f721.callStatic.ambWhitelist(amb.address);
 
-      expect(tx).to.be.ok;
-      expect(await check).to.be.false;
-      await expect(tx)
-        .to.emit(f721, "AmbassadorDeleted")
-        .withArgs(amb.address);
-      await expect(
-        f721.connect(acc02).delAmbassador(mad.address),
-      ).to.be.revertedWith(FactoryErrors.Unauthorized);
-    });
+    //   expect(tx).to.be.ok;
+    //   expect(await check).to.be.false;
+    //   await expect(tx)
+    //     .to.emit(f721, "AmbassadorDeleted")
+    //     .withArgs(amb.address);
+    //   await expect(
+    //     f721.connect(acc02).delAmbassador(mad.address),
+    //   ).to.be.revertedWith(FactoryErrors.Unauthorized);
+    // });
     it("Should update ERC721Lazy signer", async () => {
       const tx = await f721.setSigner(acc01.address);
       expect(tx).to.be.ok;
@@ -677,7 +703,17 @@ describe("MADFactory721", () => {
         f721.splitterCheck("", dead, 0),
       ).to.be.revertedWith(FactoryErrors.Paused);
       await expect(
-        f721.createCollection(1, "", "", "", 0, 1, "", dead),
+        f721.createCollection(
+          1,
+          "",
+          "",
+          "",
+          0,
+          1,
+          "",
+          dead,
+          750,
+        ),
       ).to.be.revertedWith(FactoryErrors.Paused);
       await expect(
         f721.connect(acc02).unpause(),
@@ -689,7 +725,7 @@ describe("MADFactory721", () => {
   // `getDeployedAddr` already tested in `splitterCheck` and `createCollection` unit tests
   describe("Helpers", async () => {
     it("Should retrieve user's colID indexes", async () => {
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -707,6 +743,7 @@ describe("MADFactory721", () => {
           1000,
           "ipfs://cid/",
           splAddr,
+          750,
         );
       await f721
         .connect(acc02)
@@ -719,6 +756,7 @@ describe("MADFactory721", () => {
           1000,
           "ipfs://cid/",
           splAddr,
+          750,
         );
       await f721
         .connect(acc02)
@@ -731,6 +769,7 @@ describe("MADFactory721", () => {
           1,
           "ipfs://cid/",
           splAddr,
+          750,
         );
 
       expect(await f721.getIDsLength(acc02.address)).to.eq(3);
@@ -746,7 +785,7 @@ describe("MADFactory721", () => {
       expect(tx).to.eq(colID);
     });
     it("Should retrieve collection type", async () => {
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -767,6 +806,7 @@ describe("MADFactory721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const colID = await f721.callStatic.getColID(minAddr);
       const min = await ethers.getContractAt(
@@ -795,7 +835,7 @@ describe("MADFactory721", () => {
       );
     });
     it("Should enable marketplace no-fee listing", async () => {
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -816,6 +856,7 @@ describe("MADFactory721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -859,7 +900,7 @@ describe("MADFactory721", () => {
       );
     });
     it("Should verify a collection's creator", async () => {
-      await f721.addAmbassador(amb.address);
+      // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -880,6 +921,7 @@ describe("MADFactory721", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const colID = await f721.callStatic.getColID(minAddr);
 

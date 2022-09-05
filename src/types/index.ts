@@ -29,6 +29,8 @@ export type { Owned } from "./lib/auth/Owned";
 export { Owned__factory } from "./factories/lib/auth/Owned__factory";
 export type { Pausable } from "./lib/security/Pausable";
 export { Pausable__factory } from "./factories/lib/security/Pausable__factory";
+export type { SplitterEventsAndErrors } from "./lib/splitter/SplitterEventsAndErrors";
+export { SplitterEventsAndErrors__factory } from "./factories/lib/splitter/SplitterEventsAndErrors__factory";
 export type { SplitterImpl } from "./lib/splitter/SplitterImpl";
 export { SplitterImpl__factory } from "./factories/lib/splitter/SplitterImpl__factory";
 export type { MockERC1155 } from "./lib/test/erc1155-mock.sol/MockERC1155";

@@ -2,40 +2,6 @@
 
 ## Methods
 
-### addAmbassador
-
-```solidity
-function addAmbassador(address _whitelistedAmb) external nonpayable
-```
-
-_Add address to ambassador whitelist.Function Sighash := 0x295c25d5_
-
-#### Parameters
-
-| Name             | Type    | Description |
-| ---------------- | ------- | ----------- |
-| \_whitelistedAmb | address | undefined   |
-
-### ambWhitelist
-
-```solidity
-function ambWhitelist(address) external view returns (bool)
-```
-
-_Stores authorized ambassador addresses to be opted as shareholders of splitter contracts. _
-
-#### Parameters
-
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | address | undefined   |
-
-#### Returns
-
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| \_0  | bool | undefined   |
-
 ### colInfo
 
 ```solidity
@@ -63,7 +29,7 @@ _`colIDs` are derived from adding 12 bytes of zeros to an collection&#39;s addre
 ### createCollection
 
 ```solidity
-function createCollection(uint8 _tokenType, string _tokenSalt, uint256 _price, uint256 _maxSupply, string _uri, address _splitter) external nonpayable
+function createCollection(uint8 _tokenType, string _tokenSalt, uint256 _price, uint256 _maxSupply, string _uri, address _splitter, uint256 _royalty) external nonpayable
 ```
 
 Core public ERC1155 token types deployment pusher.
@@ -80,6 +46,7 @@ _Function Sighash := 0x73fd6808Args passed as params in this function serve as c
 | \_maxSupply | uint256 | Maximum supply of tokens to be minted of the collection to be deployed (Not used for ERC1155Minimal token type, since it always equals to one).                                         |
 | \_uri       | string  | The URL + CID to be added the tokenID and suffix (.json) by the tokenURI function in the collection to be deployed (baseURI used as tokenURI itself for the ERC1155Minimal token type). |
 | \_splitter  | address | Previously deployed Splitter implementation so to validate and attach to collection.                                                                                                    |
+| \_royalty   | uint256 | Ranges in between 0%-10%, in percentage basis points, accepted (Min tick := 25).                                                                                                        |
 
 ### creatorAuth
 
@@ -126,20 +93,6 @@ _Function Sighash := 0xb64bd5eb_
 | ------- | ------- | ---------------------------------------------------------------------------------- |
 | creator | address | bb                                                                                 |
 | check   | bool    | Boolean output to either approve or reject call&#39;s `tx.origin` function access. |
-
-### delAmbassador
-
-```solidity
-function delAmbassador(address _removedAmb) external nonpayable
-```
-
-_Delete address from ambassador whitelist.Function Sighash := 0xf2d0e148_
-
-#### Parameters
-
-| Name         | Type    | Description |
-| ------------ | ------- | ----------- |
-| \_removedAmb | address | undefined   |
 
 ### getColID
 
@@ -297,6 +250,8 @@ _`MADMarketplace` instance setter.Function Sighash := _
 function setOwner(address newOwner) external nonpayable
 ```
 
+_Function Signature := 0x13af4035_
+
 #### Parameters
 
 | Name     | Type    | Description |
@@ -426,30 +381,6 @@ _Maps an collection creator, of type address, to an array of `colIDs`._
 | \_0  | bytes32 | undefined   |
 
 ## Events
-
-### AmbassadorAdded
-
-```solidity
-event AmbassadorAdded(address indexed whitelistedAmb)
-```
-
-#### Parameters
-
-| Name                     | Type    | Description |
-| ------------------------ | ------- | ----------- |
-| whitelistedAmb `indexed` | address | undefined   |
-
-### AmbassadorDeleted
-
-```solidity
-event AmbassadorDeleted(address indexed removedAmb)
-```
-
-#### Parameters
-
-| Name                 | Type    | Description |
-| -------------------- | ------- | ----------- |
-| removedAmb `indexed` | address | undefined   |
 
 ### ERC1155BasicCreated
 
@@ -604,6 +535,14 @@ error AccessDenied()
 ```
 
 _0x4ca88867_
+
+### InvalidRoyalty
+
+```solidity
+error InvalidRoyalty()
+```
+
+_0xe0e54ced_
 
 ### SplitterFail
 

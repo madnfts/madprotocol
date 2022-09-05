@@ -2,30 +2,6 @@
 
 ## Events
 
-### AmbassadorAdded
-
-```solidity
-event AmbassadorAdded(address indexed whitelistedAmb)
-```
-
-#### Parameters
-
-| Name                     | Type    | Description |
-| ------------------------ | ------- | ----------- |
-| whitelistedAmb `indexed` | address | undefined   |
-
-### AmbassadorDeleted
-
-```solidity
-event AmbassadorDeleted(address indexed removedAmb)
-```
-
-#### Parameters
-
-| Name                 | Type    | Description |
-| -------------------- | ------- | ----------- |
-| removedAmb `indexed` | address | undefined   |
-
 ### ERC721BasicCreated
 
 ```solidity
@@ -134,6 +110,14 @@ event SplitterCreated(address indexed creator, uint256[] shares, address[] payee
 | splitter          | address   | undefined   |
 
 ## Errors
+
+### InvalidRoyalty
+
+```solidity
+error InvalidRoyalty()
+```
+
+_0xe0e54ced_
 
 ### SplitterFail
 

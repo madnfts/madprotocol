@@ -74,24 +74,24 @@ describe("MADFactory1155", () => {
   });
 
   describe("Splitter check", async () => {
-    it("Should revert if wrong ambassador or ambShare is provided", async () => {
-      await f1155.addAmbassador(amb.address);
-      const tx = f1155
-        .connect(acc02)
-        .splitterCheck("MADSplitter1", acc01.address, 20);
-      const tx2 = f1155
-        .connect(acc02)
-        .splitterCheck("MADSplitter1", amb.address, 21);
+    // it("Should revert if wrong ambassador or ambShare is provided", async () => {
+    //   await f1155.addAmbassador(amb.address);
+    //   const tx = f1155
+    //     .connect(acc02)
+    //     .splitterCheck("MADSplitter1", acc01.address, 20);
+    //   const tx2 = f1155
+    //     .connect(acc02)
+    //     .splitterCheck("MADSplitter1", amb.address, 21);
 
-      await expect(tx).to.be.revertedWithCustomError(
-        f1155,
-        FactoryErrors.SplitterFail,
-      );
-      await expect(tx2).to.be.revertedWithCustomError(
-        f1155,
-        FactoryErrors.SplitterFail,
-      );
-    });
+    //   await expect(tx).to.be.revertedWithCustomError(
+    //     f1155,
+    //     FactoryErrors.SplitterFail,
+    //   );
+    //   await expect(tx2).to.be.revertedWithCustomError(
+    //     f1155,
+    //     FactoryErrors.SplitterFail,
+    //   );
+    // });
     it("Should revert if creator and owner are the same", async () => {
       const tx = f1155
         .connect(owner)
@@ -142,10 +142,10 @@ describe("MADFactory1155", () => {
         "SplitterImpl",
         addr,
       );
-      const ownerShares = await instance.callStatic.shares(
+      const ownerShares = await instance.callStatic._shares(
         owner.address,
       );
-      const creatorShares = await instance.callStatic.shares(
+      const creatorShares = await instance.callStatic._shares(
         acc02.address,
       );
 
@@ -176,7 +176,7 @@ describe("MADFactory1155", () => {
       expect(storage.valid).to.eq(true);
     });
     it("Should deploy splitter with ambassador, update storage and emit events", async () => {
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       const tx: ContractTransaction = await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -206,13 +206,13 @@ describe("MADFactory1155", () => {
         "SplitterImpl",
         addr,
       );
-      const ownerShares = await instance.callStatic.shares(
+      const ownerShares = await instance.callStatic._shares(
         owner.address,
       );
-      const ambShares = await instance.callStatic.shares(
+      const ambShares = await instance.callStatic._shares(
         amb.address,
       );
-      const creatorShares = await instance.callStatic.shares(
+      const creatorShares = await instance.callStatic._shares(
         acc02.address,
       );
 
@@ -253,7 +253,7 @@ describe("MADFactory1155", () => {
 
   describe("Create collection", async () => {
     it("Should deploy ERC1155Minimal, update storage and emit events", async () => {
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -272,6 +272,7 @@ describe("MADFactory1155", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const colID = await f1155.callStatic.getColID(minAddr);
       const storage = await f1155.callStatic.userTokens(
@@ -290,6 +291,7 @@ describe("MADFactory1155", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
 
       const fail2 = f1155
@@ -301,6 +303,7 @@ describe("MADFactory1155", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
 
       expect(tx).to.be.ok;
@@ -332,7 +335,7 @@ describe("MADFactory1155", () => {
     });
 
     it("Should deploy ERC1155Basic, update storage and emit events", async () => {
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -350,6 +353,7 @@ describe("MADFactory1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
+          750,
         );
       const colID = await f1155.callStatic.getColID(
         basicAddr,
@@ -370,6 +374,7 @@ describe("MADFactory1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
+          750,
         );
 
       const fail2 = f1155
@@ -381,6 +386,7 @@ describe("MADFactory1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
+          750,
         );
 
       expect(tx).to.be.ok;
@@ -411,7 +417,7 @@ describe("MADFactory1155", () => {
       );
     });
     it("Should deploy ERC1155Whitelist, update storage and emit events", async () => {
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -430,6 +436,7 @@ describe("MADFactory1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
+          750,
         );
       const colID = await f1155.callStatic.getColID(wlAddr);
       const storage = await f1155.callStatic.userTokens(
@@ -448,6 +455,7 @@ describe("MADFactory1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
+          750,
         );
 
       const fail2 = f1155
@@ -459,6 +467,7 @@ describe("MADFactory1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
+          750,
         );
 
       expect(tx).to.be.ok;
@@ -489,7 +498,7 @@ describe("MADFactory1155", () => {
       );
     });
     it("Should deploy ERC1155Lazy, update storage and emit events", async () => {
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc01)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -505,6 +514,7 @@ describe("MADFactory1155", () => {
           ethers.constants.Zero,
           "ipfs://cid/",
           splAddr,
+          750,
         );
       const lazyAddr = await f1155.callStatic.getDeployedAddr(
         "LazySalt",
@@ -527,6 +537,7 @@ describe("MADFactory1155", () => {
           0,
           "ipfs://cid/",
           splAddr,
+          750,
         );
 
       const fail2 = f1155
@@ -538,6 +549,7 @@ describe("MADFactory1155", () => {
           0,
           "ipfs://cid/",
           splAddr,
+          750,
         );
 
       expect(tx).to.be.ok;
@@ -571,6 +583,20 @@ describe("MADFactory1155", () => {
 
   // `router` and `signer` setters tested in init.
   describe("Only owner functions", async () => {
+    it("Should update contract's owner", async () => {
+      const tx = await f1155.setOwner(mad.address);
+
+      expect(tx).to.be.ok;
+      await expect(tx)
+        .to.emit(f1155, "OwnerUpdated")
+        .withArgs(owner.address, mad.address);
+      expect(await f1155.callStatic.owner()).to.eq(
+        mad.address,
+      );
+      await expect(
+        f1155.connect(acc02).setOwner(acc01.address),
+      ).to.be.revertedWith(FactoryErrors.Unauthorized);
+    });
     it("Should set new marketplace instance", async () => {
       const curAuth = await f1155.callStatic.market();
       const tx = await f1155
@@ -589,39 +615,39 @@ describe("MADFactory1155", () => {
         .to.emit(f1155, "MarketplaceUpdated")
         .withArgs(owner.address);
     });
-    it("Should add address to ambassador whitelist", async () => {
-      const tx = await f1155.addAmbassador(amb.address);
-      const check = f1155.callStatic.ambWhitelist(
-        amb.address,
-      );
+    // it("Should add address to ambassador whitelist", async () => {
+    //   const tx = await f1155.addAmbassador(amb.address);
+    //   const check = f1155.callStatic.ambWhitelist(
+    //     amb.address,
+    //   );
 
-      expect(tx).to.be.ok;
-      expect(await check).to.be.true;
-      await expect(tx)
-        .to.emit(f1155, "AmbassadorAdded")
-        .withArgs(amb.address);
-      await expect(
-        f1155.connect(acc02).addAmbassador(acc01.address),
-      ).to.be.revertedWith(FactoryErrors.Unauthorized);
-    });
-    it("Should delete address from ambassador whitelist", async () => {
-      await f1155.addAmbassador(amb.address);
-      await f1155.addAmbassador(mad.address);
+    //   expect(tx).to.be.ok;
+    //   expect(await check).to.be.true;
+    //   await expect(tx)
+    //     .to.emit(f1155, "AmbassadorAdded")
+    //     .withArgs(amb.address);
+    //   await expect(
+    //     f1155.connect(acc02).addAmbassador(acc01.address),
+    //   ).to.be.revertedWith(FactoryErrors.Unauthorized);
+    // });
+    // it("Should delete address from ambassador whitelist", async () => {
+    //   await f1155.addAmbassador(amb.address);
+    //   await f1155.addAmbassador(mad.address);
 
-      const tx = await f1155.delAmbassador(amb.address);
-      const check = f1155.callStatic.ambWhitelist(
-        amb.address,
-      );
+    //   const tx = await f1155.delAmbassador(amb.address);
+    //   const check = f1155.callStatic.ambWhitelist(
+    //     amb.address,
+    //   );
 
-      expect(tx).to.be.ok;
-      expect(await check).to.be.false;
-      await expect(tx)
-        .to.emit(f1155, "AmbassadorDeleted")
-        .withArgs(amb.address);
-      await expect(
-        f1155.connect(acc02).delAmbassador(mad.address),
-      ).to.be.revertedWith(FactoryErrors.Unauthorized);
-    });
+    //   expect(tx).to.be.ok;
+    //   expect(await check).to.be.false;
+    //   await expect(tx)
+    //     .to.emit(f1155, "AmbassadorDeleted")
+    //     .withArgs(amb.address);
+    //   await expect(
+    //     f1155.connect(acc02).delAmbassador(mad.address),
+    //   ).to.be.revertedWith(FactoryErrors.Unauthorized);
+    // });
     it("Should update ERC1155Lazy signer", async () => {
       const tx = await f1155.setSigner(acc01.address);
       expect(tx).to.be.ok;
@@ -656,7 +682,7 @@ describe("MADFactory1155", () => {
         f1155.splitterCheck("", dead, 0),
       ).to.be.revertedWith(FactoryErrors.Paused);
       await expect(
-        f1155.createCollection(1, "", 0, 1, "", dead),
+        f1155.createCollection(1, "", 0, 1, "", dead, 750),
       ).to.be.revertedWith(FactoryErrors.Paused);
       await expect(
         f1155.connect(acc02).unpause(),
@@ -668,7 +694,7 @@ describe("MADFactory1155", () => {
   // `getDeployedAddr` already tested in `splitterCheck` and `createCollection` unit tests
   describe("Helpers", async () => {
     it("Should retrieve user's colID indexes", async () => {
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -684,6 +710,7 @@ describe("MADFactory1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
+          750,
         );
       await f1155
         .connect(acc02)
@@ -694,6 +721,7 @@ describe("MADFactory1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
+          750,
         );
       await f1155
         .connect(acc02)
@@ -704,6 +732,7 @@ describe("MADFactory1155", () => {
           1,
           "ipfs://cid/",
           splAddr,
+          750,
         );
 
       expect(await f1155.getIDsLength(acc02.address)).to.eq(
@@ -721,7 +750,7 @@ describe("MADFactory1155", () => {
       expect(tx).to.eq(colID);
     });
     it("Should retrieve collection type", async () => {
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -740,6 +769,7 @@ describe("MADFactory1155", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const colID = await f1155.callStatic.getColID(minAddr);
       const min = await ethers.getContractAt(
@@ -768,7 +798,7 @@ describe("MADFactory1155", () => {
       );
     });
     it("Should enable marketplace no-fee listing", async () => {
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -787,6 +817,7 @@ describe("MADFactory1155", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC1155Minimal",
@@ -834,7 +865,7 @@ describe("MADFactory1155", () => {
       );
     });
     it("Should verify a collection's creator", async () => {
-      await f1155.addAmbassador(amb.address);
+      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", amb.address, 20);
@@ -853,6 +884,7 @@ describe("MADFactory1155", () => {
           1,
           "cid/id.json",
           splAddr,
+          750,
         );
       const colID = await f1155.callStatic.getColID(minAddr);
 

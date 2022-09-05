@@ -121,13 +121,13 @@ describe("ERC721Lazy", () => {
       expect(await splitter.callStatic.totalShares()).to.eq(
         100,
       );
-      expect(await splitter.callStatic.payee(0)).to.eq(
+      expect(await splitter.callStatic._payees(0)).to.eq(
         mad.address,
       );
-      expect(await splitter.callStatic.payee(1)).to.eq(
+      expect(await splitter.callStatic._payees(1)).to.eq(
         amb.address,
       );
-      expect(await splitter.callStatic.payee(2)).to.eq(
+      expect(await splitter.callStatic._payees(2)).to.eq(
         owner.address,
       );
     });
@@ -293,11 +293,12 @@ describe("ERC721Lazy", () => {
       );
     });
     it("Should withdraw and update balances", async () => {
+      const prevBal = BigNumber.from(2).pow(255);
       const ERC20 = await ethers.getContractFactory(
         "MockERC20",
       );
       const erc20 = (await ERC20.deploy(
-        BigNumber.from(2).pow(255),
+        prevBal,
       )) as MockERC20;
 
       await lazy.lazyMint(
@@ -305,44 +306,63 @@ describe("ERC721Lazy", () => {
         sigSplit.v,
         sigSplit.r,
         sigSplit.s,
-        { value: price.mul(amount) },
-      );
-      const oldOwnerBal = await ethers.provider.getBalance(
-        lazy.address,
-      );
-      const oldContractBal = await ethers.provider.getBalance(
-        owner.address,
+        { value: price.mul(amount) }, // amount := 30
       );
       await erc20.mint(lazy.address, price);
-      const bal = await erc20.callStatic.balanceOf(
-        lazy.address,
-      );
-      const balOwner = await erc20.callStatic.balanceOf(
-        owner.address,
-      );
       const tx = await lazy.withdrawERC20(erc20.address);
-      const tx2 = await lazy.withdraw();
+      const addrs = [
+        mad.address,
+        amb.address,
+        owner.address,
+        lazy.address,
+      ];
+      const shares = [
+        ethers.BigNumber.from(1000),
+        ethers.BigNumber.from(2000),
+        ethers.BigNumber.from(7000),
+      ];
+      const vals = [
+        shares[0].mul(price.mul(amount)).div(10_000),
+        shares[1].mul(price.mul(amount)).div(10_000),
+        shares[2].mul(price.mul(amount)).div(10_000),
+        "-30000000000000000000",
+      ];
+
+      const vals2 = [
+        shares[0].mul(price).div(10_000),
+        shares[1].mul(price).div(10_000),
+        shares[2].mul(price).div(10_000).add(prevBal),
+      ];
+
+      await expect(() =>
+        lazy.withdraw(),
+      ).to.changeEtherBalances(addrs, vals);
 
       expect(tx).to.be.ok;
-      expect(tx2).to.be.ok;
+      expect(
+        await erc20.callStatic.balanceOf(addrs[0]),
+      ).to.eq(vals2[0]);
+      expect(
+        await erc20.callStatic.balanceOf(addrs[1]),
+      ).to.eq(vals2[1]);
+      expect(
+        await erc20.callStatic.balanceOf(addrs[2]),
+      ).to.eq(vals2[2]);
+
       await expect(
         lazy.connect(acc01).withdraw(),
       ).to.be.revertedWith(LazyErrors.Unauthorized);
       await expect(
         lazy.connect(acc02).withdrawERC20(erc20.address),
       ).to.be.revertedWith(LazyErrors.Unauthorized);
+
       expect(await erc20.balanceOf(lazy.address)).to.eq(
-        bal.sub(price),
+        ethers.constants.Zero,
       );
-      expect(await erc20.balanceOf(owner.address)).to.eq(
-        balOwner.add(price),
-      );
-      expect(oldOwnerBal).to.be.below(
-        await ethers.provider.getBalance(owner.address),
-      );
-      expect(oldContractBal).to.be.above(
+
+      expect(
         await ethers.provider.getBalance(lazy.address),
-      );
+      ).to.eq(ethers.constants.Zero);
     });
   });
 

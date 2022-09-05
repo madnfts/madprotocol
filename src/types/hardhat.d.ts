@@ -45,6 +45,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Pausable__factory>;
     getContractFactory(
+      name: "SplitterEventsAndErrors",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.SplitterEventsAndErrors__factory>;
+    getContractFactory(
       name: "SplitterImpl",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.SplitterImpl__factory>;
@@ -265,6 +269,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Pausable>;
+    getContractAt(
+      name: "SplitterEventsAndErrors",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.SplitterEventsAndErrors>;
     getContractAt(
       name: "SplitterImpl",
       address: string,

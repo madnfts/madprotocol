@@ -288,18 +288,58 @@ contract ERC721Whitelist is
     }
 
     function withdraw() external onlyOwner {
-        SafeTransferLib.safeTransferETH(
-            tx.origin,
-            address(this).balance
-        );
+        uint256 len = splitter.payeesLength();
+        address[] memory addrs = new address[](len);
+        uint256[] memory values = new uint256[](len);
+        uint256 _val = address(this).balance;
+        uint256 i;
+        for (i; i < len; ) {
+            address addr = splitter._payees(i);
+            uint256 share = splitter._shares(addr);
+            addrs[i] = addr;
+            values[i] = ((_val * (share * 1e2)) / 10_000);
+            unchecked {
+                ++i;
+            }
+        }
+        uint256 j;
+        while (j < len) {
+            SafeTransferLib.safeTransferETH(
+                addrs[j],
+                values[j]
+            );
+            unchecked {
+                ++j;
+            }
+        }
     }
 
     function withdrawERC20(ERC20 _token) external onlyOwner {
-        SafeTransferLib.safeTransfer(
-            _token,
-            tx.origin,
-            _token.balanceOf(address(this))
-        );
+        uint256 len = splitter.payeesLength();
+        address[] memory addrs = new address[](len);
+        uint256[] memory values = new uint256[](len);
+        uint256 i;
+        uint256 _val = _token.balanceOf(address(this));
+        for (i; i < len; ) {
+            address addr = splitter._payees(i);
+            uint256 share = splitter._shares(addr);
+            addrs[i] = addr;
+            values[i] = ((_val * (share * 1e2)) / 10_000);
+            unchecked {
+                ++i;
+            }
+        }
+        uint256 j;
+        while (j < len) {
+            SafeTransferLib.safeTransfer(
+                _token,
+                addrs[j],
+                values[j]
+            );
+            unchecked {
+                ++j;
+            }
+        }
     }
 
     ////////////////////////////////////////////////////////////////

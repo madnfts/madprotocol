@@ -31,6 +31,7 @@ import type {
 export interface MADMarketplace721Interface extends utils.Interface {
   functions: {
     "MADFactory721()": FunctionFragment;
+    "basisPoints()": FunctionFragment;
     "bid(bytes32)": FunctionFragment;
     "buy(bytes32)": FunctionFragment;
     "cancelOrder(bytes32)": FunctionFragment;
@@ -38,7 +39,9 @@ export interface MADMarketplace721Interface extends utils.Interface {
     "delOrder(bytes32,address,uint256,address)": FunctionFragment;
     "dutchAuction(address,uint256,uint256,uint256,uint256)": FunctionFragment;
     "englishAuction(address,uint256,uint256,uint256)": FunctionFragment;
-    "feePercent()": FunctionFragment;
+    "feePercent0()": FunctionFragment;
+    "feePercent1()": FunctionFragment;
+    "feeSelector(uint256,uint256)": FunctionFragment;
     "fixedPrice(address,uint256,uint256,uint256)": FunctionFragment;
     "getCurrentPrice(bytes32)": FunctionFragment;
     "minAuctionIncrement()": FunctionFragment;
@@ -66,6 +69,7 @@ export interface MADMarketplace721Interface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "MADFactory721"
+      | "basisPoints"
       | "bid"
       | "buy"
       | "cancelOrder"
@@ -73,7 +77,9 @@ export interface MADMarketplace721Interface extends utils.Interface {
       | "delOrder"
       | "dutchAuction"
       | "englishAuction"
-      | "feePercent"
+      | "feePercent0"
+      | "feePercent1"
+      | "feeSelector"
       | "fixedPrice"
       | "getCurrentPrice"
       | "minAuctionIncrement"
@@ -100,6 +106,10 @@ export interface MADMarketplace721Interface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "MADFactory721",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "basisPoints",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -147,8 +157,16 @@ export interface MADMarketplace721Interface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "feePercent",
+    functionFragment: "feePercent0",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "feePercent1",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "feeSelector",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "fixedPrice",
@@ -240,6 +258,10 @@ export interface MADMarketplace721Interface extends utils.Interface {
     functionFragment: "MADFactory721",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "basisPoints",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "bid", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "buy", data: BytesLike): Result;
   decodeFunctionResult(
@@ -256,7 +278,18 @@ export interface MADMarketplace721Interface extends utils.Interface {
     functionFragment: "englishAuction",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "feePercent", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "feePercent0",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "feePercent1",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "feeSelector",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "fixedPrice", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getCurrentPrice",
@@ -481,6 +514,8 @@ export interface MADMarketplace721 extends BaseContract {
   functions: {
     MADFactory721(overrides?: CallOverrides): Promise<[string]>;
 
+    basisPoints(overrides?: CallOverrides): Promise<[number]>;
+
     bid(
       _order: PromiseOrValue<BytesLike>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
@@ -526,7 +561,15 @@ export interface MADMarketplace721 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    feePercent(overrides?: CallOverrides): Promise<[number]>;
+    feePercent0(overrides?: CallOverrides): Promise<[number]>;
+
+    feePercent1(overrides?: CallOverrides): Promise<[number]>;
+
+    feeSelector(
+      arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     fixedPrice(
       _token: PromiseOrValue<string>,
@@ -655,6 +698,8 @@ export interface MADMarketplace721 extends BaseContract {
 
   MADFactory721(overrides?: CallOverrides): Promise<string>;
 
+  basisPoints(overrides?: CallOverrides): Promise<number>;
+
   bid(
     _order: PromiseOrValue<BytesLike>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
@@ -700,7 +745,15 @@ export interface MADMarketplace721 extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  feePercent(overrides?: CallOverrides): Promise<number>;
+  feePercent0(overrides?: CallOverrides): Promise<number>;
+
+  feePercent1(overrides?: CallOverrides): Promise<number>;
+
+  feeSelector(
+    arg0: PromiseOrValue<BigNumberish>,
+    arg1: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   fixedPrice(
     _token: PromiseOrValue<string>,
@@ -829,6 +882,8 @@ export interface MADMarketplace721 extends BaseContract {
   callStatic: {
     MADFactory721(overrides?: CallOverrides): Promise<string>;
 
+    basisPoints(overrides?: CallOverrides): Promise<number>;
+
     bid(
       _order: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -874,7 +929,15 @@ export interface MADMarketplace721 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    feePercent(overrides?: CallOverrides): Promise<number>;
+    feePercent0(overrides?: CallOverrides): Promise<number>;
+
+    feePercent1(overrides?: CallOverrides): Promise<number>;
+
+    feeSelector(
+      arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     fixedPrice(
       _token: PromiseOrValue<string>,
@@ -1098,6 +1161,8 @@ export interface MADMarketplace721 extends BaseContract {
   estimateGas: {
     MADFactory721(overrides?: CallOverrides): Promise<BigNumber>;
 
+    basisPoints(overrides?: CallOverrides): Promise<BigNumber>;
+
     bid(
       _order: PromiseOrValue<BytesLike>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
@@ -1143,7 +1208,15 @@ export interface MADMarketplace721 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    feePercent(overrides?: CallOverrides): Promise<BigNumber>;
+    feePercent0(overrides?: CallOverrides): Promise<BigNumber>;
+
+    feePercent1(overrides?: CallOverrides): Promise<BigNumber>;
+
+    feeSelector(
+      arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     fixedPrice(
       _token: PromiseOrValue<string>,
@@ -1247,6 +1320,8 @@ export interface MADMarketplace721 extends BaseContract {
   populateTransaction: {
     MADFactory721(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    basisPoints(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     bid(
       _order: PromiseOrValue<BytesLike>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
@@ -1292,7 +1367,15 @@ export interface MADMarketplace721 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    feePercent(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    feePercent0(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    feePercent1(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    feeSelector(
+      arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     fixedPrice(
       _token: PromiseOrValue<string>,

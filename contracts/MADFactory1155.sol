@@ -482,17 +482,16 @@ contract MADFactory1155 is MAD,
     view 
     returns (address[] memory memOffset) 
     {
-        if (amb == address(0)) {
-            assembly {
+        assembly {
+            switch iszero(amb)
+            case 1 {
                 memOffset := mload(0x40)
                 mstore(add(memOffset, 0x00), 2)
                 mstore(add(memOffset, 0x20), castedAddr)
                 mstore(add(memOffset, 0x40), origin())
                 mstore(0x40, add(memOffset, 0x60))
             }
-        }
-        else {
-            assembly {
+            case 0 {
                 memOffset := mload(0x40)
                 mstore(add(memOffset, 0x00), 3)
                 mstore(add(memOffset, 0x20), castedAddr)
@@ -504,28 +503,27 @@ contract MADFactory1155 is MAD,
     }
 
     /// @dev Builds shares dynamic sized array buffer for `splitterCheck` cases.
-    function _sharesBuffer(uint256 _ambShare) 
+function _sharesBuffer(uint256 _ambShare) 
     internal 
     pure 
     returns (uint256[] memory memOffset) 
     {
-        if (_ambShare == 0) {
-            assembly {
-                memOffset := mload(0x40)
-                mstore(add(memOffset, 0x00), 2) 
-                mstore(add(memOffset, 0x20), 10) 
-                mstore(add(memOffset, 0x40), 90) 
-                mstore(0x40, add(memOffset, 0x60))
+        assembly {
+            switch iszero(_ambShare)
+                case 1 {
+                    memOffset := mload(0x40)
+                    mstore(add(memOffset, 0x00), 2) 
+                    mstore(add(memOffset, 0x20), 10) 
+                    mstore(add(memOffset, 0x40), 90) 
+                    mstore(0x40, add(memOffset, 0x60))
             }
-        }
-        else {
-            assembly {
-                memOffset := mload(0x40)
-                mstore(add(memOffset, 0x00), 3)
-                mstore(add(memOffset, 0x20), 10) 
-                mstore(add(memOffset, 0x40), _ambShare) 
-                mstore(add(memOffset, 0x60), sub(90,_ambShare)) 
-                mstore(0x40, add(memOffset, 0x80))
+                case 0 {
+                    memOffset := mload(0x40)
+                    mstore(add(memOffset, 0x00), 3)
+                    mstore(add(memOffset, 0x20), 10) 
+                    mstore(add(memOffset, 0x40), _ambShare) 
+                    mstore(add(memOffset, 0x60), sub(90,_ambShare)) 
+                    mstore(0x40, add(memOffset, 0x80))
             }
         }
     }

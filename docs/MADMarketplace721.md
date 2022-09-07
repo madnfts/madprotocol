@@ -14,6 +14,18 @@ function MADFactory721() external view returns (contract FactoryVerifier)
 | ---- | ------------------------ | ----------- |
 | \_0  | contract FactoryVerifier | undefined   |
 
+### basisPoints
+
+```solidity
+function basisPoints() external view returns (uint16)
+```
+
+#### Returns
+
+| Name | Type   | Description |
+| ---- | ------ | ----------- |
+| \_0  | uint16 | undefined   |
+
 ### bid
 
 ```solidity
@@ -136,10 +148,10 @@ _Function Signature := 0x47c4be17_
 | \_startPrice | uint256          | undefined   |
 | \_endBlock   | uint256          | undefined   |
 
-### feePercent
+### feePercent0
 
 ```solidity
-function feePercent() external view returns (uint16)
+function feePercent0() external view returns (uint16)
 ```
 
 #### Returns
@@ -147,6 +159,39 @@ function feePercent() external view returns (uint16)
 | Name | Type   | Description |
 | ---- | ------ | ----------- |
 | \_0  | uint16 | undefined   |
+
+### feePercent1
+
+```solidity
+function feePercent1() external view returns (uint16)
+```
+
+#### Returns
+
+| Name | Type   | Description |
+| ---- | ------ | ----------- |
+| \_0  | uint16 | undefined   |
+
+### feeSelector
+
+```solidity
+function feeSelector(uint256, uint256) external view returns (bool)
+```
+
+_token =&gt; tokenId =&gt; case0(feePercent0)/case1(feePercent1)_
+
+#### Parameters
+
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | uint256 | undefined   |
+| \_1  | uint256 | undefined   |
+
+#### Returns
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| \_0  | bool | undefined   |
 
 ### fixedPrice
 

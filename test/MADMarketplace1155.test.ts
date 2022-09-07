@@ -2805,10 +2805,10 @@ describe("MADMarketplace1155", () => {
       const splAddr = await f1155.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
-      const splitter = await ethers.getContractAt(
-        "SplitterImpl",
-        splAddr,
-      );
+      // const splitter = await ethers.getContractAt(
+      //   "SplitterImpl",
+      //   splAddr,
+      // );
       const minAddr = await f1155.callStatic.getDeployedAddr(
         "MinSalt",
       );
@@ -2964,7 +2964,7 @@ describe("MADMarketplace1155", () => {
       );
       const cPrice = price.sub(fpRoyalty[1]);
       const fpFee = cPrice
-        .mul(ethers.BigNumber.from(250))
+        .mul(ethers.BigNumber.from(1000))
         .div(ethers.BigNumber.from(10000));
 
       await expect(() =>
@@ -3003,7 +3003,7 @@ describe("MADMarketplace1155", () => {
       );
       const cPrice2 = daPrice.sub(daRoyalty[1]);
       const daFee = cPrice2
-        .mul(ethers.BigNumber.from(250))
+        .mul(ethers.BigNumber.from(1000))
         .div(ethers.BigNumber.from(10000));
 
       await expect(() =>
@@ -3044,7 +3044,7 @@ describe("MADMarketplace1155", () => {
       await mine(10);
 
       const fpFee = price
-        .mul(ethers.BigNumber.from(250))
+        .mul(ethers.BigNumber.from(1000))
         .div(ethers.BigNumber.from(10000));
 
       await expect(() =>
@@ -3078,7 +3078,7 @@ describe("MADMarketplace1155", () => {
       const daPrice = price.sub(dec);
 
       const daFee = daPrice
-        .mul(ethers.BigNumber.from(250))
+        .mul(ethers.BigNumber.from(1000))
         .div(ethers.BigNumber.from(10000));
 
       await expect(() =>
@@ -3584,7 +3584,7 @@ describe("MADMarketplace1155", () => {
 
       const cPrice = bidVal.sub(eaRoyalty[1]);
       const fee = cPrice
-        .mul(ethers.BigNumber.from(250))
+        .mul(ethers.BigNumber.from(1000))
         .div(ethers.BigNumber.from(10000));
 
       expect(
@@ -3632,7 +3632,7 @@ describe("MADMarketplace1155", () => {
 
       const eaPrice = bidVal;
       const fee = eaPrice
-        .mul(ethers.BigNumber.from(250))
+        .mul(ethers.BigNumber.from(1000))
         .div(ethers.BigNumber.from(10000));
 
       expect(

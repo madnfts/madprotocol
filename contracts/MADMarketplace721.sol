@@ -49,6 +49,10 @@ contract MADMarketplace721 is
     // uint256 constant NAME_SLOT =
     // 0x8b30951df380b6b10da747e1167dd8e40bf8604c88c75b245dc172767f3b7320;
 
+    uint16 public constant feePercent1 = 2.5e2;
+    uint16 public constant feePercent0 = 1.0e3;
+    uint16 public constant basisPoints = 1.0e4;
+
     /// @dev token => id => orderID[]
     mapping(IERC721 => mapping(uint256 => bytes32[]))
         public orderIdByToken;
@@ -59,7 +63,10 @@ contract MADMarketplace721 is
     /// @dev orderID => order details
     mapping(bytes32 => Types.Order721) public orderInfo;
 
-    uint16 public constant feePercent = 250;
+    /// @dev token => tokenId => case0(feePercent0)/case1(feePercent1)
+    mapping(uint256 => mapping(uint256 => bool))
+        public feeSelector;
+
     uint256 public minOrderDuration;
     uint256 public minAuctionIncrement;
     uint256 public minBidValue;
@@ -592,6 +599,10 @@ contract MADMarketplace721 is
         bytes32 _orderId,
         address _to
     ) internal {
+        uint256 key = uint256(
+            uint160(address(_order.token))
+        ) << 12;
+        uint16 feePercent = _feeResolver(key, _order.tokenId);
         // load royalty info query to mem
         (address _receiver, uint256 _amount) = _order
             .token
@@ -603,7 +614,7 @@ contract MADMarketplace721 is
         );
         // update price and transfer fee to recipient
         uint256 fee = ((_price - _amount) * feePercent) /
-            10000;
+            basisPoints;
         SafeTransferLib.safeTransferETH(
             payable(recipient),
             fee
@@ -635,7 +646,11 @@ contract MADMarketplace721 is
         bytes32 _orderId,
         address _to
     ) internal {
-        uint256 fee = (_price * feePercent) / 10000;
+        uint256 key = uint256(
+            uint160(address(_order.token))
+        ) << 12;
+        uint16 feePercent = _feeResolver(key, _order.tokenId);
+        uint256 fee = (_price * feePercent) / basisPoints;
         SafeTransferLib.safeTransferETH(
             payable(recipient),
             fee
@@ -658,6 +673,28 @@ contract MADMarketplace721 is
             _to,
             _price
         );
+    }
+
+    function _feeResolver(uint256 _key, uint256 _tokenId)
+        internal
+        returns (uint16 _feePercent)
+    {
+        assembly {
+            mstore(0x00, _key)
+            mstore(0x20, feeSelector.slot)
+            let x := keccak256(0x00, 0x40)
+            mstore(0x20, x)
+            mstore(0x00, _tokenId)
+            let y := keccak256(0x00, 0x40)
+            switch sload(y)
+            case 0 {
+                sstore(y, 1)
+                _feePercent := feePercent0
+            }
+            case 1 {
+                _feePercent := feePercent1
+            }
+        }
     }
 
     ////////////////////////////////////////////////////////////////

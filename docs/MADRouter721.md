@@ -14,6 +14,20 @@ function MADFactory721() external view returns (contract FactoryVerifier)
 | ---- | ------------------------ | ----------- |
 | \_0  | contract FactoryVerifier | undefined   |
 
+### basicMintTo
+
+```solidity
+function basicMintTo(address _token, address _to, uint256 _amount) external nonpayable
+```
+
+#### Parameters
+
+| Name     | Type    | Description |
+| -------- | ------- | ----------- |
+| \_token  | address | undefined   |
+| \_to     | address | undefined   |
+| \_amount | uint256 | undefined   |
+
 ### burn
 
 ```solidity

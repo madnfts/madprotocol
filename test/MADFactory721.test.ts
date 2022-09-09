@@ -103,7 +103,7 @@ describe("MADFactory721", () => {
     it("Should revert if creator and owner are the same", async () => {
       const tx = f721
         .connect(owner)
-        .splitterCheck("MADSplitter1", dead, 0);
+        .splitterCheck("MADSplitter1", dead, dead, 0, 0);
 
       await expect(tx).to.be.revertedWith(
         FactoryErrors.InitFailed,
@@ -112,10 +112,10 @@ describe("MADFactory721", () => {
     it("Should revert if repeated salt is provided", async () => {
       await f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", dead, 0);
+        .splitterCheck("MADSplitter1", dead, dead, 0, 0);
       const tx = f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", dead, 0);
+        .splitterCheck("MADSplitter1", dead, dead, 0, 0);
 
       await expect(tx).to.be.revertedWith(
         FactoryErrors.DeploymentFailed,
@@ -124,7 +124,7 @@ describe("MADFactory721", () => {
     it("Should deploy splitter without ambassador, update storage and emit events", async () => {
       const tx: ContractTransaction = await f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", dead, 0);
+        .splitterCheck("MADSplitter1", dead, dead, 0, 0);
       const rc: ContractReceipt = await tx.wait();
 
       const indexed = rc.logs[1].data;
@@ -185,7 +185,13 @@ describe("MADFactory721", () => {
       // await f721.addAmbassador(amb.address);
       const tx: ContractTransaction = await f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", amb.address, 20);
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const rc: ContractReceipt = await tx.wait();
 
       const indexed = rc.logs[2].data;
@@ -259,7 +265,13 @@ describe("MADFactory721", () => {
       // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", amb.address, 20);
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
@@ -347,7 +359,13 @@ describe("MADFactory721", () => {
       // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", amb.address, 20);
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
@@ -434,7 +452,13 @@ describe("MADFactory721", () => {
       // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", amb.address, 20);
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
@@ -521,7 +545,13 @@ describe("MADFactory721", () => {
       // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc01)
-        .splitterCheck("MADSplitter1", amb.address, 20);
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
@@ -700,7 +730,7 @@ describe("MADFactory721", () => {
         f721.connect(acc01).pause(),
       ).to.be.revertedWith(FactoryErrors.Unauthorized);
       await expect(
-        f721.splitterCheck("", dead, 0),
+        f721.splitterCheck("", dead, dead, 0, 0),
       ).to.be.revertedWith(FactoryErrors.Paused);
       await expect(
         f721.createCollection(
@@ -728,7 +758,13 @@ describe("MADFactory721", () => {
       // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", amb.address, 20);
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
@@ -788,7 +824,13 @@ describe("MADFactory721", () => {
       // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", amb.address, 20);
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
@@ -838,7 +880,13 @@ describe("MADFactory721", () => {
       // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", amb.address, 20);
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
@@ -903,7 +951,13 @@ describe("MADFactory721", () => {
       // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", amb.address, 20);
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );

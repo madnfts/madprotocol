@@ -101,6 +101,53 @@ contract ERC1155Basic is
         emit PublicMintStateSet(_publicMintState);
     }
 
+    function mintTo(address to, uint256 amount)
+        external
+        onlyOwner
+        hasReachedMax(amount)
+    {
+        uint256 i;
+        // for (uint256 i = 0; i < amount; i++) {
+        for (i; i < amount; ) {
+            _mint(to, _nextId(), "");
+            unchecked {
+                ++i;
+            }
+        }
+
+        assembly {
+            if lt(i, amount) {
+                // LoopOverflow()
+                mstore(0x00, 0xdfb035c9)
+                revert(0x1c, 0x04)
+            }
+        }
+        // Transfer event emited by parent ERC1155 contract
+    }
+
+    function mintBatchTo(address to, uint256[] memory ids)
+        external
+        onlyOwner
+        hasReachedMax(ids.length)
+    {
+        uint256 i;
+        uint256 len = ids.length;
+        for (i; i < len; ) {
+            liveSupply.increment();
+            unchecked {
+                ++i;
+            }
+        }
+        assembly {
+            if lt(i, len) {
+                mstore(0x00, 0xdfb035c9)
+                revert(0x1c, 0x04)
+            }
+        }
+        _batchMint(to, ids, "");
+        // Transfer event emited by parent ERC1155 contract
+    }
+
     /// @dev Burns an arbitrary length array of ids of different owners.
     function burn(uint256[] memory ids) external onlyOwner {
         uint256 i;

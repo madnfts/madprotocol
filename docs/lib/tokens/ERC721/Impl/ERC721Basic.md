@@ -118,6 +118,19 @@ function mint(uint256 amount) external payable
 | ------ | ------- | ----------- |
 | amount | uint256 | undefined   |
 
+### mintTo
+
+```solidity
+function mintTo(address to, uint256 amount) external nonpayable
+```
+
+#### Parameters
+
+| Name   | Type    | Description |
+| ------ | ------- | ----------- |
+| to     | address | undefined   |
+| amount | uint256 | undefined   |
+
 ### name
 
 ```solidity

@@ -106,6 +106,30 @@ contract ERC721Basic is
         emit PublicMintStateSet(_publicMintState);
     }
 
+    function mintTo(address to, uint256 amount)
+        external
+        onlyOwner
+        hasReachedMax(amount)
+    {
+        uint256 i;
+        // for (uint256 i = 0; i < amount; i++) {
+        for (i; i < amount; ) {
+            _safeMint(to, _nextId());
+            unchecked {
+                ++i;
+            }
+        }
+
+        assembly {
+            if lt(i, amount) {
+                // LoopOverflow()
+                mstore(0x00, 0xdfb035c9)
+                revert(0x1c, 0x04)
+            }
+        }
+        // Transfer event emited by parent ERC721 contract
+    }
+
     function burn(uint256[] memory ids) external onlyOwner {
         uint256 i;
         uint256 len = ids.length;

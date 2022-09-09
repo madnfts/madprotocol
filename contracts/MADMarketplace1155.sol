@@ -237,12 +237,18 @@ contract MADMarketplace1155 is
 
         order.isSold = true;
 
+        uint256 key = uint256(
+            uint160(address(order.token))
+        ) << 12;
+
         // path for inhouse minted tokens
         if (
+            !feeSelector[key][order.tokenId][order.amount] &&
             MADFactory1155.creatorAuth(
                 address(order.token),
                 order.seller
-            ) == true
+            ) ==
+            true
         ) {
             _intPath(order, currentPrice, _order, msg.sender);
         }
@@ -261,7 +267,8 @@ contract MADMarketplace1155 is
                     order,
                     currentPrice,
                     _order,
-                    msg.sender
+                    msg.sender,
+                    key
                 );
             }
             // case for external tokens without ERC2981 support
@@ -270,7 +277,8 @@ contract MADMarketplace1155 is
                     order,
                     currentPrice,
                     _order,
-                    msg.sender
+                    msg.sender,
+                    key
                 );
             }
         }
@@ -291,12 +299,18 @@ contract MADMarketplace1155 is
 
         order.isSold = true;
 
+        uint256 key = uint256(
+            uint160(address(order.token))
+        ) << 12;
+
         // path for inhouse minted tokens
         if (
+            !feeSelector[key][order.tokenId][order.amount] &&
             MADFactory1155.creatorAuth(
                 address(order.token),
                 order.seller
-            ) == true
+            ) ==
+            true
         ) {
             _intPath(
                 order,
@@ -320,7 +334,8 @@ contract MADMarketplace1155 is
                     order,
                     order.lastBidPrice,
                     _order,
-                    order.lastBidder
+                    order.lastBidder,
+                    key
                 );
             }
             // case for external tokens without ERC2981 support
@@ -329,7 +344,8 @@ contract MADMarketplace1155 is
                     order,
                     order.lastBidPrice,
                     _order,
-                    order.lastBidder
+                    order.lastBidder,
+                    key
                 );
             }
         }
@@ -651,11 +667,9 @@ contract MADMarketplace1155 is
         Types.Order1155 storage _order,
         uint256 _price,
         bytes32 _orderId,
-        address _to
+        address _to,
+        uint256 key
     ) internal {
-        uint256 key = uint256(
-            uint160(address(_order.token))
-        ) << 12;
         uint16 feePercent = _feeResolver(
             key,
             _order.tokenId,
@@ -671,8 +685,7 @@ contract MADMarketplace1155 is
             _amount
         );
         // update price and transfer fee to recipient
-        uint256 fee = ((_price - _amount) * feePercent) /
-            basisPoints;
+        uint256 fee = (_price * feePercent) / basisPoints;
         SafeTransferLib.safeTransferETH(
             payable(recipient),
             fee
@@ -680,7 +693,7 @@ contract MADMarketplace1155 is
         // transfer remaining value to seller
         SafeTransferLib.safeTransferETH(
             payable(_order.seller),
-            (_price - _amount) - fee
+            (_price - (_amount + fee))
         );
         // transfer token and emit event
         _order.token.safeTransferFrom(
@@ -705,11 +718,9 @@ contract MADMarketplace1155 is
         Types.Order1155 storage _order,
         uint256 _price,
         bytes32 _orderId,
-        address _to
+        address _to,
+        uint256 key
     ) internal {
-        uint256 key = uint256(
-            uint160(address(_order.token))
-        ) << 12;
         uint16 feePercent = _feeResolver(
             key,
             _order.tokenId,

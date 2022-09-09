@@ -39,6 +39,8 @@ export interface ERC1155BasicInterface extends utils.Interface {
     "maxSupply()": FunctionFragment;
     "mint(uint256)": FunctionFragment;
     "mintBatch(uint256[])": FunctionFragment;
+    "mintBatchTo(address,uint256[])": FunctionFragment;
+    "mintTo(address,uint256)": FunctionFragment;
     "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "onERC1155Received(address,address,uint256,uint256,bytes)": FunctionFragment;
     "owner()": FunctionFragment;
@@ -71,6 +73,8 @@ export interface ERC1155BasicInterface extends utils.Interface {
       | "maxSupply"
       | "mint"
       | "mintBatch"
+      | "mintBatchTo"
+      | "mintTo"
       | "onERC1155BatchReceived"
       | "onERC1155Received"
       | "owner"
@@ -121,6 +125,14 @@ export interface ERC1155BasicInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "mintBatch",
     values: [PromiseOrValue<BigNumberish>[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "mintBatchTo",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "mintTo",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "onERC1155BatchReceived",
@@ -226,6 +238,11 @@ export interface ERC1155BasicInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "maxSupply", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "mintBatch", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "mintBatchTo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "mintTo", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "onERC1155BatchReceived",
     data: BytesLike
@@ -470,6 +487,18 @@ export interface ERC1155Basic extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    mintBatchTo(
+      to: PromiseOrValue<string>,
+      ids: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    mintTo(
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     onERC1155BatchReceived(
       arg0: PromiseOrValue<string>,
       arg1: PromiseOrValue<string>,
@@ -613,6 +642,18 @@ export interface ERC1155Basic extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  mintBatchTo(
+    to: PromiseOrValue<string>,
+    ids: PromiseOrValue<BigNumberish>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  mintTo(
+    to: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   onERC1155BatchReceived(
     arg0: PromiseOrValue<string>,
     arg1: PromiseOrValue<string>,
@@ -753,6 +794,18 @@ export interface ERC1155Basic extends BaseContract {
 
     mintBatch(
       ids: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    mintBatchTo(
+      to: PromiseOrValue<string>,
+      ids: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    mintTo(
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -984,6 +1037,18 @@ export interface ERC1155Basic extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    mintBatchTo(
+      to: PromiseOrValue<string>,
+      ids: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    mintTo(
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     onERC1155BatchReceived(
       arg0: PromiseOrValue<string>,
       arg1: PromiseOrValue<string>,
@@ -1124,6 +1189,18 @@ export interface ERC1155Basic extends BaseContract {
     mintBatch(
       ids: PromiseOrValue<BigNumberish>[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    mintBatchTo(
+      to: PromiseOrValue<string>,
+      ids: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    mintTo(
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     onERC1155BatchReceived(

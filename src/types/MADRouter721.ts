@@ -30,6 +30,7 @@ import type {
 export interface MADRouter721Interface extends utils.Interface {
   functions: {
     "MADFactory721()": FunctionFragment;
+    "basicMintTo(address,address,uint256)": FunctionFragment;
     "burn(address,uint256[])": FunctionFragment;
     "creatorMint(address,uint256)": FunctionFragment;
     "freeSettings(address,uint256,uint256,bytes32)": FunctionFragment;
@@ -51,6 +52,7 @@ export interface MADRouter721Interface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "MADFactory721"
+      | "basicMintTo"
       | "burn"
       | "creatorMint"
       | "freeSettings"
@@ -72,6 +74,14 @@ export interface MADRouter721Interface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "MADFactory721",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "basicMintTo",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "burn",
@@ -139,6 +149,10 @@ export interface MADRouter721Interface extends utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "MADFactory721",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "basicMintTo",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
@@ -306,6 +320,13 @@ export interface MADRouter721 extends BaseContract {
   functions: {
     MADFactory721(overrides?: CallOverrides): Promise<[string]>;
 
+    basicMintTo(
+      _token: PromiseOrValue<string>,
+      _to: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     burn(
       _token: PromiseOrValue<string>,
       _ids: PromiseOrValue<BigNumberish>[],
@@ -393,6 +414,13 @@ export interface MADRouter721 extends BaseContract {
 
   MADFactory721(overrides?: CallOverrides): Promise<string>;
 
+  basicMintTo(
+    _token: PromiseOrValue<string>,
+    _to: PromiseOrValue<string>,
+    _amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   burn(
     _token: PromiseOrValue<string>,
     _ids: PromiseOrValue<BigNumberish>[],
@@ -479,6 +507,13 @@ export interface MADRouter721 extends BaseContract {
 
   callStatic: {
     MADFactory721(overrides?: CallOverrides): Promise<string>;
+
+    basicMintTo(
+      _token: PromiseOrValue<string>,
+      _to: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     burn(
       _token: PromiseOrValue<string>,
@@ -634,6 +669,13 @@ export interface MADRouter721 extends BaseContract {
   estimateGas: {
     MADFactory721(overrides?: CallOverrides): Promise<BigNumber>;
 
+    basicMintTo(
+      _token: PromiseOrValue<string>,
+      _to: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     burn(
       _token: PromiseOrValue<string>,
       _ids: PromiseOrValue<BigNumberish>[],
@@ -721,6 +763,13 @@ export interface MADRouter721 extends BaseContract {
 
   populateTransaction: {
     MADFactory721(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    basicMintTo(
+      _token: PromiseOrValue<string>,
+      _to: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     burn(
       _token: PromiseOrValue<string>,

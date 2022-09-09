@@ -42,7 +42,9 @@ library Types {
         address splitter;
         bytes32 splitterSalt;
         address ambassador;
+        address project;
         uint256 ambShare;
+        uint256 projectShare;
         bool valid;
     }
 

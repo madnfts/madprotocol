@@ -291,7 +291,7 @@ _Setter for EIP712 signer/validator instance.Function Sighash := 0x6c19e783_
 ### splitterCheck
 
 ```solidity
-function splitterCheck(string _splitterSalt, address _ambassador, uint256 _ambShare) external nonpayable
+function splitterCheck(string _splitterSalt, address _ambassador, address _project, uint256 _ambShare, uint256 _projectShare) external nonpayable
 ```
 
 Splitter deployment pusher.
@@ -304,12 +304,14 @@ _Function Sighash := 0x9e5c4b70_
 | -------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | \_splitterSalt | string  | Nonce/Entropy factor used by CREATE3 method. Must be always different to avoid address collision. to generate payment splitter deployment address.                     |
 | \_ambassador   | address | User may choose from one of the whitelisted addresses to donate 1%-20% of secondary sales royalties (optional, will be disregarded if left empty(value == address(0)). |
+| \_project      | address | undefined                                                                                                                                                              |
 | \_ambShare     | uint256 | Percentage (1%-20%) of secondary sales royalties to be donated to an ambassador (optional, will be disregarded if left empty(value == 0)).                             |
+| \_projectShare | uint256 | undefined                                                                                                                                                              |
 
 ### splitterInfo
 
 ```solidity
-function splitterInfo(address, address) external view returns (address splitter, bytes32 splitterSalt, address ambassador, uint256 ambShare, bool valid)
+function splitterInfo(address, address) external view returns (address splitter, bytes32 splitterSalt, address ambassador, address project, uint256 ambShare, uint256 projectShare, bool valid)
 ```
 
 _Nested mapping that takes an collection creator as key of an hashmap of splitter contracts to its respective deployment configs._
@@ -328,7 +330,9 @@ _Nested mapping that takes an collection creator as key of an hashmap of splitte
 | splitter     | address | undefined   |
 | splitterSalt | bytes32 | undefined   |
 | ambassador   | address | undefined   |
+| project      | address | undefined   |
 | ambShare     | uint256 | undefined   |
+| projectShare | uint256 | undefined   |
 | valid        | bool    | undefined   |
 
 ### typeChecker

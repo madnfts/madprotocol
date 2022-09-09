@@ -30,6 +30,8 @@ import type {
 export interface MADRouter1155Interface extends utils.Interface {
   functions: {
     "MADFactory1155()": FunctionFragment;
+    "basicMintBatchTo(address,address,uint256[])": FunctionFragment;
+    "basicMintTo(address,address,uint256)": FunctionFragment;
     "batchBurn(address,address,uint256[])": FunctionFragment;
     "burn(address,uint256[])": FunctionFragment;
     "creatorBatchMint(address,uint256[])": FunctionFragment;
@@ -53,6 +55,8 @@ export interface MADRouter1155Interface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "MADFactory1155"
+      | "basicMintBatchTo"
+      | "basicMintTo"
       | "batchBurn"
       | "burn"
       | "creatorBatchMint"
@@ -76,6 +80,22 @@ export interface MADRouter1155Interface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "MADFactory1155",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "basicMintBatchTo",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>[]
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "basicMintTo",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "batchBurn",
@@ -155,6 +175,14 @@ export interface MADRouter1155Interface extends utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "MADFactory1155",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "basicMintBatchTo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "basicMintTo",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "batchBurn", data: BytesLike): Result;
@@ -327,6 +355,20 @@ export interface MADRouter1155 extends BaseContract {
   functions: {
     MADFactory1155(overrides?: CallOverrides): Promise<[string]>;
 
+    basicMintBatchTo(
+      _token: PromiseOrValue<string>,
+      _to: PromiseOrValue<string>,
+      _ids: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    basicMintTo(
+      _token: PromiseOrValue<string>,
+      _to: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     batchBurn(
       _token: PromiseOrValue<string>,
       _from: PromiseOrValue<string>,
@@ -427,6 +469,20 @@ export interface MADRouter1155 extends BaseContract {
 
   MADFactory1155(overrides?: CallOverrides): Promise<string>;
 
+  basicMintBatchTo(
+    _token: PromiseOrValue<string>,
+    _to: PromiseOrValue<string>,
+    _ids: PromiseOrValue<BigNumberish>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  basicMintTo(
+    _token: PromiseOrValue<string>,
+    _to: PromiseOrValue<string>,
+    _amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   batchBurn(
     _token: PromiseOrValue<string>,
     _from: PromiseOrValue<string>,
@@ -526,6 +582,20 @@ export interface MADRouter1155 extends BaseContract {
 
   callStatic: {
     MADFactory1155(overrides?: CallOverrides): Promise<string>;
+
+    basicMintBatchTo(
+      _token: PromiseOrValue<string>,
+      _to: PromiseOrValue<string>,
+      _ids: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    basicMintTo(
+      _token: PromiseOrValue<string>,
+      _to: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     batchBurn(
       _token: PromiseOrValue<string>,
@@ -694,6 +764,20 @@ export interface MADRouter1155 extends BaseContract {
   estimateGas: {
     MADFactory1155(overrides?: CallOverrides): Promise<BigNumber>;
 
+    basicMintBatchTo(
+      _token: PromiseOrValue<string>,
+      _to: PromiseOrValue<string>,
+      _ids: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    basicMintTo(
+      _token: PromiseOrValue<string>,
+      _to: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     batchBurn(
       _token: PromiseOrValue<string>,
       _from: PromiseOrValue<string>,
@@ -794,6 +878,20 @@ export interface MADRouter1155 extends BaseContract {
 
   populateTransaction: {
     MADFactory1155(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    basicMintBatchTo(
+      _token: PromiseOrValue<string>,
+      _to: PromiseOrValue<string>,
+      _ids: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    basicMintTo(
+      _token: PromiseOrValue<string>,
+      _to: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     batchBurn(
       _token: PromiseOrValue<string>,

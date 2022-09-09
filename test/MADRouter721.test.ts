@@ -72,7 +72,13 @@ describe("MADRouter721", () => {
       // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", amb.address, 20);
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
@@ -108,7 +114,13 @@ describe("MADRouter721", () => {
       // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", amb.address, 20);
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
@@ -163,7 +175,13 @@ describe("MADRouter721", () => {
       // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", amb.address, 20);
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
@@ -216,7 +234,13 @@ describe("MADRouter721", () => {
       // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", amb.address, 20);
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
@@ -276,7 +300,13 @@ describe("MADRouter721", () => {
       // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", amb.address, 20);
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
@@ -315,7 +345,13 @@ describe("MADRouter721", () => {
       // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", amb.address, 20);
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
@@ -363,7 +399,13 @@ describe("MADRouter721", () => {
       // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", amb.address, 20);
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
@@ -402,7 +444,13 @@ describe("MADRouter721", () => {
       // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", amb.address, 20);
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
@@ -443,7 +491,13 @@ describe("MADRouter721", () => {
       // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", amb.address, 20);
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
@@ -482,7 +536,13 @@ describe("MADRouter721", () => {
       // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", amb.address, 20);
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
@@ -545,7 +605,13 @@ describe("MADRouter721", () => {
       // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", amb.address, 20);
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
@@ -597,7 +663,13 @@ describe("MADRouter721", () => {
       // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", amb.address, 20);
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
@@ -655,7 +727,13 @@ describe("MADRouter721", () => {
       // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", amb.address, 20);
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
@@ -709,7 +787,13 @@ describe("MADRouter721", () => {
       await f721.setSigner(await signer.getAddress());
       await f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", amb.address, 20);
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
@@ -831,7 +915,13 @@ describe("MADRouter721", () => {
       // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", amb.address, 20);
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
@@ -863,7 +953,13 @@ describe("MADRouter721", () => {
       // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", amb.address, 20);
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
@@ -981,7 +1077,13 @@ describe("MADRouter721", () => {
       // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", amb.address, 20);
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
@@ -1032,7 +1134,13 @@ describe("MADRouter721", () => {
       // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", amb.address, 20);
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
@@ -1085,7 +1193,13 @@ describe("MADRouter721", () => {
       // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", amb.address, 20);
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
@@ -1118,7 +1232,13 @@ describe("MADRouter721", () => {
       // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", amb.address, 20);
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
@@ -1163,7 +1283,13 @@ describe("MADRouter721", () => {
       // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", amb.address, 20);
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
@@ -1192,7 +1318,13 @@ describe("MADRouter721", () => {
       // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", amb.address, 20);
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
@@ -1248,7 +1380,13 @@ describe("MADRouter721", () => {
 
       await f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", amb.address, 20);
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
@@ -1297,7 +1435,13 @@ describe("MADRouter721", () => {
       );
       await f721
         .connect(mad)
-        .splitterCheck("MADSplitter2", amb.address, 20);
+        .splitterCheck(
+          "MADSplitter2",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const madSpl = await f721.callStatic.getDeployedAddr(
         "MADSplitter2",
       );
@@ -1344,7 +1488,7 @@ describe("MADRouter721", () => {
       );
       await f721
         .connect(amb)
-        .splitterCheck("MADSplitter3", dead, 0);
+        .splitterCheck("MADSplitter3", dead, dead, 0, 0);
       const ambSpl = await f721.callStatic.getDeployedAddr(
         "MADSplitter3",
       );
@@ -1393,7 +1537,7 @@ describe("MADRouter721", () => {
 
       await f721
         .connect(await ethers.getSigner(newUser))
-        .splitterCheck("MADSplitter4", dead, 0);
+        .splitterCheck("MADSplitter4", dead, dead, 0, 0);
       const userSpl = await f721.callStatic.getDeployedAddr(
         "MADSplitter4",
       );

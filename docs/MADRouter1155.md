@@ -14,6 +14,34 @@ function MADFactory1155() external view returns (contract FactoryVerifier)
 | ---- | ------------------------ | ----------- |
 | \_0  | contract FactoryVerifier | undefined   |
 
+### basicMintBatchTo
+
+```solidity
+function basicMintBatchTo(address _token, address _to, uint256[] _ids) external nonpayable
+```
+
+#### Parameters
+
+| Name    | Type      | Description |
+| ------- | --------- | ----------- |
+| \_token | address   | undefined   |
+| \_to    | address   | undefined   |
+| \_ids   | uint256[] | undefined   |
+
+### basicMintTo
+
+```solidity
+function basicMintTo(address _token, address _to, uint256 _amount) external nonpayable
+```
+
+#### Parameters
+
+| Name     | Type    | Description |
+| -------- | ------- | ----------- |
+| \_token  | address | undefined   |
+| \_to     | address | undefined   |
+| \_amount | uint256 | undefined   |
+
 ### batchBurn
 
 ```solidity

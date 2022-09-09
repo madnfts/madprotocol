@@ -46,7 +46,7 @@ export interface MADFactory1155Interface extends utils.Interface {
     "setOwner(address)": FunctionFragment;
     "setRouter(address)": FunctionFragment;
     "setSigner(address)": FunctionFragment;
-    "splitterCheck(string,address,uint256)": FunctionFragment;
+    "splitterCheck(string,address,address,uint256,uint256)": FunctionFragment;
     "splitterInfo(address,address)": FunctionFragment;
     "typeChecker(bytes32)": FunctionFragment;
     "unpause()": FunctionFragment;
@@ -142,6 +142,8 @@ export interface MADFactory1155Interface extends utils.Interface {
     values: [
       PromiseOrValue<string>,
       PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>
     ]
   ): string;
@@ -462,7 +464,9 @@ export interface MADFactory1155 extends BaseContract {
     splitterCheck(
       _splitterSalt: PromiseOrValue<string>,
       _ambassador: PromiseOrValue<string>,
+      _project: PromiseOrValue<string>,
       _ambShare: PromiseOrValue<BigNumberish>,
+      _projectShare: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -471,11 +475,13 @@ export interface MADFactory1155 extends BaseContract {
       arg1: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<
-      [string, string, string, BigNumber, boolean] & {
+      [string, string, string, string, BigNumber, BigNumber, boolean] & {
         splitter: string;
         splitterSalt: string;
         ambassador: string;
+        project: string;
         ambShare: BigNumber;
+        projectShare: BigNumber;
         valid: boolean;
       }
     >;
@@ -583,7 +589,9 @@ export interface MADFactory1155 extends BaseContract {
   splitterCheck(
     _splitterSalt: PromiseOrValue<string>,
     _ambassador: PromiseOrValue<string>,
+    _project: PromiseOrValue<string>,
     _ambShare: PromiseOrValue<BigNumberish>,
+    _projectShare: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -592,11 +600,13 @@ export interface MADFactory1155 extends BaseContract {
     arg1: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<
-    [string, string, string, BigNumber, boolean] & {
+    [string, string, string, string, BigNumber, BigNumber, boolean] & {
       splitter: string;
       splitterSalt: string;
       ambassador: string;
+      project: string;
       ambShare: BigNumber;
+      projectShare: BigNumber;
       valid: boolean;
     }
   >;
@@ -702,7 +712,9 @@ export interface MADFactory1155 extends BaseContract {
     splitterCheck(
       _splitterSalt: PromiseOrValue<string>,
       _ambassador: PromiseOrValue<string>,
+      _project: PromiseOrValue<string>,
       _ambShare: PromiseOrValue<BigNumberish>,
+      _projectShare: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -711,11 +723,13 @@ export interface MADFactory1155 extends BaseContract {
       arg1: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<
-      [string, string, string, BigNumber, boolean] & {
+      [string, string, string, string, BigNumber, BigNumber, boolean] & {
         splitter: string;
         splitterSalt: string;
         ambassador: string;
+        project: string;
         ambShare: BigNumber;
+        projectShare: BigNumber;
         valid: boolean;
       }
     >;
@@ -909,7 +923,9 @@ export interface MADFactory1155 extends BaseContract {
     splitterCheck(
       _splitterSalt: PromiseOrValue<string>,
       _ambassador: PromiseOrValue<string>,
+      _project: PromiseOrValue<string>,
       _ambShare: PromiseOrValue<BigNumberish>,
+      _projectShare: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1015,7 +1031,9 @@ export interface MADFactory1155 extends BaseContract {
     splitterCheck(
       _splitterSalt: PromiseOrValue<string>,
       _ambassador: PromiseOrValue<string>,
+      _project: PromiseOrValue<string>,
       _ambShare: PromiseOrValue<BigNumberish>,
+      _projectShare: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

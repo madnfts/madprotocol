@@ -123,14 +123,25 @@ contract MADFactory721 is MAD,
     function splitterCheck(
         string memory _splitterSalt,
         address _ambassador,
-        uint256 _ambShare
+        address _project,
+        uint256 _ambShare,
+        uint256 _projectShare
     ) external nonReentrant isThisOg whenNotPaused {
         bytes32 splitterSalt = keccak256(
             bytes(_splitterSalt)
         );
-        if (_ambassador == address(0)) {
-            address[] memory _payees = _payeesBuffer(address(0), owner);
-            uint256[] memory _shares = _sharesBuffer(0);
+        if (
+            _ambassador == address(0) && 
+            _project == address(0)) 
+        {
+            // [owner, tx.origin]
+            address[] memory _payees = _payeesBuffer(
+                address(0),
+                address(0),
+                owner
+            );
+            // [10, 90]
+            uint256[] memory _shares = _sharesBuffer(0,0);
 
             address _splitter = SplitterDeployer._SplitterDeploy(
                 _splitterSalt,
@@ -143,7 +154,9 @@ contract MADFactory721 is MAD,
                     splitter: _splitter,
                     splitterSalt: splitterSalt,
                     ambassador: address(0),
+                    project: address(0),
                     ambShare: 0,
+                    projectShare: 0,
                     valid: true
                 });
 
@@ -155,19 +168,23 @@ contract MADFactory721 is MAD,
             );
 
         } else if (
+            _ambassador != address(0) &&
+            _project == address(0) &&
             _ambShare != 0 && 
-            _ambShare < 21 &&
-            _ambassador != address(0)
-            // ambWhitelist[_ambassador] == true
+            _ambShare < 21 
         ) {
-            address[] memory _payees = _payeesBuffer(_ambassador, owner);
-            uint256[] memory _shares = _sharesBuffer(_ambShare); 
+            // [owner, _ambassador, tx.origin]
+            address[] memory _payees = _payeesBuffer(
+                _ambassador, 
+                address(0),
+                owner
+            );
+            // [10, _ambShare, 90 - _ambShare]
+            uint256[] memory _shares = _sharesBuffer(_ambShare, 0); 
 
             address _splitter = SplitterDeployer._SplitterDeploy(
                 _splitterSalt,
-                // [owner, _ambassador, tx.origin],
                 _payees,
-                // [10, _ambShare, 90 - _ambShare]
                 _shares
             );
 
@@ -176,7 +193,95 @@ contract MADFactory721 is MAD,
                     splitter: _splitter,
                     splitterSalt: splitterSalt,
                     ambassador: _ambassador,
+                    project: address(0),
                     ambShare: _ambShare,
+                    projectShare: 0,
+                    valid: true
+                });
+
+            emit SplitterCreated(
+                tx.origin,
+                _shares,
+                _payees,
+                _splitter
+            );
+
+        } else if(
+            _project != address(0) && 
+            _ambassador == address(0) &&
+            _projectShare != 0 &&
+            _projectShare < 91
+        ) {
+            // [owner, _project, tx.origin]
+            address[] memory _payees = _payeesBuffer(
+                address(0),
+                _project, 
+                owner
+            );
+            // [10, _projectShare, 90 - _projectShare]
+            uint256[] memory _shares = _sharesBuffer(0, _projectShare); 
+
+            address _splitter = SplitterDeployer._SplitterDeploy(
+                _splitterSalt,
+                _payees,
+                _shares
+            );
+
+            splitterInfo[tx.origin][_splitter] = Types
+                .SplitterConfig({
+                    splitter: _splitter,
+                    splitterSalt: splitterSalt,
+                    ambassador: address(0),
+                    project: _project,
+                    ambShare: 0,
+                    projectShare: _projectShare,
+                    valid: true
+                });
+
+            emit SplitterCreated(
+                tx.origin,
+                _shares,
+                _payees,
+                _splitter
+            );
+
+        } else if(
+            _ambassador != address(0) &&
+            _project != address(0) && 
+            _ambShare != 0 && 
+            _ambShare < 21 &&
+            _projectShare != 0 &&
+            _projectShare < 71
+        ) { 
+            // [owner, _ambassador, _project, tx.origin]
+            address[] memory _payees = _payeesBuffer(
+                _ambassador,
+                _project, 
+                owner
+            );
+
+            // [
+                // 10, 
+                // _ambShare, 
+                // _projectShare, 
+                // 90 - (_ambShare + _projectShare) 
+            // ]
+            uint256[] memory _shares = _sharesBuffer(_ambShare, _projectShare); 
+
+            address _splitter = SplitterDeployer._SplitterDeploy(
+                _splitterSalt,
+                _payees,
+                _shares
+            );
+
+            splitterInfo[tx.origin][_splitter] = Types
+                .SplitterConfig({
+                    splitter: _splitter,
+                    splitterSalt: splitterSalt,
+                    ambassador: _ambassador,
+                    project: _project,
+                    ambShare: _ambShare,
+                    projectShare: _projectShare,
                     valid: true
                 });
 
@@ -489,13 +594,19 @@ contract MADFactory721 is MAD,
     }
 
     /// @dev Builds payees dynamic sized array buffer for `splitterCheck` cases.
-    function _payeesBuffer(address amb, address castedAddr) 
+    function _payeesBuffer(
+        address amb, 
+        address project,
+        address castedAddr) 
     internal 
     view 
     returns (address[] memory memOffset) 
     {
         assembly {
-            switch iszero(amb)
+            switch and(
+                    iszero(amb),
+                    iszero(project)
+                    )
             case 1 {
                 memOffset := mload(0x40)
                 mstore(add(memOffset, 0x00), 2)
@@ -504,38 +615,87 @@ contract MADFactory721 is MAD,
                 mstore(0x40, add(memOffset, 0x60))
             }
             case 0 {
-                memOffset := mload(0x40)
-                mstore(add(memOffset, 0x00), 3)
-                mstore(add(memOffset, 0x20), castedAddr)
-                mstore(add(memOffset, 0x40), amb)
-                mstore(add(memOffset, 0x60), origin())
-                mstore(0x40, add(memOffset, 0x80))
+                switch iszero(project)
+                case 1 {
+                    memOffset := mload(0x40)
+                    mstore(add(memOffset, 0x00), 3)
+                    mstore(add(memOffset, 0x20), castedAddr)
+                    mstore(add(memOffset, 0x40), amb)
+                    mstore(add(memOffset, 0x60), origin())
+                    mstore(0x40, add(memOffset, 0x80))
+                }
+                case 0 {
+                    switch iszero(amb)
+                    case 1 {
+                        memOffset := mload(0x40)
+                        mstore(add(memOffset, 0x00), 3)
+                        mstore(add(memOffset, 0x20), castedAddr)
+                        mstore(add(memOffset, 0x40), project)
+                        mstore(add(memOffset, 0x60), origin())
+                        mstore(0x40, add(memOffset, 0x80))
+                    }
+                    case 0 {
+                        memOffset := mload(0x40)
+                        mstore(add(memOffset, 0x00), 4)
+                        mstore(add(memOffset, 0x20), castedAddr)
+                        mstore(add(memOffset, 0x40), amb)
+                        mstore(add(memOffset, 0x60), project)
+                        mstore(add(memOffset, 0x80), origin())
+                        mstore(0x40, add(memOffset, 0xa0))
+                    }
+                }
             }
         }
     }
 
     /// @dev Builds shares dynamic sized array buffer for `splitterCheck` cases.
-    function _sharesBuffer(uint256 _ambShare) 
+    function _sharesBuffer(uint256 _ambShare, uint256 _projectShare) 
     internal 
     pure 
     returns (uint256[] memory memOffset) 
     {
         assembly {
-            switch iszero(_ambShare)
-                case 1 {
-                    memOffset := mload(0x40)
-                    mstore(add(memOffset, 0x00), 2) 
-                    mstore(add(memOffset, 0x20), 10) 
-                    mstore(add(memOffset, 0x40), 90) 
-                    mstore(0x40, add(memOffset, 0x60))
+            switch and(
+                    iszero(_ambShare),
+                    iszero(_projectShare)
+                    )
+            case 1 {
+                memOffset := mload(0x40)
+                mstore(add(memOffset, 0x00), 2) 
+                mstore(add(memOffset, 0x20), 10) 
+                mstore(add(memOffset, 0x40), 90) 
+                mstore(0x40, add(memOffset, 0x60))
             }
-                case 0 {
+            case 0 {
+                switch iszero(_projectShare)
+                case 1 {
                     memOffset := mload(0x40)
                     mstore(add(memOffset, 0x00), 3)
                     mstore(add(memOffset, 0x20), 10) 
                     mstore(add(memOffset, 0x40), _ambShare) 
                     mstore(add(memOffset, 0x60), sub(90,_ambShare)) 
                     mstore(0x40, add(memOffset, 0x80))
+                }
+                case 0 {
+                    switch iszero(_ambShare)
+                    case 1 {
+                        memOffset := mload(0x40)
+                        mstore(add(memOffset, 0x00), 3)
+                        mstore(add(memOffset, 0x20), 10) 
+                        mstore(add(memOffset, 0x40), _projectShare) 
+                        mstore(add(memOffset, 0x60), sub(90,_projectShare)) 
+                        mstore(0x40, add(memOffset, 0x80))
+                    }
+                    case 0 {
+                        memOffset := mload(0x40)
+                        mstore(add(memOffset, 0x00), 4)
+                        mstore(add(memOffset, 0x20), 10) 
+                        mstore(add(memOffset, 0x40), _ambShare) 
+                        mstore(add(memOffset, 0x60), _projectShare) 
+                        mstore(add(memOffset, 0x80), sub(90,add(_ambShare,_projectShare))) 
+                        mstore(0x40, add(memOffset, 0xa0))
+                    }
+                }
             }
         }
     }

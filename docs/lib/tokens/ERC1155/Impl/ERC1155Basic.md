@@ -140,6 +140,32 @@ _Enables public minting of an arbitrary length array of specific ids._
 | ---- | --------- | ----------- |
 | ids  | uint256[] | undefined   |
 
+### mintBatchTo
+
+```solidity
+function mintBatchTo(address to, uint256[] ids) external nonpayable
+```
+
+#### Parameters
+
+| Name | Type      | Description |
+| ---- | --------- | ----------- |
+| to   | address   | undefined   |
+| ids  | uint256[] | undefined   |
+
+### mintTo
+
+```solidity
+function mintTo(address to, uint256 amount) external nonpayable
+```
+
+#### Parameters
+
+| Name   | Type    | Description |
+| ------ | ------- | ----------- |
+| to     | address | undefined   |
+| amount | uint256 | undefined   |
+
 ### onERC1155BatchReceived
 
 ```solidity

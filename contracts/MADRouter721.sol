@@ -139,6 +139,16 @@ contract MADRouter721 is
         ERC721Minimal(_token).safeMint(_to);
     }
 
+    function basicMintTo(
+        address _token,
+        address _to,
+        uint256 _amount
+    ) external nonReentrant whenNotPaused {
+        (, uint8 _tokenType) = _tokenRender(_token);
+        if (_tokenType != 1) revert("INVALID_TYPE");
+        ERC721Basic(_token).mintTo(_to, _amount);
+    }
+
     /// @notice Global token burn controller/single pusher for all token types.
     /// @dev Function Sighash := 0xba36b92d
     /// @param _ids The token IDs of each token to be burnt;

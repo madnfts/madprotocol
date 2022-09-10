@@ -19,8 +19,42 @@ const main = async () => {
 
   console.log(`ERC721 Marketplace address: ${m721.address}`);
 
+  /// deploy the libraries and link them
+
+  const ERC1155BasicDeployer = await ethers.getContractFactory('ERC1155BasicDeployer'); 
+  const ERC1155LazyDeployer = await ethers.getContractFactory('ERC1155LazyDeployer')
+  const ERC1155MinimalDeployer = await ethers.getContractFactory('ERC1155MinimalDeployer')
+  const ERC1155WhitelistDeployer = await ethers.getContractFactory('ERC1155WhitelistDeployer')
+  const SplitterDeployer = await ethers.getContractFactory('SplitterDeployer')
+
+  const ERC721BasicDeployer = await ethers.getContractFactory('ERC721BasicDeployer'); 
+  const ERC721LazyDeployer = await ethers.getContractFactory('ERC721LazyDeployer')
+  const ERC721MinimalDeployer = await ethers.getContractFactory('ERC721MinimalDeployer')
+  const ERC721WhitelistDeployer = await ethers.getContractFactory('ERC721WhitelistDeployer')
+
+  const bd1155 = await ERC1155BasicDeployer.deploy()
+  const ld1155 = await ERC1155LazyDeployer.deploy()
+  const md1155 = await ERC1155MinimalDeployer.deploy()
+  const wd1155 = await ERC1155WhitelistDeployer.deploy()
+  const sd = await SplitterDeployer.deploy()
+
+  const bd721 = await ERC721BasicDeployer.deploy()
+  const ld721 = await ERC721LazyDeployer.deploy()
+  const md721 = await ERC721MinimalDeployer.deploy()
+  const wd721 = await ERC721WhitelistDeployer.deploy()
+
+
   const MADFactory721 = await ethers.getContractFactory(
     "MADFactory721",
+    {
+      libraries: {
+        ERC721BasicDeployer: bd721.address,
+        ERC721LazyDeployer: ld721.address,
+        ERC721MinimalDeployer: md721.address,
+        ERC721WhitelistDeployer: wd721.address,
+        SplitterDeployer: sd.address
+      }
+    }
   );
   const f721 = await MADFactory721.deploy(
     m721.address, // marketplace addr
@@ -55,6 +89,15 @@ const main = async () => {
 
   const MADFactory1155 = await ethers.getContractFactory(
     "MADFactory1155",
+    {
+      libraries: {
+        ERC1155BasicDeployer: bd1155.address,
+        ERC1155LazyDeployer: ld1155.address,
+        ERC1155MinimalDeployer: md1155.address,
+        ERC1155WhitelistDeployer: wd1155.address,
+        SplitterDeployer: sd.address
+      }
+    }
   );
   const f1155 = await MADFactory1155.deploy(
     m1155.address, // marketplace addr

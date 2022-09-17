@@ -366,7 +366,8 @@ contract MADFactory721 is MAD,
         emit ERC721MinimalCreated(
             _splitter,
             deployed,
-            tx.origin
+            _name,
+            _symbol
         );
         }
         if (_tokenType == 1) {
@@ -397,7 +398,8 @@ contract MADFactory721 is MAD,
         emit ERC721BasicCreated(
             _splitter,
             deployed,
-            tx.origin
+            _name,
+            _symbol
         );
         }
         if (_tokenType == 2) {
@@ -428,7 +430,8 @@ contract MADFactory721 is MAD,
         emit ERC721WhitelistCreated(
             _splitter,
             deployed,
-            tx.origin
+            _name,
+            _symbol
         );
         }
         if (_tokenType > 2) {
@@ -458,7 +461,8 @@ contract MADFactory721 is MAD,
         emit ERC721LazyCreated(
             _splitter,
             deployed,
-            tx.origin
+            _name,
+            _symbol
         );
         }
     }

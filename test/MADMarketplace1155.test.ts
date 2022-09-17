@@ -214,6 +214,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -346,6 +348,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -393,6 +397,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -451,6 +457,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -500,6 +508,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -614,6 +624,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           2,
           "salt",
+          "min",
+          "min",
           price,
           1000,
           "ipfs://cid/",
@@ -906,6 +918,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -953,6 +967,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -1011,6 +1027,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -1068,6 +1086,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -1181,6 +1201,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           2,
           "salt",
+          "",
+          "",
           price,
           1000,
           "ipfs://cid/",
@@ -1473,6 +1495,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -1520,6 +1544,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -1578,6 +1604,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -1627,6 +1655,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -1740,6 +1770,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           2,
           "salt",
+          "",
+          "",
           price,
           1000,
           "ipfs://cid/",
@@ -2032,6 +2064,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -2105,6 +2139,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -2163,6 +2199,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -2224,6 +2262,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -2285,6 +2325,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -2344,6 +2386,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -2442,6 +2486,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -2501,6 +2547,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -2560,6 +2608,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -2621,6 +2671,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -2682,6 +2734,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -2746,6 +2800,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -2787,6 +2843,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
+          "1155Basic",
+          "BASIC",
           price,
           1,
           "ipfs://cid/",
@@ -2991,6 +3049,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -3041,6 +3101,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
+          "1155Basic",
+          "BASIC",
           price,
           1,
           "ipfs://cid/",
@@ -3289,6 +3351,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -3365,6 +3429,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -3481,6 +3547,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -3543,6 +3611,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -3683,6 +3753,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -3874,6 +3946,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -3936,6 +4010,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -4006,6 +4082,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -4087,6 +4165,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -4175,6 +4255,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -4263,6 +4345,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -4350,6 +4434,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           2,
           "salt",
+          "",
+          "",
           price,
           1000,
           "ipfs://cid/",
@@ -4445,6 +4531,8 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           2,
           "salt",
+          "",
+          "",
           price,
           1000,
           "ipfs://cid/",

@@ -312,6 +312,8 @@ function splitterCheck(
     /// 0=Minimal; 1=Basic; 2=Whitelist; 3=Lazy.
     /// @param _tokenSalt Nonce/Entropy factor used by CREATE3 method
     /// to generate collection deployment address. Must be always different to avoid address collision.
+    /// @param _name Name of the collection to be deployed.
+    /// @param _symbol Symbol of the collection to be deployed.
     /// @param _price Public mint price of the collection to be deployed.
     /// @param _maxSupply Maximum supply of tokens to be minted of the collection to be deployed
     /// (Not used for ERC1155Minimal token type, since it always equals to one).
@@ -322,6 +324,8 @@ function splitterCheck(
     function createCollection(
         uint8 _tokenType,
         string memory _tokenSalt,
+        string memory _name,
+        string memory _symbol,
         uint256 _price,
         uint256 _maxSupply,
         string memory _uri,
@@ -361,7 +365,8 @@ function splitterCheck(
         emit ERC1155MinimalCreated(
             _splitter,
             deployed,
-            tx.origin
+            _name,
+            _symbol
         );
         }
         if (_tokenType == 1) {
@@ -390,7 +395,8 @@ function splitterCheck(
         emit ERC1155BasicCreated(
             _splitter,
             deployed,
-            tx.origin
+            _name,
+            _symbol
         );
         }
         if (_tokenType == 2) {
@@ -419,7 +425,8 @@ function splitterCheck(
         emit ERC1155WhitelistCreated(
             _splitter,
             deployed,
-            tx.origin
+            _name,
+            _symbol
         );
         }
         if (_tokenType > 2) {
@@ -447,7 +454,8 @@ function splitterCheck(
         emit ERC1155LazyCreated(
             _splitter,
             deployed,
-            tx.origin
+            _name,
+            _symbol
         );
         }
     }

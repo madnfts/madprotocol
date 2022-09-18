@@ -92,6 +92,8 @@ describe("MADRouter1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "ipfs://cid/id.json",
@@ -131,6 +133,8 @@ describe("MADRouter1155", () => {
         .createCollection(
           1,
           "BasicSalt",
+          "1155Basic",
+          "BASIC",
           price,
           1000,
           "ipfs://cid/",
@@ -190,6 +194,8 @@ describe("MADRouter1155", () => {
         .createCollection(
           2,
           "WhiteSalt",
+          "1155Whitelist",
+          "WL",
           price,
           1000,
           "ipfs://cid/",
@@ -247,6 +253,8 @@ describe("MADRouter1155", () => {
         .createCollection(
           3,
           "LazySalt",
+          "1155Lazy",
+          "LAZY",
           ethers.constants.Zero,
           ethers.constants.Zero,
           "ipfs://cid/",
@@ -309,6 +317,8 @@ describe("MADRouter1155", () => {
         .createCollection(
           3,
           "LazySalt",
+          "1155Lazy",
+          "LAZY",
           ethers.constants.Zero,
           ethers.constants.Zero,
           "ipfs://cid/",
@@ -353,6 +363,8 @@ describe("MADRouter1155", () => {
         .createCollection(
           2,
           "WhiteSalt",
+          "1155Whitelist",
+          "WL",
           price,
           1000,
           "ipfs://cid/",
@@ -406,6 +418,8 @@ describe("MADRouter1155", () => {
         .createCollection(
           3,
           "LazySalt",
+          "1155Lazy",
+          "LAZY",
           ethers.constants.Zero,
           ethers.constants.Zero,
           "ipfs://cid/",
@@ -449,6 +463,8 @@ describe("MADRouter1155", () => {
         .createCollection(
           2,
           "WhiteSalt",
+          "1155Whitelist",
+          "WL",
           price,
           1000,
           "ipfs://cid/",
@@ -494,6 +510,8 @@ describe("MADRouter1155", () => {
         .createCollection(
           2,
           "WhiteSalt",
+          "1155Whitelist",
+          "WL",
           price,
           1000,
           "ipfs://cid/",
@@ -537,6 +555,8 @@ describe("MADRouter1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "cid/id.json",
@@ -604,6 +624,8 @@ describe("MADRouter1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "ipfs://cid/id.json",
@@ -660,6 +682,8 @@ describe("MADRouter1155", () => {
         .createCollection(
           1,
           "BasicSalt",
+          "1155Basic",
+          "BASIC",
           price,
           1000,
           "ipfs://cid/",
@@ -722,6 +746,8 @@ describe("MADRouter1155", () => {
         .createCollection(
           2,
           "WhiteSalt",
+          "1155Whitelist",
+          "WL",
           price,
           1000,
           "ipfs://cid/",
@@ -780,6 +806,8 @@ describe("MADRouter1155", () => {
         .createCollection(
           3,
           "LazySalt",
+          "1155Lazy",
+          "LAZY",
           ethers.constants.Zero,
           ethers.constants.Zero,
           "ipfs://cid/",
@@ -898,6 +926,8 @@ describe("MADRouter1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "ipfs://cid/id.json",
@@ -940,6 +970,8 @@ describe("MADRouter1155", () => {
         .createCollection(
           1,
           "BasicSalt",
+          "1155Basic",
+          "BASIC",
           price,
           1000,
           "ipfs://cid/",
@@ -1014,6 +1046,8 @@ describe("MADRouter1155", () => {
         .createCollection(
           2,
           "WhiteSalt",
+          "1155Whitelist",
+          "WL",
           price,
           1000,
           "ipfs://cid/",
@@ -1077,6 +1111,8 @@ describe("MADRouter1155", () => {
         .createCollection(
           3,
           "LazySalt",
+          "1155Lazy",
+          "LAZY",
           ethers.constants.Zero,
           ethers.constants.Zero,
           "ipfs://cid/",
@@ -1204,6 +1240,8 @@ describe("MADRouter1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "ipfs://cid/id.json",
@@ -1245,6 +1283,8 @@ describe("MADRouter1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "ipfs://cid/id.json",
@@ -1260,6 +1300,8 @@ describe("MADRouter1155", () => {
         .createCollection(
           1,
           "BasicSalt",
+          "1155Basic",
+          "BASIC",
           price,
           1000,
           "ipfs://cid/",
@@ -1275,6 +1317,8 @@ describe("MADRouter1155", () => {
         .createCollection(
           2,
           "WhiteSalt",
+          "1155Whitelist",
+          "WL",
           price,
           1,
           "ipfs://cid/id.json",
@@ -1354,6 +1398,8 @@ describe("MADRouter1155", () => {
         .createCollection(
           2,
           "WhiteSalt",
+          "1155Whitelist",
+          "WL",
           price,
           1,
           "ipfs://cid/id.json",
@@ -1409,6 +1455,8 @@ describe("MADRouter1155", () => {
         .createCollection(
           2,
           "WhiteSalt",
+          "1155Whitelist",
+          "WL",
           price,
           1,
           "ipfs://cid/id.json",
@@ -1466,6 +1514,8 @@ describe("MADRouter1155", () => {
         .createCollection(
           1,
           "BasicSalt",
+          "1155Basic",
+          "BASIC",
           price,
           100,
           "ipfs://cid/",
@@ -1502,6 +1552,8 @@ describe("MADRouter1155", () => {
         .createCollection(
           2,
           "WhiteSalt",
+          "1155Whitelist",
+          "WL",
           price,
           100,
           "ipfs://cid/",
@@ -1553,6 +1605,8 @@ describe("MADRouter1155", () => {
         .createCollection(
           1,
           "BasicSalt",
+          "1155Basic",
+          "BASIC",
           price,
           100,
           "ipfs://cid/",
@@ -1591,6 +1645,8 @@ describe("MADRouter1155", () => {
         .createCollection(
           1,
           "BasicSalt",
+          "1155Basic",
+          "BASIC",
           price,
           100,
           "ipfs://cid/",
@@ -1627,6 +1683,8 @@ describe("MADRouter1155", () => {
         .createCollection(
           2,
           "WhiteSalt",
+          "1155Whitelist",
+          "WL",
           price,
           100,
           "ipfs://cid/",
@@ -1678,6 +1736,8 @@ describe("MADRouter1155", () => {
         .createCollection(
           1,
           "BasicSalt",
+          "1155Basic",
+          "BASIC",
           price,
           100,
           "ipfs://cid/",
@@ -1710,6 +1770,8 @@ describe("MADRouter1155", () => {
         .createCollection(
           2,
           "WhiteSalt",
+          "1155Whitelist",
+          "WL",
           price,
           100,
           "ipfs://cid/",
@@ -1776,6 +1838,8 @@ describe("MADRouter1155", () => {
         .createCollection(
           0,
           "MinSalt",
+          "1155Min",
+          "MIN",
           price,
           1,
           "ipfs://cid/id.json",
@@ -1826,6 +1890,8 @@ describe("MADRouter1155", () => {
         .createCollection(
           1,
           "salt",
+          "",
+          "",
           price,
           1000,
           "ipfs://cid/",
@@ -1870,6 +1936,8 @@ describe("MADRouter1155", () => {
         .createCollection(
           2,
           "WhiteSalt",
+          "1155Whitelist",
+          "WL",
           price,
           1000,
           "ipfs://cid/",
@@ -1920,6 +1988,8 @@ describe("MADRouter1155", () => {
         .createCollection(
           3,
           "LazySalt",
+          "1155Lazy",
+          "LAZY",
           ethers.constants.Zero,
           ethers.constants.Zero,
           "ipfs://cid/",

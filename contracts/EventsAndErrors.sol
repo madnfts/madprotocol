@@ -26,22 +26,26 @@ interface FactoryEventsAndErrors721 {
     event ERC721MinimalCreated(
         address indexed newSplitter,
         address indexed newCollection,
-        address indexed newCreator
+        string name,
+        string symbol
     );
     event ERC721BasicCreated(
         address indexed newSplitter,
         address indexed newCollection,
-        address indexed newCreator
+        string name,
+        string symbol
     );
     event ERC721WhitelistCreated(
         address indexed newSplitter,
         address indexed newCollection,
-        address indexed newCreator
+        string name,
+        string symbol
     );
     event ERC721LazyCreated(
         address indexed newSplitter,
         address indexed newCollection,
-        address indexed newCreator
+        string name,
+        string symbol
     );
 
     ////////////////////////////////////////////////////////////////
@@ -75,22 +79,26 @@ interface FactoryEventsAndErrors1155 {
     event ERC1155MinimalCreated(
         address indexed newSplitter,
         address indexed newCollection,
-        address indexed newCreator
+        string name,
+        string symbol
     );
     event ERC1155BasicCreated(
         address indexed newSplitter,
         address indexed newCollection,
-        address indexed newCreator
+        string name,
+        string symbol
     );
     event ERC1155WhitelistCreated(
         address indexed newSplitter,
         address indexed newCollection,
-        address indexed newCreator
+        string name,
+        string symbol
     );
     event ERC1155LazyCreated(
         address indexed newSplitter,
         address indexed newCollection,
-        address indexed newCreator
+        string name,
+        string symbol
     );
 
     ////////////////////////////////////////////////////////////////

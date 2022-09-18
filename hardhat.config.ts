@@ -36,6 +36,7 @@ const chainIds = {
   hardhat: 31337,
   mainnet: 1,
   rinkeby: 4,
+  ganache: 1337,
   // "arbitrum-mainnet": 42161,
   // avalanche: 43114,
   // bsc: 56,

@@ -16,10 +16,10 @@ export interface FactoryEventsAndErrors1155Interface extends utils.Interface {
   functions: {};
 
   events: {
-    "ERC1155BasicCreated(address,address,string,string)": EventFragment;
-    "ERC1155LazyCreated(address,address,string,string)": EventFragment;
-    "ERC1155MinimalCreated(address,address,string,string)": EventFragment;
-    "ERC1155WhitelistCreated(address,address,string,string)": EventFragment;
+    "ERC1155BasicCreated(address,address,string,string,uint256,uint256,uint256)": EventFragment;
+    "ERC1155LazyCreated(address,address,string,string,uint256,uint256,uint256)": EventFragment;
+    "ERC1155MinimalCreated(address,address,string,string,uint256,uint256,uint256)": EventFragment;
+    "ERC1155WhitelistCreated(address,address,string,string,uint256,uint256,uint256)": EventFragment;
     "MarketplaceUpdated(address)": EventFragment;
     "RouterUpdated(address)": EventFragment;
     "SignerUpdated(address)": EventFragment;
@@ -41,9 +41,12 @@ export interface ERC1155BasicCreatedEventObject {
   newCollection: string;
   name: string;
   symbol: string;
+  royalties: BigNumber;
+  maxSupply: BigNumber;
+  mintPrice: BigNumber;
 }
 export type ERC1155BasicCreatedEvent = TypedEvent<
-  [string, string, string, string],
+  [string, string, string, string, BigNumber, BigNumber, BigNumber],
   ERC1155BasicCreatedEventObject
 >;
 
@@ -55,9 +58,12 @@ export interface ERC1155LazyCreatedEventObject {
   newCollection: string;
   name: string;
   symbol: string;
+  royalties: BigNumber;
+  maxSupply: BigNumber;
+  mintPrice: BigNumber;
 }
 export type ERC1155LazyCreatedEvent = TypedEvent<
-  [string, string, string, string],
+  [string, string, string, string, BigNumber, BigNumber, BigNumber],
   ERC1155LazyCreatedEventObject
 >;
 
@@ -69,9 +75,12 @@ export interface ERC1155MinimalCreatedEventObject {
   newCollection: string;
   name: string;
   symbol: string;
+  royalties: BigNumber;
+  maxSupply: BigNumber;
+  mintPrice: BigNumber;
 }
 export type ERC1155MinimalCreatedEvent = TypedEvent<
-  [string, string, string, string],
+  [string, string, string, string, BigNumber, BigNumber, BigNumber],
   ERC1155MinimalCreatedEventObject
 >;
 
@@ -83,9 +92,12 @@ export interface ERC1155WhitelistCreatedEventObject {
   newCollection: string;
   name: string;
   symbol: string;
+  royalties: BigNumber;
+  maxSupply: BigNumber;
+  mintPrice: BigNumber;
 }
 export type ERC1155WhitelistCreatedEvent = TypedEvent<
-  [string, string, string, string],
+  [string, string, string, string, BigNumber, BigNumber, BigNumber],
   ERC1155WhitelistCreatedEventObject
 >;
 
@@ -161,56 +173,80 @@ export interface FactoryEventsAndErrors1155 extends BaseContract {
   callStatic: {};
 
   filters: {
-    "ERC1155BasicCreated(address,address,string,string)"(
+    "ERC1155BasicCreated(address,address,string,string,uint256,uint256,uint256)"(
       newSplitter?: PromiseOrValue<string> | null,
       newCollection?: PromiseOrValue<string> | null,
       name?: null,
-      symbol?: null
+      symbol?: null,
+      royalties?: null,
+      maxSupply?: null,
+      mintPrice?: null
     ): ERC1155BasicCreatedEventFilter;
     ERC1155BasicCreated(
       newSplitter?: PromiseOrValue<string> | null,
       newCollection?: PromiseOrValue<string> | null,
       name?: null,
-      symbol?: null
+      symbol?: null,
+      royalties?: null,
+      maxSupply?: null,
+      mintPrice?: null
     ): ERC1155BasicCreatedEventFilter;
 
-    "ERC1155LazyCreated(address,address,string,string)"(
+    "ERC1155LazyCreated(address,address,string,string,uint256,uint256,uint256)"(
       newSplitter?: PromiseOrValue<string> | null,
       newCollection?: PromiseOrValue<string> | null,
       name?: null,
-      symbol?: null
+      symbol?: null,
+      royalties?: null,
+      maxSupply?: null,
+      mintPrice?: null
     ): ERC1155LazyCreatedEventFilter;
     ERC1155LazyCreated(
       newSplitter?: PromiseOrValue<string> | null,
       newCollection?: PromiseOrValue<string> | null,
       name?: null,
-      symbol?: null
+      symbol?: null,
+      royalties?: null,
+      maxSupply?: null,
+      mintPrice?: null
     ): ERC1155LazyCreatedEventFilter;
 
-    "ERC1155MinimalCreated(address,address,string,string)"(
+    "ERC1155MinimalCreated(address,address,string,string,uint256,uint256,uint256)"(
       newSplitter?: PromiseOrValue<string> | null,
       newCollection?: PromiseOrValue<string> | null,
       name?: null,
-      symbol?: null
+      symbol?: null,
+      royalties?: null,
+      maxSupply?: null,
+      mintPrice?: null
     ): ERC1155MinimalCreatedEventFilter;
     ERC1155MinimalCreated(
       newSplitter?: PromiseOrValue<string> | null,
       newCollection?: PromiseOrValue<string> | null,
       name?: null,
-      symbol?: null
+      symbol?: null,
+      royalties?: null,
+      maxSupply?: null,
+      mintPrice?: null
     ): ERC1155MinimalCreatedEventFilter;
 
-    "ERC1155WhitelistCreated(address,address,string,string)"(
+    "ERC1155WhitelistCreated(address,address,string,string,uint256,uint256,uint256)"(
       newSplitter?: PromiseOrValue<string> | null,
       newCollection?: PromiseOrValue<string> | null,
       name?: null,
-      symbol?: null
+      symbol?: null,
+      royalties?: null,
+      maxSupply?: null,
+      mintPrice?: null
     ): ERC1155WhitelistCreatedEventFilter;
     ERC1155WhitelistCreated(
       newSplitter?: PromiseOrValue<string> | null,
       newCollection?: PromiseOrValue<string> | null,
       name?: null,
-      symbol?: null
+      symbol?: null,
+      royalties?: null,
+      maxSupply?: null,
+      mintPrice?: null
     ): ERC1155WhitelistCreatedEventFilter;
 
     "MarketplaceUpdated(address)"(

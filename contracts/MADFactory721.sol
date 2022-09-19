@@ -367,7 +367,10 @@ contract MADFactory721 is MAD,
             _splitter,
             deployed,
             _name,
-            _symbol
+            _symbol, 
+            _royalty,
+            _maxSupply,
+            _price
         );
         }
         if (_tokenType == 1) {
@@ -399,7 +402,10 @@ contract MADFactory721 is MAD,
             _splitter,
             deployed,
             _name,
-            _symbol
+            _symbol, 
+            _royalty,
+            _maxSupply,
+            _price
         );
         }
         if (_tokenType == 2) {
@@ -431,7 +437,10 @@ contract MADFactory721 is MAD,
             _splitter,
             deployed,
             _name,
-            _symbol
+            _symbol, 
+            _royalty,
+            _maxSupply,
+            _price
         );
         }
         if (_tokenType > 2) {
@@ -462,7 +471,10 @@ contract MADFactory721 is MAD,
             _splitter,
             deployed,
             _name,
-            _symbol
+            _symbol, 
+            _royalty,
+            _maxSupply,
+            _price
         );
         }
     }

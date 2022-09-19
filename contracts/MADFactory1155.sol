@@ -366,7 +366,10 @@ function splitterCheck(
             _splitter,
             deployed,
             _name,
-            _symbol
+            _symbol, 
+            _royalty,
+            _maxSupply,
+            _price
         );
         }
         if (_tokenType == 1) {
@@ -396,7 +399,10 @@ function splitterCheck(
             _splitter,
             deployed,
             _name,
-            _symbol
+            _symbol, 
+            _royalty,
+            _maxSupply,
+            _price
         );
         }
         if (_tokenType == 2) {
@@ -426,7 +432,10 @@ function splitterCheck(
             _splitter,
             deployed,
             _name,
-            _symbol
+            _symbol, 
+            _royalty,
+            _maxSupply,
+            _price
         );
         }
         if (_tokenType > 2) {
@@ -455,7 +464,10 @@ function splitterCheck(
             _splitter,
             deployed,
             _name,
-            _symbol
+            _symbol, 
+            _royalty,
+            _maxSupply,
+            _price
         );
         }
     }

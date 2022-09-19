@@ -341,7 +341,7 @@ describe("MADFactory1155", () => {
       );
       await expect(tx)
         .to.emit(f1155, "ERC1155MinimalCreated")
-        .withArgs(splAddr, minAddr, '1155Min', "MIN");
+        .withArgs(splAddr, minAddr, '1155Min', "MIN", 750, 1, price);
       await expect(fail1).to.be.revertedWithCustomError(
         f1155,
         FactoryErrors.AccessDenied,
@@ -436,7 +436,7 @@ describe("MADFactory1155", () => {
       );
       await expect(tx)
         .to.emit(f1155, "ERC1155BasicCreated")
-        .withArgs(splAddr, basicAddr, "1155Basic", "BASIC");
+        .withArgs(splAddr, basicAddr, "1155Basic", "BASIC", 750, 1000, price);
       await expect(fail1).to.be.revertedWithCustomError(
         f1155,
         FactoryErrors.AccessDenied,
@@ -529,7 +529,7 @@ describe("MADFactory1155", () => {
       );
       await expect(tx)
         .to.emit(f1155, "ERC1155WhitelistCreated")
-        .withArgs(splAddr, wlAddr, "1155Whitelist", "WL");
+        .withArgs(splAddr, wlAddr, "1155Whitelist", "WL", 750, 1000, price);
       await expect(fail1).to.be.revertedWithCustomError(
         f1155,
         FactoryErrors.AccessDenied,
@@ -623,7 +623,7 @@ describe("MADFactory1155", () => {
       );
       await expect(tx)
         .to.emit(f1155, "ERC1155LazyCreated")
-        .withArgs(splAddr, lazyAddr, "1155Lazy", "LAZY");
+        .withArgs(splAddr, lazyAddr, "1155Lazy", "LAZY", 750, 0, 0);
       await expect(fail1).to.be.revertedWithCustomError(
         f1155,
         FactoryErrors.AccessDenied,

@@ -27,25 +27,37 @@ interface FactoryEventsAndErrors721 {
         address indexed newSplitter,
         address indexed newCollection,
         string name,
-        string symbol
+        string symbol,
+        uint256 royalties,
+        uint256 maxSupply,
+        uint256 mintPrice
     );
     event ERC721BasicCreated(
         address indexed newSplitter,
         address indexed newCollection,
         string name,
-        string symbol
+        string symbol,
+        uint256 royalties,
+        uint256 maxSupply,
+        uint256 mintPrice
     );
     event ERC721WhitelistCreated(
         address indexed newSplitter,
         address indexed newCollection,
         string name,
-        string symbol
+        string symbol,
+        uint256 royalties,
+        uint256 maxSupply,
+        uint256 mintPrice
     );
     event ERC721LazyCreated(
         address indexed newSplitter,
         address indexed newCollection,
         string name,
-        string symbol
+        string symbol,
+        uint256 royalties,
+        uint256 maxSupply,
+        uint256 mintPrice
     );
 
     ////////////////////////////////////////////////////////////////
@@ -80,25 +92,37 @@ interface FactoryEventsAndErrors1155 {
         address indexed newSplitter,
         address indexed newCollection,
         string name,
-        string symbol
+        string symbol,
+        uint256 royalties,
+        uint256 maxSupply,
+        uint256 mintPrice
     );
     event ERC1155BasicCreated(
         address indexed newSplitter,
         address indexed newCollection,
         string name,
-        string symbol
+        string symbol,
+        uint256 royalties,
+        uint256 maxSupply,
+        uint256 mintPrice
     );
     event ERC1155WhitelistCreated(
         address indexed newSplitter,
         address indexed newCollection,
         string name,
-        string symbol
+        string symbol,
+        uint256 royalties,
+        uint256 maxSupply,
+        uint256 mintPrice
     );
     event ERC1155LazyCreated(
         address indexed newSplitter,
         address indexed newCollection,
         string name,
-        string symbol
+        string symbol,
+        uint256 royalties,
+        uint256 maxSupply,
+        uint256 mintPrice
     );
 
     ////////////////////////////////////////////////////////////////

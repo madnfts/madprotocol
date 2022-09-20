@@ -56,6 +56,9 @@ function getChainConfig(
     case "harmony-devnet":
       jsonRpcUrl = "https://api.s0.ps.hmny.io/";
       break;
+    case "ganache":
+      jsonRpcUrl = "http://localhost:8545/";
+      break;
     default:
       jsonRpcUrl =
         "https://" + chain + ".infura.io/v3/" + infuraApiKey;
@@ -130,6 +133,7 @@ const config: HardhatUserConfig = {
     harmonyDev: getChainConfig("harmony-devnet"),
     mainnet: getChainConfig("mainnet"),
     rinkeby: getChainConfig("rinkeby"),
+    ganache: getChainConfig("ganache"),
     // arbitrum: getChainConfig("arbitrum-mainnet"),
     // avalanche: getChainConfig("avalanche"),
     // bsc: getChainConfig("bsc"),

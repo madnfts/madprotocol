@@ -914,11 +914,11 @@ describe("MADFactory721", () => {
         .connect(acc02)
         .setMintState(minAddr, true, 0);
       await min.connect(acc02).publicMint({ value: price });
-      const blocknum = await m721.provider.getBlockNumber();
+      const blockTimestamp = (await m721.provider.getBlock(await m721.provider.getBlockNumber())).timestamp;
       await min.connect(acc02).approve(m721.address, 1);
       await m721
         .connect(acc02)
-        .fixedPrice(minAddr, 1, price, blocknum + 400);
+        .fixedPrice(minAddr, 1, price, blockTimestamp + 301);
       await mine(296);
       const orderID = await m721.callStatic.orderIdBySeller(
         acc02.address,

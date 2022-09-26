@@ -102,9 +102,9 @@ contract MADMarketplace721 is
         IERC721 _token,
         uint256 _id,
         uint256 _price,
-        uint256 _endBlock
+        uint256 _endTime
     ) public whenNotPaused {
-        _makeOrder(0, _token, _id, _price, 0, _endBlock);
+        _makeOrder(0, _token, _id, _price, 0, _endTime);
     }
 
     /// @notice Dutch Auction listing order public pusher.
@@ -114,7 +114,7 @@ contract MADMarketplace721 is
         uint256 _id,
         uint256 _startPrice,
         uint256 _endPrice,
-        uint256 _endBlock
+        uint256 _endTime
     ) public whenNotPaused {
         _exceedsMaxEP(_startPrice, _endPrice);
         _makeOrder(
@@ -123,7 +123,7 @@ contract MADMarketplace721 is
             _id,
             _startPrice,
             _endPrice,
-            _endBlock
+            _endTime
         );
     }
 
@@ -133,9 +133,9 @@ contract MADMarketplace721 is
         IERC721 _token,
         uint256 _id,
         uint256 _startPrice,
-        uint256 _endBlock
+        uint256 _endTime
     ) public whenNotPaused {
-        _makeOrder(2, _token, _id, _startPrice, 0, _endBlock);
+        _makeOrder(2, _token, _id, _startPrice, 0, _endTime);
     }
 
     /// @notice Bidding function available for English Auction only.
@@ -154,7 +154,7 @@ contract MADMarketplace721 is
 
         _bidChecks(
             order.orderType,
-            order.endBlock,
+            order.endTime,
             order.seller,
             lastBidPrice,
             order.startPrice
@@ -162,16 +162,16 @@ contract MADMarketplace721 is
 
         // 1s blocktime
         assembly {
-            let endBlock := and(
+            let endTime := and(
                 sload(add(order.slot, 4)),
                 shr(32, not(0))
             )
             if gt(
-                number(),
-                sub(endBlock, sload(minAuctionIncrement.slot))
+                timestamp(),
+                sub(endTime, sload(minAuctionIncrement.slot))
             ) {
                 let inc := add(
-                    endBlock,
+                    endTime,
                     sload(minAuctionIncrement.slot)
                 )
                 sstore(add(order.slot, 4), inc)
@@ -207,7 +207,7 @@ contract MADMarketplace721 is
         Types.Order721 storage order = orderInfo[_order];
 
         _buyChecks(
-            order.endBlock,
+            order.endTime,
             order.orderType,
             order.isSold
         );
@@ -274,7 +274,7 @@ contract MADMarketplace721 is
         _claimChecks(
             order.isSold,
             order.orderType,
-            order.endBlock
+            order.endTime
         );
 
         order.isSold = true;
@@ -333,7 +333,7 @@ contract MADMarketplace721 is
 
     /// @notice Enables sellers to withdraw their tokens.
     /// @dev Function Signature := 0x7489ec23
-    /// @dev Cancels order setting endBlock value to 0.
+    /// @dev Cancels order setting endTime value to 0.
     function cancelOrder(bytes32 _order) external {
         Types.Order721 storage order = orderInfo[_order];
         _cancelOrderChecks(
@@ -345,7 +345,7 @@ contract MADMarketplace721 is
         IERC721 token = order.token;
         uint256 tokenId = order.tokenId;
 
-        order.endBlock = 0;
+        order.endTime = 0;
 
         token.safeTransferFrom(
             address(this),
@@ -476,24 +476,24 @@ contract MADMarketplace721 is
     /// @dev Function Signature := 0x4ac079a6
     /// @param _orderType Values legend:
     /// 0=Fixed Price; 1=Dutch Auction; 2=English Auction.
-    /// @param _endBlock Equals to canceled order when value is set to 0.
+    /// @param _endTime Equals to canceled order when value is set to 0.
     function _makeOrder(
         uint8 _orderType,
         IERC721 _token,
         uint256 _id,
         uint256 _startPrice,
         uint256 _endPrice,
-        uint256 _endBlock
+        uint256 _endTime
     ) internal {
-        _makeOrderChecks(_endBlock, _startPrice);
+        _makeOrderChecks(_endTime, _startPrice);
 
         bytes32 hash = _hash(_token, _id, msg.sender);
         orderInfo[hash] = Types.Order721(
             _id,
             _startPrice,
             _endPrice,
-            block.number,
-            _endBlock,
+            block.timestamp,
+            _endTime,
             0,
             address(0),
             _token,
@@ -749,7 +749,7 @@ contract MADMarketplace721 is
     }
 
     function _makeOrderChecks(
-        uint256 _endBlock,
+        uint256 _endTime,
         uint256 _startPrice
     ) private view {
         assembly {
@@ -758,11 +758,11 @@ contract MADMarketplace721 is
                 iszero(
                     or(
                         or(
-                            eq(number(), _endBlock),
-                            lt(_endBlock, number())
+                            eq(timestamp(), _endTime),
+                            lt(_endTime, timestamp())
                         ),
                         lt(
-                            sub(_endBlock, number()),
+                            sub(_endTime, timestamp()),
                             sload(minOrderDuration.slot)
                         )
                     )
@@ -805,7 +805,7 @@ contract MADMarketplace721 is
 
     function _bidChecks(
         uint8 _orderType,
-        uint256 _endBlock,
+        uint256 _endTime,
         address _seller,
         uint256 _lastBidPrice,
         uint256 _startPrice
@@ -817,12 +817,12 @@ contract MADMarketplace721 is
                 revert(0x1c, 0x04)
             }
             // CanceledOrder()
-            if iszero(_endBlock) {
+            if iszero(_endTime) {
                 mstore(0x00, 0xdf9428da)
                 revert(0x1c, 0x04)
             }
             // Timeout()
-            if gt(number(), _endBlock) {
+            if gt(timestamp(), _endTime) {
                 mstore(0x00, 0x2af0c7f8)
                 revert(0x1c, 0x04)
             }
@@ -861,20 +861,20 @@ contract MADMarketplace721 is
     }
 
     function _buyChecks(
-        uint256 _endBlock,
+        uint256 _endTime,
         uint8 _orderType,
         bool _isSold
     ) private view {
         assembly {
             // CanceledOrder()
-            if iszero(_endBlock) {
+            if iszero(_endTime) {
                 mstore(0x00, 0xdf9428da)
                 revert(0x1c, 0x04)
             }
             // Timeout()
             if or(
-                eq(number(), _endBlock),
-                lt(_endBlock, number())
+                eq(timestamp(), _endTime),
+                lt(_endTime, timestamp())
             ) {
                 mstore(0x00, 0x2af0c7f8)
                 revert(0x1c, 0x04)
@@ -895,7 +895,7 @@ contract MADMarketplace721 is
     function _claimChecks(
         bool _isSold,
         uint8 _orderType,
-        uint256 _endBlock
+        uint256 _endTime
     ) private view {
         assembly {
             // SoldToken()
@@ -910,8 +910,8 @@ contract MADMarketplace721 is
             }
             // NeedMoreTime()
             if or(
-                eq(number(), _endBlock),
-                lt(number(), _endBlock)
+                eq(timestamp(), _endTime),
+                lt(timestamp(), _endTime)
             ) {
                 mstore(0x00, 0x921dbfec)
                 revert(0x1c, 0x04)
@@ -953,7 +953,7 @@ contract MADMarketplace721 is
                     sload(add(order.slot, 1)),
                     shr(32, not(0))
                 )
-                let _startBlock := and(
+                let _startTime := and(
                     sload(add(order.slot, 3)),
                     shr(32, not(0))
                 )
@@ -961,17 +961,17 @@ contract MADMarketplace721 is
                     sload(add(order.slot, 2)),
                     shr(32, not(0))
                 )
-                let _endBlock := and(
+                let _endTime := and(
                     sload(add(order.slot, 4)),
                     shr(32, not(0))
                 )
                 let _tick := div(
                     sub(_startPrice, _endPrice),
-                    sub(_endBlock, _startBlock)
+                    sub(_endTime, _startTime)
                 )
                 price := sub(
                     _startPrice,
-                    mul(sub(number(), _startBlock), _tick)
+                    mul(sub(timestamp(), _startTime), _tick)
                 )
             }
             // English Auction

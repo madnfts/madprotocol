@@ -30,7 +30,7 @@ import type {
 export interface MADFactory1155Interface extends utils.Interface {
   functions: {
     "colInfo(bytes32)": FunctionFragment;
-    "createCollection(uint8,string,uint256,uint256,string,address,uint256)": FunctionFragment;
+    "createCollection(uint8,string,string,string,uint256,uint256,string,address,uint256)": FunctionFragment;
     "creatorAuth(address,address)": FunctionFragment;
     "creatorCheck(bytes32)": FunctionFragment;
     "getColID(address)": FunctionFragment;
@@ -87,6 +87,8 @@ export interface MADFactory1155Interface extends utils.Interface {
     functionFragment: "createCollection",
     values: [
       PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
@@ -209,10 +211,10 @@ export interface MADFactory1155Interface extends utils.Interface {
   decodeFunctionResult(functionFragment: "userTokens", data: BytesLike): Result;
 
   events: {
-    "ERC1155BasicCreated(address,address,address)": EventFragment;
-    "ERC1155LazyCreated(address,address,address)": EventFragment;
-    "ERC1155MinimalCreated(address,address,address)": EventFragment;
-    "ERC1155WhitelistCreated(address,address,address)": EventFragment;
+    "ERC1155BasicCreated(address,address,string,string,uint256,uint256,uint256)": EventFragment;
+    "ERC1155LazyCreated(address,address,string,string,uint256,uint256,uint256)": EventFragment;
+    "ERC1155MinimalCreated(address,address,string,string,uint256,uint256,uint256)": EventFragment;
+    "ERC1155WhitelistCreated(address,address,string,string,uint256,uint256,uint256)": EventFragment;
     "MarketplaceUpdated(address)": EventFragment;
     "OwnerUpdated(address,address)": EventFragment;
     "Paused(address)": EventFragment;
@@ -238,10 +240,14 @@ export interface MADFactory1155Interface extends utils.Interface {
 export interface ERC1155BasicCreatedEventObject {
   newSplitter: string;
   newCollection: string;
-  newCreator: string;
+  name: string;
+  symbol: string;
+  royalties: BigNumber;
+  maxSupply: BigNumber;
+  mintPrice: BigNumber;
 }
 export type ERC1155BasicCreatedEvent = TypedEvent<
-  [string, string, string],
+  [string, string, string, string, BigNumber, BigNumber, BigNumber],
   ERC1155BasicCreatedEventObject
 >;
 
@@ -251,10 +257,14 @@ export type ERC1155BasicCreatedEventFilter =
 export interface ERC1155LazyCreatedEventObject {
   newSplitter: string;
   newCollection: string;
-  newCreator: string;
+  name: string;
+  symbol: string;
+  royalties: BigNumber;
+  maxSupply: BigNumber;
+  mintPrice: BigNumber;
 }
 export type ERC1155LazyCreatedEvent = TypedEvent<
-  [string, string, string],
+  [string, string, string, string, BigNumber, BigNumber, BigNumber],
   ERC1155LazyCreatedEventObject
 >;
 
@@ -264,10 +274,14 @@ export type ERC1155LazyCreatedEventFilter =
 export interface ERC1155MinimalCreatedEventObject {
   newSplitter: string;
   newCollection: string;
-  newCreator: string;
+  name: string;
+  symbol: string;
+  royalties: BigNumber;
+  maxSupply: BigNumber;
+  mintPrice: BigNumber;
 }
 export type ERC1155MinimalCreatedEvent = TypedEvent<
-  [string, string, string],
+  [string, string, string, string, BigNumber, BigNumber, BigNumber],
   ERC1155MinimalCreatedEventObject
 >;
 
@@ -277,10 +291,14 @@ export type ERC1155MinimalCreatedEventFilter =
 export interface ERC1155WhitelistCreatedEventObject {
   newSplitter: string;
   newCollection: string;
-  newCreator: string;
+  name: string;
+  symbol: string;
+  royalties: BigNumber;
+  maxSupply: BigNumber;
+  mintPrice: BigNumber;
 }
 export type ERC1155WhitelistCreatedEvent = TypedEvent<
-  [string, string, string],
+  [string, string, string, string, BigNumber, BigNumber, BigNumber],
   ERC1155WhitelistCreatedEventObject
 >;
 
@@ -393,6 +411,8 @@ export interface MADFactory1155 extends BaseContract {
     createCollection(
       _tokenType: PromiseOrValue<BigNumberish>,
       _tokenSalt: PromiseOrValue<string>,
+      _name: PromiseOrValue<string>,
+      _symbol: PromiseOrValue<string>,
       _price: PromiseOrValue<BigNumberish>,
       _maxSupply: PromiseOrValue<BigNumberish>,
       _uri: PromiseOrValue<string>,
@@ -518,6 +538,8 @@ export interface MADFactory1155 extends BaseContract {
   createCollection(
     _tokenType: PromiseOrValue<BigNumberish>,
     _tokenSalt: PromiseOrValue<string>,
+    _name: PromiseOrValue<string>,
+    _symbol: PromiseOrValue<string>,
     _price: PromiseOrValue<BigNumberish>,
     _maxSupply: PromiseOrValue<BigNumberish>,
     _uri: PromiseOrValue<string>,
@@ -643,6 +665,8 @@ export interface MADFactory1155 extends BaseContract {
     createCollection(
       _tokenType: PromiseOrValue<BigNumberish>,
       _tokenSalt: PromiseOrValue<string>,
+      _name: PromiseOrValue<string>,
+      _symbol: PromiseOrValue<string>,
       _price: PromiseOrValue<BigNumberish>,
       _maxSupply: PromiseOrValue<BigNumberish>,
       _uri: PromiseOrValue<string>,
@@ -749,48 +773,80 @@ export interface MADFactory1155 extends BaseContract {
   };
 
   filters: {
-    "ERC1155BasicCreated(address,address,address)"(
+    "ERC1155BasicCreated(address,address,string,string,uint256,uint256,uint256)"(
       newSplitter?: PromiseOrValue<string> | null,
       newCollection?: PromiseOrValue<string> | null,
-      newCreator?: PromiseOrValue<string> | null
+      name?: null,
+      symbol?: null,
+      royalties?: null,
+      maxSupply?: null,
+      mintPrice?: null
     ): ERC1155BasicCreatedEventFilter;
     ERC1155BasicCreated(
       newSplitter?: PromiseOrValue<string> | null,
       newCollection?: PromiseOrValue<string> | null,
-      newCreator?: PromiseOrValue<string> | null
+      name?: null,
+      symbol?: null,
+      royalties?: null,
+      maxSupply?: null,
+      mintPrice?: null
     ): ERC1155BasicCreatedEventFilter;
 
-    "ERC1155LazyCreated(address,address,address)"(
+    "ERC1155LazyCreated(address,address,string,string,uint256,uint256,uint256)"(
       newSplitter?: PromiseOrValue<string> | null,
       newCollection?: PromiseOrValue<string> | null,
-      newCreator?: PromiseOrValue<string> | null
+      name?: null,
+      symbol?: null,
+      royalties?: null,
+      maxSupply?: null,
+      mintPrice?: null
     ): ERC1155LazyCreatedEventFilter;
     ERC1155LazyCreated(
       newSplitter?: PromiseOrValue<string> | null,
       newCollection?: PromiseOrValue<string> | null,
-      newCreator?: PromiseOrValue<string> | null
+      name?: null,
+      symbol?: null,
+      royalties?: null,
+      maxSupply?: null,
+      mintPrice?: null
     ): ERC1155LazyCreatedEventFilter;
 
-    "ERC1155MinimalCreated(address,address,address)"(
+    "ERC1155MinimalCreated(address,address,string,string,uint256,uint256,uint256)"(
       newSplitter?: PromiseOrValue<string> | null,
       newCollection?: PromiseOrValue<string> | null,
-      newCreator?: PromiseOrValue<string> | null
+      name?: null,
+      symbol?: null,
+      royalties?: null,
+      maxSupply?: null,
+      mintPrice?: null
     ): ERC1155MinimalCreatedEventFilter;
     ERC1155MinimalCreated(
       newSplitter?: PromiseOrValue<string> | null,
       newCollection?: PromiseOrValue<string> | null,
-      newCreator?: PromiseOrValue<string> | null
+      name?: null,
+      symbol?: null,
+      royalties?: null,
+      maxSupply?: null,
+      mintPrice?: null
     ): ERC1155MinimalCreatedEventFilter;
 
-    "ERC1155WhitelistCreated(address,address,address)"(
+    "ERC1155WhitelistCreated(address,address,string,string,uint256,uint256,uint256)"(
       newSplitter?: PromiseOrValue<string> | null,
       newCollection?: PromiseOrValue<string> | null,
-      newCreator?: PromiseOrValue<string> | null
+      name?: null,
+      symbol?: null,
+      royalties?: null,
+      maxSupply?: null,
+      mintPrice?: null
     ): ERC1155WhitelistCreatedEventFilter;
     ERC1155WhitelistCreated(
       newSplitter?: PromiseOrValue<string> | null,
       newCollection?: PromiseOrValue<string> | null,
-      newCreator?: PromiseOrValue<string> | null
+      name?: null,
+      symbol?: null,
+      royalties?: null,
+      maxSupply?: null,
+      mintPrice?: null
     ): ERC1155WhitelistCreatedEventFilter;
 
     "MarketplaceUpdated(address)"(
@@ -852,6 +908,8 @@ export interface MADFactory1155 extends BaseContract {
     createCollection(
       _tokenType: PromiseOrValue<BigNumberish>,
       _tokenSalt: PromiseOrValue<string>,
+      _name: PromiseOrValue<string>,
+      _symbol: PromiseOrValue<string>,
       _price: PromiseOrValue<BigNumberish>,
       _maxSupply: PromiseOrValue<BigNumberish>,
       _uri: PromiseOrValue<string>,
@@ -960,6 +1018,8 @@ export interface MADFactory1155 extends BaseContract {
     createCollection(
       _tokenType: PromiseOrValue<BigNumberish>,
       _tokenSalt: PromiseOrValue<string>,
+      _name: PromiseOrValue<string>,
+      _symbol: PromiseOrValue<string>,
       _price: PromiseOrValue<BigNumberish>,
       _maxSupply: PromiseOrValue<BigNumberish>,
       _uri: PromiseOrValue<string>,

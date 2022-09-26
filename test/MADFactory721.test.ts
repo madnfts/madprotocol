@@ -344,7 +344,7 @@ describe("MADFactory721", () => {
       );
       await expect(tx)
         .to.emit(f721, "ERC721MinimalCreated")
-        .withArgs(splAddr, minAddr, acc02.address);
+        .withArgs(splAddr, minAddr, '721Minimal', 'MIN', 750, 1, price);
       await expect(fail1).to.be.revertedWithCustomError(
         m721,
         FactoryErrors.AccessDenied,
@@ -438,7 +438,7 @@ describe("MADFactory721", () => {
       );
       await expect(tx)
         .to.emit(f721, "ERC721BasicCreated")
-        .withArgs(splAddr, basicAddr, acc02.address);
+        .withArgs(splAddr, basicAddr, '721Basic', 'BASIC', 750, 1000, price);
       await expect(fail1).to.be.revertedWithCustomError(
         f721,
         FactoryErrors.AccessDenied,
@@ -531,7 +531,7 @@ describe("MADFactory721", () => {
       );
       await expect(tx)
         .to.emit(f721, "ERC721WhitelistCreated")
-        .withArgs(splAddr, wlAddr, acc02.address);
+        .withArgs(splAddr, wlAddr, '721Whitelist', 'WL', 750, 1000, price);
       await expect(fail1).to.be.revertedWithCustomError(
         f721,
         FactoryErrors.AccessDenied,
@@ -625,7 +625,7 @@ describe("MADFactory721", () => {
       );
       await expect(tx)
         .to.emit(f721, "ERC721LazyCreated")
-        .withArgs(splAddr, lazyAddr, acc01.address);
+        .withArgs(splAddr, lazyAddr, '721Lazy', 'LAZY', 750, ethers.constants.Zero, ethers.constants.Zero);
       await expect(fail1).to.be.revertedWithCustomError(
         f721,
         FactoryErrors.AccessDenied,

@@ -36,7 +36,7 @@ const chainIds = {
   hardhat: 31337,
   mainnet: 1,
   rinkeby: 4,
-  local: 1337,
+  ganache: 1337,
   // "arbitrum-mainnet": 42161,
   // avalanche: 43114,
   // bsc: 56,
@@ -56,7 +56,7 @@ function getChainConfig(
     case "harmony-devnet":
       jsonRpcUrl = "https://api.s0.ps.hmny.io/";
       break;
-    case "local": 
+    case "ganache":
       jsonRpcUrl = "http://localhost:8545/";
       break;
     default:
@@ -133,7 +133,7 @@ const config: HardhatUserConfig = {
     harmonyDev: getChainConfig("harmony-devnet"),
     mainnet: getChainConfig("mainnet"),
     rinkeby: getChainConfig("rinkeby"),
-    local: getChainConfig("local"),
+    ganache: getChainConfig("ganache"),
     // arbitrum: getChainConfig("arbitrum-mainnet"),
     // avalanche: getChainConfig("avalanche"),
     // bsc: getChainConfig("bsc"),

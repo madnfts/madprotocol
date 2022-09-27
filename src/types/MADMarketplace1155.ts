@@ -585,7 +585,7 @@ export interface MADMarketplace1155 extends BaseContract {
       _amount: PromiseOrValue<BigNumberish>,
       _startPrice: PromiseOrValue<BigNumberish>,
       _endPrice: PromiseOrValue<BigNumberish>,
-      _endBlock: PromiseOrValue<BigNumberish>,
+      _endTime: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -594,7 +594,7 @@ export interface MADMarketplace1155 extends BaseContract {
       _id: PromiseOrValue<BigNumberish>,
       _amount: PromiseOrValue<BigNumberish>,
       _startPrice: PromiseOrValue<BigNumberish>,
-      _endBlock: PromiseOrValue<BigNumberish>,
+      _endTime: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -614,7 +614,7 @@ export interface MADMarketplace1155 extends BaseContract {
       _id: PromiseOrValue<BigNumberish>,
       _amount: PromiseOrValue<BigNumberish>,
       _price: PromiseOrValue<BigNumberish>,
-      _endBlock: PromiseOrValue<BigNumberish>,
+      _endTime: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -685,8 +685,8 @@ export interface MADMarketplace1155 extends BaseContract {
         amount: BigNumber;
         startPrice: BigNumber;
         endPrice: BigNumber;
-        startBlock: BigNumber;
-        endBlock: BigNumber;
+        startTime: BigNumber;
+        endTime: BigNumber;
         lastBidPrice: BigNumber;
         lastBidder: string;
         token: string;
@@ -788,7 +788,7 @@ export interface MADMarketplace1155 extends BaseContract {
     _amount: PromiseOrValue<BigNumberish>,
     _startPrice: PromiseOrValue<BigNumberish>,
     _endPrice: PromiseOrValue<BigNumberish>,
-    _endBlock: PromiseOrValue<BigNumberish>,
+    _endTime: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -797,7 +797,7 @@ export interface MADMarketplace1155 extends BaseContract {
     _id: PromiseOrValue<BigNumberish>,
     _amount: PromiseOrValue<BigNumberish>,
     _startPrice: PromiseOrValue<BigNumberish>,
-    _endBlock: PromiseOrValue<BigNumberish>,
+    _endTime: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -817,7 +817,7 @@ export interface MADMarketplace1155 extends BaseContract {
     _id: PromiseOrValue<BigNumberish>,
     _amount: PromiseOrValue<BigNumberish>,
     _price: PromiseOrValue<BigNumberish>,
-    _endBlock: PromiseOrValue<BigNumberish>,
+    _endTime: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -888,8 +888,8 @@ export interface MADMarketplace1155 extends BaseContract {
       amount: BigNumber;
       startPrice: BigNumber;
       endPrice: BigNumber;
-      startBlock: BigNumber;
-      endBlock: BigNumber;
+      startTime: BigNumber;
+      endTime: BigNumber;
       lastBidPrice: BigNumber;
       lastBidder: string;
       token: string;
@@ -991,7 +991,7 @@ export interface MADMarketplace1155 extends BaseContract {
       _amount: PromiseOrValue<BigNumberish>,
       _startPrice: PromiseOrValue<BigNumberish>,
       _endPrice: PromiseOrValue<BigNumberish>,
-      _endBlock: PromiseOrValue<BigNumberish>,
+      _endTime: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1000,7 +1000,7 @@ export interface MADMarketplace1155 extends BaseContract {
       _id: PromiseOrValue<BigNumberish>,
       _amount: PromiseOrValue<BigNumberish>,
       _startPrice: PromiseOrValue<BigNumberish>,
-      _endBlock: PromiseOrValue<BigNumberish>,
+      _endTime: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1020,7 +1020,7 @@ export interface MADMarketplace1155 extends BaseContract {
       _id: PromiseOrValue<BigNumberish>,
       _amount: PromiseOrValue<BigNumberish>,
       _price: PromiseOrValue<BigNumberish>,
-      _endBlock: PromiseOrValue<BigNumberish>,
+      _endTime: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1091,8 +1091,8 @@ export interface MADMarketplace1155 extends BaseContract {
         amount: BigNumber;
         startPrice: BigNumber;
         endPrice: BigNumber;
-        startBlock: BigNumber;
-        endBlock: BigNumber;
+        startTime: BigNumber;
+        endTime: BigNumber;
         lastBidPrice: BigNumber;
         lastBidder: string;
         token: string;
@@ -1297,7 +1297,7 @@ export interface MADMarketplace1155 extends BaseContract {
       _amount: PromiseOrValue<BigNumberish>,
       _startPrice: PromiseOrValue<BigNumberish>,
       _endPrice: PromiseOrValue<BigNumberish>,
-      _endBlock: PromiseOrValue<BigNumberish>,
+      _endTime: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1306,7 +1306,7 @@ export interface MADMarketplace1155 extends BaseContract {
       _id: PromiseOrValue<BigNumberish>,
       _amount: PromiseOrValue<BigNumberish>,
       _startPrice: PromiseOrValue<BigNumberish>,
-      _endBlock: PromiseOrValue<BigNumberish>,
+      _endTime: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1326,7 +1326,7 @@ export interface MADMarketplace1155 extends BaseContract {
       _id: PromiseOrValue<BigNumberish>,
       _amount: PromiseOrValue<BigNumberish>,
       _price: PromiseOrValue<BigNumberish>,
-      _endBlock: PromiseOrValue<BigNumberish>,
+      _endTime: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1473,7 +1473,7 @@ export interface MADMarketplace1155 extends BaseContract {
       _amount: PromiseOrValue<BigNumberish>,
       _startPrice: PromiseOrValue<BigNumberish>,
       _endPrice: PromiseOrValue<BigNumberish>,
-      _endBlock: PromiseOrValue<BigNumberish>,
+      _endTime: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1482,7 +1482,7 @@ export interface MADMarketplace1155 extends BaseContract {
       _id: PromiseOrValue<BigNumberish>,
       _amount: PromiseOrValue<BigNumberish>,
       _startPrice: PromiseOrValue<BigNumberish>,
-      _endBlock: PromiseOrValue<BigNumberish>,
+      _endTime: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1502,7 +1502,7 @@ export interface MADMarketplace1155 extends BaseContract {
       _id: PromiseOrValue<BigNumberish>,
       _amount: PromiseOrValue<BigNumberish>,
       _price: PromiseOrValue<BigNumberish>,
-      _endBlock: PromiseOrValue<BigNumberish>,
+      _endTime: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

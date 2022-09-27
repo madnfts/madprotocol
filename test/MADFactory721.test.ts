@@ -24,8 +24,7 @@ import {
   Collection,
   SplitterConfig,
   dead,
-  madFixture721A,
-  OrderDetails721,
+  madFixture721A
 } from "./utils/madFixtures";
 
 describe("MADFactory721", () => {

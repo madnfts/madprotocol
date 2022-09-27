@@ -4,6 +4,7 @@ import {
   mine,
   mineUpTo,
 } from "@nomicfoundation/hardhat-network-helpers";
+import { setNextBlockTimestamp } from "@nomicfoundation/hardhat-network-helpers/dist/src/helpers/time";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import {
@@ -226,11 +227,11 @@ describe("MADMarketplace1155", () => {
         "ERC1155Minimal",
         minAddr,
       );
-      await r1155
+      const tx_ = await r1155
         .connect(acc02)
         .setMintState(minAddr, true, 0);
 
-      const blocknum = m1155.provider.getBlockNumber();
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
       await r1155
         .connect(acc02)
         .minimalSafeMint(minAddr, acc02.address);
@@ -244,7 +245,7 @@ describe("MADMarketplace1155", () => {
           1,
           1,
           price,
-          (await blocknum) + 100,
+          blockTimestamp + 100,
         );
       const rc: ContractReceipt = await fixepPrice.wait();
       const bn = rc.blockNumber;
@@ -285,8 +286,8 @@ describe("MADMarketplace1155", () => {
         amount: zero,
         startPrice: zero,
         endPrice: zero,
-        startBlock: zero,
-        endBlock: zero,
+        startTime: zero,
+        endTime: zero,
         lastBidPrice: zero,
         lastBidder: dead,
         isSold: false,
@@ -311,8 +312,8 @@ describe("MADMarketplace1155", () => {
       expect(orderInfo.amount).to.eq(_null.amount);
       expect(orderInfo.startPrice).to.eq(_null.startPrice);
       expect(orderInfo.endPrice).to.eq(_null.endPrice);
-      expect(orderInfo.startBlock).to.eq(_null.startBlock);
-      expect(orderInfo.endBlock).to.eq(_null.endBlock);
+      expect(orderInfo.startTime).to.eq(_null.startTime);
+      expect(orderInfo.endTime).to.eq(_null.endTime);
       expect(orderInfo.lastBidPrice).to.eq(
         _null.lastBidPrice,
       );
@@ -364,15 +365,18 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
+      
+      const blockTimestamp = (await m1155.provider.getBlock(await m1155.provider.getBlockNumber())).timestamp;
+
       await expect(
         m1155
           .connect(acc01)
-          .fixedPrice(min.address, 1, 1, price, 300),
+          .fixedPrice(min.address, 1, 1, price, blockTimestamp + 300),
       ).to.be.revertedWith(MarketplaceErrors.NotAuthorized);
       await expect(
         m1155
           .connect(acc02)
-          .fixedPrice(min.address, 1, 1, price, 300),
+          .fixedPrice(min.address, 1, 1, price, blockTimestamp + 300),
       ).to.be.revertedWith(MarketplaceErrors.NotAuthorized);
     });
     it("Should revert if duration is less than min allowed", async () => {
@@ -412,10 +416,11 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      await min
+       const tx_ = await min
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
-      const bn = await m1155.provider.getBlockNumber();
+
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
 
       await expect(
         m1155
@@ -428,7 +433,7 @@ describe("MADMarketplace1155", () => {
       await expect(
         m1155
           .connect(acc02)
-          .fixedPrice(min.address, 1, 1, price, bn),
+          .fixedPrice(min.address, 1, 1, price, blockTimestamp),
       ).to.be.revertedWithCustomError(
         m1155,
         MarketplaceErrors.NeedMoreTime,
@@ -472,14 +477,16 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      await min
+      const tx_ = await min
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+      
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
 
       await expect(
         m1155
           .connect(acc02)
-          .fixedPrice(min.address, 1, 1, 0, 300),
+          .fixedPrice(min.address, 1, 1, 0, blockTimestamp + 300),
       ).to.be.revertedWithCustomError(
         m1155,
         MarketplaceErrors.WrongPrice,
@@ -523,12 +530,15 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      await min
+      const tx_ = await min
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
       const fpTx = await m1155
         .connect(acc02)
-        .fixedPrice(min.address, 1, 1, price, 300);
+        .fixedPrice(min.address, 1, 1, price, blockTimestamp + 300);
       const fpRc: ContractReceipt = await fpTx.wait();
       const fpBn = fpRc.blockNumber;
 
@@ -540,8 +550,8 @@ describe("MADMarketplace1155", () => {
         amount: ethers.constants.One,
         startPrice: price,
         endPrice: ethers.constants.Zero,
-        startBlock: ethers.BigNumber.from(fpBn),
-        endBlock: ethers.BigNumber.from(300),
+        startTime: ethers.BigNumber.from(blockTimestamp + 1),
+        endTime: ethers.BigNumber.from(blockTimestamp + 300),
         lastBidPrice: ethers.constants.Zero,
         lastBidder: dead,
         isSold: false,
@@ -566,8 +576,8 @@ describe("MADMarketplace1155", () => {
       expect(orderInfo.amount).to.eq(storage.amount);
       expect(orderInfo.startPrice).to.eq(storage.startPrice);
       expect(orderInfo.endPrice).to.eq(storage.endPrice);
-      expect(orderInfo.startBlock).to.eq(storage.startBlock);
-      expect(orderInfo.endBlock).to.eq(storage.endBlock);
+      expect(orderInfo.startTime).to.eq(storage.startTime);
+      expect(orderInfo.endTime).to.eq(storage.endTime);
 
       expect(
         await m1155.callStatic.tokenOrderLength(
@@ -671,37 +681,39 @@ describe("MADMarketplace1155", () => {
       await whitelist
         .connect(owner)
         .setApprovalForAll(m1155.address, true);
-      await whitelist
+      const tx_ = await whitelist
         .connect(amb)
         .setApprovalForAll(m1155.address, true);
 
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
       const fpTx1 = await m1155
         .connect(mad)
-        .fixedPrice(whitelist.address, 1, 1, price, 300);
+        .fixedPrice(whitelist.address, 1, 1, price, blockTimestamp + 300);
       const fpRc1: ContractReceipt = await fpTx1.wait();
       const fpBn1 = fpRc1.blockNumber;
 
       const fpTx2 = await m1155
         .connect(acc01)
-        .fixedPrice(whitelist.address, 2, 1, price, 300);
+        .fixedPrice(whitelist.address, 2, 1, price, blockTimestamp + 300);
       const fpRc2: ContractReceipt = await fpTx2.wait();
       const fpBn2 = fpRc2.blockNumber;
 
       const fpTx3 = await m1155
         .connect(acc02)
-        .fixedPrice(whitelist.address, 3, 1, price, 300);
+        .fixedPrice(whitelist.address, 3, 1, price, blockTimestamp + 300);
       const fpRc3: ContractReceipt = await fpTx3.wait();
       const fpBn3 = fpRc3.blockNumber;
 
       const fpTx4 = await m1155
         .connect(owner)
-        .fixedPrice(whitelist.address, 4, 1, price, 300);
+        .fixedPrice(whitelist.address, 4, 1, price, blockTimestamp + 300);
       const fpRc4: ContractReceipt = await fpTx4.wait();
       const fpBn4 = fpRc4.blockNumber;
 
       const fpTx5 = await m1155
         .connect(amb)
-        .fixedPrice(whitelist.address, 5, 1, price, 300);
+        .fixedPrice(whitelist.address, 5, 1, price, blockTimestamp + 300);
       const fpRc5: ContractReceipt = await fpTx5.wait();
       const fpBn5 = fpRc5.blockNumber;
 
@@ -931,18 +943,21 @@ describe("MADMarketplace1155", () => {
         minAddr,
       );
 
-      await r1155
+      const tx_ = await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
+
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
       await expect(
         m1155
           .connect(acc01)
-          .dutchAuction(min.address, 1, 1, price, 0, 300),
+          .dutchAuction(min.address, 1, 1, price, 0, blockTimestamp + 300),
       ).to.be.revertedWith(MarketplaceErrors.NotAuthorized);
       await expect(
         m1155
           .connect(acc02)
-          .dutchAuction(min.address, 1, 1, price, 0, 300),
+          .dutchAuction(min.address, 1, 1, price, 0, blockTimestamp + 300),
       ).to.be.revertedWith(MarketplaceErrors.NotAuthorized);
     });
     it("Should revert if duration is less than min allowed", async () => {
@@ -982,15 +997,15 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      await min
+      const tx_ = await min
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
-      const bn = await m1155.provider.getBlockNumber();
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
 
       await expect(
         m1155
           .connect(acc02)
-          .dutchAuction(min.address, 1, 1, price, 0, 300),
+          .dutchAuction(min.address, 1, 1, price, 0, blockTimestamp + 300),
       ).to.be.revertedWithCustomError(
         m1155,
         MarketplaceErrors.NeedMoreTime,
@@ -998,7 +1013,7 @@ describe("MADMarketplace1155", () => {
       await expect(
         m1155
           .connect(acc02)
-          .dutchAuction(min.address, 1, 1, price, 0, bn),
+          .dutchAuction(min.address, 1, 1, price, 0, blockTimestamp),
       ).to.be.revertedWithCustomError(
         m1155,
         MarketplaceErrors.NeedMoreTime,
@@ -1042,14 +1057,16 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      await min
+      const tx_ = await min
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
 
       await expect(
         m1155
           .connect(acc02)
-          .dutchAuction(min.address, 1, 1, 2, 3, 300),
+          .dutchAuction(min.address, 1, 1, 2, 3, blockTimestamp + 300),
       ).to.be.revertedWithCustomError(
         m1155,
         MarketplaceErrors.ExceedsMaxEP,
@@ -1057,7 +1074,7 @@ describe("MADMarketplace1155", () => {
       await expect(
         m1155
           .connect(acc02)
-          .dutchAuction(min.address, 1, 1, 3, 3, 700),
+          .dutchAuction(min.address, 1, 1, 3, 3, blockTimestamp + 700),
       ).to.be.revertedWithCustomError(
         m1155,
         MarketplaceErrors.ExceedsMaxEP,
@@ -1101,12 +1118,15 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      await min
+      const tx_ = await min
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
       const daTx = await m1155
         .connect(acc02)
-        .dutchAuction(min.address, 1, 1, price, 0, 300);
+        .dutchAuction(min.address, 1, 1, price, 0, blockTimestamp + 300);
       const daRc: ContractReceipt = await daTx.wait();
       const daBn = daRc.blockNumber;
 
@@ -1118,8 +1138,8 @@ describe("MADMarketplace1155", () => {
         amount: ethers.constants.One,
         startPrice: price,
         endPrice: ethers.constants.Zero,
-        startBlock: ethers.BigNumber.from(daBn),
-        endBlock: ethers.BigNumber.from(300),
+        startTime: ethers.BigNumber.from(blockTimestamp + 1),
+        endTime: ethers.BigNumber.from(blockTimestamp + 300),
         lastBidPrice: ethers.constants.Zero,
         lastBidder: dead,
         isSold: false,
@@ -1143,8 +1163,8 @@ describe("MADMarketplace1155", () => {
       expect(orderInfo.amount).to.eq(storage.amount);
       expect(orderInfo.startPrice).to.eq(storage.startPrice);
       expect(orderInfo.endPrice).to.eq(storage.endPrice);
-      expect(orderInfo.startBlock).to.eq(storage.startBlock);
-      expect(orderInfo.endBlock).to.eq(storage.endBlock);
+      expect(orderInfo.startTime).to.eq(storage.startTime);
+      expect(orderInfo.endTime).to.eq(storage.endTime);
 
       expect(
         await m1155.callStatic.tokenOrderLength(
@@ -1248,37 +1268,39 @@ describe("MADMarketplace1155", () => {
       await whitelist
         .connect(owner)
         .setApprovalForAll(m1155.address, true);
-      await whitelist
+      const tx_ = await whitelist
         .connect(amb)
         .setApprovalForAll(m1155.address, true);
 
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
       const daTx1 = await m1155
         .connect(mad)
-        .dutchAuction(whitelist.address, 1, 1, price, 0, 300);
+        .dutchAuction(whitelist.address, 1, 1, price, 0, blockTimestamp + 300);
       const daRc1: ContractReceipt = await daTx1.wait();
       const daBn1 = daRc1.blockNumber;
 
       const daTx2 = await m1155
         .connect(acc01)
-        .dutchAuction(whitelist.address, 2, 1, price, 0, 300);
+        .dutchAuction(whitelist.address, 2, 1, price, 0, blockTimestamp + 300);
       const daRc2: ContractReceipt = await daTx2.wait();
       const daBn2 = daRc2.blockNumber;
 
       const daTx3 = await m1155
         .connect(acc02)
-        .dutchAuction(whitelist.address, 3, 1, price, 0, 300);
+        .dutchAuction(whitelist.address, 3, 1, price, 0, blockTimestamp + 300);
       const daRc3: ContractReceipt = await daTx3.wait();
       const daBn3 = daRc3.blockNumber;
 
       const daTx4 = await m1155
         .connect(owner)
-        .dutchAuction(whitelist.address, 4, 1, price, 0, 300);
+        .dutchAuction(whitelist.address, 4, 1, price, 0, blockTimestamp + 300);
       const daRc4: ContractReceipt = await daTx4.wait();
       const daBn4 = daRc4.blockNumber;
 
       const daTx5 = await m1155
         .connect(amb)
-        .dutchAuction(whitelist.address, 5, 1, price, 0, 300);
+        .dutchAuction(whitelist.address, 5, 1, price, 0, blockTimestamp + 300);
       const daRc5: ContractReceipt = await daTx5.wait();
       const daBn5 = daRc5.blockNumber;
 
@@ -1508,18 +1530,20 @@ describe("MADMarketplace1155", () => {
         minAddr,
       );
 
-      await r1155
+      const tx_ = await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
       await expect(
         m1155
           .connect(acc01)
-          .englishAuction(min.address, 1, 1, price, 300),
+          .englishAuction(min.address, 1, 1, price, blockTimestamp + 300),
       ).to.be.revertedWith(MarketplaceErrors.NotAuthorized);
       await expect(
         m1155
           .connect(acc02)
-          .englishAuction(min.address, 1, 1, price, 300),
+          .englishAuction(min.address, 1, 1, price, blockTimestamp + 300),
       ).to.be.revertedWith(MarketplaceErrors.NotAuthorized);
     });
     it("Should revert if duration is less than min allowed", async () => {
@@ -1559,15 +1583,15 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      await min
+      const tx_ = await min
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
-      const bn = await m1155.provider.getBlockNumber();
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
 
       await expect(
         m1155
           .connect(acc02)
-          .englishAuction(min.address, 1, 1, price, 300),
+          .englishAuction(min.address, 1, 1, price, blockTimestamp + 300),
       ).to.be.revertedWithCustomError(
         m1155,
         MarketplaceErrors.NeedMoreTime,
@@ -1575,7 +1599,7 @@ describe("MADMarketplace1155", () => {
       await expect(
         m1155
           .connect(acc02)
-          .englishAuction(min.address, 1, 1, price, bn),
+          .englishAuction(min.address, 1, 1, price, blockTimestamp),
       ).to.be.revertedWithCustomError(
         m1155,
         MarketplaceErrors.NeedMoreTime,
@@ -1619,14 +1643,16 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      await min
+      const tx_ = await min
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
 
       await expect(
         m1155
           .connect(acc02)
-          .englishAuction(min.address, 1, 1, 0, 300),
+          .englishAuction(min.address, 1, 1, 0, blockTimestamp + 300),
       ).to.be.revertedWithCustomError(
         m1155,
         MarketplaceErrors.WrongPrice,
@@ -1670,12 +1696,14 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      await min
+      const tx_ = await min
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
       const eaTx = await m1155
         .connect(acc02)
-        .englishAuction(min.address, 1, 1, price, 300);
+        .englishAuction(min.address, 1, 1, price, blockTimestamp + 300);
       const eaRc: ContractReceipt = await eaTx.wait();
       const eaBn = eaRc.blockNumber;
 
@@ -1687,8 +1715,8 @@ describe("MADMarketplace1155", () => {
         amount: ethers.constants.One,
         startPrice: price,
         endPrice: ethers.constants.Zero,
-        startBlock: ethers.BigNumber.from(eaBn),
-        endBlock: ethers.BigNumber.from(300),
+        startTime: ethers.BigNumber.from(blockTimestamp + 1),
+        endTime: ethers.BigNumber.from(blockTimestamp + 300),
         lastBidPrice: ethers.constants.Zero,
         lastBidder: dead,
         isSold: false,
@@ -1712,8 +1740,8 @@ describe("MADMarketplace1155", () => {
       expect(orderInfo.amount).to.eq(storage.amount);
       expect(orderInfo.startPrice).to.eq(storage.startPrice);
       expect(orderInfo.endPrice).to.eq(storage.endPrice);
-      expect(orderInfo.startBlock).to.eq(storage.startBlock);
-      expect(orderInfo.endBlock).to.eq(storage.endBlock);
+      expect(orderInfo.startTime).to.eq(storage.startTime);
+      expect(orderInfo.endTime).to.eq(storage.endTime);
 
       expect(
         await m1155.callStatic.tokenOrderLength(
@@ -1817,37 +1845,39 @@ describe("MADMarketplace1155", () => {
       await whitelist
         .connect(owner)
         .setApprovalForAll(m1155.address, true);
-      await whitelist
+      const tx_ = await whitelist
         .connect(amb)
         .setApprovalForAll(m1155.address, true);
 
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
       const eaTx1 = await m1155
         .connect(mad)
-        .englishAuction(whitelist.address, 1, 1, price, 300);
+        .englishAuction(whitelist.address, 1, 1, price, blockTimestamp + 300);
       const eaRc1: ContractReceipt = await eaTx1.wait();
       const eaBn1 = eaRc1.blockNumber;
 
       const eaTx2 = await m1155
         .connect(acc01)
-        .englishAuction(whitelist.address, 2, 1, price, 300);
+        .englishAuction(whitelist.address, 2, 1, price, blockTimestamp + 300);
       const eaRc2: ContractReceipt = await eaTx2.wait();
       const eaBn2 = eaRc2.blockNumber;
 
       const eaTx3 = await m1155
         .connect(acc02)
-        .englishAuction(whitelist.address, 3, 1, price, 300);
+        .englishAuction(whitelist.address, 3, 1, price, blockTimestamp + 300);
       const eaRc3: ContractReceipt = await eaTx3.wait();
       const eaBn3 = eaRc3.blockNumber;
 
       const eaTx4 = await m1155
         .connect(owner)
-        .englishAuction(whitelist.address, 4, 1, price, 300);
+        .englishAuction(whitelist.address, 4, 1, price, blockTimestamp + 300);
       const eaRc4: ContractReceipt = await eaTx4.wait();
       const eaBn4 = eaRc4.blockNumber;
 
       const eaTx5 = await m1155
         .connect(amb)
-        .englishAuction(whitelist.address, 5, 1, price, 300);
+        .englishAuction(whitelist.address, 5, 1, price, blockTimestamp + 300);
       const eaRc5: ContractReceipt = await eaTx5.wait();
       const eaBn5 = eaRc5.blockNumber;
 
@@ -2079,12 +2109,15 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      await min
+      const tx_ = await min
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
       const eaTx = await m1155
         .connect(acc02)
-        .englishAuction(min.address, 1, 1, price, 300);
+        .englishAuction(min.address, 1, 1, price, blockTimestamp + 300);
       const eaRc: ContractReceipt = await eaTx.wait();
       const eaBn = eaRc.blockNumber;
 
@@ -2154,12 +2187,14 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      await min
+      const tx_ = await min
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
       const daTx = await m1155
         .connect(acc02)
-        .dutchAuction(min.address, 1, 1, price, 0, 300);
+        .dutchAuction(min.address, 1, 1, price, 0, blockTimestamp + 300);
       const daRc: ContractReceipt = await daTx.wait();
       const daBn = daRc.blockNumber;
       const orderId = getOrderId1155(
@@ -2214,12 +2249,15 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      await min
+      const tx_ = await min
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
       const eaTx = await m1155
         .connect(acc02)
-        .englishAuction(min.address, 1, 1, price, 300);
+        .englishAuction(min.address, 1, 1, price, blockTimestamp + 300);
       const eaRc: ContractReceipt = await eaTx.wait();
       const eaBn = eaRc.blockNumber;
       const orderId = getOrderId1155(
@@ -2277,12 +2315,14 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      await min
+      const tx_ = await min
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
       const eaTx = await m1155
         .connect(acc02)
-        .englishAuction(min.address, 1, 1, price, 300);
+        .englishAuction(min.address, 1, 1, price, blockTimestamp + 300);
       const eaRc: ContractReceipt = await eaTx.wait();
       const eaBn = eaRc.blockNumber;
       const orderId = getOrderId1155(
@@ -2293,6 +2333,7 @@ describe("MADMarketplace1155", () => {
         acc02.address,
       );
 
+      await setNextBlockTimestamp(blockTimestamp + 303);
       await mineUpTo(303);
 
       await expect(
@@ -2340,12 +2381,14 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      await min
+      const tx_ = await min
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
       const eaTx = await m1155
         .connect(acc02)
-        .englishAuction(min.address, 1, 1, price, 300);
+        .englishAuction(min.address, 1, 1, price, blockTimestamp + 300);
       const eaRc: ContractReceipt = await eaTx.wait();
       const eaBn = eaRc.blockNumber;
       const orderId = getOrderId1155(
@@ -2401,12 +2444,14 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      await min
+      const tx_ = await min
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
       const eaTx = await m1155
         .connect(acc02)
-        .englishAuction(min.address, 1, 1, price, 300);
+        .englishAuction(min.address, 1, 1, price, blockTimestamp + 300);
       const eaRc: ContractReceipt = await eaTx.wait();
       const eaBn = eaRc.blockNumber;
 
@@ -2457,7 +2502,7 @@ describe("MADMarketplace1155", () => {
       const orderInfo: OrderDetails1155 =
         await m1155.callStatic.orderInfo(eaOrderId);
 
-      expect(orderInfo.endBlock).to.eq(600);
+      expect(orderInfo.endTime).to.eq(blockTimestamp + 600);
       expect(orderInfo.lastBidder).to.eq(acc01.address);
       expect(orderInfo.lastBidPrice).to.eq(bidVal2);
     });
@@ -2501,12 +2546,14 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      await min
+      const tx_ = await min
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
       const fpTx = await m1155
         .connect(acc02)
-        .fixedPrice(min.address, 1, 1, price, 300);
+        .fixedPrice(min.address, 1, 1, price, blockTimestamp + 300);
       const fpRc: ContractReceipt = await fpTx.wait();
       const fpBn = fpRc.blockNumber;
       const fpOrderId = getOrderId1155(
@@ -2562,12 +2609,14 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      await min
+      const tx_ = await min
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
       const eaTx = await m1155
         .connect(acc02)
-        .englishAuction(min.address, 1, 1, price, 300);
+        .englishAuction(min.address, 1, 1, price, blockTimestamp + 300);
       const eaRc: ContractReceipt = await eaTx.wait();
       const eaBn = eaRc.blockNumber;
       const orderId = getOrderId1155(
@@ -2623,12 +2672,14 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      await min
+      const tx_ = await min
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
       const daTx = await m1155
         .connect(acc02)
-        .dutchAuction(min.address, 1, 1, price, 0, 300);
+        .dutchAuction(min.address, 1, 1, price, 0, blockTimestamp + 300);
       const daRc: ContractReceipt = await daTx.wait();
       const daBn = daRc.blockNumber;
       const orderId = getOrderId1155(
@@ -2686,12 +2737,14 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      await min
+      const tx_ = await min
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
       const daTx = await m1155
         .connect(acc02)
-        .dutchAuction(min.address, 1, 1, price, 0, 300);
+        .dutchAuction(min.address, 1, 1, price, 0, blockTimestamp + 300);
       const daRc: ContractReceipt = await daTx.wait();
       const daBn = daRc.blockNumber;
       const orderId = getOrderId1155(
@@ -2701,7 +2754,7 @@ describe("MADMarketplace1155", () => {
         1,
         acc02.address,
       );
-
+      await setNextBlockTimestamp(blockTimestamp + 302);
       await mineUpTo(302);
 
       await expect(
@@ -2749,12 +2802,14 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      await min
+      const tx_ = await min
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
       const fpTx = await m1155
         .connect(acc02)
-        .fixedPrice(min.address, 1, 1, price, 300);
+        .fixedPrice(min.address, 1, 1, price, blockTimestamp + 300);
       const fpRc: ContractReceipt = await fpTx.wait();
       const fpBn = fpRc.blockNumber;
       const fpOrderId = getOrderId1155(
@@ -2815,12 +2870,14 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      await min
+      const tx_ = await min
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
       const fpTx = await m1155
         .connect(acc02)
-        .fixedPrice(min.address, 1, 1, price, 300);
+        .fixedPrice(min.address, 1, 1, price, blockTimestamp + 300);
       const fpRc: ContractReceipt = await fpTx.wait();
       const fpBn = fpRc.blockNumber;
       const fpOrderId = getOrderId1155(
@@ -2834,7 +2891,6 @@ describe("MADMarketplace1155", () => {
       const fpBuy = await m1155
         .connect(acc01)
         .buy(fpOrderId, { value: price });
-
       // dutch auction order
       const basicAddr =
         await f1155.callStatic.getDeployedAddr("BasicSalt");
@@ -2864,7 +2920,7 @@ describe("MADMarketplace1155", () => {
         .setApprovalForAll(m1155.address, true);
       const daTx = await m1155
         .connect(acc02)
-        .dutchAuction(basic.address, 1, 1, price, 0, 300);
+        .dutchAuction(basic.address, 1, 1, price, 0, blockTimestamp + 300);
       const daRc: ContractReceipt = await daTx.wait();
       const daBn = daRc.blockNumber;
       const daOrderId = getOrderId1155(
@@ -2875,14 +2931,15 @@ describe("MADMarketplace1155", () => {
         acc02.address,
       );
 
-      await mineUpTo(200);
-
+      const orderInfo: OrderDetails1155 =
+        await m1155.callStatic.orderInfo(daOrderId);
+      await setNextBlockTimestamp(blockTimestamp + 200)
+      await mineUpTo(daBn + 1)
+      const blockTimestamp2 = (await m1155.provider.getBlock(daBn + 1)).timestamp;
       // simulate DA pricing math with ts
-      const delta = ethers.BigNumber.from(300 - daBn);
-      // tick = (startPrice(price) - endPrice(0)) / (endBlock - startBlock)
+      const delta = orderInfo.endTime.sub(orderInfo.startTime);
       const tick = price.div(delta);
-      // 202 - 33 = 169
-      const dec = ethers.BigNumber.from(169).mul(tick);
+      const dec = ethers.BigNumber.from(blockTimestamp2 - orderInfo.startTime.toNumber() + 1).mul(tick);
       const daPrice = price.sub(dec);
 
       const daBuy = await m1155
@@ -2910,12 +2967,15 @@ describe("MADMarketplace1155", () => {
         amount: ethers.constants.One,
         startPrice: price,
         endPrice: zero,
-        startBlock: ethers.BigNumber.from(fpBn),
-        endBlock: ethers.BigNumber.from(300),
+        startTime: ethers.BigNumber.from(blockTimestamp + 1),
+        endTime: ethers.BigNumber.from(blockTimestamp + 300),
         lastBidPrice: zero,
         lastBidder: dead,
         isSold: true,
       };
+
+      const blockTimestampDA = (await m1155.provider.getBlock(daBn)).timestamp;
+
       const daOD: OrderDetails1155 = {
         orderType: 1,
         seller: acc02.address,
@@ -2924,8 +2984,8 @@ describe("MADMarketplace1155", () => {
         amount: ethers.constants.One,
         startPrice: price,
         endPrice: zero,
-        startBlock: ethers.BigNumber.from(daBn),
-        endBlock: ethers.BigNumber.from(300),
+        startTime: ethers.BigNumber.from(blockTimestampDA),
+        endTime: ethers.BigNumber.from(blockTimestamp + 300),
         lastBidPrice: zero,
         lastBidder: dead,
         isSold: true,
@@ -2977,8 +3037,8 @@ describe("MADMarketplace1155", () => {
       expect(fpOrderInfo.amount).to.eq(fpOD.amount);
       expect(fpOrderInfo.startPrice).to.eq(fpOD.startPrice);
       expect(fpOrderInfo.endPrice).to.eq(fpOD.endPrice);
-      expect(fpOrderInfo.startBlock).to.eq(fpOD.startBlock);
-      expect(fpOrderInfo.endBlock).to.eq(fpOD.endBlock);
+      expect(fpOrderInfo.startTime).to.eq(fpOD.startTime);
+      expect(fpOrderInfo.endTime).to.eq(fpOD.endTime);
       expect(fpOrderInfo.lastBidPrice).to.eq(
         fpOD.lastBidPrice,
       );
@@ -2992,8 +3052,8 @@ describe("MADMarketplace1155", () => {
       expect(daOrderInfo.amount).to.eq(daOD.amount);
       expect(daOrderInfo.startPrice).to.eq(daOD.startPrice);
       expect(daOrderInfo.endPrice).to.eq(daOD.endPrice);
-      expect(daOrderInfo.startBlock).to.eq(daOD.startBlock);
-      expect(daOrderInfo.endBlock).to.eq(daOD.endBlock);
+      expect(daOrderInfo.startTime).to.eq(daOD.startTime);
+      expect(daOrderInfo.endTime).to.eq(daOD.endTime);
       expect(daOrderInfo.lastBidPrice).to.eq(
         daOD.lastBidPrice,
       );
@@ -3064,12 +3124,15 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      await min
+      const tx_ = await min
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+      
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
       const fpTx = await m1155
         .connect(acc02)
-        .fixedPrice(min.address, 1, 1, price, 300);
+        .fixedPrice(min.address, 1, 1, price, blockTimestamp + 300);
       const fpRc: ContractReceipt = await fpTx.wait();
       const fpBn = fpRc.blockNumber;
       const fpOrderId = getOrderId1155(
@@ -3122,7 +3185,7 @@ describe("MADMarketplace1155", () => {
         .setApprovalForAll(m1155.address, true);
       const daTx = await m1155
         .connect(acc02)
-        .dutchAuction(basic.address, 1, 1, price, 0, 300);
+        .dutchAuction(basic.address, 1, 1, price, 0, blockTimestamp + 300);
       const daRc: ContractReceipt = await daTx.wait();
       const daBn = daRc.blockNumber;
       const daOrderId = getOrderId1155(
@@ -3133,14 +3196,15 @@ describe("MADMarketplace1155", () => {
         acc02.address,
       );
 
-      await mineUpTo(200);
-
+      const orderInfo: OrderDetails1155 =
+        await m1155.callStatic.orderInfo(daOrderId);
+      await setNextBlockTimestamp(blockTimestamp + 200)
+      await mineUpTo(daBn + 1)
+      const blockTimestamp2 = (await m1155.provider.getBlock(daBn + 1)).timestamp;
       // simulate DA pricing math with ts
-      const delta = ethers.BigNumber.from(300 - daBn);
-      // tick = (startPrice(price) - endPrice(0)) / (endBlock - startBlock)
+      const delta = orderInfo.endTime.sub(orderInfo.startTime);
       const tick = price.div(delta);
-      // 202 - 33 = 169
-      const dec = ethers.BigNumber.from(169).mul(tick);
+      const dec = ethers.BigNumber.from(blockTimestamp2 - orderInfo.startTime.toNumber() + 1).mul(tick);
       const daPrice = price.sub(dec);
 
       const daRoyalty = await basic.royaltyInfo(1, daPrice);
@@ -3152,7 +3216,7 @@ describe("MADMarketplace1155", () => {
       ).to.changeEtherBalances(
         [acc01, acc02],
         [
-          "-369402985074626959",
+          "-349823321554770424",
           daPrice
             .sub(daRoyalty[1])
             .add(daRoyalty[1].mul(7000).div(10_000)),
@@ -3177,13 +3241,14 @@ describe("MADMarketplace1155", () => {
       await extToken
         .connect(acc02)
         .mint(2, { value: price.mul(ethers.constants.Two) });
-      await extToken
+      const tx_ = await extToken
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
 
       const fpTx = await m1155
         .connect(acc02)
-        .fixedPrice(extToken.address, 1, 1, price, 300);
+        .fixedPrice(extToken.address, 1, 1, price, blockTimestamp + 300);
       const fpRc: ContractReceipt = await fpTx.wait();
       const fpBn = fpRc.blockNumber;
       const fpOrderId = getOrderId1155(
@@ -3212,7 +3277,7 @@ describe("MADMarketplace1155", () => {
 
       const daTx = await m1155
         .connect(acc02)
-        .dutchAuction(extToken.address, 2, 1, price, 0, 300);
+        .dutchAuction(extToken.address, 2, 1, price, 0, blockTimestamp + 300);
       const daRc: ContractReceipt = await daTx.wait();
       const daBn = daRc.blockNumber;
       const daOrderId = getOrderId1155(
@@ -3223,14 +3288,15 @@ describe("MADMarketplace1155", () => {
         acc02.address,
       );
 
-      await mineUpTo(199);
-
+      const orderInfo: OrderDetails1155 =
+        await m1155.callStatic.orderInfo(daOrderId);
+        await setNextBlockTimestamp(blockTimestamp + 200)
+      await mineUpTo(daBn + 1)
+      const blockTimestamp2 = (await m1155.provider.getBlock(daBn + 1)).timestamp;
       // simulate DA pricing math with ts
-      const delta = ethers.BigNumber.from(300 - daBn);
-      // tick = (startPrice(price) - endPrice(0)) / (endBlock - startBlock)
+      const delta = orderInfo.endTime.sub(orderInfo.startTime);
       const tick = price.div(delta);
-      // 200 - 29 = 171
-      const dec = ethers.BigNumber.from(172).mul(tick);
+      const dec = ethers.BigNumber.from(blockTimestamp2 - orderInfo.startTime.toNumber() + 1).mul(tick);
       const daPrice = price.sub(dec);
 
       // const daRoyalty = await extToken.royaltyInfo(
@@ -3248,7 +3314,7 @@ describe("MADMarketplace1155", () => {
           .buy(daOrderId, { value: daPrice }),
       ).to.changeEtherBalances(
         [acc01, acc02, owner],
-        ["-367647058823529432", daPrice.sub(daFee), daFee],
+        ["-344947735191637668", daPrice.sub(daFee), daFee],
       );
     });
     it("Should buy third party minted tokens without ERC2981 support", async () => {
@@ -3261,13 +3327,15 @@ describe("MADMarketplace1155", () => {
         .connect(acc02)
         .batchMint(acc02.address, [1, 2]);
 
-      await extToken
+      const tx_ = await extToken
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
 
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
       const fpTx = await m1155
         .connect(acc02)
-        .fixedPrice(extToken.address, 1, 1, price, 300);
+        .fixedPrice(extToken.address, 1, 1, price, blockTimestamp + 300);
       const fpRc: ContractReceipt = await fpTx.wait();
       const fpBn = fpRc.blockNumber;
       const fpOrderId = getOrderId1155(
@@ -3292,7 +3360,7 @@ describe("MADMarketplace1155", () => {
 
       const daTx = await m1155
         .connect(acc02)
-        .dutchAuction(extToken.address, 2, 1, price, 0, 300);
+        .dutchAuction(extToken.address, 2, 1, price, 0, blockTimestamp + 300);
       const daRc: ContractReceipt = await daTx.wait();
       const daBn = daRc.blockNumber;
       const daOrderId = getOrderId1155(
@@ -3303,14 +3371,16 @@ describe("MADMarketplace1155", () => {
         acc02.address,
       );
 
-      await mineUpTo(200);
-
+      const orderInfo: OrderDetails1155 =
+        await m1155.callStatic.orderInfo(daOrderId);
+      await setNextBlockTimestamp(blockTimestamp + 200)
+      await mineUpTo(daBn + 1)
+      const blockTimestamp2 = (await m1155.provider.getBlock(daBn + 1)).timestamp;
+      
       // simulate DA pricing math with ts
-      const delta = ethers.BigNumber.from(300 - daBn);
-      // tick = (startPrice(price) - endPrice(0)) / (endBlock - startBlock)
+      const delta = orderInfo.endTime.sub(orderInfo.startTime);
       const tick = price.div(delta);
-      // 201 - 27 = 174
-      const dec = ethers.BigNumber.from(174).mul(tick);
+      const dec = ethers.BigNumber.from(blockTimestamp2 - orderInfo.startTime.toNumber() + 1).mul(tick);
       const daPrice = price.sub(dec);
 
       const daFee = daPrice
@@ -3323,7 +3393,7 @@ describe("MADMarketplace1155", () => {
           .buy(daOrderId, { value: daPrice }),
       ).to.changeEtherBalances(
         [acc01, acc02, owner],
-        ["-362637362637362638", daPrice.sub(daFee), daFee],
+        ["-344947735191637668", daPrice.sub(daFee), daFee],
       );
     });
   });
@@ -3366,12 +3436,14 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      await min
+      const tx_ = await min
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
       const eaTx = await m1155
         .connect(acc02)
-        .englishAuction(min.address, 1, 1, price, 300);
+        .englishAuction(min.address, 1, 1, price, blockTimestamp + 300);
       const eaRc: ContractReceipt = await eaTx.wait();
       const eaBn = eaRc.blockNumber;
 
@@ -3444,12 +3516,14 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      await min
+      const tx_ = await min
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
       const eaTx = await m1155
         .connect(acc02)
-        .englishAuction(min.address, 1, 1, price, 300);
+        .englishAuction(min.address, 1, 1, price, blockTimestamp + 300);
       const eaRc: ContractReceipt = await eaTx.wait();
       const eaBn = eaRc.blockNumber;
       const orderId = getOrderId1155(
@@ -3462,6 +3536,7 @@ describe("MADMarketplace1155", () => {
       await m1155.connect(acc01).bid(orderId, {
         value: price.mul(ethers.constants.Two),
       });
+      await setNextBlockTimestamp(blockTimestamp + 600);
       await mineUpTo(600);
 
       await m1155
@@ -3500,13 +3575,14 @@ describe("MADMarketplace1155", () => {
       await extToken
         .connect(acc02)
         .mint(2, { value: price.mul(ethers.constants.Two) });
-      await extToken
+      const tx_ = await extToken
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
 
       const fpTx = await m1155
         .connect(acc02)
-        .fixedPrice(extToken.address, 1, 1, price, 300);
+        .fixedPrice(extToken.address, 1, 1, price, blockTimestamp + 300);
       const fpRc: ContractReceipt = await fpTx.wait();
       const fpBn = fpRc.blockNumber;
       const fpOrderId = getOrderId1155(
@@ -3562,12 +3638,14 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      await min
+      const tx_ = await min
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
       const eaTx = await m1155
         .connect(acc02)
-        .englishAuction(min.address, 1, 1, price, 300);
+        .englishAuction(min.address, 1, 1, price, blockTimestamp + 300);
       const eaRc: ContractReceipt = await eaTx.wait();
       const eaBn = eaRc.blockNumber;
       const orderId = getOrderId1155(
@@ -3626,12 +3704,14 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      await min
+      const tx_ = await min
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
       const eaTx = await m1155
         .connect(acc02)
-        .englishAuction(min.address, 1, 1, price, 300);
+        .englishAuction(min.address, 1, 1, price, blockTimestamp + 300);
       const eaRc: ContractReceipt = await eaTx.wait();
       const eaBn = eaRc.blockNumber;
       const orderId = getOrderId1155(
@@ -3648,6 +3728,7 @@ describe("MADMarketplace1155", () => {
         .connect(acc01)
         .bid(orderId, { value: bidVal });
 
+      await setNextBlockTimestamp(blockTimestamp + 600);
       await mineUpTo(600);
 
       const tx = await m1155
@@ -3669,6 +3750,7 @@ describe("MADMarketplace1155", () => {
         acc01.address,
         1,
       );
+
       const eaOwnerOf = await min.callStatic.ownerOf(1);
       const eaOD: OrderDetails1155 = {
         orderType: 2,
@@ -3678,8 +3760,8 @@ describe("MADMarketplace1155", () => {
         amount: one,
         startPrice: price,
         endPrice: zero,
-        startBlock: ethers.BigNumber.from(eaBn),
-        endBlock: ethers.BigNumber.from(600),
+        startTime: ethers.BigNumber.from(blockTimestamp + 1),
+        endTime: ethers.BigNumber.from(blockTimestamp + 300 + 300),
         lastBidPrice: bidVal,
         lastBidder: acc01.address,
         isSold: true,
@@ -3709,8 +3791,8 @@ describe("MADMarketplace1155", () => {
       expect(eaOrderInfo.amount).to.eq(eaOD.amount);
       expect(eaOrderInfo.startPrice).to.eq(eaOD.startPrice);
       expect(eaOrderInfo.endPrice).to.eq(eaOD.endPrice);
-      expect(eaOrderInfo.startBlock).to.eq(eaOD.startBlock);
-      expect(eaOrderInfo.endBlock).to.eq(eaOD.endBlock);
+      expect(eaOrderInfo.startTime).to.eq(eaOD.startTime);
+      expect(eaOrderInfo.endTime).to.eq(eaOD.endTime);
       expect(eaOrderInfo.lastBidPrice).to.eq(
         eaOD.lastBidPrice,
       );
@@ -3772,12 +3854,14 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      await min
+      const tx_ = await min
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
       const eaTx = await m1155
         .connect(acc02)
-        .englishAuction(min.address, 1, 1, price, 300);
+        .englishAuction(min.address, 1, 1, price, blockTimestamp + 300);
       const eaRc: ContractReceipt = await eaTx.wait();
       const eaBn = eaRc.blockNumber;
       const orderId = getOrderId1155(
@@ -3794,6 +3878,7 @@ describe("MADMarketplace1155", () => {
         .connect(acc01)
         .bid(orderId, { value: bidVal });
 
+      await setNextBlockTimestamp(blockTimestamp + 600);
       await mineUpTo(600);
 
       const eaRoyalty = await min.royaltyInfo(1, bidVal);
@@ -3831,13 +3916,14 @@ describe("MADMarketplace1155", () => {
 
       await extToken.connect(acc02).setPublicMintState(true);
       await extToken.connect(acc02).mint(1, { value: price });
-      await extToken
+      const tx_ = await extToken
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
 
       const eaTx = await m1155
         .connect(acc02)
-        .englishAuction(extToken.address, 1, 1, price, 300);
+        .englishAuction(extToken.address, 1, 1, price, blockTimestamp + 300);
       const eaRc: ContractReceipt = await eaTx.wait();
       const eaBn = eaRc.blockNumber;
       const orderId = getOrderId1155(
@@ -3854,6 +3940,7 @@ describe("MADMarketplace1155", () => {
         .connect(acc01)
         .bid(orderId, { value: bidVal });
 
+      await setNextBlockTimestamp(blockTimestamp + 600);
       await mineUpTo(600);
 
       // const eaRoyalty = await extToken.royaltyInfo(1, bidVal);
@@ -3881,13 +3968,14 @@ describe("MADMarketplace1155", () => {
       const extToken = await ExtToken.connect(acc02).deploy();
 
       await extToken.mint(acc02.address, 1);
-      await extToken
+      const tx_ = await extToken
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
 
       const eaTx = await m1155
         .connect(acc02)
-        .englishAuction(extToken.address, 1, 1, price, 300);
+        .englishAuction(extToken.address, 1, 1, price, blockTimestamp + 300);
       const eaRc: ContractReceipt = await eaTx.wait();
       const eaBn = eaRc.blockNumber;
       const orderId = getOrderId1155(
@@ -3904,6 +3992,7 @@ describe("MADMarketplace1155", () => {
         .connect(acc01)
         .bid(orderId, { value: bidVal });
 
+      await setNextBlockTimestamp(blockTimestamp + 600);
       await mineUpTo(600);
 
       const eaPrice = bidVal;
@@ -3961,12 +4050,14 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      await min
+      const tx_ = await min
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
       const fpTx = await m1155
         .connect(acc02)
-        .fixedPrice(min.address, 1, 1, price, 300);
+        .fixedPrice(min.address, 1, 1, price, blockTimestamp + 301);
       const fpRc: ContractReceipt = await fpTx.wait();
       const fpBn = fpRc.blockNumber;
       const orderId = getOrderId1155(
@@ -4025,12 +4116,14 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      await min
+      const tx_ = await min
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
       const daTx = await m1155
         .connect(acc02)
-        .dutchAuction(min.address, 1, 1, price, 0, 300);
+        .dutchAuction(min.address, 1, 1, price, 0, blockTimestamp + 300);
       const daRc: ContractReceipt = await daTx.wait();
       const daBn = daRc.blockNumber;
       const orderId = getOrderId1155(
@@ -4041,12 +4134,16 @@ describe("MADMarketplace1155", () => {
         acc02.address,
       );
 
-      await mineUpTo(200);
-
+      const orderInfo: OrderDetails1155 =
+        await m1155.callStatic.orderInfo(orderId);
+      await setNextBlockTimestamp(blockTimestamp + 200)
+      await mineUpTo(daBn + 1)
+      const blockTimestamp2 = (await m1155.provider.getBlock(daBn + 1)).timestamp;
+      
       // simulate DA pricing math with ts
-      const delta = ethers.BigNumber.from(300 - daBn);
+      const delta = orderInfo.endTime.sub(orderInfo.startTime);
       const tick = price.div(delta);
-      const dec = ethers.BigNumber.from(185).mul(tick);
+      const dec = ethers.BigNumber.from(blockTimestamp2 - orderInfo.startTime.toNumber() + 1).mul(tick);
       const daPrice = price.sub(dec);
 
       await m1155
@@ -4097,12 +4194,14 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      await min
+      const tx_ = await min
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
       const eaTx = await m1155
         .connect(acc02)
-        .englishAuction(min.address, 1, 1, price, 300);
+        .englishAuction(min.address, 1, 1, price, blockTimestamp + 301);
       const eaRc: ContractReceipt = await eaTx.wait();
       const eaBn = eaRc.blockNumber;
       const orderId = getOrderId1155(
@@ -4115,7 +4214,8 @@ describe("MADMarketplace1155", () => {
       await m1155.connect(acc01).bid(orderId, {
         value: price.mul(ethers.constants.Two),
       });
-      await mineUpTo(600);
+      await setNextBlockTimestamp(blockTimestamp + 600)
+      await mineUpTo(eaBn + 2);
       await expect(
         m1155.connect(acc02).cancelOrder(orderId),
       ).to.be.revertedWithCustomError(
@@ -4180,12 +4280,14 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      await min
+      const tx_ = await min
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
       const fpTx = await m1155
         .connect(acc02)
-        .fixedPrice(min.address, 1, 1, price, 300);
+        .fixedPrice(min.address, 1, 1, price, blockTimestamp + 300);
       const fpRc: ContractReceipt = await fpTx.wait();
       const fpBn = fpRc.blockNumber;
       const orderId = getOrderId1155(
@@ -4202,7 +4304,7 @@ describe("MADMarketplace1155", () => {
         .cancelOrder(orderId);
       const storage: OrderDetails1155 =
         await m1155.callStatic.orderInfo(orderId);
-      const endBlock = storage.endBlock;
+      const endTime = storage.endTime;
       const verArt = await artifacts.readArtifact(
         "FactoryVerifier",
       );
@@ -4223,7 +4325,7 @@ describe("MADMarketplace1155", () => {
         .to.be.ok.and.to.emit(m1155, "CancelOrder")
         .withArgs(minAddr, 1, 1, orderId, acc02.address);
 
-      expect(endBlock).to.be.eq(ethers.constants.Zero);
+      expect(endTime).to.be.eq(ethers.constants.Zero);
       expect(oldOwner).to.eq(m1155.address);
       expect(await min.callStatic.ownerOf(1)).to.eq(
         acc02.address,
@@ -4270,12 +4372,14 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      await min
+      const tx_ = await min
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
       const daTx = await m1155
         .connect(acc02)
-        .dutchAuction(min.address, 1, 1, price, 0, 300);
+        .dutchAuction(min.address, 1, 1, price, 0, blockTimestamp + 300);
       const daRc: ContractReceipt = await daTx.wait();
       const daBn = daRc.blockNumber;
       const orderId = getOrderId1155(
@@ -4292,7 +4396,7 @@ describe("MADMarketplace1155", () => {
         .cancelOrder(orderId);
       const storage: OrderDetails1155 =
         await m1155.callStatic.orderInfo(orderId);
-      const endBlock = storage.endBlock;
+      const endTime = storage.endTime;
       const verArt = await artifacts.readArtifact(
         "FactoryVerifier",
       );
@@ -4313,7 +4417,7 @@ describe("MADMarketplace1155", () => {
         .to.be.ok.and.to.emit(m1155, "CancelOrder")
         .withArgs(minAddr, 1, 1, orderId, acc02.address);
 
-      expect(endBlock).to.be.eq(ethers.constants.Zero);
+      expect(endTime).to.be.eq(ethers.constants.Zero);
       expect(oldOwner).to.eq(m1155.address);
       expect(await min.callStatic.ownerOf(1)).to.eq(
         acc02.address,
@@ -4360,12 +4464,14 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      await min
+      const tx_ = await min
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
       const eaTx = await m1155
         .connect(acc02)
-        .englishAuction(min.address, 1, 1, price, 300);
+        .englishAuction(min.address, 1, 1, price, blockTimestamp + 300);
       const eaRc: ContractReceipt = await eaTx.wait();
       const eaBn = eaRc.blockNumber;
       const orderId = getOrderId1155(
@@ -4382,7 +4488,7 @@ describe("MADMarketplace1155", () => {
         .cancelOrder(orderId);
       const storage: OrderDetails1155 =
         await m1155.callStatic.orderInfo(orderId);
-      const endBlock = storage.endBlock;
+      const endTime = storage.endTime;
       const verArt = await artifacts.readArtifact(
         "FactoryVerifier",
       );
@@ -4403,7 +4509,7 @@ describe("MADMarketplace1155", () => {
         .to.be.ok.and.to.emit(m1155, "CancelOrder")
         .withArgs(minAddr, 1, 1, orderId, acc02.address);
 
-      expect(endBlock).to.be.eq(ethers.constants.Zero);
+      expect(endTime).to.be.eq(ethers.constants.Zero);
       expect(oldOwner).to.eq(m1155.address);
       expect(await min.callStatic.ownerOf(1)).to.eq(
         acc02.address,
@@ -4473,19 +4579,21 @@ describe("MADMarketplace1155", () => {
       await whitelist
         .connect(acc01)
         .setApprovalForAll(m1155.address, true);
-      await whitelist
+      const tx_ = await whitelist
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
 
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
       const fpTx = await m1155
         .connect(mad)
-        .fixedPrice(whitelist.address, 1, 1, price, 300);
+        .fixedPrice(whitelist.address, 1, 1, price, blockTimestamp + 300);
       const daTx = await m1155
         .connect(acc01)
-        .dutchAuction(whitelist.address, 2, 1, price, 0, 300);
+        .dutchAuction(whitelist.address, 2, 1, price, 0, blockTimestamp + 300);
       const eaTx = await m1155
         .connect(acc02)
-        .englishAuction(whitelist.address, 3, 1, price, 300);
+        .englishAuction(whitelist.address, 3, 1, price, blockTimestamp + 300);
 
       const tx1 = await m1155.callStatic.tokenOrderLength(
         whitelist.address,
@@ -4558,19 +4666,20 @@ describe("MADMarketplace1155", () => {
         .freeSettings(wlAddr, 1, 10, root);
 
       await r1155.connect(acc02).creatorMint(wlAddr, 3);
-      await whitelist
+      const tx_ = await whitelist
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
 
       const fpTx = await m1155
         .connect(acc02)
-        .fixedPrice(whitelist.address, 1, 1, price, 300);
+        .fixedPrice(whitelist.address, 1, 1, price, blockTimestamp + 300);
       const daTx = await m1155
         .connect(acc02)
-        .dutchAuction(whitelist.address, 2, 1, price, 0, 300);
+        .dutchAuction(whitelist.address, 2, 1, price, 0, blockTimestamp + 300);
       const eaTx = await m1155
         .connect(acc02)
-        .englishAuction(whitelist.address, 3, 1, price, 300);
+        .englishAuction(whitelist.address, 3, 1, price, blockTimestamp + 300);
 
       const tx = await m1155.callStatic.sellerOrderLength(
         acc02.address,
@@ -4644,21 +4753,23 @@ describe("MADMarketplace1155", () => {
       await wl
         .connect(acc01)
         .setApprovalForAll(m1155.address, true);
-      await wl
+      const tx_ = await wl
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
 
       // `price` is constant in FP
       const fpTx: ContractTransaction = await m1155
         .connect(mad)
-        .fixedPrice(wl.address, 1, 1, price, 300);
+        .fixedPrice(wl.address, 1, 1, price, blockTimestamp + 300);
       await mineUpTo(100);
       const daTx: ContractTransaction = await m1155
         .connect(acc01)
-        .dutchAuction(wl.address, 2, 1, price, 0, 300);
+        .dutchAuction(wl.address, 2, 1, price, 0, blockTimestamp + 300);
       const eaTx: ContractTransaction = await m1155
         .connect(acc02)
-        .englishAuction(wl.address, 3, 1, price, 300);
+        .englishAuction(wl.address, 3, 1, price, blockTimestamp + 300);
 
       const fpRc: ContractReceipt = await fpTx.wait();
       const fpBn = fpRc.blockNumber;
@@ -4693,12 +4804,15 @@ describe("MADMarketplace1155", () => {
         value: price.mul(ethers.constants.Two),
       });
 
-      await mineUpTo(200);
-
+      const orderInfo: OrderDetails1155 =
+        await m1155.callStatic.orderInfo(daOrderId);
+      const blockTimestamp2 = (await m1155.provider.getBlock(await m1155.provider.getBlockNumber())).timestamp;
+      await setNextBlockTimestamp(blockTimestamp + 200)
+      
       // simulate DA pricing math with ts
-      const delta = ethers.BigNumber.from(300 - daBn);
+      const delta = orderInfo.endTime.sub(orderInfo.startTime);
       const tick = price.div(delta);
-      const dec = ethers.BigNumber.from(99).mul(tick);
+      const dec = ethers.BigNumber.from(blockTimestamp2 - orderInfo.startTime.toNumber()).mul(tick);
       const daPrice = price.sub(dec);
 
       expect(

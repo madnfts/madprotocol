@@ -3,6 +3,7 @@ import {
   loadFixture,
   mine,
 } from "@nomicfoundation/hardhat-network-helpers";
+import { setNextBlockTimestamp } from "@nomicfoundation/hardhat-network-helpers/dist/src/helpers/time";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import {
@@ -23,7 +24,7 @@ import {
   Collection,
   SplitterConfig,
   dead,
-  madFixture721A,
+  madFixture721A
 } from "./utils/madFixtures";
 
 describe("MADFactory721", () => {
@@ -914,12 +915,16 @@ describe("MADFactory721", () => {
         .connect(acc02)
         .setMintState(minAddr, true, 0);
       await min.connect(acc02).publicMint({ value: price });
-      const blockTimestamp = (await m721.provider.getBlock(await m721.provider.getBlockNumber())).timestamp;
-      await min.connect(acc02).approve(m721.address, 1);
-      await m721
+      const tx_ = await min.connect(acc02).approve(m721.address, 1);
+      const blockTimestamp = (await m721.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+      const daTx = await m721
         .connect(acc02)
-        .fixedPrice(minAddr, 1, price, blockTimestamp + 301);
-      await mine(296);
+        .fixedPrice(minAddr, 1, price, blockTimestamp + 400);
+      const daRc: ContractReceipt = await daTx.wait();
+      const daBn = daRc.blockNumber;
+      
+      await setNextBlockTimestamp(blockTimestamp + 296);
+      await mine(daBn + 1);
       const orderID = await m721.callStatic.orderIdBySeller(
         acc02.address,
         0,

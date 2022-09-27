@@ -3,6 +3,7 @@ import {
   loadFixture,
   mine,
 } from "@nomicfoundation/hardhat-network-helpers";
+import { setNextBlockTimestamp } from "@nomicfoundation/hardhat-network-helpers/dist/src/helpers/time";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import {
@@ -909,14 +910,21 @@ describe("MADFactory1155", () => {
         .connect(acc02)
         .setMintState(minAddr, true, 0);
       await min.connect(acc02).publicMint({ value: price });
-      const blocknum = await m1155.provider.getBlockNumber();
+      const blockTimestamp = (await m1155.provider.getBlock(await m1155.provider.getBlockNumber())).timestamp;
+
+      // const blocknum = await m1155.provider.getBlockNumber();
       await min
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
-      await m1155
+      const daTx = await m1155
         .connect(acc02)
-        .fixedPrice(minAddr, 1, 1, price, blocknum + 400);
-      await mine(296);
+        .fixedPrice(minAddr, 1, 1, price, blockTimestamp + 400);
+
+      const daRc: ContractReceipt = await daTx.wait();
+      const daBn = daRc.blockNumber;
+      
+      await setNextBlockTimestamp(blockTimestamp + 296)
+      await mine(daBn + 1);
       const orderID = await m1155.callStatic.orderIdBySeller(
         acc02.address,
         0,

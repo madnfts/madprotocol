@@ -93,15 +93,16 @@ describe("MADFactory1155", () => {
     //     FactoryErrors.SplitterFail,
     //   );
     // });
-    it("Should revert if creator and owner are the same", async () => {
-      const tx = f1155
-        .connect(owner)
-        .splitterCheck("MADSplitter1", dead, dead, 0, 0);
+    // this won't fail with latest release because we no longer give royalties to contract owner
+    // it("Should revert if creator and owner are the same", async () => {
+    //   const tx = f1155
+    //     .connect(owner)
+    //     .splitterCheck("MADSplitter1", dead, dead, 0, 0);
 
-      await expect(tx).to.be.revertedWith(
-        FactoryErrors.InitFailed,
-      );
-    });
+    //   await expect(tx).to.be.revertedWith(
+    //     FactoryErrors.InitFailed,
+    //   );
+    // });
     it("Should revert if repeated salt is provided", async () => {
       await f1155
         .connect(acc02)
@@ -120,8 +121,8 @@ describe("MADFactory1155", () => {
         .splitterCheck("MADSplitter1", dead, dead, 0, 0);
       const rc: ContractReceipt = await tx.wait();
 
-      const indexed = rc.logs[1].data;
-      const data = rc.logs[2].data;
+      const indexed = rc.logs[0].data;
+      const data = rc.logs[1].data;
 
       const addr = await f1155.getDeployedAddr(
         "MADSplitter1",
@@ -143,9 +144,6 @@ describe("MADFactory1155", () => {
         "SplitterImpl",
         addr,
       );
-      const ownerShares = await instance.callStatic._shares(
-        owner.address,
-      );
       const creatorShares = await instance.callStatic._shares(
         acc02.address,
       );
@@ -159,13 +157,12 @@ describe("MADFactory1155", () => {
       expect(tx).to.be.ok;
       await expect(tx).to.emit(f1155, "SplitterCreated");
       expect(creator.toString()).to.eq(acc02.address);
-      expect(shares).to.eq("10,90");
+      expect(shares).to.eq("100");
       expect(payees).to.eq(
-        [owner.address, acc02.address].toString(),
+        [acc02.address].toString(),
       );
       expect(splitter).to.eq(addr);
-      expect(ethers.BigNumber.from(ownerShares)).to.eq(10);
-      expect(ethers.BigNumber.from(creatorShares)).to.eq(90);
+      expect(ethers.BigNumber.from(creatorShares)).to.eq(100);
       expect(storage.splitter).to.eq(addr);
       expect(storage.splitterSalt).to.eq(
         ethers.utils.keccak256(
@@ -189,8 +186,8 @@ describe("MADFactory1155", () => {
         );
       const rc: ContractReceipt = await tx.wait();
 
-      const indexed = rc.logs[2].data;
-      const data = rc.logs[3].data;
+      const indexed = rc.logs[1].data;
+      const data = rc.logs[2].data;
 
       const addr = await f1155.getDeployedAddr(
         "MADSplitter1",
@@ -213,9 +210,6 @@ describe("MADFactory1155", () => {
         "SplitterImpl",
         addr,
       );
-      const ownerShares = await instance.callStatic._shares(
-        owner.address,
-      );
       const ambShares = await instance.callStatic._shares(
         amb.address,
       );
@@ -232,18 +226,16 @@ describe("MADFactory1155", () => {
       expect(tx).to.be.ok;
       await expect(tx).to.emit(f1155, "SplitterCreated");
       expect(creator.toString()).to.eq(acc02.address);
-      expect(shares).to.eq("10,20,70");
+      expect(shares).to.eq("20,80");
       expect(payees).to.eq(
         [
-          owner.address,
           amb.address,
           acc02.address,
         ].toString(),
       );
       expect(splitter).to.eq(addr);
-      expect(ethers.BigNumber.from(ownerShares)).to.eq(10);
       expect(ethers.BigNumber.from(ambShares)).to.eq(20);
-      expect(ethers.BigNumber.from(creatorShares)).to.eq(70);
+      expect(ethers.BigNumber.from(creatorShares)).to.eq(80);
       expect(storage.splitter).to.eq(addr);
       expect(storage.splitterSalt).to.eq(
         ethers.utils.keccak256(

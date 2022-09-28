@@ -165,7 +165,8 @@ function splitterCheck(
                 tx.origin,
                 _shares,
                 _payees,
-                _splitter
+                _splitter,
+                0 // neither ambassador or project
             );
 
         } else if (
@@ -204,7 +205,8 @@ function splitterCheck(
                 tx.origin,
                 _shares,
                 _payees,
-                _splitter
+                _splitter,
+                1 // ambassador only
             );
 
         } else if(
@@ -243,7 +245,8 @@ function splitterCheck(
                 tx.origin,
                 _shares,
                 _payees,
-                _splitter
+                _splitter,
+                2 // project only
             );
 
         } else if(
@@ -290,7 +293,8 @@ function splitterCheck(
                 tx.origin,
                 _shares,
                 _payees,
-                _splitter
+                _splitter,
+                3 // both ambassador and project
             );
 
         } else { 

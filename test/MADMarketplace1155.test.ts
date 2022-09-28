@@ -3151,8 +3151,9 @@ describe("MADMarketplace1155", () => {
         [
           "-1000000000000000000",
           price
+            .sub(price.mul(1000).div(10_000)) // 10% on initial in-house token purchase
             .sub(fpRoyalty[1])
-            .add(fpRoyalty[1].mul(7000).div(10_000)),
+            .add(fpRoyalty[1].mul(8000).div(10_000)),
         ],
       );
 
@@ -3218,8 +3219,9 @@ describe("MADMarketplace1155", () => {
         [
           "-349823321554770424",
           daPrice
+            .sub(daPrice.mul(1000).div(10_000))
             .sub(daRoyalty[1])
-            .add(daRoyalty[1].mul(7000).div(10_000)),
+            .add(daRoyalty[1].mul(8000).div(10_000)),
         ],
       );
     });
@@ -3265,7 +3267,7 @@ describe("MADMarketplace1155", () => {
       // );
       // const cPrice = price/* .sub(fpRoyalty[1]) */;
       const fpFee = price
-        .mul(ethers.BigNumber.from(1000))
+        .mul(ethers.BigNumber.from(250)) // flat rate 2.5%
         .div(ethers.BigNumber.from(10000));
 
       await expect(() =>
@@ -3305,7 +3307,7 @@ describe("MADMarketplace1155", () => {
       // );
       // const cPrice2 = daPrice.sub(daRoyalty[1]);
       const daFee = daPrice
-        .mul(ethers.BigNumber.from(1000))
+        .mul(ethers.BigNumber.from(250))
         .div(ethers.BigNumber.from(10000));
 
       await expect(() =>
@@ -3348,7 +3350,7 @@ describe("MADMarketplace1155", () => {
       await mine(10);
 
       const fpFee = price
-        .mul(ethers.BigNumber.from(1000))
+        .mul(ethers.BigNumber.from(250))
         .div(ethers.BigNumber.from(10000));
 
       await expect(() =>
@@ -3384,7 +3386,7 @@ describe("MADMarketplace1155", () => {
       const daPrice = price.sub(dec);
 
       const daFee = daPrice
-        .mul(ethers.BigNumber.from(1000))
+        .mul(ethers.BigNumber.from(250))
         .div(ethers.BigNumber.from(10000));
 
       await expect(() =>
@@ -3892,8 +3894,9 @@ describe("MADMarketplace1155", () => {
         [acc02],
         [
           bidVal
+            .sub(bidVal.mul(1000).div(10_000)) // 10% on first sale
             .sub(eaRoyalty[1])
-            .add(eaRoyalty[1].mul(7000).div(10_000)),
+            .add(eaRoyalty[1].mul(8000).div(10_000)),
         ],
       );
       expect(
@@ -3947,7 +3950,7 @@ describe("MADMarketplace1155", () => {
 
       const cPrice = bidVal; /* .sub(eaRoyalty[1]) */
       const fee = cPrice
-        .mul(ethers.BigNumber.from(1000))
+        .mul(ethers.BigNumber.from(250))
         .div(ethers.BigNumber.from(10000));
 
       expect(
@@ -3997,7 +4000,7 @@ describe("MADMarketplace1155", () => {
 
       const eaPrice = bidVal;
       const fee = eaPrice
-        .mul(ethers.BigNumber.from(1000))
+        .mul(ethers.BigNumber.from(250))
         .div(ethers.BigNumber.from(10000));
 
       expect(
@@ -4800,13 +4803,13 @@ describe("MADMarketplace1155", () => {
       );
 
       // update EA `lastBidPrice`
-      await m1155.connect(amb).bid(eaOrderId, {
+      const tt = await m1155.connect(amb).bid(eaOrderId, {
         value: price.mul(ethers.constants.Two),
       });
 
       const orderInfo: OrderDetails1155 =
         await m1155.callStatic.orderInfo(daOrderId);
-      const blockTimestamp2 = (await m1155.provider.getBlock(await m1155.provider.getBlockNumber())).timestamp;
+      const blockTimestamp2 = (await m1155.provider.getBlock(tt.blockNumber || 0)).timestamp;
       await setNextBlockTimestamp(blockTimestamp + 200)
       
       // simulate DA pricing math with ts

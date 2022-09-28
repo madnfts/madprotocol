@@ -250,7 +250,7 @@ contract MADMarketplace1155 is
             ) ==
             true
         ) {
-            _intPath(order, currentPrice, _order, msg.sender);
+            _intPath(order, currentPrice, _order, msg.sender, key);
         }
         // path for external tokens
         else {
@@ -267,8 +267,7 @@ contract MADMarketplace1155 is
                     order,
                     currentPrice,
                     _order,
-                    msg.sender,
-                    key
+                    msg.sender
                 );
             }
             // case for external tokens without ERC2981 support
@@ -277,8 +276,7 @@ contract MADMarketplace1155 is
                     order,
                     currentPrice,
                     _order,
-                    msg.sender,
-                    key
+                    msg.sender
                 );
             }
         }
@@ -316,7 +314,8 @@ contract MADMarketplace1155 is
                 order,
                 order.lastBidPrice,
                 _order,
-                order.lastBidder
+                order.lastBidder,
+                key
             );
         }
         // path for external tokens
@@ -334,8 +333,7 @@ contract MADMarketplace1155 is
                     order,
                     order.lastBidPrice,
                     _order,
-                    order.lastBidder,
-                    key
+                    order.lastBidder
                 );
             }
             // case for external tokens without ERC2981 support
@@ -344,8 +342,7 @@ contract MADMarketplace1155 is
                     order,
                     order.lastBidPrice,
                     _order,
-                    order.lastBidder,
-                    key
+                    order.lastBidder
                 );
             }
         }
@@ -631,45 +628,10 @@ contract MADMarketplace1155 is
         Types.Order1155 storage _order,
         uint256 _price,
         bytes32 _orderId,
-        address _to
-    ) internal {
-        // load royalty info query to mem
-        (address _receiver, uint256 _amount) = _order
-            .token
-            .royaltyInfo(_order.tokenId, _price);
-        // transfer royalties
-        SafeTransferLib.safeTransferETH(_receiver, _amount);
-        // transfer remaining value to seller
-        SafeTransferLib.safeTransferETH(
-            payable(_order.seller),
-            _price - _amount
-        );
-        // transfer token and emit event
-        _order.token.safeTransferFrom(
-            address(this),
-            _to,
-            _order.tokenId,
-            _order.amount,
-            ""
-        );
-        emit Claim(
-            _order.token,
-            _order.tokenId,
-            _order.amount,
-            _orderId,
-            _order.seller,
-            _to,
-            _price
-        );
-    }
-
-    function _extPath0(
-        Types.Order1155 storage _order,
-        uint256 _price,
-        bytes32 _orderId,
         address _to,
         uint256 key
     ) internal {
+        // load royalty info query to mem
         uint16 feePercent = _feeResolver(
             key,
             _order.tokenId,
@@ -714,18 +676,67 @@ contract MADMarketplace1155 is
         );
     }
 
+    function _extPath0(
+        Types.Order1155 storage _order,
+        uint256 _price,
+        bytes32 _orderId,
+        address _to
+    ) internal {
+        uint16 feePercent = feePercent1; // _feeResolver(
+            // key,
+            // _order.tokenId,
+            // _order.amount
+        // );
+        // load royalty info query to mem
+        (address _receiver, uint256 _amount) = _order
+            .token
+            .royaltyInfo(_order.tokenId, _price);
+        // transfer royalties
+        SafeTransferLib.safeTransferETH(
+            payable(_receiver),
+            _amount
+        );
+        // update price and transfer fee to recipient
+        uint256 fee = (_price * feePercent) / basisPoints;
+        SafeTransferLib.safeTransferETH(
+            payable(recipient),
+            fee
+        );
+        // transfer remaining value to seller
+        SafeTransferLib.safeTransferETH(
+            payable(_order.seller),
+            (_price - (_amount + fee))
+        );
+        // transfer token and emit event
+        _order.token.safeTransferFrom(
+            address(this),
+            _to,
+            _order.tokenId,
+            _order.amount,
+            ""
+        );
+        emit Claim(
+            _order.token,
+            _order.tokenId,
+            _order.amount,
+            _orderId,
+            _order.seller,
+            _to,
+            _price
+        );
+    }
+
     function _extPath1(
         Types.Order1155 storage _order,
         uint256 _price,
         bytes32 _orderId,
-        address _to,
-        uint256 key
+        address _to
     ) internal {
-        uint16 feePercent = _feeResolver(
-            key,
-            _order.tokenId,
-            _order.amount
-        );
+        uint16 feePercent = feePercent1; // _feeResolver(
+        //     key,
+        //     _order.tokenId,
+        //     _order.amount
+        // );
         uint256 fee = (_price * feePercent) / basisPoints;
         SafeTransferLib.safeTransferETH(
             payable(recipient),

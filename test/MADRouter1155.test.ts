@@ -2091,7 +2091,7 @@ describe("MADRouter1155", () => {
       expect(tx1).to.be.ok;
       expect(tx2).to.be.ok;
       expect(bal1).to.be.lt(newBal1);
-      expect(price.mul(7000).div(10_000)).to.be.eq(
+      expect(price.mul(8000).div(10_000)).to.be.eq(
         newBal2.sub(bal2),
       );
 

@@ -138,8 +138,7 @@ function splitterCheck(
             // [owner, tx.origin]
             address[] memory _payees = _payeesBuffer(
                 address(0),
-                address(0),
-                owner
+                address(0)
             );
             // [10, 90]
             uint256[] memory _shares = _sharesBuffer(0,0);
@@ -177,8 +176,7 @@ function splitterCheck(
             // [owner, _ambassador, tx.origin]
             address[] memory _payees = _payeesBuffer(
                 _ambassador, 
-                address(0),
-                owner
+                address(0)
             );
             // [10, _ambShare, 90 - _ambShare]
             uint256[] memory _shares = _sharesBuffer(_ambShare, 0); 
@@ -216,8 +214,7 @@ function splitterCheck(
             // [owner, _project, tx.origin]
             address[] memory _payees = _payeesBuffer(
                 address(0),
-                _project, 
-                owner
+                _project 
             );
             // [10, _projectShare, 90 - _projectShare]
             uint256[] memory _shares = _sharesBuffer(0, _projectShare); 
@@ -257,8 +254,7 @@ function splitterCheck(
             // [owner, _ambassador, _project, tx.origin]
             address[] memory _payees = _payeesBuffer(
                 _ambassador,
-                _project, 
-                owner
+                _project
             );
 
             // [
@@ -605,8 +601,7 @@ function splitterCheck(
     /// @dev Builds payees dynamic sized array buffer for `splitterCheck` cases.
     function _payeesBuffer(
         address amb, 
-        address project,
-        address castedAddr) 
+        address project) 
     internal 
     view 
     returns (address[] memory memOffset) 
@@ -618,39 +613,35 @@ function splitterCheck(
                     )
             case 1 {
                 memOffset := mload(0x40)
-                mstore(add(memOffset, 0x00), 2)
-                mstore(add(memOffset, 0x20), castedAddr)
-                mstore(add(memOffset, 0x40), origin())
-                mstore(0x40, add(memOffset, 0x60))
+                mstore(add(memOffset, 0x00), 1)
+                mstore(add(memOffset, 0x20), origin())
+                mstore(0x40, add(memOffset, 0x40))
             }
             case 0 {
                 switch iszero(project)
                 case 1 {
                     memOffset := mload(0x40)
-                    mstore(add(memOffset, 0x00), 3)
-                    mstore(add(memOffset, 0x20), castedAddr)
-                    mstore(add(memOffset, 0x40), amb)
-                    mstore(add(memOffset, 0x60), origin())
-                    mstore(0x40, add(memOffset, 0x80))
+                    mstore(add(memOffset, 0x00), 2)
+                    mstore(add(memOffset, 0x20), amb)
+                    mstore(add(memOffset, 0x40), origin())
+                    mstore(0x40, add(memOffset, 0x60))
                 }
                 case 0 {
                     switch iszero(amb)
                     case 1 {
                         memOffset := mload(0x40)
-                        mstore(add(memOffset, 0x00), 3)
-                        mstore(add(memOffset, 0x20), castedAddr)
-                        mstore(add(memOffset, 0x40), project)
-                        mstore(add(memOffset, 0x60), origin())
-                        mstore(0x40, add(memOffset, 0x80))
+                        mstore(add(memOffset, 0x00), 2)
+                        mstore(add(memOffset, 0x20), project)
+                        mstore(add(memOffset, 0x40), origin())
+                        mstore(0x40, add(memOffset, 0x60))
                     }
                     case 0 {
                         memOffset := mload(0x40)
-                        mstore(add(memOffset, 0x00), 4)
-                        mstore(add(memOffset, 0x20), castedAddr)
-                        mstore(add(memOffset, 0x40), amb)
-                        mstore(add(memOffset, 0x60), project)
-                        mstore(add(memOffset, 0x80), origin())
-                        mstore(0x40, add(memOffset, 0xa0))
+                        mstore(add(memOffset, 0x00), 3)
+                        mstore(add(memOffset, 0x20), amb)
+                        mstore(add(memOffset, 0x40), project)
+                        mstore(add(memOffset, 0x60), origin())
+                        mstore(0x40, add(memOffset, 0x80))
                     }
                 }
             }
@@ -670,39 +661,35 @@ function splitterCheck(
                     )
             case 1 {
                 memOffset := mload(0x40)
-                mstore(add(memOffset, 0x00), 2) 
-                mstore(add(memOffset, 0x20), 10) 
-                mstore(add(memOffset, 0x40), 90) 
-                mstore(0x40, add(memOffset, 0x60))
+                mstore(add(memOffset, 0x00), 1) 
+                mstore(add(memOffset, 0x20), 100) 
+                mstore(0x40, add(memOffset, 0x40))
             }
             case 0 {
                 switch iszero(_projectShare)
                 case 1 {
                     memOffset := mload(0x40)
-                    mstore(add(memOffset, 0x00), 3)
-                    mstore(add(memOffset, 0x20), 10) 
-                    mstore(add(memOffset, 0x40), _ambShare) 
-                    mstore(add(memOffset, 0x60), sub(90,_ambShare)) 
-                    mstore(0x40, add(memOffset, 0x80))
+                    mstore(add(memOffset, 0x00), 2)
+                    mstore(add(memOffset, 0x20), _ambShare) 
+                    mstore(add(memOffset, 0x40), sub(100,_ambShare)) 
+                    mstore(0x40, add(memOffset, 0x60))
                 }
                 case 0 {
                     switch iszero(_ambShare)
                     case 1 {
                         memOffset := mload(0x40)
-                        mstore(add(memOffset, 0x00), 3)
-                        mstore(add(memOffset, 0x20), 10) 
-                        mstore(add(memOffset, 0x40), _projectShare) 
-                        mstore(add(memOffset, 0x60), sub(90,_projectShare)) 
-                        mstore(0x40, add(memOffset, 0x80))
+                        mstore(add(memOffset, 0x00), 2)
+                        mstore(add(memOffset, 0x20), _projectShare) 
+                        mstore(add(memOffset, 0x40), sub(100,_projectShare)) 
+                        mstore(0x40, add(memOffset, 0x60))
                     }
                     case 0 {
                         memOffset := mload(0x40)
-                        mstore(add(memOffset, 0x00), 4)
-                        mstore(add(memOffset, 0x20), 10) 
-                        mstore(add(memOffset, 0x40), _ambShare) 
-                        mstore(add(memOffset, 0x60), _projectShare) 
-                        mstore(add(memOffset, 0x80), sub(90,add(_ambShare,_projectShare))) 
-                        mstore(0x40, add(memOffset, 0xa0))
+                        mstore(add(memOffset, 0x00), 3)
+                        mstore(add(memOffset, 0x20), _ambShare) 
+                        mstore(add(memOffset, 0x40), _projectShare) 
+                        mstore(add(memOffset, 0x60), sub(100,add(_ambShare,_projectShare))) 
+                        mstore(0x40, add(memOffset, 0x80))
                     }
                 }
             }

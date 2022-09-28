@@ -20,7 +20,8 @@ interface FactoryEventsAndErrors721 {
         address indexed creator,
         uint256[] shares,
         address[] payees,
-        address splitter
+        address splitter,
+        uint256 flag
     );
 
     event ERC721MinimalCreated(
@@ -85,7 +86,8 @@ interface FactoryEventsAndErrors1155 {
         address indexed creator,
         uint256[] shares,
         address[] payees,
-        address splitter
+        address splitter,
+        uint256 flag
     );
 
     event ERC1155MinimalCreated(

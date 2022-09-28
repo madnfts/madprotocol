@@ -282,6 +282,12 @@ const _abi = [
         name: "splitter",
         type: "address",
       },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "flag",
+        type: "uint256",
+      },
     ],
     name: "SplitterCreated",
     type: "event",

@@ -220,7 +220,7 @@ export interface MADFactory1155Interface extends utils.Interface {
     "Paused(address)": EventFragment;
     "RouterUpdated(address)": EventFragment;
     "SignerUpdated(address)": EventFragment;
-    "SplitterCreated(address,uint256[],address[],address)": EventFragment;
+    "SplitterCreated(address,uint256[],address[],address,uint256)": EventFragment;
     "Unpaused(address)": EventFragment;
   };
 
@@ -353,9 +353,10 @@ export interface SplitterCreatedEventObject {
   shares: BigNumber[];
   payees: string[];
   splitter: string;
+  flag: BigNumber;
 }
 export type SplitterCreatedEvent = TypedEvent<
-  [string, BigNumber[], string[], string],
+  [string, BigNumber[], string[], string, BigNumber],
   SplitterCreatedEventObject
 >;
 
@@ -882,17 +883,19 @@ export interface MADFactory1155 extends BaseContract {
       newSigner?: PromiseOrValue<string> | null
     ): SignerUpdatedEventFilter;
 
-    "SplitterCreated(address,uint256[],address[],address)"(
+    "SplitterCreated(address,uint256[],address[],address,uint256)"(
       creator?: PromiseOrValue<string> | null,
       shares?: null,
       payees?: null,
-      splitter?: null
+      splitter?: null,
+      flag?: null
     ): SplitterCreatedEventFilter;
     SplitterCreated(
       creator?: PromiseOrValue<string> | null,
       shares?: null,
       payees?: null,
-      splitter?: null
+      splitter?: null,
+      flag?: null
     ): SplitterCreatedEventFilter;
 
     "Unpaused(address)"(account?: null): UnpausedEventFilter;

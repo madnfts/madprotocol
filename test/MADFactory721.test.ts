@@ -251,6 +251,89 @@ describe("MADFactory721", () => {
       );
       expect(storage.valid).to.eq(true);
     });
+    it("Should deploy splitter with ambassador and project, update storage and emit events", async () => {
+      // await f721.addAmbassador(amb.address);
+      const tx: ContractTransaction = await f721
+        .connect(acc02)
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          acc01.address,
+          20,
+          10,
+        );
+      const rc: ContractReceipt = await tx.wait();
+
+      const indexed = rc.logs[3].data;
+      const data = rc.logs[4].data;
+
+      const addr = await f721.getDeployedAddr("MADSplitter1");
+      const creator = ethers.utils.defaultAbiCoder.decode(
+        ["address"],
+        indexed,
+      );
+
+      const args = ethers.utils.defaultAbiCoder.decode(
+        ["uint256[]", "address[]", "address"],
+        data,
+      );
+
+      const payees = args[1].toString();
+      const shares = args[0].toString();
+      const splitter = args[2].toString();
+
+      const instance = await ethers.getContractAt(
+        "SplitterImpl",
+        addr,
+      );
+      const ownerShares = await instance.callStatic._shares(
+        owner.address,
+      );
+      const ambShares = await instance.callStatic._shares(
+        amb.address,
+      );
+      const creatorShares = await instance.callStatic._shares(
+        acc02.address,
+      );
+      const projShares = await instance.callStatic._shares(
+        acc01.address,
+      );
+
+      const storage: SplitterConfig =
+        await f721.callStatic.splitterInfo(
+          acc02.address,
+          addr,
+        );
+
+      expect(tx).to.be.ok;
+      await expect(tx).to.emit(f721, "SplitterCreated");
+      expect(creator.toString()).to.eq(acc02.address);
+      expect(shares).to.eq("10,20,10,60");
+      expect(payees).to.eq(
+        [
+          owner.address,
+          amb.address,
+          acc01.address,
+          acc02.address,
+        ].toString(),
+      );
+      expect(splitter).to.eq(addr);
+      expect(ethers.BigNumber.from(ownerShares)).to.eq(10);
+      expect(ethers.BigNumber.from(ambShares)).to.eq(20);
+      expect(ethers.BigNumber.from(projShares)).to.eq(10);
+      expect(ethers.BigNumber.from(creatorShares)).to.eq(60);
+      expect(storage.splitter).to.eq(addr);
+      expect(storage.splitterSalt).to.eq(
+        ethers.utils.keccak256(
+          ethers.utils.toUtf8Bytes("MADSplitter1"),
+        ),
+      );
+      expect(storage.ambassador).to.eq(amb.address);
+      expect(storage.ambShare).to.eq(
+        ethers.BigNumber.from(20),
+      );
+      expect(storage.valid).to.eq(true);
+    });
   });
   describe("Create collection", async () => {
     it("Should deploy ERC721Minimal, update storage and emit events", async () => {

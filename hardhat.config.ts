@@ -70,11 +70,8 @@ function getChainConfig(
     //   break;
   }
   return {
-    // accounts: {
-    // count: 10,
-    // mnemonic,
-    // path: "m/44'/60'/0'/0",
-    // },
+    // @todo updated for harmony deploy, this script needs refactoring
+    accounts: [`0x${mnemonic}`],
     chainId: chainIds[chain],
     url: jsonRpcUrl,
   };

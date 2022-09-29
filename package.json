@@ -73,6 +73,7 @@
   "scripts": {
     "build-marketplace": "sol-merger --remove-comments \"./contracts/MADMarketplace721.sol\" ./build",
     "build-factory": "sol-merger --remove-comments \"./contracts/MADFactory721.sol\" ./build",
+    "deploy:harmony": "hardhat run scripts/devnetDeploy.ts --network harmony",
     "deploy:ganache": "hardhat run scripts/devnetDeploy.ts --network ganache",
     "deploy:devnet": "hardhat run scripts/devnetDeploy.ts --network devnet",
     "compile:watch": "nodemon --watch contracts/{INSERT_CONTRACT}.sol --exec 'npx hardhat compile'",

@@ -32,7 +32,7 @@ export interface ERC1155BInterface extends utils.Interface {
     "balanceOf(address,uint256)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
-    "ownerOf(uint256)": FunctionFragment;
+    "ownerOf(uint256,address)": FunctionFragment;
     "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
@@ -65,7 +65,7 @@ export interface ERC1155BInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "ownerOf",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "safeBatchTransferFrom",
@@ -228,8 +228,9 @@ export interface ERC1155B extends BaseContract {
 
     ownerOf(
       arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[string]>;
+    ): Promise<[BigNumber]>;
 
     safeBatchTransferFrom(
       from: PromiseOrValue<string>,
@@ -281,8 +282,9 @@ export interface ERC1155B extends BaseContract {
 
   ownerOf(
     arg0: PromiseOrValue<BigNumberish>,
+    arg1: PromiseOrValue<string>,
     overrides?: CallOverrides
-  ): Promise<string>;
+  ): Promise<BigNumber>;
 
   safeBatchTransferFrom(
     from: PromiseOrValue<string>,
@@ -334,8 +336,9 @@ export interface ERC1155B extends BaseContract {
 
     ownerOf(
       arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<string>;
+    ): Promise<BigNumber>;
 
     safeBatchTransferFrom(
       from: PromiseOrValue<string>,
@@ -437,6 +440,7 @@ export interface ERC1155B extends BaseContract {
 
     ownerOf(
       arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -491,6 +495,7 @@ export interface ERC1155B extends BaseContract {
 
     ownerOf(
       arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

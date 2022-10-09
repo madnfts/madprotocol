@@ -32,18 +32,18 @@ export interface ERC1155MinimalInterface extends utils.Interface {
   functions: {
     "balanceOf(address,uint256)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
-    "burn()": FunctionFragment;
+    "burn(address,uint256)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "onERC1155Received(address,address,uint256,uint256,bytes)": FunctionFragment;
     "owner()": FunctionFragment;
-    "ownerOf(uint256)": FunctionFragment;
+    "ownerOf(uint256,address)": FunctionFragment;
     "price()": FunctionFragment;
-    "publicMint()": FunctionFragment;
+    "publicMint(uint256)": FunctionFragment;
     "publicMintState()": FunctionFragment;
     "royaltyInfo(uint256,uint256)": FunctionFragment;
     "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
-    "safeMint(address)": FunctionFragment;
+    "safeMint(address,uint256)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
     "setOwner(address)": FunctionFragment;
@@ -90,7 +90,10 @@ export interface ERC1155MinimalInterface extends utils.Interface {
     functionFragment: "balanceOfBatch",
     values: [PromiseOrValue<string>[], PromiseOrValue<BigNumberish>[]]
   ): string;
-  encodeFunctionData(functionFragment: "burn", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "burn",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(
     functionFragment: "isApprovedForAll",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
@@ -118,12 +121,12 @@ export interface ERC1155MinimalInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "ownerOf",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "price", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "publicMint",
-    values?: undefined
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "publicMintState",
@@ -145,7 +148,7 @@ export interface ERC1155MinimalInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "safeMint",
-    values: [PromiseOrValue<string>]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "safeTransferFrom",
@@ -396,6 +399,8 @@ export interface ERC1155Minimal extends BaseContract {
     ): Promise<[BigNumber[]] & { balances: BigNumber[] }>;
 
     burn(
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -427,12 +432,14 @@ export interface ERC1155Minimal extends BaseContract {
 
     ownerOf(
       arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[string]>;
+    ): Promise<[BigNumber]>;
 
     price(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     publicMint(
+      balance: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -457,6 +464,7 @@ export interface ERC1155Minimal extends BaseContract {
 
     safeMint(
       to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -520,6 +528,8 @@ export interface ERC1155Minimal extends BaseContract {
   ): Promise<BigNumber[]>;
 
   burn(
+    to: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -551,12 +561,14 @@ export interface ERC1155Minimal extends BaseContract {
 
   ownerOf(
     arg0: PromiseOrValue<BigNumberish>,
+    arg1: PromiseOrValue<string>,
     overrides?: CallOverrides
-  ): Promise<string>;
+  ): Promise<BigNumber>;
 
   price(overrides?: CallOverrides): Promise<BigNumber>;
 
   publicMint(
+    balance: PromiseOrValue<BigNumberish>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -581,6 +593,7 @@ export interface ERC1155Minimal extends BaseContract {
 
   safeMint(
     to: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -643,7 +656,11 @@ export interface ERC1155Minimal extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
-    burn(overrides?: CallOverrides): Promise<void>;
+    burn(
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     isApprovedForAll(
       arg0: PromiseOrValue<string>,
@@ -673,12 +690,16 @@ export interface ERC1155Minimal extends BaseContract {
 
     ownerOf(
       arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<string>;
+    ): Promise<BigNumber>;
 
     price(overrides?: CallOverrides): Promise<BigNumber>;
 
-    publicMint(overrides?: CallOverrides): Promise<void>;
+    publicMint(
+      balance: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     publicMintState(overrides?: CallOverrides): Promise<boolean>;
 
@@ -701,6 +722,7 @@ export interface ERC1155Minimal extends BaseContract {
 
     safeMint(
       to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -842,6 +864,8 @@ export interface ERC1155Minimal extends BaseContract {
     ): Promise<BigNumber>;
 
     burn(
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -873,12 +897,14 @@ export interface ERC1155Minimal extends BaseContract {
 
     ownerOf(
       arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     price(overrides?: CallOverrides): Promise<BigNumber>;
 
     publicMint(
+      balance: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -901,6 +927,7 @@ export interface ERC1155Minimal extends BaseContract {
 
     safeMint(
       to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -965,6 +992,8 @@ export interface ERC1155Minimal extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     burn(
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -996,12 +1025,14 @@ export interface ERC1155Minimal extends BaseContract {
 
     ownerOf(
       arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     price(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     publicMint(
+      balance: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1024,6 +1055,7 @@ export interface ERC1155Minimal extends BaseContract {
 
     safeMint(
       to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

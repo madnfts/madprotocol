@@ -32,13 +32,21 @@ export declare namespace Types {
   export type VoucherStruct = {
     voucherId: PromiseOrValue<BytesLike>;
     users: PromiseOrValue<string>[];
+    balances: PromiseOrValue<BigNumberish>[];
     amount: PromiseOrValue<BigNumberish>;
     price: PromiseOrValue<BigNumberish>;
   };
 
-  export type VoucherStructOutput = [string, string[], BigNumber, BigNumber] & {
+  export type VoucherStructOutput = [
+    string,
+    string[],
+    BigNumber[],
+    BigNumber,
+    BigNumber
+  ] & {
     voucherId: string;
     users: string[];
+    balances: BigNumber[];
     amount: BigNumber;
     price: BigNumber;
   };
@@ -53,7 +61,7 @@ export interface ERC721LazyInterface extends utils.Interface {
     "getApproved(uint256)": FunctionFragment;
     "getBaseURI()": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
-    "lazyMint((bytes32,address[],uint256,uint256),uint8,bytes32,bytes32)": FunctionFragment;
+    "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32)": FunctionFragment;
     "name()": FunctionFragment;
     "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
     "owner()": FunctionFragment;

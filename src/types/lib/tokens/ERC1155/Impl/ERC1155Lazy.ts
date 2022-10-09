@@ -32,13 +32,21 @@ export declare namespace Types {
   export type VoucherStruct = {
     voucherId: PromiseOrValue<BytesLike>;
     users: PromiseOrValue<string>[];
+    balances: PromiseOrValue<BigNumberish>[];
     amount: PromiseOrValue<BigNumberish>;
     price: PromiseOrValue<BigNumberish>;
   };
 
-  export type VoucherStructOutput = [string, string[], BigNumber, BigNumber] & {
+  export type VoucherStructOutput = [
+    string,
+    string[],
+    BigNumber[],
+    BigNumber,
+    BigNumber
+  ] & {
     voucherId: string;
     users: string[];
+    balances: BigNumber[];
     amount: BigNumber;
     price: BigNumber;
   };
@@ -46,6 +54,7 @@ export declare namespace Types {
   export type UserBatchStruct = {
     voucherId: PromiseOrValue<BytesLike>;
     ids: PromiseOrValue<BigNumberish>[];
+    balances: PromiseOrValue<BigNumberish>[];
     price: PromiseOrValue<BigNumberish>;
     user: PromiseOrValue<string>;
   };
@@ -53,9 +62,16 @@ export declare namespace Types {
   export type UserBatchStructOutput = [
     string,
     BigNumber[],
+    BigNumber[],
     BigNumber,
     string
-  ] & { voucherId: string; ids: BigNumber[]; price: BigNumber; user: string };
+  ] & {
+    voucherId: string;
+    ids: BigNumber[];
+    balances: BigNumber[];
+    price: BigNumber;
+    user: string;
+  };
 }
 
 export interface ERC1155LazyInterface extends utils.Interface {
@@ -63,16 +79,16 @@ export interface ERC1155LazyInterface extends utils.Interface {
     "DOMAIN_SEPARATOR()": FunctionFragment;
     "balanceOf(address,uint256)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
-    "burn(uint256[])": FunctionFragment;
-    "burnBatch(address,uint256[])": FunctionFragment;
+    "burn(address[],uint256[],uint256[])": FunctionFragment;
+    "burnBatch(address,uint256[],uint256[])": FunctionFragment;
     "getURI()": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
-    "lazyMint((bytes32,address[],uint256,uint256),uint8,bytes32,bytes32)": FunctionFragment;
-    "lazyMintBatch((bytes32,uint256[],uint256,address),uint8,bytes32,bytes32)": FunctionFragment;
+    "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32)": FunctionFragment;
+    "lazyMintBatch((bytes32,uint256[],uint256[],uint256,address),uint8,bytes32,bytes32)": FunctionFragment;
     "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "onERC1155Received(address,address,uint256,uint256,bytes)": FunctionFragment;
     "owner()": FunctionFragment;
-    "ownerOf(uint256)": FunctionFragment;
+    "ownerOf(uint256,address)": FunctionFragment;
     "royaltyInfo(uint256,uint256)": FunctionFragment;
     "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
@@ -134,11 +150,19 @@ export interface ERC1155LazyInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "burn",
-    values: [PromiseOrValue<BigNumberish>[]]
+    values: [
+      PromiseOrValue<string>[],
+      PromiseOrValue<BigNumberish>[],
+      PromiseOrValue<BigNumberish>[]
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "burnBatch",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>[]]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>[],
+      PromiseOrValue<BigNumberish>[]
+    ]
   ): string;
   encodeFunctionData(functionFragment: "getURI", values?: undefined): string;
   encodeFunctionData(
@@ -186,7 +210,7 @@ export interface ERC1155LazyInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "ownerOf",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "royaltyInfo",
@@ -480,13 +504,16 @@ export interface ERC1155Lazy extends BaseContract {
     ): Promise<[BigNumber[]] & { balances: BigNumber[] }>;
 
     burn(
+      from: PromiseOrValue<string>[],
       ids: PromiseOrValue<BigNumberish>[],
+      balances: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     burnBatch(
       from: PromiseOrValue<string>,
       ids: PromiseOrValue<BigNumberish>[],
+      balances: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -536,8 +563,9 @@ export interface ERC1155Lazy extends BaseContract {
 
     ownerOf(
       arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[string]>;
+    ): Promise<[BigNumber]>;
 
     royaltyInfo(
       arg0: PromiseOrValue<BigNumberish>,
@@ -630,13 +658,16 @@ export interface ERC1155Lazy extends BaseContract {
   ): Promise<BigNumber[]>;
 
   burn(
+    from: PromiseOrValue<string>[],
     ids: PromiseOrValue<BigNumberish>[],
+    balances: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   burnBatch(
     from: PromiseOrValue<string>,
     ids: PromiseOrValue<BigNumberish>[],
+    balances: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -686,8 +717,9 @@ export interface ERC1155Lazy extends BaseContract {
 
   ownerOf(
     arg0: PromiseOrValue<BigNumberish>,
+    arg1: PromiseOrValue<string>,
     overrides?: CallOverrides
-  ): Promise<string>;
+  ): Promise<BigNumber>;
 
   royaltyInfo(
     arg0: PromiseOrValue<BigNumberish>,
@@ -780,13 +812,16 @@ export interface ERC1155Lazy extends BaseContract {
     ): Promise<BigNumber[]>;
 
     burn(
+      from: PromiseOrValue<string>[],
       ids: PromiseOrValue<BigNumberish>[],
+      balances: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
     burnBatch(
       from: PromiseOrValue<string>,
       ids: PromiseOrValue<BigNumberish>[],
+      balances: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -836,8 +871,9 @@ export interface ERC1155Lazy extends BaseContract {
 
     ownerOf(
       arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<string>;
+    ): Promise<BigNumber>;
 
     royaltyInfo(
       arg0: PromiseOrValue<BigNumberish>,
@@ -1015,13 +1051,16 @@ export interface ERC1155Lazy extends BaseContract {
     ): Promise<BigNumber>;
 
     burn(
+      from: PromiseOrValue<string>[],
       ids: PromiseOrValue<BigNumberish>[],
+      balances: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     burnBatch(
       from: PromiseOrValue<string>,
       ids: PromiseOrValue<BigNumberish>[],
+      balances: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1071,6 +1110,7 @@ export interface ERC1155Lazy extends BaseContract {
 
     ownerOf(
       arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1164,13 +1204,16 @@ export interface ERC1155Lazy extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     burn(
+      from: PromiseOrValue<string>[],
       ids: PromiseOrValue<BigNumberish>[],
+      balances: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     burnBatch(
       from: PromiseOrValue<string>,
       ids: PromiseOrValue<BigNumberish>[],
+      balances: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1220,6 +1263,7 @@ export interface ERC1155Lazy extends BaseContract {
 
     ownerOf(
       arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

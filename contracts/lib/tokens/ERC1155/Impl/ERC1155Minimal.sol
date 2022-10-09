@@ -56,16 +56,16 @@ contract ERC1155Minimal is
     ////////////////////////////////////////////////////////////////
 
     /// @dev Can't be reminted if already minted, due to boolean.
-    function safeMint(address to) external onlyOwner {
+    function safeMint(address to, uint256 amount) external onlyOwner {
         if (minted == true) revert AlreadyMinted();
 
         minted = true;
-        _mint(to, 1, "");
+        _mint(to, 1, amount, "");
     }
 
     /// @dev Can't be reburnt since `minted` is not updated to false.
-    function burn() external onlyOwner {
-        _burn(1);
+    function burn(address to, uint256 amount) external onlyOwner {
+        _burn(to, 1, amount);
     }
 
     function setPublicMintState(bool _publicMintState)
@@ -136,13 +136,13 @@ contract ERC1155Minimal is
     //                           USER FX                          //
     ////////////////////////////////////////////////////////////////
 
-    function publicMint() external payable {
+    function publicMint(uint256 balance) external payable {
         if (!publicMintState) revert PublicMintOff();
         if (msg.value != price) revert WrongPrice();
         if (minted == true) revert AlreadyMinted();
 
         minted = true;
-        _mint(msg.sender, 1, "");
+        _mint(msg.sender, 1, balance, "");
     }
 
     ////////////////////////////////////////////////////////////////

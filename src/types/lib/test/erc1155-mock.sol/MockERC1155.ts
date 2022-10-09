@@ -31,13 +31,13 @@ export interface MockERC1155Interface extends utils.Interface {
   functions: {
     "balanceOf(address,uint256)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
-    "batchMint(address,uint256[])": FunctionFragment;
+    "batchMint(address,uint256[],uint256[])": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
-    "mint(address,uint256)": FunctionFragment;
+    "mint(address,uint256,uint256)": FunctionFragment;
     "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "onERC1155Received(address,address,uint256,uint256,bytes)": FunctionFragment;
     "owner()": FunctionFragment;
-    "ownerOf(uint256)": FunctionFragment;
+    "ownerOf(uint256,address)": FunctionFragment;
     "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
@@ -75,7 +75,11 @@ export interface MockERC1155Interface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "batchMint",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>[]]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>[],
+      PromiseOrValue<BigNumberish>[]
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "isApprovedForAll",
@@ -83,7 +87,11 @@ export interface MockERC1155Interface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "mint",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "onERC1155BatchReceived",
@@ -108,7 +116,7 @@ export interface MockERC1155Interface extends utils.Interface {
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "ownerOf",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "safeBatchTransferFrom",
@@ -303,6 +311,7 @@ export interface MockERC1155 extends BaseContract {
     batchMint(
       to: PromiseOrValue<string>,
       ids: PromiseOrValue<BigNumberish>[],
+      balances: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -315,6 +324,7 @@ export interface MockERC1155 extends BaseContract {
     mint(
       to: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
+      total: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -340,8 +350,9 @@ export interface MockERC1155 extends BaseContract {
 
     ownerOf(
       arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[string]>;
+    ): Promise<[BigNumber]>;
 
     safeBatchTransferFrom(
       from: PromiseOrValue<string>,
@@ -398,6 +409,7 @@ export interface MockERC1155 extends BaseContract {
   batchMint(
     to: PromiseOrValue<string>,
     ids: PromiseOrValue<BigNumberish>[],
+    balances: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -410,6 +422,7 @@ export interface MockERC1155 extends BaseContract {
   mint(
     to: PromiseOrValue<string>,
     id: PromiseOrValue<BigNumberish>,
+    total: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -435,8 +448,9 @@ export interface MockERC1155 extends BaseContract {
 
   ownerOf(
     arg0: PromiseOrValue<BigNumberish>,
+    arg1: PromiseOrValue<string>,
     overrides?: CallOverrides
-  ): Promise<string>;
+  ): Promise<BigNumber>;
 
   safeBatchTransferFrom(
     from: PromiseOrValue<string>,
@@ -493,6 +507,7 @@ export interface MockERC1155 extends BaseContract {
     batchMint(
       to: PromiseOrValue<string>,
       ids: PromiseOrValue<BigNumberish>[],
+      balances: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -505,6 +520,7 @@ export interface MockERC1155 extends BaseContract {
     mint(
       to: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
+      total: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -530,8 +546,9 @@ export interface MockERC1155 extends BaseContract {
 
     ownerOf(
       arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<string>;
+    ): Promise<BigNumber>;
 
     safeBatchTransferFrom(
       from: PromiseOrValue<string>,
@@ -647,6 +664,7 @@ export interface MockERC1155 extends BaseContract {
     batchMint(
       to: PromiseOrValue<string>,
       ids: PromiseOrValue<BigNumberish>[],
+      balances: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -659,6 +677,7 @@ export interface MockERC1155 extends BaseContract {
     mint(
       to: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
+      total: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -684,6 +703,7 @@ export interface MockERC1155 extends BaseContract {
 
     ownerOf(
       arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -743,6 +763,7 @@ export interface MockERC1155 extends BaseContract {
     batchMint(
       to: PromiseOrValue<string>,
       ids: PromiseOrValue<BigNumberish>[],
+      balances: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -755,6 +776,7 @@ export interface MockERC1155 extends BaseContract {
     mint(
       to: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
+      total: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -780,6 +802,7 @@ export interface MockERC1155 extends BaseContract {
 
     ownerOf(
       arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

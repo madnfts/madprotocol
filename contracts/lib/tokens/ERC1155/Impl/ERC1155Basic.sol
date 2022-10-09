@@ -101,15 +101,15 @@ contract ERC1155Basic is
         emit PublicMintStateSet(_publicMintState);
     }
 
-    function mintTo(address to, uint256 amount)
+    function mintTo(address to, uint256 amount, uint256[] memory balance)
         external
         onlyOwner
-        hasReachedMax(amount)
+        hasReachedMax(amount) // todo: fix; not working as we should sum the balance
     {
         uint256 i;
         // for (uint256 i = 0; i < amount; i++) {
         for (i; i < amount; ) {
-            _mint(to, _nextId(), "");
+            _mint(to, _nextId(), balance[i], "");
             unchecked {
                 ++i;
             }
@@ -125,7 +125,7 @@ contract ERC1155Basic is
         // Transfer event emited by parent ERC1155 contract
     }
 
-    function mintBatchTo(address to, uint256[] memory ids)
+    function mintBatchTo(address to, uint256[] memory ids, uint256[] memory amounts)
         external
         onlyOwner
         hasReachedMax(ids.length)
@@ -133,7 +133,7 @@ contract ERC1155Basic is
         uint256 i;
         uint256 len = ids.length;
         for (i; i < len; ) {
-            liveSupply.increment();
+            liveSupply.increment(amounts[i]);
             unchecked {
                 ++i;
             }
@@ -144,17 +144,18 @@ contract ERC1155Basic is
                 revert(0x1c, 0x04)
             }
         }
-        _batchMint(to, ids, "");
+        _batchMint(to, ids, amounts, "");
         // Transfer event emited by parent ERC1155 contract
     }
 
     /// @dev Burns an arbitrary length array of ids of different owners.
-    function burn(uint256[] memory ids) external onlyOwner {
+    function burn(address[] memory from, uint256[] memory ids, uint256[] memory balances) external onlyOwner {
         uint256 i;
         uint256 len = ids.length;
+        require(from.length == ids.length && ids.length == balances.length, "LENGTH_MISMATCH");
         for (i; i < len; ) {
-            liveSupply.decrement();
-            _burn(ids[i]);
+            liveSupply.decrement(balances[i]);
+            _burn(from[i], ids[i], balances[i]);
             unchecked {
                 ++i;
             }
@@ -169,14 +170,15 @@ contract ERC1155Basic is
     }
 
     /// @dev Burns an arbitrary length array of ids owned by a single account.
-    function burnBatch(address from, uint256[] memory ids)
+    function burnBatch(address from, uint256[] memory ids, uint256[] memory amounts)
         external
         onlyOwner
     {
+        require(ids.length == amounts.length, "LENGTH_MISMATCH");
         uint256 i;
         uint256 len = ids.length;
         for (i; i < len; ) {
-            liveSupply.decrement();
+            liveSupply.decrement(amounts[i]);
             unchecked {
                 ++i;
             }
@@ -187,7 +189,7 @@ contract ERC1155Basic is
                 revert(0x1c, 0x04)
             }
         }
-        _batchBurn(from, ids);
+        _batchBurn(from, ids, amounts);
         // Transfer event emited by parent ERC1155 contract
     }
 
@@ -250,17 +252,17 @@ contract ERC1155Basic is
     //                           USER FX                          //
     ////////////////////////////////////////////////////////////////
 
-    function mint(uint256 amount)
+    function mint(uint256 amount, uint256 balance)
         external
         payable
         nonReentrant
         publicMintAccess
-        hasReachedMax(amount)
+        hasReachedMax(amount * balance)
         priceCheck(price, amount)
     {
         uint256 i;
         for (i; i < amount; ) {
-            _mint(msg.sender, _nextId(), "");
+            _mint(msg.sender, _nextId(), balance, "");
             unchecked {
                 ++i;
             }
@@ -276,17 +278,18 @@ contract ERC1155Basic is
     }
 
     /// @dev Enables public minting of an arbitrary length array of specific ids.
-    function mintBatch(uint256[] memory ids)
+    function mintBatch(uint256[] memory ids, uint256[] memory amounts)
         external
         payable
         nonReentrant
         publicMintAccess
     {
+        require(ids.length == amounts.length, "MISMATCH_LENGTH");
         uint256 len = ids.length;
         _mintBatchCheck(len);
         uint256 i;
         for (i; i < len; ) {
-            liveSupply.increment();
+            liveSupply.increment(amounts[i]);
             unchecked {
                 ++i;
             }
@@ -297,7 +300,7 @@ contract ERC1155Basic is
                 revert(0x1c, 0x04)
             }
         }
-        _batchMint(msg.sender, ids, "");
+        _batchMint(msg.sender, ids, amounts, "");
         // Transfer event emited by parent ERC1155 contract
     }
 

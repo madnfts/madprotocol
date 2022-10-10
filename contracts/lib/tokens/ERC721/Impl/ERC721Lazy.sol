@@ -41,11 +41,11 @@ contract ERC721Lazy is
 
     bytes32 private constant _VOUCHER_TYPEHASH =
         keccak256(
-            "Voucher(bytes32 voucherId,address[] users,uint256 amount,uint256 price)"
+            "Voucher(bytes32 voucherId,address[] users,uint256[] balances,uint256 amount,uint256 price)"
         );
 
     /// @dev The signer address used for lazy minting voucher validation.
-    address private signer;
+    address public signer;
 
     Counters.Counter private liveSupply;
 
@@ -235,13 +235,13 @@ contract ERC721Lazy is
         ) revert WrongPrice();
     }
 
-    function _verify(
+    function _verifyVoucher(
         Types.Voucher calldata _voucher,
         // bytes calldata _sig
         uint8 v,
         bytes32 r,
         bytes32 s
-    ) internal view returns (address recovered) {
+    ) public view returns (address recovered) {
         unchecked {
             recovered = ecrecover(
                 keccak256(
@@ -255,6 +255,51 @@ contract ERC721Lazy is
                                 keccak256(
                                     abi.encodePacked(
                                         _voucher.users
+                                    )
+                                ),
+                                keccak256(
+                                    abi.encodePacked(
+                                        _voucher.balances
+                                    )
+                                ),
+                                _voucher.amount,
+                                _voucher.price
+                            )
+                        )
+                    )
+                ),
+                v,
+                r,
+                s
+            );
+        }
+    }
+
+    function _verify(
+        Types.Voucher calldata _voucher,
+        // bytes calldata _sig
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) public view returns (address recovered) {
+        unchecked {
+            recovered = ecrecover(
+                keccak256(
+                    abi.encodePacked(
+                        "\x19\x01",
+                        DOMAIN_SEPARATOR(),
+                        keccak256(
+                            abi.encode(
+                                _VOUCHER_TYPEHASH,
+                                _voucher.voucherId,
+                                keccak256(
+                                    abi.encodePacked(
+                                        _voucher.users
+                                    )
+                                ),
+                                keccak256(
+                                    abi.encodePacked(
+                                        _voucher.balances
                                     )
                                 ),
                                 _voucher.amount,

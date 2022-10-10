@@ -135,7 +135,7 @@ describe("ERC1155Minimal", () => {
     it("Should revert if not the owner", async () => {
       const tx = minimal
         .connect(acc01)
-        .safeMint(acc01.address);
+        .safeMint(acc01.address, 1);
 
       await expect(tx).to.be.revertedWith(
         MinimalErrors.Unauthorized,
@@ -144,7 +144,7 @@ describe("ERC1155Minimal", () => {
     it("Should mint, update storage and emit events", async () => {
       const tx: ContractTransaction = await minimal
         .connect(owner)
-        .safeMint(acc02.address);
+        .safeMint(acc02.address, 1);
       const rc: ContractReceipt = await tx.wait();
       const event = rc.events?.find(
         event => event.event === "TransferSingle",
@@ -160,13 +160,13 @@ describe("ERC1155Minimal", () => {
         acc02.address,
         1,
       );
-      const ownerOf = await minimal.callStatic.ownerOf(1);
+      // const ownerOf = await minimal.callStatic.ownerOf(1);
 
       expect(tx).to.be.ok;
       await expect(tx).to.emit(minimal, "TransferSingle");
 
       expect(1).to.eq(bal);
-      expect(acc02.address).to.eq(ownerOf);
+      // expect(acc02.address).to.eq(ownerOf);
       expect(owner.address).to.eq(operator);
       expect(ethers.constants.AddressZero).to.eq(from);
       expect(acc02.address).to.eq(to);
@@ -175,10 +175,10 @@ describe("ERC1155Minimal", () => {
     });
 
     it("Should revert if already minted", async () => {
-      await minimal.connect(owner).safeMint(acc01.address);
+      await minimal.connect(owner).safeMint(acc01.address, 1);
       const tx = minimal
         .connect(owner)
-        .safeMint(acc02.address);
+        .safeMint(acc02.address, 1);
 
       await expect(tx).to.be.revertedWithCustomError(
         minimal,
@@ -189,16 +189,16 @@ describe("ERC1155Minimal", () => {
 
   describe("Burning", async () => {
     it("Should revert if has not been minted", async () => {
-      const tx = minimal.connect(owner).burn();
+      const tx = minimal.connect(owner).burn(owner.address, 1);
 
       await expect(tx).to.be.revertedWith(
-        MinimalErrors.NotMinted,
+        MinimalErrors.InvalidAmount,
       );
     });
 
     it("Should revert if not the owner", async () => {
-      await minimal.connect(owner).safeMint(acc02.address);
-      const tx = minimal.connect(acc01).burn();
+      await minimal.connect(owner).safeMint(acc02.address, 1);
+      const tx = minimal.connect(acc01).burn(acc02.address, 1);
 
       await expect(tx).to.be.revertedWith(
         MinimalErrors.Unauthorized,
@@ -206,10 +206,10 @@ describe("ERC1155Minimal", () => {
     });
 
     it("Should burn, update storage and emit events", async () => {
-      await minimal.connect(owner).safeMint(acc02.address);
+      await minimal.connect(owner).safeMint(acc02.address, 1);
       const tx: ContractTransaction = await minimal
         .connect(owner)
-        .burn();
+        .burn(acc02.address, 1);
       const rc: ContractReceipt = await tx.wait();
       const event = rc.events?.find(
         event => event.event === "TransferSingle",
@@ -228,9 +228,9 @@ describe("ERC1155Minimal", () => {
 
       await expect(tx).to.emit(minimal, "TransferSingle");
 
-      expect(await minimal.ownerOf(1)).to.eq(
-        ethers.constants.AddressZero,
-      );
+      // expect(await minimal.ownerOf(1)).to.eq(
+      //   ethers.constants.AddressZero,
+      // );
       expect(tx).to.be.ok;
       expect(0).to.eq(bal);
       expect(acc02.address).to.eq(from);
@@ -241,11 +241,11 @@ describe("ERC1155Minimal", () => {
     });
 
     it("Should revert if already burned", async () => {
-      await minimal.connect(owner).safeMint(acc02.address);
-      await minimal.connect(owner).burn();
+      await minimal.connect(owner).safeMint(acc02.address, 1);
+      await minimal.connect(owner).burn(acc02.address, 1);
 
-      await expect(minimal.burn()).to.be.revertedWith(
-        MinimalErrors.NotMinted,
+      await expect(minimal.burn(acc02.address, 1)).to.be.revertedWith(
+        MinimalErrors.InvalidAmount,
       );
     });
   });
@@ -267,7 +267,7 @@ describe("ERC1155Minimal", () => {
 
     it("Should revert if public mint is off", async () => {
       await expect(
-        minimal.connect(acc01).publicMint(),
+        minimal.connect(acc01).publicMint(1),
       ).to.be.revertedWithCustomError(
         minimal,
         MinimalErrors.PublicMintOff,
@@ -280,7 +280,7 @@ describe("ERC1155Minimal", () => {
       await expect(
         minimal
           .connect(acc02)
-          .publicMint({ value: 10100111001 }),
+          .publicMint(1, { value: 10100111001 }),
       ).to.be.revertedWithCustomError(
         minimal,
         MinimalErrors.WrongPrice,
@@ -291,10 +291,10 @@ describe("ERC1155Minimal", () => {
       await minimal.connect(owner).setPublicMintState(true);
       await minimal
         .connect(acc02)
-        .publicMint({ value: price });
+        .publicMint(1, { value: price });
 
       await expect(
-        minimal.connect(acc01).publicMint({ value: price }),
+        minimal.connect(acc01).publicMint(1, { value: price }),
       ).to.be.revertedWithCustomError(
         minimal,
         MinimalErrors.AlreadyMinted,
@@ -305,7 +305,7 @@ describe("ERC1155Minimal", () => {
       await minimal.connect(owner).setPublicMintState(true);
       const tx: ContractTransaction = await minimal
         .connect(acc02)
-        .publicMint({ value: price });
+        .publicMint(1, { value: price });
       const rc: ContractReceipt = await tx.wait();
       const event = rc.events?.find(
         event => event.event === "TransferSingle",
@@ -321,7 +321,7 @@ describe("ERC1155Minimal", () => {
         acc02.address,
         1,
       );
-      const ownerOf = await minimal.callStatic.ownerOf(1);
+      // const ownerOf = await minimal.callStatic.ownerOf(1);
       const cBal = await minimal.provider.getBalance(
         minimal.address,
       );
@@ -333,7 +333,7 @@ describe("ERC1155Minimal", () => {
       expect(to).to.eq(acc02.address);
       expect(id).to.eq(1);
       expect(bal).to.eq(1);
-      expect(ownerOf).to.eq(acc02.address);
+      // expect(ownerOf).to.eq(acc02.address);
       expect(operator).to.eq(acc02.address);
       expect(amount).to.eq(1);
     });
@@ -344,7 +344,7 @@ describe("ERC1155Minimal", () => {
       await minimal.connect(owner).setPublicMintState(true);
       await minimal
         .connect(acc02)
-        .publicMint({ value: price });
+        .publicMint(1, { value: price });
 
       await expect(
         minimal.connect(acc01).withdraw(),
@@ -355,7 +355,7 @@ describe("ERC1155Minimal", () => {
       await minimal.connect(owner).setPublicMintState(true);
       await minimal
         .connect(acc02)
-        .publicMint({ value: price });
+        .publicMint(1, { value: price });
 
       const addrs = [
         mad.address,
@@ -455,7 +455,7 @@ describe("ERC1155Minimal", () => {
     });
 
     it("Should retrieve tokenURI", async () => {
-      await minimal.connect(owner).safeMint(acc01.address);
+      await minimal.connect(owner).safeMint(acc01.address, 1);
       const tx = await minimal.uri(1);
       const uri: string = "ipfs://cid/id.json";
 

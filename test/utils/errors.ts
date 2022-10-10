@@ -7,6 +7,7 @@ export enum MinimalErrors {
   InvalidId = "InvalidId",
   NotMinted = "NOT_MINTED",
   NotMintedBytes4 = "NotMinted",
+  InvalidAmount = "INVALID_AMOUNT",
 }
 
 export enum BasicErrors {
@@ -20,6 +21,7 @@ export enum BasicErrors {
   WrongPrice = "WrongPrice",
   WrongFrom = "WRONG_FROM",
   NotMinted = "NOT_MINTED",
+  InvalidAmount = "INVALID_AMOUNT",
 }
 
 export enum WhitelistErrors {
@@ -37,7 +39,8 @@ export enum WhitelistErrors {
   NotMintedYet = "NotMintedYet",
   WrongPrice = "WrongPrice",
   NotMinted = "NOT_MINTED",
-  WrongFrom = "WRONG_FROM",
+  WrongFrom = "WRONG_FROM",  
+  InvalidAmount = "INVALID_AMOUNT",
 }
 
 export enum LazyErrors {
@@ -49,6 +52,7 @@ export enum LazyErrors {
   WrongPrice = "WrongPrice",
   WrongFrom = "WRONG_FROM",
   NotMinted = "NOT_MINTED",
+  InvalidAmount = "INVALID_AMOUNT",
 }
 
 export enum SplitterErrors {

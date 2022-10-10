@@ -518,7 +518,7 @@ describe("MADRouter1155", () => {
           splAddr,
           750,
         );
-      const tx = r1155.minimalSafeMint(wlAddr, acc01.address);
+      const tx = r1155.minimalSafeMint(wlAddr, acc01.address, 1);
       const verArt = await artifacts.readArtifact(
         "FactoryVerifier",
       );
@@ -569,12 +569,12 @@ describe("MADRouter1155", () => {
       );
       const tx = await r1155
         .connect(acc02)
-        .minimalSafeMint(minAddr, acc01.address);
+        .minimalSafeMint(minAddr, acc01.address, 1);
 
       expect(tx).to.be.ok;
-      expect(await min.callStatic.ownerOf(1)).to.eq(
-        acc01.address,
-      );
+      // expect(await min.callStatic.ownerOf(1)).to.eq(
+      //   acc01.address,
+      // );
       const verArt = await artifacts.readArtifact(
         "FactoryVerifier",
       );
@@ -586,7 +586,7 @@ describe("MADRouter1155", () => {
       await expect(
         r1155
           .connect(mad)
-          .minimalSafeMint(minAddr, acc02.address),
+          .minimalSafeMint(minAddr, acc02.address, 1),
       ).to.be.revertedWithCustomError(
         ver,
         RouterErrors.AccessDenied,
@@ -594,7 +594,7 @@ describe("MADRouter1155", () => {
       await expect(
         r1155
           .connect(acc02)
-          .minimalSafeMint(minAddr, acc02.address),
+          .minimalSafeMint(minAddr, acc02.address, 1),
       ).to.be.revertedWithCustomError(
         min,
         RouterErrors.AlreadyMinted,
@@ -640,8 +640,8 @@ describe("MADRouter1155", () => {
       await r1155
         .connect(acc02)
         .setMintState(minAddr, true, 0);
-      await min.connect(acc01).publicMint({ value: price });
-      const tx = await r1155.connect(acc02).burn(minAddr, []);
+      await min.connect(acc01).publicMint(1, { value: price });
+      const tx = await r1155.connect(acc02).burn(minAddr, [1], [acc01.address], [1]);
       const verArt = await artifacts.readArtifact(
         "FactoryVerifier",
       );
@@ -655,7 +655,7 @@ describe("MADRouter1155", () => {
         await min.callStatic.balanceOf(acc01.address, 1),
       ).to.eq(0);
       await expect(
-        r1155.burn(minAddr, []),
+        r1155.burn(minAddr, [], [], []),
       ).to.be.revertedWithCustomError(
         ver,
         RouterErrors.AccessDenied,
@@ -697,10 +697,10 @@ describe("MADRouter1155", () => {
       await r1155
         .connect(acc02)
         .setMintState(basicAddr, true, 0);
-      await basic.connect(acc01).mint(1, { value: price });
+      await basic.connect(acc01).mint(1, 1, { value: price });
       const tx = await r1155
         .connect(acc02)
-        .burn(basicAddr, [1]);
+        .burn(basicAddr, [1], [acc01.address], [1]);
 
       expect(tx).to.be.ok;
       expect(
@@ -715,7 +715,7 @@ describe("MADRouter1155", () => {
         ethers.provider,
       );
       await expect(
-        r1155.burn(basicAddr, [1]),
+        r1155.burn(basicAddr, [1], [acc01.address], [1]),
       ).to.be.revertedWithCustomError(
         ver,
         RouterErrors.AccessDenied,
@@ -761,8 +761,8 @@ describe("MADRouter1155", () => {
       await r1155
         .connect(acc02)
         .freeSettings(wl.address, 1, 10, root);
-      await r1155.connect(acc02).creatorMint(wlAddr, 1);
-      const tx = await r1155.connect(acc02).burn(wlAddr, [1]);
+      await r1155.connect(acc02).creatorMint(wlAddr, 1, [1], 1);
+      const tx = await r1155.connect(acc02).burn(wlAddr, [1], [acc02.address], [1]);
       const verArt = await artifacts.readArtifact(
         "FactoryVerifier",
       );
@@ -776,7 +776,7 @@ describe("MADRouter1155", () => {
         await wl.callStatic.balanceOf(acc02.address, 1),
       ).to.eq(0);
       await expect(
-        r1155.burn(wlAddr, [1]),
+        r1155.burn(wlAddr, [1], [acc02.address], [1]),
       ).to.be.revertedWithCustomError(
         ver,
         RouterErrors.AccessDenied,
@@ -839,6 +839,7 @@ describe("MADRouter1155", () => {
       const voucherType = [
         { name: "voucherId", type: "bytes32" },
         { name: "users", type: "address[]" },
+        { name: "balances", type: "uint256[]"},
         { name: "amount", type: "uint256" },
         { name: "price", type: "uint256" },
       ];
@@ -851,6 +852,7 @@ describe("MADRouter1155", () => {
       const Voucher = {
         voucherId: vId,
         users: usrs,
+        balances: [1],
         amount: 1,
         price: bnPrice.toString(),
       };
@@ -871,6 +873,7 @@ describe("MADRouter1155", () => {
         version: SignTypedDataVersion.V4,
       });
       const sigSplit = ethers.utils.splitSignature(signature);
+      
       await lazy
         .connect(acc02)
         .lazyMint(
@@ -882,7 +885,7 @@ describe("MADRouter1155", () => {
         );
       const tx = await r1155
         .connect(acc02)
-        .burn(lazyAddr, [1, 2]);
+        .burn(lazyAddr, [1, 2], [Voucher.users[0], Voucher.users[1]], [1, 1]);
       const verArt = await artifacts.readArtifact(
         "FactoryVerifier",
       );
@@ -896,7 +899,7 @@ describe("MADRouter1155", () => {
       expect(await lazy.balanceOf(owner.address, 1)).to.eq(0);
       expect(await lazy.balanceOf(acc02.address, 2)).to.eq(0);
       await expect(
-        r1155.burn(lazyAddr, [1]),
+        r1155.burn(lazyAddr, [1], [acc02.address], [1]),
       ).to.be.revertedWithCustomError(
         ver,
         RouterErrors.AccessDenied,
@@ -941,12 +944,12 @@ describe("MADRouter1155", () => {
       await r1155
         .connect(acc02)
         .setMintState(minAddr, true, 0);
-      await min.connect(acc01).publicMint({ value: price });
+      await min.connect(acc01).publicMint(1, { value: price });
 
       await expect(
         r1155
           .connect(acc02)
-          .batchBurn(minAddr, acc01.address, [1]),
+          .batchBurn(minAddr, acc01.address, [1], [1]),
       ).to.be.revertedWith(RouterErrors.InvalidType);
     });
     it("Should batch burn token for 1155Basic collection type", async () => {
@@ -988,10 +991,10 @@ describe("MADRouter1155", () => {
         .setMintState(basicAddr, true, 0);
       await basic
         .connect(acc01)
-        .mint(4, { value: price.mul(pmul) });
+        .mint(4, 1, { value: price.mul(pmul) });
       const tx = await r1155
         .connect(acc02)
-        .batchBurn(basicAddr, acc01.address, [1, 2, 3, 4]);
+        .batchBurn(basicAddr, acc01.address, [1, 2, 3, 4], [1, 1, 1, 1]);
 
       expect(tx).to.be.ok;
       expect(
@@ -1015,7 +1018,7 @@ describe("MADRouter1155", () => {
         ethers.provider,
       );
       await expect(
-        r1155.batchBurn(basicAddr, acc01.address, [1]),
+        r1155.batchBurn(basicAddr, acc01.address, [1], [1]),
       ).to.be.revertedWithCustomError(
         ver,
         RouterErrors.AccessDenied,
@@ -1061,10 +1064,10 @@ describe("MADRouter1155", () => {
       await r1155
         .connect(acc02)
         .freeSettings(wl.address, 1, 10, root);
-      await r1155.connect(acc02).creatorMint(wlAddr, 2);
+      await r1155.connect(acc02).creatorMint(wlAddr, 2, [1, 1], 2);
       const tx = await r1155
         .connect(acc02)
-        .batchBurn(wlAddr, acc02.address, [1, 2]);
+        .batchBurn(wlAddr, acc02.address, [1, 2], [1, 1]);
       const verArt = await artifacts.readArtifact(
         "FactoryVerifier",
       );
@@ -1081,7 +1084,7 @@ describe("MADRouter1155", () => {
         await wl.callStatic.balanceOf(acc02.address, 2),
       ).to.eq(0);
       await expect(
-        r1155.batchBurn(wlAddr, acc02.address, [1]),
+        r1155.batchBurn(wlAddr, acc02.address, [1], [1]),
       ).to.be.revertedWithCustomError(
         ver,
         RouterErrors.AccessDenied,
@@ -1144,6 +1147,7 @@ describe("MADRouter1155", () => {
       const voucherType = [
         { name: "voucherId", type: "bytes32" },
         { name: "users", type: "address[]" },
+        { name: "balances", type: "uint256[]"},
         { name: "amount", type: "uint256" },
         { name: "price", type: "uint256" },
       ];
@@ -1156,6 +1160,7 @@ describe("MADRouter1155", () => {
       const Voucher = {
         voucherId: vId,
         users: usrs,
+        balances: [1, 1, 1],
         amount: 3,
         price: bnPrice.toString(),
       };
@@ -1187,7 +1192,7 @@ describe("MADRouter1155", () => {
         );
       const tx = await r1155
         .connect(acc02)
-        .batchBurn(lazyAddr, owner.address, [3, 2, 1]);
+        .batchBurn(lazyAddr, owner.address, [3, 2, 1], [1, 1, 1]);
       const verArt = await artifacts.readArtifact(
         "FactoryVerifier",
       );
@@ -1202,7 +1207,7 @@ describe("MADRouter1155", () => {
       expect(await lazy.balanceOf(owner.address, 2)).to.eq(0);
       expect(await lazy.balanceOf(owner.address, 3)).to.eq(0);
       await expect(
-        r1155.batchBurn(lazyAddr, owner.address, [1]),
+        r1155.batchBurn(lazyAddr, owner.address, [1], [1]),
       ).to.be.revertedWithCustomError(
         ver,
         RouterErrors.AccessDenied,
@@ -1530,7 +1535,7 @@ describe("MADRouter1155", () => {
       );
 
       await expect(
-        r1155.connect(acc02).creatorMint(basic.address, 2),
+        r1155.connect(acc02).creatorMint(basic.address, 2, [1, 1], 2),
       ).to.be.revertedWith(RouterErrors.InvalidType);
     });
     it("Should mint to creator", async () => {
@@ -1579,7 +1584,7 @@ describe("MADRouter1155", () => {
         .setMintState(wlAddr, true, 2);
       const tx = await r1155
         .connect(acc02)
-        .creatorMint(wlAddr, 2);
+        .creatorMint(wlAddr, 2, [1, 1], 2);
 
       expect(tx).to.be.ok;
       expect(await wl.callStatic.freeClaimState()).to.be.true;
@@ -1623,7 +1628,7 @@ describe("MADRouter1155", () => {
       await expect(
         r1155
           .connect(acc02)
-          .creatorBatchMint(basic.address, [1, 3, 3, 7]),
+          .creatorBatchMint(basic.address, [1, 3, 3, 7], [1, 1, 1, 1], 4),
       ).to.be.revertedWith(RouterErrors.InvalidType);
     });
     it("Should batch mint to creator", async () => {
@@ -1661,7 +1666,7 @@ describe("MADRouter1155", () => {
       );
 
       await expect(
-        r1155.connect(acc02).creatorMint(basic.address, 2),
+        r1155.connect(acc02).creatorMint(basic.address, 2, [1, 1], 2),
       ).to.be.revertedWith(RouterErrors.InvalidType);
     });
     it("Should mint to creator", async () => {
@@ -1710,7 +1715,7 @@ describe("MADRouter1155", () => {
         .setMintState(wlAddr, true, 2);
       const tx = await r1155
         .connect(acc02)
-        .creatorBatchMint(wlAddr, [7, 4, 6, 5, 73, 74]);
+        .creatorBatchMint(wlAddr, [7, 4, 6, 5, 73, 74], [1, 1, 1, 1, 1, 1], 6);
 
       expect(tx).to.be.ok;
       expect(await wl.callStatic.freeClaimState()).to.be.true;
@@ -1748,7 +1753,7 @@ describe("MADRouter1155", () => {
         await f1155.callStatic.getDeployedAddr("BasicSalt");
       const addrs = [owner.address, mad.address];
       await expect(
-        r1155.connect(acc02).gift(basicAddr, addrs),
+        r1155.connect(acc02).gift(basicAddr, addrs, [1, 1], 2),
       ).to.be.revertedWith(RouterErrors.InvalidType);
     });
     it("Should gift tokens", async () => {
@@ -1797,7 +1802,7 @@ describe("MADRouter1155", () => {
         .setMintState(wlAddr, true, 2);
       const tx = await r1155
         .connect(acc02)
-        .gift(wlAddr, addrs);
+        .gift(wlAddr, addrs, [1, 1], 2);
 
       expect(tx).to.be.ok;
       expect(
@@ -1854,7 +1859,7 @@ describe("MADRouter1155", () => {
       await r1155
         .connect(acc02)
         .setMintState(min.address, true, 0);
-      await min.connect(acc01).publicMint({ value: price });
+      await min.connect(acc01).publicMint(1, { value: price });
       const bal1 = await ethers.provider.getBalance(
         acc02.address,
       );
@@ -1906,7 +1911,7 @@ describe("MADRouter1155", () => {
       await r1155
         .connect(mad)
         .setMintState(basic.address, true, 0);
-      await basic.connect(acc01).mint(1, { value: price });
+      await basic.connect(acc01).mint(1, 1, { value: price });
       const bala = await ethers.provider.getBalance(
         mad.address,
       );
@@ -1952,7 +1957,7 @@ describe("MADRouter1155", () => {
       await r1155
         .connect(amb)
         .setMintState(wl.address, true, 0);
-      await wl.connect(acc01).mint(1, { value: price });
+      await wl.connect(acc01).mint(1, [1], 1, { value: price });
       const balc = await ethers.provider.getBalance(
         amb.address,
       );
@@ -2024,6 +2029,7 @@ describe("MADRouter1155", () => {
       const voucherType = [
         { name: "voucherId", type: "bytes32" },
         { name: "users", type: "address[]" },
+        { name: "balances", type: "uint256[]"},
         { name: "amount", type: "uint256" },
         { name: "price", type: "uint256" },
       ];
@@ -2036,6 +2042,7 @@ describe("MADRouter1155", () => {
       const Voucher = {
         voucherId: vId,
         users: usrs,
+        balances: [1],
         amount: 1,
         price: bnPrice.toString(),
       };
@@ -2218,19 +2225,19 @@ describe("MADRouter1155", () => {
         r1155.freeSettings(addr, 1, 100, root),
       ).to.be.revertedWith(RouterErrors.Paused);
       await expect(
-        r1155.minimalSafeMint(addr, acc01.address),
+        r1155.minimalSafeMint(addr, acc01.address, 1),
       ).to.be.revertedWith(RouterErrors.Paused);
       await expect(
-        r1155.burn(addr, [1, 2, 3]),
+        r1155.burn(addr, [1, 2, 3], [acc01.address, acc01.address, acc01.address], [1, 1, 1]),
       ).to.be.revertedWith(RouterErrors.Paused);
       await expect(
         r1155.setMintState(addr, false, 2),
       ).to.be.revertedWith(RouterErrors.Paused);
       await expect(
-        r1155.creatorMint(addr, 1),
+        r1155.creatorMint(addr, 1, [1, 1], 2),
       ).to.be.revertedWith(RouterErrors.Paused);
       await expect(
-        r1155.gift(addr, [acc01.address, mad.address]),
+        r1155.gift(addr, [acc01.address, mad.address], [1, 1], 2),
       ).to.be.revertedWith(RouterErrors.Paused);
       await expect(
         r1155.withdraw(addr, addr),

@@ -111,12 +111,12 @@ contract ERC1155Whitelist is
 
     modifier balanceMatchesTotal(uint256 amount, uint256[] memory balances, uint256 balanceTotal) {
         uint256 i;
-        
+        uint256 total = balanceTotal;
         for (i; i < balances.length;) {
-            balanceTotal -= balances[i];
+            total = total - balances[i++];
         }
 
-        require(balanceTotal == 0 && amount == balances.length, "INVALID_AMOUNT");
+        require(total == 0 && amount == balances.length, "INVALID_AMOUNT");
         _;
     }
 
@@ -301,8 +301,8 @@ contract ERC1155Whitelist is
     {
         uint256 len = ids.length;
 
-        freeSupply += balanceTotal;
         _canBatchToCreator(balanceTotal);
+        freeSupply += balanceTotal;
 
         uint256 i;
 

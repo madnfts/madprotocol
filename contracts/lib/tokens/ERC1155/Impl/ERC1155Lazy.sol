@@ -42,12 +42,12 @@ contract ERC1155Lazy is
 
     bytes32 private constant _VOUCHER_TYPEHASH =
         keccak256(
-            "Voucher(bytes32 voucherId,address[] users,uint256 amount,uint256 price)"
+            "Voucher(bytes32 voucherId,address[] users,uint256[] balances,uint256 amount,uint256 price)"
         );
 
     bytes32 private constant _USERBATCH_TYPEHASH =
         keccak256(
-            "UserBatch(bytes32 voucherId,uint256[] ids,uint256 price,address user)"
+            "UserBatch(bytes32 voucherId,uint256[] ids,uint256[] balances,uint256 price,address user)"
         );
 
     /// @dev The signer address used for lazy minting voucher validation.
@@ -163,7 +163,7 @@ contract ERC1155Lazy is
     function burn(address[] memory from, uint256[] memory ids, uint256[] memory balances) external onlyOwner {
         uint256 i;
         uint256 len = ids.length;
-        require(len == balances.length && len == from.length, "INVALID_AMOUNTS");
+        require(len == balances.length && len == from.length, "INVALID_AMOUNT");
         // for (uint256 i = 0; i < ids.length; i++) {
         for (i; i < len; ) {
             // delId();

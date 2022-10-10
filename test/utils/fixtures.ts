@@ -295,6 +295,7 @@ export async function lazyFixture721(): Promise<SplitterAndLazy721> {
   const voucherType = [
     { name: "voucherId", type: "bytes32" },
     { name: "users", type: "address[]" },
+    { name: "balances", type: "uint256[]" },
     { name: "amount", type: "uint256" },
     { name: "price", type: "uint256" },
   ];
@@ -307,6 +308,7 @@ export async function lazyFixture721(): Promise<SplitterAndLazy721> {
   const Voucher = {
     voucherId: vId,
     users: usrs,
+    balances: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     amount: 10,
     price: bnPrice.toString(),
   };
@@ -553,12 +555,14 @@ export async function lazyFixture1155(): Promise<SplitterAndLazy1155> {
   const voucherType = [
     { name: "voucherId", type: "bytes32" },
     { name: "users", type: "address[]" },
+    { name: "balances", type: "uint256[]" },
     { name: "amount", type: "uint256" },
     { name: "price", type: "uint256" },
   ];
   const userBatchType = [
     { name: "voucherId", type: "bytes32" },
     { name: "ids", type: "uint256[]" },
+    { name: "balances", type: "uint256[]" },
     { name: "price", type: "uint256" },
     { name: "user", type: "address" },
   ];
@@ -571,12 +575,14 @@ export async function lazyFixture1155(): Promise<SplitterAndLazy1155> {
   const Voucher = {
     voucherId: vId,
     users: usrs,
+    balances: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     amount: 10,
     price: bnPrice.toString(),
   };
   const UserBatch = {
     voucherId: vId2,
     ids: [1, 33, 7],
+    balances: [1, 1, 1],
     price: bnPrice.toString(),
     user: owner.address,
   };

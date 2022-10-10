@@ -62,6 +62,7 @@ export interface LazyFixture721 {
 export interface Voucher {
   voucherId: string;
   users: string[];
+  balances: number[];
   amount: number;
   price: string;
 }
@@ -96,6 +97,7 @@ export interface LazyFixture1155 {
 export interface UserBatch {
   voucherId: string;
   ids: number[];
+  balances: number[];
   price: string;
   user: string;
 }

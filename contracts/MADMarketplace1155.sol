@@ -49,6 +49,11 @@ contract MADMarketplace1155 is
     // uint256 constant NAME_SLOT =
     // 0x8b30951df380b6b10da747e1167dd8e40bf8604c88c75b245dc172767f3b7320;
 
+    uint256 public feeVal0 = 25 ether;
+    uint256 public feeVal1 = 1.0e3;
+    uint256 public feeVal2 = 2.5e2;
+    uint256 public feeVal3 = 1.0e4;
+
     uint16 public constant feePercent1 = 2.5e2;
     uint16 public constant feePercent0 = 1.0e3;
     uint16 public constant basisPoints = 1.0e4;

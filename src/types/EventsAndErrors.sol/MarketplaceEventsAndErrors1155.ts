@@ -29,6 +29,7 @@ export interface MarketplaceEventsAndErrors1155Interface
     "CancelOrder(address,uint256,uint256,bytes32,address)": EventFragment;
     "Claim(address,uint256,uint256,bytes32,address,address,uint256)": EventFragment;
     "FactoryUpdated(address)": EventFragment;
+    "FeesUpdated(uint256,uint256,uint256,uint256)": EventFragment;
     "MakeOrder(address,uint256,uint256,bytes32,address)": EventFragment;
     "RecipientUpdated(address)": EventFragment;
   };
@@ -38,6 +39,7 @@ export interface MarketplaceEventsAndErrors1155Interface
   getEvent(nameOrSignatureOrTopic: "CancelOrder"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Claim"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FactoryUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "FeesUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MakeOrder"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RecipientUpdated"): EventFragment;
 }
@@ -109,6 +111,19 @@ export type FactoryUpdatedEvent = TypedEvent<
 >;
 
 export type FactoryUpdatedEventFilter = TypedEventFilter<FactoryUpdatedEvent>;
+
+export interface FeesUpdatedEventObject {
+  feeVal0: BigNumber;
+  feeVal1: BigNumber;
+  feeVal2: BigNumber;
+  feeVal3: BigNumber;
+}
+export type FeesUpdatedEvent = TypedEvent<
+  [BigNumber, BigNumber, BigNumber, BigNumber],
+  FeesUpdatedEventObject
+>;
+
+export type FeesUpdatedEventFilter = TypedEventFilter<FeesUpdatedEvent>;
 
 export interface MakeOrderEventObject {
   token: string;
@@ -234,6 +249,19 @@ export interface MarketplaceEventsAndErrors1155 extends BaseContract {
     FactoryUpdated(
       newFactory?: PromiseOrValue<string> | null
     ): FactoryUpdatedEventFilter;
+
+    "FeesUpdated(uint256,uint256,uint256,uint256)"(
+      feeVal0?: null,
+      feeVal1?: null,
+      feeVal2?: null,
+      feeVal3?: null
+    ): FeesUpdatedEventFilter;
+    FeesUpdated(
+      feeVal0?: null,
+      feeVal1?: null,
+      feeVal2?: null,
+      feeVal3?: null
+    ): FeesUpdatedEventFilter;
 
     "MakeOrder(address,uint256,uint256,bytes32,address)"(
       token?: PromiseOrValue<string> | null,

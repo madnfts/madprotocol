@@ -49,13 +49,13 @@ contract MADMarketplace1155 is
     // uint256 constant NAME_SLOT =
     // 0x8b30951df380b6b10da747e1167dd8e40bf8604c88c75b245dc172767f3b7320;
 
-    uint256 public feeVal0 = 25 ether;
-    uint256 public feeVal1 = 1.0e3;
-    uint256 public feeVal2 = 2.5e2;
-    uint256 public feeVal3 = 1.0e4;
+    uint256 public feeVal0 = 25 ether; // mint fee
+    uint256 public feeVal1; // burn fee
+    uint256 public feeVal2 = 1.0e3;
+    uint256 public feeVal3 = 2.5e2;
 
-    uint16 public constant feePercent1 = 2.5e2;
-    uint16 public constant feePercent0 = 1.0e3;
+    // uint16 public constant feePercent1 = 2.5e2;
+    // uint16 public constant feePercent0 = 1.0e3;
     uint16 public constant basisPoints = 1.0e4;
 
     /// @dev token => id => amount => orderID[]
@@ -406,6 +406,29 @@ contract MADMarketplace1155 is
         emit FactoryUpdated(_factory);
     }
 
+    function setFees(
+        uint256 _feeVal0,
+        uint256 _feeVal1,
+        uint256 _feeVal2,
+        uint256 _feeVal3) 
+        external
+        onlyOwner 
+    {
+        assembly {
+            sstore(feeVal0.slot, _feeVal0)
+            sstore(feeVal1.slot, _feeVal1)
+            sstore(feeVal2.slot, _feeVal2)
+            sstore(feeVal3.slot, _feeVal3)
+        }
+
+        emit FeesUpdated(
+            _feeVal0,
+            _feeVal1,
+            _feeVal2,
+            _feeVal3
+        );
+    }
+
     /// @notice Marketplace config setter.
     /// @dev Function Signature := 0x0465c563
     /// @dev Time tracking criteria based on `blocktimestamp`.
@@ -637,7 +660,7 @@ contract MADMarketplace1155 is
         uint256 key
     ) internal {
         // load royalty info query to mem
-        uint16 feePercent = _feeResolver(
+        uint256 feePercent = _feeResolver(
             key,
             _order.tokenId,
             _order.amount
@@ -687,7 +710,7 @@ contract MADMarketplace1155 is
         bytes32 _orderId,
         address _to
     ) internal {
-        uint16 feePercent = feePercent1; // _feeResolver(
+        uint256 feePercent = feeVal3; // _feeResolver(
             // key,
             // _order.tokenId,
             // _order.amount
@@ -737,7 +760,7 @@ contract MADMarketplace1155 is
         bytes32 _orderId,
         address _to
     ) internal {
-        uint16 feePercent = feePercent1; // _feeResolver(
+        uint256 feePercent = feeVal3; // _feeResolver(
         //     key,
         //     _order.tokenId,
         //     _order.amount
@@ -774,7 +797,7 @@ contract MADMarketplace1155 is
         uint256 _key,
         uint256 _tokenId,
         uint256 _amount
-    ) internal returns (uint16 _feePercent) {
+    ) internal returns (uint256 _feePercent) {
         assembly {
             mstore(0x00, _key)
             mstore(0x20, feeSelector.slot)
@@ -788,10 +811,10 @@ contract MADMarketplace1155 is
             switch sload(z)
             case 0 {
                 sstore(y, 1)
-                _feePercent := feePercent0
+                _feePercent := sload(feeVal2.slot)
             }
             case 1 {
-                _feePercent := feePercent1
+                _feePercent := sload(feeVal3.slot)
             }
         }
     }

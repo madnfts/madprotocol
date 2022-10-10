@@ -179,6 +179,13 @@ interface MarketplaceEventsAndErrors721 {
         uint256 price
     );
 
+    event FeesUpdated (
+        uint256 feeVal0,
+        uint256 feeVal1,
+        uint256 feeVal2,
+        uint256 feeVal3
+    );
+
     ////////////////////////////////////////////////////////////////
     //                           ERRORS                           //
     ////////////////////////////////////////////////////////////////
@@ -253,6 +260,13 @@ interface MarketplaceEventsAndErrors1155 {
         address seller,
         address taker,
         uint256 price
+    );
+
+    event FeesUpdated (
+        uint256 feeVal0,
+        uint256 feeVal1,
+        uint256 feeVal2,
+        uint256 feeVal3
     );
 
     ////////////////////////////////////////////////////////////////

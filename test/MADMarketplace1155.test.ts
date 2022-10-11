@@ -3398,6 +3398,331 @@ describe("MADMarketplace1155", () => {
         ["-344947735191637668", daPrice.sub(daFee), daFee],
       );
     });
+
+
+
+
+    it("Should verify inhouse minted tokens balance changes - set fees", async () => {
+      await m1155.updateSettings(300, 10, 20);
+      await m1155.setFees(ethers.utils.parseUnits('25', 'ether'), 0, 1.5e3, 5.0e2);
+
+      await f1155
+        .connect(acc02)
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
+      const splAddr = await f1155.callStatic.getDeployedAddr(
+        "MADSplitter1",
+      );
+      // const splitter = await ethers.getContractAt(
+      //   "SplitterImpl",
+      //   splAddr,
+      // );
+      const minAddr = await f1155.callStatic.getDeployedAddr(
+        "MinSalt",
+      );
+      await f1155
+        .connect(acc02)
+        .createCollection(
+          0,
+          "MinSalt",
+          "1155Min",
+          "MIN",
+          price,
+          1,
+          "cid/id.json",
+          splAddr,
+          750,
+        );
+      const min = await ethers.getContractAt(
+        "ERC1155Minimal",
+        minAddr,
+      );
+      await r1155
+        .connect(acc02)
+        .minimalSafeMint(min.address, acc02.address, 1);
+      const tx_ = await min
+        .connect(acc02)
+        .setApprovalForAll(m1155.address, true);
+      
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
+      const fpTx = await m1155
+        .connect(acc02)
+        .fixedPrice(min.address, 1, 1, price, blockTimestamp + 300);
+      const fpRc: ContractReceipt = await fpTx.wait();
+      const fpBn = fpRc.blockNumber;
+      const fpOrderId = getOrderId1155(
+        fpBn,
+        min.address,
+        1,
+        1,
+        acc02.address,
+      );
+      await mine(10);
+      const fpRoyalty = await min.royaltyInfo(1, price);
+      await expect(() =>
+        m1155.connect(acc01).buy(fpOrderId, { value: price }),
+      ).to.changeEtherBalances(
+        [acc01, acc02],
+        [
+          "-1000000000000000000",
+          price
+            .sub(price.mul(1500).div(10_000)) // 10% on initial in-house token purchase
+            .sub(fpRoyalty[1])
+            .add(fpRoyalty[1].mul(8000).div(10_000)),
+        ],
+      );
+
+      // dutch auction order
+      const basicAddr =
+        await f1155.callStatic.getDeployedAddr("BasicSalt");
+      await f1155
+        .connect(acc02)
+        .createCollection(
+          1,
+          "BasicSalt",
+          "1155Basic",
+          "BASIC",
+          price,
+          1,
+          "ipfs://cid/",
+          splAddr,
+          750,
+        );
+      const basic = await ethers.getContractAt(
+        "ERC1155Basic",
+        basicAddr,
+      );
+      await r1155
+        .connect(acc02)
+        .setMintState(basic.address, true, 0);
+      await basic.connect(acc02).mint(1, 1, { value: price });
+      await basic
+        .connect(acc02)
+        .setApprovalForAll(m1155.address, true);
+      const daTx = await m1155
+        .connect(acc02)
+        .dutchAuction(basic.address, 1, 1, price, 0, blockTimestamp + 300);
+      const daRc: ContractReceipt = await daTx.wait();
+      const daBn = daRc.blockNumber;
+      const daOrderId = getOrderId1155(
+        daBn,
+        basic.address,
+        1,
+        1,
+        acc02.address,
+      );
+
+      const orderInfo: OrderDetails1155 =
+        await m1155.callStatic.orderInfo(daOrderId);
+      await setNextBlockTimestamp(blockTimestamp + 200)
+      await mineUpTo(daBn + 1)
+      const blockTimestamp2 = (await m1155.provider.getBlock(daBn + 1)).timestamp;
+      // simulate DA pricing math with ts
+      const delta = orderInfo.endTime.sub(orderInfo.startTime);
+      const tick = price.div(delta);
+      const dec = ethers.BigNumber.from(blockTimestamp2 - orderInfo.startTime.toNumber() + 1).mul(tick);
+      const daPrice = price.sub(dec);
+
+      const daRoyalty = await basic.royaltyInfo(1, daPrice);
+
+      await expect(() =>
+        m1155
+          .connect(acc01)
+          .buy(daOrderId, { value: daPrice }),
+      ).to.changeEtherBalances(
+        [acc01, acc02],
+        [
+          "-349823321554770424",
+          daPrice
+            .sub(daPrice.mul(1500).div(10_000))
+            .sub(daRoyalty[1])
+            .add(daRoyalty[1].mul(8000).div(10_000)),
+        ],
+      );
+    });
+    it("Should buy third party minted tokens with ERC2981 support - set fees", async () => {
+      await m1155.updateSettings(300, 10, 20);
+      await m1155.setFees(ethers.utils.parseUnits('25', 'ether'), 0, 1.5e3, 5.0e2);
+
+      const ExtToken = await ethers.getContractFactory(
+        "ERC1155Basic",
+      );
+      const extToken = await ExtToken.connect(acc02).deploy(
+        "ipfs://cid/",
+        price,
+        100,
+        acc02.address,
+        500,
+        acc02.address,
+      );
+
+      await extToken.connect(acc02).setPublicMintState(true);
+      await extToken
+        .connect(acc02)
+        .mint(2, 1, { value: price.mul(ethers.constants.Two) });
+      const tx_ = await extToken
+        .connect(acc02)
+        .setApprovalForAll(m1155.address, true);
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
+      const fpTx = await m1155
+        .connect(acc02)
+        .fixedPrice(extToken.address, 1, 1, price, blockTimestamp + 300);
+      const fpRc: ContractReceipt = await fpTx.wait();
+      const fpBn = fpRc.blockNumber;
+      const fpOrderId = getOrderId1155(
+        fpBn,
+        extToken.address,
+        1,
+        1,
+        acc02.address,
+      );
+      await mine(10);
+      // const fpRoyalty = await extToken.callStatic.royaltyInfo(
+      //   1,
+      //   price,
+      // );
+      // const cPrice = price/* .sub(fpRoyalty[1]) */;
+      const fpFee = price
+        .mul(ethers.BigNumber.from(500)) // flat rate 2.5%
+        .div(ethers.BigNumber.from(10000));
+
+      await expect(() =>
+        m1155.connect(acc01).buy(fpOrderId, { value: price }),
+      ).to.changeEtherBalances(
+        [acc01, acc02, owner],
+        ["-1000000000000000000", price.sub(fpFee), fpFee],
+      );
+
+      const daTx = await m1155
+        .connect(acc02)
+        .dutchAuction(extToken.address, 2, 1, price, 0, blockTimestamp + 300);
+      const daRc: ContractReceipt = await daTx.wait();
+      const daBn = daRc.blockNumber;
+      const daOrderId = getOrderId1155(
+        daBn,
+        extToken.address,
+        2,
+        1,
+        acc02.address,
+      );
+
+      const orderInfo: OrderDetails1155 =
+        await m1155.callStatic.orderInfo(daOrderId);
+        await setNextBlockTimestamp(blockTimestamp + 200)
+      await mineUpTo(daBn + 1)
+      const blockTimestamp2 = (await m1155.provider.getBlock(daBn + 1)).timestamp;
+      // simulate DA pricing math with ts
+      const delta = orderInfo.endTime.sub(orderInfo.startTime);
+      const tick = price.div(delta);
+      const dec = ethers.BigNumber.from(blockTimestamp2 - orderInfo.startTime.toNumber() + 1).mul(tick);
+      const daPrice = price.sub(dec);
+
+      // const daRoyalty = await extToken.royaltyInfo(
+      //   2,
+      //   daPrice,
+      // );
+      // const cPrice2 = daPrice.sub(daRoyalty[1]);
+      const daFee = daPrice
+        .mul(ethers.BigNumber.from(500))
+        .div(ethers.BigNumber.from(10000));
+
+      await expect(() =>
+        m1155
+          .connect(acc01)
+          .buy(daOrderId, { value: daPrice }),
+      ).to.changeEtherBalances(
+        [acc01, acc02, owner],
+        ["-344947735191637668", daPrice.sub(daFee), daFee],
+      );
+    });
+    it("Should buy third party minted tokens without ERC2981 support - set fees", async () => {
+      await m1155.updateSettings(300, 10, 20);
+      await m1155.setFees(ethers.utils.parseUnits('25', 'ether'), 0, 1.5e3, 5.0e2);
+
+      const ExtToken = await ethers.getContractFactory(
+        "MockERC1155",
+      );
+      const extToken = await ExtToken.connect(acc02).deploy();
+      await extToken
+        .connect(acc02)
+        .batchMint(acc02.address, [1, 2], [1, 1]);
+
+      const tx_ = await extToken
+        .connect(acc02)
+        .setApprovalForAll(m1155.address, true);
+
+      const blockTimestamp = (await m1155.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+
+      const fpTx = await m1155
+        .connect(acc02)
+        .fixedPrice(extToken.address, 1, 1, price, blockTimestamp + 300);
+      const fpRc: ContractReceipt = await fpTx.wait();
+      const fpBn = fpRc.blockNumber;
+      const fpOrderId = getOrderId1155(
+        fpBn,
+        extToken.address,
+        1,
+        1,
+        acc02.address,
+      );
+      await mine(10);
+
+      const fpFee = price
+        .mul(ethers.BigNumber.from(500))
+        .div(ethers.BigNumber.from(10000));
+
+      await expect(() =>
+        m1155.connect(acc01).buy(fpOrderId, { value: price }),
+      ).to.changeEtherBalances(
+        [acc01, acc02, owner],
+        ["-1000000000000000000", price.sub(fpFee), fpFee],
+      );
+
+      const daTx = await m1155
+        .connect(acc02)
+        .dutchAuction(extToken.address, 2, 1, price, 0, blockTimestamp + 300);
+      const daRc: ContractReceipt = await daTx.wait();
+      const daBn = daRc.blockNumber;
+      const daOrderId = getOrderId1155(
+        daBn,
+        extToken.address,
+        2,
+        1,
+        acc02.address,
+      );
+
+      const orderInfo: OrderDetails1155 =
+        await m1155.callStatic.orderInfo(daOrderId);
+      await setNextBlockTimestamp(blockTimestamp + 200)
+      await mineUpTo(daBn + 1)
+      const blockTimestamp2 = (await m1155.provider.getBlock(daBn + 1)).timestamp;
+      
+      // simulate DA pricing math with ts
+      const delta = orderInfo.endTime.sub(orderInfo.startTime);
+      const tick = price.div(delta);
+      const dec = ethers.BigNumber.from(blockTimestamp2 - orderInfo.startTime.toNumber() + 1).mul(tick);
+      const daPrice = price.sub(dec);
+
+      const daFee = daPrice
+        .mul(ethers.BigNumber.from(500))
+        .div(ethers.BigNumber.from(10000));
+
+      await expect(() =>
+        m1155
+          .connect(acc01)
+          .buy(daOrderId, { value: daPrice }),
+      ).to.changeEtherBalances(
+        [acc01, acc02, owner],
+        ["-344947735191637668", daPrice.sub(daFee), daFee],
+      );
+    });
   });
   describe("Claim", async () => {
     it("Should revert if caller is seller or bidder", async () => {

@@ -2,3 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export { ERC2981__factory } from "./ERC2981__factory";
+export { FeeOracle__factory } from "./FeeOracle__factory";

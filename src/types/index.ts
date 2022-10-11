@@ -55,6 +55,8 @@ export type { IERC721Metadata } from "./lib/test/test-interfaces.sol/IERC721Meta
 export { IERC721Metadata__factory } from "./factories/lib/test/test-interfaces.sol/IERC721Metadata__factory";
 export type { ERC2981 } from "./lib/tokens/common/ERC2981";
 export { ERC2981__factory } from "./factories/lib/tokens/common/ERC2981__factory";
+export type { FeeOracle } from "./lib/tokens/common/FeeOracle";
+export { FeeOracle__factory } from "./factories/lib/tokens/common/FeeOracle__factory";
 export type { ERC1155B } from "./lib/tokens/ERC1155/Base/ERC1155B.sol/ERC1155B";
 export { ERC1155B__factory } from "./factories/lib/tokens/ERC1155/Base/ERC1155B.sol/ERC1155B__factory";
 export type { ERC1155TokenReceiver } from "./lib/tokens/ERC1155/Base/ERC1155B.sol/ERC1155TokenReceiver";

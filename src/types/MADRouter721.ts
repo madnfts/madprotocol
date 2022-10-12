@@ -189,6 +189,7 @@ export interface MADRouter721Interface extends utils.Interface {
 
   events: {
     "BaseURI(bytes32,string)": EventFragment;
+    "FeesUpdated(uint256,uint256)": EventFragment;
     "FreeClaimState(bytes32,uint8,bool)": EventFragment;
     "OwnerUpdated(address,address)": EventFragment;
     "Paused(address)": EventFragment;
@@ -199,6 +200,7 @@ export interface MADRouter721Interface extends utils.Interface {
   };
 
   getEvent(nameOrSignatureOrTopic: "BaseURI"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "FeesUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FreeClaimState"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnerUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
@@ -215,6 +217,17 @@ export interface BaseURIEventObject {
 export type BaseURIEvent = TypedEvent<[string, string], BaseURIEventObject>;
 
 export type BaseURIEventFilter = TypedEventFilter<BaseURIEvent>;
+
+export interface FeesUpdatedEventObject {
+  burnFees: BigNumber;
+  mintFees: BigNumber;
+}
+export type FeesUpdatedEvent = TypedEvent<
+  [BigNumber, BigNumber],
+  FeesUpdatedEventObject
+>;
+
+export type FeesUpdatedEventFilter = TypedEventFilter<FeesUpdatedEvent>;
 
 export interface FreeClaimStateEventObject {
   _id: string;
@@ -605,6 +618,12 @@ export interface MADRouter721 extends BaseContract {
       _id?: PromiseOrValue<BytesLike> | null,
       _baseURI?: PromiseOrValue<string> | null
     ): BaseURIEventFilter;
+
+    "FeesUpdated(uint256,uint256)"(
+      burnFees?: null,
+      mintFees?: null
+    ): FeesUpdatedEventFilter;
+    FeesUpdated(burnFees?: null, mintFees?: null): FeesUpdatedEventFilter;
 
     "FreeClaimState(bytes32,uint8,bool)"(
       _id?: PromiseOrValue<BytesLike> | null,

@@ -243,18 +243,6 @@ const _abi = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "feeVal0",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "feeVal1",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
         name: "feeVal2",
         type: "uint256",
       },

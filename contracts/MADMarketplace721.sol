@@ -48,9 +48,6 @@ contract MADMarketplace721 is
 
     // uint256 constant NAME_SLOT =
     // 0x8b30951df380b6b10da747e1167dd8e40bf8604c88c75b245dc172767f3b7320;
-
-    uint256 public feeVal0 = 25 ether; // mint fee
-    uint256 public feeVal1; // burn fee
     uint256 public feeVal2 = 1.0e3;
     uint256 public feeVal3 = 2.5e2;
 
@@ -382,23 +379,17 @@ contract MADMarketplace721 is
     }
 
     function setFees(
-        uint256 _feeVal0,
-        uint256 _feeVal1,
         uint256 _feeVal2,
         uint256 _feeVal3) 
         external
         onlyOwner 
     {
         assembly {
-            sstore(feeVal0.slot, _feeVal0)
-            sstore(feeVal1.slot, _feeVal1)
             sstore(feeVal2.slot, _feeVal2)
             sstore(feeVal3.slot, _feeVal3)
         }
 
         emit FeesUpdated(
-            _feeVal0,
-            _feeVal1,
             _feeVal2,
             _feeVal3
         );

@@ -11,6 +11,7 @@ import { SplitterImpl } from "../../../splitter/SplitterImpl.sol";
 import { ReentrancyGuard } from "../../../security/ReentrancyGuard.sol";
 import { Owned } from "../../../auth/Owned.sol";
 import { SafeTransferLib } from "../../../utils/SafeTransferLib.sol";
+import { FeeOracle } from "../../common/FeeOracle.sol";
 
 contract ERC721Minimal is
     ERC721,
@@ -61,7 +62,8 @@ contract ERC721Minimal is
     ////////////////////////////////////////////////////////////////
 
     /// @dev Can't be reminted if already minted, due to boolean.
-    function safeMint(address to) external onlyOwner {
+    function safeMint(address to) external payable onlyOwner {
+        _feeCheck(0x40d097c3);
         if (minted == true) revert AlreadyMinted();
 
         minted = true;
@@ -70,7 +72,8 @@ contract ERC721Minimal is
     }
 
     /// @dev Can't be reburnt since `minted` is not updated to false.
-    function burn() external onlyOwner {
+    function burn() external payable onlyOwner {
+        _feeCheck(0x44df8e70);
         _burn(1);
     }
 
@@ -166,6 +169,20 @@ contract ERC721Minimal is
         if (id != 1) revert InvalidId();
         if (!minted) revert NotMinted();
         return _tokenURI;
+    }
+
+    ////////////////////////////////////////////////////////////////
+    //                     INTERNAL FUNCTIONS                     //
+    ////////////////////////////////////////////////////////////////
+
+    function _feeCheck(bytes4 _method) internal view {
+        uint256 _fee = FeeOracle(owner).feeLookup(_method);
+        assembly {
+            if iszero(eq(callvalue(), _fee)) {
+                mstore(0x00, 0xf7760f25)
+                revert(0x1c, 0x04)
+            }
+        }
     }
 
     ////////////////////////////////////////////////////////////////

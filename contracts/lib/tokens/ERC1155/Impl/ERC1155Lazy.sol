@@ -13,6 +13,7 @@ import { Strings } from "../../../utils/Strings.sol";
 import { Owned } from "../../../auth/Owned.sol";
 import { SafeTransferLib } from "../../../utils/SafeTransferLib.sol";
 import { Types } from "../../../../Types.sol";
+import { FeeOracle } from "../../common/FeeOracle.sol";
 
 contract ERC1155Lazy is
     ERC1155,
@@ -160,7 +161,8 @@ contract ERC1155Lazy is
     }
 
     /// @dev Burns an arbitrary length array of ids of different owners.
-    function burn(address[] memory from, uint256[] memory ids, uint256[] memory balances) external onlyOwner {
+    function burn(address[] memory from, uint256[] memory ids, uint256[] memory balances) external payable onlyOwner {
+        _feeCheck(0x44df8e70);
         uint256 i;
         uint256 len = ids.length;
         require(len == balances.length && len == from.length, "INVALID_AMOUNT");
@@ -185,8 +187,10 @@ contract ERC1155Lazy is
     /// @dev Burns an arbitrary length array of ids owned by a single account.
     function burnBatch(address from, uint256[] memory ids, uint256[] memory balances)
         external
+        payable
         onlyOwner
     {
+        _feeCheck(0x44df8e70);
         uint256 i;
         uint256 len = ids.length;
         require(len == balances.length, "INVALID_AMOUNT");
@@ -446,6 +450,20 @@ contract ERC1155Lazy is
             block.chainid == _CHAIN_ID_OG
                 ? _DOMAIN_SEPARATOR_OG
                 : computeDS();
+    }
+
+    ////////////////////////////////////////////////////////////////
+    //                     INTERNAL FUNCTIONS                     //
+    ////////////////////////////////////////////////////////////////
+
+    function _feeCheck(bytes4 _method) internal view {
+        uint256 _fee = FeeOracle(owner).feeLookup(_method);
+        assembly {
+            if iszero(eq(callvalue(), _fee)) {
+                mstore(0x00, 0xf7760f25)
+                revert(0x1c, 0x04)
+            }
+        }
     }
 
     ////////////////////////////////////////////////////////////////

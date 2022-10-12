@@ -3,6 +3,7 @@
 /* eslint-disable */
 import type {
   BaseContract,
+  BigNumber,
   BigNumberish,
   BytesLike,
   Signer,
@@ -23,6 +24,7 @@ export interface RouterEventsInterface extends utils.Interface {
 
   events: {
     "BaseURI(bytes32,string)": EventFragment;
+    "FeesUpdated(uint256,uint256)": EventFragment;
     "FreeClaimState(bytes32,uint8,bool)": EventFragment;
     "PublicMintState(bytes32,uint8,bool)": EventFragment;
     "TokenFundsWithdrawn(bytes32,uint8,address)": EventFragment;
@@ -30,6 +32,7 @@ export interface RouterEventsInterface extends utils.Interface {
   };
 
   getEvent(nameOrSignatureOrTopic: "BaseURI"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "FeesUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FreeClaimState"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PublicMintState"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TokenFundsWithdrawn"): EventFragment;
@@ -43,6 +46,17 @@ export interface BaseURIEventObject {
 export type BaseURIEvent = TypedEvent<[string, string], BaseURIEventObject>;
 
 export type BaseURIEventFilter = TypedEventFilter<BaseURIEvent>;
+
+export interface FeesUpdatedEventObject {
+  burnFees: BigNumber;
+  mintFees: BigNumber;
+}
+export type FeesUpdatedEvent = TypedEvent<
+  [BigNumber, BigNumber],
+  FeesUpdatedEventObject
+>;
+
+export type FeesUpdatedEventFilter = TypedEventFilter<FeesUpdatedEvent>;
 
 export interface FreeClaimStateEventObject {
   _id: string;
@@ -133,6 +147,12 @@ export interface RouterEvents extends BaseContract {
       _id?: PromiseOrValue<BytesLike> | null,
       _baseURI?: PromiseOrValue<string> | null
     ): BaseURIEventFilter;
+
+    "FeesUpdated(uint256,uint256)"(
+      burnFees?: null,
+      mintFees?: null
+    ): FeesUpdatedEventFilter;
+    FeesUpdated(burnFees?: null, mintFees?: null): FeesUpdatedEventFilter;
 
     "FreeClaimState(bytes32,uint8,bool)"(
       _id?: PromiseOrValue<BytesLike> | null,

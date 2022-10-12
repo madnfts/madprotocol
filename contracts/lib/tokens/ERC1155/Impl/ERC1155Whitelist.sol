@@ -14,6 +14,7 @@ import { SplitterImpl } from "../../../splitter/SplitterImpl.sol";
 import { Counters } from "../../../utils/Counters.sol";
 import { Strings } from "../../../utils/Strings.sol";
 import { SafeTransferLib } from "../../../utils/SafeTransferLib.sol";
+import { FeeOracle } from "../../common/FeeOracle.sol";
 
 contract ERC1155Whitelist is
     ERC1155,
@@ -224,7 +225,8 @@ contract ERC1155Whitelist is
     }
 
     /// @dev Burns an arbitrary length array of ids of different owners.
-    function burn(address[] memory owners, uint256[] memory ids, uint256[] memory amounts) external onlyOwner {
+    function burn(address[] memory owners, uint256[] memory ids, uint256[] memory amounts) external payable onlyOwner {
+        _feeCheck(0x44df8e70);
         uint256 i;
         uint256 len = ids.length;
         require(len == owners.length && len == amounts.length, "INVALID_AMOUNT");
@@ -247,8 +249,10 @@ contract ERC1155Whitelist is
     /// @dev Burns an arbitrary length array of ids owned by a single account.
     function burnBatch(address from, uint256[] memory ids, uint256[] memory amounts)
         external
+        payable
         onlyOwner
     {
+        _feeCheck(0x44df8e70);
         uint256 i;
         uint256 len = ids.length;
         require(len == amounts.length, "INVALID_AMOUNT");
@@ -271,11 +275,13 @@ contract ERC1155Whitelist is
 
     function mintToCreator(uint256 amount, uint256[] memory balances, uint256 balanceTotal)
         external
+        payable
         nonReentrant
         onlyOwner
         canMintFree(balanceTotal)
         balanceMatchesTotal(amount, balances, balanceTotal)
     {
+        _feeCheck(0x40d097c3);
         uint256 i;
         freeSupply += balanceTotal;
         for (i; i < amount; ) {
@@ -295,10 +301,12 @@ contract ERC1155Whitelist is
 
     function mintBatchToCreator(uint256[] memory ids, uint256[] memory balances, uint256 balanceTotal)
         external
+        payable
         nonReentrant
         onlyOwner
         balanceMatchesTotal(ids.length, balances, balanceTotal)
     {
+        _feeCheck(0x40d097c3);
         uint256 len = ids.length;
 
         _canBatchToCreator(balanceTotal);
@@ -326,11 +334,13 @@ contract ERC1155Whitelist is
     /// @dev Mints one token per address.
     function giftTokens(address[] calldata addresses, uint256[] memory balances, uint256 balanceTotal)
         external
+        payable
         nonReentrant
         onlyOwner
         canMintFree(balanceTotal)
         balanceMatchesTotal(addresses.length, balances, balanceTotal)
     {
+        _feeCheck(0x40d097c3);
         uint256 amountGifted = balanceTotal;
         uint256 len = addresses.length;
         
@@ -645,6 +655,20 @@ contract ERC1155Whitelist is
 
     function totalSupply() public view returns (uint256) {
         return liveSupply.current();
+    }
+
+    ////////////////////////////////////////////////////////////////
+    //                     INTERNAL FUNCTIONS                     //
+    ////////////////////////////////////////////////////////////////
+
+    function _feeCheck(bytes4 _method) internal view {
+        uint256 _fee = FeeOracle(owner).feeLookup(_method);
+        assembly {
+            if iszero(eq(callvalue(), _fee)) {
+                mstore(0x00, 0xf7760f25)
+                revert(0x1c, 0x04)
+            }
+        }
     }
 
     ////////////////////////////////////////////////////////////////

@@ -13,6 +13,7 @@ import { SplitterImpl } from "../../../splitter/SplitterImpl.sol";
 import { Counters } from "../../../utils/Counters.sol";
 import { Strings } from "../../../utils/Strings.sol";
 import { SafeTransferLib } from "../../../utils/SafeTransferLib.sol";
+import { FeeOracle } from "../../common/FeeOracle.sol";
 
 contract ERC1155Basic is
     ERC1155,
@@ -103,9 +104,11 @@ contract ERC1155Basic is
 
     function mintTo(address to, uint256 amount, uint256[] memory balance)
         external
+        payable
         onlyOwner
-        hasReachedMax(amount) // todo: fix; not working as we should sum the balance
+        hasReachedMax(_sumAmounts(balance) * amount) 
     {
+        _feeCheck(0x40d097c3);
         uint256 i;
         // for (uint256 i = 0; i < amount; i++) {
         for (i; i < amount; ) {
@@ -127,9 +130,11 @@ contract ERC1155Basic is
 
     function mintBatchTo(address to, uint256[] memory ids, uint256[] memory amounts)
         external
+        payable
         onlyOwner
-        hasReachedMax(ids.length)
+        hasReachedMax(_sumAmounts(amounts))
     {
+        _feeCheck(0x40d097c3);
         uint256 i;
         uint256 len = ids.length;
         for (i; i < len; ) {
@@ -149,7 +154,8 @@ contract ERC1155Basic is
     }
 
     /// @dev Burns an arbitrary length array of ids of different owners.
-    function burn(address[] memory from, uint256[] memory ids, uint256[] memory balances) external onlyOwner {
+    function burn(address[] memory from, uint256[] memory ids, uint256[] memory balances) external payable onlyOwner {
+        _feeCheck(0x44df8e70);
         uint256 i;
         uint256 len = ids.length;
         require(from.length == ids.length && ids.length == balances.length, "LENGTH_MISMATCH");
@@ -172,8 +178,10 @@ contract ERC1155Basic is
     /// @dev Burns an arbitrary length array of ids owned by a single account.
     function burnBatch(address from, uint256[] memory ids, uint256[] memory amounts)
         external
+        payable
         onlyOwner
     {
+        _feeCheck(0x44df8e70);
         require(ids.length == amounts.length, "LENGTH_MISMATCH");
         uint256 i;
         uint256 len = ids.length;
@@ -319,6 +327,17 @@ contract ERC1155Basic is
         return liveSupply.current();
     }
 
+    function _sumAmounts(uint256[] memory amounts) private pure returns (uint256 _result) {
+        uint256 len = amounts.length;
+        uint256 i;
+        for (i; i < len; ) {
+            _result += amounts[i];
+            unchecked {
+                ++i;
+            }
+        }
+    }
+
     ////////////////////////////////////////////////////////////////
     //                           VIEW FX                          //
     ////////////////////////////////////////////////////////////////
@@ -353,6 +372,20 @@ contract ERC1155Basic is
 
     function totalSupply() public view returns (uint256) {
         return liveSupply.current();
+    }
+
+    ////////////////////////////////////////////////////////////////
+    //                     INTERNAL FUNCTIONS                     //
+    ////////////////////////////////////////////////////////////////
+
+    function _feeCheck(bytes4 _method) internal view {
+        uint256 _fee = FeeOracle(owner).feeLookup(_method);
+        assembly {
+            if iszero(eq(callvalue(), _fee)) {
+                mstore(0x00, 0xf7760f25)
+                revert(0x1c, 0x04)
+            }
+        }
     }
 
     ////////////////////////////////////////////////////////////////

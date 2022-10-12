@@ -40,8 +40,6 @@ export interface MADMarketplace1155Interface extends utils.Interface {
     "dutchAuction(address,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
     "englishAuction(address,uint256,uint256,uint256,uint256)": FunctionFragment;
     "feeSelector(uint256,uint256,uint256)": FunctionFragment;
-    "feeVal0()": FunctionFragment;
-    "feeVal1()": FunctionFragment;
     "feeVal2()": FunctionFragment;
     "feeVal3()": FunctionFragment;
     "fixedPrice(address,uint256,uint256,uint256,uint256)": FunctionFragment;
@@ -61,7 +59,7 @@ export interface MADMarketplace1155Interface extends utils.Interface {
     "recipient()": FunctionFragment;
     "sellerOrderLength(address)": FunctionFragment;
     "setFactory(address)": FunctionFragment;
-    "setFees(uint256,uint256,uint256,uint256)": FunctionFragment;
+    "setFees(uint256,uint256)": FunctionFragment;
     "setOwner(address)": FunctionFragment;
     "setRecipient(address)": FunctionFragment;
     "tokenOrderLength(address,uint256,uint256)": FunctionFragment;
@@ -82,8 +80,6 @@ export interface MADMarketplace1155Interface extends utils.Interface {
       | "dutchAuction"
       | "englishAuction"
       | "feeSelector"
-      | "feeVal0"
-      | "feeVal1"
       | "feeVal2"
       | "feeVal3"
       | "fixedPrice"
@@ -175,8 +171,6 @@ export interface MADMarketplace1155Interface extends utils.Interface {
       PromiseOrValue<BigNumberish>
     ]
   ): string;
-  encodeFunctionData(functionFragment: "feeVal0", values?: undefined): string;
-  encodeFunctionData(functionFragment: "feeVal1", values?: undefined): string;
   encodeFunctionData(functionFragment: "feeVal2", values?: undefined): string;
   encodeFunctionData(functionFragment: "feeVal3", values?: undefined): string;
   encodeFunctionData(
@@ -257,12 +251,7 @@ export interface MADMarketplace1155Interface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setFees",
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
-    ]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "setOwner",
@@ -319,8 +308,6 @@ export interface MADMarketplace1155Interface extends utils.Interface {
     functionFragment: "feeSelector",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "feeVal0", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "feeVal1", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "feeVal2", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "feeVal3", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "fixedPrice", data: BytesLike): Result;
@@ -390,7 +377,7 @@ export interface MADMarketplace1155Interface extends utils.Interface {
     "CancelOrder(address,uint256,uint256,bytes32,address)": EventFragment;
     "Claim(address,uint256,uint256,bytes32,address,address,uint256)": EventFragment;
     "FactoryUpdated(address)": EventFragment;
-    "FeesUpdated(uint256,uint256,uint256,uint256)": EventFragment;
+    "FeesUpdated(uint256,uint256)": EventFragment;
     "MakeOrder(address,uint256,uint256,bytes32,address)": EventFragment;
     "OwnerUpdated(address,address)": EventFragment;
     "Paused(address)": EventFragment;
@@ -480,13 +467,11 @@ export type FactoryUpdatedEvent = TypedEvent<
 export type FactoryUpdatedEventFilter = TypedEventFilter<FactoryUpdatedEvent>;
 
 export interface FeesUpdatedEventObject {
-  feeVal0: BigNumber;
-  feeVal1: BigNumber;
   feeVal2: BigNumber;
   feeVal3: BigNumber;
 }
 export type FeesUpdatedEvent = TypedEvent<
-  [BigNumber, BigNumber, BigNumber, BigNumber],
+  [BigNumber, BigNumber],
   FeesUpdatedEventObject
 >;
 
@@ -628,10 +613,6 @@ export interface MADMarketplace1155 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    feeVal0(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    feeVal1(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     feeVal2(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     feeVal3(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -744,8 +725,6 @@ export interface MADMarketplace1155 extends BaseContract {
     ): Promise<ContractTransaction>;
 
     setFees(
-      _feeVal0: PromiseOrValue<BigNumberish>,
-      _feeVal1: PromiseOrValue<BigNumberish>,
       _feeVal2: PromiseOrValue<BigNumberish>,
       _feeVal3: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -842,10 +821,6 @@ export interface MADMarketplace1155 extends BaseContract {
     arg2: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<boolean>;
-
-  feeVal0(overrides?: CallOverrides): Promise<BigNumber>;
-
-  feeVal1(overrides?: CallOverrides): Promise<BigNumber>;
 
   feeVal2(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -959,8 +934,6 @@ export interface MADMarketplace1155 extends BaseContract {
   ): Promise<ContractTransaction>;
 
   setFees(
-    _feeVal0: PromiseOrValue<BigNumberish>,
-    _feeVal1: PromiseOrValue<BigNumberish>,
     _feeVal2: PromiseOrValue<BigNumberish>,
     _feeVal3: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1057,10 +1030,6 @@ export interface MADMarketplace1155 extends BaseContract {
       arg2: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
-
-    feeVal0(overrides?: CallOverrides): Promise<BigNumber>;
-
-    feeVal1(overrides?: CallOverrides): Promise<BigNumber>;
 
     feeVal2(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1172,8 +1141,6 @@ export interface MADMarketplace1155 extends BaseContract {
     ): Promise<void>;
 
     setFees(
-      _feeVal0: PromiseOrValue<BigNumberish>,
-      _feeVal1: PromiseOrValue<BigNumberish>,
       _feeVal2: PromiseOrValue<BigNumberish>,
       _feeVal3: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1278,18 +1245,11 @@ export interface MADMarketplace1155 extends BaseContract {
       newFactory?: PromiseOrValue<string> | null
     ): FactoryUpdatedEventFilter;
 
-    "FeesUpdated(uint256,uint256,uint256,uint256)"(
-      feeVal0?: null,
-      feeVal1?: null,
+    "FeesUpdated(uint256,uint256)"(
       feeVal2?: null,
       feeVal3?: null
     ): FeesUpdatedEventFilter;
-    FeesUpdated(
-      feeVal0?: null,
-      feeVal1?: null,
-      feeVal2?: null,
-      feeVal3?: null
-    ): FeesUpdatedEventFilter;
+    FeesUpdated(feeVal2?: null, feeVal3?: null): FeesUpdatedEventFilter;
 
     "MakeOrder(address,uint256,uint256,bytes32,address)"(
       token?: PromiseOrValue<string> | null,
@@ -1389,10 +1349,6 @@ export interface MADMarketplace1155 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    feeVal0(overrides?: CallOverrides): Promise<BigNumber>;
-
-    feeVal1(overrides?: CallOverrides): Promise<BigNumber>;
-
     feeVal2(overrides?: CallOverrides): Promise<BigNumber>;
 
     feeVal3(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1477,8 +1433,6 @@ export interface MADMarketplace1155 extends BaseContract {
     ): Promise<BigNumber>;
 
     setFees(
-      _feeVal0: PromiseOrValue<BigNumberish>,
-      _feeVal1: PromiseOrValue<BigNumberish>,
       _feeVal2: PromiseOrValue<BigNumberish>,
       _feeVal3: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1577,10 +1531,6 @@ export interface MADMarketplace1155 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    feeVal0(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    feeVal1(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     feeVal2(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     feeVal3(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1667,8 +1617,6 @@ export interface MADMarketplace1155 extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     setFees(
-      _feeVal0: PromiseOrValue<BigNumberish>,
-      _feeVal1: PromiseOrValue<BigNumberish>,
       _feeVal2: PromiseOrValue<BigNumberish>,
       _feeVal3: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }

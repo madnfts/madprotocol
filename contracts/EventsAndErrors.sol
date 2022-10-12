@@ -179,6 +179,11 @@ interface MarketplaceEventsAndErrors721 {
         uint256 price
     );
 
+    event FeesUpdated (
+        uint256 feeVal2,
+        uint256 feeVal3
+    );
+
     ////////////////////////////////////////////////////////////////
     //                           ERRORS                           //
     ////////////////////////////////////////////////////////////////
@@ -255,6 +260,11 @@ interface MarketplaceEventsAndErrors1155 {
         uint256 price
     );
 
+    event FeesUpdated (
+        uint256 feeVal2,
+        uint256 feeVal3
+    );
+
     ////////////////////////////////////////////////////////////////
     //                           ERRORS                           //
     ////////////////////////////////////////////////////////////////
@@ -317,5 +327,10 @@ interface RouterEvents {
     event BaseURI(
         bytes32 indexed _id,
         string indexed _baseURI
+    );
+
+    event FeesUpdated(
+        uint256 burnFees,
+        uint256 mintFees
     );
 }

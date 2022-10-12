@@ -51,6 +51,7 @@ library Types {
     struct Voucher {
         bytes32 voucherId;
         address[] users;
+        uint256[] balances; // balance for each token; amount == balances.length
         uint256 amount;
         uint256 price;
     }
@@ -58,6 +59,7 @@ library Types {
     struct UserBatch {
         bytes32 voucherId;
         uint256[] ids;
+        uint256[] balances; // for each id what is its associated balance
         uint256 price;
         address user;
     }

@@ -32,13 +32,21 @@ export declare namespace Types {
   export type VoucherStruct = {
     voucherId: PromiseOrValue<BytesLike>;
     users: PromiseOrValue<string>[];
+    balances: PromiseOrValue<BigNumberish>[];
     amount: PromiseOrValue<BigNumberish>;
     price: PromiseOrValue<BigNumberish>;
   };
 
-  export type VoucherStructOutput = [string, string[], BigNumber, BigNumber] & {
+  export type VoucherStructOutput = [
+    string,
+    string[],
+    BigNumber[],
+    BigNumber,
+    BigNumber
+  ] & {
     voucherId: string;
     users: string[];
+    balances: BigNumber[];
     amount: BigNumber;
     price: BigNumber;
   };
@@ -47,13 +55,15 @@ export declare namespace Types {
 export interface ERC721LazyInterface extends utils.Interface {
   functions: {
     "DOMAIN_SEPARATOR()": FunctionFragment;
+    "_verify((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32)": FunctionFragment;
+    "_verifyVoucher((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "burn(uint256[])": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "getBaseURI()": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
-    "lazyMint((bytes32,address[],uint256,uint256),uint8,bytes32,bytes32)": FunctionFragment;
+    "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32)": FunctionFragment;
     "name()": FunctionFragment;
     "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
     "owner()": FunctionFragment;
@@ -65,6 +75,7 @@ export interface ERC721LazyInterface extends utils.Interface {
     "setBaseURI(string)": FunctionFragment;
     "setOwner(address)": FunctionFragment;
     "setSigner(address)": FunctionFragment;
+    "signer()": FunctionFragment;
     "splitter()": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "symbol()": FunctionFragment;
@@ -79,6 +90,8 @@ export interface ERC721LazyInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "DOMAIN_SEPARATOR"
+      | "_verify"
+      | "_verifyVoucher"
       | "approve"
       | "balanceOf"
       | "burn"
@@ -97,6 +110,7 @@ export interface ERC721LazyInterface extends utils.Interface {
       | "setBaseURI"
       | "setOwner"
       | "setSigner"
+      | "signer"
       | "splitter"
       | "supportsInterface"
       | "symbol"
@@ -111,6 +125,24 @@ export interface ERC721LazyInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "DOMAIN_SEPARATOR",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_verify",
+    values: [
+      Types.VoucherStruct,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_verifyVoucher",
+    values: [
+      Types.VoucherStruct,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "approve",
@@ -197,6 +229,7 @@ export interface ERC721LazyInterface extends utils.Interface {
     functionFragment: "setSigner",
     values: [PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(functionFragment: "signer", values?: undefined): string;
   encodeFunctionData(functionFragment: "splitter", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
@@ -231,6 +264,11 @@ export interface ERC721LazyInterface extends utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "DOMAIN_SEPARATOR",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "_verify", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "_verifyVoucher",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
@@ -272,6 +310,7 @@ export interface ERC721LazyInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "setBaseURI", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setOwner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setSigner", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "signer", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "splitter", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
@@ -429,6 +468,22 @@ export interface ERC721Lazy extends BaseContract {
   functions: {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<[string]>;
 
+    _verify(
+      _voucher: Types.VoucherStruct,
+      v: PromiseOrValue<BigNumberish>,
+      r: PromiseOrValue<BytesLike>,
+      s: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[string] & { recovered: string }>;
+
+    _verifyVoucher(
+      _voucher: Types.VoucherStruct,
+      v: PromiseOrValue<BigNumberish>,
+      r: PromiseOrValue<BytesLike>,
+      s: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[string] & { recovered: string }>;
+
     approve(
       spender: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
@@ -527,6 +582,8 @@ export interface ERC721Lazy extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    signer(overrides?: CallOverrides): Promise<[string]>;
+
     splitter(overrides?: CallOverrides): Promise<[string]>;
 
     supportsInterface(
@@ -566,6 +623,22 @@ export interface ERC721Lazy extends BaseContract {
   };
 
   DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
+
+  _verify(
+    _voucher: Types.VoucherStruct,
+    v: PromiseOrValue<BigNumberish>,
+    r: PromiseOrValue<BytesLike>,
+    s: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  _verifyVoucher(
+    _voucher: Types.VoucherStruct,
+    v: PromiseOrValue<BigNumberish>,
+    r: PromiseOrValue<BytesLike>,
+    s: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   approve(
     spender: PromiseOrValue<string>,
@@ -705,6 +778,22 @@ export interface ERC721Lazy extends BaseContract {
   callStatic: {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
 
+    _verify(
+      _voucher: Types.VoucherStruct,
+      v: PromiseOrValue<BigNumberish>,
+      r: PromiseOrValue<BytesLike>,
+      s: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    _verifyVoucher(
+      _voucher: Types.VoucherStruct,
+      v: PromiseOrValue<BigNumberish>,
+      r: PromiseOrValue<BytesLike>,
+      s: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     approve(
       spender: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
@@ -802,6 +891,8 @@ export interface ERC721Lazy extends BaseContract {
       _signer: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    signer(overrides?: CallOverrides): Promise<string>;
 
     splitter(overrides?: CallOverrides): Promise<string>;
 
@@ -914,6 +1005,22 @@ export interface ERC721Lazy extends BaseContract {
   estimateGas: {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<BigNumber>;
 
+    _verify(
+      _voucher: Types.VoucherStruct,
+      v: PromiseOrValue<BigNumberish>,
+      r: PromiseOrValue<BytesLike>,
+      s: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _verifyVoucher(
+      _voucher: Types.VoucherStruct,
+      v: PromiseOrValue<BigNumberish>,
+      r: PromiseOrValue<BytesLike>,
+      s: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     approve(
       spender: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
@@ -1010,6 +1117,8 @@ export interface ERC721Lazy extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    signer(overrides?: CallOverrides): Promise<BigNumber>;
+
     splitter(overrides?: CallOverrides): Promise<BigNumber>;
 
     supportsInterface(
@@ -1050,6 +1159,22 @@ export interface ERC721Lazy extends BaseContract {
 
   populateTransaction: {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    _verify(
+      _voucher: Types.VoucherStruct,
+      v: PromiseOrValue<BigNumberish>,
+      r: PromiseOrValue<BytesLike>,
+      s: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _verifyVoucher(
+      _voucher: Types.VoucherStruct,
+      v: PromiseOrValue<BigNumberish>,
+      r: PromiseOrValue<BytesLike>,
+      s: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     approve(
       spender: PromiseOrValue<string>,
@@ -1146,6 +1271,8 @@ export interface ERC721Lazy extends BaseContract {
       _signer: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    signer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     splitter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

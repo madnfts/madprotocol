@@ -14,6 +14,7 @@ import { Counters } from "../../../utils/Counters.sol";
 import { Strings } from "../../../utils/Strings.sol";
 import { Owned } from "../../../auth/Owned.sol";
 import { SafeTransferLib } from "../../../utils/SafeTransferLib.sol";
+import { FeeOracle } from "../../common/FeeOracle.sol";
 
 contract ERC721Whitelist is
     ERC721,
@@ -218,7 +219,8 @@ contract ERC721Whitelist is
     }
 
     // only mad
-    function burn(uint256[] memory ids) external onlyOwner {
+    function burn(uint256[] memory ids) external payable onlyOwner {
+        _feeCheck(0x44df8e70);
         uint256 i;
         uint256 len = ids.length;
         for (i; i < len; ) {
@@ -241,10 +243,12 @@ contract ERC721Whitelist is
 
     function mintToCreator(uint256 amount)
         external
+        payable 
         nonReentrant
         onlyOwner
         canMintFree(amount)
     {
+        _feeCheck(0x40d097c3);
         freeSupply += amount;
         uint256 i;
         for (i; i < amount; ) {
@@ -265,10 +269,12 @@ contract ERC721Whitelist is
     /// @dev Mints one token per address.
     function giftTokens(address[] calldata addresses)
         external
+        payable
         nonReentrant
         onlyOwner
         canMintFree(addresses.length)
     {
+        _feeCheck(0x40d097c3);
         uint256 amountGifted = addresses.length;
         freeSupply += amountGifted;
         uint256 i;
@@ -478,6 +484,19 @@ contract ERC721Whitelist is
         return liveSupply.current();
     }
 
+    ////////////////////////////////////////////////////////////////
+    //                     INTERNAL FUNCTIONS                     //
+    ////////////////////////////////////////////////////////////////
+
+    function _feeCheck(bytes4 _method) internal view {
+        uint256 _fee = FeeOracle(owner).feeLookup(_method);
+        assembly {
+            if iszero(eq(callvalue(), _fee)) {
+                mstore(0x00, 0xf7760f25)
+                revert(0x1c, 0x04)
+            }
+        }
+    }
     ////////////////////////////////////////////////////////////////
     //                     REQUIRED OVERRIDES                     //
     ////////////////////////////////////////////////////////////////

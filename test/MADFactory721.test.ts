@@ -263,9 +263,9 @@ describe("MADFactory721", () => {
           10,
         );
       const rc: ContractReceipt = await tx.wait();
-
-      const indexed = rc.logs[3].data;
-      const data = rc.logs[4].data;
+      
+      const indexed = rc.logs[2].data;
+      const data = rc.logs[3].data;
 
       const addr = await f721.getDeployedAddr("MADSplitter1");
       const creator = ethers.utils.defaultAbiCoder.decode(
@@ -286,9 +286,6 @@ describe("MADFactory721", () => {
         "SplitterImpl",
         addr,
       );
-      const ownerShares = await instance.callStatic._shares(
-        owner.address,
-      );
       const ambShares = await instance.callStatic._shares(
         amb.address,
       );
@@ -308,20 +305,18 @@ describe("MADFactory721", () => {
       expect(tx).to.be.ok;
       await expect(tx).to.emit(f721, "SplitterCreated");
       expect(creator.toString()).to.eq(acc02.address);
-      expect(shares).to.eq("10,20,10,60");
+      expect(shares).to.eq("20,10,70");
       expect(payees).to.eq(
         [
-          owner.address,
           amb.address,
           acc01.address,
           acc02.address,
         ].toString(),
       );
       expect(splitter).to.eq(addr);
-      expect(ethers.BigNumber.from(ownerShares)).to.eq(10);
       expect(ethers.BigNumber.from(ambShares)).to.eq(20);
       expect(ethers.BigNumber.from(projShares)).to.eq(10);
-      expect(ethers.BigNumber.from(creatorShares)).to.eq(60);
+      expect(ethers.BigNumber.from(creatorShares)).to.eq(70);
       expect(storage.splitter).to.eq(addr);
       expect(storage.splitterSalt).to.eq(
         ethers.utils.keccak256(

@@ -13,6 +13,7 @@ import { SplitterImpl } from "../../../splitter/SplitterImpl.sol";
 import { Counters } from "../../../utils/Counters.sol";
 import { Strings } from "../../../utils/Strings.sol";
 import { SafeTransferLib } from "../../../utils/SafeTransferLib.sol";
+import { FeeOracle } from "../../common/FeeOracle.sol";
 
 contract ERC1155Basic is
     ERC1155,
@@ -101,15 +102,17 @@ contract ERC1155Basic is
         emit PublicMintStateSet(_publicMintState);
     }
 
-    function mintTo(address to, uint256 amount)
+    function mintTo(address to, uint256 amount, uint256[] memory balance)
         external
+        payable
         onlyOwner
-        hasReachedMax(amount)
+        hasReachedMax(_sumAmounts(balance) * amount) 
     {
+        _feeCheck(0x40d097c3);
         uint256 i;
         // for (uint256 i = 0; i < amount; i++) {
         for (i; i < amount; ) {
-            _mint(to, _nextId(), "");
+            _mint(to, _nextId(), balance[i], "");
             unchecked {
                 ++i;
             }
@@ -125,15 +128,17 @@ contract ERC1155Basic is
         // Transfer event emited by parent ERC1155 contract
     }
 
-    function mintBatchTo(address to, uint256[] memory ids)
+    function mintBatchTo(address to, uint256[] memory ids, uint256[] memory amounts)
         external
+        payable
         onlyOwner
-        hasReachedMax(ids.length)
+        hasReachedMax(_sumAmounts(amounts))
     {
+        _feeCheck(0x40d097c3);
         uint256 i;
         uint256 len = ids.length;
         for (i; i < len; ) {
-            liveSupply.increment();
+            liveSupply.increment(amounts[i]);
             unchecked {
                 ++i;
             }
@@ -144,17 +149,19 @@ contract ERC1155Basic is
                 revert(0x1c, 0x04)
             }
         }
-        _batchMint(to, ids, "");
+        _batchMint(to, ids, amounts, "");
         // Transfer event emited by parent ERC1155 contract
     }
 
     /// @dev Burns an arbitrary length array of ids of different owners.
-    function burn(uint256[] memory ids) external onlyOwner {
+    function burn(address[] memory from, uint256[] memory ids, uint256[] memory balances) external payable onlyOwner {
+        _feeCheck(0x44df8e70);
         uint256 i;
         uint256 len = ids.length;
+        require(from.length == ids.length && ids.length == balances.length, "LENGTH_MISMATCH");
         for (i; i < len; ) {
-            liveSupply.decrement();
-            _burn(ids[i]);
+            liveSupply.decrement(balances[i]);
+            _burn(from[i], ids[i], balances[i]);
             unchecked {
                 ++i;
             }
@@ -169,14 +176,17 @@ contract ERC1155Basic is
     }
 
     /// @dev Burns an arbitrary length array of ids owned by a single account.
-    function burnBatch(address from, uint256[] memory ids)
+    function burnBatch(address from, uint256[] memory ids, uint256[] memory amounts)
         external
+        payable
         onlyOwner
     {
+        _feeCheck(0x44df8e70);
+        require(ids.length == amounts.length, "LENGTH_MISMATCH");
         uint256 i;
         uint256 len = ids.length;
         for (i; i < len; ) {
-            liveSupply.decrement();
+            liveSupply.decrement(amounts[i]);
             unchecked {
                 ++i;
             }
@@ -187,7 +197,7 @@ contract ERC1155Basic is
                 revert(0x1c, 0x04)
             }
         }
-        _batchBurn(from, ids);
+        _batchBurn(from, ids, amounts);
         // Transfer event emited by parent ERC1155 contract
     }
 
@@ -250,17 +260,17 @@ contract ERC1155Basic is
     //                           USER FX                          //
     ////////////////////////////////////////////////////////////////
 
-    function mint(uint256 amount)
+    function mint(uint256 amount, uint256 balance)
         external
         payable
         nonReentrant
         publicMintAccess
-        hasReachedMax(amount)
+        hasReachedMax(amount * balance)
         priceCheck(price, amount)
     {
         uint256 i;
         for (i; i < amount; ) {
-            _mint(msg.sender, _nextId(), "");
+            _mint(msg.sender, _nextId(), balance, "");
             unchecked {
                 ++i;
             }
@@ -276,17 +286,18 @@ contract ERC1155Basic is
     }
 
     /// @dev Enables public minting of an arbitrary length array of specific ids.
-    function mintBatch(uint256[] memory ids)
+    function mintBatch(uint256[] memory ids, uint256[] memory amounts)
         external
         payable
         nonReentrant
         publicMintAccess
     {
+        require(ids.length == amounts.length, "MISMATCH_LENGTH");
         uint256 len = ids.length;
         _mintBatchCheck(len);
         uint256 i;
         for (i; i < len; ) {
-            liveSupply.increment();
+            liveSupply.increment(amounts[i]);
             unchecked {
                 ++i;
             }
@@ -297,7 +308,7 @@ contract ERC1155Basic is
                 revert(0x1c, 0x04)
             }
         }
-        _batchMint(msg.sender, ids, "");
+        _batchMint(msg.sender, ids, amounts, "");
         // Transfer event emited by parent ERC1155 contract
     }
 
@@ -314,6 +325,17 @@ contract ERC1155Basic is
     function _nextId() private returns (uint256) {
         liveSupply.increment();
         return liveSupply.current();
+    }
+
+    function _sumAmounts(uint256[] memory amounts) private pure returns (uint256 _result) {
+        uint256 len = amounts.length;
+        uint256 i;
+        for (i; i < len; ) {
+            _result += amounts[i];
+            unchecked {
+                ++i;
+            }
+        }
     }
 
     ////////////////////////////////////////////////////////////////
@@ -350,6 +372,20 @@ contract ERC1155Basic is
 
     function totalSupply() public view returns (uint256) {
         return liveSupply.current();
+    }
+
+    ////////////////////////////////////////////////////////////////
+    //                     INTERNAL FUNCTIONS                     //
+    ////////////////////////////////////////////////////////////////
+
+    function _feeCheck(bytes4 _method) internal view {
+        uint256 _fee = FeeOracle(owner).feeLookup(_method);
+        assembly {
+            if iszero(eq(callvalue(), _fee)) {
+                mstore(0x00, 0xf7760f25)
+                revert(0x1c, 0x04)
+            }
+        }
     }
 
     ////////////////////////////////////////////////////////////////

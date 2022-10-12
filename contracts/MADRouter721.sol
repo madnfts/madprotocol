@@ -20,13 +20,15 @@ import { ERC721Lazy } from "./lib/tokens/ERC721/Impl/ERC721Lazy.sol";
 import { ReentrancyGuard } from "./lib/security/ReentrancyGuard.sol";
 import { Pausable } from "./lib/security/Pausable.sol";
 import { Owned } from "./lib/auth/Owned.sol";
+import { FeeOracle } from "./lib/tokens/common/FeeOracle.sol";
 
 contract MADRouter721 is
     MAD,
     RouterEvents,
     Owned(msg.sender),
     Pausable,
-    ReentrancyGuard
+    ReentrancyGuard,
+    FeeOracle
 {
     /// @dev Function Sighash := 0x06fdde03
     function name()
@@ -47,7 +49,12 @@ contract MADRouter721 is
     ////////////////////////////////////////////////////////////////
 
     FactoryVerifier public MADFactory721;
+    
+    bytes4 internal constant MINSAFEMINT = 0x40d097c3;
+    bytes4 internal constant MINBURN = 0x44df8e70;
 
+    uint256 public feeMint = 0.25 ether;
+    uint256 public feeBurn = 0;
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
@@ -131,6 +138,7 @@ contract MADRouter721 is
     /// @dev Function Sighash := 0x42a42752
     function minimalSafeMint(address _token, address _to)
         external
+        payable
         nonReentrant
         whenNotPaused
     {
@@ -143,7 +151,7 @@ contract MADRouter721 is
         address _token,
         address _to,
         uint256 _amount
-    ) external nonReentrant whenNotPaused {
+    ) external payable nonReentrant whenNotPaused {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType != 1) revert("INVALID_TYPE");
         ERC721Basic(_token).mintTo(_to, _amount);
@@ -156,6 +164,7 @@ contract MADRouter721 is
     /// @dev Transfer events emitted by nft implementation contracts.
     function burn(address _token, uint256[] memory _ids)
         external
+        payable
         nonReentrant
         whenNotPaused
     {
@@ -211,6 +220,7 @@ contract MADRouter721 is
     /// @dev Function Sighash := 0x182ee485
     function creatorMint(address _token, uint256 _amount)
         external
+        payable
         nonReentrant
         whenNotPaused
     {
@@ -225,7 +235,7 @@ contract MADRouter721 is
     function gift(
         address _token,
         address[] calldata _addresses
-    ) external nonReentrant whenNotPaused {
+    ) external payable nonReentrant whenNotPaused {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType == 2) {
             ERC721Whitelist(_token).giftTokens(_addresses);
@@ -317,6 +327,39 @@ contract MADRouter721 is
     //                         HELPERS                            //
     ////////////////////////////////////////////////////////////////
 
+    function feeLookup(bytes4 sigHash)
+        external
+        override(FeeOracle)
+        view
+        returns (uint256 fee) {
+
+        assembly {
+            for {} 1 {} {
+                if eq(MINSAFEMINT, sigHash) {
+                    fee := sload(feeMint.slot)
+                    break
+                }
+                if eq(MINBURN, sigHash) {
+                    fee := sload(feeBurn.slot)
+                    break
+                }
+                fee := 0x00
+                break
+            }
+        }
+    }
+
+    function setFees(
+        uint256 _feeMint,
+        uint256 _feeBurn
+    ) external onlyOwner {
+        assembly {
+            sstore(feeBurn.slot, _feeBurn)
+            sstore(feeMint.slot, _feeMint)
+        }
+
+        emit FeesUpdated(_feeMint, _feeBurn);
+    }
     /// @notice Private auth-check mechanism that verifies `MADFactory` storage.
     /// @dev Retrieves both `colID` (bytes32) and collection type (uint8)
     /// for valid token and approved user.

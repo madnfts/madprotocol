@@ -32,19 +32,19 @@ export interface ERC1155BasicInterface extends utils.Interface {
   functions: {
     "balanceOf(address,uint256)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
-    "burn(uint256[])": FunctionFragment;
-    "burnBatch(address,uint256[])": FunctionFragment;
+    "burn(address[],uint256[],uint256[])": FunctionFragment;
+    "burnBatch(address,uint256[],uint256[])": FunctionFragment;
     "getURI()": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "maxSupply()": FunctionFragment;
-    "mint(uint256)": FunctionFragment;
-    "mintBatch(uint256[])": FunctionFragment;
-    "mintBatchTo(address,uint256[])": FunctionFragment;
-    "mintTo(address,uint256)": FunctionFragment;
+    "mint(uint256,uint256)": FunctionFragment;
+    "mintBatch(uint256[],uint256[])": FunctionFragment;
+    "mintBatchTo(address,uint256[],uint256[])": FunctionFragment;
+    "mintTo(address,uint256,uint256[])": FunctionFragment;
     "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "onERC1155Received(address,address,uint256,uint256,bytes)": FunctionFragment;
     "owner()": FunctionFragment;
-    "ownerOf(uint256)": FunctionFragment;
+    "ownerOf(uint256,address)": FunctionFragment;
     "price()": FunctionFragment;
     "publicMintState()": FunctionFragment;
     "royaltyInfo(uint256,uint256)": FunctionFragment;
@@ -106,11 +106,19 @@ export interface ERC1155BasicInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "burn",
-    values: [PromiseOrValue<BigNumberish>[]]
+    values: [
+      PromiseOrValue<string>[],
+      PromiseOrValue<BigNumberish>[],
+      PromiseOrValue<BigNumberish>[]
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "burnBatch",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>[]]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>[],
+      PromiseOrValue<BigNumberish>[]
+    ]
   ): string;
   encodeFunctionData(functionFragment: "getURI", values?: undefined): string;
   encodeFunctionData(
@@ -120,19 +128,27 @@ export interface ERC1155BasicInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "maxSupply", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "mint",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "mintBatch",
-    values: [PromiseOrValue<BigNumberish>[]]
+    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "mintBatchTo",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>[]]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>[],
+      PromiseOrValue<BigNumberish>[]
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "mintTo",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>[]
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "onERC1155BatchReceived",
@@ -157,7 +173,7 @@ export interface ERC1155BasicInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "ownerOf",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "price", values?: undefined): string;
   encodeFunctionData(
@@ -457,13 +473,16 @@ export interface ERC1155Basic extends BaseContract {
     ): Promise<[BigNumber[]] & { balances: BigNumber[] }>;
 
     burn(
+      from: PromiseOrValue<string>[],
       ids: PromiseOrValue<BigNumberish>[],
+      balances: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     burnBatch(
       from: PromiseOrValue<string>,
       ids: PromiseOrValue<BigNumberish>[],
+      amounts: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -479,23 +498,27 @@ export interface ERC1155Basic extends BaseContract {
 
     mint(
       amount: PromiseOrValue<BigNumberish>,
+      balance: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     mintBatch(
       ids: PromiseOrValue<BigNumberish>[],
+      amounts: PromiseOrValue<BigNumberish>[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     mintBatchTo(
       to: PromiseOrValue<string>,
       ids: PromiseOrValue<BigNumberish>[],
+      amounts: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     mintTo(
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
+      balance: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -521,8 +544,9 @@ export interface ERC1155Basic extends BaseContract {
 
     ownerOf(
       arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[string]>;
+    ): Promise<[BigNumber]>;
 
     price(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -612,13 +636,16 @@ export interface ERC1155Basic extends BaseContract {
   ): Promise<BigNumber[]>;
 
   burn(
+    from: PromiseOrValue<string>[],
     ids: PromiseOrValue<BigNumberish>[],
+    balances: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   burnBatch(
     from: PromiseOrValue<string>,
     ids: PromiseOrValue<BigNumberish>[],
+    amounts: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -634,23 +661,27 @@ export interface ERC1155Basic extends BaseContract {
 
   mint(
     amount: PromiseOrValue<BigNumberish>,
+    balance: PromiseOrValue<BigNumberish>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   mintBatch(
     ids: PromiseOrValue<BigNumberish>[],
+    amounts: PromiseOrValue<BigNumberish>[],
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   mintBatchTo(
     to: PromiseOrValue<string>,
     ids: PromiseOrValue<BigNumberish>[],
+    amounts: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   mintTo(
     to: PromiseOrValue<string>,
     amount: PromiseOrValue<BigNumberish>,
+    balance: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -676,8 +707,9 @@ export interface ERC1155Basic extends BaseContract {
 
   ownerOf(
     arg0: PromiseOrValue<BigNumberish>,
+    arg1: PromiseOrValue<string>,
     overrides?: CallOverrides
-  ): Promise<string>;
+  ): Promise<BigNumber>;
 
   price(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -767,13 +799,16 @@ export interface ERC1155Basic extends BaseContract {
     ): Promise<BigNumber[]>;
 
     burn(
+      from: PromiseOrValue<string>[],
       ids: PromiseOrValue<BigNumberish>[],
+      balances: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
     burnBatch(
       from: PromiseOrValue<string>,
       ids: PromiseOrValue<BigNumberish>[],
+      amounts: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -789,23 +824,27 @@ export interface ERC1155Basic extends BaseContract {
 
     mint(
       amount: PromiseOrValue<BigNumberish>,
+      balance: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     mintBatch(
       ids: PromiseOrValue<BigNumberish>[],
+      amounts: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
     mintBatchTo(
       to: PromiseOrValue<string>,
       ids: PromiseOrValue<BigNumberish>[],
+      amounts: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
     mintTo(
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
+      balance: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -831,8 +870,9 @@ export interface ERC1155Basic extends BaseContract {
 
     ownerOf(
       arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<string>;
+    ): Promise<BigNumber>;
 
     price(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1007,13 +1047,16 @@ export interface ERC1155Basic extends BaseContract {
     ): Promise<BigNumber>;
 
     burn(
+      from: PromiseOrValue<string>[],
       ids: PromiseOrValue<BigNumberish>[],
+      balances: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     burnBatch(
       from: PromiseOrValue<string>,
       ids: PromiseOrValue<BigNumberish>[],
+      amounts: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1029,23 +1072,27 @@ export interface ERC1155Basic extends BaseContract {
 
     mint(
       amount: PromiseOrValue<BigNumberish>,
+      balance: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     mintBatch(
       ids: PromiseOrValue<BigNumberish>[],
+      amounts: PromiseOrValue<BigNumberish>[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     mintBatchTo(
       to: PromiseOrValue<string>,
       ids: PromiseOrValue<BigNumberish>[],
+      amounts: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     mintTo(
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
+      balance: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1071,6 +1118,7 @@ export interface ERC1155Basic extends BaseContract {
 
     ownerOf(
       arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1161,13 +1209,16 @@ export interface ERC1155Basic extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     burn(
+      from: PromiseOrValue<string>[],
       ids: PromiseOrValue<BigNumberish>[],
+      balances: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     burnBatch(
       from: PromiseOrValue<string>,
       ids: PromiseOrValue<BigNumberish>[],
+      amounts: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1183,23 +1234,27 @@ export interface ERC1155Basic extends BaseContract {
 
     mint(
       amount: PromiseOrValue<BigNumberish>,
+      balance: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     mintBatch(
       ids: PromiseOrValue<BigNumberish>[],
+      amounts: PromiseOrValue<BigNumberish>[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     mintBatchTo(
       to: PromiseOrValue<string>,
       ids: PromiseOrValue<BigNumberish>[],
+      amounts: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     mintTo(
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
+      balance: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1225,6 +1280,7 @@ export interface ERC1155Basic extends BaseContract {
 
     ownerOf(
       arg0: PromiseOrValue<BigNumberish>,
+      arg1: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

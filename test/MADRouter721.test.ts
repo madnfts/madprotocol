@@ -1,6 +1,6 @@
 import {
   SignTypedDataVersion,
-  signTypedData,
+  signTypedData
 } from "@metamask/eth-sig-util";
 import "@nomicfoundation/hardhat-chai-matchers";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
@@ -838,6 +838,7 @@ describe("MADRouter721", () => {
       const voucherType = [
         { name: "voucherId", type: "bytes32" },
         { name: "users", type: "address[]" },
+        { name: "balances", type: "uint256[]" },
         { name: "amount", type: "uint256" },
         { name: "price", type: "uint256" },
       ];
@@ -850,6 +851,7 @@ describe("MADRouter721", () => {
       const Voucher = {
         voucherId: vId,
         users: usrs,
+        balances: [1],
         amount: 1,
         price: bnPrice.toString(),
       };
@@ -869,7 +871,9 @@ describe("MADRouter721", () => {
         data: parsedData,
         version: SignTypedDataVersion.V4,
       });
+    
       const sigSplit = ethers.utils.splitSignature(signature);
+
       await lazy
         .connect(acc02)
         .lazyMint(
@@ -1585,6 +1589,7 @@ describe("MADRouter721", () => {
       const voucherType = [
         { name: "voucherId", type: "bytes32" },
         { name: "users", type: "address[]" },
+        { name: "balances", type: "uint256[]" }, 
         { name: "amount", type: "uint256" },
         { name: "price", type: "uint256" },
       ];
@@ -1597,6 +1602,7 @@ describe("MADRouter721", () => {
       const Voucher = {
         voucherId: vId,
         users: usrs,
+        balances: [1],
         amount: 1,
         price: bnPrice.toString(),
       };
@@ -1618,6 +1624,7 @@ describe("MADRouter721", () => {
       });
       const sigSplit = ethers.utils.splitSignature(signature);
       await erc20.mint(lazy.address, price);
+      
       await lazy
         .connect(acc01)
         .lazyMint(

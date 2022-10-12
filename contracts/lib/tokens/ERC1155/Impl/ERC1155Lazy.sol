@@ -13,6 +13,7 @@ import { Strings } from "../../../utils/Strings.sol";
 import { Owned } from "../../../auth/Owned.sol";
 import { SafeTransferLib } from "../../../utils/SafeTransferLib.sol";
 import { Types } from "../../../../Types.sol";
+import { FeeOracle } from "../../common/FeeOracle.sol";
 
 contract ERC1155Lazy is
     ERC1155,
@@ -42,12 +43,12 @@ contract ERC1155Lazy is
 
     bytes32 private constant _VOUCHER_TYPEHASH =
         keccak256(
-            "Voucher(bytes32 voucherId,address[] users,uint256 amount,uint256 price)"
+            "Voucher(bytes32 voucherId,address[] users,uint256[] balances,uint256 amount,uint256 price)"
         );
 
     bytes32 private constant _USERBATCH_TYPEHASH =
         keccak256(
-            "UserBatch(bytes32 voucherId,uint256[] ids,uint256 price,address user)"
+            "UserBatch(bytes32 voucherId,uint256[] ids,uint256[] balances,uint256 price,address user)"
         );
 
     /// @dev The signer address used for lazy minting voucher validation.
@@ -107,7 +108,7 @@ contract ERC1155Lazy is
         uint256 len = voucher.users.length;
         uint256 i;
         for (i; i < len; ) {
-            _userMint(voucher.amount, voucher.users[i]);
+            _userMint(voucher.amount, voucher.balances, voucher.users[i]);
             // can't overflow due to have been previously validated by signer
             unchecked {
                 ++i;
@@ -128,14 +129,16 @@ contract ERC1155Lazy is
 
         uint256 len = userBatch.ids.length;
         uint256 i;
+        require(len == userBatch.balances.length, "INVALID_AMOUNT");
+
         for (i; i < len; ) {
-            liveSupply.increment();
+            liveSupply.increment(userBatch.balances[i]);
             // can't overflow due to have been previously validated by signer
             unchecked {
                 ++i;
             }
         }
-        _batchMint(userBatch.user, userBatch.ids, "");
+        _batchMint(userBatch.user, userBatch.ids, userBatch.balances, "");
     }
 
     ////////////////////////////////////////////////////////////////
@@ -158,14 +161,16 @@ contract ERC1155Lazy is
     }
 
     /// @dev Burns an arbitrary length array of ids of different owners.
-    function burn(uint256[] memory ids) external onlyOwner {
+    function burn(address[] memory from, uint256[] memory ids, uint256[] memory balances) external payable onlyOwner {
+        _feeCheck(0x44df8e70);
         uint256 i;
         uint256 len = ids.length;
+        require(len == balances.length && len == from.length, "INVALID_AMOUNT");
         // for (uint256 i = 0; i < ids.length; i++) {
         for (i; i < len; ) {
             // delId();
-            liveSupply.decrement();
-            _burn(ids[i]);
+            liveSupply.decrement(balances[i]);
+            _burn(from[i], ids[i], balances[i]);
             unchecked {
                 ++i;
             }
@@ -180,15 +185,18 @@ contract ERC1155Lazy is
     }
 
     /// @dev Burns an arbitrary length array of ids owned by a single account.
-    function burnBatch(address from, uint256[] memory ids)
+    function burnBatch(address from, uint256[] memory ids, uint256[] memory balances)
         external
+        payable
         onlyOwner
     {
+        _feeCheck(0x44df8e70);
         uint256 i;
         uint256 len = ids.length;
+        require(len == balances.length, "INVALID_AMOUNT");
         for (i; i < len; ) {
             // delId();
-            liveSupply.decrement();
+            liveSupply.decrement(balances[i]);
             unchecked {
                 ++i;
             }
@@ -199,7 +207,7 @@ contract ERC1155Lazy is
                 revert(0x00, 0x20)
             }
         }
-        _batchBurn(from, ids);
+        _batchBurn(from, ids, balances);
         // Transfer event emited by parent ERC1155 contract
     }
 
@@ -319,6 +327,11 @@ contract ERC1155Lazy is
                                         _voucher.users
                                     )
                                 ),
+                                keccak256(
+                                    abi.encodePacked(
+                                        _voucher.balances
+                                    )
+                                ),
                                 _voucher.amount,
                                 _voucher.price
                             )
@@ -353,6 +366,11 @@ contract ERC1155Lazy is
                                         _userBatch.ids
                                     )
                                 ),
+                                keccak256(
+                                    abi.encodePacked(
+                                        _userBatch.balances
+                                    )
+                                ),
                                 _userBatch.price,
                                 _userBatch.user
                             )
@@ -379,12 +397,13 @@ contract ERC1155Lazy is
             );
     }
 
-    function _userMint(uint256 _amount, address _key)
+    function _userMint(uint256 _amount, uint256[] memory _balances, address _key)
         internal
     {
+        require(_balances.length == _amount, "INVALID_AMOUNT");
         uint256 j;
         while (j < _amount) {
-            _mint(_key, _nextId(), "");
+            _mint(_key, _nextId(), _balances[j], "");
             // can't overflow due to have been previously validated by signer
             unchecked {
                 ++j;
@@ -431,6 +450,20 @@ contract ERC1155Lazy is
             block.chainid == _CHAIN_ID_OG
                 ? _DOMAIN_SEPARATOR_OG
                 : computeDS();
+    }
+
+    ////////////////////////////////////////////////////////////////
+    //                     INTERNAL FUNCTIONS                     //
+    ////////////////////////////////////////////////////////////////
+
+    function _feeCheck(bytes4 _method) internal view {
+        uint256 _fee = FeeOracle(owner).feeLookup(_method);
+        assembly {
+            if iszero(eq(callvalue(), _fee)) {
+                mstore(0x00, 0xf7760f25)
+                revert(0x1c, 0x04)
+            }
+        }
     }
 
     ////////////////////////////////////////////////////////////////

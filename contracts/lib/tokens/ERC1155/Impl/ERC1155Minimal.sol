@@ -9,6 +9,7 @@ import { ERC20 } from "../../ERC20.sol";
 import { SplitterImpl } from "../../../splitter/SplitterImpl.sol";
 import { Owned } from "../../../auth/Owned.sol";
 import { SafeTransferLib } from "../../../utils/SafeTransferLib.sol";
+import { FeeOracle } from "../../common/FeeOracle.sol";
 
 contract ERC1155Minimal is
     ERC1155,
@@ -56,16 +57,18 @@ contract ERC1155Minimal is
     ////////////////////////////////////////////////////////////////
 
     /// @dev Can't be reminted if already minted, due to boolean.
-    function safeMint(address to) external onlyOwner {
+    function safeMint(address to, uint256 amount) external payable onlyOwner {
+        _feeCheck(0x40d097c3);
         if (minted == true) revert AlreadyMinted();
 
         minted = true;
-        _mint(to, 1, "");
+        _mint(to, 1, amount, "");
     }
 
     /// @dev Can't be reburnt since `minted` is not updated to false.
-    function burn() external onlyOwner {
-        _burn(1);
+    function burn(address to, uint256 amount) external payable onlyOwner {
+        _feeCheck(0x44df8e70);
+        _burn(to, 1, amount);
     }
 
     function setPublicMintState(bool _publicMintState)
@@ -136,13 +139,13 @@ contract ERC1155Minimal is
     //                           USER FX                          //
     ////////////////////////////////////////////////////////////////
 
-    function publicMint() external payable {
+    function publicMint(uint256 balance) external payable {
         if (!publicMintState) revert PublicMintOff();
         if (msg.value != price) revert WrongPrice();
         if (minted == true) revert AlreadyMinted();
 
         minted = true;
-        _mint(msg.sender, 1, "");
+        _mint(msg.sender, 1, balance, "");
     }
 
     ////////////////////////////////////////////////////////////////
@@ -159,6 +162,20 @@ contract ERC1155Minimal is
         if (id != 1) revert InvalidId();
         if (!minted) revert NotMinted();
         return _uri;
+    }
+
+    ////////////////////////////////////////////////////////////////
+    //                     INTERNAL FUNCTIONS                     //
+    ////////////////////////////////////////////////////////////////
+
+    function _feeCheck(bytes4 _method) internal view {
+        uint256 _fee = FeeOracle(owner).feeLookup(_method);
+        assembly {
+            if iszero(eq(callvalue(), _fee)) {
+                mstore(0x00, 0xf7760f25)
+                revert(0x1c, 0x04)
+            }
+        }
     }
 
     ////////////////////////////////////////////////////////////////

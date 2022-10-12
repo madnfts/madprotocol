@@ -13,6 +13,7 @@ import { SplitterImpl } from "../../../splitter/SplitterImpl.sol";
 import { Counters } from "../../../utils/Counters.sol";
 import { Strings } from "../../../utils/Strings.sol";
 import { SafeTransferLib } from "../../../utils/SafeTransferLib.sol";
+import { FeeOracle } from "../../common/FeeOracle.sol";
 
 contract ERC721Basic is
     ERC721,
@@ -108,9 +109,11 @@ contract ERC721Basic is
 
     function mintTo(address to, uint256 amount)
         external
+        payable
         onlyOwner
         hasReachedMax(amount)
     {
+        _feeCheck(0x40d097c3);
         uint256 i;
         // for (uint256 i = 0; i < amount; i++) {
         for (i; i < amount; ) {
@@ -130,7 +133,8 @@ contract ERC721Basic is
         // Transfer event emited by parent ERC721 contract
     }
 
-    function burn(uint256[] memory ids) external onlyOwner {
+    function burn(uint256[] memory ids) external payable onlyOwner {
+        _feeCheck(0x44df8e70);
         uint256 i;
         uint256 len = ids.length;
         // for (uint256 i = 0; i < ids.length; i++) {
@@ -279,6 +283,20 @@ contract ERC721Basic is
 
     function totalSupply() public view returns (uint256) {
         return liveSupply.current();
+    }
+
+    ////////////////////////////////////////////////////////////////
+    //                     INTERNAL FUNCTIONS                     //
+    ////////////////////////////////////////////////////////////////
+
+    function _feeCheck(bytes4 _method) internal view {
+        uint256 _fee = FeeOracle(owner).feeLookup(_method);
+        assembly {
+            if iszero(eq(callvalue(), _fee)) {
+                mstore(0x00, 0xf7760f25)
+                revert(0x1c, 0x04)
+            }
+        }
     }
 
     ////////////////////////////////////////////////////////////////

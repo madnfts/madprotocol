@@ -20,13 +20,15 @@ import { ERC1155Lazy } from "./lib/tokens/ERC1155/Impl/ERC1155Lazy.sol";
 import { ReentrancyGuard } from "./lib/security/ReentrancyGuard.sol";
 import { Pausable } from "./lib/security/Pausable.sol";
 import { Owned } from "./lib/auth/Owned.sol";
+import { FeeOracle } from "./lib/tokens/common/FeeOracle.sol";
 
 contract MADRouter1155 is
     MAD,
     RouterEvents,
     Owned(msg.sender),
     Pausable,
-    ReentrancyGuard
+    ReentrancyGuard,
+    FeeOracle
 {
     /// @dev Function Sighash := 0x06fdde03
     function name()
@@ -47,6 +49,12 @@ contract MADRouter1155 is
     ////////////////////////////////////////////////////////////////
 
     FactoryVerifier public MADFactory1155;
+
+    bytes4 internal constant MINSAFEMINT = 0x40d097c3;
+    bytes4 internal constant MINBURN = 0x44df8e70;
+
+    uint256 public feeMint = 0.25 ether;
+    uint256 public feeBurn = 0;
 
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
@@ -129,34 +137,37 @@ contract MADRouter1155 is
 
     /// @notice `ERC1155Minimal` creator mint function handler.
     /// @dev Function Sighash := 0x42a42752
-    function minimalSafeMint(address _token, address _to)
+    function minimalSafeMint(address _token, address _to, uint256 balance)
         external
+        payable
         nonReentrant
         whenNotPaused
     {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType != 0) revert("INVALID_TYPE");
-        ERC1155Minimal(_token).safeMint(_to);
+        ERC1155Minimal(_token).safeMint(_to, balance);
     }
 
     function basicMintTo(
         address _token,
         address _to,
-        uint256 _amount
-    ) external nonReentrant whenNotPaused {
+        uint256 _amount,
+        uint256[] memory _balances
+    ) external payable nonReentrant whenNotPaused {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType != 1) revert("INVALID_TYPE");
-        ERC1155Basic(_token).mintTo(_to, _amount);
+        ERC1155Basic(_token).mintTo(_to, _amount, _balances);
     }
 
     function basicMintBatchTo(
         address _token,
         address _to,
-        uint256[] memory _ids
-    ) external nonReentrant whenNotPaused {
+        uint256[] memory _ids,
+        uint256[] memory _balances
+    ) external payable nonReentrant whenNotPaused {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType != 1) revert("INVALID_TYPE");
-        ERC1155Basic(_token).mintBatchTo(_to, _ids);
+        ERC1155Basic(_token).mintBatchTo(_to, _ids, _balances);
     }
 
     /// @notice Global token burn controller/single pusher for all token types.
@@ -164,21 +175,22 @@ contract MADRouter1155 is
     /// @param _ids The token IDs of each token to be burnt;
     /// should be left empty for the `ERC1155Minimal` type.
     /// @dev Transfer events emitted by nft implementation contracts.
-    function burn(address _token, uint256[] memory _ids)
+    function burn(address _token, uint256[] memory _ids, address[] memory to, uint256[] memory _amount)
         external
+        payable
         nonReentrant
         whenNotPaused
     {
         (, uint8 _tokenType) = _tokenRender(_token);
 
         _tokenType < 1
-            ? ERC1155Minimal(_token).burn()
+            ? ERC1155Minimal(_token).burn(to[0], _amount[0])
             : _tokenType == 1
-            ? ERC1155Basic(_token).burn(_ids)
+            ? ERC1155Basic(_token).burn(to, _ids, _amount)
             : _tokenType == 2
-            ? ERC1155Whitelist(_token).burn(_ids)
+            ? ERC1155Whitelist(_token).burn(to, _ids, _amount)
             : _tokenType > 2
-            ? ERC1155Lazy(_token).burn(_ids)
+            ? ERC1155Lazy(_token).burn(to, _ids, _amount)
             : revert("INVALID_TYPE");
     }
 
@@ -190,16 +202,17 @@ contract MADRouter1155 is
     function batchBurn(
         address _token,
         address _from,
-        uint256[] memory _ids
-    ) external nonReentrant whenNotPaused {
+        uint256[] memory _ids,
+        uint256[] memory _balances
+    ) external payable nonReentrant whenNotPaused {
         (, uint8 _tokenType) = _tokenRender(_token);
 
         _tokenType == 1
-            ? ERC1155Basic(_token).burnBatch(_from, _ids)
+            ? ERC1155Basic(_token).burnBatch(_from, _ids, _balances)
             : _tokenType == 2
-            ? ERC1155Whitelist(_token).burnBatch(_from, _ids)
+            ? ERC1155Whitelist(_token).burnBatch(_from, _ids, _balances)
             : _tokenType > 2
-            ? ERC1155Lazy(_token).burnBatch(_from, _ids)
+            ? ERC1155Lazy(_token).burnBatch(_from, _ids, _balances)
             : revert("INVALID_TYPE");
     }
 
@@ -240,14 +253,15 @@ contract MADRouter1155 is
 
     /// @notice `ERC1155Whitelist` mint to creator function handler.
     /// @dev Function Sighash := 0x182ee485
-    function creatorMint(address _token, uint256 _amount)
+    function creatorMint(address _token, uint256 _amount, uint256[] memory _balances, uint256 totalBalance)
         external
+        payable
         nonReentrant
         whenNotPaused
     {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType == 2) {
-            ERC1155Whitelist(_token).mintToCreator(_amount);
+            ERC1155Whitelist(_token).mintToCreator(_amount, _balances, totalBalance);
         } else revert("INVALID_TYPE");
     }
 
@@ -255,11 +269,13 @@ contract MADRouter1155 is
     /// @dev Function Sighash := 0x182ee485
     function creatorBatchMint(
         address _token,
-        uint256[] memory _ids
-    ) external nonReentrant whenNotPaused {
+        uint256[] memory _ids,
+        uint256[] memory _balances,
+        uint256 totalBalance
+    ) external payable nonReentrant whenNotPaused {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType == 2) {
-            ERC1155Whitelist(_token).mintBatchToCreator(_ids);
+            ERC1155Whitelist(_token).mintBatchToCreator(_ids, _balances, totalBalance);
         } else revert("INVALID_TYPE");
     }
 
@@ -267,11 +283,13 @@ contract MADRouter1155 is
     /// @dev Function Sighash := 0x67b5a642
     function gift(
         address _token,
-        address[] calldata _addresses
-    ) external nonReentrant whenNotPaused {
+        address[] calldata _addresses,
+        uint256[] memory _balances,
+        uint256 totalBalance
+    ) external payable nonReentrant whenNotPaused {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType == 2) {
-            ERC1155Whitelist(_token).giftTokens(_addresses);
+            ERC1155Whitelist(_token).giftTokens(_addresses, _balances, totalBalance);
         } else revert("INVALID_TYPE");
     }
 
@@ -359,6 +377,40 @@ contract MADRouter1155 is
     ////////////////////////////////////////////////////////////////
     //                         HELPERS                            //
     ////////////////////////////////////////////////////////////////
+
+    function feeLookup(bytes4 sigHash)
+        external
+        override(FeeOracle)
+        view
+        returns (uint256 fee) {
+
+        assembly {
+            for {} 1 {} {
+                if eq(MINSAFEMINT, sigHash) {
+                    fee := sload(feeMint.slot)
+                    break
+                }
+                if eq(MINBURN, sigHash) {
+                    fee := sload(feeBurn.slot)
+                    break
+                }
+                fee := 0x00
+                break
+            }
+        }
+    }
+
+    function setFees(
+        uint256 _feeMint,
+        uint256 _feeBurn
+    ) external onlyOwner {
+        assembly {
+            sstore(feeBurn.slot, _feeBurn)
+            sstore(feeMint.slot, _feeMint)
+        }
+
+        emit FeesUpdated(_feeMint, _feeBurn);
+    }
 
     /// @notice Private auth-check mechanism that verifies `MADFactory` storage.
     /// @dev Retrieves both `colID` (bytes32) and collection type (uint8)

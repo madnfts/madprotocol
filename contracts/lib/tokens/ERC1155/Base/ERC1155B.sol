@@ -46,7 +46,7 @@ abstract contract ERC1155B {
                             ERC1155B STORAGE
     //////////////////////////////////////////////////////////////*/
 
-    mapping(uint256 => address) public ownerOf;
+    mapping(uint256 => mapping(address => uint256)) public ownerOf;
 
     function balanceOf(address owner, uint256 id)
         public
@@ -54,13 +54,14 @@ abstract contract ERC1155B {
         virtual
         returns (uint256 bal)
     {
-        address idOwner = ownerOf[id];
+        // address idOwner = ownerOf[id];
+        bal = ownerOf[id][owner];
 
-        assembly {
-            // We avoid branching by using assembly to take
-            // the bool output of eq() and use it as a uint.
-            bal := eq(idOwner, owner)
-        }
+        // assembly {
+        //     // We avoid branching by using assembly to take
+        //     // the bool output of eq() and use it as a uint.
+        //     bal := eq(idOwner, owner)
+        // }
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -99,12 +100,14 @@ abstract contract ERC1155B {
             "NOT_AUTHORIZED"
         );
 
-        require(from == ownerOf[id], "WRONG_FROM"); // Can only transfer from the owner.
+        require(ownerOf[id][from] > 0, "WRONG_FROM"); // Can only transfer from the owner.
 
         // Can only transfer 1 with ERC1155B.
-        require(amount == 1, "INVALID_AMOUNT");
+        require(ownerOf[id][from] >= amount, "INVALID_AMOUNT");
 
-        ownerOf[id] = to;
+        // ownerOf[id] = to;
+        ownerOf[id][to] += amount;
+        ownerOf[id][from] -= amount;
 
         emit TransferSingle(msg.sender, from, to, id, amount);
 
@@ -155,12 +158,13 @@ abstract contract ERC1155B {
                 amount = amounts[i];
 
                 // Can only transfer from the owner.
-                require(from == ownerOf[id], "WRONG_FROM");
+                require(ownerOf[id][from] > 0, "WRONG_FROM");
 
                 // Can only transfer 1 with ERC1155B.
-                require(amount == 1, "INVALID_AMOUNT");
+                require(ownerOf[id][from] >= amount, "INVALID_AMOUNT");
 
-                ownerOf[id] = to;
+                ownerOf[id][to] += amount;
+                ownerOf[id][from] -= amount;
             }
         }
 
@@ -222,19 +226,17 @@ abstract contract ERC1155B {
     function _mint(
         address to,
         uint256 id,
+        uint256 amount,
         bytes memory data
     ) internal virtual {
-        // Minting twice would effectively be a force transfer.
-        require(ownerOf[id] == address(0), "ALREADY_MINTED");
-
-        ownerOf[id] = to;
+        ownerOf[id][to] += amount;
 
         emit TransferSingle(
             msg.sender,
             address(0),
             to,
             id,
-            1
+            amount
         );
 
         if (to.code.length != 0) {
@@ -243,7 +245,7 @@ abstract contract ERC1155B {
                     msg.sender,
                     address(0),
                     id,
-                    1,
+                    amount,
                     data
                 ) ==
                     ERC1155TokenReceiver
@@ -257,12 +259,11 @@ abstract contract ERC1155B {
     function _batchMint(
         address to,
         uint256[] memory ids,
+        uint256[] memory amounts,
         bytes memory data
     ) internal virtual {
         uint256 idsLength = ids.length; // Saves MLOADs.
 
-        // Generate an amounts array locally to use in the event below.
-        uint256[] memory amounts = new uint256[](idsLength);
 
         uint256 id; // Storing outside the loop saves ~7 gas per iteration.
 
@@ -272,15 +273,7 @@ abstract contract ERC1155B {
             for (uint256 i = 0; i < idsLength; ++i) {
                 id = ids[i];
 
-                // Minting twice would effectively be a force transfer.
-                require(
-                    ownerOf[id] == address(0),
-                    "ALREADY_MINTED"
-                );
-
-                ownerOf[id] = to;
-
-                amounts[i] = 1;
+                ownerOf[id][to] += amounts[i];
             }
         }
 
@@ -310,7 +303,7 @@ abstract contract ERC1155B {
         } else require(to != address(0), "INVALID_RECIPIENT");
     }
 
-    function _batchBurn(address from, uint256[] memory ids)
+    function _batchBurn(address from, uint256[] memory ids, uint256[] memory amounts)
         internal
         virtual
     {
@@ -318,9 +311,6 @@ abstract contract ERC1155B {
         require(from != address(0), "INVALID_FROM");
 
         uint256 idsLength = ids.length; // Saves MLOADs.
-
-        // Generate an amounts array locally to use in the event below.
-        uint256[] memory amounts = new uint256[](idsLength);
 
         uint256 id; // Storing outside the loop saves ~7 gas per iteration.
 
@@ -330,11 +320,9 @@ abstract contract ERC1155B {
             for (uint256 i = 0; i < idsLength; ++i) {
                 id = ids[i];
 
-                require(ownerOf[id] == from, "WRONG_FROM");
+                require(ownerOf[id][from] >= amounts[i], "WRONG_FROM");
 
-                ownerOf[id] = address(0);
-
-                amounts[i] = 1;
+                ownerOf[id][from] -= amounts[i];
             }
         }
 
@@ -347,16 +335,14 @@ abstract contract ERC1155B {
         );
     }
 
-    function _burn(uint256 id) internal virtual {
-        address owner = ownerOf[id];
+    function _burn(address from, uint256 id, uint256 amount) internal virtual {
+        require(ownerOf[id][from] >= amount, "INVALID_AMOUNT");
 
-        require(owner != address(0), "NOT_MINTED");
-
-        ownerOf[id] = address(0);
+        ownerOf[id][from] -= amount;
 
         emit TransferSingle(
             msg.sender,
-            owner,
+            from,
             address(0),
             id,
             1

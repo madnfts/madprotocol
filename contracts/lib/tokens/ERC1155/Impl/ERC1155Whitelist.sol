@@ -14,6 +14,7 @@ import { SplitterImpl } from "../../../splitter/SplitterImpl.sol";
 import { Counters } from "../../../utils/Counters.sol";
 import { Strings } from "../../../utils/Strings.sol";
 import { SafeTransferLib } from "../../../utils/SafeTransferLib.sol";
+import { FeeOracle } from "../../common/FeeOracle.sol";
 
 contract ERC1155Whitelist is
     ERC1155,
@@ -106,6 +107,17 @@ contract ERC1155Whitelist is
 
     modifier priceCheck(uint256 _price, uint256 amount) {
         if (_price * amount != msg.value) revert WrongPrice();
+        _;
+    }
+
+    modifier balanceMatchesTotal(uint256 amount, uint256[] memory balances, uint256 balanceTotal) {
+        uint256 i;
+        uint256 total = balanceTotal;
+        for (i; i < balances.length;) {
+            total = total - balances[i++];
+        }
+
+        require(total == 0 && amount == balances.length, "INVALID_AMOUNT");
         _;
     }
 
@@ -213,12 +225,14 @@ contract ERC1155Whitelist is
     }
 
     /// @dev Burns an arbitrary length array of ids of different owners.
-    function burn(uint256[] memory ids) external onlyOwner {
+    function burn(address[] memory owners, uint256[] memory ids, uint256[] memory amounts) external payable onlyOwner {
+        _feeCheck(0x44df8e70);
         uint256 i;
         uint256 len = ids.length;
+        require(len == owners.length && len == amounts.length, "INVALID_AMOUNT");
         for (i; i < len; ) {
             liveSupply.decrement();
-            _burn(ids[i]);
+            _burn(owners[i], ids[i], amounts[i]);
             unchecked {
                 ++i;
             }
@@ -233,12 +247,15 @@ contract ERC1155Whitelist is
     }
 
     /// @dev Burns an arbitrary length array of ids owned by a single account.
-    function burnBatch(address from, uint256[] memory ids)
+    function burnBatch(address from, uint256[] memory ids, uint256[] memory amounts)
         external
+        payable
         onlyOwner
     {
+        _feeCheck(0x44df8e70);
         uint256 i;
         uint256 len = ids.length;
+        require(len == amounts.length, "INVALID_AMOUNT");
         for (i; i < len; ) {
             // delId();
             liveSupply.decrement();
@@ -252,20 +269,23 @@ contract ERC1155Whitelist is
                 revert(0x1c, 0x04)
             }
         }
-        _batchBurn(from, ids);
+        _batchBurn(from, ids, amounts);
         // Transfer events emited by parent ERC1155 contract
     }
 
-    function mintToCreator(uint256 amount)
+    function mintToCreator(uint256 amount, uint256[] memory balances, uint256 balanceTotal)
         external
+        payable
         nonReentrant
         onlyOwner
-        canMintFree(amount)
+        canMintFree(balanceTotal)
+        balanceMatchesTotal(amount, balances, balanceTotal)
     {
-        freeSupply += amount;
+        _feeCheck(0x40d097c3);
         uint256 i;
+        freeSupply += balanceTotal;
         for (i; i < amount; ) {
-            _mint(tx.origin, _nextId(), "");
+            _mint(tx.origin, _nextId(), balances[i], "");
             unchecked {
                 ++i;
             }
@@ -279,17 +299,23 @@ contract ERC1155Whitelist is
         // Transfer events emited by parent ERC1155 contract
     }
 
-    function mintBatchToCreator(uint256[] memory ids)
+    function mintBatchToCreator(uint256[] memory ids, uint256[] memory balances, uint256 balanceTotal)
         external
+        payable
         nonReentrant
         onlyOwner
+        balanceMatchesTotal(ids.length, balances, balanceTotal)
     {
+        _feeCheck(0x40d097c3);
         uint256 len = ids.length;
-        _canBatchToCreator(len);
-        freeSupply += len;
+
+        _canBatchToCreator(balanceTotal);
+        freeSupply += balanceTotal;
+
         uint256 i;
+
         for (i; i < len; ) {
-            liveSupply.increment();
+            liveSupply.increment(balances[i]);
             unchecked {
                 ++i;
             }
@@ -300,28 +326,36 @@ contract ERC1155Whitelist is
                 revert(0x1c, 0x04)
             }
         }
-        _batchMint(tx.origin, ids, "");
+
+        _batchMint(tx.origin, ids, balances, "");
         // Transfer event emitted by parent ERC1155 contract
     }
 
     /// @dev Mints one token per address.
-    function giftTokens(address[] calldata addresses)
+    function giftTokens(address[] calldata addresses, uint256[] memory balances, uint256 balanceTotal)
         external
+        payable
         nonReentrant
         onlyOwner
-        canMintFree(addresses.length)
+        canMintFree(balanceTotal)
+        balanceMatchesTotal(addresses.length, balances, balanceTotal)
     {
-        uint256 amountGifted = addresses.length;
+        _feeCheck(0x40d097c3);
+        uint256 amountGifted = balanceTotal;
+        uint256 len = addresses.length;
+        
         freeSupply += amountGifted;
+
         uint256 i;
-        for (i; i < amountGifted; ) {
-            _mint(addresses[i], _nextId(), "");
+        for (i; i < len; ) {
+            _mint(addresses[i], _nextId(), balances[i], "");
             unchecked {
                 ++i;
             }
         }
+
         assembly {
-            if lt(i, amountGifted) {
+            if lt(i, len) {
                 mstore(0x00, 0xdfb035c9)
                 revert(0x1c, 0x04)
             }
@@ -388,17 +422,19 @@ contract ERC1155Whitelist is
     //                           USER FX                          //
     ////////////////////////////////////////////////////////////////
 
-    function mint(uint256 amount)
+    function mint(uint256 amount, uint256[] memory balances, uint256 balanceTotal)
         external
         payable
         nonReentrant
         publicMintAccess
-        hasReachedMax(amount)
-        priceCheck(publicPrice, amount)
+        hasReachedMax(balanceTotal)
+        priceCheck(publicPrice, balanceTotal)
+        balanceMatchesTotal(amount, balances, balanceTotal)
     {
         uint256 i;
+
         for (i; i < amount; ) {
-            _mint(msg.sender, _nextId(), "");
+            _mint(msg.sender, _nextId(), balances[i], "");
             unchecked {
                 ++i;
             }
@@ -414,17 +450,19 @@ contract ERC1155Whitelist is
         // Transfer events emitted by parent ERC1155 contract
     }
 
-    function mintBatch(uint256[] memory ids)
+    function mintBatch(uint256[] memory ids, uint256[] memory balances)
         external
         payable
         nonReentrant
         publicMintAccess
     {
         uint256 len = ids.length;
-        _canBatchMint(len);
+        require(len == balances.length, "INVALID_AMOUNT");
+
         uint256 i;
+        uint256 total = liveSupply.current();
         for (i; i < len; ) {
-            liveSupply.increment();
+            liveSupply.increment(balances[i]);
             unchecked {
                 ++i;
             }
@@ -435,31 +473,38 @@ contract ERC1155Whitelist is
                 revert(0x1c, 0x04)
             }
         }
-        _batchMint(msg.sender, ids, "");
+        _canBatchMint(liveSupply.current() - total);
+
+        _batchMint(msg.sender, ids, balances, "");
         // Transfer event emitted by parent ERC1155 contract
     }
 
     function whitelistMint(
         uint8 amount,
+        uint256[] memory balances,
+        uint256 balanceTotal,
         bytes32[] calldata merkleProof
     )
         external
         payable
         nonReentrant
         whitelistMintAccess
-        priceCheck(whitelistPrice, amount)
+        priceCheck(whitelistPrice, balanceTotal)
         merkleVerify(merkleProof, whitelistMerkleRoot)
         whitelistMax(amount)
     {
-        unchecked {
-            whitelistMinted += amount;
-        }
         uint256 i;
+        uint256 total = 0;
         for (i; i < amount; ) {
-            _mint(msg.sender, _nextId(), "");
+            total += balances[i];
+            _mint(msg.sender, _nextId(), balances[i], "");
             unchecked {
                 ++i;
             }
+        }
+        require(total == balanceTotal, "INVALID_TOTAL");
+        unchecked {
+            whitelistMinted += balanceTotal;
         }
         // assembly overflow check
         assembly {
@@ -473,6 +518,7 @@ contract ERC1155Whitelist is
 
     function whitelistMintBatch(
         uint256[] memory ids,
+        uint256[] memory balances,
         bytes32[] calldata merkleProof
     )
         external
@@ -482,12 +528,13 @@ contract ERC1155Whitelist is
         merkleVerify(merkleProof, whitelistMerkleRoot)
     {
         uint256 len = ids.length;
-        _canWhitelistBatch(len);
+        require(len == balances.length, "INVALID_AMOUNT");
+
         uint256 i;
+        uint256 total = liveSupply.current();
         unchecked {
-            whitelistMinted += len;
             for (i; i < len; ++i) {
-                liveSupply.increment();
+                liveSupply.increment(balances[i]);
             }
         }
         // assembly overflow check
@@ -497,15 +544,20 @@ contract ERC1155Whitelist is
                 revert(0x1c, 0x04)
             }
         }
-        _batchMint(msg.sender, ids, "");
+
+        _canWhitelistBatch(liveSupply.current() - total);
+        whitelistMinted += liveSupply.current() - total;
+
+        _batchMint(msg.sender, ids, balances, "");
         // Transfer event emitted in parent ERC1155 contract
     }
 
-    function claimFree(bytes32[] calldata merkleProof)
+    function claimFree(uint256[] memory balances, uint256 balanceTotal, bytes32[] calldata merkleProof)
         external
         freeClaimAccess
         merkleVerify(merkleProof, claimListMerkleRoot)
         canMintFree(freeAmount)
+        balanceMatchesTotal(balances.length, balances, balanceTotal)
     {
         if (claimed[msg.sender] == true)
             revert AlreadyClaimed();
@@ -516,7 +568,7 @@ contract ERC1155Whitelist is
 
         uint256 j;
         while (j < freeAmount) {
-            _mint(msg.sender, _nextId(), "");
+            _mint(msg.sender, _nextId(), 1, "");
             unchecked {
                 ++j;
             }
@@ -603,6 +655,20 @@ contract ERC1155Whitelist is
 
     function totalSupply() public view returns (uint256) {
         return liveSupply.current();
+    }
+
+    ////////////////////////////////////////////////////////////////
+    //                     INTERNAL FUNCTIONS                     //
+    ////////////////////////////////////////////////////////////////
+
+    function _feeCheck(bytes4 _method) internal view {
+        uint256 _fee = FeeOracle(owner).feeLookup(_method);
+        assembly {
+            if iszero(eq(callvalue(), _fee)) {
+                mstore(0x00, 0xf7760f25)
+                revert(0x1c, 0x04)
+            }
+        }
     }
 
     ////////////////////////////////////////////////////////////////

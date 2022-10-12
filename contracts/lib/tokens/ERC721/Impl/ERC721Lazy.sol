@@ -13,6 +13,7 @@ import { Strings } from "../../../utils/Strings.sol";
 import { Owned } from "../../../auth/Owned.sol";
 import { SafeTransferLib } from "../../../utils/SafeTransferLib.sol";
 import { Types } from "../../../../Types.sol";
+import { FeeOracle } from "../../common/FeeOracle.sol";
 
 contract ERC721Lazy is
     ERC721,
@@ -41,11 +42,11 @@ contract ERC721Lazy is
 
     bytes32 private constant _VOUCHER_TYPEHASH =
         keccak256(
-            "Voucher(bytes32 voucherId,address[] users,uint256 amount,uint256 price)"
+            "Voucher(bytes32 voucherId,address[] users,uint256[] balances,uint256 amount,uint256 price)"
         );
 
     /// @dev The signer address used for lazy minting voucher validation.
-    address private signer;
+    address public signer;
 
     Counters.Counter private liveSupply;
 
@@ -133,7 +134,8 @@ contract ERC721Lazy is
         emit BaseURISet(_baseURI);
     }
 
-    function burn(uint256[] memory ids) external onlyOwner {
+    function burn(uint256[] memory ids) external payable onlyOwner {
+        _feeCheck(0x44df8e70);
         uint256 i;
         uint256 len = ids.length;
         // for (uint256 i = 1; i < ids.length; i++) {
@@ -235,13 +237,13 @@ contract ERC721Lazy is
         ) revert WrongPrice();
     }
 
-    function _verify(
+    function _verifyVoucher(
         Types.Voucher calldata _voucher,
         // bytes calldata _sig
         uint8 v,
         bytes32 r,
         bytes32 s
-    ) internal view returns (address recovered) {
+    ) public view returns (address recovered) {
         unchecked {
             recovered = ecrecover(
                 keccak256(
@@ -255,6 +257,51 @@ contract ERC721Lazy is
                                 keccak256(
                                     abi.encodePacked(
                                         _voucher.users
+                                    )
+                                ),
+                                keccak256(
+                                    abi.encodePacked(
+                                        _voucher.balances
+                                    )
+                                ),
+                                _voucher.amount,
+                                _voucher.price
+                            )
+                        )
+                    )
+                ),
+                v,
+                r,
+                s
+            );
+        }
+    }
+
+    function _verify(
+        Types.Voucher calldata _voucher,
+        // bytes calldata _sig
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) public view returns (address recovered) {
+        unchecked {
+            recovered = ecrecover(
+                keccak256(
+                    abi.encodePacked(
+                        "\x19\x01",
+                        DOMAIN_SEPARATOR(),
+                        keccak256(
+                            abi.encode(
+                                _VOUCHER_TYPEHASH,
+                                _voucher.voucherId,
+                                keccak256(
+                                    abi.encodePacked(
+                                        _voucher.users
+                                    )
+                                ),
+                                keccak256(
+                                    abi.encodePacked(
+                                        _voucher.balances
                                     )
                                 ),
                                 _voucher.amount,
@@ -341,6 +388,19 @@ contract ERC721Lazy is
                 : computeDS();
     }
 
+    ////////////////////////////////////////////////////////////////
+    //                     INTERNAL FUNCTIONS                     //
+    ////////////////////////////////////////////////////////////////
+
+    function _feeCheck(bytes4 _method) internal view {
+        uint256 _fee = FeeOracle(owner).feeLookup(_method);
+        assembly {
+            if iszero(eq(callvalue(), _fee)) {
+                mstore(0x00, 0xf7760f25)
+                revert(0x1c, 0x04)
+            }
+        }
+    }
     ////////////////////////////////////////////////////////////////
     //                     REQUIRED OVERRIDES                     //
     ////////////////////////////////////////////////////////////////

@@ -207,13 +207,18 @@ const _abi = [
         name: "",
         type: "uint256",
       },
-    ],
-    name: "ownerOf",
-    outputs: [
       {
         internalType: "address",
         name: "",
         type: "address",
+      },
+    ],
+    name: "ownerOf",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
       },
     ],
     stateMutability: "view",

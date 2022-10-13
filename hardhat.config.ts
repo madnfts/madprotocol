@@ -9,24 +9,31 @@ import { HardhatUserConfig } from "hardhat/config";
 import { NetworkUserConfig } from "hardhat/types";
 import { resolve } from "path";
 import "solidity-coverage";
+import yargs from "yargs";
 
 import "./tasks/accounts";
 
 // import "./tasks/deploy";
 
+const argv = yargs
+  .option("network", {
+    type: "string",
+    default: "hardhat",
+  })
+  .help(false)
+  .version(false).argv;
+
 dotenvConfig({ path: resolve(__dirname, "./.env") });
 
 // Ensure that we have all the environment variables we need.
-const mnemonic: string | undefined = process.env.MNEMONIC;
-if (!mnemonic) {
-  throw new Error("Please set your MNEMONIC in a .env file");
-}
+const { INFURA_API_KEY, MNEMONIC, ETHERSCAN_API_KEY, PK } = process.env;
 
-const infuraApiKey: string | undefined =
-  process.env.INFURA_API_KEY;
-if (!infuraApiKey) {
+const DEFAULT_MNEMONIC =
+  "candy maple cake sugar pudding cream honey rich smooth crumble sweet treat";
+
+if (["rinkeby", "mainnet"].includes(argv.network) && INFURA_API_KEY === undefined) {
   throw new Error(
-    "Please set your INFURA_API_KEY in a .env file",
+    `Could not find Infura key in env, unable to connect to network ${argv.network}`,
   );
 }
 
@@ -61,7 +68,7 @@ function getChainConfig(
       break;
     default:
       jsonRpcUrl =
-        "https://" + chain + ".infura.io/v3/" + infuraApiKey;
+        "https://" + chain + ".infura.io/v3/" + INFURA_API_KEY;
     // case "avalanche":
     //   jsonRpcUrl = "https://api.avax.network/ext/bc/C/rpc";
     //   break;
@@ -69,12 +76,21 @@ function getChainConfig(
     //   jsonRpcUrl = "https://bsc-dataseed1.binance.org";
     //   break;
   }
-  return {
-    // @todo updated for harmony deploy, this script needs refactoring
-    accounts: [`0x${mnemonic}`],
-    chainId: chainIds[chain],
-    url: jsonRpcUrl,
-  };
+  if (PK) {
+    return {
+      accounts: [PK],
+      chainId: chainIds[chain],
+      url: jsonRpcUrl,
+    };
+  } else {
+    return {
+      accounts: {
+        mnemonic: MNEMONIC || DEFAULT_MNEMONIC,
+      },
+      chainId: chainIds[chain],
+      url: jsonRpcUrl,
+    };
+  }
 }
 
 const config: HardhatUserConfig = {
@@ -84,8 +100,8 @@ const config: HardhatUserConfig = {
       harmonyDevnet: "your API key",
       harmony: "your API key",
       // harmonyDev: process.env.DEVNET_API_KEY || "",
-      mainnet: process.env.ETHERSCAN_API_KEY || "",
-      rinkeby: process.env.ETHERSCAN_API_KEY || "",
+      mainnet: ETHERSCAN_API_KEY || "",
+      rinkeby: ETHERSCAN_API_KEY || "",
       // arbitrumOne: process.env.ARBISCAN_API_KEY || "",
       // avalanche: process.env.SNOWTRACE_API_KEY || "",
       // bsc: process.env.BSCSCAN_API_KEY || "",
@@ -120,12 +136,6 @@ const config: HardhatUserConfig = {
     src: "./contracts",
   },
   networks: {
-    hardhat: {
-      accounts: {
-        mnemonic,
-      },
-      chainId: chainIds.hardhat,
-    },
     harmony: getChainConfig("harmony-mainnet"),
     harmonyDev: getChainConfig("harmony-devnet"),
     mainnet: getChainConfig("mainnet"),

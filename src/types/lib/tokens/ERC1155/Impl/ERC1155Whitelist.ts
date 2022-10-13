@@ -735,14 +735,14 @@ export interface ERC1155Whitelist extends BaseContract {
       owners: PromiseOrValue<string>[],
       ids: PromiseOrValue<BigNumberish>[],
       amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     burnBatch(
       from: PromiseOrValue<string>,
       ids: PromiseOrValue<BigNumberish>[],
       amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     claimFree(
@@ -778,7 +778,7 @@ export interface ERC1155Whitelist extends BaseContract {
       addresses: PromiseOrValue<string>[],
       balances: PromiseOrValue<BigNumberish>[],
       balanceTotal: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     isApprovedForAll(
@@ -810,14 +810,14 @@ export interface ERC1155Whitelist extends BaseContract {
       ids: PromiseOrValue<BigNumberish>[],
       balances: PromiseOrValue<BigNumberish>[],
       balanceTotal: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     mintToCreator(
       amount: PromiseOrValue<BigNumberish>,
       balances: PromiseOrValue<BigNumberish>[],
       balanceTotal: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     onERC1155BatchReceived(
@@ -977,14 +977,14 @@ export interface ERC1155Whitelist extends BaseContract {
     owners: PromiseOrValue<string>[],
     ids: PromiseOrValue<BigNumberish>[],
     amounts: PromiseOrValue<BigNumberish>[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   burnBatch(
     from: PromiseOrValue<string>,
     ids: PromiseOrValue<BigNumberish>[],
     amounts: PromiseOrValue<BigNumberish>[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   claimFree(
@@ -1020,7 +1020,7 @@ export interface ERC1155Whitelist extends BaseContract {
     addresses: PromiseOrValue<string>[],
     balances: PromiseOrValue<BigNumberish>[],
     balanceTotal: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   isApprovedForAll(
@@ -1052,14 +1052,14 @@ export interface ERC1155Whitelist extends BaseContract {
     ids: PromiseOrValue<BigNumberish>[],
     balances: PromiseOrValue<BigNumberish>[],
     balanceTotal: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   mintToCreator(
     amount: PromiseOrValue<BigNumberish>,
     balances: PromiseOrValue<BigNumberish>[],
     balanceTotal: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   onERC1155BatchReceived(
@@ -1582,14 +1582,14 @@ export interface ERC1155Whitelist extends BaseContract {
       owners: PromiseOrValue<string>[],
       ids: PromiseOrValue<BigNumberish>[],
       amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     burnBatch(
       from: PromiseOrValue<string>,
       ids: PromiseOrValue<BigNumberish>[],
       amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     claimFree(
@@ -1625,7 +1625,7 @@ export interface ERC1155Whitelist extends BaseContract {
       addresses: PromiseOrValue<string>[],
       balances: PromiseOrValue<BigNumberish>[],
       balanceTotal: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     isApprovedForAll(
@@ -1657,14 +1657,14 @@ export interface ERC1155Whitelist extends BaseContract {
       ids: PromiseOrValue<BigNumberish>[],
       balances: PromiseOrValue<BigNumberish>[],
       balanceTotal: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     mintToCreator(
       amount: PromiseOrValue<BigNumberish>,
       balances: PromiseOrValue<BigNumberish>[],
       balanceTotal: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     onERC1155BatchReceived(
@@ -1823,14 +1823,14 @@ export interface ERC1155Whitelist extends BaseContract {
       owners: PromiseOrValue<string>[],
       ids: PromiseOrValue<BigNumberish>[],
       amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     burnBatch(
       from: PromiseOrValue<string>,
       ids: PromiseOrValue<BigNumberish>[],
       amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     claimFree(
@@ -1868,7 +1868,7 @@ export interface ERC1155Whitelist extends BaseContract {
       addresses: PromiseOrValue<string>[],
       balances: PromiseOrValue<BigNumberish>[],
       balanceTotal: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     isApprovedForAll(
@@ -1902,14 +1902,14 @@ export interface ERC1155Whitelist extends BaseContract {
       ids: PromiseOrValue<BigNumberish>[],
       balances: PromiseOrValue<BigNumberish>[],
       balanceTotal: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     mintToCreator(
       amount: PromiseOrValue<BigNumberish>,
       balances: PromiseOrValue<BigNumberish>[],
       balanceTotal: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     onERC1155BatchReceived(

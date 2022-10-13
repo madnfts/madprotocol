@@ -659,7 +659,7 @@ export interface ERC721Whitelist extends BaseContract {
 
     burn(
       ids: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     claimFree(
@@ -696,7 +696,7 @@ export interface ERC721Whitelist extends BaseContract {
 
     giftTokens(
       addresses: PromiseOrValue<string>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     isApprovedForAll(
@@ -718,7 +718,7 @@ export interface ERC721Whitelist extends BaseContract {
 
     mintToCreator(
       amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     name(overrides?: CallOverrides): Promise<[string]>;
@@ -863,7 +863,7 @@ export interface ERC721Whitelist extends BaseContract {
 
   burn(
     ids: PromiseOrValue<BigNumberish>[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   claimFree(
@@ -900,7 +900,7 @@ export interface ERC721Whitelist extends BaseContract {
 
   giftTokens(
     addresses: PromiseOrValue<string>[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   isApprovedForAll(
@@ -922,7 +922,7 @@ export interface ERC721Whitelist extends BaseContract {
 
   mintToCreator(
     amount: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   name(overrides?: CallOverrides): Promise<string>;
@@ -1378,7 +1378,7 @@ export interface ERC721Whitelist extends BaseContract {
 
     burn(
       ids: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     claimFree(
@@ -1415,7 +1415,7 @@ export interface ERC721Whitelist extends BaseContract {
 
     giftTokens(
       addresses: PromiseOrValue<string>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     isApprovedForAll(
@@ -1437,7 +1437,7 @@ export interface ERC721Whitelist extends BaseContract {
 
     mintToCreator(
       amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1581,7 +1581,7 @@ export interface ERC721Whitelist extends BaseContract {
 
     burn(
       ids: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     claimFree(
@@ -1620,7 +1620,7 @@ export interface ERC721Whitelist extends BaseContract {
 
     giftTokens(
       addresses: PromiseOrValue<string>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     isApprovedForAll(
@@ -1644,7 +1644,7 @@ export interface ERC721Whitelist extends BaseContract {
 
     mintToCreator(
       amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;

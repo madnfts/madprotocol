@@ -401,7 +401,7 @@ export interface ERC1155Minimal extends BaseContract {
     burn(
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     isApprovedForAll(
@@ -465,7 +465,7 @@ export interface ERC1155Minimal extends BaseContract {
     safeMint(
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     safeTransferFrom(
@@ -530,7 +530,7 @@ export interface ERC1155Minimal extends BaseContract {
   burn(
     to: PromiseOrValue<string>,
     amount: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   isApprovedForAll(
@@ -594,7 +594,7 @@ export interface ERC1155Minimal extends BaseContract {
   safeMint(
     to: PromiseOrValue<string>,
     amount: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   safeTransferFrom(
@@ -866,7 +866,7 @@ export interface ERC1155Minimal extends BaseContract {
     burn(
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     isApprovedForAll(
@@ -928,7 +928,7 @@ export interface ERC1155Minimal extends BaseContract {
     safeMint(
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     safeTransferFrom(
@@ -994,7 +994,7 @@ export interface ERC1155Minimal extends BaseContract {
     burn(
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     isApprovedForAll(
@@ -1056,7 +1056,7 @@ export interface ERC1155Minimal extends BaseContract {
     safeMint(
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     safeTransferFrom(

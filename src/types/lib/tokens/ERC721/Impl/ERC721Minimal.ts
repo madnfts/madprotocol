@@ -390,7 +390,7 @@ export interface ERC721Minimal extends BaseContract {
     ): Promise<[BigNumber]>;
 
     burn(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     getApproved(
@@ -439,7 +439,7 @@ export interface ERC721Minimal extends BaseContract {
 
     safeMint(
       to: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     "safeTransferFrom(address,address,uint256)"(
@@ -516,7 +516,7 @@ export interface ERC721Minimal extends BaseContract {
   ): Promise<BigNumber>;
 
   burn(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   getApproved(
@@ -565,7 +565,7 @@ export interface ERC721Minimal extends BaseContract {
 
   safeMint(
     to: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   "safeTransferFrom(address,address,uint256)"(
@@ -828,7 +828,7 @@ export interface ERC721Minimal extends BaseContract {
     ): Promise<BigNumber>;
 
     burn(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     getApproved(
@@ -875,7 +875,7 @@ export interface ERC721Minimal extends BaseContract {
 
     safeMint(
       to: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     "safeTransferFrom(address,address,uint256)"(
@@ -953,7 +953,7 @@ export interface ERC721Minimal extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     burn(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     getApproved(
@@ -1000,7 +1000,7 @@ export interface ERC721Minimal extends BaseContract {
 
     safeMint(
       to: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     "safeTransferFrom(address,address,uint256)"(

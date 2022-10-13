@@ -507,14 +507,14 @@ export interface ERC1155Lazy extends BaseContract {
       from: PromiseOrValue<string>[],
       ids: PromiseOrValue<BigNumberish>[],
       balances: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     burnBatch(
       from: PromiseOrValue<string>,
       ids: PromiseOrValue<BigNumberish>[],
       balances: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     getURI(overrides?: CallOverrides): Promise<[string]>;
@@ -661,14 +661,14 @@ export interface ERC1155Lazy extends BaseContract {
     from: PromiseOrValue<string>[],
     ids: PromiseOrValue<BigNumberish>[],
     balances: PromiseOrValue<BigNumberish>[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   burnBatch(
     from: PromiseOrValue<string>,
     ids: PromiseOrValue<BigNumberish>[],
     balances: PromiseOrValue<BigNumberish>[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   getURI(overrides?: CallOverrides): Promise<string>;
@@ -1054,14 +1054,14 @@ export interface ERC1155Lazy extends BaseContract {
       from: PromiseOrValue<string>[],
       ids: PromiseOrValue<BigNumberish>[],
       balances: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     burnBatch(
       from: PromiseOrValue<string>,
       ids: PromiseOrValue<BigNumberish>[],
       balances: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     getURI(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1207,14 +1207,14 @@ export interface ERC1155Lazy extends BaseContract {
       from: PromiseOrValue<string>[],
       ids: PromiseOrValue<BigNumberish>[],
       balances: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     burnBatch(
       from: PromiseOrValue<string>,
       ids: PromiseOrValue<BigNumberish>[],
       balances: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     getURI(overrides?: CallOverrides): Promise<PopulatedTransaction>;

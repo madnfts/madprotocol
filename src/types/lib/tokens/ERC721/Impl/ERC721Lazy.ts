@@ -497,7 +497,7 @@ export interface ERC721Lazy extends BaseContract {
 
     burn(
       ids: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     getApproved(
@@ -653,7 +653,7 @@ export interface ERC721Lazy extends BaseContract {
 
   burn(
     ids: PromiseOrValue<BigNumberish>[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   getApproved(
@@ -1034,7 +1034,7 @@ export interface ERC721Lazy extends BaseContract {
 
     burn(
       ids: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     getApproved(
@@ -1189,7 +1189,7 @@ export interface ERC721Lazy extends BaseContract {
 
     burn(
       ids: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     getApproved(

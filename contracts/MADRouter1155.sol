@@ -142,10 +142,10 @@ contract MADRouter1155 is
         payable
         nonReentrant
         whenNotPaused
-    {
+    { 
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType != 0) revert("INVALID_TYPE");
-        ERC1155Minimal(_token).safeMint(_to, balance);
+        ERC1155Minimal(_token).safeMint{value: msg.value}(_to, balance);
     }
 
     function basicMintTo(
@@ -156,7 +156,7 @@ contract MADRouter1155 is
     ) external payable nonReentrant whenNotPaused {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType != 1) revert("INVALID_TYPE");
-        ERC1155Basic(_token).mintTo(_to, _amount, _balances);
+        ERC1155Basic(_token).mintTo{value: msg.value}(_to, _amount, _balances);
     }
 
     function basicMintBatchTo(
@@ -167,7 +167,7 @@ contract MADRouter1155 is
     ) external payable nonReentrant whenNotPaused {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType != 1) revert("INVALID_TYPE");
-        ERC1155Basic(_token).mintBatchTo(_to, _ids, _balances);
+        ERC1155Basic(_token).mintBatchTo{value: msg.value}(_to, _ids, _balances);
     }
 
     /// @notice Global token burn controller/single pusher for all token types.
@@ -184,13 +184,13 @@ contract MADRouter1155 is
         (, uint8 _tokenType) = _tokenRender(_token);
 
         _tokenType < 1
-            ? ERC1155Minimal(_token).burn(to[0], _amount[0])
+            ? ERC1155Minimal(_token).burn{value: msg.value}(to[0], _amount[0])
             : _tokenType == 1
-            ? ERC1155Basic(_token).burn(to, _ids, _amount)
+            ? ERC1155Basic(_token).burn{value: msg.value}(to, _ids, _amount)
             : _tokenType == 2
-            ? ERC1155Whitelist(_token).burn(to, _ids, _amount)
+            ? ERC1155Whitelist(_token).burn{value: msg.value}(to, _ids, _amount)
             : _tokenType > 2
-            ? ERC1155Lazy(_token).burn(to, _ids, _amount)
+            ? ERC1155Lazy(_token).burn{value: msg.value}(to, _ids, _amount)
             : revert("INVALID_TYPE");
     }
 
@@ -208,11 +208,11 @@ contract MADRouter1155 is
         (, uint8 _tokenType) = _tokenRender(_token);
 
         _tokenType == 1
-            ? ERC1155Basic(_token).burnBatch(_from, _ids, _balances)
+            ? ERC1155Basic(_token).burnBatch{value: msg.value}(_from, _ids, _balances)
             : _tokenType == 2
-            ? ERC1155Whitelist(_token).burnBatch(_from, _ids, _balances)
+            ? ERC1155Whitelist(_token).burnBatch{value: msg.value}(_from, _ids, _balances)
             : _tokenType > 2
-            ? ERC1155Lazy(_token).burnBatch(_from, _ids, _balances)
+            ? ERC1155Lazy(_token).burnBatch{value: msg.value}(_from, _ids, _balances)
             : revert("INVALID_TYPE");
     }
 
@@ -261,7 +261,7 @@ contract MADRouter1155 is
     {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType == 2) {
-            ERC1155Whitelist(_token).mintToCreator(_amount, _balances, totalBalance);
+            ERC1155Whitelist(_token).mintToCreator{value: msg.value}(_amount, _balances, totalBalance);
         } else revert("INVALID_TYPE");
     }
 
@@ -275,7 +275,7 @@ contract MADRouter1155 is
     ) external payable nonReentrant whenNotPaused {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType == 2) {
-            ERC1155Whitelist(_token).mintBatchToCreator(_ids, _balances, totalBalance);
+            ERC1155Whitelist(_token).mintBatchToCreator{value: msg.value}(_ids, _balances, totalBalance);
         } else revert("INVALID_TYPE");
     }
 
@@ -289,7 +289,7 @@ contract MADRouter1155 is
     ) external payable nonReentrant whenNotPaused {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType == 2) {
-            ERC1155Whitelist(_token).giftTokens(_addresses, _balances, totalBalance);
+            ERC1155Whitelist(_token).giftTokens{value: msg.value}(_addresses, _balances, totalBalance);
         } else revert("INVALID_TYPE");
     }
 

@@ -144,7 +144,7 @@ contract MADRouter721 is
     {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType != 0) revert("INVALID_TYPE");
-        ERC721Minimal(_token).safeMint(_to);
+        ERC721Minimal(_token).safeMint{value: msg.value}(_to);
     }
 
     function basicMintTo(
@@ -154,7 +154,7 @@ contract MADRouter721 is
     ) external payable nonReentrant whenNotPaused {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType != 1) revert("INVALID_TYPE");
-        ERC721Basic(_token).mintTo(_to, _amount);
+        ERC721Basic(_token).mintTo{value: msg.value}(_to, _amount);
     }
 
     /// @notice Global token burn controller/single pusher for all token types.
@@ -171,13 +171,13 @@ contract MADRouter721 is
         (, uint8 _tokenType) = _tokenRender(_token);
 
         _tokenType < 1
-            ? ERC721Minimal(_token).burn()
+            ? ERC721Minimal(_token).burn{value: msg.value}()
             : _tokenType == 1
-            ? ERC721Basic(_token).burn(_ids)
+            ? ERC721Basic(_token).burn{value: msg.value}(_ids)
             : _tokenType == 2
-            ? ERC721Whitelist(_token).burn(_ids)
+            ? ERC721Whitelist(_token).burn{value: msg.value}(_ids)
             : _tokenType > 2
-            ? ERC721Lazy(_token).burn(_ids)
+            ? ERC721Lazy(_token).burn{value: msg.value}(_ids)
             : revert("INVALID_TYPE");
     }
 
@@ -226,7 +226,7 @@ contract MADRouter721 is
     {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType == 2) {
-            ERC721Whitelist(_token).mintToCreator(_amount);
+            ERC721Whitelist(_token).mintToCreator{value: msg.value}(_amount);
         } else revert("INVALID_TYPE");
     }
 
@@ -238,7 +238,7 @@ contract MADRouter721 is
     ) external payable nonReentrant whenNotPaused {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType == 2) {
-            ERC721Whitelist(_token).giftTokens(_addresses);
+            ERC721Whitelist(_token).giftTokens{value: msg.value}(_addresses);
         } else revert("INVALID_TYPE");
     }
 

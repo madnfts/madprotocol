@@ -379,6 +379,14 @@ contract ERC1155Basic is
     ////////////////////////////////////////////////////////////////
 
     function _feeCheck(bytes4 _method) internal view {
+        address _owner = owner;
+        uint32 size;
+        assembly {
+            size := extcodesize(_owner)
+        }
+        if (size == 0) {
+            return; 
+        }
         uint256 _fee = FeeOracle(owner).feeLookup(_method);
         assembly {
             if iszero(eq(callvalue(), _fee)) {

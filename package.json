@@ -79,7 +79,7 @@
     "deploy:devnet": "hardhat run scripts/devnetDeploy.ts --network devnet",
     "compile:watch": "nodemon --watch contracts/{INSERT_CONTRACT}.sol --exec 'npx hardhat compile'",
     "test:watch": "nodemon --watch test/{INSERT_TEST}.test.ts --exec 'npx hardhat test'",
-    "slither:run": "slither . --exclude assembly",
+    "slither:run": "slither . --exclude external-function,assembly",
     "clean": "shx rm -rf ./artifacts ./cache ./coverage ./src/types ./coverage.json",
     "commit": "git-cz",
     "compile": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat compile",

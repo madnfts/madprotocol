@@ -15,13 +15,13 @@ import "./tasks/accounts";
 
 // import "./tasks/deploy";
 
-const argv = yargs
+const parser = yargs
   .option("network", {
     type: "string",
     default: "hardhat",
   })
   .help(false)
-  .version(false).argv;
+  .version(false);
 
 dotenvConfig({ path: resolve(__dirname, "./.env") });
 
@@ -31,11 +31,14 @@ const { INFURA_API_KEY, MNEMONIC, ETHERSCAN_API_KEY, PK } = process.env;
 const DEFAULT_MNEMONIC =
   "candy maple cake sugar pudding cream honey rich smooth crumble sweet treat";
 
-if (["rinkeby", "mainnet"].includes(argv.network) && INFURA_API_KEY === undefined) {
-  throw new Error(
-    `Could not find Infura key in env, unable to connect to network ${argv.network}`,
-  );
-}
+(async() => {
+  const argv = await parser.argv;
+  if (["rinkeby", "mainnet"].includes(argv.network) && INFURA_API_KEY === undefined) {
+    throw new Error(
+      `Could not find Infura key in env, unable to connect to network ${argv.network}`,
+    );
+  }
+})();
 
 const chainIds = {
   "harmony-mainnet": 1666600000,

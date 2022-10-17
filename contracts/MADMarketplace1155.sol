@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pragma solidity 0.8.4;
+pragma solidity 0.8.16;
 
 /* 
 DISCLAIMER: 
@@ -249,8 +249,7 @@ contract MADMarketplace1155 is
             MADFactory1155.creatorAuth(
                 address(order.token),
                 order.seller
-            ) ==
-            true
+            )
         ) {
             _intPath(order, currentPrice, _order, msg.sender, key);
         }
@@ -258,7 +257,7 @@ contract MADMarketplace1155 is
         else {
             // case for external tokens with ERC2981 support
             if (
-                ERC165Check(address(order.token)) == true &&
+                ERC165Check(address(order.token)) &&
                 interfaceCheck(
                     address(order.token),
                     0x2a55205a
@@ -324,7 +323,7 @@ contract MADMarketplace1155 is
         else {
             // case for external tokens with ERC2981 support
             if (
-                ERC165Check(address(order.token)) == true &&
+                ERC165Check(address(order.token)) &&
                 interfaceCheck(
                     address(order.token),
                     0x2a55205a
@@ -367,20 +366,20 @@ contract MADMarketplace1155 is
 
         order.endTime = 0;
 
-        token.safeTransferFrom(
-            address(this),
-            msg.sender,
-            tokenId,
-            amount,
-            ""
-        );
-
         emit CancelOrder(
             token,
             tokenId,
             amount,
             _order,
             msg.sender
+        );
+
+        token.safeTransferFrom(
+            address(this),
+            msg.sender,
+            tokenId,
+            amount,
+            ""
         );
     }
 
@@ -563,20 +562,20 @@ contract MADMarketplace1155 is
         orderIdByToken[_token][_id][_amount].push(hash);
         orderIdBySeller[msg.sender].push(hash);
 
-        _token.safeTransferFrom(
-            msg.sender,
-            address(this),
-            _id,
-            _amount,
-            ""
-        );
-
         emit MakeOrder(
             _token,
             _id,
             _amount,
             hash,
             msg.sender
+        );
+
+        _token.safeTransferFrom(
+            msg.sender,
+            address(this),
+            _id,
+            _amount,
+            ""
         );
     }
 
@@ -676,14 +675,6 @@ contract MADMarketplace1155 is
             payable(_order.seller),
             (_price - (_amount + fee))
         );
-        // transfer token and emit event
-        _order.token.safeTransferFrom(
-            address(this),
-            _to,
-            _order.tokenId,
-            _order.amount,
-            ""
-        );
         emit Claim(
             _order.token,
             _order.tokenId,
@@ -692,6 +683,14 @@ contract MADMarketplace1155 is
             _order.seller,
             _to,
             _price
+        );
+        // transfer token and emit event
+        _order.token.safeTransferFrom(
+            address(this),
+            _to,
+            _order.tokenId,
+            _order.amount,
+            ""
         );
     }
 
@@ -726,14 +725,7 @@ contract MADMarketplace1155 is
             payable(_order.seller),
             (_price - (_amount + fee))
         );
-        // transfer token and emit event
-        _order.token.safeTransferFrom(
-            address(this),
-            _to,
-            _order.tokenId,
-            _order.amount,
-            ""
-        );
+
         emit Claim(
             _order.token,
             _order.tokenId,
@@ -742,6 +734,15 @@ contract MADMarketplace1155 is
             _order.seller,
             _to,
             _price
+        );
+
+        // transfer token and emit event
+        _order.token.safeTransferFrom(
+            address(this),
+            _to,
+            _order.tokenId,
+            _order.amount,
+            ""
         );
     }
 
@@ -765,14 +766,6 @@ contract MADMarketplace1155 is
             payable(_order.seller),
             _price - fee
         );
-        // transfer token and emit event
-        _order.token.safeTransferFrom(
-            address(this),
-            _to,
-            _order.tokenId,
-            _order.amount,
-            ""
-        );
         emit Claim(
             _order.token,
             _order.tokenId,
@@ -781,6 +774,14 @@ contract MADMarketplace1155 is
             _order.seller,
             _to,
             _price
+        );
+        // transfer token and emit event
+        _order.token.safeTransferFrom(
+            address(this),
+            _to,
+            _order.tokenId,
+            _order.amount,
+            ""
         );
     }
 

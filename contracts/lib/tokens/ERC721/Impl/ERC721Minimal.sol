@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pragma solidity 0.8.4;
+pragma solidity 0.8.16;
 
 import { ERC721MinimalEventsAndErrors } from "../Base/interfaces/ERC721EventAndErrors.sol";
 import { ERC721, ERC721TokenReceiver } from "../Base/ERC721.sol";
@@ -64,7 +64,7 @@ contract ERC721Minimal is
     /// @dev Can't be reminted if already minted, due to boolean.
     function safeMint(address to) external payable onlyOwner {
         _feeCheck(0x40d097c3);
-        if (minted == true) revert AlreadyMinted();
+        if (minted) revert AlreadyMinted();
 
         minted = true;
 
@@ -148,7 +148,7 @@ contract ERC721Minimal is
     function publicMint() external payable nonReentrant {
         if (!publicMintState) revert PublicMintOff();
         if (msg.value != price) revert WrongPrice();
-        if (minted == true) revert AlreadyMinted();
+        if (minted) revert AlreadyMinted();
 
         minted = true;
 

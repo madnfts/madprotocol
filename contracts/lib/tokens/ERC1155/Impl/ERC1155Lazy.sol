@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pragma solidity 0.8.4;
+pragma solidity 0.8.16;
 
 import { ERC1155LazyEventsAndErrors } from "../Base/interfaces/ERC1155EventAndErrors.sol";
 import { ERC1155B as ERC1155, ERC1155TokenReceiver } from "../Base/ERC1155B.sol";
@@ -281,7 +281,7 @@ contract ERC1155Lazy is
         Types.Voucher calldata voucher
     ) private view {
         if (_signer != signer) revert InvalidSigner();
-        if (usedVouchers[voucher.voucherId] == true)
+        if (usedVouchers[voucher.voucherId])
             revert UsedVoucher();
         if (
             msg.value !=
@@ -297,7 +297,7 @@ contract ERC1155Lazy is
         Types.UserBatch calldata userBatch
     ) private view {
         if (_signer != signer) revert InvalidSigner();
-        if (usedVouchers[userBatch.voucherId] == true)
+        if (usedVouchers[userBatch.voucherId])
             revert UsedVoucher();
         if (
             msg.value !=

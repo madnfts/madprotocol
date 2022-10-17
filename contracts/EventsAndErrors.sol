@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pragma solidity 0.8.4;
+pragma solidity 0.8.16;
 
 import { FactoryVerifier } from "./lib/auth/FactoryVerifier.sol";
 import { IERC721, IERC1155 } from "./Types.sol";

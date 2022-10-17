@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pragma solidity 0.8.4;
+pragma solidity 0.8.16;
 
 import { ERC1155MinimalEventsAndErrors } from "../Base/interfaces/ERC1155EventAndErrors.sol";
 import { ERC1155B as ERC1155, ERC1155TokenReceiver } from "../Base/ERC1155B.sol";
@@ -59,7 +59,7 @@ contract ERC1155Minimal is
     /// @dev Can't be reminted if already minted, due to boolean.
     function safeMint(address to, uint256 amount) external payable onlyOwner {
         _feeCheck(0x40d097c3);
-        if (minted == true) revert AlreadyMinted();
+        if (minted) revert AlreadyMinted();
 
         minted = true;
         _mint(to, 1, amount, "");
@@ -142,7 +142,7 @@ contract ERC1155Minimal is
     function publicMint(uint256 balance) external payable {
         if (!publicMintState) revert PublicMintOff();
         if (msg.value != price) revert WrongPrice();
-        if (minted == true) revert AlreadyMinted();
+        if (minted) revert AlreadyMinted();
 
         minted = true;
         _mint(msg.sender, 1, balance, "");

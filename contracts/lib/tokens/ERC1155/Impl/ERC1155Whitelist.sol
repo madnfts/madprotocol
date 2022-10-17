@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pragma solidity 0.8.4;
+pragma solidity 0.8.16;
 
 import { ERC1155WhitelistEventsAndErrors } from "../Base/interfaces/ERC1155EventAndErrors.sol";
 import { ERC1155B as ERC1155, ERC1155TokenReceiver } from "../Base/ERC1155B.sol";
@@ -559,7 +559,7 @@ contract ERC1155Whitelist is
         canMintFree(freeAmount)
         balanceMatchesTotal(balances.length, balances, balanceTotal)
     {
-        if (claimed[msg.sender] == true)
+        if (claimed[msg.sender])
             revert AlreadyClaimed();
         unchecked {
             claimed[msg.sender] = true;

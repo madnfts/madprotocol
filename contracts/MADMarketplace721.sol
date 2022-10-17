@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pragma solidity 0.8.4;
+pragma solidity 0.8.16;
 
 /* 
 DISCLAIMER: 
@@ -238,7 +238,7 @@ contract MADMarketplace721 is
         else {
             // case for external tokens with ERC2981 support
             if (
-                ERC165Check(address(order.token)) == true &&
+                ERC165Check(address(order.token)) &&
                 interfaceCheck(
                     address(order.token),
                     0x2a55205a
@@ -306,7 +306,7 @@ contract MADMarketplace721 is
         else {
             // case for external tokens with ERC2981 support
             if (
-                ERC165Check(address(order.token)) == true &&
+                ERC165Check(address(order.token)) &&
                 interfaceCheck(
                     address(order.token),
                     0x2a55205a
@@ -350,14 +350,14 @@ contract MADMarketplace721 is
 
         order.endTime = 0;
 
+        emit CancelOrder(token, tokenId, _order, msg.sender);
+
+
         token.safeTransferFrom(
             address(this),
             msg.sender,
             tokenId
-        );
-
-        emit CancelOrder(token, tokenId, _order, msg.sender);
-    }
+        );    }
 
     receive() external payable {}
 
@@ -523,13 +523,13 @@ contract MADMarketplace721 is
         orderIdByToken[_token][_id].push(hash);
         orderIdBySeller[msg.sender].push(hash);
 
+        emit MakeOrder(_token, _id, hash, msg.sender);
+
         _token.safeTransferFrom(
             msg.sender,
             address(this),
             _id
         );
-
-        emit MakeOrder(_token, _id, hash, msg.sender);
     }
 
     /// @notice Provides hash of an order used as an order info pointer

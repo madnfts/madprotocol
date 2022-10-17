@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pragma solidity 0.8.4;
+pragma solidity 0.8.16;
 
 /* 
 DISCLAIMER: 
@@ -718,7 +718,7 @@ function splitterCheck(
         uint256 len = digest.length;
         mapping(address => bytes32[]) storage usrTkns =
             userTokens;
-        for (i; i < len;) {
+        for (; i < len;) {
             if(buffer == usrTkns[_user][i]) {
                 stdout = true;
             } unchecked { ++i; } 

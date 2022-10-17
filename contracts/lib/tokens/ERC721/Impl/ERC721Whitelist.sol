@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pragma solidity 0.8.4;
+pragma solidity 0.8.16;
 
 import { ERC721WhitelistEventsAndErrors } from "../Base/interfaces/ERC721EventAndErrors.sol";
 import { ERC721, ERC721TokenReceiver } from "../Base/ERC721.sol";
@@ -416,7 +416,7 @@ contract ERC721Whitelist is
         merkleVerify(merkleProof, claimListMerkleRoot)
         canMintFree(freeAmount)
     {
-        if (claimed[msg.sender] == true)
+        if (claimed[msg.sender])
             revert AlreadyClaimed();
 
         unchecked {

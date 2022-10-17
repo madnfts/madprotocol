@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pragma solidity 0.8.4;
+pragma solidity 0.8.16;
 
 import { ERC721LazyEventsAndErrors } from "../Base/interfaces/ERC721EventAndErrors.sol";
 import { ERC721, ERC721TokenReceiver } from "../Base/ERC721.sol";
@@ -227,7 +227,7 @@ contract ERC721Lazy is
         Types.Voucher calldata voucher
     ) private view {
         if (_signer != signer) revert InvalidSigner();
-        if (usedVouchers[voucher.voucherId] == true)
+        if (usedVouchers[voucher.voucherId])
             revert UsedVoucher();
         if (
             msg.value !=

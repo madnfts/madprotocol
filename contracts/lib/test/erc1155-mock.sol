@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pragma solidity 0.8.4;
+pragma solidity 0.8.16;
 
 import { ERC1155B, ERC1155TokenReceiver } from "../tokens/ERC1155/Base/ERC1155B.sol";
 

@@ -104,8 +104,11 @@ contract MADFactory721 is MAD,
     )
     {
         setMarket(_marketplace);
-        setRouter(_router);
+        // setRouter(_router);
         setSigner(_signer);
+
+        router = _router;
+        emit RouterUpdated(_router);
     }
 
     ////////////////////////////////////////////////////////////////
@@ -489,6 +492,7 @@ contract MADFactory721 is MAD,
         override
         onlyOwner
     {
+        require(newOwner != address(0), "Invalid address");
         // owner = newOwner;
         assembly {
             sstore(owner.slot, newOwner)
@@ -500,6 +504,8 @@ contract MADFactory721 is MAD,
     /// @dev `MADMarketplace` instance setter.
     /// @dev Function Sighash := 
     function setMarket(address _market) public onlyOwner {
+        require(_market != address(0), "Invalid address");
+
         assembly {
             sstore(market.slot, _market)
         }
@@ -510,6 +516,8 @@ contract MADFactory721 is MAD,
     /// @dev `MADRouter` instance setter.
     /// @dev Function Sighash := 0xc0d78655
     function setRouter(address _router) public onlyOwner {
+        require(_router != address(0), "Invalid address");
+
         // router = _router;
         assembly {
             sstore(router.slot, _router)
@@ -521,6 +529,8 @@ contract MADFactory721 is MAD,
     /// @dev Setter for EIP712 signer/validator instance.
     /// @dev Function Sighash := 0x6c19e783
     function setSigner(address _signer) public onlyOwner {
+        require(_signer != address(0), "Invalid address");
+
         // signer = _signer;
         assembly {
             sstore(signer.slot, _signer)

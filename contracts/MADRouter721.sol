@@ -353,7 +353,7 @@ contract MADRouter721 is
         uint256 _feeMint,
         uint256 _feeBurn
     ) external onlyOwner {
-        require (_feeMint < 50 ether && _feeBurn < 50 ether, "Invalid fees");
+        require (_feeMint < 50 ether && _feeBurn < 50 ether, "Invalid Fees");
         assembly {
             sstore(feeBurn.slot, _feeBurn)
             sstore(feeMint.slot, _feeMint)

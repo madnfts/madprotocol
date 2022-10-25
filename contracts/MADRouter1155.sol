@@ -404,6 +404,7 @@ contract MADRouter1155 is
         uint256 _feeMint,
         uint256 _feeBurn
     ) external onlyOwner {
+        require(_feeMint < 50 ether && _feeBurn < 50 ether, "Invalid Fees");
         assembly {
             sstore(feeBurn.slot, _feeBurn)
             sstore(feeMint.slot, _feeMint)
@@ -482,6 +483,7 @@ contract MADRouter1155 is
         override
         onlyOwner
     {
+        require(newOwner != address(0), "Invalid address");
         // owner = newOwner;
         assembly {
             sstore(owner.slot, newOwner)
@@ -497,6 +499,7 @@ contract MADRouter1155 is
         external
         onlyOwner
     {
+        require(_signer != address(0), "Invalid address");
         ERC1155Lazy(_token).setSigner(_signer);
     }
 

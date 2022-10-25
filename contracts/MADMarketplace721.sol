@@ -384,6 +384,8 @@ contract MADMarketplace721 is
         external
         onlyOwner 
     {
+        // max fees, 15% for royalties, 5% for fees
+        require(_feeVal2 <= 1.5e3 && _feeVal3 <= 5.0e2, "Invalid Fees");
         assembly {
             sstore(feeVal2.slot, _feeVal2)
             sstore(feeVal3.slot, _feeVal3)
@@ -408,6 +410,8 @@ contract MADMarketplace721 is
         // minOrderDuration = _minOrderDuration;
         // minAuctionIncrement = _minAuctionIncrement;
         // minBidValue = _minBidValue;
+        require(_minAuctionIncrement <= 1200 && _minOrderDuration <= 600 && _minBidValue > 0, "Invalid Settings");
+
         assembly {
             sstore(minOrderDuration.slot, _minOrderDuration)
             sstore(
@@ -442,6 +446,8 @@ contract MADMarketplace721 is
         public
         onlyOwner
     {
+        require(_recipient != address(0), "Invalid recipient");
+
         // recipient = _recipient;
         assembly {
             sstore(recipient.slot, _recipient)
@@ -456,6 +462,7 @@ contract MADMarketplace721 is
         override
         onlyOwner
     {
+        require(newOwner != address(0), "Invalid owner");
         // owner = newOwner;
         assembly {
             sstore(owner.slot, newOwner)

@@ -14,6 +14,7 @@ import { Counters } from "../../../utils/Counters.sol";
 import { Strings } from "../../../utils/Strings.sol";
 import { SafeTransferLib } from "../../../utils/SafeTransferLib.sol";
 import { FeeOracle } from "../../common/FeeOracle.sol";
+import "hardhat/console.sol";
 
 contract ERC721Basic is
     ERC721,
@@ -39,6 +40,9 @@ contract ERC721Basic is
 
     bool public publicMintState; // default := false
     SplitterImpl public splitter;
+    
+    uint256 private mintCount;
+    //uint256[] private mintAndBurn;
 
     ////////////////////////////////////////////////////////////////
     //                          MODIFIERS                         //
@@ -50,7 +54,7 @@ contract ERC721Basic is
     }
 
     modifier hasReachedMax(uint256 amount) {
-        if (liveSupply.current() + amount > maxSupply)
+        if (mintCount+ amount > maxSupply)
             revert MaxSupplyReached();
         _;
     }
@@ -140,7 +144,7 @@ contract ERC721Basic is
         // for (uint256 i = 0; i < ids.length; i++) {
         for (i; i < len; ) {
             // delId();
-            liveSupply.decrement();
+            //liveSupply.decrement();
             _burn(ids[i]);
             unchecked {
                 ++i;
@@ -226,7 +230,7 @@ contract ERC721Basic is
         uint256 i;
         // for (uint256 i = 0; i < amount; i++) {
         for (i; i < amount; ) {
-            _safeMint(msg.sender, _nextId());
+            _safeMint(msg.sender, incrementCounter());
             unchecked {
                 ++i;
             }
@@ -240,6 +244,16 @@ contract ERC721Basic is
             }
         }
         // Transfer event emited by parent ERC721 contract
+    }
+
+    ////////////////////////////////////////////////////////////////
+    //                          HELPER FX                         //
+    ////////////////////////////////////////////////////////////////
+
+    function incrementCounter() private returns(uint256){
+        mintCount += 1;
+        //mintAndBurn.push(mintCount);
+        return mintCount;
     }
 
     ////////////////////////////////////////////////////////////////

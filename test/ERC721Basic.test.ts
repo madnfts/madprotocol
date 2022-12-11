@@ -194,7 +194,6 @@ describe("ERC721Basic", () => {
       const tx = basic
         .connect(acc02)
         .mint(1, { value: price });
-
       await expect(tx).to.be.revertedWithCustomError(
         basic,
         BasicErrors.MaxSupplyReached,
@@ -287,9 +286,11 @@ describe("ERC721Basic", () => {
       );
     });
     it("Should revert if ids length is less than 2", async () => {
+      //await basic.setPublicMintState(true);
       const Counters = await ethers.getContractFactory(
         "Counters",
       );
+      //await basic.connect(acc01).mint(5, {value: price})
       await expect(
         basic.burn([1]),
       ).to.be.revertedWithCustomError(

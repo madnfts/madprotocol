@@ -14,7 +14,6 @@ import { Counters } from "../../../utils/Counters.sol";
 import { Strings } from "../../../utils/Strings.sol";
 import { SafeTransferLib } from "../../../utils/SafeTransferLib.sol";
 import { FeeOracle } from "../../common/FeeOracle.sol";
-import "hardhat/console.sol";
 
 contract ERC721Basic is
     ERC721,

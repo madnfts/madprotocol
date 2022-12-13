@@ -33,7 +33,7 @@ const DEFAULT_MNEMONIC =
 
 (async() => {
   const argv = await parser.argv;
-  if (["rinkeby", "mainnet"].includes(argv.network) && INFURA_API_KEY === undefined) {
+  if (["goerli", "rinkeby", "mainnet"].includes(argv.network) && INFURA_API_KEY === undefined) {
     throw new Error(
       `Could not find Infura key in env, unable to connect to network ${argv.network}`,
     );
@@ -46,7 +46,9 @@ const chainIds = {
   hardhat: 31337,
   mainnet: 1,
   rinkeby: 4,
+  goerli: 5,
   ganache: 1337,
+  "skaleTestnet": 344106930
   // "arbitrum-mainnet": 42161,
   // avalanche: 43114,
   // bsc: 56,
@@ -64,20 +66,17 @@ function getChainConfig(
       jsonRpcUrl = "https://api.s0.t.hmny.io";
       break;
     case "harmony-devnet":
-      jsonRpcUrl = "https://api.s0.ps.hmny.io/";
+      jsonRpcUrl = "https://api.s0.ps.hmny.io";
       break;
     case "ganache":
       jsonRpcUrl = "http://localhost:8545/";
       break;
+    case "skaleTestnet":
+      jsonRpcUrl = "https://staging-v3.skalenodes.com/v1/staging-utter-unripe-menkar";
+      break;
     default:
       jsonRpcUrl =
         "https://" + chain + ".infura.io/v3/" + INFURA_API_KEY;
-    // case "avalanche":
-    //   jsonRpcUrl = "https://api.avax.network/ext/bc/C/rpc";
-    //   break;
-    // case "bsc":
-    //   jsonRpcUrl = "https://bsc-dataseed1.binance.org";
-    //   break;
   }
   if (PK) {
     return {
@@ -102,15 +101,8 @@ const config: HardhatUserConfig = {
     apiKey: {
       harmonyDevnet: "your API key",
       harmony: "your API key",
-      // harmonyDev: process.env.DEVNET_API_KEY || "",
       mainnet: ETHERSCAN_API_KEY || "",
-      rinkeby: ETHERSCAN_API_KEY || "",
-      // arbitrumOne: process.env.ARBISCAN_API_KEY || "",
-      // avalanche: process.env.SNOWTRACE_API_KEY || "",
-      // bsc: process.env.BSCSCAN_API_KEY || "",
-      // optimisticEthereum: process.env.OPTIMISM_API_KEY || "",
-      // polygon: process.env.POLYGONSCAN_API_KEY || "",
-      // polygonMumbai: process.env.POLYGONSCAN_API_KEY || "",
+      rinkeby: ETHERSCAN_API_KEY || ""
     },
     customChains: [
       {
@@ -142,14 +134,10 @@ const config: HardhatUserConfig = {
     harmony: getChainConfig("harmony-mainnet"),
     harmonyDev: getChainConfig("harmony-devnet"),
     mainnet: getChainConfig("mainnet"),
+    goerli: getChainConfig("goerli"),
     rinkeby: getChainConfig("rinkeby"),
     ganache: getChainConfig("ganache"),
-    // arbitrum: getChainConfig("arbitrum-mainnet"),
-    // avalanche: getChainConfig("avalanche"),
-    // bsc: getChainConfig("bsc"),
-    // optimism: getChainConfig("optimism-mainnet"),
-    // "polygon-mainnet": getChainConfig("polygon-mainnet"),
-    // "polygon-mumbai": getChainConfig("polygon-mumbai"),
+    skaleTestnet: getChainConfig("skaleTestnet")
   },
   paths: {
     artifacts: "./artifacts",

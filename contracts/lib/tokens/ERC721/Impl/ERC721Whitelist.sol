@@ -243,7 +243,7 @@ contract ERC721Whitelist is
 
     function mintToCreator(uint256 amount)
         external
-        payable 
+        payable
         nonReentrant
         onlyOwner
         canMintFree(amount)
@@ -495,7 +495,7 @@ contract ERC721Whitelist is
             size := extcodesize(_owner)
         }
         if (size == 0) {
-            return; 
+            return;
         }
         uint256 _fee = FeeOracle(owner).feeLookup(_method);
         assembly {

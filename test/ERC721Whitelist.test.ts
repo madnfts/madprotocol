@@ -24,11 +24,11 @@ import {
 } from "./utils/interfaces";
 
 describe("ERC721Whitelist", () => {
-  /* 
-  For the sake of solely testing the nft functionalities, we consider 
-  the user as the contract's owner, and the marketplace just as the 
-  recipient for the royalties distribution; even though these tx 
-  would've been proxied through the marketplace address when the 
+  /*
+  For the sake of solely testing the nft functionalities, we consider
+  the user as the contract's owner, and the marketplace just as the
+  recipient for the royalties distribution; even though these tx
+  would've been proxied through the marketplace address when the
   other core contracts are taken into account.
   */
 
@@ -630,14 +630,16 @@ describe("ERC721Whitelist", () => {
         WhitelistErrors.DecrementOverflow,
       );
     });
-    it("Should burn update storage and emit events", async () => {
-      // const amount = ethers.BigNumber.from(2);
+    it("Should mint, burn then mint again, update storage and emit event", async () => {
       await wl.setPublicMintState(true);
       await wl.giftTokens([acc02.address, acc01.address]);
       await wl.giftTokens([acc02.address, acc01.address]);
 
       const ids = [1, 2, 3, 4];
       const tx = await wl.burn(ids);
+
+      await wl.giftTokens([acc02.address, acc01.address]);
+
       const dead = ethers.constants.AddressZero;
       const bal1 = await wl.callStatic.balanceOf(
         acc01.address,
@@ -651,8 +653,8 @@ describe("ERC721Whitelist", () => {
       const approved4 = await wl.callStatic.getApproved(4);
 
       expect(tx).to.be.ok;
-      expect(bal1).to.eq(0);
-      expect(bal2).to.eq(0);
+      expect(bal1).to.eq(1);
+      expect(bal2).to.eq(1);
       expect(approved1).to.eq(dead);
       expect(approved2).to.eq(dead);
       expect(approved3).to.eq(dead);

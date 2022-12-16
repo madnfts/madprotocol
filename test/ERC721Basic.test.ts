@@ -26,11 +26,11 @@ import {
 // import { base64 } from "ethers/lib/utils";
 
 describe("ERC721Basic", () => {
-  /* 
-  For the sake of solely testing the nft functionalities, we consider 
-  the user as the contract's owner, and the marketplace just as the 
-  recipient for the royalties distribution; even though these tx 
-  would've been proxied through the marketplace address when the 
+  /*
+  For the sake of solely testing the nft functionalities, we consider
+  the user as the contract's owner, and the marketplace just as the
+  recipient for the royalties distribution; even though these tx
+  would've been proxied through the marketplace address when the
   other core contracts are taken into account.
   */
 
@@ -299,7 +299,7 @@ describe("ERC721Basic", () => {
       );
     });
 
-    it("Should burn tokens, update storage and emit event", async () => {
+    it("Should mint, burn then mint again, update storage and emit event", async () => {
       const amount = ethers.BigNumber.from(2);
       await basic.setPublicMintState(true);
       await basic
@@ -311,6 +311,9 @@ describe("ERC721Basic", () => {
       const ids = [1, 2, 3, 4];
       const tx = await basic.burn(ids);
       const dead = ethers.constants.AddressZero;
+      await basic
+        .connect(acc01)
+        .mint(2, { value: price.mul(amount) });
       const bal1 = await basic.callStatic.balanceOf(
         acc01.address,
       );
@@ -323,7 +326,7 @@ describe("ERC721Basic", () => {
       const approved4 = await basic.callStatic.getApproved(4);
 
       expect(tx).to.be.ok;
-      expect(bal1).to.eq(0);
+      expect(bal1).to.eq(2);
       expect(bal2).to.eq(0);
       expect(approved1).to.eq(dead);
       expect(approved2).to.eq(dead);

@@ -39,9 +39,8 @@ contract ERC721Basic is
 
     bool public publicMintState; // default := false
     SplitterImpl public splitter;
-    
+
     uint256 private mintCount;
-    //uint256[] private mintAndBurn;
 
     ////////////////////////////////////////////////////////////////
     //                          MODIFIERS                         //
@@ -53,7 +52,7 @@ contract ERC721Basic is
     }
 
     modifier hasReachedMax(uint256 amount) {
-        if (mintCount+ amount > maxSupply)
+        if (mintCount + amount > maxSupply)
             revert MaxSupplyReached();
         _;
     }
@@ -120,7 +119,7 @@ contract ERC721Basic is
         uint256 i;
         // for (uint256 i = 0; i < amount; i++) {
         for (i; i < amount; ) {
-            _safeMint(to, _nextId());
+            _safeMint(to, incrementCounter());
             unchecked {
                 ++i;
             }
@@ -143,7 +142,7 @@ contract ERC721Basic is
         // for (uint256 i = 0; i < ids.length; i++) {
         for (i; i < len; ) {
             // delId();
-            //liveSupply.decrement();
+            liveSupply.decrement();
             _burn(ids[i]);
             unchecked {
                 ++i;
@@ -249,19 +248,15 @@ contract ERC721Basic is
     //                          HELPER FX                         //
     ////////////////////////////////////////////////////////////////
 
-    function incrementCounter() private returns(uint256){
-        mintCount += 1;
-        //mintAndBurn.push(mintCount);
-        return mintCount;
-    }
-
-    ////////////////////////////////////////////////////////////////
-    //                          HELPER FX                         //
-    ////////////////////////////////////////////////////////////////
-
     function _nextId() private returns (uint256) {
         liveSupply.increment();
         return liveSupply.current();
+    }
+
+    function incrementCounter() private returns(uint256){
+        _nextId();
+        mintCount += 1;
+        return mintCount;
     }
 
     ////////////////////////////////////////////////////////////////
@@ -309,7 +304,7 @@ contract ERC721Basic is
             size := extcodesize(_owner)
         }
         if (size == 0) {
-            return; 
+            return;
         }
 
         uint256 _fee = FeeOracle(owner).feeLookup(_method);

@@ -252,6 +252,9 @@ export async function lazyFixture721(): Promise<SplitterAndLazy721> {
   const vId = ethers.utils.keccak256(
     ethers.utils.toUtf8Bytes("voucher"),
   );
+  const vId2 = ethers.utils.keccak256(
+    ethers.utils.toUtf8Bytes("voucher2"),
+  );
 
   const [owner, amb, mad] = await ethers.getSigners();
   const payees = [mad.address, amb.address, owner.address];
@@ -312,6 +315,14 @@ export async function lazyFixture721(): Promise<SplitterAndLazy721> {
     amount: 10,
     price: bnPrice.toString(),
   };
+
+  const Voucher2 = {
+    voucherId: vId2,
+    users: usrs,
+    balances: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    amount: 10,
+    price: bnPrice.toString(),
+  };
   const data = JSON.stringify({
     types: {
       EIP712Domain: domain,
@@ -321,11 +332,26 @@ export async function lazyFixture721(): Promise<SplitterAndLazy721> {
     domain: domainData,
     message: Voucher,
   });
+  const data2 = JSON.stringify({
+    types: {
+      EIP712Domain: domain,
+      Voucher: voucherType,
+    },
+    primaryType: "Voucher",
+    domain: domainData,
+    message: Voucher2,
+  });
 
   const parsedData = JSON.parse(data);
+  const parsedData2 = JSON.parse(data2);
   const signature = signTypedData({
     privateKey: pk,
     data: parsedData,
+    version: SignTypedDataVersion.V4,
+  });
+  const signature2 = signTypedData({
+    privateKey: pk,
+    data: parsedData2,
     version: SignTypedDataVersion.V4,
   });
   const wrongSig = signTypedData({
@@ -368,19 +394,23 @@ export async function lazyFixture721(): Promise<SplitterAndLazy721> {
     lazy.address,
   );
   const voucher = Voucher;
+  const voucher2 = Voucher2;
   const sigSplit = ethers.utils.splitSignature(signature);
+  const sigSplit2 = ethers.utils.splitSignature(signature2);
 
   return {
     splitter,
     lazy,
     signature,
     sigSplit,
+    sigSplit2,
     signer,
     signerAddr,
     recover,
     domainCheck,
     wrongSig,
     voucher,
+    voucher2,
   };
 }
 

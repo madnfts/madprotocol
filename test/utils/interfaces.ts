@@ -52,12 +52,14 @@ export interface LazyFixture721 {
   lazy: ERC721Lazy;
   signature: string;
   sigSplit: Signature;
+  sigSplit2: Signature;
   signerAddr: string;
   signer: Wallet;
   recover: string;
   domainCheck: string;
   wrongSig: string;
   voucher: Voucher;
+  voucher2: Voucher;
 }
 export interface Voucher {
   voucherId: string;

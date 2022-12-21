@@ -67,7 +67,7 @@ function getChainConfig(
       jsonRpcUrl = "https://api.s0.ps.hmny.io/";
       break;
     case "ganache":
-      jsonRpcUrl = "http://localhost:8545/";
+      jsonRpcUrl = "http://localhost:7545/";
       break;
     default:
       jsonRpcUrl =

@@ -118,49 +118,49 @@ const main = async () => {
   console.log(`Core 1155 Auth transfers executed.`);
 
   //verify
-  await hre.run("verify:verify", {
-    address: m721.address,
-    constructorArguments: [
-      deployer.address,
-      300,
-      ethers.constants.AddressZero,
-    ],
-  });
-  await hre.run("verify:verify", {
-    address: m1155.address,
-    constructorArguments: [
-      deployer.address,
-      300,
-      ethers.constants.AddressZero,
-    ],
-  });
+//   await hre.run("verify:verify", {
+//     address: m721.address,
+//     constructorArguments: [
+//       deployer.address,
+//       300,
+//       ethers.constants.AddressZero,
+//     ],
+//   });
+//   await hre.run("verify:verify", {
+//     address: m1155.address,
+//     constructorArguments: [
+//       deployer.address,
+//       300,
+//       ethers.constants.AddressZero,
+//     ],
+//   });
 
-  await hre.run("verify:verify", {
-    address: r721.address,
-    constructorArguments: [f721.address],
-  });
-  await hre.run("verify:verify", {
-    address: r1155.address,
-    constructorArguments: [f1155.address],
-  });
+//   await hre.run("verify:verify", {
+//     address: r721.address,
+//     constructorArguments: [f721.address],
+//   });
+//   await hre.run("verify:verify", {
+//     address: r1155.address,
+//     constructorArguments: [f1155.address],
+//   });
 
-  await hre.run("verify:verify", {
-    address: f721.address,
-    constructorArguments: [
-      m721.address,
-      ethers.constants.AddressZero,
-      ethers.constants.AddressZero,
-    ],
-  });
-  await hre.run("verify:verify", {
-    address: f1155.address,
-    constructorArguments: [
-      m1155.address,
-      ethers.constants.AddressZero,
-      ethers.constants.AddressZero,
-    ],
-  });
-};
+//   await hre.run("verify:verify", {
+//     address: f721.address,
+//     constructorArguments: [
+//       m721.address,
+//       ethers.constants.AddressZero,
+//       ethers.constants.AddressZero,
+//     ],
+//   });
+//   await hre.run("verify:verify", {
+//     address: f1155.address,
+//     constructorArguments: [
+//       m1155.address,
+//       ethers.constants.AddressZero,
+//       ethers.constants.AddressZero,
+//     ],
+//   });
+ };
 
 main()
   .then(() => process.exit(0))

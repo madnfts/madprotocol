@@ -62,6 +62,8 @@ contract ERC721Whitelist is
     /// @dev For fetching purposes and max free claim control.
     mapping(address => bool) public claimed;
 
+    uint256 private mintCount;
+
     ////////////////////////////////////////////////////////////////
     //                          MODIFIERS                         //
     ////////////////////////////////////////////////////////////////
@@ -362,7 +364,7 @@ contract ERC721Whitelist is
     {
         uint256 i;
         for (i; i < amount; ) {
-            _safeMint(msg.sender, _nextId());
+            _safeMint(msg.sender, incrementCounter());
             unchecked {
                 ++i;
             }
@@ -377,7 +379,7 @@ contract ERC721Whitelist is
 
         // Transfer event emitted in parent ERC721 contract
     }
-
+    
     function whitelistMint(
         uint8 amount,
         bytes32[] calldata merkleProof
@@ -448,6 +450,12 @@ contract ERC721Whitelist is
     function _nextId() private returns (uint256) {
         liveSupply.increment();
         return liveSupply.current();
+    }
+
+    function incrementCounter() private returns(uint256){
+        _nextId();
+        mintCount += 1;
+        return mintCount;
     }
 
     ////////////////////////////////////////////////////////////////

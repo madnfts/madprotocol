@@ -465,25 +465,37 @@ describe("ERC1155Basic", () => {
       );
     });
 
-    it("Should burn tokens, update storage and emit event", async () => {
+    it("Should mint, burn then mint again, update storage and emit event", async () => {
+      //ID 1,2 will be minted in first mint call
+      //ID 3,4 will be minted in second mint call
+      //ID 1,2 will be burn in burn call
+      //ID 5,6 will be minted in third mint call. so mintCounter will be 6 in last
       const amount = ethers.BigNumber.from(2);
       await basic.setPublicMintState(true);
       await basic
         .connect(acc02)
-        .mint(2, 1, { value: price.mul(amount) });
+        .mint(2, 1, { value: price.mul(amount) }); // mintCount = 2
+
       await basic
         .connect(acc01)
-        .mint(2, 1, { value: price.mul(amount) });
+        .mint(2, 1, { value: price.mul(amount) }); // mintCount = 4
+
+      // this will not effect mintCount as we are not decrementing the cointer, only the liveSupply is decrementing
       const tx = await basic.burn([acc02.address, acc02.address], [1, 2], [1, 1]);
       const dead = ethers.constants.AddressZero;
-      const bal1 = await basic.callStatic.balanceOf(
-        acc01.address,
-        1,
-      );
-      
+      await basic
+        .connect(acc02)
+        .mint(2, 2, { value: price.mul(amount) }); // mintCount = 6
+
+        const bal1 = await basic.callStatic.balanceOf(
+          acc01.address,
+          4,
+        );  
+      const mintCounter = await basic.callStatic.getMintCount()
+        
       expect(tx).to.be.ok;
-      expect(bal1).to.eq(0);
-      
+      expect(bal1).to.eq(1);
+      expect(mintCounter).to.eq(6);
       await expect(tx)
         .to.emit(basic, "TransferSingle")
         .withArgs(owner.address, acc02.address, dead, 1, 1);

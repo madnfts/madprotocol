@@ -385,6 +385,10 @@ contract ERC721Lazy is
         return liveSupply.current();
     }
 
+    function getMintCount() public view returns(uint256) {
+        return mintCount;
+    }
+
     function DOMAIN_SEPARATOR()
         public
         view

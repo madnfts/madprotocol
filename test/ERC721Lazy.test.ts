@@ -435,6 +435,7 @@ describe("ERC721Lazy", () => {
       const approved2 = await lazy.callStatic.getApproved(13);
       const approved3 = await lazy.callStatic.getApproved(20);
       const approved4 = await lazy.callStatic.getApproved(30);
+      const mintCounter = await lazy.callStatic.getMintCount();
 
       expect(tx).to.be.ok;
       expect(bal1).to.eq(19);
@@ -444,6 +445,7 @@ describe("ERC721Lazy", () => {
       expect(approved2).to.eq(dead);
       expect(approved3).to.eq(dead);
       expect(approved4).to.eq(dead);
+      expect(mintCounter).to.eq(60);
 
       await expect(tx)
         .to.emit(lazy, "Transfer")

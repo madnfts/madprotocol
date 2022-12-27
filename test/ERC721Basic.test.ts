@@ -324,6 +324,7 @@ describe("ERC721Basic", () => {
       const approved2 = await basic.callStatic.getApproved(2);
       const approved3 = await basic.callStatic.getApproved(3);
       const approved4 = await basic.callStatic.getApproved(4);
+      const mintCounter = await basic.callStatic.getMintCount();
 
       expect(tx).to.be.ok;
       expect(bal1).to.eq(2);
@@ -332,6 +333,7 @@ describe("ERC721Basic", () => {
       expect(approved2).to.eq(dead);
       expect(approved3).to.eq(dead);
       expect(approved4).to.eq(dead);
+      expect(mintCounter).to.eq(6);
 
       await expect(tx)
         .to.emit(basic, "Transfer")

@@ -293,6 +293,10 @@ contract ERC721Basic is
         return liveSupply.current();
     }
 
+    function getMintCount() public view returns(uint256) {
+        return mintCount;
+    }
+
     ////////////////////////////////////////////////////////////////
     //                     INTERNAL FUNCTIONS                     //
     ////////////////////////////////////////////////////////////////

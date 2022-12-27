@@ -351,10 +351,6 @@ contract ERC1155Basic is
         return mintCount;
     }
 
-    function getMintCount() private returns(uint256){
-        return mintCount;
-    }
-
     ////////////////////////////////////////////////////////////////
     //                           VIEW FX                          //
     ////////////////////////////////////////////////////////////////
@@ -389,6 +385,10 @@ contract ERC1155Basic is
 
     function totalSupply() public view returns (uint256) {
         return liveSupply.current();
+    }
+
+    function getMintCount() public view returns(uint256) {
+        return mintCount;
     }
 
     ////////////////////////////////////////////////////////////////

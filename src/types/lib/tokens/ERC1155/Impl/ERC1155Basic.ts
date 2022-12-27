@@ -496,9 +496,7 @@ export interface ERC1155Basic extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    getMintCount(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+    getMintCount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getURI(overrides?: CallOverrides): Promise<[string]>;
 
@@ -663,9 +661,7 @@ export interface ERC1155Basic extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  getMintCount(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  getMintCount(overrides?: CallOverrides): Promise<BigNumber>;
 
   getURI(overrides?: CallOverrides): Promise<string>;
 
@@ -1080,9 +1076,7 @@ export interface ERC1155Basic extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    getMintCount(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
+    getMintCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     getURI(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1246,9 +1240,7 @@ export interface ERC1155Basic extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    getMintCount(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+    getMintCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getURI(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

@@ -711,6 +711,12 @@ describe("ERC721Whitelist", () => {
       );
     });
 
+    it("Should query mint count", async () => {
+      const tx = await wl.callStatic.getMintCount();
+      expect(tx).to.be.ok;
+      expect(tx).to.eq(0);
+    });
+
     it("Should support interfaces", async () => {
       const erc165 =
         getInterfaceID(ERC165Interface).interfaceID._hex;

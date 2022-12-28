@@ -781,6 +781,12 @@ describe("ERC1155Basic", () => {
       expect(tx).to.eq(0);
     });
 
+    it("Should query mint count", async () => {
+      const tx = await basic.callStatic.getMintCount();
+      expect(tx).to.be.ok;
+      expect(tx).to.eq(0);
+    });
+
     it("Should query base uri", async () => {
       const base = "ipfs://cid/";
       const tx = await basic.callStatic.getURI();

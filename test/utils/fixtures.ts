@@ -542,6 +542,9 @@ export async function lazyFixture1155(): Promise<SplitterAndLazy1155> {
     ethers.utils.toUtf8Bytes("voucher"),
   );
   const vId2 = ethers.utils.keccak256(
+    ethers.utils.toUtf8Bytes("voucher2"),
+  );
+  const vIdBatch = ethers.utils.keccak256(
     ethers.utils.toUtf8Bytes("batch"),
   );
 
@@ -609,8 +612,15 @@ export async function lazyFixture1155(): Promise<SplitterAndLazy1155> {
     amount: 10,
     price: bnPrice.toString(),
   };
-  const UserBatch = {
+  const Voucher2 = {
     voucherId: vId2,
+    users: usrs,
+    balances: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    amount: 10,
+    price: bnPrice.toString(),
+  };
+  const UserBatch = {
+    voucherId: vIdBatch,
     ids: [1, 33, 7],
     balances: [1, 1, 1],
     price: bnPrice.toString(),
@@ -628,6 +638,15 @@ export async function lazyFixture1155(): Promise<SplitterAndLazy1155> {
   const data2 = JSON.stringify({
     types: {
       EIP712Domain: domain,
+      Voucher: voucherType,
+    },
+    primaryType: "Voucher",
+    domain: domainData,
+    message: Voucher2,
+  });
+  const dataBatch = JSON.stringify({
+    types: {
+      EIP712Domain: domain,
       UserBatch: userBatchType,
     },
     primaryType: "UserBatch",
@@ -637,14 +656,20 @@ export async function lazyFixture1155(): Promise<SplitterAndLazy1155> {
 
   const parsedData = JSON.parse(data);
   const parsedData2 = JSON.parse(data2);
+  const parsedDataBatch = JSON.parse(dataBatch);
   const vSig = signTypedData({
     privateKey: pk,
     data: parsedData,
     version: SignTypedDataVersion.V4,
   });
-  const ubSig = signTypedData({
+  const vSig2 = signTypedData({
     privateKey: pk,
     data: parsedData2,
+    version: SignTypedDataVersion.V4,
+  });
+  const ubSig = signTypedData({
+    privateKey: pk,
+    data: parsedDataBatch,
     version: SignTypedDataVersion.V4,
   });
   const wrongSig = signTypedData({
@@ -658,7 +683,7 @@ export async function lazyFixture1155(): Promise<SplitterAndLazy1155> {
     version: SignTypedDataVersion.V4,
   });
   const ubRecover = recoverTypedSignature({
-    data: parsedData2,
+    data: parsedDataBatch,
     signature: ubSig,
     version: SignTypedDataVersion.V4,
   });
@@ -692,8 +717,10 @@ export async function lazyFixture1155(): Promise<SplitterAndLazy1155> {
     lazy.address,
   );
   const voucher = Voucher;
+  const voucher2 = Voucher2;
   const userBatch = UserBatch;
   const vSigSplit = ethers.utils.splitSignature(vSig);
+  const vSigSplit2 = ethers.utils.splitSignature(vSig2);
   const ubSigSplit = ethers.utils.splitSignature(ubSig);
 
   return {
@@ -701,6 +728,7 @@ export async function lazyFixture1155(): Promise<SplitterAndLazy1155> {
     lazy,
     vSig,
     vSigSplit,
+    vSigSplit2,
     vRecover,
     ubSig,
     ubSigSplit,
@@ -710,6 +738,7 @@ export async function lazyFixture1155(): Promise<SplitterAndLazy1155> {
     domainCheck,
     wrongSig,
     voucher,
+    voucher2,
     userBatch,
   };
 }

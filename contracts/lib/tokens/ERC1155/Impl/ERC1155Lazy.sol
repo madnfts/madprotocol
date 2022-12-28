@@ -271,17 +271,12 @@ contract ERC1155Lazy is
     //                          HELPER FX                         //
     ////////////////////////////////////////////////////////////////
 
-     function incrementCounter() private returns(uint256){
-        _nextId();
-        mintCount += 1;
-        return mintCount;
-    }
-
-     function incrementCounter(uint256 amount) private returns(uint256){
+    function incrementCounter(uint256 amount) private returns(uint256){
         liveSupply.increment(amount);
         mintCount += amount;
         return mintCount;
     }
+    
     function _nextId() private returns (uint256) {
         liveSupply.increment();
         return liveSupply.current();
@@ -415,7 +410,7 @@ contract ERC1155Lazy is
         require(_balances.length == _amount, "INVALID_AMOUNT");
         uint256 j;
         while (j < _amount) {
-            _mint(_key, incrementCounter(), _balances[j], "");
+            _mint(_key, incrementCounter(_balances[j]), _balances[j], "");
             // can't overflow due to have been previously validated by signer
             unchecked {
                 ++j;
@@ -451,6 +446,10 @@ contract ERC1155Lazy is
 
     function totalSupply() public view returns (uint256) {
         return liveSupply.current();
+    }
+
+    function getMintCount() public view returns(uint256) {
+        return mintCount;
     }
 
     function DOMAIN_SEPARATOR()

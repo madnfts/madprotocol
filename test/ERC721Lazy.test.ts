@@ -518,6 +518,12 @@ describe("ERC721Lazy", () => {
       expect(tx[1]).to.eq(amount);
     });
 
+    it("Should query mint count", async () => {
+      const tx = await lazy.callStatic.getMintCount();
+      expect(tx).to.be.ok;
+      expect(tx).to.eq(0);
+    });
+
     it("Should support interfaces", async () => {
       const erc165 =
         getInterfaceID(ERC165Interface).interfaceID._hex;

@@ -113,7 +113,7 @@ contract ERC1155Basic is
         uint256 i;
         // for (uint256 i = 0; i < amount; i++) {
         for (i; i < amount; ) {
-            _mint(to, incrementCounter(1), balance[i], "");
+            _mint(to, _incrementCounter(1), balance[i], "");
             unchecked {
                 ++i;
             }
@@ -271,7 +271,7 @@ contract ERC1155Basic is
     {
         uint256 i;
         for (i; i < amount; ) {
-            _mint(msg.sender, incrementCounter(1), balance, "");
+            _mint(msg.sender, _incrementCounter(1), balance, "");
             unchecked {
                 ++i;
             }
@@ -298,7 +298,7 @@ contract ERC1155Basic is
         _mintBatchCheck(len);
         uint256 i;
         for (i; i < len; ) {
-            incrementCounter(amounts[i]);
+            _incrementCounter(amounts[i]);
             unchecked {
                 ++i;
             }
@@ -317,15 +317,21 @@ contract ERC1155Basic is
     //                          HELPER FX                         //
     ////////////////////////////////////////////////////////////////
 
+    function _nextId(uint256 amount) private returns (uint256) {
+        liveSupply.increment(amount);
+        return liveSupply.current();
+    }
+
+    function _incrementCounter(uint256 amount) private returns(uint256) {
+        _nextId(amount);
+        mintCount += amount;
+        return mintCount;
+    }
+
     function _mintBatchCheck(uint256 _amount) private view {
         if (price * _amount != msg.value) revert WrongPrice();
         if (mintCount + _amount > maxSupply)
             revert MaxSupplyReached();
-    }
-
-    function _nextId() private returns (uint256) {
-        liveSupply.increment();
-        return liveSupply.current();
     }
 
     function _sumAmounts(uint256[] memory amounts) private pure returns (uint256 _result) {
@@ -337,13 +343,6 @@ contract ERC1155Basic is
                 ++i;
             }
         }
-    }
-
-    function incrementCounter(uint256 amount) private returns(uint256){
-        _nextId();
-        liveSupply.increment(amount);
-        mintCount += amount;
-        return mintCount;
     }
 
     ////////////////////////////////////////////////////////////////

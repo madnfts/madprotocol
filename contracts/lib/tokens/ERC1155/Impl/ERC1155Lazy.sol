@@ -133,7 +133,7 @@ contract ERC1155Lazy is
         require(len == userBatch.balances.length, "INVALID_AMOUNT");
 
         for (i; i < len; ) {
-            incrementCounter(userBatch.balances[i]);
+            _incrementCounter(userBatch.balances[i]);
             // can't overflow due to have been previously validated by signer
             unchecked {
                 ++i;
@@ -271,15 +271,15 @@ contract ERC1155Lazy is
     //                          HELPER FX                         //
     ////////////////////////////////////////////////////////////////
 
-    function incrementCounter(uint256 amount) private returns(uint256){
+    function _nextId(uint256 amount) private returns (uint256) {
         liveSupply.increment(amount);
+        return liveSupply.current();
+    }
+
+    function _incrementCounter(uint256 amount) private returns(uint256) {
+        _nextId(amount);
         mintCount += amount;
         return mintCount;
-    }
-    
-    function _nextId() private returns (uint256) {
-        liveSupply.increment();
-        return liveSupply.current();
     }
 
     /// @dev Checks for signer validity and if total balance provided in the message matches to voucher's record.
@@ -410,7 +410,7 @@ contract ERC1155Lazy is
         require(_balances.length == _amount, "INVALID_AMOUNT");
         uint256 j;
         while (j < _amount) {
-            _mint(_key, incrementCounter(_balances[j]), _balances[j], "");
+            _mint(_key, _incrementCounter(_balances[j]), _balances[j], "");
             // can't overflow due to have been previously validated by signer
             unchecked {
                 ++j;

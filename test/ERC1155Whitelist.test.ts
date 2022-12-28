@@ -915,7 +915,7 @@ describe("ERC1155Whitelist", () => {
       );
     });
 
-    it("Should burn tokens, update storage and emit event", async () => {
+    it("Should mint, burn, mint again, update storage and emit event", async () => {
       const amount = ethers.BigNumber.from(2);
       await wl.setPublicMintState(true);
       await wl
@@ -923,9 +923,12 @@ describe("ERC1155Whitelist", () => {
         .mint(2, [1, 1], 2, { value: price.mul(amount) });
       await wl
         .connect(acc01)
-        .mint(2, [1, 1,], 2, { value: price.mul(amount) });
+        .mint(2, [1, 1], 2, { value: price.mul(amount) });
       const ids = [1, 2, 3, 4];
       const tx = await wl.burn([acc02.address, acc02.address, acc01.address, acc01.address], ids, [1, 1, 1, 1]);
+      await wl
+        .connect(acc01)
+        .mint(2, [1, 1], 2, { value: price.mul(amount) });
       const dead = ethers.constants.AddressZero;
       const bal1 = await wl.callStatic.balanceOf(
         acc01.address,
@@ -935,10 +938,17 @@ describe("ERC1155Whitelist", () => {
         acc02.address,
         3,
       );
+      const bal3 = await wl.callStatic.balanceOf(
+        acc01.address,
+        5,
+      );
+      const mintCounter = await wl.callStatic.getMintCount();
 
       expect(tx).to.be.ok;
       expect(bal1).to.eq(0);
       expect(bal2).to.eq(0);
+      expect(bal3).to.eq(1);
+      expect(mintCounter).to.eq(6);
 
       await expect(tx)
         .to.emit(wl, "TransferSingle")
@@ -1205,6 +1215,13 @@ describe("ERC1155Whitelist", () => {
         wl,
         WhitelistErrors.NotMintedYet,
       );
+    });
+
+    it("Should query total supply", async () => {
+      const tx = await wl.callStatic.totalSupply();
+
+      expect(tx).to.be.ok;
+      expect(tx).to.eq(0);
     });
 
     it("Should query total supply", async () => {

@@ -223,7 +223,7 @@ contract ERC721Lazy is
         return liveSupply.current();
     }
 
-    function incrementCounter() private returns(uint256){
+    function _incrementCounter() private returns(uint256){
         _nextId();
         mintCount += 1;
         return mintCount;
@@ -343,7 +343,7 @@ contract ERC721Lazy is
     {
         uint256 j;
         while (j < _amount) {
-            _mint(_key, incrementCounter());
+            _mint(_key, _incrementCounter());
             // can't overflow due to have been previously validated by signer
             unchecked {
                 ++j;

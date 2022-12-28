@@ -119,7 +119,7 @@ contract ERC721Basic is
         uint256 i;
         // for (uint256 i = 0; i < amount; i++) {
         for (i; i < amount; ) {
-            _safeMint(to, incrementCounter());
+            _safeMint(to, _incrementCounter());
             unchecked {
                 ++i;
             }
@@ -228,7 +228,7 @@ contract ERC721Basic is
         uint256 i;
         // for (uint256 i = 0; i < amount; i++) {
         for (i; i < amount; ) {
-            _safeMint(msg.sender, incrementCounter());
+            _safeMint(msg.sender, _incrementCounter());
             unchecked {
                 ++i;
             }
@@ -253,7 +253,7 @@ contract ERC721Basic is
         return liveSupply.current();
     }
 
-    function incrementCounter() private returns(uint256){
+    function _incrementCounter() private returns(uint256){
         _nextId();
         mintCount += 1;
         return mintCount;

@@ -254,7 +254,7 @@ contract ERC721Whitelist is
         freeSupply += amount;
         uint256 i;
         for (i; i < amount; ) {
-            _safeMint(tx.origin, incrementCounter());
+            _safeMint(tx.origin, _incrementCounter());
             unchecked {
                 ++i;
             }
@@ -281,7 +281,7 @@ contract ERC721Whitelist is
         freeSupply += amountGifted;
         uint256 i;
         for (i; i < amountGifted; ) {
-            _safeMint(addresses[i], incrementCounter());
+            _safeMint(addresses[i], _incrementCounter());
             unchecked {
                 ++i;
             }
@@ -364,7 +364,7 @@ contract ERC721Whitelist is
     {
         uint256 i;
         for (i; i < amount; ) {
-            _safeMint(msg.sender, incrementCounter());
+            _safeMint(msg.sender, _incrementCounter());
             unchecked {
                 ++i;
             }
@@ -397,7 +397,7 @@ contract ERC721Whitelist is
         }
         uint256 i;
         for (i; i < amount; ) {
-            _safeMint(msg.sender, incrementCounter());
+            _safeMint(msg.sender, _incrementCounter());
             unchecked {
                 ++i;
             }
@@ -428,7 +428,7 @@ contract ERC721Whitelist is
 
         uint256 j;
         while (j < freeAmount) {
-            _safeMint(msg.sender, incrementCounter());
+            _safeMint(msg.sender, _incrementCounter());
             unchecked {
                 ++j;
             }
@@ -452,7 +452,7 @@ contract ERC721Whitelist is
         return liveSupply.current();
     }
 
-    function incrementCounter() private returns(uint256){
+    function _incrementCounter() private returns(uint256){
         _nextId();
         mintCount += 1;
         return mintCount;

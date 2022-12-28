@@ -651,6 +651,7 @@ describe("ERC721Whitelist", () => {
       const approved2 = await wl.callStatic.getApproved(2);
       const approved3 = await wl.callStatic.getApproved(3);
       const approved4 = await wl.callStatic.getApproved(4);
+      const mintCounter = await wl.callStatic.getMintCount();
 
       expect(tx).to.be.ok;
       expect(bal1).to.eq(1);
@@ -659,6 +660,7 @@ describe("ERC721Whitelist", () => {
       expect(approved2).to.eq(dead);
       expect(approved3).to.eq(dead);
       expect(approved4).to.eq(dead);
+      expect(mintCounter).to.eq(6);
 
       await expect(tx)
         .to.emit(wl, "Transfer")

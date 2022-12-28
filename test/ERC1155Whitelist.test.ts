@@ -1224,9 +1224,8 @@ describe("ERC1155Whitelist", () => {
       expect(tx).to.eq(0);
     });
 
-    it("Should query total supply", async () => {
-      const tx = await wl.callStatic.totalSupply();
-
+    it("Should query mint count", async () => {
+      const tx = await wl.callStatic.getMintCount();
       expect(tx).to.be.ok;
       expect(tx).to.eq(0);
     });

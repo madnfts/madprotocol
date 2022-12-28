@@ -480,17 +480,17 @@ describe("ERC1155Basic", () => {
         .connect(acc01)
         .mint(2, 1, { value: price.mul(amount) }); // mintCount = 4
 
-      // this will not effect mintCount as we are not decrementing the cointer, only the liveSupply is decrementing
+      // this will not effect mintCount as we are not decrementing the counter, only the liveSupply is decrementing
       const tx = await basic.burn([acc02.address, acc02.address], [1, 2], [1, 1]);
       const dead = ethers.constants.AddressZero;
       await basic
         .connect(acc02)
         .mint(2, 2, { value: price.mul(amount) }); // mintCount = 6
 
-        const bal1 = await basic.callStatic.balanceOf(
-          acc01.address,
-          4,
-        );  
+      const bal1 = await basic.callStatic.balanceOf(
+        acc01.address,
+        4,
+      );  
       const mintCounter = await basic.callStatic.getMintCount()
         
       expect(tx).to.be.ok;

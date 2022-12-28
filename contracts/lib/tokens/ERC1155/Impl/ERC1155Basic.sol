@@ -113,7 +113,7 @@ contract ERC1155Basic is
         uint256 i;
         // for (uint256 i = 0; i < amount; i++) {
         for (i; i < amount; ) {
-            _mint(to, incrementCounter(), balance[i], "");
+            _mint(to, incrementCounter(1), balance[i], "");
             unchecked {
                 ++i;
             }
@@ -271,7 +271,7 @@ contract ERC1155Basic is
     {
         uint256 i;
         for (i; i < amount; ) {
-            _mint(msg.sender, incrementCounter(), balance, "");
+            _mint(msg.sender, incrementCounter(1), balance, "");
             unchecked {
                 ++i;
             }
@@ -339,13 +339,8 @@ contract ERC1155Basic is
         }
     }
 
-    function incrementCounter() private returns(uint256){
-        _nextId();
-        mintCount += 1;
-        return mintCount;
-    }
-
     function incrementCounter(uint256 amount) private returns(uint256){
+        _nextId();
         liveSupply.increment(amount);
         mintCount += amount;
         return mintCount;

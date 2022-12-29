@@ -1,10 +1,10 @@
 {
   "name": "mad-contracts",
   "description": "MADNFTs' smart contracts",
-  "version": "0.9.0",
+  "version": "1.0",
   "author": {
-    "name": "MAD",
-    "url": "https://github.com/{INSERT_REPO}"
+    "name": "MADNFTs",
+    "url": "https://github.com/madnfts/madnfts-solidity-contracts"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.0.2",
@@ -72,13 +72,13 @@
     "access": "public"
   },
   "scripts": {
+    "deploy:harmony": "hardhat run scripts/devnetDeploy.ts --network harmony",
+    "deploy:harmonyDevnet": "hardhat run scripts/devnetDeploy.ts --network harmonyDevnet",
+    "deploy:skaleDevnet": "hardhat run scripts/devnetDeploy.ts --network skaleDevnet",
+    "deploy:goerli": "hardhat run scripts/devnetDeploy.ts --network goerli",
+    "deploy:ganache": "hardhat run scripts/devnetDeploy.ts --network ganache",
     "build-marketplace": "sol-merger --remove-comments \"./contracts/MADMarketplace721.sol\" ./build",
     "build-factory": "sol-merger --remove-comments \"./contracts/MADFactory721.sol\" ./build",
-    "deploy:harmony": "hardhat run scripts/devnetDeploy.ts --network harmony",
-    "deploy:ganache": "hardhat run scripts/devnetDeploy.ts --network ganache",
-    "deploy:devnet": "hardhat run scripts/devnetDeploy.ts --network devnet",
-    "compile:watch": "nodemon --watch contracts/{INSERT_CONTRACT}.sol --exec 'npx hardhat compile'",
-    "test:watch": "nodemon --watch test/{INSERT_TEST}.test.ts --exec 'npx hardhat test'",
     "slither:run": "slither . --exclude conformance-to-solidity-naming-conventions,external-function,assembly,uninitialized-state,locked-ether,constable-states",
     "clean": "shx rm -rf ./artifacts ./cache ./coverage ./src/types ./coverage.json",
     "commit": "git-cz",

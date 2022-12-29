@@ -62,6 +62,8 @@ contract ERC721Whitelist is
     /// @dev For fetching purposes and max free claim control.
     mapping(address => bool) public claimed;
 
+    uint256 private mintCount;
+
     ////////////////////////////////////////////////////////////////
     //                          MODIFIERS                         //
     ////////////////////////////////////////////////////////////////
@@ -243,7 +245,7 @@ contract ERC721Whitelist is
 
     function mintToCreator(uint256 amount)
         external
-        payable 
+        payable
         nonReentrant
         onlyOwner
         canMintFree(amount)
@@ -252,7 +254,7 @@ contract ERC721Whitelist is
         freeSupply += amount;
         uint256 i;
         for (i; i < amount; ) {
-            _safeMint(tx.origin, _nextId());
+            _safeMint(tx.origin, _incrementCounter());
             unchecked {
                 ++i;
             }
@@ -279,7 +281,7 @@ contract ERC721Whitelist is
         freeSupply += amountGifted;
         uint256 i;
         for (i; i < amountGifted; ) {
-            _safeMint(addresses[i], _nextId());
+            _safeMint(addresses[i], _incrementCounter());
             unchecked {
                 ++i;
             }
@@ -362,7 +364,7 @@ contract ERC721Whitelist is
     {
         uint256 i;
         for (i; i < amount; ) {
-            _safeMint(msg.sender, _nextId());
+            _safeMint(msg.sender, _incrementCounter());
             unchecked {
                 ++i;
             }
@@ -377,7 +379,7 @@ contract ERC721Whitelist is
 
         // Transfer event emitted in parent ERC721 contract
     }
-
+    
     function whitelistMint(
         uint8 amount,
         bytes32[] calldata merkleProof
@@ -395,7 +397,7 @@ contract ERC721Whitelist is
         }
         uint256 i;
         for (i; i < amount; ) {
-            _safeMint(msg.sender, _nextId());
+            _safeMint(msg.sender, _incrementCounter());
             unchecked {
                 ++i;
             }
@@ -426,7 +428,7 @@ contract ERC721Whitelist is
 
         uint256 j;
         while (j < freeAmount) {
-            _safeMint(msg.sender, _nextId());
+            _safeMint(msg.sender, _incrementCounter());
             unchecked {
                 ++j;
             }
@@ -448,6 +450,12 @@ contract ERC721Whitelist is
     function _nextId() private returns (uint256) {
         liveSupply.increment();
         return liveSupply.current();
+    }
+
+    function _incrementCounter() private returns(uint256){
+        _nextId();
+        mintCount += 1;
+        return mintCount;
     }
 
     ////////////////////////////////////////////////////////////////
@@ -484,6 +492,10 @@ contract ERC721Whitelist is
         return liveSupply.current();
     }
 
+    function getMintCount() public view returns(uint256) {
+        return mintCount;
+    }
+
     ////////////////////////////////////////////////////////////////
     //                     INTERNAL FUNCTIONS                     //
     ////////////////////////////////////////////////////////////////
@@ -495,7 +507,7 @@ contract ERC721Whitelist is
             size := extcodesize(_owner)
         }
         if (size == 0) {
-            return; 
+            return;
         }
         uint256 _fee = FeeOracle(owner).feeLookup(_method);
         assembly {

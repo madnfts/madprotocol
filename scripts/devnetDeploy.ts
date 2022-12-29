@@ -21,13 +21,13 @@ const main = async () => {
 
   /// deploy the libraries and link them
 
-  const ERC1155BasicDeployer = await ethers.getContractFactory('ERC1155BasicDeployer');
+  const ERC1155BasicDeployer = await ethers.getContractFactory('ERC1155BasicDeployer'); 
   const ERC1155LazyDeployer = await ethers.getContractFactory('ERC1155LazyDeployer')
   const ERC1155MinimalDeployer = await ethers.getContractFactory('ERC1155MinimalDeployer')
   const ERC1155WhitelistDeployer = await ethers.getContractFactory('ERC1155WhitelistDeployer')
   const SplitterDeployer = await ethers.getContractFactory('SplitterDeployer')
 
-  const ERC721BasicDeployer = await ethers.getContractFactory('ERC721BasicDeployer');
+  const ERC721BasicDeployer = await ethers.getContractFactory('ERC721BasicDeployer'); 
   const ERC721LazyDeployer = await ethers.getContractFactory('ERC721LazyDeployer')
   const ERC721MinimalDeployer = await ethers.getContractFactory('ERC721MinimalDeployer')
   const ERC721WhitelistDeployer = await ethers.getContractFactory('ERC721WhitelistDeployer')
@@ -118,49 +118,49 @@ const main = async () => {
   console.log(`Core 1155 Auth transfers executed.`);
 
   //verify
-  // await hre.run("verify:verify", {
-  //   address: m721.address,
-  //   constructorArgumengeorlits: [
-  //     deployer.address,
-  //     300,
-  //     ethers.constants.AddressZero,
-  //   ],
-  // });
-  // await hre.run("verify:verify", {
-  //   address: m1155.address,
-  //   constructorArguments: [
-  //     deployer.address,
-  //     300,
-  //     ethers.constants.AddressZero,
-  //   ],
-  // });
-  //
-  // await hre.run("verify:verify", {
-  //   address: r721.address,
-  //   constructorArguments: [f721.address],
-  // });
-  // await hre.run("verify:verify", {
-  //   address: r1155.address,
-  //   constructorArguments: [f1155.address],
-  // });
-  //
-  // await hre.run("verify:verify", {
-  //   address: f721.address,
-  //   constructorArguments: [
-  //     m721.address,
-  //     ethers.constants.AddressZero,
-  //     ethers.constants.AddressZero,
-  //   ],
-  // });
-  // await hre.run("verify:verify", {
-  //   address: f1155.address,
-  //   constructorArguments: [
-  //     m1155.address,
-  //     ethers.constants.AddressZero,
-  //     ethers.constants.AddressZero,
-  //   ],
-  // });
-};
+//   await hre.run("verify:verify", {
+//     address: m721.address,
+//     constructorArguments: [
+//       deployer.address,
+//       300,
+//       ethers.constants.AddressZero,
+//     ],
+//   });
+//   await hre.run("verify:verify", {
+//     address: m1155.address,
+//     constructorArguments: [
+//       deployer.address,
+//       300,
+//       ethers.constants.AddressZero,
+//     ],
+//   });
+
+//   await hre.run("verify:verify", {
+//     address: r721.address,
+//     constructorArguments: [f721.address],
+//   });
+//   await hre.run("verify:verify", {
+//     address: r1155.address,
+//     constructorArguments: [f1155.address],
+//   });
+
+//   await hre.run("verify:verify", {
+//     address: f721.address,
+//     constructorArguments: [
+//       m721.address,
+//       ethers.constants.AddressZero,
+//       ethers.constants.AddressZero,
+//     ],
+//   });
+//   await hre.run("verify:verify", {
+//     address: f1155.address,
+//     constructorArguments: [
+//       m1155.address,
+//       ethers.constants.AddressZero,
+//       ethers.constants.AddressZero,
+//     ],
+//   });
+ };
 
 main()
   .then(() => process.exit(0))

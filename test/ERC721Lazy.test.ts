@@ -30,11 +30,11 @@ import {
 } from "./utils/interfaces";
 
 describe("ERC721Lazy", () => {
-  /* 
-  For the sake of solely testing the nft functionalities, we consider 
-  the user as the contract's owner, and the marketplace just as the 
-  recipient for the royalties distribution; even though these tx 
-  would've been proxied through the marketplace address when the 
+  /*
+  For the sake of solely testing the nft functionalities, we consider
+  the user as the contract's owner, and the marketplace just as the
+  recipient for the royalties distribution; even though these tx
+  would've been proxied through the marketplace address when the
   other core contracts are taken into account.
   */
 
@@ -58,15 +58,16 @@ describe("ERC721Lazy", () => {
 
   let splitter: SplitterImpl;
   let lazy: ERC721Lazy;
-  let erc20: MockERC20;
   let signature: string;
   let wrongSig: string;
   let voucher: Voucher;
+  let voucher2: Voucher;
   let signerAddr: string;
   let recover: string;
   let domainCheck: string;
   let signer: Wallet;
   let sigSplit: Signature;
+  let sigSplit2: Signature;
 
   const fundAmount: BigNumber =
     ethers.utils.parseEther("10000");
@@ -91,7 +92,9 @@ describe("ERC721Lazy", () => {
       domainCheck,
       wrongSig,
       sigSplit,
+      sigSplit2,
       voucher,
+      voucher2,
     } = await loadFixture(lazyFixture721));
   });
 
@@ -398,7 +401,7 @@ describe("ERC721Lazy", () => {
         LazyErrors.DecrementOverflow,
       );
     });
-    it("Should burn update storage and emit events", async () => {
+    it("Should mint, burn then mint again, update storage and emit event", async () => {
       await lazy.lazyMint(
         voucher,
         sigSplit.v,
@@ -409,6 +412,15 @@ describe("ERC721Lazy", () => {
 
       const ids = [1, 13, 20, 30];
       const tx = await lazy.burn(ids);
+
+      await lazy.lazyMint(
+        voucher2,
+        sigSplit2.v,
+        sigSplit2.r,
+        sigSplit2.s,
+        { value: price.mul(amount) },
+      );
+
       const dead = ethers.constants.AddressZero;
       const bal1 = await lazy.callStatic.balanceOf(
         owner.address,
@@ -423,15 +435,17 @@ describe("ERC721Lazy", () => {
       const approved2 = await lazy.callStatic.getApproved(13);
       const approved3 = await lazy.callStatic.getApproved(20);
       const approved4 = await lazy.callStatic.getApproved(30);
+      const mintCounter = await lazy.callStatic.getMintCount();
 
       expect(tx).to.be.ok;
-      expect(bal1).to.eq(9);
-      expect(bal2).to.eq(8);
-      expect(bal3).to.eq(9);
+      expect(bal1).to.eq(19);
+      expect(bal2).to.eq(18);
+      expect(bal3).to.eq(19);
       expect(approved1).to.eq(dead);
       expect(approved2).to.eq(dead);
       expect(approved3).to.eq(dead);
       expect(approved4).to.eq(dead);
+      expect(mintCounter).to.eq(60);
 
       await expect(tx)
         .to.emit(lazy, "Transfer")
@@ -502,6 +516,12 @@ describe("ERC721Lazy", () => {
 
       expect(tx[0]).to.eq(splitter.address);
       expect(tx[1]).to.eq(amount);
+    });
+
+    it("Should query mint count", async () => {
+      const tx = await lazy.callStatic.getMintCount();
+      expect(tx).to.be.ok;
+      expect(tx).to.eq(0);
     });
 
     it("Should support interfaces", async () => {

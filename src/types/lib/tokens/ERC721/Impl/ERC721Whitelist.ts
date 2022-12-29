@@ -42,6 +42,7 @@ export interface ERC721WhitelistInterface extends utils.Interface {
     "freeSupply()": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "getBaseURI()": FunctionFragment;
+    "getMintCount()": FunctionFragment;
     "giftTokens(address[])": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "maxFree()": FunctionFragment;
@@ -94,6 +95,7 @@ export interface ERC721WhitelistInterface extends utils.Interface {
       | "freeSupply"
       | "getApproved"
       | "getBaseURI"
+      | "getMintCount"
       | "giftTokens"
       | "isApprovedForAll"
       | "maxFree"
@@ -182,6 +184,10 @@ export interface ERC721WhitelistInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getBaseURI",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getMintCount",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -351,6 +357,10 @@ export interface ERC721WhitelistInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getBaseURI", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getMintCount",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "giftTokens", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isApprovedForAll",
@@ -694,6 +704,8 @@ export interface ERC721Whitelist extends BaseContract {
 
     getBaseURI(overrides?: CallOverrides): Promise<[string]>;
 
+    getMintCount(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     giftTokens(
       addresses: PromiseOrValue<string>[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
@@ -898,6 +910,8 @@ export interface ERC721Whitelist extends BaseContract {
 
   getBaseURI(overrides?: CallOverrides): Promise<string>;
 
+  getMintCount(overrides?: CallOverrides): Promise<BigNumber>;
+
   giftTokens(
     addresses: PromiseOrValue<string>[],
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
@@ -1101,6 +1115,8 @@ export interface ERC721Whitelist extends BaseContract {
     ): Promise<string>;
 
     getBaseURI(overrides?: CallOverrides): Promise<string>;
+
+    getMintCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     giftTokens(
       addresses: PromiseOrValue<string>[],
@@ -1413,6 +1429,8 @@ export interface ERC721Whitelist extends BaseContract {
 
     getBaseURI(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getMintCount(overrides?: CallOverrides): Promise<BigNumber>;
+
     giftTokens(
       addresses: PromiseOrValue<string>[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
@@ -1617,6 +1635,8 @@ export interface ERC721Whitelist extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getBaseURI(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getMintCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     giftTokens(
       addresses: PromiseOrValue<string>[],

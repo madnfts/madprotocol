@@ -39,6 +39,7 @@ contract ERC1155Basic is
     /// @dev default := false.
     bool public publicMintState;
     SplitterImpl public splitter;
+    uint256 private mintCount;
 
     ////////////////////////////////////////////////////////////////
     //                          MODIFIERS                         //
@@ -50,7 +51,7 @@ contract ERC1155Basic is
     }
 
     modifier hasReachedMax(uint256 amount) {
-        if (totalSupply() + amount > maxSupply)
+        if (mintCount + amount > maxSupply)
             revert MaxSupplyReached();
         _;
     }
@@ -112,7 +113,7 @@ contract ERC1155Basic is
         uint256 i;
         // for (uint256 i = 0; i < amount; i++) {
         for (i; i < amount; ) {
-            _mint(to, _nextId(), balance[i], "");
+            _mint(to, _incrementCounter(1), balance[i], "");
             unchecked {
                 ++i;
             }
@@ -270,7 +271,7 @@ contract ERC1155Basic is
     {
         uint256 i;
         for (i; i < amount; ) {
-            _mint(msg.sender, _nextId(), balance, "");
+            _mint(msg.sender, _incrementCounter(1), balance, "");
             unchecked {
                 ++i;
             }
@@ -297,7 +298,7 @@ contract ERC1155Basic is
         _mintBatchCheck(len);
         uint256 i;
         for (i; i < len; ) {
-            liveSupply.increment(amounts[i]);
+            _incrementCounter(amounts[i]);
             unchecked {
                 ++i;
             }
@@ -316,15 +317,21 @@ contract ERC1155Basic is
     //                          HELPER FX                         //
     ////////////////////////////////////////////////////////////////
 
-    function _mintBatchCheck(uint256 _amount) private view {
-        if (price * _amount != msg.value) revert WrongPrice();
-        if (totalSupply() + _amount > maxSupply)
-            revert MaxSupplyReached();
+    function _nextId(uint256 amount) private returns (uint256) {
+        liveSupply.increment(amount);
+        return liveSupply.current();
     }
 
-    function _nextId() private returns (uint256) {
-        liveSupply.increment();
-        return liveSupply.current();
+    function _incrementCounter(uint256 amount) private returns(uint256) {
+        _nextId(amount);
+        mintCount += amount;
+        return mintCount;
+    }
+
+    function _mintBatchCheck(uint256 _amount) private view {
+        if (price * _amount != msg.value) revert WrongPrice();
+        if (mintCount + _amount > maxSupply)
+            revert MaxSupplyReached();
     }
 
     function _sumAmounts(uint256[] memory amounts) private pure returns (uint256 _result) {
@@ -353,7 +360,7 @@ contract ERC1155Basic is
         override
         returns (string memory)
     {
-        if (id > totalSupply()) {
+        if (id > mintCount) {
             // revert("NotMintedYet");
             assembly {
                 mstore(0x00, 0xbad086ea)
@@ -372,6 +379,10 @@ contract ERC1155Basic is
 
     function totalSupply() public view returns (uint256) {
         return liveSupply.current();
+    }
+
+    function getMintCount() public view returns(uint256) {
+        return mintCount;
     }
 
     ////////////////////////////////////////////////////////////////

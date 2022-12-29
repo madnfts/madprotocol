@@ -62,6 +62,7 @@ export interface ERC721LazyInterface extends utils.Interface {
     "burn(uint256[])": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "getBaseURI()": FunctionFragment;
+    "getMintCount()": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32)": FunctionFragment;
     "name()": FunctionFragment;
@@ -97,6 +98,7 @@ export interface ERC721LazyInterface extends utils.Interface {
       | "burn"
       | "getApproved"
       | "getBaseURI"
+      | "getMintCount"
       | "isApprovedForAll"
       | "lazyMint"
       | "name"
@@ -162,6 +164,10 @@ export interface ERC721LazyInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getBaseURI",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getMintCount",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -279,6 +285,10 @@ export interface ERC721LazyInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getBaseURI", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getMintCount",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "isApprovedForAll",
     data: BytesLike
@@ -507,6 +517,8 @@ export interface ERC721Lazy extends BaseContract {
 
     getBaseURI(overrides?: CallOverrides): Promise<[string]>;
 
+    getMintCount(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     isApprovedForAll(
       arg0: PromiseOrValue<string>,
       arg1: PromiseOrValue<string>,
@@ -663,6 +675,8 @@ export interface ERC721Lazy extends BaseContract {
 
   getBaseURI(overrides?: CallOverrides): Promise<string>;
 
+  getMintCount(overrides?: CallOverrides): Promise<BigNumber>;
+
   isApprovedForAll(
     arg0: PromiseOrValue<string>,
     arg1: PromiseOrValue<string>,
@@ -816,6 +830,8 @@ export interface ERC721Lazy extends BaseContract {
     ): Promise<string>;
 
     getBaseURI(overrides?: CallOverrides): Promise<string>;
+
+    getMintCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     isApprovedForAll(
       arg0: PromiseOrValue<string>,
@@ -1044,6 +1060,8 @@ export interface ERC721Lazy extends BaseContract {
 
     getBaseURI(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getMintCount(overrides?: CallOverrides): Promise<BigNumber>;
+
     isApprovedForAll(
       arg0: PromiseOrValue<string>,
       arg1: PromiseOrValue<string>,
@@ -1198,6 +1216,8 @@ export interface ERC721Lazy extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getBaseURI(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getMintCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     isApprovedForAll(
       arg0: PromiseOrValue<string>,

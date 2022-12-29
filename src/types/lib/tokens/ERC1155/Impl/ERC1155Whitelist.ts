@@ -41,6 +41,7 @@ export interface ERC1155WhitelistInterface extends utils.Interface {
     "freeClaimState()": FunctionFragment;
     "freeConfig(uint256,uint256,bytes32)": FunctionFragment;
     "freeSupply()": FunctionFragment;
+    "getMintCount()": FunctionFragment;
     "getURI()": FunctionFragment;
     "giftTokens(address[],uint256[],uint256)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
@@ -94,6 +95,7 @@ export interface ERC1155WhitelistInterface extends utils.Interface {
       | "freeClaimState"
       | "freeConfig"
       | "freeSupply"
+      | "getMintCount"
       | "getURI"
       | "giftTokens"
       | "isApprovedForAll"
@@ -192,6 +194,10 @@ export interface ERC1155WhitelistInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "freeSupply",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getMintCount",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "getURI", values?: undefined): string;
@@ -402,6 +408,10 @@ export interface ERC1155WhitelistInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "freeConfig", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "freeSupply", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getMintCount",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getURI", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "giftTokens", data: BytesLike): Result;
   decodeFunctionResult(
@@ -772,6 +782,8 @@ export interface ERC1155Whitelist extends BaseContract {
 
     freeSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    getMintCount(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     getURI(overrides?: CallOverrides): Promise<[string]>;
 
     giftTokens(
@@ -1014,6 +1026,8 @@ export interface ERC1155Whitelist extends BaseContract {
 
   freeSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
+  getMintCount(overrides?: CallOverrides): Promise<BigNumber>;
+
   getURI(overrides?: CallOverrides): Promise<string>;
 
   giftTokens(
@@ -1255,6 +1269,8 @@ export interface ERC1155Whitelist extends BaseContract {
     ): Promise<void>;
 
     freeSupply(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getMintCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     getURI(overrides?: CallOverrides): Promise<string>;
 
@@ -1619,6 +1635,8 @@ export interface ERC1155Whitelist extends BaseContract {
 
     freeSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getMintCount(overrides?: CallOverrides): Promise<BigNumber>;
+
     getURI(overrides?: CallOverrides): Promise<BigNumber>;
 
     giftTokens(
@@ -1861,6 +1879,8 @@ export interface ERC1155Whitelist extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     freeSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getMintCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getURI(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

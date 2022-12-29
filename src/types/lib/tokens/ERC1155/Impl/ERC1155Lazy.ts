@@ -81,6 +81,7 @@ export interface ERC1155LazyInterface extends utils.Interface {
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
     "burn(address[],uint256[],uint256[])": FunctionFragment;
     "burnBatch(address,uint256[],uint256[])": FunctionFragment;
+    "getMintCount()": FunctionFragment;
     "getURI()": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32)": FunctionFragment;
@@ -112,6 +113,7 @@ export interface ERC1155LazyInterface extends utils.Interface {
       | "balanceOfBatch"
       | "burn"
       | "burnBatch"
+      | "getMintCount"
       | "getURI"
       | "isApprovedForAll"
       | "lazyMint"
@@ -163,6 +165,10 @@ export interface ERC1155LazyInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>[],
       PromiseOrValue<BigNumberish>[]
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getMintCount",
+    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "getURI", values?: undefined): string;
   encodeFunctionData(
@@ -286,6 +292,10 @@ export interface ERC1155LazyInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "burnBatch", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getMintCount",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getURI", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isApprovedForAll",
@@ -517,6 +527,8 @@ export interface ERC1155Lazy extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    getMintCount(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     getURI(overrides?: CallOverrides): Promise<[string]>;
 
     isApprovedForAll(
@@ -671,6 +683,8 @@ export interface ERC1155Lazy extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  getMintCount(overrides?: CallOverrides): Promise<BigNumber>;
+
   getURI(overrides?: CallOverrides): Promise<string>;
 
   isApprovedForAll(
@@ -824,6 +838,8 @@ export interface ERC1155Lazy extends BaseContract {
       balances: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
+
+    getMintCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     getURI(overrides?: CallOverrides): Promise<string>;
 
@@ -1064,6 +1080,8 @@ export interface ERC1155Lazy extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    getMintCount(overrides?: CallOverrides): Promise<BigNumber>;
+
     getURI(overrides?: CallOverrides): Promise<BigNumber>;
 
     isApprovedForAll(
@@ -1216,6 +1234,8 @@ export interface ERC1155Lazy extends BaseContract {
       balances: PromiseOrValue<BigNumberish>[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    getMintCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getURI(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

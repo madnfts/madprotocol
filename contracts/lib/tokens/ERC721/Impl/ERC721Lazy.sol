@@ -370,7 +370,7 @@ contract ERC721Lazy is
         override
         returns (string memory)
     {
-        if (id > totalSupply()) revert NotMintedYet();
+        if (id > mintCount) revert NotMintedYet();
         return
             string(
                 abi.encodePacked(

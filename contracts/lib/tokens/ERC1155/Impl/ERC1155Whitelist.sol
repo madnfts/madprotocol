@@ -643,7 +643,7 @@ contract ERC1155Whitelist is
         override
         returns (string memory)
     {
-        if (id > totalSupply()) {
+        if (id > mintCount) {
             // revert("NotMintedYet");
             assembly {
                 mstore(0x00, 0xbad086ea)

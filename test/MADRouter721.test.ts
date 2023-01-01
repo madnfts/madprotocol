@@ -566,11 +566,9 @@ describe("MADRouter721", () => {
         "ERC721Minimal",
         minAddr,
       );
-      console.log(ethers.utils.parseEther('0.25'))
       const tx = await r721
         .connect(acc02)
         .minimalSafeMint(minAddr, acc01.address, {value: ethers.utils.parseEther("0.25")});
-      console.log("minted successfully")
 
       expect(tx).to.be.ok;
       expect(await min.callStatic.ownerOf(1)).to.eq(
@@ -599,6 +597,67 @@ describe("MADRouter721", () => {
       ).to.be.revertedWithCustomError(
         min,
         RouterErrors.AlreadyMinted,
+      );
+    });
+  });
+
+  describe("Basic MintTo", async () => {
+    it("Should call basicMintTo for 721Basic collection type", async () => {
+      await f721
+        .connect(acc02)
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
+      const splAddr = await f721.callStatic.getDeployedAddr(
+        "MADSplitter1",
+      );
+      const minAddr = await f721.callStatic.getDeployedAddr(
+        "BasicSalt",
+      );
+      await f721
+        .connect(acc02)
+        .createCollection(
+          1,
+          "BasicSalt",
+          "721Minimal",
+          "MIN",
+          price,
+          1,
+          "cid/id.json",
+          splAddr,
+          750,
+        );
+      const basic = await ethers.getContractAt(
+        "ERC721Basic",
+        minAddr,
+      );
+      const tx = await r721
+        .connect(acc02)
+        .basicMintTo(minAddr, acc01.address, 1, {value: ethers.utils.parseEther("0.25")});
+
+      expect(tx).to.be.ok;
+      expect(await basic.callStatic.ownerOf(1)).to.eq(
+        acc01.address,
+      );
+      const verArt = await artifacts.readArtifact(
+        "FactoryVerifier",
+      );
+      const ver = new ethers.Contract(
+        f721.address,
+        verArt.abi,
+        ethers.provider,
+      );
+      await expect(
+        r721
+          .connect(mad)
+          .basicMintTo(minAddr, acc02.address, 1, {value: ethers.utils.parseEther("0.25")}),
+      ).to.be.revertedWithCustomError(
+        ver,
+        RouterErrors.AccessDenied,
       );
     });
   });

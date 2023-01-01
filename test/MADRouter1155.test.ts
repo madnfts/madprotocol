@@ -2328,6 +2328,138 @@ describe("MADRouter1155", () => {
       );
     });
   });
+  describe("Basic MintTo", async () => {
+    it("Should call basicMintTo for 1155Basic collection type", async () => {
+      await f1155
+        .connect(acc02)
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
+      const splAddr = await f1155.callStatic.getDeployedAddr(
+        "MADSplitter1",
+      );
+      const minAddr = await f1155.callStatic.getDeployedAddr(
+        "MinSalt",
+      );
+      await f1155
+        .connect(acc02)
+        .createCollection(
+          1,
+          "MinSalt",
+          "1155Min",
+          "MIN",
+          price,
+          1,
+          "cid/id.json",
+          splAddr,
+          750,
+        );
+      const min = await ethers.getContractAt(
+        "ERC1155Basic",
+        minAddr,
+      );
+      await r1155.setFees(ethers.utils.parseEther("2.5"), ethers.utils.parseEther("0.5"));
+      await expect(r1155
+        .connect(acc02)
+        .basicMintTo(minAddr, acc01.address, 1, [1], {value:ethers.utils.parseEther("0.25")})
+      ).to.be.revertedWithCustomError(
+        min,
+        BasicErrors.WrongPrice
+      );
+
+      const tx = await r1155
+        .connect(acc02)
+        .basicMintTo(minAddr, acc01.address, 1, [1], {value:ethers.utils.parseEther("2.5")});
+
+      expect(tx).to.be.ok;
+      const verArt = await artifacts.readArtifact(
+        "FactoryVerifier",
+      );
+      const ver = new ethers.Contract(
+        f1155.address,
+        verArt.abi,
+        ethers.provider,
+      );
+      await expect(
+        r1155
+          .connect(mad)
+          .basicMintTo(minAddr, acc02.address, 1, [1], {value:ethers.utils.parseEther("2.5")}),
+      ).to.be.revertedWithCustomError(
+        ver,
+        RouterErrors.AccessDenied,
+      );
+    });
+  });
+  describe("Basic BatchMintTo", async () => {
+    it("Should call basicMintTo for 1155Basic collection type", async () => {
+      await f1155
+        .connect(acc02)
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
+      const splAddr = await f1155.callStatic.getDeployedAddr(
+        "MADSplitter1",
+      );
+      const minAddr = await f1155.callStatic.getDeployedAddr(
+        "MinSalt",
+      );
+      await f1155
+        .connect(acc02)
+        .createCollection(
+          1,
+          "MinSalt",
+          "1155Min",
+          "MIN",
+          price,
+          2,
+          "cid/id.json",
+          splAddr,
+          750,
+        );
+      const min = await ethers.getContractAt(
+        "ERC1155Basic",
+        minAddr,
+      );
+      await r1155.setFees(ethers.utils.parseEther("2.5"), ethers.utils.parseEther("0.5"));
+      await expect(r1155
+        .connect(acc02)
+        .basicMintBatchTo(minAddr, acc01.address, [1, 2], [1, 1], {value:ethers.utils.parseEther("0.25")})
+      ).to.be.revertedWithCustomError(
+        min,
+        BasicErrors.WrongPrice
+      );
+
+      const tx = await r1155
+        .connect(acc02)
+        .basicMintBatchTo(minAddr, acc01.address, [1, 2], [1, 1], {value:ethers.utils.parseEther("2.5")});
+
+      expect(tx).to.be.ok;
+      const verArt = await artifacts.readArtifact(
+        "FactoryVerifier",
+      );
+      const ver = new ethers.Contract(
+        f1155.address,
+        verArt.abi,
+        ethers.provider,
+      );
+      await expect(
+        r1155
+          .connect(mad)
+          .basicMintBatchTo(minAddr, acc02.address, [1, 2], [1, 1], {value:ethers.utils.parseEther("2.5")}),
+      ).to.be.revertedWithCustomError(
+        ver,
+        RouterErrors.AccessDenied,
+      );
+    });
+  });
   describe("Burn-setfees", async () => {
     it("Should burn token for 1155Minimal collection type", async () => {
       // await f1155.addAmbassador(amb.address);
@@ -2443,7 +2575,6 @@ describe("MADRouter1155", () => {
         BasicErrors.WrongPrice
       );
         
-      console.log('fee is', await r1155.feeBurn());
       const tx = await r1155
         .connect(acc02)
         .burn(basicAddr, [1], [acc01.address], [1], {value: ethers.utils.parseEther("0.5")});

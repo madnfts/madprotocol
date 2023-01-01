@@ -2,12 +2,6 @@
 
 pragma solidity 0.8.16;
 
-/* 
-DISCLAIMER: 
-This contract hasn't been audited yet. Most likely contains unexpected bugs. 
-Don't trust your funds to be held by this code before the final thoroughly tested and audited version release.
-*/
-
 import { MAD } from "./MAD.sol";
 
 import { 
@@ -65,7 +59,6 @@ contract MADFactory1155 is MAD,
     //                           STORAGE                          //
     ////////////////////////////////////////////////////////////////
 
-    
     /// @dev `colIDs` are derived from adding 12 bytes of zeros to an collection's address.
     /// @dev colID => colInfo(salt/type/addr/time/splitter)
     mapping(bytes32 => Types.Collection1155) public colInfo;
@@ -78,17 +71,11 @@ contract MADFactory1155 is MAD,
     mapping(address => mapping(address => Types.SplitterConfig))
         public splitterInfo;
 
-    /// @dev Stores authorized ambassador addresses to be opted as shareholders of splitter contracts.  
-    // mapping(address => bool) public ambWhitelist;
-
     /// @dev Instance of `MADRouter` being passed as parameter of collection's constructor.
     address public router;
 
     /// @dev Instance of `MADMarketplace` being passed as parameter of `creatorAuth`.
     address public market;
-
-    /// @dev Self-reference pointer for assembly internal calls.
-    // address private _this;
 
     /// @dev The signer address used for lazy minting voucher validation.
     address private signer;
@@ -105,7 +92,6 @@ contract MADFactory1155 is MAD,
     )
     {
         setMarket(_marketplace);
-        // setRouter(_router);
         setSigner(_signer);
 
         router = _router;
@@ -124,7 +110,7 @@ contract MADFactory1155 is MAD,
     /// 1%-20% of secondary sales royalties (optional, will be disregarded if left empty(value == address(0)).
     /// @param _ambShare Percentage (1%-20%) of secondary sales royalties to be donated to an ambassador
     /// (optional, will be disregarded if left empty(value == 0)).
-function splitterCheck(
+    function splitterCheck(
         string memory _splitterSalt,
         address _ambassador,
         address _project,
@@ -479,7 +465,7 @@ function splitterCheck(
     //                         OWNER FX                           //
     ////////////////////////////////////////////////////////////////
 
-        /// @dev Function Signature := 0x13af4035
+    /// @dev Function Signature := 0x13af4035
     function setOwner(address newOwner)
         public
         override
@@ -528,40 +514,6 @@ function splitterCheck(
 
         emit SignerUpdated(_signer);
     }
-
-    // /// @dev Add address to ambassador whitelist.
-    // /// @dev Function Sighash := 0x295c25d5
-    // function addAmbassador(address _whitelistedAmb)
-    //     public
-    //     onlyOwner
-    // {
-    //     // ambWhitelist[_whitelistedAmb] = true;
-    //     assembly {
-    //         mstore(0x00, _whitelistedAmb)
-    //         mstore(0x20, ambWhitelist.slot)
-    //         let ambSlot := keccak256(0x00, 0x40)
-    //         sstore(ambSlot, 1)
-    //     }
-
-    //     emit AmbassadorAdded(_whitelistedAmb);
-    // }
-
-    // /// @dev Delete address from ambassador whitelist.
-    // /// @dev Function Sighash := 0xf2d0e148
-    // function delAmbassador(address _removedAmb)
-    //     public
-    //     onlyOwner
-    // {
-    //     // delete ambWhitelist[_removedAmb];
-    //     assembly {
-    //         mstore(0x00, _removedAmb)
-    //         mstore(0x20, ambWhitelist.slot)
-    //         let ambSlot := keccak256(0x00, 0x40)
-    //         sstore(ambSlot, 0)
-    //     }
-
-    //     emit AmbassadorDeleted(_removedAmb);
-    // }
 
     /// @notice Paused state initializer for security risk mitigation pratice.
     /// @dev Function Sighash := 0x8456cb59
@@ -750,7 +702,7 @@ function splitterCheck(
             if eq(creator, origin()) {
                 check := true
             }
-        // if(!check) revert AccessDenied();
+            // if(!check) revert AccessDenied();
             if iszero(check) {
                 mstore(0x00, 0x4ca88867)
                 revert(0x1c, 0x04)

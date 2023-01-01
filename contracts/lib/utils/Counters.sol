@@ -69,9 +69,4 @@ library Counters {
             sstore(counter.slot, 0)
         }
     }
-
-    // function incrementCounter() internal returns(uint256){
-    //     Counters.Counter._val += 1;
-    //     return Counters.Counter._val;
-    // }
 }

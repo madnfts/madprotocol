@@ -52,12 +52,14 @@ export interface LazyFixture721 {
   lazy: ERC721Lazy;
   signature: string;
   sigSplit: Signature;
+  sigSplit2: Signature;
   signerAddr: string;
   signer: Wallet;
   recover: string;
   domainCheck: string;
   wrongSig: string;
   voucher: Voucher;
+  voucher2: Voucher;
 }
 export interface Voucher {
   voucherId: string;
@@ -83,6 +85,7 @@ export interface LazyFixture1155 {
   lazy: ERC1155Lazy;
   vSig: string;
   vSigSplit: Signature;
+  vSigSplit2: Signature;
   vRecover: string;
   ubSig: string;
   ubSigSplit: Signature;
@@ -92,6 +95,7 @@ export interface LazyFixture1155 {
   domainCheck: string;
   wrongSig: string;
   voucher: Voucher;
+  voucher2: Voucher;
   userBatch: UserBatch;
 }
 export interface UserBatch {

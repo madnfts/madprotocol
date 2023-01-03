@@ -56,6 +56,8 @@ contract ERC721Lazy is
 
     mapping(bytes32 => bool) public usedVouchers;
 
+    uint256 private mintCount;
+
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
@@ -221,6 +223,12 @@ contract ERC721Lazy is
         return liveSupply.current();
     }
 
+    function _incrementCounter() private returns(uint256){
+        _nextId();
+        mintCount += 1;
+        return mintCount;
+    }
+
     /// @dev Checks for signer validity and if total balance provided in the message matches to voucher's record.
     function _lazyCheck(
         address _signer,
@@ -335,7 +343,7 @@ contract ERC721Lazy is
     {
         uint256 j;
         while (j < _amount) {
-            _mint(_key, _nextId());
+            _mint(_key, _incrementCounter());
             // can't overflow due to have been previously validated by signer
             unchecked {
                 ++j;
@@ -362,7 +370,7 @@ contract ERC721Lazy is
         override
         returns (string memory)
     {
-        if (id > totalSupply()) revert NotMintedYet();
+        if (id > mintCount) revert NotMintedYet();
         return
             string(
                 abi.encodePacked(
@@ -375,6 +383,10 @@ contract ERC721Lazy is
 
     function totalSupply() public view returns (uint256) {
         return liveSupply.current();
+    }
+
+    function getMintCount() public view returns(uint256) {
+        return mintCount;
     }
 
     function DOMAIN_SEPARATOR()
@@ -399,7 +411,7 @@ contract ERC721Lazy is
             size := extcodesize(_owner)
         }
         if (size == 0) {
-            return; 
+            return;
         }
         uint256 _fee = FeeOracle(owner).feeLookup(_method);
         assembly {

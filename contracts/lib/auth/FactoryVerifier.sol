@@ -2,8 +2,6 @@
 
 pragma solidity 0.8.16;
 
-// import { Types } from "../../Types.sol";
-
 /// @title Factory Verifier
 /// @notice Core contract binding interface that connect both
 /// `MADMarketplace` and `MADRouter` storage verifications made to `MADFactory`.
@@ -33,13 +31,6 @@ interface FactoryVerifier {
         external
         view
         returns (address creator, bool check);
-
-    // /// @dev Convert `colID` to address (32bytes => 20bytes).
-    // /// @dev Function Sighash := 0xc3e15ec0
-    // function getColAddress(bytes32 _colID)
-    //     external
-    //     pure
-    //     returns (address colAddress);
 
     /// @dev Convert address to `colID` (20bytes => 32bytes).
     /// @dev Function Sighash := 0x617d1d3b

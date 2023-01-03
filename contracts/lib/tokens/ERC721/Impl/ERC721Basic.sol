@@ -40,6 +40,8 @@ contract ERC721Basic is
     bool public publicMintState; // default := false
     SplitterImpl public splitter;
 
+    uint256 private mintCount;
+
     ////////////////////////////////////////////////////////////////
     //                          MODIFIERS                         //
     ////////////////////////////////////////////////////////////////
@@ -50,7 +52,7 @@ contract ERC721Basic is
     }
 
     modifier hasReachedMax(uint256 amount) {
-        if (liveSupply.current() + amount > maxSupply)
+        if (mintCount + amount > maxSupply)
             revert MaxSupplyReached();
         _;
     }
@@ -117,7 +119,7 @@ contract ERC721Basic is
         uint256 i;
         // for (uint256 i = 0; i < amount; i++) {
         for (i; i < amount; ) {
-            _safeMint(to, _nextId());
+            _safeMint(to, _incrementCounter());
             unchecked {
                 ++i;
             }
@@ -226,7 +228,7 @@ contract ERC721Basic is
         uint256 i;
         // for (uint256 i = 0; i < amount; i++) {
         for (i; i < amount; ) {
-            _safeMint(msg.sender, _nextId());
+            _safeMint(msg.sender, _incrementCounter());
             unchecked {
                 ++i;
             }
@@ -251,6 +253,12 @@ contract ERC721Basic is
         return liveSupply.current();
     }
 
+    function _incrementCounter() private returns(uint256){
+        _nextId();
+        mintCount += 1;
+        return mintCount;
+    }
+
     ////////////////////////////////////////////////////////////////
     //                           VIEW FX                          //
     ////////////////////////////////////////////////////////////////
@@ -270,7 +278,7 @@ contract ERC721Basic is
         override
         returns (string memory)
     {
-        if (id > totalSupply()) revert NotMintedYet();
+        if (id > mintCount) revert NotMintedYet();
         return
             string(
                 abi.encodePacked(
@@ -285,6 +293,10 @@ contract ERC721Basic is
         return liveSupply.current();
     }
 
+    function getMintCount() public view returns(uint256) {
+        return mintCount;
+    }
+
     ////////////////////////////////////////////////////////////////
     //                     INTERNAL FUNCTIONS                     //
     ////////////////////////////////////////////////////////////////
@@ -296,7 +308,7 @@ contract ERC721Basic is
             size := extcodesize(_owner)
         }
         if (size == 0) {
-            return; 
+            return;
         }
 
         uint256 _fee = FeeOracle(owner).feeLookup(_method);

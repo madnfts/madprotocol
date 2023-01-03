@@ -2,12 +2,6 @@
 
 pragma solidity 0.8.16;
 
-/* 
-DISCLAIMER: 
-This contract hasn't been audited yet. Most likely contains unexpected bugs. 
-Don't trust your funds to be held by this code before the final thoroughly tested and audited version release.
-*/
-
 import { MAD } from "./MAD.sol";
 
 import { 
@@ -77,17 +71,11 @@ contract MADFactory721 is MAD,
     mapping(address => mapping(address => Types.SplitterConfig))
         public splitterInfo;
 
-    /// @dev Stores authorized ambassador addresses to be opted as shareholders of splitter contracts.  
-    // mapping(address => bool) public ambWhitelist;
-
     /// @dev Instance of `MADRouter` being passed as parameter of collection's constructor.
     address public router;
 
     /// @dev Instance of `MADMarketplace` being passed as parameter of `creatorAuth`.
     address public market;
-
-    /// @dev Self-reference pointer for assembly internal calls.
-    // address private _this;
 
     /// @dev The signer address used for lazy minting voucher validation.
     address private signer;
@@ -104,7 +92,6 @@ contract MADFactory721 is MAD,
     )
     {
         setMarket(_marketplace);
-        // setRouter(_router);
         setSigner(_signer);
 
         router = _router;
@@ -119,9 +106,13 @@ contract MADFactory721 is MAD,
     /// @dev Function Sighash := 0x9e5c4b70
     /// @param _splitterSalt Nonce/Entropy factor used by CREATE3 method. Must be always different to avoid address collision.
     /// to generate payment splitter deployment address.
-    /// @param _ambassador User may choose from one of the whitelisted addresses to donate
+    /// @param _ambassador User may submit an addresses to donate
     /// 1%-20% of secondary sales royalties (optional, will be disregarded if left empty(value == address(0)).
+    /// @param _project User may submit an addresses to donate
+    /// 1%-100% of creators secondary sales royalties (optional, will be disregarded if left empty(value == address(0)).
     /// @param _ambShare Percentage (1%-20%) of secondary sales royalties to be donated to an ambassador
+    /// (optional, will be disregarded if left empty(value == 0)).
+    /// @param _projectShare Percentage (1%-100%) of secondary sales royalties to be donated to a project taken from the creators resale share
     /// (optional, will be disregarded if left empty(value == 0)).
     function splitterCheck(
         string memory _splitterSalt,
@@ -486,14 +477,14 @@ contract MADFactory721 is MAD,
     //                         OWNER FX                           //
     ////////////////////////////////////////////////////////////////
 
-        /// @dev Function Signature := 0x13af4035
+    /// @dev Function Signature := 0x13af4035
     function setOwner(address newOwner)
         public
         override
         onlyOwner
     {
         require(newOwner != address(0), "Invalid address");
-        // owner = newOwner;
+
         assembly {
             sstore(owner.slot, newOwner)
         }
@@ -518,7 +509,6 @@ contract MADFactory721 is MAD,
     function setRouter(address _router) public onlyOwner {
         require(_router != address(0), "Invalid address");
 
-        // router = _router;
         assembly {
             sstore(router.slot, _router)
         }
@@ -531,47 +521,12 @@ contract MADFactory721 is MAD,
     function setSigner(address _signer) public onlyOwner {
         require(_signer != address(0), "Invalid address");
 
-        // signer = _signer;
         assembly {
             sstore(signer.slot, _signer)
         }
 
         emit SignerUpdated(_signer);
     }
-
-    // /// @dev Add address to ambassador whitelist.
-    // /// @dev Function Sighash := 0x295c25d5
-    // function addAmbassador(address _whitelistedAmb)
-    //     public
-    //     onlyOwner
-    // {
-    //     // ambWhitelist[_whitelistedAmb] = true;
-    //     assembly {
-    //         mstore(0x00, _whitelistedAmb)
-    //         mstore(0x20, ambWhitelist.slot)
-    //         let ambSlot := keccak256(0x00, 0x40)
-    //         sstore(ambSlot, 1)
-    //     }
-
-    //     emit AmbassadorAdded(_whitelistedAmb);
-    // }
-
-    // /// @dev Delete address from ambassador whitelist.
-    // /// @dev Function Sighash := 0xf2d0e148
-    // function delAmbassador(address _removedAmb)
-    //     public
-    //     onlyOwner
-    // {
-    //     // delete ambWhitelist[_removedAmb];
-    //     assembly {
-    //         mstore(0x00, _removedAmb)
-    //         mstore(0x20, ambWhitelist.slot)
-    //         let ambSlot := keccak256(0x00, 0x40)
-    //         sstore(ambSlot, 0)
-    //     }
-
-    //     emit AmbassadorDeleted(_removedAmb);
-    // }
 
     /// @notice Paused state initializer for security risk mitigation pratice.
     /// @dev Function Sighash := 0x8456cb59
@@ -769,7 +724,7 @@ contract MADFactory721 is MAD,
         }
     }
 
-    /// @dev Stablishes sealed/safe callpath for `MADRouter` contract.
+    /// @dev Establishes sealed/safe callpath for `MADRouter` contract.
     /// @dev Function Sighash := 0xb4d30bec
     function _isRouter() private view {
         // if (msg.sender != router) revert AccessDenied();
@@ -783,7 +738,7 @@ contract MADFactory721 is MAD,
         } 
     }
 
-    /// @dev Stablishes sealed/safe callpath for `MADMarketplace` contract.
+    /// @dev Establishes sealed/safe callpath for `MADMarketplace` contract.
     /// @dev Function Sighash := 
     function _isMarket() private view {
         assembly {

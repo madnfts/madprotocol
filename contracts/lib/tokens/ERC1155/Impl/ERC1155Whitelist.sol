@@ -62,6 +62,8 @@ contract ERC1155Whitelist is
     /// @dev For fetching purposes and max free claim control.
     mapping(address => bool) public claimed;
 
+    uint256 private mintCount;
+
     ////////////////////////////////////////////////////////////////
     //                          MODIFIERS                         //
     ////////////////////////////////////////////////////////////////
@@ -285,7 +287,7 @@ contract ERC1155Whitelist is
         uint256 i;
         freeSupply += balanceTotal;
         for (i; i < amount; ) {
-            _mint(tx.origin, _nextId(), balances[i], "");
+            _mint(tx.origin, _incrementCounter(balances[i]), balances[i], "");
             unchecked {
                 ++i;
             }
@@ -315,7 +317,7 @@ contract ERC1155Whitelist is
         uint256 i;
 
         for (i; i < len; ) {
-            liveSupply.increment(balances[i]);
+            _incrementCounter(balances[i]);
             unchecked {
                 ++i;
             }
@@ -348,7 +350,7 @@ contract ERC1155Whitelist is
 
         uint256 i;
         for (i; i < len; ) {
-            _mint(addresses[i], _nextId(), balances[i], "");
+            _mint(addresses[i], _incrementCounter(balances[i]), balances[i], "");
             unchecked {
                 ++i;
             }
@@ -434,7 +436,7 @@ contract ERC1155Whitelist is
         uint256 i;
 
         for (i; i < amount; ) {
-            _mint(msg.sender, _nextId(), balances[i], "");
+            _mint(msg.sender, _incrementCounter(balances[i]), balances[i], "");
             unchecked {
                 ++i;
             }
@@ -462,7 +464,7 @@ contract ERC1155Whitelist is
         uint256 i;
         uint256 total = liveSupply.current();
         for (i; i < len; ) {
-            liveSupply.increment(balances[i]);
+            _incrementCounter(balances[i]);
             unchecked {
                 ++i;
             }
@@ -497,7 +499,7 @@ contract ERC1155Whitelist is
         uint256 total = 0;
         for (i; i < amount; ) {
             total += balances[i];
-            _mint(msg.sender, _nextId(), balances[i], "");
+            _mint(msg.sender, _incrementCounter(balances[i]), balances[i], "");
             unchecked {
                 ++i;
             }
@@ -534,7 +536,7 @@ contract ERC1155Whitelist is
         uint256 total = liveSupply.current();
         unchecked {
             for (i; i < len; ++i) {
-                liveSupply.increment(balances[i]);
+                _incrementCounter(balances[i]);
             }
         }
         // assembly overflow check
@@ -568,7 +570,7 @@ contract ERC1155Whitelist is
 
         uint256 j;
         while (j < freeAmount) {
-            _mint(msg.sender, _nextId(), 1, "");
+            _mint(msg.sender, _incrementCounter(1), 1, "");
             unchecked {
                 ++j;
             }
@@ -587,9 +589,15 @@ contract ERC1155Whitelist is
     //                          HELPER FX                         //
     ////////////////////////////////////////////////////////////////
 
-    function _nextId() private returns (uint256) {
-        liveSupply.increment();
+    function _nextId(uint256 amount) private returns (uint256) {
+        liveSupply.increment(amount);
         return liveSupply.current();
+    }
+
+    function _incrementCounter(uint256 amount) private returns(uint256) {
+        _nextId(amount);
+        mintCount += amount;
+        return mintCount;
     }
 
     function _canBatchToCreator(uint256 _amount)
@@ -635,7 +643,7 @@ contract ERC1155Whitelist is
         override
         returns (string memory)
     {
-        if (id > totalSupply()) {
+        if (id > mintCount) {
             // revert("NotMintedYet");
             assembly {
                 mstore(0x00, 0xbad086ea)
@@ -655,6 +663,10 @@ contract ERC1155Whitelist is
 
     function totalSupply() public view returns (uint256) {
         return liveSupply.current();
+    }
+
+    function getMintCount() public view returns(uint256) {
+        return mintCount;
     }
 
     ////////////////////////////////////////////////////////////////

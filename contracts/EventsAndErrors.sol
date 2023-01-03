@@ -10,8 +10,6 @@ interface FactoryEventsAndErrors721 {
     //                           EVENTS                           //
     ////////////////////////////////////////////////////////////////
 
-    // event AmbassadorAdded(address indexed whitelistedAmb);
-    // event AmbassadorDeleted(address indexed removedAmb);
     event MarketplaceUpdated(address indexed newMarket);
     event RouterUpdated(address indexed newRouter);
     event SignerUpdated(address indexed newSigner);
@@ -76,8 +74,6 @@ interface FactoryEventsAndErrors1155 {
     //                           EVENTS                           //
     ////////////////////////////////////////////////////////////////
 
-    // event AmbassadorAdded(address indexed whitelistedAmb);
-    // event AmbassadorDeleted(address indexed removedAmb);
     event MarketplaceUpdated(address indexed newMarket);
     event RouterUpdated(address indexed newRouter);
     event SignerUpdated(address indexed newSigner);

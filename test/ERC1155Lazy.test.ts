@@ -62,12 +62,14 @@ describe("ERC1155Lazy", () => {
   // let erc20: MockERC20;
   let vSig: string;
   let vSigSplit: Signature;
+  let vSigSplit2: Signature;
   let vRecover: string;
   let ubRecover: string;
   let ubSig: string;
   let ubSigSplit: Signature;
   let wrongSig: string;
   let voucher: Voucher;
+  let voucher2: Voucher;
   let userBatch: UserBatch;
   let signerAddr: string;
   let domainCheck: string;
@@ -92,6 +94,7 @@ describe("ERC1155Lazy", () => {
       lazy,
       vSig,
       vSigSplit,
+      vSigSplit2,
       vRecover,
       ubSig,
       ubSigSplit,
@@ -101,6 +104,7 @@ describe("ERC1155Lazy", () => {
       domainCheck,
       wrongSig,
       voucher,
+      voucher2,
       userBatch,
     } = await loadFixture(lazyFixture1155));
   });
@@ -530,7 +534,7 @@ describe("ERC1155Lazy", () => {
         LazyErrors.DecrementOverflow,
       );
     });
-    it("Should burn update storage and emit events", async () => {
+    it("Should mint, burn, mint again, update storage and emit events", async () => {
       await lazy.lazyMint(
         voucher,
         vSigSplit.v,
@@ -541,7 +545,17 @@ describe("ERC1155Lazy", () => {
 
       const ids = [1, 13, 20, 30];
       const tx = await lazy.burn([voucher.users[0], voucher.users[1], voucher.users[1], voucher.users[2]], ids, [1, 1, 1, 1]);
+
+      await lazy.lazyMint(
+        voucher2,
+        vSigSplit2.v,
+        vSigSplit2.r,
+        vSigSplit2.s,
+        { value: price.mul(amount) },
+      );
+
       const dead = ethers.constants.AddressZero;
+      const mintCounter = await lazy.callStatic.getMintCount();
       const bal1 = await lazy.callStatic.balanceOf(
         owner.address,
         1,
@@ -559,6 +573,7 @@ describe("ERC1155Lazy", () => {
       expect(bal1).to.eq(0);
       expect(bal2).to.eq(0);
       expect(bal3).to.eq(0);
+      expect(mintCounter).to.eq(60);
 
       await expect(tx)
         .to.emit(lazy, "TransferSingle")
@@ -755,6 +770,20 @@ describe("ERC1155Lazy", () => {
       expect(sup).to.eq(30);
       expect(sup2).to.eq(28);
     });
+
+    it("Should query total supply", async () => {
+      const tx = await lazy.callStatic.totalSupply();
+
+      expect(tx).to.be.ok;
+      expect(tx).to.eq(0);
+    });
+
+    it("Should query mint count", async () => {
+      const tx = await lazy.callStatic.getMintCount();
+      expect(tx).to.be.ok;
+      expect(tx).to.eq(0);
+    });
+
     it("Should retrive tokenURI and revert if not yet minted", async () => {
       await lazy.lazyMint(
         voucher,

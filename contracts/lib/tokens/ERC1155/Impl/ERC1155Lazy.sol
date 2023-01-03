@@ -61,6 +61,7 @@ contract ERC1155Lazy is
     SplitterImpl public splitter;
 
     mapping(bytes32 => bool) public usedVouchers;
+    uint256 private mintCount;
 
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
@@ -132,7 +133,7 @@ contract ERC1155Lazy is
         require(len == userBatch.balances.length, "INVALID_AMOUNT");
 
         for (i; i < len; ) {
-            liveSupply.increment(userBatch.balances[i]);
+            _incrementCounter(userBatch.balances[i]);
             // can't overflow due to have been previously validated by signer
             unchecked {
                 ++i;
@@ -270,9 +271,15 @@ contract ERC1155Lazy is
     //                          HELPER FX                         //
     ////////////////////////////////////////////////////////////////
 
-    function _nextId() private returns (uint256) {
-        liveSupply.increment();
+    function _nextId(uint256 amount) private returns (uint256) {
+        liveSupply.increment(amount);
         return liveSupply.current();
+    }
+
+    function _incrementCounter(uint256 amount) private returns(uint256) {
+        _nextId(amount);
+        mintCount += amount;
+        return mintCount;
     }
 
     /// @dev Checks for signer validity and if total balance provided in the message matches to voucher's record.
@@ -403,7 +410,7 @@ contract ERC1155Lazy is
         require(_balances.length == _amount, "INVALID_AMOUNT");
         uint256 j;
         while (j < _amount) {
-            _mint(_key, _nextId(), _balances[j], "");
+            _mint(_key, _incrementCounter(_balances[j]), _balances[j], "");
             // can't overflow due to have been previously validated by signer
             unchecked {
                 ++j;
@@ -426,7 +433,7 @@ contract ERC1155Lazy is
         override
         returns (string memory)
     {
-        if (id > totalSupply()) revert NotMintedYet();
+        if (id > mintCount) revert NotMintedYet();
         return
             string(
                 abi.encodePacked(
@@ -439,6 +446,10 @@ contract ERC1155Lazy is
 
     function totalSupply() public view returns (uint256) {
         return liveSupply.current();
+    }
+
+    function getMintCount() public view returns(uint256) {
+        return mintCount;
     }
 
     function DOMAIN_SEPARATOR()

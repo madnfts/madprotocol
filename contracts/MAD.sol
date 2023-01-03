@@ -1,11 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-/* 
-DISCLAIMER: 
-This contract hasn't been audited yet. Most likely contains unexpected bugs. 
-Don't trust your funds to be held by this code before the final thoroughly tested and audited version release.
-*/
-
 pragma solidity 0.8.16;
 
 ///     ...     ..      ..                    ..

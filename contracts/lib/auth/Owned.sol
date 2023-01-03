@@ -3,7 +3,8 @@
 pragma solidity 0.8.16;
 
 /// @notice Simple single owner authorization mixin.
-/// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/auth/Owned.sol)
+/// @author Modified from Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/auth/Owned.sol)
+
 abstract contract Owned {
     /*//////////////////////////////////////////////////////////////
                                  EVENTS

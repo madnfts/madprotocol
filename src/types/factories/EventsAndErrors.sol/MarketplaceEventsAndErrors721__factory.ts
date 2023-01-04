@@ -37,6 +37,11 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "InsufficientERC20",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "InvalidBidder",
     type: "error",
   },
@@ -267,6 +272,19 @@ const _abi = [
       },
     ],
     name: "MakeOrder",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "newPaymentToken",
+        type: "address",
+      },
+    ],
+    name: "PaymentTokenUpdated",
     type: "event",
   },
   {

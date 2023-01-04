@@ -39,6 +39,7 @@ export interface MADMarketplace721Interface extends utils.Interface {
     "delOrder(bytes32,address,uint256,address)": FunctionFragment;
     "dutchAuction(address,uint256,uint256,uint256,uint256)": FunctionFragment;
     "englishAuction(address,uint256,uint256,uint256)": FunctionFragment;
+    "erc20()": FunctionFragment;
     "feeSelector(uint256,uint256)": FunctionFragment;
     "feeVal2()": FunctionFragment;
     "feeVal3()": FunctionFragment;
@@ -55,11 +56,13 @@ export interface MADMarketplace721Interface extends utils.Interface {
     "owner()": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
+    "paymentTokenAddress()": FunctionFragment;
     "recipient()": FunctionFragment;
     "sellerOrderLength(address)": FunctionFragment;
     "setFactory(address)": FunctionFragment;
     "setFees(uint256,uint256)": FunctionFragment;
     "setOwner(address)": FunctionFragment;
+    "setPaymentToken(address)": FunctionFragment;
     "setRecipient(address)": FunctionFragment;
     "tokenOrderLength(address,uint256)": FunctionFragment;
     "unpause()": FunctionFragment;
@@ -78,6 +81,7 @@ export interface MADMarketplace721Interface extends utils.Interface {
       | "delOrder"
       | "dutchAuction"
       | "englishAuction"
+      | "erc20"
       | "feeSelector"
       | "feeVal2"
       | "feeVal3"
@@ -94,11 +98,13 @@ export interface MADMarketplace721Interface extends utils.Interface {
       | "owner"
       | "pause"
       | "paused"
+      | "paymentTokenAddress"
       | "recipient"
       | "sellerOrderLength"
       | "setFactory"
       | "setFees"
       | "setOwner"
+      | "setPaymentToken"
       | "setRecipient"
       | "tokenOrderLength"
       | "unpause"
@@ -158,6 +164,7 @@ export interface MADMarketplace721Interface extends utils.Interface {
       PromiseOrValue<BigNumberish>
     ]
   ): string;
+  encodeFunctionData(functionFragment: "erc20", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "feeSelector",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
@@ -218,6 +225,10 @@ export interface MADMarketplace721Interface extends utils.Interface {
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "paymentTokenAddress",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "recipient", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "sellerOrderLength",
@@ -233,6 +244,10 @@ export interface MADMarketplace721Interface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setOwner",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setPaymentToken",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -278,6 +293,7 @@ export interface MADMarketplace721Interface extends utils.Interface {
     functionFragment: "englishAuction",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "erc20", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "feeSelector",
     data: BytesLike
@@ -318,6 +334,10 @@ export interface MADMarketplace721Interface extends utils.Interface {
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "paymentTokenAddress",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "recipient", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "sellerOrderLength",
@@ -326,6 +346,10 @@ export interface MADMarketplace721Interface extends utils.Interface {
   decodeFunctionResult(functionFragment: "setFactory", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setFees", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setOwner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setPaymentToken",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "setRecipient",
     data: BytesLike
@@ -351,6 +375,7 @@ export interface MADMarketplace721Interface extends utils.Interface {
     "MakeOrder(address,uint256,bytes32,address)": EventFragment;
     "OwnerUpdated(address,address)": EventFragment;
     "Paused(address)": EventFragment;
+    "PaymentTokenUpdated(address)": EventFragment;
     "RecipientUpdated(address)": EventFragment;
     "Unpaused(address)": EventFragment;
   };
@@ -364,6 +389,7 @@ export interface MADMarketplace721Interface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "MakeOrder"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnerUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PaymentTokenUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RecipientUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
 }
@@ -475,6 +501,17 @@ export type PausedEvent = TypedEvent<[string], PausedEventObject>;
 
 export type PausedEventFilter = TypedEventFilter<PausedEvent>;
 
+export interface PaymentTokenUpdatedEventObject {
+  newPaymentToken: string;
+}
+export type PaymentTokenUpdatedEvent = TypedEvent<
+  [string],
+  PaymentTokenUpdatedEventObject
+>;
+
+export type PaymentTokenUpdatedEventFilter =
+  TypedEventFilter<PaymentTokenUpdatedEvent>;
+
 export interface RecipientUpdatedEventObject {
   newRecipient: string;
 }
@@ -569,6 +606,8 @@ export interface MADMarketplace721 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    erc20(overrides?: CallOverrides): Promise<[string]>;
+
     feeSelector(
       arg0: PromiseOrValue<BigNumberish>,
       arg1: PromiseOrValue<BigNumberish>,
@@ -660,6 +699,8 @@ export interface MADMarketplace721 extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<[boolean]>;
 
+    paymentTokenAddress(overrides?: CallOverrides): Promise<[string]>;
+
     recipient(overrides?: CallOverrides): Promise<[string]>;
 
     sellerOrderLength(
@@ -680,6 +721,11 @@ export interface MADMarketplace721 extends BaseContract {
 
     setOwner(
       newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setPaymentToken(
+      _paymentTokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -758,6 +804,8 @@ export interface MADMarketplace721 extends BaseContract {
     _endTime: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  erc20(overrides?: CallOverrides): Promise<string>;
 
   feeSelector(
     arg0: PromiseOrValue<BigNumberish>,
@@ -850,6 +898,8 @@ export interface MADMarketplace721 extends BaseContract {
 
   paused(overrides?: CallOverrides): Promise<boolean>;
 
+  paymentTokenAddress(overrides?: CallOverrides): Promise<string>;
+
   recipient(overrides?: CallOverrides): Promise<string>;
 
   sellerOrderLength(
@@ -870,6 +920,11 @@ export interface MADMarketplace721 extends BaseContract {
 
   setOwner(
     newOwner: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setPaymentToken(
+    _paymentTokenAddress: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -948,6 +1003,8 @@ export interface MADMarketplace721 extends BaseContract {
       _endTime: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    erc20(overrides?: CallOverrides): Promise<string>;
 
     feeSelector(
       arg0: PromiseOrValue<BigNumberish>,
@@ -1038,6 +1095,8 @@ export interface MADMarketplace721 extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<boolean>;
 
+    paymentTokenAddress(overrides?: CallOverrides): Promise<string>;
+
     recipient(overrides?: CallOverrides): Promise<string>;
 
     sellerOrderLength(
@@ -1058,6 +1117,11 @@ export interface MADMarketplace721 extends BaseContract {
 
     setOwner(
       newOwner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setPaymentToken(
+      _paymentTokenAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1179,6 +1243,13 @@ export interface MADMarketplace721 extends BaseContract {
     "Paused(address)"(account?: null): PausedEventFilter;
     Paused(account?: null): PausedEventFilter;
 
+    "PaymentTokenUpdated(address)"(
+      newPaymentToken?: PromiseOrValue<string> | null
+    ): PaymentTokenUpdatedEventFilter;
+    PaymentTokenUpdated(
+      newPaymentToken?: PromiseOrValue<string> | null
+    ): PaymentTokenUpdatedEventFilter;
+
     "RecipientUpdated(address)"(
       newRecipient?: PromiseOrValue<string> | null
     ): RecipientUpdatedEventFilter;
@@ -1239,6 +1310,8 @@ export interface MADMarketplace721 extends BaseContract {
       _endTime: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    erc20(overrides?: CallOverrides): Promise<BigNumber>;
 
     feeSelector(
       arg0: PromiseOrValue<BigNumberish>,
@@ -1305,6 +1378,8 @@ export interface MADMarketplace721 extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<BigNumber>;
 
+    paymentTokenAddress(overrides?: CallOverrides): Promise<BigNumber>;
+
     recipient(overrides?: CallOverrides): Promise<BigNumber>;
 
     sellerOrderLength(
@@ -1325,6 +1400,11 @@ export interface MADMarketplace721 extends BaseContract {
 
     setOwner(
       newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setPaymentToken(
+      _paymentTokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1405,6 +1485,8 @@ export interface MADMarketplace721 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    erc20(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     feeSelector(
       arg0: PromiseOrValue<BigNumberish>,
       arg1: PromiseOrValue<BigNumberish>,
@@ -1472,6 +1554,10 @@ export interface MADMarketplace721 extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    paymentTokenAddress(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     recipient(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     sellerOrderLength(
@@ -1492,6 +1578,11 @@ export interface MADMarketplace721 extends BaseContract {
 
     setOwner(
       newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setPaymentToken(
+      _paymentTokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

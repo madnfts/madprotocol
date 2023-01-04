@@ -9,6 +9,7 @@ import { Pausable } from "./lib/security/Pausable.sol";
 import { Owned } from "./lib/auth/Owned.sol";
 import { ERC721Holder } from "./lib/tokens/ERC721/Base/utils/ERC721Holder.sol";
 import { SafeTransferLib } from "./lib/utils/SafeTransferLib.sol";
+import { ERC20 } from "./lib/tokens/ERC20.sol";
 
 contract MADMarketplace721 is
     MAD,
@@ -66,6 +67,9 @@ contract MADMarketplace721 is
 
     address public recipient;
     FactoryVerifier public MADFactory721;
+    
+    address public paymentTokenAddress;
+    ERC20 public erc20;
 
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
@@ -74,12 +78,16 @@ contract MADMarketplace721 is
     constructor(
         address _recipient,
         uint256 _minOrderDuration,
-        FactoryVerifier _factory
+        FactoryVerifier _factory,
+        address _paymentTokenAddress
     ) {
         setFactory(_factory);
         setRecipient(_recipient);
+        if (_paymentTokenAddress != address(0)) {
+            setPaymentToken(_paymentTokenAddress);
+        }
         updateSettings(
-            300, // 5 min
+            300, // 5 min 
             _minOrderDuration,
             20 // 5% (1/20th)
         );
@@ -206,7 +214,12 @@ contract MADMarketplace721 is
         );
 
         uint256 currentPrice = getCurrentPrice(_order);
-        if (msg.value != currentPrice) revert WrongPrice();
+        if (paymentTokenAddress != address(0)) {
+            if (erc20.allowance(msg.sender, address(this)) < currentPrice) revert InsufficientERC20();
+            SafeTransferLib.safeTransferFrom(erc20, msg.sender, address(this), currentPrice);
+        } else {
+            if (msg.value != currentPrice) revert WrongPrice();
+        }
 
         order.isSold = true;
 
@@ -343,12 +356,12 @@ contract MADMarketplace721 is
 
         emit CancelOrder(token, tokenId, _order, msg.sender);
 
-
         token.safeTransferFrom(
             address(this),
             msg.sender,
             tokenId
-        );    }
+        );    
+    }
 
     receive() external payable {}
 
@@ -387,6 +400,7 @@ contract MADMarketplace721 is
             _feeVal3
         );
     }
+
     /// @notice Marketplace config setter.
     /// @dev Function Signature := 0x0465c563
     /// @dev Time tracking criteria based on `blocknumber`.
@@ -431,6 +445,23 @@ contract MADMarketplace721 is
         _unpause();
     }
 
+    /// @notice Enables the contract's owner to change payment token address.
+    /// @dev Function Signature := ?
+    function setPaymentToken(address _paymentTokenAddress)
+        public
+        onlyOwner
+    {
+        require(_paymentTokenAddress != address(0), "Invalid token address");
+
+        assembly {
+            // paymentTokenAddress = _paymentTokenAddress;
+            sstore(paymentTokenAddress.slot, _paymentTokenAddress)
+        }
+        erc20 = ERC20(_paymentTokenAddress);
+
+        emit PaymentTokenUpdated(_paymentTokenAddress);
+    }
+
     /// @notice Enables the contract's owner to change recipient address.
     /// @dev Function Signature := 0x3bbed4a0
     function setRecipient(address _recipient)
@@ -438,7 +469,7 @@ contract MADMarketplace721 is
         onlyOwner
     {
         require(_recipient != address(0), "Invalid recipient");
-
+        
         // recipient = _recipient;
         assembly {
             sstore(recipient.slot, _recipient)

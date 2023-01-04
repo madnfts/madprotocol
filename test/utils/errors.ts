@@ -66,6 +66,7 @@ export enum SplitterErrors {
 }
 
 export enum MarketplaceErrors {
+  InsufficientERC20 = "InsufficientERC20",
   TransferFailed = "TransferFailed",
   NotAuthorized = "NOT_AUTHORIZED",
   CanceledOrder = "CanceledOrder",

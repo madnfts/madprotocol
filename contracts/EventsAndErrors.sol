@@ -140,6 +140,7 @@ interface MarketplaceEventsAndErrors721 {
 
     event FactoryUpdated(FactoryVerifier indexed newFactory);
     event RecipientUpdated(address indexed newRecipient);
+    event PaymentTokenUpdated(address indexed newPaymentToken);
 
     event AuctionSettingsUpdated(
         uint256 indexed newMinDuration,
@@ -186,6 +187,8 @@ interface MarketplaceEventsAndErrors721 {
 
     /// @dev 0xf7760f25
     error WrongPrice();
+    /// @dev ...
+    error InsufficientERC20();
     /// @dev 0x90b8ec18
     error TransferFailed();
     /// @dev 0x0863b103

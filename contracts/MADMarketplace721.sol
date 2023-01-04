@@ -152,14 +152,21 @@ contract MADMarketplace721 is
         Types.Order721 storage order = orderInfo[_order];
 
         uint256 lastBidPrice = order.lastBidPrice;
+        uint256 bidValue = paymentTokenAddress != address(0)
+            ? erc20.allowance(msg.sender, address(this)) : msg.value;
 
         _bidChecks(
             order.orderType,
             order.endTime,
             order.seller,
             lastBidPrice,
-            order.startPrice
+            order.startPrice,
+            bidValue
         );
+
+        if (paymentTokenAddress != address(0)) {
+            SafeTransferLib.safeTransferFrom(erc20, msg.sender, address(this), bidValue);
+        }
 
         // 1s blocktime
         assembly {
@@ -178,7 +185,7 @@ contract MADMarketplace721 is
                 sstore(add(order.slot, 4), inc)
             }
             sstore(add(order.slot, 6), caller())
-            sstore(add(order.slot, 5), callvalue())
+            sstore(add(order.slot, 5), bidValue)
         }
 
         if (lastBidPrice != 0) {
@@ -193,7 +200,7 @@ contract MADMarketplace721 is
             order.tokenId,
             _order,
             msg.sender,
-            msg.value
+            bidValue
         );
     }
 
@@ -929,7 +936,8 @@ contract MADMarketplace721 is
         uint256 _endTime,
         address _seller,
         uint256 _lastBidPrice,
-        uint256 _startPrice
+        uint256 _startPrice,
+        uint256 _bidValue
     ) private view {
         assembly {
             // EAOnly()
@@ -956,7 +964,7 @@ contract MADMarketplace721 is
             switch iszero(_lastBidPrice)
             case 0 {
                 if lt(
-                    callvalue(),
+                    _bidValue,
                     add(
                         _lastBidPrice,
                         div(
@@ -971,8 +979,8 @@ contract MADMarketplace721 is
             }
             case 1 {
                 if or(
-                    iszero(callvalue()),
-                    lt(callvalue(), _startPrice)
+                    iszero(_bidValue),
+                    lt(_bidValue, _startPrice)
                 ) {
                     mstore(0x00, 0xf7760f25)
                     revert(0x1c, 0x04)

@@ -98,6 +98,8 @@ describe("MADMarketplace721", () => {
   });
   describe("Buying", async () => {
     it("Should revert if buyer has insufficient ERC20 balance is wrong", async () => {
+      // acc02 = seller
+      // acc01 = buyer
       await m721.updateSettings(300, 10, 20);
       await f721
         .connect(acc02)
@@ -157,6 +159,9 @@ describe("MADMarketplace721", () => {
       );
     });
     it("Should buy token with ERC20, update storage and emit events", async () => {
+      // acc02 = seller > should recieve 0.825 payment for this sale
+      // acc01 = buyer
+      // Mint and list token
       await m721.updateSettings(300, 10, 20);
       await f721
         .connect(acc02)
@@ -210,7 +215,7 @@ describe("MADMarketplace721", () => {
       );
       await mine(10);
       
-      // Set ERC20 balances and approve for maretplace
+      // Set ERC20 balances and approve for maretplace purchase
       const balance = await erc20.balanceOf(acc01.address)
       expect(balance).to.equal(erc20Balance)
       const erc20Tx = await erc20.connect(acc01).approve(m721.address, price)
@@ -218,21 +223,32 @@ describe("MADMarketplace721", () => {
       const result = await erc20.callStatic.allowance(acc01.address, m721.address)
       expect(result).to.equal(price)
       
-      // Buy the token, @todo update to support ERC20 payout
-      // MADMarketplace721._intPath > SafeTransferLib.safeTransferETH > 'ETH_TRANSFER_FAILED'
+      // Buy the token
       const buyTx = await m721
         .connect(acc01)
         .buy(fpOrderId);
-      expect(buyTx).to.be.ok;
-      console.log(buyTx)
-
-      // await erc20.connect(acc02).approve(m721.address, price)
-      // await expect(
-      //   m721.connect(acc02).buy(fpOrderId),
-      // ).to.be.revertedWithCustomError(
-      //   m721,
-      //   MarketplaceErrors.SoldToken,
-      // );
+      
+      // Test ERC20 buy response
+      await expect(buyTx)
+        .to.be.ok.and.to.emit(m721, "Claim")
+        .withArgs(
+          minAddr,
+          1,
+          fpOrderId,
+          acc02.address,
+          acc01.address,
+          price,
+        );
+      
+      // Validate ERC20 balances
+      expect(
+        await erc20.balanceOf(acc02.address)
+      ).to.equal(erc20Balance.add(ethers.utils.parseEther("0.825")))
+      expect(
+        await erc20.balanceOf(acc01.address)
+      ).to.equal(erc20Balance.sub(ethers.utils.parseEther("1")))
+      // @todo validate ERCEO payout balances
+      console.log(await erc20.balanceOf(amb.address))
     });
   });
 });

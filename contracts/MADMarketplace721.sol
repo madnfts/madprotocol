@@ -636,21 +636,45 @@ contract MADMarketplace721 is
             .token
             .royaltyInfo(_order.tokenId, _price);
         // transfer royalties
-        SafeTransferLib.safeTransferETH(
-            payable(_receiver),
-            _amount
-        );
+        if (paymentTokenAddress != address(0)) {
+            SafeTransferLib.safeTransfer(
+                erc20,
+                payable(_receiver),
+                _amount
+            );
+        } else {
+            SafeTransferLib.safeTransferETH(
+                payable(_receiver),
+                _amount
+            );
+        }
         // update price and transfer fee to recipient
         uint256 fee = (_price * feePercent) / basisPoints;
-        SafeTransferLib.safeTransferETH(
-            payable(recipient),
-            fee
-        );
+        if (paymentTokenAddress != address(0)) {
+            SafeTransferLib.safeTransfer(
+                erc20,
+                payable(recipient),
+                fee
+            );
+        } else {
+            SafeTransferLib.safeTransferETH(
+                payable(recipient),
+                fee
+            );
+        }
         // transfer remaining value to seller
-        SafeTransferLib.safeTransferETH(
-            payable(_order.seller),
-            (_price - (_amount + fee))
-        );
+        if (paymentTokenAddress != address(0)) {
+            SafeTransferLib.safeTransfer(
+                erc20,
+                payable(_order.seller),
+                (_price - (_amount + fee))
+            );
+        } else {
+            SafeTransferLib.safeTransferETH(
+                payable(_order.seller),
+                (_price - (_amount + fee))
+            );
+        }
         // transfer token and emit event
         _order.token.safeTransferFrom(
             address(this),
@@ -680,21 +704,45 @@ contract MADMarketplace721 is
             .token
             .royaltyInfo(_order.tokenId, _price);
         // transfer royalties
-        SafeTransferLib.safeTransferETH(
-            payable(_receiver),
-            _amount
-        );
+        if (paymentTokenAddress != address(0)) {
+            SafeTransferLib.safeTransfer(
+                erc20,
+                payable(_receiver),
+                _amount
+            );
+        } else {
+            SafeTransferLib.safeTransferETH(
+                payable(_receiver),
+                _amount
+            );
+        }
         // update price and transfer fee to recipient
         uint256 fee = (_price * feePercent) / basisPoints;
-        SafeTransferLib.safeTransferETH(
-            payable(recipient),
-            fee
-        );
+        if (paymentTokenAddress != address(0)) {
+            SafeTransferLib.safeTransfer(
+                erc20,
+                payable(recipient),
+                fee
+            );
+        } else {
+            SafeTransferLib.safeTransferETH(
+                payable(recipient),
+                fee
+            );
+        }
         // transfer remaining value to seller
-        SafeTransferLib.safeTransferETH(
-            payable(_order.seller),
-            (_price - (_amount + fee))
-        );
+        if (paymentTokenAddress != address(0)) {
+            SafeTransferLib.safeTransfer(
+                erc20,
+                payable(_order.seller),
+                (_price - (_amount + fee))
+            );
+        } else {
+            SafeTransferLib.safeTransferETH(
+                payable(_order.seller),
+                (_price - (_amount + fee))
+            );
+        }
         // transfer token and emit event
         _order.token.safeTransferFrom(
             address(this),
@@ -720,14 +768,27 @@ contract MADMarketplace721 is
         // note: 2.5% flat fee for external listings
         uint256 feePercent = feeVal3; // _feeResolver(key, _order.tokenId);
         uint256 fee = (_price * feePercent) / basisPoints;
-        SafeTransferLib.safeTransferETH(
-            payable(recipient),
-            fee
-        );
-        SafeTransferLib.safeTransferETH(
-            payable(_order.seller),
-            _price - fee
-        );
+        if (paymentTokenAddress != address(0)) {
+            SafeTransferLib.safeTransfer(
+                erc20,
+                payable(recipient),
+                fee
+            );
+            SafeTransferLib.safeTransfer(
+                erc20,
+                payable(_order.seller),
+                _price - fee
+            );
+        } else {
+            SafeTransferLib.safeTransferETH(
+                payable(recipient),
+                fee
+            );
+            SafeTransferLib.safeTransferETH(
+                payable(_order.seller),
+                _price - fee
+            );
+        }
         // transfer token and emit event
         _order.token.safeTransferFrom(
             address(this),

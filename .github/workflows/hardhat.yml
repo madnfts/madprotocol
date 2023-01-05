@@ -1,4 +1,4 @@
-name: Static Anaysis with Slither
+name: Hardhat tests
 
 on: [push, pull_request]
 jobs:

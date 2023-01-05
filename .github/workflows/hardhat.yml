@@ -1,0 +1,19 @@
+name: Static Anaysis with Slither
+
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install deps
+        run: yarn install
+      
+      - name: Compile
+        run: yarn install
+      
+      - name: Run tests
+        continue-on-error: false
+        run: yarn test

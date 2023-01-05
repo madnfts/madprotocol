@@ -21,10 +21,8 @@ import {
   MADMarketplace721,
   MADRouter721,
   MockERC20,
-  SplitterImpl,
 } from "../src/types";
 import { MarketplaceErrors } from "./utils/errors";
-import { splitterFixture } from "./utils/fixtures";
 import {
   dead,
   getOrderId721,

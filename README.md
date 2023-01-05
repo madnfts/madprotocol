@@ -61,8 +61,8 @@ yarn coverage
 
 Delete the smart contract artifacts and cache:
 
-```sh
-$ yarn clean
+```
+yarn clean
 ```
 
 ### Deploy

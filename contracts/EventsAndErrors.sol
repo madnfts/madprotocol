@@ -187,8 +187,6 @@ interface MarketplaceEventsAndErrors721 {
 
     /// @dev 0xf7760f25
     error WrongPrice();
-    /// @dev ...
-    error InsufficientERC20();
     /// @dev 0x90b8ec18
     error TransferFailed();
     /// @dev 0x0863b103

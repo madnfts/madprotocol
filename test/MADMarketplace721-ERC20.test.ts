@@ -99,7 +99,7 @@ describe("MADMarketplace721", () => {
     });
   });
   describe("Buying", async () => {
-    it("Should revert if buyer has insufficient ERC20 balance", async () => {
+    it("Should revert buy if buyer has insufficient ERC20 balance", async () => {
       // acc02 = seller
       // acc01 = buyer
       await m721.updateSettings(300, 10, 20);
@@ -158,7 +158,7 @@ describe("MADMarketplace721", () => {
         m721.connect(acc01).buy(fpOrderId),
       ).to.be.revertedWithCustomError(
         m721,
-        MarketplaceErrors.InsufficientERC20,
+        MarketplaceErrors.WrongPrice,
       );
     });
     it("Should buy token with ERC20, distribute ERC20 splitter and fees", async () => {
@@ -249,6 +249,52 @@ describe("MADMarketplace721", () => {
       expect(
         await erc20.balanceOf(await m721.callStatic.recipient())
       ).to.equal(ownerERC20Bal.add(ethers.utils.parseEther("0.1")))
+    });
+    it("Should revert bid if bidder has insufficient ERC20 balance", async () => {
+      // acc02 = seller
+      // acc01 = buyer
+      await m721.updateSettings(300, 10, 20);
+      await f721.connect(acc02).splitterCheck(
+        "MADSplitter1", amb.address, dead, 20, 0,
+      );
+      const splAddr = await f721.callStatic.getDeployedAddr(
+        "MADSplitter1",
+      );
+      const minAddr = await f721.callStatic.getDeployedAddr(
+        "MinSalt",
+      );
+      await f721.connect(acc02).createCollection(
+        0, "MinSalt", "721Minimal", "MIN", price, 1, "cid/id.json", splAddr, 750,
+      );
+      const min = await ethers.getContractAt(
+        "ERC721Minimal",
+        minAddr,
+      );
+      
+      await r721
+        .connect(acc02)
+        .minimalSafeMint(min.address, acc02.address, {value: ethers.utils.parseEther("0.25")});
+      const tx = await min.connect(acc02).approve(m721.address, 1);
+      const blockTimestamp = (await m721.provider.getBlock(tx.blockNumber || 0)).timestamp;
+
+      const fpTx = await m721
+        .connect(acc02)
+        .englishAuction(min.address, 1, price, blockTimestamp + 301);
+      const fpRc: ContractReceipt = await fpTx.wait();
+      const fpBn = fpRc.blockNumber;
+      const fpOrderId = getOrderId721(
+        fpBn,
+        min.address,
+        1,
+        acc02.address,
+      );
+
+      await expect(
+        m721.connect(acc01).bid(fpOrderId),
+      ).to.be.revertedWithCustomError(
+        m721,
+        MarketplaceErrors.WrongPrice,
+      );
     });
     it("Should bid and win token with ERC20, distribute ERC20 splitter and fees", async () => {
       // acc02 = seller > should recieve 0.825 payment for this sale

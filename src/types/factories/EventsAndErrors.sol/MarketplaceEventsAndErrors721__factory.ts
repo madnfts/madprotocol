@@ -37,11 +37,6 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "InsufficientERC20",
-    type: "error",
-  },
-  {
-    inputs: [],
     name: "InvalidBidder",
     type: "error",
   },

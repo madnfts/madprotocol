@@ -222,7 +222,7 @@ contract MADMarketplace721 is
 
         uint256 currentPrice = getCurrentPrice(_order);
         if (paymentTokenAddress != address(0)) {
-            if (erc20.allowance(msg.sender, address(this)) < currentPrice) revert InsufficientERC20();
+            if (erc20.allowance(msg.sender, address(this)) < currentPrice) revert WrongPrice();
             SafeTransferLib.safeTransferFrom(erc20, msg.sender, address(this), currentPrice);
         } else {
             if (msg.value != currentPrice) revert WrongPrice();

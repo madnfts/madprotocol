@@ -1,10 +1,15 @@
 import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-etherscan";
 import { ethers } from "hardhat";
+import { resolve } from "path";
+import { config } from "dotenv";
 
+config({ path: resolve(__dirname, "./.env") });
+const { ERC20_TOKEN } = process.env;
 const hre = require("hardhat");
 
 const main = async () => {
+  console.log(ERC20_TOKEN);
   const [deployer] = await ethers.getSigners();
   console.log(`Deploying contracts with ${deployer.address}`);
 
@@ -15,6 +20,7 @@ const main = async () => {
     deployer.address, // recipient addr
     300, // min order duration
     ethers.constants.AddressZero, // factory addr
+    ERC20_TOKEN || ethers.constants.AddressZero, // ERC20 payment token addr
   );
 
   console.log(`ERC721 Marketplace address: ${m721.address}`);
@@ -81,6 +87,7 @@ const main = async () => {
     deployer.address, // recipient addr
     300, // min order duration
     ethers.constants.AddressZero, // factory addr
+    ERC20_TOKEN || ethers.constants.AddressZero, // ERC20 payment token addr
   );
 
   console.log(
@@ -168,3 +175,7 @@ main()
     console.log(error);
     process.exit(1);
   });
+function dotenvConfig(arg0: { path: any; }) {
+  throw new Error("Function not implemented.");
+}
+

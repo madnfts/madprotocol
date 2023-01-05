@@ -31,6 +31,7 @@ export interface MarketplaceEventsAndErrors1155Interface
     "FactoryUpdated(address)": EventFragment;
     "FeesUpdated(uint256,uint256)": EventFragment;
     "MakeOrder(address,uint256,uint256,bytes32,address)": EventFragment;
+    "PaymentTokenUpdated(address)": EventFragment;
     "RecipientUpdated(address)": EventFragment;
   };
 
@@ -41,6 +42,7 @@ export interface MarketplaceEventsAndErrors1155Interface
   getEvent(nameOrSignatureOrTopic: "FactoryUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FeesUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MakeOrder"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PaymentTokenUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RecipientUpdated"): EventFragment;
 }
 
@@ -136,6 +138,17 @@ export type MakeOrderEvent = TypedEvent<
 >;
 
 export type MakeOrderEventFilter = TypedEventFilter<MakeOrderEvent>;
+
+export interface PaymentTokenUpdatedEventObject {
+  newPaymentToken: string;
+}
+export type PaymentTokenUpdatedEvent = TypedEvent<
+  [string],
+  PaymentTokenUpdatedEventObject
+>;
+
+export type PaymentTokenUpdatedEventFilter =
+  TypedEventFilter<PaymentTokenUpdatedEvent>;
 
 export interface RecipientUpdatedEventObject {
   newRecipient: string;
@@ -268,6 +281,13 @@ export interface MarketplaceEventsAndErrors1155 extends BaseContract {
       hash?: PromiseOrValue<BytesLike> | null,
       seller?: null
     ): MakeOrderEventFilter;
+
+    "PaymentTokenUpdated(address)"(
+      newPaymentToken?: PromiseOrValue<string> | null
+    ): PaymentTokenUpdatedEventFilter;
+    PaymentTokenUpdated(
+      newPaymentToken?: PromiseOrValue<string> | null
+    ): PaymentTokenUpdatedEventFilter;
 
     "RecipientUpdated(address)"(
       newRecipient?: PromiseOrValue<string> | null

@@ -55,7 +55,7 @@ REPORT_GAS=true yarn test
 yarn coverage
 ```
 
-#### **_NOTE:_** See coverage output in [coverage](./coverage/).
+**_NOTE:_** Coverage results output to ./coverage.
 
 ### Clean
 
@@ -73,11 +73,11 @@ Deploy the contracts to the desired network:
 yarn deploy:network
 ```
 
-#### **_NOTE:_** Supported networks; Harmony Mainet, Skale Calypso, Skale Stage v3, Goerli
+**_NOTE:_** Supported networks; Harmony Mainet, Skale Calypso, Skale Stage v3, Goerli
 
 ## Contracts Dependency Tree
 
-#### **_NOTE:_** See smart contracts natspec docs in [documentation](./docs/).
+**_NOTE:_** See smart contracts natspec docs in [documentation](./docs/).
 
 ```rs
 ./contracts/

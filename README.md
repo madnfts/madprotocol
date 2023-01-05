@@ -1,4 +1,4 @@
-# MAD Smart Contracts v0.9
+# MAD Smart Contracts v1.0
 
 ```ts
 ///     ...     ..      ..                    ..
@@ -14,6 +14,66 @@
 /// :""888":~"888"     `888*"  "888*""888"  `"888*""
 ///     "~'    "~        ""     ^Y"   ^Y'      ""     MADNFTs © 2022.
 ```
+
+## Usage
+
+### Pre Requisites
+
+Before installing, create a `.env` file and set criteria as in `.env.example`.
+
+### Install
+
+```
+yarn install
+```
+
+### Compile
+
+```
+yarn compile
+```
+
+**_NOTE:_** TypeChain artifacts generated at compile time.
+
+### Tests
+
+```
+yarn test
+```
+
+### Report Gas
+
+```
+REPORT_GAS=true yarn test
+```
+
+**_NOTE_:** Gas usage per unit test and average gas per method call.
+
+### Test coverage
+
+```
+yarn coverage
+```
+
+#### **_NOTE:_** See coverage output in [coverage](./coverage/).
+
+### Clean
+
+Delete the smart contract artifacts and cache:
+
+```sh
+$ yarn clean
+```
+
+### Deploy
+
+Deploy the contracts to the desired network:
+
+```
+yarn deploy:network
+```
+
+#### **_NOTE:_** Supported networks; Harmony Mainet, Skale Calypso, Skale Stage v3, Goerli
 
 ## Contracts Dependency Tree
 
@@ -86,54 +146,4 @@
 ├── MADRouter721.sol
 ├── MAD.sol
 └── Types.sol
-```
-
-## Usage
-
-### Pre Requisites
-
-Before installing, create a `.env` file and set a BIP-39 compatible mnemonic and other env criteria as in `.env.example`.
-
-### Install
-
-```sh
-$ yarn install
-```
-
-### Compile
-
-```sh
-$ yarn compile
-```
-
-**_NOTE:_** TypeChain artifacts generated at compile time.
-
-### Test
-
-```sh
-$ yarn test
-```
-
-### Report Gas
-
-```sh
-$ REPORT_GAS=true yarn test
-```
-
-**_NOTE_:** Gas usage per unit test and average gas per method call.
-
-### Clean
-
-Delete the smart contract artifacts and cache:
-
-```sh
-$ yarn clean
-```
-
-### Deploy
-
-Deploy the contracts to devnet:
-
-```sh
-$ yarn deploy:devnet
 ```

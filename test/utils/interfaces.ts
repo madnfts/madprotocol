@@ -111,10 +111,22 @@ export interface MADFixture721 {
   m721: MADMarketplace721;
   r721: MADRouter721;
 }
+export interface MADFixture721ERC20 {
+  f721: MADFactory721;
+  m721: MADMarketplace721;
+  r721: MADRouter721;
+  erc20: MockERC20;
+}
 export interface MADFixture1155 {
   f1155: MADFactory1155;
   m1155: MADMarketplace1155;
   r1155: MADRouter1155;
+}
+export interface MADFixture1155ERC20 {
+  f1155: MADFactory1155;
+  m1155: MADMarketplace1155;
+  r1155: MADRouter1155;
+  erc20: MockERC20;
 }
 
 // exported consts

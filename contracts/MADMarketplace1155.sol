@@ -9,6 +9,7 @@ import { Pausable } from "./lib/security/Pausable.sol";
 import { Owned } from "./lib/auth/Owned.sol";
 import { ERC1155Holder } from "./lib/tokens/ERC1155/Base/utils/ERC1155Holder.sol";
 import { SafeTransferLib } from "./lib/utils/SafeTransferLib.sol";
+import { ERC20 } from "./lib/tokens/ERC20.sol";
 
 contract MADMarketplace1155 is
     MAD,
@@ -66,6 +67,9 @@ contract MADMarketplace1155 is
 
     address public recipient;
     FactoryVerifier public MADFactory1155;
+    
+    address public paymentTokenAddress;
+    ERC20 public erc20;
 
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
@@ -74,10 +78,14 @@ contract MADMarketplace1155 is
     constructor(
         address _recipient,
         uint256 _minOrderDuration,
-        FactoryVerifier _factory
+        FactoryVerifier _factory,
+        address _paymentTokenAddress
     ) {
         setFactory(_factory);
         setRecipient(_recipient);
+        if (_paymentTokenAddress != address(0)) {
+            setPaymentToken(_paymentTokenAddress);
+        }
         updateSettings(
             300, // 5 min
             _minOrderDuration,
@@ -164,14 +172,21 @@ contract MADMarketplace1155 is
         Types.Order1155 storage order = orderInfo[_order];
 
         uint256 lastBidPrice = order.lastBidPrice;
+        uint256 bidValue = paymentTokenAddress != address(0)
+            ? erc20.allowance(msg.sender, address(this)) : msg.value;
 
         _bidChecks(
             order.orderType,
             order.endTime,
             order.seller,
             lastBidPrice,
-            order.startPrice
+            order.startPrice,
+            bidValue
         );
+
+        if (paymentTokenAddress != address(0)) {
+            SafeTransferLib.safeTransferFrom(erc20, msg.sender, address(this), bidValue);
+        }
 
         // 1s blocktime
         assembly {
@@ -190,7 +205,7 @@ contract MADMarketplace1155 is
                 sstore(add(order.slot, 5), inc)
             }
             sstore(add(order.slot, 7), caller())
-            sstore(add(order.slot, 6), callvalue())
+            sstore(add(order.slot, 6), bidValue)
         }
         if (lastBidPrice != 0) {
             SafeTransferLib.safeTransferETH(
@@ -205,7 +220,7 @@ contract MADMarketplace1155 is
             order.amount,
             _order,
             msg.sender,
-            msg.value
+            bidValue
         );
     }
 
@@ -226,7 +241,12 @@ contract MADMarketplace1155 is
         );
 
         uint256 currentPrice = getCurrentPrice(_order);
-        if (msg.value != currentPrice) revert WrongPrice();
+        if (paymentTokenAddress != address(0)) {
+            if (erc20.allowance(msg.sender, address(this)) < currentPrice) revert WrongPrice();
+            SafeTransferLib.safeTransferFrom(erc20, msg.sender, address(this), currentPrice);
+        } else {
+            if (msg.value != currentPrice) revert WrongPrice();
+        }
 
         order.isSold = true;
 
@@ -457,6 +477,23 @@ contract MADMarketplace1155 is
         _unpause();
     }
 
+    /// @notice Enables the contract's owner to change payment token address.
+    /// @dev Function Signature := ?
+    function setPaymentToken(address _paymentTokenAddress)
+        public
+        onlyOwner
+    {
+        require(_paymentTokenAddress != address(0), "Invalid token address");
+
+        assembly {
+            // paymentTokenAddress = _paymentTokenAddress;
+            sstore(paymentTokenAddress.slot, _paymentTokenAddress)
+        }
+        erc20 = ERC20(_paymentTokenAddress);
+
+        emit PaymentTokenUpdated(_paymentTokenAddress);
+    }
+
     /// @notice Enables the contract's owner to change recipient address.
     /// @dev Function Signature := 0x3bbed4a0
     function setRecipient(address _recipient)
@@ -660,21 +697,45 @@ contract MADMarketplace1155 is
             .token
             .royaltyInfo(_order.tokenId, _price);
         // transfer royalties
-        SafeTransferLib.safeTransferETH(
-            payable(_receiver),
-            _amount
-        );
+        if (paymentTokenAddress != address(0)) {
+            SafeTransferLib.safeTransfer(
+                erc20,
+                payable(_receiver),
+                _amount
+            );
+        } else {
+            SafeTransferLib.safeTransferETH(
+                payable(_receiver),
+                _amount
+            );
+        }
         // update price and transfer fee to recipient
         uint256 fee = (_price * feePercent) / basisPoints;
-        SafeTransferLib.safeTransferETH(
-            payable(recipient),
-            fee
-        );
+        if (paymentTokenAddress != address(0)) {
+            SafeTransferLib.safeTransfer(
+                erc20,
+                payable(recipient),
+                fee
+            );
+        } else {
+            SafeTransferLib.safeTransferETH(
+                payable(recipient),
+                fee
+            );
+        }
         // transfer remaining value to seller
-        SafeTransferLib.safeTransferETH(
-            payable(_order.seller),
-            (_price - (_amount + fee))
-        );
+        if (paymentTokenAddress != address(0)) {
+            SafeTransferLib.safeTransfer(
+                erc20,
+                payable(_order.seller),
+                (_price - (_amount + fee))
+            );
+        } else {
+            SafeTransferLib.safeTransferETH(
+                payable(_order.seller),
+                (_price - (_amount + fee))
+            );
+        }
         emit Claim(
             _order.token,
             _order.tokenId,
@@ -913,7 +974,8 @@ contract MADMarketplace1155 is
         uint256 _endTime,
         address _seller,
         uint256 _lastBidPrice,
-        uint256 _startPrice
+        uint256 _startPrice,
+        uint256 _bidValue        
     ) private view {
         assembly {
             // EAOnly()
@@ -940,7 +1002,7 @@ contract MADMarketplace1155 is
             switch iszero(_lastBidPrice)
             case 0 {
                 if lt(
-                    callvalue(),
+                    _bidValue,
                     add(
                         _lastBidPrice,
                         div(
@@ -955,8 +1017,8 @@ contract MADMarketplace1155 is
             }
             case 1 {
                 if or(
-                    iszero(callvalue()),
-                    lt(callvalue(), _startPrice)
+                    iszero(_bidValue),
+                    lt(_bidValue, _startPrice)
                 ) {
                     mstore(0x00, 0xf7760f25)
                     revert(0x1c, 0x04)

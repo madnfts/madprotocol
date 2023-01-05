@@ -3122,8 +3122,6 @@ describe("MADMarketplace721", () => {
         .mul(ethers.BigNumber.from(250))
         .div(ethers.BigNumber.from(10000));
 
-      console.log(daPrice, daFee)
-
       await expect(() =>
         m721
           .connect(acc01)
@@ -3444,8 +3442,6 @@ describe("MADMarketplace721", () => {
       const daFee = daPrice
         .mul(ethers.BigNumber.from(500))
         .div(ethers.BigNumber.from(10000));
-
-      console.log(daPrice, daFee)
 
       await expect(() =>
         m721

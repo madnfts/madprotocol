@@ -32,14 +32,14 @@ export interface ERC721BasicInterface extends utils.Interface {
   functions: {
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
-    "burn(uint256[])": FunctionFragment;
+    "burn(uint256[],address)": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "getBaseURI()": FunctionFragment;
     "getMintCount()": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "maxSupply()": FunctionFragment;
     "mint(uint256)": FunctionFragment;
-    "mintTo(address,uint256)": FunctionFragment;
+    "mintTo(address,uint256,address)": FunctionFragment;
     "name()": FunctionFragment;
     "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
     "owner()": FunctionFragment;
@@ -108,7 +108,7 @@ export interface ERC721BasicInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "burn",
-    values: [PromiseOrValue<BigNumberish>[]]
+    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "getApproved",
@@ -133,7 +133,11 @@ export interface ERC721BasicInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "mintTo",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>
+    ]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
@@ -441,6 +445,7 @@ export interface ERC721Basic extends BaseContract {
 
     burn(
       ids: PromiseOrValue<BigNumberish>[],
+      _erc20: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -469,6 +474,7 @@ export interface ERC721Basic extends BaseContract {
     mintTo(
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
+      _erc20: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -583,6 +589,7 @@ export interface ERC721Basic extends BaseContract {
 
   burn(
     ids: PromiseOrValue<BigNumberish>[],
+    _erc20: PromiseOrValue<string>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -611,6 +618,7 @@ export interface ERC721Basic extends BaseContract {
   mintTo(
     to: PromiseOrValue<string>,
     amount: PromiseOrValue<BigNumberish>,
+    _erc20: PromiseOrValue<string>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -725,6 +733,7 @@ export interface ERC721Basic extends BaseContract {
 
     burn(
       ids: PromiseOrValue<BigNumberish>[],
+      _erc20: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -753,6 +762,7 @@ export interface ERC721Basic extends BaseContract {
     mintTo(
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
+      _erc20: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -938,6 +948,7 @@ export interface ERC721Basic extends BaseContract {
 
     burn(
       ids: PromiseOrValue<BigNumberish>[],
+      _erc20: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -966,6 +977,7 @@ export interface ERC721Basic extends BaseContract {
     mintTo(
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
+      _erc20: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1079,6 +1091,7 @@ export interface ERC721Basic extends BaseContract {
 
     burn(
       ids: PromiseOrValue<BigNumberish>[],
+      _erc20: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1107,6 +1120,7 @@ export interface ERC721Basic extends BaseContract {
     mintTo(
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
+      _erc20: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -459,13 +459,11 @@ contract MADMarketplace721 is
         onlyOwner
     {
         require(_paymentTokenAddress != address(0), "Invalid token address");
-
         assembly {
             // paymentTokenAddress = _paymentTokenAddress;
             sstore(paymentTokenAddress.slot, _paymentTokenAddress)
         }
         erc20 = ERC20(_paymentTokenAddress);
-
         emit PaymentTokenUpdated(_paymentTokenAddress);
     }
 

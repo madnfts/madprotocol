@@ -109,13 +109,16 @@ contract ERC721Basic is
         emit PublicMintStateSet(_publicMintState);
     }
 
-    function mintTo(address to, uint256 amount)
+    function mintTo(address to, uint256 amount, ERC20 _erc20)
         external
         payable
         onlyOwner
         hasReachedMax(amount)
     {
-        _feeCheck(0x40d097c3);
+        _feeCheck(0x40d097c3, msg.value);
+        if (address(_erc20) != address(0)) {
+            SafeTransferLib.safeTransferFrom(_erc20, msg.sender, address(this), msg.value);
+        }
         uint256 i;
         // for (uint256 i = 0; i < amount; i++) {
         for (i; i < amount; ) {
@@ -135,8 +138,11 @@ contract ERC721Basic is
         // Transfer event emited by parent ERC721 contract
     }
 
-    function burn(uint256[] memory ids) external payable onlyOwner {
-        _feeCheck(0x44df8e70);
+    function burn(uint256[] memory ids, ERC20 _erc20) external payable onlyOwner {
+        _feeCheck(0x44df8e70, msg.value);
+        if (address(_erc20) != address(0)) {
+            SafeTransferLib.safeTransferFrom(_erc20, msg.sender, address(this), msg.value);
+        }
         uint256 i;
         uint256 len = ids.length;
         // for (uint256 i = 0; i < ids.length; i++) {
@@ -301,7 +307,7 @@ contract ERC721Basic is
     //                     INTERNAL FUNCTIONS                     //
     ////////////////////////////////////////////////////////////////
 
-    function _feeCheck(bytes4 _method) internal view {
+    function _feeCheck(bytes4 _method, uint256 _value) internal view {
         address _owner = owner;
         uint32 size;
         assembly {
@@ -313,7 +319,7 @@ contract ERC721Basic is
 
         uint256 _fee = FeeOracle(owner).feeLookup(_method);
         assembly {
-            if iszero(eq(callvalue(), _fee)) {
+            if iszero(eq(_value, _fee)) {
                 mstore(0x00, 0xf7760f25)
                 revert(0x1c, 0x04)
             }

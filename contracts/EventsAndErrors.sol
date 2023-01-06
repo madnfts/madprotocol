@@ -331,4 +331,8 @@ interface RouterEvents {
         uint256 burnFees,
         uint256 mintFees
     );
+
+    event PaymentTokenUpdated(
+        address indexed newPaymentToken
+    );
 }

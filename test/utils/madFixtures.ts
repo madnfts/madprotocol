@@ -150,6 +150,7 @@ export async function madFixture721A(): Promise<MADFixture721> {
 
   const r721 = (await Router.deploy(
     f721.address,
+    dead
   )) as MADRouter721;
 
   await f721.setRouter(r721.address);
@@ -221,6 +222,7 @@ export async function madFixture721B(): Promise<MADFixture721> {
 
   const r721 = (await Router.deploy(
     f721.address,
+    dead
   )) as MADRouter721;
 
   await f721.setRouter(r721.address);
@@ -292,6 +294,7 @@ export async function madFixture721C(): Promise<MADFixture721> {
 
   const r721 = (await Router.deploy(
     f721.address,
+    dead
   )) as MADRouter721;
 
   await f721.setRouter(r721.address);
@@ -366,11 +369,12 @@ export async function madFixture721D(): Promise<MADFixture721ERC20> {
   const f721 = (await Factory.deploy(
     m721.address,
     ethers.constants.AddressZero,
-    owner[0],
+    owner[0]
   )) as MADFactory721;
 
   const r721 = (await Router.deploy(
     f721.address,
+    erc20.address
   )) as MADRouter721;
 
   await f721.setRouter(r721.address);

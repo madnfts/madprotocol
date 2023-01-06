@@ -50,12 +50,33 @@ contract MADRouter721 is
     uint256 public feeMint = 0.25 ether;
     uint256 public feeBurn = 0;
     
+    address public paymentTokenAddress;
+    ERC20 public erc20;
+    
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    constructor(FactoryVerifier _factory) {
+    constructor(FactoryVerifier _factory, address _paymentTokenAddress) {
         MADFactory721 = _factory;
+        if (_paymentTokenAddress != address(0)) {
+            setPaymentToken(_paymentTokenAddress);
+        }
+    }
+
+    /// @notice Enables the contract's owner to change payment token address.
+    /// @dev Function Signature := ?
+    function setPaymentToken(address _paymentTokenAddress)
+        public
+        onlyOwner
+    {
+        require(_paymentTokenAddress != address(0), "Invalid token address");
+        assembly {
+            // paymentTokenAddress = _paymentTokenAddress;
+            sstore(paymentTokenAddress.slot, _paymentTokenAddress)
+        }
+        erc20 = ERC20(_paymentTokenAddress);
+        emit PaymentTokenUpdated(_paymentTokenAddress);
     }
 
     ////////////////////////////////////////////////////////////////
@@ -131,6 +152,7 @@ contract MADRouter721 is
 
     /// @notice `ERC721Minimal` creator mint function handler.
     /// @dev Function Sighash := 0x42a42752
+    /// @dev Cousumes price from msg.value or erc20 if supported
     function minimalSafeMint(address _token, address _to)
         external
         payable
@@ -139,7 +161,7 @@ contract MADRouter721 is
     {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType != 0) revert("INVALID_TYPE");
-        ERC721Minimal(_token).safeMint{value: msg.value}(_to);
+        ERC721Minimal(_token).safeMint{value: msg.value}(_to, msg.sender, erc20);
     }
 
     function basicMintTo(
@@ -149,7 +171,9 @@ contract MADRouter721 is
     ) external payable nonReentrant whenNotPaused {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType != 1) revert("INVALID_TYPE");
-        ERC721Basic(_token).mintTo{value: msg.value}(_to, _amount);
+        uint256 currentPrice = (paymentTokenAddress != address(0)) 
+            ? msg.value : erc20.allowance(msg.sender, address(this));
+        ERC721Basic(_token).mintTo{value: currentPrice}(_to, _amount, erc20);
     }
 
     /// @notice Global token burn controller/single pusher for all token types.
@@ -163,16 +187,17 @@ contract MADRouter721 is
         nonReentrant
         whenNotPaused
     {
+        uint256 currentPrice = (paymentTokenAddress != address(0)) ? 0 : erc20.allowance(msg.sender, address(this));
         (, uint8 _tokenType) = _tokenRender(_token);
 
         _tokenType < 1
-            ? ERC721Minimal(_token).burn{value: msg.value}()
+            ? ERC721Minimal(_token).burn{value: currentPrice}()
             : _tokenType == 1
-            ? ERC721Basic(_token).burn{value: msg.value}(_ids)
+            ? ERC721Basic(_token).burn{value: currentPrice}(_ids, erc20)
             : _tokenType == 2
-            ? ERC721Whitelist(_token).burn{value: msg.value}(_ids)
+            ? ERC721Whitelist(_token).burn{value: currentPrice}(_ids)
             : _tokenType > 2
-            ? ERC721Lazy(_token).burn{value: msg.value}(_ids)
+            ? ERC721Lazy(_token).burn{value: currentPrice}(_ids)
             : revert("INVALID_TYPE");
     }
 
@@ -356,6 +381,7 @@ contract MADRouter721 is
 
         emit FeesUpdated(_feeMint, _feeBurn);
     }
+
     /// @notice Private auth-check mechanism that verifies `MADFactory` storage.
     /// @dev Retrieves both `colID` (bytes32) and collection type (uint8)
     /// for valid token and approved user.

@@ -57,7 +57,7 @@ describe("ERC721Minimal", () => {
 
   let splitter: SplitterImpl;
   let minimal: ERC721Minimal;
-  // let erc20: MockERC20;
+  let erc20: MockERC20;
 
   // let tx:ContractTransaction;
   // let rc:ContractReceipt;
@@ -78,6 +78,12 @@ describe("ERC721Minimal", () => {
     ({ minimal, splitter } = await loadFixture(
       minimalFixture721,
     ));
+    const ERC20 = await ethers.getContractFactory(
+      "MockERC20",
+    );
+    erc20 = (await ERC20.deploy(
+      BigNumber.from(2).pow(255),
+    )) as MockERC20;
   });
 
   describe("Init", async () => {
@@ -149,11 +155,40 @@ describe("ERC721Minimal", () => {
         MinimalErrors.Unauthorized,
       );
     });
-
+  
     it("Should mint, update storage and emit events", async () => {
       const tx: ContractTransaction = await minimal
         .connect(owner)
         .safeMint(acc02.address);
+      const rc: ContractReceipt = await tx.wait();
+      const event = rc.events?.find(
+        event => event.event === "Transfer",
+      );
+      /* eslint-disable @typescript-eslint/no-non-null-assertion */
+      const from = event?.args!["from"];
+      const to = event?.args!["to"];
+      const id = event?.args!["id"];
+      /* eslint-enable @typescript-eslint/no-non-null-assertion */
+      const bal = await minimal.callStatic.balanceOf(
+        acc02.address,
+      );
+      const ownerOf = await minimal.callStatic.ownerOf(1);
+
+      expect(tx).to.be.ok;
+      await expect(tx).to.emit(minimal, "Transfer");
+
+      expect(1).to.eq(bal);
+      expect(acc02.address).to.eq(ownerOf);
+      expect(ethers.constants.AddressZero).to.eq(from);
+      expect(acc02.address).to.eq(to);
+      expect(1).to.eq(id);
+    });
+
+    it("Should mint, update storage and emit events - ERC20", async () => {      
+      const tx: ContractTransaction = await minimal
+        .connect(owner)
+        .safeMintERC20(acc02.address, acc02.address, erc20.address);
+
       const rc: ContractReceipt = await tx.wait();
       const event = rc.events?.find(
         event => event.event === "Transfer",
@@ -214,6 +249,39 @@ describe("ERC721Minimal", () => {
       const tx: ContractTransaction = await minimal
         .connect(owner)
         .burn();
+      const rc: ContractReceipt = await tx.wait();
+      const event = rc.events?.find(
+        event => event.event === "Transfer",
+      );
+      /* eslint-disable @typescript-eslint/no-non-null-assertion */
+      const from = event?.args!["from"];
+      const to = event?.args!["to"];
+      const id = event?.args!["id"];
+      /* eslint-enable @typescript-eslint/no-non-null-assertion */
+      const bal = await minimal.callStatic.balanceOf(
+        acc02.address,
+      );
+      const getApproved =
+        await minimal.callStatic.getApproved(1);
+
+      await expect(minimal.ownerOf(1)).to.be.revertedWith(
+        MinimalErrors.NotMinted,
+      );
+      await expect(tx).to.emit(minimal, "Transfer");
+
+      expect(getApproved).to.eq(ethers.constants.AddressZero);
+      expect(tx).to.be.ok;
+      expect(0).to.eq(bal);
+      expect(acc02.address).to.eq(from);
+      expect(ethers.constants.AddressZero).to.eq(to);
+      expect(1).to.eq(id);
+    });
+
+    it("Should burn, update storage and emit events - ERC20", async () => {
+      await minimal.connect(owner).safeMint(acc02.address);
+      const tx: ContractTransaction = await minimal
+        .connect(owner)
+        .burnERC20(owner.address, erc20.address);
       const rc: ContractReceipt = await tx.wait();
       const event = rc.events?.find(
         event => event.event === "Transfer",

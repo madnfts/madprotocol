@@ -161,7 +161,11 @@ contract MADRouter721 is
     {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType != 0) revert("INVALID_TYPE");
-        ERC721Minimal(_token).safeMint{value: msg.value}(_to, msg.sender, erc20);
+        if (address(erc20) != address(0)) {
+            ERC721Minimal(_token).safeMintERC20{value: msg.value}(_to, msg.sender, erc20);
+        } else {
+            ERC721Minimal(_token).safeMint{value: msg.value}(_to);
+        }
     }
 
     function basicMintTo(
@@ -187,17 +191,16 @@ contract MADRouter721 is
         nonReentrant
         whenNotPaused
     {
-        uint256 currentPrice = (paymentTokenAddress != address(0)) ? 0 : erc20.allowance(msg.sender, address(this));
         (, uint8 _tokenType) = _tokenRender(_token);
 
         _tokenType < 1
-            ? ERC721Minimal(_token).burn{value: currentPrice}()
+            ? paymentTokenAddress != address(0) ? ERC721Minimal(_token).burn{value: msg.value}() : ERC721Minimal(_token).burnERC20(msg.sender, erc20)
             : _tokenType == 1
-            ? ERC721Basic(_token).burn{value: currentPrice}(_ids, erc20)
+            ? ERC721Basic(_token).burn{value: msg.value}(_ids, erc20)
             : _tokenType == 2
-            ? ERC721Whitelist(_token).burn{value: currentPrice}(_ids)
+            ? ERC721Whitelist(_token).burn{value: msg.value}(_ids)
             : _tokenType > 2
-            ? ERC721Lazy(_token).burn{value: currentPrice}(_ids)
+            ? ERC721Lazy(_token).burn{value: msg.value}(_ids)
             : revert("INVALID_TYPE");
     }
 

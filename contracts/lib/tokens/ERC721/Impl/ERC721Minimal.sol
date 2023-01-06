@@ -64,14 +64,22 @@ contract ERC721Minimal is
     ////////////////////////////////////////////////////////////////
 
     /// @dev Can't be reminted if already minted, due to boolean.
+    function safeMint(address to) external payable onlyOwner {
+        _feeCheck(0x40d097c3, msg.value);
+        if (minted) revert AlreadyMinted();
+        minted = true;
+        _safeMint(to, 1);
+    }
+
+    /// @dev Can't be reminted if already minted, due to boolean.
+    /// @dev ERC20 payment minting compatible with MADRouter.
     /// @dev msg.sender = router
     /// @dev erc20Owner = paying user
-    function safeMint(address to, address erc20Owner, ERC20 erc20) external payable onlyOwner {
-        uint256 value = address(erc20) != address(0) ? erc20.allowance(erc20Owner, address(this)) : msg.value;
+    function safeMintERC20(address to, address erc20Owner, ERC20 erc20) external payable onlyOwner {
+        uint256 value = erc20.allowance(erc20Owner, address(this));
         _feeCheck(0x40d097c3, value);
         if (minted) revert AlreadyMinted();
-        if (address(erc20) != address(0)) SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
-
+        SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
         minted = true;
         _safeMint(to, 1);
     }
@@ -79,6 +87,15 @@ contract ERC721Minimal is
     /// @dev Can't be reburnt since `minted` is not updated to false.
     function burn() external payable onlyOwner {
         _feeCheck(0x44df8e70, msg.value);
+        _burn(1);
+    }
+
+    /// @dev Can't be reburnt since `minted` is not updated to false.
+    /// @dev ERC20 payment for burning compatible with MADRouter.
+    function burnERC20(address erc20Owner, ERC20 erc20) external payable onlyOwner {
+        uint256 value = erc20.allowance(erc20Owner, address(this));
+        _feeCheck(0x44df8e70, value);
+        SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
         _burn(1);
     }
 

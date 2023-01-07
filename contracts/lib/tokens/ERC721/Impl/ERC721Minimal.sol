@@ -13,8 +13,6 @@ import { Owned } from "../../../auth/Owned.sol";
 import { SafeTransferLib } from "../../../utils/SafeTransferLib.sol";
 import { FeeOracle } from "../../common/FeeOracle.sol";
 
-import "hardhat/console.sol";
-
 contract ERC721Minimal is
     ERC721,
     ERC2981,
@@ -34,6 +32,8 @@ contract ERC721Minimal is
     bool private minted;
     /// @dev  default := false
     bool public publicMintState;
+    /// @dev  default := false
+    ERC20 public erc20;
 
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
@@ -47,13 +47,15 @@ contract ERC721Minimal is
         uint256 _price,
         SplitterImpl _splitter,
         uint96 _fraction,
-        address _router
+        address _router,
+        ERC20 _erc20
     ) ERC721(_name, _symbol) Owned(_router) {
         _tokenURI = __tokenURI;
         price = _price;
         splitter = _splitter;
         _royaltyFee = _fraction;
         _royaltyRecipient = payable(splitter);
+        erc20 = _erc20;
 
         emit RoyaltyFeeSet(_royaltyFee);
         emit RoyaltyRecipientSet(_royaltyRecipient);
@@ -64,7 +66,9 @@ contract ERC721Minimal is
     ////////////////////////////////////////////////////////////////
 
     /// @dev Can't be reminted if already minted, due to boolean.
+    /// @dev Allows msg.value payments only if !erc20
     function safeMint(address to) external payable onlyOwner {
+        if (address(erc20) != address(0)) revert("INVALID_TYPE");
         _feeCheck(0x40d097c3, msg.value);
         if (minted) revert AlreadyMinted();
         minted = true;
@@ -75,7 +79,8 @@ contract ERC721Minimal is
     /// @dev ERC20 payment minting compatible with MADRouter.
     /// @dev msg.sender = router
     /// @dev erc20Owner = paying user
-    function safeMintERC20(address to, address erc20Owner, ERC20 erc20) external payable onlyOwner {
+    function safeMint(address to, address erc20Owner) external payable onlyOwner {
+        if (address(erc20) == address(0)) revert("INVALID_TYPE");
         uint256 value = erc20.allowance(erc20Owner, address(this));
         _feeCheck(0x40d097c3, value);
         if (minted) revert AlreadyMinted();
@@ -85,14 +90,18 @@ contract ERC721Minimal is
     }
 
     /// @dev Can't be reburnt since `minted` is not updated to false.
+    /// @dev Allows msg.value payments only if !erc20
     function burn() external payable onlyOwner {
+        if (address(erc20) != address(0)) revert("INVALID_TYPE");
         _feeCheck(0x44df8e70, msg.value);
         _burn(1);
     }
 
     /// @dev Can't be reburnt since `minted` is not updated to false.
     /// @dev ERC20 payment for burning compatible with MADRouter.
-    function burnERC20(address erc20Owner, ERC20 erc20) external payable onlyOwner {
+    /// @dev Allows msg.value payments only if erc20
+    function burn(address erc20Owner) external payable onlyOwner {
+        if (address(erc20) == address(0)) revert("INVALID_TYPE");
         uint256 value = erc20.allowance(erc20Owner, address(this));
         _feeCheck(0x44df8e70, value);
         SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
@@ -168,10 +177,25 @@ contract ERC721Minimal is
     ////////////////////////////////////////////////////////////////
 
     function publicMint() external payable nonReentrant {
+        if (address(erc20) != address(0)) revert("INVALID_TYPE");
         if (!publicMintState) revert PublicMintOff();
         if (msg.value != price) revert WrongPrice();
         if (minted) revert AlreadyMinted();
 
+        minted = true;
+        
+        _safeMint(msg.sender, 1);
+    }
+
+    function publicMint(address erc20Owner) external payable nonReentrant {
+        if (address(erc20) == address(0)) revert("INVALID_TYPE");
+        uint256 value = erc20.allowance(erc20Owner, address(this));
+        
+        if (!publicMintState) revert PublicMintOff();
+        if (value != price) revert WrongPrice();
+        if (minted) revert AlreadyMinted();
+
+        SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
         minted = true;
 
         _safeMint(msg.sender, 1);

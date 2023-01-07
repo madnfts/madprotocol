@@ -33,7 +33,8 @@ export interface ERC721MinimalInterface extends utils.Interface {
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "burn()": FunctionFragment;
-    "burnERC20(address,address)": FunctionFragment;
+    "burn(address)": FunctionFragment;
+    "erc20()": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "name()": FunctionFragment;
@@ -42,10 +43,11 @@ export interface ERC721MinimalInterface extends utils.Interface {
     "ownerOf(uint256)": FunctionFragment;
     "price()": FunctionFragment;
     "publicMint()": FunctionFragment;
+    "publicMint(address)": FunctionFragment;
     "publicMintState()": FunctionFragment;
     "royaltyInfo(uint256,uint256)": FunctionFragment;
     "safeMint(address)": FunctionFragment;
-    "safeMintERC20(address,address,address)": FunctionFragment;
+    "safeMint(address,address)": FunctionFragment;
     "safeTransferFrom(address,address,uint256)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
@@ -64,8 +66,9 @@ export interface ERC721MinimalInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "approve"
       | "balanceOf"
-      | "burn"
-      | "burnERC20"
+      | "burn()"
+      | "burn(address)"
+      | "erc20"
       | "getApproved"
       | "isApprovedForAll"
       | "name"
@@ -73,11 +76,12 @@ export interface ERC721MinimalInterface extends utils.Interface {
       | "owner"
       | "ownerOf"
       | "price"
-      | "publicMint"
+      | "publicMint()"
+      | "publicMint(address)"
       | "publicMintState"
       | "royaltyInfo"
-      | "safeMint"
-      | "safeMintERC20"
+      | "safeMint(address)"
+      | "safeMint(address,address)"
       | "safeTransferFrom(address,address,uint256)"
       | "safeTransferFrom(address,address,uint256,bytes)"
       | "setApprovalForAll"
@@ -100,11 +104,12 @@ export interface ERC721MinimalInterface extends utils.Interface {
     functionFragment: "balanceOf",
     values: [PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(functionFragment: "burn", values?: undefined): string;
+  encodeFunctionData(functionFragment: "burn()", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "burnERC20",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+    functionFragment: "burn(address)",
+    values: [PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(functionFragment: "erc20", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getApproved",
     values: [PromiseOrValue<BigNumberish>]
@@ -130,8 +135,12 @@ export interface ERC721MinimalInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "price", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "publicMint",
+    functionFragment: "publicMint()",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "publicMint(address)",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "publicMintState",
@@ -142,16 +151,12 @@ export interface ERC721MinimalInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "safeMint",
+    functionFragment: "safeMint(address)",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "safeMintERC20",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<string>
-    ]
+    functionFragment: "safeMint(address,address)",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "safeTransferFrom(address,address,uint256)",
@@ -208,8 +213,12 @@ export interface ERC721MinimalInterface extends utils.Interface {
 
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "burnERC20", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "burn()", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "burn(address)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "erc20", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getApproved",
     data: BytesLike
@@ -226,7 +235,14 @@ export interface ERC721MinimalInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "ownerOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "price", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "publicMint", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "publicMint()",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "publicMint(address)",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "publicMintState",
     data: BytesLike
@@ -235,9 +251,12 @@ export interface ERC721MinimalInterface extends utils.Interface {
     functionFragment: "royaltyInfo",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "safeMint", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "safeMintERC20",
+    functionFragment: "safeMint(address)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "safeMint(address,address)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -410,15 +429,16 @@ export interface ERC721Minimal extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    burn(
+    "burn()"(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    burnERC20(
+    "burn(address)"(
       erc20Owner: PromiseOrValue<string>,
-      erc20: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    erc20(overrides?: CallOverrides): Promise<[string]>;
 
     getApproved(
       arg0: PromiseOrValue<BigNumberish>,
@@ -450,7 +470,12 @@ export interface ERC721Minimal extends BaseContract {
 
     price(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    publicMint(
+    "publicMint()"(
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "publicMint(address)"(
+      erc20Owner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -464,15 +489,14 @@ export interface ERC721Minimal extends BaseContract {
       [string, BigNumber] & { receiver: string; royaltyAmount: BigNumber }
     >;
 
-    safeMint(
+    "safeMint(address)"(
       to: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    safeMintERC20(
+    "safeMint(address,address)"(
       to: PromiseOrValue<string>,
       erc20Owner: PromiseOrValue<string>,
-      erc20: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -549,15 +573,16 @@ export interface ERC721Minimal extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  burn(
+  "burn()"(
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  burnERC20(
+  "burn(address)"(
     erc20Owner: PromiseOrValue<string>,
-    erc20: PromiseOrValue<string>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  erc20(overrides?: CallOverrides): Promise<string>;
 
   getApproved(
     arg0: PromiseOrValue<BigNumberish>,
@@ -589,7 +614,12 @@ export interface ERC721Minimal extends BaseContract {
 
   price(overrides?: CallOverrides): Promise<BigNumber>;
 
-  publicMint(
+  "publicMint()"(
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "publicMint(address)"(
+    erc20Owner: PromiseOrValue<string>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -603,15 +633,14 @@ export interface ERC721Minimal extends BaseContract {
     [string, BigNumber] & { receiver: string; royaltyAmount: BigNumber }
   >;
 
-  safeMint(
+  "safeMint(address)"(
     to: PromiseOrValue<string>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  safeMintERC20(
+  "safeMint(address,address)"(
     to: PromiseOrValue<string>,
     erc20Owner: PromiseOrValue<string>,
-    erc20: PromiseOrValue<string>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -688,13 +717,14 @@ export interface ERC721Minimal extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    burn(overrides?: CallOverrides): Promise<void>;
+    "burn()"(overrides?: CallOverrides): Promise<void>;
 
-    burnERC20(
+    "burn(address)"(
       erc20Owner: PromiseOrValue<string>,
-      erc20: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    erc20(overrides?: CallOverrides): Promise<string>;
 
     getApproved(
       arg0: PromiseOrValue<BigNumberish>,
@@ -726,7 +756,12 @@ export interface ERC721Minimal extends BaseContract {
 
     price(overrides?: CallOverrides): Promise<BigNumber>;
 
-    publicMint(overrides?: CallOverrides): Promise<void>;
+    "publicMint()"(overrides?: CallOverrides): Promise<void>;
+
+    "publicMint(address)"(
+      erc20Owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     publicMintState(overrides?: CallOverrides): Promise<boolean>;
 
@@ -738,15 +773,14 @@ export interface ERC721Minimal extends BaseContract {
       [string, BigNumber] & { receiver: string; royaltyAmount: BigNumber }
     >;
 
-    safeMint(
+    "safeMint(address)"(
       to: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    safeMintERC20(
+    "safeMint(address,address)"(
       to: PromiseOrValue<string>,
       erc20Owner: PromiseOrValue<string>,
-      erc20: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -887,15 +921,16 @@ export interface ERC721Minimal extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    burn(
+    "burn()"(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    burnERC20(
+    "burn(address)"(
       erc20Owner: PromiseOrValue<string>,
-      erc20: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    erc20(overrides?: CallOverrides): Promise<BigNumber>;
 
     getApproved(
       arg0: PromiseOrValue<BigNumberish>,
@@ -927,7 +962,12 @@ export interface ERC721Minimal extends BaseContract {
 
     price(overrides?: CallOverrides): Promise<BigNumber>;
 
-    publicMint(
+    "publicMint()"(
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "publicMint(address)"(
+      erc20Owner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -939,15 +979,14 @@ export interface ERC721Minimal extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    safeMint(
+    "safeMint(address)"(
       to: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    safeMintERC20(
+    "safeMint(address,address)"(
       to: PromiseOrValue<string>,
       erc20Owner: PromiseOrValue<string>,
-      erc20: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1025,15 +1064,16 @@ export interface ERC721Minimal extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    burn(
+    "burn()"(
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    burnERC20(
+    "burn(address)"(
       erc20Owner: PromiseOrValue<string>,
-      erc20: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    erc20(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getApproved(
       arg0: PromiseOrValue<BigNumberish>,
@@ -1065,7 +1105,12 @@ export interface ERC721Minimal extends BaseContract {
 
     price(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    publicMint(
+    "publicMint()"(
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "publicMint(address)"(
+      erc20Owner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1077,15 +1122,14 @@ export interface ERC721Minimal extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    safeMint(
+    "safeMint(address)"(
       to: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    safeMintERC20(
+    "safeMint(address,address)"(
       to: PromiseOrValue<string>,
       erc20Owner: PromiseOrValue<string>,
-      erc20: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -54,7 +54,7 @@ describe("ERC721Basic", () => {
 
   let splitter: SplitterImpl;
   let basic: ERC721Basic;
-  // let erc20: MockERC20;
+  let erc20: MockERC20;
 
   const fundAmount: BigNumber =
     ethers.utils.parseEther("10000");
@@ -74,6 +74,12 @@ describe("ERC721Basic", () => {
     ({ basic, splitter } = await loadFixture(
       basicFixture721,
     ));
+    const ERC20 = await ethers.getContractFactory(
+      "MockERC20",
+    );
+    erc20 = (await ERC20.deploy(
+      BigNumber.from(2).pow(255),
+    )) as MockERC20;
   });
 
   describe("Init", async () => {
@@ -201,6 +207,16 @@ describe("ERC721Basic", () => {
     });
 
     it("Should revert if price is wrong", async () => {
+      await basic.setPublicMintState(true);
+      const tx = basic.connect(acc02).mint(1, { value: 0 });
+
+      await expect(tx).to.be.revertedWithCustomError(
+        basic,
+        BasicErrors.WrongPrice,
+      );
+    });
+
+    it("Should revert if price is wrong - ERC20", async () => {
       await basic.setPublicMintState(true);
       const tx = basic.connect(acc02).mint(1, { value: 0 });
 

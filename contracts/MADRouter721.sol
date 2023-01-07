@@ -162,7 +162,7 @@ contract MADRouter721 is
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType != 0) revert("INVALID_TYPE");
         if (address(erc20) != address(0)) {
-            ERC721Minimal(_token).safeMintERC20{value: msg.value}(_to, msg.sender, erc20);
+            ERC721Minimal(_token).safeMint{value: msg.value}(_to, msg.sender);
         } else {
             ERC721Minimal(_token).safeMint{value: msg.value}(_to);
         }
@@ -175,9 +175,11 @@ contract MADRouter721 is
     ) external payable nonReentrant whenNotPaused {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType != 1) revert("INVALID_TYPE");
-        uint256 currentPrice = (paymentTokenAddress != address(0)) 
-            ? msg.value : erc20.allowance(msg.sender, address(this));
-        ERC721Basic(_token).mintTo{value: currentPrice}(_to, _amount, erc20);
+        if (address(erc20) != address(0)) {
+            ERC721Basic(_token).mintToERC20{value: msg.value}(_to, _amount,  msg.sender, erc20);
+        } else {
+            ERC721Basic(_token).mintTo{value: msg.value}(_to, _amount);
+        }
     }
 
     /// @notice Global token burn controller/single pusher for all token types.
@@ -194,14 +196,16 @@ contract MADRouter721 is
         (, uint8 _tokenType) = _tokenRender(_token);
 
         _tokenType < 1
-            ? paymentTokenAddress != address(0) ? ERC721Minimal(_token).burn{value: msg.value}() : ERC721Minimal(_token).burnERC20(msg.sender, erc20)
-            : _tokenType == 1
-            ? ERC721Basic(_token).burn{value: msg.value}(_ids, erc20)
-            : _tokenType == 2
+            ? paymentTokenAddress != address(0) 
+                ? ERC721Minimal(_token).burn(msg.sender) : ERC721Minimal(_token).burn{value: msg.value}()
+        : _tokenType == 1
+            ? paymentTokenAddress != address(0) 
+                ? ERC721Basic(_token).burnERC20{value: msg.value}(_ids, msg.sender, erc20) : ERC721Basic(_token).burn{value: msg.value}(_ids)
+        : _tokenType == 2
             ? ERC721Whitelist(_token).burn{value: msg.value}(_ids)
-            : _tokenType > 2
+        : _tokenType > 2
             ? ERC721Lazy(_token).burn{value: msg.value}(_ids)
-            : revert("INVALID_TYPE");
+        : revert("INVALID_TYPE");
     }
 
     /// @notice Global MintState setter/controller with switch

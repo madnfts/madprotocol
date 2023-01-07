@@ -109,16 +109,13 @@ contract ERC721Basic is
         emit PublicMintStateSet(_publicMintState);
     }
 
-    function mintTo(address to, uint256 amount, ERC20 _erc20)
+    function mintTo(address to, uint256 amount)
         external
         payable
         onlyOwner
         hasReachedMax(amount)
     {
         _feeCheck(0x40d097c3, msg.value);
-        if (address(_erc20) != address(0)) {
-            SafeTransferLib.safeTransferFrom(_erc20, msg.sender, address(this), msg.value);
-        }
         uint256 i;
         // for (uint256 i = 0; i < amount; i++) {
         for (i; i < amount; ) {
@@ -138,11 +135,63 @@ contract ERC721Basic is
         // Transfer event emited by parent ERC721 contract
     }
 
-    function burn(uint256[] memory ids, ERC20 _erc20) external payable onlyOwner {
-        _feeCheck(0x44df8e70, msg.value);
-        if (address(_erc20) != address(0)) {
-            SafeTransferLib.safeTransferFrom(_erc20, msg.sender, address(this), msg.value);
+    function mintToERC20(address to, uint256 amount, address erc20Owner, ERC20 erc20)
+        external
+        payable
+        onlyOwner
+        hasReachedMax(amount)
+    {
+        uint256 value = erc20.allowance(erc20Owner, address(this));
+        _feeCheck(0x40d097c3, value);
+        SafeTransferLib.safeTransferFrom(erc20, msg.sender, address(this), value);
+        uint256 i;
+        // for (uint256 i = 0; i < amount; i++) {
+        for (i; i < amount; ) {
+            _safeMint(to, _incrementCounter());
+            unchecked {
+                ++i;
+            }
         }
+
+        assembly {
+            if lt(i, amount) {
+                // LoopOverflow()
+                mstore(0x00, 0xdfb035c9)
+                revert(0x1c, 0x04)
+            }
+        }
+        // Transfer event emited by parent ERC721 contract
+    }
+
+    function burn(uint256[] memory ids) external payable onlyOwner {
+        _feeCheck(0x44df8e70, msg.value);
+
+        uint256 i;
+        uint256 len = ids.length;
+        // for (uint256 i = 0; i < ids.length; i++) {
+        for (i; i < len; ) {
+            // delId();
+            liveSupply.decrement();
+            _burn(ids[i]);
+            unchecked {
+                ++i;
+            }
+        }
+        assembly {
+            if lt(i, len) {
+                // LoopOverflow()
+                mstore(0x00, 0xdfb035c9)
+                revert(0x1c, 0x04)
+            }
+        }
+        // Transfer event emited by parent ERC721 contract
+    }
+
+    function burnERC20(uint256[] memory ids, address erc20Owner, ERC20 erc20) external payable onlyOwner {
+        uint256 value = erc20.allowance(erc20Owner, address(this));
+        _feeCheck(0x44df8e70, value);
+        SafeTransferLib.safeTransferFrom(erc20, msg.sender, address(this), value);
+
         uint256 i;
         uint256 len = ids.length;
         // for (uint256 i = 0; i < ids.length; i++) {

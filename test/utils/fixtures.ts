@@ -5,7 +5,7 @@ import {
   signTypedData,
 } from "@metamask/eth-sig-util";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { Signer } from "ethers";
+import { BigNumber, Signer } from "ethers";
 import { ethers } from "hardhat";
 import keccak256 from "keccak256";
 import { MerkleTree } from "merkletreejs";
@@ -21,6 +21,7 @@ import {
   ERC1155Whitelist,
   MockERC2981,
   SplitterImpl,
+  MockERC20,
 } from "../../src/types";
 import {
   BasicFixture721,
@@ -33,11 +34,14 @@ import {
   SplitterFixture,
   WhitelistFixture721,
   WhitelistFixture1155,
+  ERC20Fixture,
 } from "./interfaces";
 
 // types
 type SplitterAndMinimal721 = SplitterFixture &
   MinimalFixture721;
+type SplitterAndMinimal721ERC20 = SplitterFixture &
+  MinimalFixture721 & ERC20Fixture;
 type SplitterAndBasic721 = SplitterFixture & BasicFixture721;
 type SplitterAndWhitelist721 = SplitterFixture &
   WhitelistFixture721;
@@ -143,8 +147,46 @@ export async function minimalFixture721(): Promise<SplitterAndMinimal721> {
     splitter.address,
     750,
     owner.address,
+    ethers.constants.AddressZero
   )) as ERC721Minimal;
   return { minimal, splitter };
+}
+
+export async function minimalFixture721ERC20(): Promise<SplitterAndMinimal721ERC20> {
+  const ERC20 = await ethers.getContractFactory(
+    "MockERC20",
+  );
+  const erc20 = (await ERC20.deploy(
+    BigNumber.from(2).pow(255),
+  )) as MockERC20;
+
+  const Splitter = await ethers.getContractFactory(
+    "SplitterImpl",
+  );
+  const [owner, amb, mad] = await ethers.getSigners();
+  const payees = [mad.address, amb.address, owner.address];
+  const shares = [10, 20, 70];
+
+  const splitter = (await Splitter.deploy(
+    payees,
+    shares,
+  )) as SplitterImpl;
+
+  const Minimal = await ethers.getContractFactory(
+    "ERC721Minimal",
+  );
+
+  const minimal = (await Minimal.deploy(
+    "721Minimal",
+    "MIN",
+    "ipfs://cid/id.json",
+    ethers.utils.parseEther("1"),
+    splitter.address,
+    750,
+    owner.address,
+    erc20.address
+  )) as ERC721Minimal;
+  return { minimal, splitter, erc20 };
 }
 
 export async function basicFixture721(): Promise<SplitterAndBasic721> {

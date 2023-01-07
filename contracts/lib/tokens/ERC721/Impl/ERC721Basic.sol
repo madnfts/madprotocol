@@ -41,6 +41,7 @@ contract ERC721Basic is
     SplitterImpl public splitter;
 
     uint256 private mintCount;
+    ERC20 public erc20;
 
     ////////////////////////////////////////////////////////////////
     //                          MODIFIERS                         //
@@ -62,6 +63,12 @@ contract ERC721Basic is
         _;
     }
 
+    modifier priceCheckERC20(uint256 _price, uint256 amount, address erc20Owner) {
+        uint256 value = erc20.allowance(erc20Owner, address(this));
+        if (_price * amount != value) revert WrongPrice();
+        _;
+    }
+
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
@@ -74,7 +81,8 @@ contract ERC721Basic is
         uint256 _maxSupply,
         SplitterImpl _splitter,
         uint96 _fraction,
-        address _router
+        address _router,
+        ERC20 _erc20
     ) ERC721(_name, _symbol) Owned(_router) {
         baseURI = _baseURI;
         price = _price;
@@ -82,6 +90,7 @@ contract ERC721Basic is
         splitter = _splitter;
         _royaltyFee = _fraction;
         _royaltyRecipient = payable(splitter);
+        erc20 = _erc20;
 
         emit RoyaltyFeeSet(_royaltyFee);
         emit RoyaltyRecipientSet(_royaltyRecipient);
@@ -115,6 +124,7 @@ contract ERC721Basic is
         onlyOwner
         hasReachedMax(amount)
     {
+        if (address(erc20) == address(0)) revert("INVALID_TYPE");
         _feeCheck(0x40d097c3, msg.value);
         uint256 i;
         // for (uint256 i = 0; i < amount; i++) {
@@ -135,12 +145,13 @@ contract ERC721Basic is
         // Transfer event emited by parent ERC721 contract
     }
 
-    function mintToERC20(address to, uint256 amount, address erc20Owner, ERC20 erc20)
+    function mintTo(address to, uint256 amount, address erc20Owner)
         external
         payable
         onlyOwner
         hasReachedMax(amount)
     {
+        if (address(erc20) == address(0)) revert("INVALID_TYPE");
         uint256 value = erc20.allowance(erc20Owner, address(this));
         _feeCheck(0x40d097c3, value);
         SafeTransferLib.safeTransferFrom(erc20, msg.sender, address(this), value);
@@ -164,6 +175,7 @@ contract ERC721Basic is
     }
 
     function burn(uint256[] memory ids) external payable onlyOwner {
+        if (address(erc20) != address(0)) revert("INVALID_TYPE");
         _feeCheck(0x44df8e70, msg.value);
 
         uint256 i;
@@ -187,7 +199,8 @@ contract ERC721Basic is
         // Transfer event emited by parent ERC721 contract
     }
 
-    function burnERC20(uint256[] memory ids, address erc20Owner, ERC20 erc20) external payable onlyOwner {
+    function burn(uint256[] memory ids, address erc20Owner) external payable onlyOwner {
+        if (address(erc20) == address(0)) revert("INVALID_TYPE");
         uint256 value = erc20.allowance(erc20Owner, address(this));
         _feeCheck(0x44df8e70, value);
         SafeTransferLib.safeTransferFrom(erc20, msg.sender, address(this), value);
@@ -280,6 +293,37 @@ contract ERC721Basic is
         hasReachedMax(amount)
         priceCheck(price, amount)
     {
+        if (address(erc20) != address(0)) revert("INVALID_TYPE");
+        uint256 i;
+        // for (uint256 i = 0; i < amount; i++) {
+        for (i; i < amount; ) {
+            _safeMint(msg.sender, _incrementCounter());
+            unchecked {
+                ++i;
+            }
+        }
+
+        assembly {
+            if lt(i, amount) {
+                // LoopOverflow()
+                mstore(0x00, 0xdfb035c9)
+                revert(0x1c, 0x04)
+            }
+        }
+        // Transfer event emited by parent ERC721 contract
+    }
+
+    function mint(uint256 amount, address erc20Owner)
+        external
+        payable
+        nonReentrant
+        publicMintAccess
+        hasReachedMax(amount)
+        priceCheckERC20(price, amount, erc20Owner)
+    {
+        if (address(erc20) == address(0)) revert("INVALID_TYPE");
+        uint256 value = erc20.allowance(erc20Owner, address(this));
+        SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
         uint256 i;
         // for (uint256 i = 0; i < amount; i++) {
         for (i; i < amount; ) {

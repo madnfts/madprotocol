@@ -32,7 +32,6 @@ contract ERC721Minimal is
     bool private minted;
     /// @dev  default := false
     bool public publicMintState;
-    /// @dev  default := false
     ERC20 public erc20;
 
     ////////////////////////////////////////////////////////////////

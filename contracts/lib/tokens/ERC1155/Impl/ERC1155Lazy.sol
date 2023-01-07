@@ -62,6 +62,7 @@ contract ERC1155Lazy is
 
     mapping(bytes32 => bool) public usedVouchers;
     uint256 private mintCount;
+    ERC20 public erc20;
 
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
@@ -72,13 +73,15 @@ contract ERC1155Lazy is
         SplitterImpl _splitter,
         uint96 _fraction,
         address _router,
-        address _signer
+        address _signer,
+        ERC20 _erc20
     ) Owned(_router) {
         _CHAIN_ID_OG = block.chainid;
         _DOMAIN_SEPARATOR_OG = computeDS();
         signer = _signer;
         _uri = __uri;
         splitter = _splitter;
+        erc20 = _erc20;
 
         _royaltyFee = _fraction;
         _royaltyRecipient = payable(splitter);
@@ -97,14 +100,48 @@ contract ERC1155Lazy is
     /// @dev Neither `totalSupply` nor `price` accountings for any of the possible mint
     /// types(e.g., public, free/gifted, toCreator) need to be recorded by the contract;
     /// since its condition checking control flow takes place in offchain databases.
+    /// @dev Allows msg.value payments only if !erc20
     function lazyMint(
         Types.Voucher calldata voucher,
         uint8 v,
         bytes32 r,
         bytes32 s
     ) external payable nonReentrant {
+        if (address(erc20) != address(0)) revert("INVALID_TYPE");
         address _signer = _verifyVoucher(voucher, v, r, s);
-        _voucherCheck(_signer, voucher);
+        _voucherCheck(_signer, voucher, msg.value);
+        usedVouchers[voucher.voucherId] = true;
+        uint256 len = voucher.users.length;
+        uint256 i;
+        for (i; i < len; ) {
+            _userMint(voucher.amount, voucher.balances, voucher.users[i]);
+            // can't overflow due to have been previously validated by signer
+            unchecked {
+                ++i;
+            }
+        }
+    }
+
+    /// @notice This method enables offchain ledgering of tokens to establish onchain provenance as
+    /// long as a trusted signer can be retrieved as the validator of such contract state update.
+    /// @dev Neither `totalSupply` nor `price` accountings for any of the possible mint
+    /// types(e.g., public, free/gifted, toCreator) need to be recorded by the contract;
+    /// since its condition checking control flow takes place in offchain databases.
+    /// @dev Allows erc20 payments only if erc20 exists
+    function lazyMint(
+        Types.Voucher calldata voucher,
+        uint8 v,
+        bytes32 r,
+        bytes32 s,
+        address erc20Owner
+    ) external payable nonReentrant {
+        if (address(erc20) == address(0)) revert("INVALID_TYPE");
+        address _signer = _verifyVoucher(voucher, v, r, s);
+        uint256 value = erc20.allowance(erc20Owner, address(this));
+        
+        _voucherCheck(_signer, voucher, value);
+        SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
+
         usedVouchers[voucher.voucherId] = true;
         uint256 len = voucher.users.length;
         uint256 i;
@@ -118,16 +155,49 @@ contract ERC1155Lazy is
     }
 
     /// @notice `_batchMint` version of `lazyMint`.
+    /// @dev Allows msg.value payments only if !erc20
     function lazyMintBatch(
         Types.UserBatch calldata userBatch,
         uint8 v,
         bytes32 r,
         bytes32 s
     ) external payable nonReentrant {
+        if (address(erc20) != address(0)) revert("INVALID_TYPE");
         address _signer = _verifyBatch(userBatch, v, r, s);
-        _batchCheck(_signer, userBatch);
+        _batchCheck(_signer, userBatch, msg.value);
         usedVouchers[userBatch.voucherId] = true;
 
+        uint256 len = userBatch.ids.length;
+        uint256 i;
+        require(len == userBatch.balances.length, "INVALID_AMOUNT");
+
+        for (i; i < len; ) {
+            _incrementCounter(userBatch.balances[i]);
+            // can't overflow due to have been previously validated by signer
+            unchecked {
+                ++i;
+            }
+        }
+        _batchMint(userBatch.user, userBatch.ids, userBatch.balances, "");
+    }
+
+    /// @notice `_batchMint` version of `lazyMint`.
+    /// @dev Allows erc20 payments only if erc20 exists
+    function lazyMintBatch(
+        Types.UserBatch calldata userBatch,
+        uint8 v,
+        bytes32 r,
+        bytes32 s,
+        address erc20Owner
+    ) external payable nonReentrant {
+        if (address(erc20) == address(0)) revert("INVALID_TYPE");
+        address _signer = _verifyBatch(userBatch, v, r, s);
+        uint256 value = erc20.allowance(erc20Owner, address(this));
+        
+        _batchCheck(_signer, userBatch, value);
+        SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
+
+        usedVouchers[userBatch.voucherId] = true;
         uint256 len = userBatch.ids.length;
         uint256 i;
         require(len == userBatch.balances.length, "INVALID_AMOUNT");
@@ -162,8 +232,44 @@ contract ERC1155Lazy is
     }
 
     /// @dev Burns an arbitrary length array of ids of different owners.
+    /// @dev Allows msg.value payments only if !erc20
     function burn(address[] memory from, uint256[] memory ids, uint256[] memory balances) external payable onlyOwner {
-        _feeCheck(0x44df8e70);
+        if (address(erc20) != address(0)) revert("INVALID_TYPE");
+        _feeCheck(0x44df8e70, msg.value);
+        uint256 i;
+        uint256 len = ids.length;
+        require(len == balances.length && len == from.length, "INVALID_AMOUNT");
+        // for (uint256 i = 0; i < ids.length; i++) {
+        for (i; i < len; ) {
+            // delId();
+            liveSupply.decrement(balances[i]);
+            _burn(from[i], ids[i], balances[i]);
+            unchecked {
+                ++i;
+            }
+        }
+        assembly {
+            if lt(i, len) {
+                mstore(0x00, "LOOP_OVERFLOW")
+                revert(0x00, 0x20)
+            }
+        }
+        // Transfer events emited by parent ERC1155 contract
+    }
+
+    /// @dev Burns an arbitrary length array of ids of different owners.
+    /// @dev Allows erc20 payments only if erc20 exists
+    function burn(address[] memory from, uint256[] memory ids, uint256[] memory balances, address erc20Owner) 
+        external 
+        payable 
+        onlyOwner 
+    {
+        if (address(erc20) == address(0)) revert("INVALID_TYPE");
+        uint256 value = erc20.allowance(erc20Owner, address(this));
+        
+        _feeCheck(0x44df8e70, value);
+        SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
+
         uint256 i;
         uint256 len = ids.length;
         require(len == balances.length && len == from.length, "INVALID_AMOUNT");
@@ -186,12 +292,47 @@ contract ERC1155Lazy is
     }
 
     /// @dev Burns an arbitrary length array of ids owned by a single account.
+    /// @dev Allows msg.value payments only if !erc20
     function burnBatch(address from, uint256[] memory ids, uint256[] memory balances)
         external
         payable
         onlyOwner
     {
-        _feeCheck(0x44df8e70);
+        if (address(erc20) != address(0)) revert("INVALID_TYPE");
+        _feeCheck(0x44df8e70, msg.value);
+        uint256 i;
+        uint256 len = ids.length;
+        require(len == balances.length, "INVALID_AMOUNT");
+        for (i; i < len; ) {
+            // delId();
+            liveSupply.decrement(balances[i]);
+            unchecked {
+                ++i;
+            }
+        }
+        assembly {
+            if lt(i, len) {
+                mstore(0x00, "LOOP_OVERFLOW")
+                revert(0x00, 0x20)
+            }
+        }
+        _batchBurn(from, ids, balances);
+        // Transfer event emited by parent ERC1155 contract
+    }
+
+    /// @dev Burns an arbitrary length array of ids owned by a single account.
+    /// @dev Allows erc20 payments only if erc20 exists
+    function burnBatch(address from, uint256[] memory ids, uint256[] memory balances, address erc20Owner)
+        external
+        payable
+        onlyOwner
+    {
+        if (address(erc20) == address(0)) revert("INVALID_TYPE");
+        uint256 value = erc20.allowance(erc20Owner, address(this));
+        
+        _feeCheck(0x44df8e70, value);
+        SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
+
         uint256 i;
         uint256 len = ids.length;
         require(len == balances.length, "INVALID_AMOUNT");
@@ -285,13 +426,14 @@ contract ERC1155Lazy is
     /// @dev Checks for signer validity and if total balance provided in the message matches to voucher's record.
     function _voucherCheck(
         address _signer,
-        Types.Voucher calldata voucher
+        Types.Voucher calldata voucher,
+        uint256 _value
     ) private view {
         if (_signer != signer) revert InvalidSigner();
         if (usedVouchers[voucher.voucherId])
             revert UsedVoucher();
         if (
-            msg.value !=
+            _value !=
             (voucher.price *
                 voucher.amount *
                 voucher.users.length)
@@ -301,13 +443,14 @@ contract ERC1155Lazy is
     /// @dev Checks for signer validity and if total balance provided in the message matches to voucher's record.
     function _batchCheck(
         address _signer,
-        Types.UserBatch calldata userBatch
+        Types.UserBatch calldata userBatch,
+        uint256 _value
     ) private view {
         if (_signer != signer) revert InvalidSigner();
         if (usedVouchers[userBatch.voucherId])
             revert UsedVoucher();
         if (
-            msg.value !=
+            _value !=
             (userBatch.price * userBatch.ids.length)
         ) revert WrongPrice();
     }
@@ -467,7 +610,7 @@ contract ERC1155Lazy is
     //                     INTERNAL FUNCTIONS                     //
     ////////////////////////////////////////////////////////////////
 
-    function _feeCheck(bytes4 _method) internal view {
+    function _feeCheck(bytes4 _method, uint256 _value) internal view {
         address _owner = owner;
         uint32 size;
         assembly {
@@ -478,7 +621,7 @@ contract ERC1155Lazy is
         }
         uint256 _fee = FeeOracle(owner).feeLookup(_method);
         assembly {
-            if iszero(eq(callvalue(), _fee)) {
+            if iszero(eq(_value, _fee)) {
                 mstore(0x00, 0xf7760f25)
                 revert(0x1c, 0x04)
             }

@@ -998,6 +998,7 @@ export async function lazyFixture1155(): Promise<SplitterAndLazy1155> {
     750,
     owner.address,
     signerAddr,
+    ethers.constants.AddressZero
   )) as ERC1155Lazy;
 
   const net = await lazy.provider.getNetwork();
@@ -1165,5 +1166,225 @@ export async function lazyFixture1155(): Promise<SplitterAndLazy1155> {
     voucher,
     voucher2,
     userBatch,
+  };
+}
+
+export async function lazyFixture1155ERC20(): Promise<SplitterAndLazy1155ERC20> {
+  const ERC20 = await ethers.getContractFactory(
+    "MockERC20",
+  );
+  const erc20 = (await ERC20.deploy(
+    BigNumber.from(2).pow(255),
+  )) as MockERC20;
+
+  const Splitter = await ethers.getContractFactory(
+    "SplitterImpl",
+  );
+  const allSigners = await ethers.getSigners();
+  const usrs = getSignerAddrs(3, allSigners);
+  const vId = ethers.utils.keccak256(
+    ethers.utils.toUtf8Bytes("voucher"),
+  );
+  const vId2 = ethers.utils.keccak256(
+    ethers.utils.toUtf8Bytes("voucher2"),
+  );
+  const vIdBatch = ethers.utils.keccak256(
+    ethers.utils.toUtf8Bytes("batch"),
+  );
+
+  const [owner, amb, mad] = await ethers.getSigners();
+  const payees = [mad.address, amb.address, owner.address];
+  const shares = [10, 20, 70];
+
+  const splitter = (await Splitter.deploy(
+    payees,
+    shares,
+  )) as SplitterImpl;
+
+  const Lazy = await ethers.getContractFactory("ERC1155Lazy");
+
+  const signer = ethers.Wallet.createRandom();
+  const wSigner = ethers.Wallet.createRandom();
+  const signerAddr = (
+    await signer.getAddress()
+  ).toLowerCase();
+  const pk = Buffer.from(signer.privateKey.slice(2), "hex");
+  const wPk = Buffer.from(wSigner.privateKey.slice(2), "hex");
+
+  const lazy = (await Lazy.deploy(
+    "ipfs://cid/",
+    splitter.address,
+    750,
+    owner.address,
+    signerAddr,
+    erc20.address
+  )) as ERC1155Lazy;
+
+  const net = await lazy.provider.getNetwork();
+  const chainId = net.chainId;
+  const bnPrice = ethers.utils.parseEther("1");
+
+  const domain = [
+    { name: "name", type: "string" },
+    { name: "version", type: "string" },
+    { name: "chainId", type: "uint256" },
+    { name: "verifyingContract", type: "address" },
+  ];
+  const voucherType = [
+    { name: "voucherId", type: "bytes32" },
+    { name: "users", type: "address[]" },
+    { name: "balances", type: "uint256[]" },
+    { name: "amount", type: "uint256" },
+    { name: "price", type: "uint256" },
+  ];
+  const userBatchType = [
+    { name: "voucherId", type: "bytes32" },
+    { name: "ids", type: "uint256[]" },
+    { name: "balances", type: "uint256[]" },
+    { name: "price", type: "uint256" },
+    { name: "user", type: "address" },
+  ];
+  const domainData = {
+    name: "MAD",
+    version: "1",
+    chainId: chainId,
+    verifyingContract: lazy.address,
+  };
+  const Voucher = {
+    voucherId: vId,
+    users: usrs,
+    balances: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    amount: 10,
+    price: bnPrice.toString(),
+  };
+  const Voucher2 = {
+    voucherId: vId2,
+    users: usrs,
+    balances: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    amount: 10,
+    price: bnPrice.toString(),
+  };
+  const UserBatch = {
+    voucherId: vIdBatch,
+    ids: [1, 33, 7],
+    balances: [1, 1, 1],
+    price: bnPrice.toString(),
+    user: owner.address,
+  };
+  const data = JSON.stringify({
+    types: {
+      EIP712Domain: domain,
+      Voucher: voucherType,
+    },
+    primaryType: "Voucher",
+    domain: domainData,
+    message: Voucher,
+  });
+  const data2 = JSON.stringify({
+    types: {
+      EIP712Domain: domain,
+      Voucher: voucherType,
+    },
+    primaryType: "Voucher",
+    domain: domainData,
+    message: Voucher2,
+  });
+  const dataBatch = JSON.stringify({
+    types: {
+      EIP712Domain: domain,
+      UserBatch: userBatchType,
+    },
+    primaryType: "UserBatch",
+    domain: domainData,
+    message: UserBatch,
+  });
+
+  const parsedData = JSON.parse(data);
+  const parsedData2 = JSON.parse(data2);
+  const parsedDataBatch = JSON.parse(dataBatch);
+  const vSig = signTypedData({
+    privateKey: pk,
+    data: parsedData,
+    version: SignTypedDataVersion.V4,
+  });
+  const vSig2 = signTypedData({
+    privateKey: pk,
+    data: parsedData2,
+    version: SignTypedDataVersion.V4,
+  });
+  const ubSig = signTypedData({
+    privateKey: pk,
+    data: parsedDataBatch,
+    version: SignTypedDataVersion.V4,
+  });
+  const wrongSig = signTypedData({
+    privateKey: wPk,
+    data: parsedData,
+    version: SignTypedDataVersion.V4,
+  });
+  const vRecover = recoverTypedSignature({
+    data: parsedData,
+    signature: vSig,
+    version: SignTypedDataVersion.V4,
+  });
+  const ubRecover = recoverTypedSignature({
+    data: parsedDataBatch,
+    signature: ubSig,
+    version: SignTypedDataVersion.V4,
+  });
+
+  async function domainSeparator(
+    name: string,
+    version: string,
+    chainId: number,
+    verifyingContract: string,
+  ) {
+    return (
+      "0x" +
+      TypedDataUtils.hashStruct(
+        "EIP712Domain",
+        {
+          name,
+          version,
+          chainId,
+          verifyingContract,
+        },
+        { EIP712Domain: domain },
+        SignTypedDataVersion.V4,
+      ).toString("hex")
+    );
+  }
+
+  const domainCheck = await domainSeparator(
+    "MAD",
+    "1",
+    chainId,
+    lazy.address,
+  );
+  const voucher = Voucher;
+  const voucher2 = Voucher2;
+  const userBatch = UserBatch;
+  const vSigSplit = ethers.utils.splitSignature(vSig);
+  const vSigSplit2 = ethers.utils.splitSignature(vSig2);
+  const ubSigSplit = ethers.utils.splitSignature(ubSig);
+
+  return {
+    splitter,
+    lazy,
+    vSig,
+    vSigSplit,
+    vSigSplit2,
+    vRecover,
+    ubSig,
+    ubSigSplit,
+    ubRecover,
+    signerAddr,
+    signer,
+    domainCheck,
+    wrongSig,
+    voucher,
+    voucher2,
+    userBatch,
+    erc20
   };
 }

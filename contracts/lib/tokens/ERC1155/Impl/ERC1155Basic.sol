@@ -40,6 +40,7 @@ contract ERC1155Basic is
     bool public publicMintState;
     SplitterImpl public splitter;
     uint256 private mintCount;
+    ERC20 public erc20;
 
     ////////////////////////////////////////////////////////////////
     //                          MODIFIERS                         //
@@ -61,6 +62,12 @@ contract ERC1155Basic is
         _;
     }
 
+    modifier priceCheckERC20(uint256 _price, uint256 amount, address erc20Owner) {
+        uint256 value = erc20.allowance(erc20Owner, address(this));
+        if (_price * amount != value) revert WrongPrice();
+        _;
+    }
+
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
@@ -71,7 +78,8 @@ contract ERC1155Basic is
         uint256 _maxSupply,
         SplitterImpl _splitter,
         uint96 _fraction,
-        address _router
+        address _router,
+        ERC20 _erc20
     ) Owned(_router) {
         _uri = __uri;
         price = _price;
@@ -79,6 +87,7 @@ contract ERC1155Basic is
         splitter = _splitter;
         _royaltyFee = _fraction;
         _royaltyRecipient = payable(splitter);
+        erc20 = _erc20;
 
         emit RoyaltyFeeSet(_royaltyFee);
         emit RoyaltyRecipientSet(_royaltyRecipient);
@@ -103,13 +112,15 @@ contract ERC1155Basic is
         emit PublicMintStateSet(_publicMintState);
     }
 
+    /// @dev Allows msg.value payments only if !erc20
     function mintTo(address to, uint256 amount, uint256[] memory balance)
         external
         payable
         onlyOwner
         hasReachedMax(_sumAmounts(balance) * amount) 
     {
-        _feeCheck(0x40d097c3);
+        if (address(erc20) != address(0)) revert("INVALID_TYPE");
+        _feeCheck(0x40d097c3, msg.value);
         uint256 i;
         // for (uint256 i = 0; i < amount; i++) {
         for (i; i < amount; ) {
@@ -129,13 +140,75 @@ contract ERC1155Basic is
         // Transfer event emited by parent ERC1155 contract
     }
 
+    /// @dev Allows erc20 payments only if erc20 exists
+    function mintTo(address to, uint256 amount, uint256[] memory balance, address erc20Owner)
+        external
+        payable
+        onlyOwner
+        hasReachedMax(_sumAmounts(balance) * amount) 
+    {
+        if (address(erc20) == address(0)) revert("INVALID_TYPE");
+        uint256 value = erc20.allowance(erc20Owner, address(this));
+        _feeCheck(0x40d097c3, value);
+
+        SafeTransferLib.safeTransferFrom(erc20, msg.sender, address(this), value);
+        uint256 i;
+        // for (uint256 i = 0; i < amount; i++) {
+        for (i; i < amount; ) {
+            _mint(to, _incrementCounter(1), balance[i], "");
+            unchecked {
+                ++i;
+            }
+        }
+
+        assembly {
+            if lt(i, amount) {
+                // LoopOverflow()
+                mstore(0x00, 0xdfb035c9)
+                revert(0x1c, 0x04)
+            }
+        }
+        // Transfer event emited by parent ERC1155 contract
+    }
+
+    /// @dev Allows msg.value payments only if !erc20
     function mintBatchTo(address to, uint256[] memory ids, uint256[] memory amounts)
         external
         payable
         onlyOwner
         hasReachedMax(_sumAmounts(amounts))
     {
-        _feeCheck(0x40d097c3);
+        if (address(erc20) != address(0)) revert("INVALID_TYPE");
+        _feeCheck(0x40d097c3, msg.value);
+        uint256 i;
+        uint256 len = ids.length;
+        for (i; i < len; ) {
+            liveSupply.increment(amounts[i]);
+            unchecked {
+                ++i;
+            }
+        }
+        assembly {
+            if lt(i, len) {
+                mstore(0x00, 0xdfb035c9)
+                revert(0x1c, 0x04)
+            }
+        }
+        _batchMint(to, ids, amounts, "");
+        // Transfer event emited by parent ERC1155 contract
+    }
+
+    /// @dev Allows erc20 payments only if erc20 exists
+    function mintBatchTo(address to, uint256[] memory ids, uint256[] memory amounts, address erc20Owner)
+        external
+        payable
+        onlyOwner
+        hasReachedMax(_sumAmounts(amounts))
+    {
+        if (address(erc20) == address(0)) revert("INVALID_TYPE");
+        uint256 value = erc20.allowance(erc20Owner, address(this));
+        _feeCheck(0x40d097c3, value);
+        SafeTransferLib.safeTransferFrom(erc20, msg.sender, address(this), value);
         uint256 i;
         uint256 len = ids.length;
         for (i; i < len; ) {
@@ -155,8 +228,40 @@ contract ERC1155Basic is
     }
 
     /// @dev Burns an arbitrary length array of ids of different owners.
+    /// @dev Allows msg.value payments only if !erc20
     function burn(address[] memory from, uint256[] memory ids, uint256[] memory balances) external payable onlyOwner {
-        _feeCheck(0x44df8e70);
+        if (address(erc20) != address(0)) revert("INVALID_TYPE");
+        _feeCheck(0x44df8e70, msg.value);
+        uint256 i;
+        uint256 len = ids.length;
+        require(from.length == ids.length && ids.length == balances.length, "LENGTH_MISMATCH");
+        for (i; i < len; ) {
+            liveSupply.decrement(balances[i]);
+            _burn(from[i], ids[i], balances[i]);
+            unchecked {
+                ++i;
+            }
+        }
+        assembly {
+            if lt(i, len) {
+                mstore(0x00, 0xdfb035c9)
+                revert(0x1c, 0x04)
+            }
+        }
+        // Transfer events emited by parent ERC1155 contract
+    }
+
+    /// @dev Burns an arbitrary length array of ids of different owners.
+    /// @dev Allows erc20 payments only if erc20 exists
+    function burn(address[] memory from, uint256[] memory ids, uint256[] memory balances, address erc20Owner) 
+        external 
+        payable 
+        onlyOwner 
+    {
+        if (address(erc20) == address(0)) revert("INVALID_TYPE");
+        uint256 value = erc20.allowance(erc20Owner, address(this));
+        _feeCheck(0x44df8e70, value);
+        SafeTransferLib.safeTransferFrom(erc20, msg.sender, address(this), value);
         uint256 i;
         uint256 len = ids.length;
         require(from.length == ids.length && ids.length == balances.length, "LENGTH_MISMATCH");
@@ -177,13 +282,44 @@ contract ERC1155Basic is
     }
 
     /// @dev Burns an arbitrary length array of ids owned by a single account.
+    /// @dev Allows msg.value payments only if !erc20
     function burnBatch(address from, uint256[] memory ids, uint256[] memory amounts)
         external
         payable
         onlyOwner
     {
-        _feeCheck(0x44df8e70);
+        if (address(erc20) != address(0)) revert("INVALID_TYPE");
+        _feeCheck(0x44df8e70, msg.value);
         require(ids.length == amounts.length, "LENGTH_MISMATCH");
+        uint256 i;
+        uint256 len = ids.length;
+        for (i; i < len; ) {
+            liveSupply.decrement(amounts[i]);
+            unchecked {
+                ++i;
+            }
+        }
+        assembly {
+            if lt(i, len) {
+                mstore(0x00, 0xdfb035c9)
+                revert(0x1c, 0x04)
+            }
+        }
+        _batchBurn(from, ids, amounts);
+        // Transfer event emited by parent ERC1155 contract
+    }
+
+    /// @dev Allows erc20 payments only if erc20 exists
+    function burnBatch(address from, uint256[] memory ids, uint256[] memory amounts, address erc20Owner)
+        external
+        payable
+        onlyOwner
+    {
+        if (address(erc20) == address(0)) revert("INVALID_TYPE");
+        uint256 value = erc20.allowance(erc20Owner, address(this));
+        _feeCheck(0x44df8e70, value);
+        require(ids.length == amounts.length, "LENGTH_MISMATCH");
+        SafeTransferLib.safeTransferFrom(erc20, msg.sender, address(this), value);
         uint256 i;
         uint256 len = ids.length;
         for (i; i < len; ) {
@@ -261,6 +397,7 @@ contract ERC1155Basic is
     //                           USER FX                          //
     ////////////////////////////////////////////////////////////////
 
+    /// @dev Allows msg.value payments only if !erc20
     function mint(uint256 amount, uint256 balance)
         external
         payable
@@ -269,6 +406,36 @@ contract ERC1155Basic is
         hasReachedMax(amount * balance)
         priceCheck(price, amount)
     {
+        if (address(erc20) != address(0)) revert("INVALID_TYPE");
+        uint256 i;
+        for (i; i < amount; ) {
+            _mint(msg.sender, _incrementCounter(1), balance, "");
+            unchecked {
+                ++i;
+            }
+        }
+        // assembly overflow check
+        assembly {
+            if lt(i, amount) {
+                mstore(0x00, 0xdfb035c9)
+                revert(0x1c, 0x04)
+            }
+        }
+        // Transfer events emited by parent ERC1155 contract
+    }
+
+    /// @dev Allows erc20 payments only if erc20 exists
+    function mint(uint256 amount, uint256 balance, address erc20Owner)
+        external
+        payable
+        nonReentrant
+        publicMintAccess
+        hasReachedMax(amount * balance)
+        priceCheckERC20(price, amount, erc20Owner)
+    {
+        if (address(erc20) == address(0)) revert("INVALID_TYPE");
+        uint256 value = erc20.allowance(erc20Owner, address(this));
+        SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
         uint256 i;
         for (i; i < amount; ) {
             _mint(msg.sender, _incrementCounter(1), balance, "");
@@ -287,15 +454,48 @@ contract ERC1155Basic is
     }
 
     /// @dev Enables public minting of an arbitrary length array of specific ids.
+    /// @dev Allows msg.value payments only if !erc20
     function mintBatch(uint256[] memory ids, uint256[] memory amounts)
         external
         payable
         nonReentrant
         publicMintAccess
     {
+        if (address(erc20) != address(0)) revert("INVALID_TYPE");
         require(ids.length == amounts.length, "MISMATCH_LENGTH");
         uint256 len = ids.length;
-        _mintBatchCheck(len);
+        _mintBatchCheck(len, msg.value);
+        uint256 i;
+        for (i; i < len; ) {
+            _incrementCounter(amounts[i]);
+            unchecked {
+                ++i;
+            }
+        }
+        assembly {
+            if lt(i, len) {
+                mstore(0x00, 0xdfb035c9)
+                revert(0x1c, 0x04)
+            }
+        }
+        _batchMint(msg.sender, ids, amounts, "");
+        // Transfer event emited by parent ERC1155 contract
+    }
+
+    /// @dev Enables public minting of an arbitrary length array of specific ids.
+    /// @dev Allows msg.value payments only if !erc20
+    function mintBatch(uint256[] memory ids, uint256[] memory amounts, address erc20Owner)
+        external
+        payable
+        nonReentrant
+        publicMintAccess
+    {
+        if (address(erc20) == address(0)) revert("INVALID_TYPE");
+        require(ids.length == amounts.length, "MISMATCH_LENGTH");
+        uint256 value = erc20.allowance(erc20Owner, address(this));
+        uint256 len = ids.length;
+        _mintBatchCheck(len, value);
+        SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
         uint256 i;
         for (i; i < len; ) {
             _incrementCounter(amounts[i]);
@@ -328,8 +528,8 @@ contract ERC1155Basic is
         return mintCount;
     }
 
-    function _mintBatchCheck(uint256 _amount) private view {
-        if (price * _amount != msg.value) revert WrongPrice();
+    function _mintBatchCheck(uint256 _amount, uint256 _value) private view {
+        if (price * _amount != _value) revert WrongPrice();
         if (mintCount + _amount > maxSupply)
             revert MaxSupplyReached();
     }
@@ -389,7 +589,7 @@ contract ERC1155Basic is
     //                     INTERNAL FUNCTIONS                     //
     ////////////////////////////////////////////////////////////////
 
-    function _feeCheck(bytes4 _method) internal view {
+    function _feeCheck(bytes4 _method, uint256 _value) internal view {
         address _owner = owner;
         uint32 size;
         assembly {
@@ -400,7 +600,7 @@ contract ERC1155Basic is
         }
         uint256 _fee = FeeOracle(owner).feeLookup(_method);
         assembly {
-            if iszero(eq(callvalue(), _fee)) {
+            if iszero(eq(_value, _fee)) {
                 mstore(0x00, 0xf7760f25)
                 revert(0x1c, 0x04)
             }

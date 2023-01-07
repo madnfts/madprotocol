@@ -15,8 +15,6 @@ import { SafeTransferLib } from "../../../utils/SafeTransferLib.sol";
 import { Types } from "../../../../Types.sol";
 import { FeeOracle } from "../../common/FeeOracle.sol";
 
-import "hardhat/console.sol";
-
 contract ERC721Lazy is
     ERC721,
     ERC2981,

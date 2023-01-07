@@ -853,6 +853,7 @@ export async function basicFixture1155(): Promise<SplitterAndBasic1155> {
     splitter.address,
     750,
     owner.address,
+    ethers.constants.AddressZero
   )) as ERC1155Basic;
   return { basic, splitter };
 }

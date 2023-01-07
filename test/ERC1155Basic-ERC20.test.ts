@@ -12,7 +12,7 @@ import {
 } from "../src/types";
 import { BasicErrors } from "./utils/errors";
 import {
-  basicFixture1155, // erc20Fixture,
+  basicFixture1155ERC20, // erc20Fixture,
 } from "./utils/fixtures";
 import {
   ERC165Interface,
@@ -51,8 +51,9 @@ describe("ERC1155Basic", () => {
 
   let splitter: SplitterImpl;
   let basic: ERC1155Basic;
-  // let erc20: MockERC20;
+  let erc20: MockERC20;
 
+  const erc20Balance: BigNumber = ethers.utils.parseEther("10000");
   const fundAmount: BigNumber =
     ethers.utils.parseEther("10000");
   const price: BigNumber = ethers.utils.parseEther("1");
@@ -67,9 +68,12 @@ describe("ERC1155Basic", () => {
     await network.provider.send("hardhat_reset");
   });
   beforeEach("Load deployment fixtures", async () => {
-    ({ basic, splitter } = await loadFixture(
-      basicFixture1155,
+    ({ basic, splitter, erc20 } = await loadFixture(
+      basicFixture1155ERC20,
     ));
+    await erc20.transfer(acc01.address, erc20Balance);
+    await erc20.transfer(acc02.address, erc20Balance);
+    await erc20.transfer(amb.address, erc20Balance);
   });
 
   describe("Init", async () => {
@@ -80,6 +84,7 @@ describe("ERC1155Basic", () => {
       expect(splitter).to.be.ok;
       expect(await basic.callStatic.price()).to.eq(price);
       expect(await basic.callStatic.maxSupply()).to.eq(1000);
+      expect(await basic.callStatic.erc20()).to.eq(erc20.address);
       expect(await basic.callStatic.publicMintState()).to.eq(
         false,
       );
@@ -127,6 +132,7 @@ describe("ERC1155Basic", () => {
       ).to.eq(fundAmount);
     });
   });
+
   // each describe tests a set of functionalities of the contract's behavior
   describe("Only owner setters", async () => {
     it("Should set base URI, emit event and revert if not owner", async () => {
@@ -165,6 +171,7 @@ describe("ERC1155Basic", () => {
       );
     });
   });
+
   describe("Mint", async () => {
     it("Should revert if public mint is turned off", async () => {
       const tx = basic.connect(acc01)["mint(uint256,uint256)"](1, 1);
@@ -178,12 +185,14 @@ describe("ERC1155Basic", () => {
     it("Should revert if max supply has reached max", async () => {
       await basic.setPublicMintState(true);
       const amount = BigNumber.from(1000);
+      await erc20.connect(acc01).approve(basic.address, price.mul(amount))
       await basic
         .connect(acc01)
-        ["mint(uint256,uint256)"](1000, 1, { value: price.mul(amount) });
+        ["mint(uint256,uint256,address)"](1000, 1, acc01.address);
+      await erc20.connect(acc02).approve(basic.address, price.mul(amount))
       const tx = basic
         .connect(acc02)
-        ["mint(uint256,uint256)"](1, 1, { value: price });
+        ["mint(uint256,uint256,address)"](1, 1, acc02.address);
 
       await expect(tx).to.be.revertedWithCustomError(
         basic,
@@ -193,7 +202,8 @@ describe("ERC1155Basic", () => {
 
     it("Should revert if price is wrong", async () => {
       await basic.setPublicMintState(true);
-      const tx = basic.connect(acc02)["mint(uint256,uint256)"](1, 1, { value: 0 });
+      await erc20.connect(acc02).approve(basic.address, 101010)
+      const tx = basic.connect(acc02)["mint(uint256,uint256,address)"](1, 1, acc02.address);
 
       await expect(tx).to.be.revertedWithCustomError(
         basic,
@@ -203,19 +213,18 @@ describe("ERC1155Basic", () => {
 
     it("Should mint, update storage and emit events", async () => {
       await basic.setPublicMintState(true);
+      await erc20.connect(acc02).approve(basic.address, price)
       const tx = await basic
         .connect(acc02)
-        ["mint(uint256,uint256)"](1, 1, { value: price });
+        ["mint(uint256,uint256,address)"](1, 1, acc02.address);
       const from = ethers.constants.AddressZero;
-      // const ownerOf = await basic.callStatic.ownerOf(1);
+
       const bal = await basic.callStatic.balanceOf(
         acc02.address,
         1,
       );
-
       expect(tx).to.be.ok;
       expect(1).to.eq(bal);
-      // expect(acc02.address).to.eq(ownerOf);
       await expect(tx)
         .to.emit(basic, "TransferSingle")
         .withArgs(acc02.address, from, acc02.address, 1, 1);
@@ -230,21 +239,26 @@ describe("ERC1155Basic", () => {
       const tx4amount = BigNumber.from(500);
       const tx5amount = BigNumber.from(322);
 
+      await erc20.connect(acc01).approve(basic.address, price.mul(txamount))
       const tx1 = await basic
         .connect(acc01)
-        ["mint(uint256,uint256)"](10, 1, { value: price.mul(txamount) });
+        ["mint(uint256,uint256,address)"](10, 1, acc01.address);
+      await erc20.connect(acc02).approve(basic.address, price.mul(tx2amount))
       const tx2 = await basic
         .connect(acc02)
-        ["mint(uint256,uint256)"](68, 1, { value: price.mul(tx2amount) });
+        ["mint(uint256,uint256,address)"](68, 1, acc02.address);
+      await erc20.connect(acc02).approve(basic.address, price.mul(tx3amount))
       const tx3 = await basic
         .connect(acc02)
-        ["mint(uint256,uint256)"](100, 1, { value: price.mul(tx3amount) });
+        ["mint(uint256,uint256,address)"](100, 1, acc02.address);
+      await erc20.connect(acc02).approve(basic.address, price.mul(tx4amount))
       const tx4 = await basic
         .connect(acc02)
-        ["mint(uint256,uint256)"](500, 1, { value: price.mul(tx4amount) });
+        ["mint(uint256,uint256,address)"](500, 1, acc02.address);
+      await erc20.connect(acc02).approve(basic.address, price.mul(tx5amount))
       const tx5 = await basic
         .connect(acc02)
-        ["mint(uint256,uint256)"](322, 1, { value: price.mul(tx5amount) });
+        ["mint(uint256,uint256,address)"](322, 1, acc02.address);
 
       expect(tx1).to.be.ok;
       expect(tx2).to.be.ok;
@@ -253,45 +267,52 @@ describe("ERC1155Basic", () => {
       expect(tx5).to.be.ok;
     });
   });
+
   describe("Batch mint", async () => {
     it("Should revert if supply has reached max", async () => {
       await basic.setPublicMintState(true);
       const id = [24];
       const amount = ethers.BigNumber.from(1000);
-      await basic["mint(uint256,uint256)"](1000, 1, { value: price.mul(amount) });
+      await erc20.connect(owner).approve(basic.address, price.mul(amount))
+      await basic["mint(uint256,uint256,address)"](1000, 1, owner.address);
+      await erc20.connect(mad).approve(basic.address, price)
       const tx = basic
         .connect(mad)
-        ["mintBatch(uint256[],uint256[])"](id, [1], { value: price });
+        ["mintBatch(uint256[],uint256[],address)"](id, [1], mad.address);
 
       await expect(tx).to.be.revertedWithCustomError(
         basic,
         BasicErrors.MaxSupplyReached,
       );
     });
+
     it("Should revert if public mint is turned off", async () => {
       const id = [25];
+      await erc20.connect(acc01).approve(basic.address, price)
       const tx = basic
         .connect(acc01)
-        ["mint(uint256,uint256)"](id, [1], { value: price });
+        ["mint(uint256,uint256,address)"](id, [1], acc01.address);
 
       await expect(tx).to.be.revertedWithCustomError(
         basic,
         BasicErrors.PublicMintClosed,
       );
     });
+
     it("Should revert if price is wrong", async () => {
       await basic.setPublicMintState(true);
       const amount = ethers.BigNumber.from(4);
       const ids = [23, 13, 400];
-      const tx = basic["mintBatch(uint256[],uint256[])"](ids, [1, 1, 1], {
-        value: price.mul(amount),
-      });
+      
+      await erc20.connect(owner).approve(basic.address, price.mul(amount))
+      const tx = basic["mintBatch(uint256[],uint256[],address)"](ids, [1, 1, 1], owner.address);
 
       await expect(tx).to.be.revertedWithCustomError(
         basic,
         BasicErrors.WrongPrice,
       );
     });
+
     it("Should batch mint, update storage and emit events", async () => {
       await basic.setPublicMintState(true);
       const dead = ethers.constants.AddressZero;
@@ -300,9 +321,11 @@ describe("ERC1155Basic", () => {
       const zero = ethers.constants.Zero;
       const ids = [123, 14, 500];
       const amounts = [one, one, one];
+
+      await erc20.connect(acc02).approve(basic.address, price.mul(amount))
       const tx = await basic
         .connect(acc02)
-        ["mintBatch(uint256[],uint256[])"](ids, [1, 1, 1], { value: price.mul(amount) });
+        ["mintBatch(uint256[],uint256[],address)"](ids, [1, 1, 1], acc02.address);
       // const ownerOfNull = await basic.callStatic.ownerOf(1);
       // const ownerOfA = await basic.callStatic.ownerOf(123);
       // const ownerOfB = await basic.callStatic.ownerOf(14);
@@ -343,6 +366,7 @@ describe("ERC1155Basic", () => {
           amounts,
         );
     });
+
     it("Should handle multiple batch mints", async () => {
       await basic.setPublicMintState(true);
       const dead = ethers.constants.AddressZero;
@@ -353,25 +377,22 @@ describe("ERC1155Basic", () => {
       const ids2 = [566, 145, 1000];
       const ids3 = [1, 33, 7];
       const amounts = [one, one, one];
+      
+      await erc20.connect(acc02).approve(basic.address, price.mul(amount))
       const tx1 = await basic
         .connect(acc02)
-        ["mintBatch(uint256[],uint256[])"](ids1, [1, 1, 1], { value: price.mul(amount) });
+        ["mintBatch(uint256[],uint256[],address)"](ids1, [1, 1, 1], acc02.address);
+
+      await erc20.connect(owner).approve(basic.address, price.mul(amount))
       const tx2 = await basic
         .connect(owner)
-        ["mintBatch(uint256[],uint256[])"](ids2, [1, 1, 1], { value: price.mul(amount) });
+        ["mintBatch(uint256[],uint256[],address)"](ids2, [1, 1, 1], owner.address);
+
+      await erc20.connect(amb).approve(basic.address, price.mul(amount))
       const tx3 = await basic
         .connect(amb)
-        ["mintBatch(uint256[],uint256[])"](ids3, [1, 1, 1], { value: price.mul(amount) });
-      // const ownerOfNull = await basic.callStatic.ownerOf(0);
-      // const ownerOfA = await basic.callStatic.ownerOf(
-      //   ids1[0],
-      // );
-      // const ownerOfB = await basic.callStatic.ownerOf(
-      //   ids2[1],
-      // );
-      // const ownerOfC = await basic.callStatic.ownerOf(
-      //   ids3[2],
-      // );
+        ["mintBatch(uint256[],uint256[],address)"](ids3, [1, 1, 1], amb.address);
+      
       const balNull = await basic.callStatic.balanceOf(
         acc02.address,
         0,
@@ -444,21 +465,23 @@ describe("ERC1155Basic", () => {
       const amount = ethers.BigNumber.from(4);
       const ids = [1, 2, 5];
       await basic.setPublicMintState(true);
+      await erc20.connect(acc02).approve(basic.address, price.mul(amount))
       await basic
         .connect(acc02)
-        ["mint(uint256,uint256)"](4, 1, { value: price.mul(amount) });
-      const tx = basic.connect(owner)["burn(address[],uint256[],uint256[])"]([acc02.address, acc02.address, acc02.address], ids, [1, 1, 1]);
+        ["mint(uint256,uint256,address)"](4, 1, acc02.address);
+      const tx = basic.connect(owner)["burn(address[],uint256[],uint256[],address)"]([acc02.address, acc02.address, acc02.address], ids, [1, 1, 1], owner.address);
 
       await expect(tx).to.be.revertedWith(
         BasicErrors.InvalidAmount,
       );
     });
+
     it("Should revert if ids length is less than 2", async () => {
       const counters = await ethers.getContractFactory(
         "Counters",
       );
       await expect(
-        basic["burn(address[],uint256[],uint256[])"]([acc02.address], [1], [1]),
+        basic["burn(address[],uint256[],uint256[],address)"]([acc02.address], [1], [1], owner.address),
       ).to.be.revertedWithCustomError(
         counters,
         BasicErrors.DecrementOverflow,
@@ -472,20 +495,25 @@ describe("ERC1155Basic", () => {
       //ID 5,6 will be minted in third mint call. so mintCounter will be 6 in last
       const amount = ethers.BigNumber.from(2);
       await basic.setPublicMintState(true);
+
+      await erc20.connect(acc02).approve(basic.address, price.mul(amount))
       await basic
         .connect(acc02)
-        ["mint(uint256,uint256)"](2, 1, { value: price.mul(amount) }); // mintCount = 2
+        ["mint(uint256,uint256,address)"](2, 1, acc02.address); // mintCount = 2
 
+      await erc20.connect(acc01).approve(basic.address, price.mul(amount))
       await basic
         .connect(acc01)
-        ["mint(uint256,uint256)"](2, 1, { value: price.mul(amount) }); // mintCount = 4
+        ["mint(uint256,uint256,address)"](2, 1, acc01.address); // mintCount = 4
 
       // this will not effect mintCount as we are not decrementing the counter, only the liveSupply is decrementing
-      const tx = await basic["burn(address[],uint256[],uint256[])"]([acc02.address, acc02.address], [1, 2], [1, 1]);
+      const tx = await basic["burn(address[],uint256[],uint256[],address)"]([acc02.address, acc02.address], [1, 2], [1, 1], owner.address);
       const dead = ethers.constants.AddressZero;
+
+      await erc20.connect(acc02).approve(basic.address, price.mul(amount))
       await basic
         .connect(acc02)
-        ["mint(uint256,uint256)"](2, 2, { value: price.mul(amount) }); // mintCount = 6
+        ["mint(uint256,uint256,address)"](2, 2, acc02.address); // mintCount = 6
 
       const bal1 = await basic.callStatic.balanceOf(
         acc01.address,
@@ -503,7 +531,7 @@ describe("ERC1155Basic", () => {
         .to.emit(basic, "TransferSingle")
         .withArgs(owner.address, acc02.address, dead, 2, 1);
 
-      const tx2 = await basic["burn(address[],uint256[],uint256[])"]([acc01.address, acc01.address], [3, 4], [1, 1]);
+      const tx2 = await basic["burn(address[],uint256[],uint256[],address)"]([acc01.address, acc01.address], [3, 4], [1, 1], owner.address);
       
       const bal2 = await basic.callStatic.balanceOf(
         acc02.address,
@@ -521,51 +549,61 @@ describe("ERC1155Basic", () => {
         .withArgs(owner.address, acc01.address, dead, 4, 1);
     });
   });
+
   describe("Batch burn", async () => {
     it("Should revert if caller is not the owner", async () => {
       const amount = ethers.BigNumber.from(3);
       const ids = [1, 2, 3];
       await basic.setPublicMintState(true);
-      await basic["mint(uint256,uint256)"](3, 1, { value: price.mul(amount) });
+      await erc20.connect(owner).approve(basic.address, price.mul(amount))
+      await basic["mint(uint256,uint256,address)"](3, 1, owner.address);
+      await erc20.connect(acc02).approve(basic.address, price.mul(amount))
       const tx = basic
         .connect(acc02)
-        ["burnBatch(address,uint256[],uint256[])"](owner.address, ids, [1, 1, 1]);
+        ["burnBatch(address,uint256[],uint256[],address)"](owner.address, ids, [1, 1, 1], acc02.address);
 
       await expect(tx).to.be.revertedWith(
         BasicErrors.Unauthorized,
       );
     });
+
     it("Should revert if id is already burnt/hasn't been minted", async () => {
       const amount = ethers.BigNumber.from(4);
       const ids = [1, 2, 5];
       await basic.setPublicMintState(true);
+
+      await erc20.connect(acc02).approve(basic.address, price.mul(amount))
       await basic
         .connect(acc02)
-        ["mint(uint256,uint256)"](4, 1, { value: price.mul(amount) });
+        ["mint(uint256,uint256,address)"](4, 1, acc02.address);
       const tx = basic
         .connect(owner)
-        ["burnBatch(address,uint256[],uint256[])"](acc02.address, ids, [1, 1, 1]);
+        ["burnBatch(address,uint256[],uint256[],address)"](acc02.address, ids, [1, 1, 1], owner.address);
 
       await expect(tx).to.be.revertedWith(
         BasicErrors.WrongFrom,
       );
     });
+
     it("Should batch burn tokens, update storage and emit event", async () => {
       const dead = ethers.constants.AddressZero;
       const one = ethers.constants.One;
       const amounts = [one, one];
       const amount = ethers.BigNumber.from(2);
       await basic.setPublicMintState(true);
+
+      await erc20.connect(acc02).approve(basic.address, price.mul(amount))
       await basic
         .connect(acc02)
-        ["mint(uint256,uint256)"](2, 1, { value: price.mul(amount) });
+        ["mint(uint256,uint256,address)"](2, 1, acc02.address);
+      await erc20.connect(acc01).approve(basic.address, price.mul(amount))
       await basic
         .connect(acc01)
-        ["mint(uint256,uint256)"](2, 1, { value: price.mul(amount) });
+        ["mint(uint256,uint256,address)"](2, 1, acc01.address);
       const ids1 = [1, 2];
       const ids2 = [3, 4];
-      const tx1 = await basic["burnBatch(address,uint256[],uint256[])"](acc02.address, ids1, [1, 1]);
-      const tx2 = await basic["burnBatch(address,uint256[],uint256[])"](acc01.address, ids2, [1, 1]);
+      const tx1 = await basic["burnBatch(address,uint256[],uint256[],address)"](acc02.address, ids1, [1, 1], owner.address);
+      const tx2 = await basic["burnBatch(address,uint256[],uint256[],address)"](acc01.address, ids2, [1, 1], owner.address);
       const bal1 = await basic.callStatic.balanceOf(
         acc02.address,
         1,
@@ -609,23 +647,25 @@ describe("ERC1155Basic", () => {
           amounts,
         );
     });
+
     it("Should handle multiple batch burns", async () => {
       const dead = ethers.constants.AddressZero;
       const one = ethers.constants.One;
       const amounts = [one, one, one, one, one];
       const amount = ethers.BigNumber.from(20);
       await basic.setPublicMintState(true);
+      await erc20.connect(acc02).approve(basic.address, price.mul(amount))
       await basic
         .connect(acc02)
-        ["mint(uint256,uint256)"](20, 1, { value: price.mul(amount) });
+        ["mint(uint256,uint256,address)"](20, 1, acc02.address);
       const ids1 = [1, 2, 3, 4, 5];
       const ids2 = [6, 7, 8, 9, 10];
       const ids3 = [11, 12, 13, 14, 15];
       const ids4 = [16, 17, 18, 19, 20];
-      const tx1 = await basic["burnBatch(address,uint256[],uint256[])"](acc02.address, ids1, [1, 1, 1, 1, 1]);
-      const tx2 = await basic["burnBatch(address,uint256[],uint256[])"](acc02.address, ids2, [1, 1, 1, 1, 1]);
-      const tx3 = await basic["burnBatch(address,uint256[],uint256[])"](acc02.address, ids3, [1, 1, 1, 1, 1]);
-      const tx4 = await basic["burnBatch(address,uint256[],uint256[])"](acc02.address, ids4, [1, 1, 1, 1, 1]);
+      const tx1 = await basic["burnBatch(address,uint256[],uint256[],address)"](acc02.address, ids1, [1, 1, 1, 1, 1], owner.address);
+      const tx2 = await basic["burnBatch(address,uint256[],uint256[],address)"](acc02.address, ids2, [1, 1, 1, 1, 1], owner.address);
+      const tx3 = await basic["burnBatch(address,uint256[],uint256[],address)"](acc02.address, ids3, [1, 1, 1, 1, 1], owner.address);
+      const tx4 = await basic["burnBatch(address,uint256[],uint256[],address)"](acc02.address, ids4, [1, 1, 1, 1, 1], owner.address);
 
       expect(tx1).to.be.ok;
       expect(tx2).to.be.ok;
@@ -671,9 +711,10 @@ describe("ERC1155Basic", () => {
   });
 
   describe("Withdraw", async () => {
-    it("Should withdraw contract's funds", async () => {
+    it("Should mint with ERC20, then withdraw contract's ERC20 funds", async () => {
       await basic.setPublicMintState(true);
-      await basic.connect(acc02)["mint(uint256,uint256)"](1, 1, { value: price });
+      await erc20.connect(acc02).approve(basic.address, price)
+      await basic.connect(acc02)["mint(uint256,uint256,address)"](1, 1, acc02.address);
 
       const addrs = [
         mad.address,
@@ -694,17 +735,18 @@ describe("ERC1155Basic", () => {
       ];
 
       await expect(() =>
-        basic.withdraw(),
-      ).to.changeEtherBalances(addrs, vals);
+        basic.withdrawERC20(erc20.address),
+      ).to.changeTokenBalances(erc20, addrs, vals);
 
       expect(
-        await ethers.provider.getBalance(basic.address),
+        await erc20.connect(owner).balanceOf(basic.address)
       ).to.eq(ethers.constants.Zero);
 
       await expect(
-        basic.connect(acc01).withdraw(),
+        basic.connect(acc01).withdrawERC20(erc20.address),
       ).to.be.revertedWith(BasicErrors.Unauthorized);
     });
+
     it("Should withdraw contract's ERC20s", async () => {
       const prevBal = BigNumber.from(2).pow(255);
       const payees = [
@@ -747,6 +789,7 @@ describe("ERC1155Basic", () => {
       ).to.eq(ethers.constants.Zero);
     });
   });
+
   describe("Public getters", async () => {
     it("Should query royalty info", async () => {
       const share = BigNumber.from(750);
@@ -760,7 +803,8 @@ describe("ERC1155Basic", () => {
 
     it("Should query token uri and revert if not yet minted", async () => {
       await basic.setPublicMintState(true);
-      await basic.connect(acc01)["mint(uint256,uint256)"](1, 1, { value: price });
+      await erc20.connect(acc01).approve(basic.address, price)
+      await basic.connect(acc01)["mint(uint256,uint256,address)"](1, 1, acc01.address);
       const tx = await basic.callStatic.uri(1);
 
       expect(tx).to.be.ok;
@@ -795,6 +839,7 @@ describe("ERC1155Basic", () => {
       expect(tx).to.eq(base);
     });
   });
+  
   describe("Interface IDs", async () => {
     it("Should support interfaces", async () => {
       const erc165 =

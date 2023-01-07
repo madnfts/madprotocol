@@ -125,7 +125,7 @@ contract ERC721Basic is
         onlyOwner
         hasReachedMax(amount)
     {
-        if (address(erc20) == address(0)) revert("INVALID_TYPE");
+        if (address(erc20) != address(0)) revert("INVALID_TYPE");
         _feeCheck(0x40d097c3, msg.value);
         uint256 i;
         // for (uint256 i = 0; i < amount; i++) {

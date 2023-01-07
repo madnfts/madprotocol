@@ -23,6 +23,7 @@ import { Owned } from "./lib/auth/Owned.sol";
 import { ReentrancyGuard } from "./lib/security/ReentrancyGuard.sol";
 import { DCPrevent } from "./lib/security/DCPrevent.sol";
 import { Types, SplitterImpl } from "./Types.sol";
+import { ERC20 } from "./lib/tokens/ERC20.sol";
 
 import { CREATE3, Bytes32AddressLib } from "./lib/utils/CREATE3.sol";
 
@@ -323,7 +324,8 @@ contract MADFactory721 is MAD,
         uint256 _maxSupply,
         string memory _baseURI,
         address _splitter,
-        uint256 _royalty
+        uint256 _royalty,
+        ERC20 erc20
     )
         external
         nonReentrant
@@ -334,38 +336,39 @@ contract MADFactory721 is MAD,
         _royaltyLocker(_royalty);
 
         if (_tokenType < 1) {
-        (bytes32 tokenSalt, address deployed) = 
-            ERC721MinimalDeployer._721MinimalDeploy(
-                _tokenSalt,
-                _name,
-                _symbol,
-                _baseURI,
-                _price,
-                _splitter,
-                router,
-                _royalty
+            (bytes32 tokenSalt, address deployed) = 
+                ERC721MinimalDeployer._721MinimalDeploy(
+                    _tokenSalt,
+                    _name,
+                    _symbol,
+                    _baseURI,
+                    _price,
+                    _splitter,
+                    router,
+                    _royalty,
+                    erc20
+                );
+
+            bytes32 colId = deployed.fillLast12Bytes();
+            userTokens[tx.origin].push(colId);
+
+            colInfo[colId] = Types.Collection721(
+                tx.origin,
+                Types.ERC721Type.ERC721Minimal,
+                tokenSalt,
+                block.number,
+                _splitter
             );
 
-        bytes32 colId = deployed.fillLast12Bytes();
-        userTokens[tx.origin].push(colId);
-
-        colInfo[colId] = Types.Collection721(
-            tx.origin,
-            Types.ERC721Type.ERC721Minimal,
-            tokenSalt,
-            block.number,
-            _splitter
-        );
-
-        emit ERC721MinimalCreated(
-            _splitter,
-            deployed,
-            _name,
-            _symbol, 
-            _royalty,
-            _maxSupply,
-            _price
-        );
+            emit ERC721MinimalCreated(
+                _splitter,
+                deployed,
+                _name,
+                _symbol, 
+                _royalty,
+                _maxSupply,
+                _price
+            );
         }
         if (_tokenType == 1) {
             (bytes32 tokenSalt, address deployed) = 
@@ -378,29 +381,30 @@ contract MADFactory721 is MAD,
                 _maxSupply,
                 _splitter,
                 router,
-                _royalty
+                _royalty,
+                erc20
             );
 
-        bytes32 colId = deployed.fillLast12Bytes();
-        userTokens[tx.origin].push(colId);
+            bytes32 colId = deployed.fillLast12Bytes();
+            userTokens[tx.origin].push(colId);
 
-        colInfo[colId] = Types.Collection721(
-            tx.origin,
-            Types.ERC721Type.ERC721Basic,
-            tokenSalt,
-            block.number,
-            _splitter
-        );
+            colInfo[colId] = Types.Collection721(
+                tx.origin,
+                Types.ERC721Type.ERC721Basic,
+                tokenSalt,
+                block.number,
+                _splitter
+            );
 
-        emit ERC721BasicCreated(
-            _splitter,
-            deployed,
-            _name,
-            _symbol, 
-            _royalty,
-            _maxSupply,
-            _price
-        );
+            emit ERC721BasicCreated(
+                _splitter,
+                deployed,
+                _name,
+                _symbol, 
+                _royalty,
+                _maxSupply,
+                _price
+            );
         }
         if (_tokenType == 2) {
             (bytes32 tokenSalt, address deployed) = 
@@ -413,63 +417,65 @@ contract MADFactory721 is MAD,
                 _maxSupply,
                 _splitter,
                 router,
-                _royalty
+                _royalty,
+                erc20
             );
 
-        bytes32 colId = deployed.fillLast12Bytes();
-        userTokens[tx.origin].push(colId);
+            bytes32 colId = deployed.fillLast12Bytes();
+            userTokens[tx.origin].push(colId);
 
-        colInfo[colId] = Types.Collection721(
-            tx.origin,
-            Types.ERC721Type.ERC721Whitelist,
-            tokenSalt,
-            block.number,
-            _splitter
-        );
+            colInfo[colId] = Types.Collection721(
+                tx.origin,
+                Types.ERC721Type.ERC721Whitelist,
+                tokenSalt,
+                block.number,
+                _splitter
+            );
 
-        emit ERC721WhitelistCreated(
-            _splitter,
-            deployed,
-            _name,
-            _symbol, 
-            _royalty,
-            _maxSupply,
-            _price
-        );
+            emit ERC721WhitelistCreated(
+                _splitter,
+                deployed,
+                _name,
+                _symbol, 
+                _royalty,
+                _maxSupply,
+                _price
+            );
         }
         if (_tokenType > 2) {
             (bytes32 tokenSalt, address deployed) = 
             ERC721LazyDeployer._721LazyDeploy(
-                    _tokenSalt,
-                    _name,
-                    _symbol,
-                    _baseURI,
-                    _splitter,
-                    router,
-                    signer,
-                    _royalty
+                _tokenSalt,
+                _name,
+                _symbol,
+                _baseURI,
+                _splitter,
+                router,
+                signer,
+                _royalty,
+                erc20
             );
 
-        bytes32 colId = deployed.fillLast12Bytes();
-        userTokens[tx.origin].push(colId);
+            bytes32 colId = deployed.fillLast12Bytes();
+            userTokens[tx.origin].push(colId);
 
-        colInfo[colId] = Types.Collection721(
-            tx.origin,
-            Types.ERC721Type.ERC721Lazy,
-            tokenSalt,
-            block.number,
-            _splitter
-        );
+            colInfo[colId] = Types.Collection721(
+                tx.origin,
+                Types.ERC721Type.ERC721Lazy,
+                tokenSalt,
+                block.number,
+                _splitter
+            );
 
-        emit ERC721LazyCreated(
-            _splitter,
-            deployed,
-            _name,
-            _symbol, 
-            _royalty,
-            _maxSupply,
-            _price
-        );
+            emit ERC721LazyCreated(
+                _splitter,
+                deployed,
+                _name,
+                _symbol, 
+                _royalty,
+                _maxSupply,
+                _price
+            );
         }
     }
 

@@ -233,6 +233,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       // const colID = await f721.callStatic.getColID(minAddr);
       const min = await ethers.getContractAt(
@@ -359,6 +360,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -410,6 +412,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -468,6 +471,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -518,6 +522,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -621,6 +626,7 @@ describe("MADMarketplace721", () => {
           "ipfs://cid/",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
 
       const wlAddr = await f721.callStatic.getDeployedAddr(
@@ -892,6 +898,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -942,6 +949,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -1000,6 +1008,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -1058,6 +1067,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -1161,6 +1171,7 @@ describe("MADMarketplace721", () => {
           "ipfs://cid/",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
 
       const wlAddr = await f721.callStatic.getDeployedAddr(
@@ -1431,6 +1442,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -1483,6 +1495,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -1542,6 +1555,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -1592,6 +1606,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -1695,6 +1710,7 @@ describe("MADMarketplace721", () => {
           "ipfs://cid/",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
 
       const wlAddr = await f721.callStatic.getDeployedAddr(
@@ -1965,6 +1981,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2039,6 +2056,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2098,6 +2116,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2160,6 +2179,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2223,6 +2243,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2283,6 +2304,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2380,6 +2402,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2440,6 +2463,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2500,6 +2524,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2562,6 +2587,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2625,6 +2651,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2691,6 +2718,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2734,6 +2762,7 @@ describe("MADMarketplace721", () => {
           "ipfs://cid/",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const basic = await ethers.getContractAt(
         "ERC721Basic",
@@ -2742,7 +2771,7 @@ describe("MADMarketplace721", () => {
       await r721
         .connect(acc02)
         .setMintState(basic.address, true, 0);
-      await basic.connect(acc02).mint(1, { value: price });
+      await basic.connect(acc02)["mint(uint256)"](1, { value: price });
       await basic.connect(acc02).approve(m721.address, 1);
       const daTx = await m721
         .connect(acc02)
@@ -2931,6 +2960,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2985,6 +3015,7 @@ describe("MADMarketplace721", () => {
           "ipfs://cid/",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const basic = await ethers.getContractAt(
         "ERC721Basic",
@@ -2993,7 +3024,7 @@ describe("MADMarketplace721", () => {
       await r721
         .connect(acc02)
         .setMintState(basic.address, true, 0);
-      await basic.connect(acc02).mint(1, { value: price });
+      await basic.connect(acc02)["mint(uint256)"](1, { value: price });
       await basic.connect(acc02).approve(m721.address, 1);
       const daTx = await m721
         .connect(acc02)
@@ -3050,12 +3081,13 @@ describe("MADMarketplace721", () => {
         acc02.address,
         500,
         acc02.address,
+        ethers.constants.AddressZero
       );
 
       await extToken.connect(acc02).setPublicMintState(true);
       await extToken
         .connect(acc02)
-        .mint(2, { value: price.mul(ethers.constants.Two) });
+        ["mint(uint256)"](2, { value: price.mul(ethers.constants.Two) });
       await extToken.connect(acc02).approve(m721.address, 1);
       const tx = await extToken.connect(acc02).approve(m721.address, 2);
       const blockTimestamp = (await m721.provider.getBlock(tx.blockNumber || 0)).timestamp;
@@ -3251,6 +3283,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -3305,6 +3338,7 @@ describe("MADMarketplace721", () => {
           "ipfs://cid/",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const basic = await ethers.getContractAt(
         "ERC721Basic",
@@ -3313,7 +3347,7 @@ describe("MADMarketplace721", () => {
       await r721
         .connect(acc02)
         .setMintState(basic.address, true, 0);
-      await basic.connect(acc02).mint(1, { value: price });
+      await basic.connect(acc02)["mint(uint256)"](1, { value: price });
       await basic.connect(acc02).approve(m721.address, 1);
       const daTx = await m721
         .connect(acc02)
@@ -3371,12 +3405,13 @@ describe("MADMarketplace721", () => {
         acc02.address,
         500,
         acc02.address,
+        ethers.constants.AddressZero
       );
 
       await extToken.connect(acc02).setPublicMintState(true);
       await extToken
         .connect(acc02)
-        .mint(2, { value: price.mul(ethers.constants.Two) });
+        ["mint(uint256)"](2, { value: price.mul(ethers.constants.Two) });
       await extToken.connect(acc02).approve(m721.address, 1);
       const tx = await extToken.connect(acc02).approve(m721.address, 2);
       const blockTimestamp = (await m721.provider.getBlock(tx.blockNumber || 0)).timestamp;
@@ -3567,6 +3602,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -3644,6 +3680,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -3699,12 +3736,13 @@ describe("MADMarketplace721", () => {
         acc02.address,
         500,
         acc02.address,
+        ethers.constants.AddressZero
       );
 
       await extToken.connect(acc02).setPublicMintState(true);
       await extToken
         .connect(acc02)
-        .mint(2, { value: price.mul(ethers.constants.Two) });
+        ["mint(uint256)"](2, { value: price.mul(ethers.constants.Two) });
       await extToken.connect(acc02).approve(m721.address, 1);
       const tx = await extToken.connect(acc02).approve(m721.address, 2);
       const blockTimestamp = (await m721.provider.getBlock(tx.blockNumber || 0)).timestamp;
@@ -3758,6 +3796,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -3821,6 +3860,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -3953,6 +3993,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -4023,10 +4064,11 @@ describe("MADMarketplace721", () => {
         acc02.address,
         500,
         acc02.address,
+        ethers.constants.AddressZero
       );
 
       await extToken.connect(acc02).setPublicMintState(true);
-      await extToken.connect(acc02).mint(1, { value: price });
+      await extToken.connect(acc02)["mint(uint256)"](1, { value: price });
       const tx = await extToken.connect(acc02).approve(m721.address, 1);
       const blockTimestamp = (await m721.provider.getBlock(tx.blockNumber || 0)).timestamp;
 
@@ -4150,6 +4192,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -4214,6 +4257,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -4290,6 +4334,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -4369,6 +4414,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -4458,6 +4504,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -4547,6 +4594,7 @@ describe("MADMarketplace721", () => {
           "cid/id.json",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -4635,6 +4683,7 @@ describe("MADMarketplace721", () => {
           "ipfs://cid/",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
 
       const wlAddr = await f721.callStatic.getDeployedAddr(
@@ -4725,6 +4774,7 @@ describe("MADMarketplace721", () => {
           "ipfs://cid/",
           splAddr,
           750,
+          ethers.constants.AddressZero
         );
 
       const wlAddr = await f721.callStatic.getDeployedAddr(
@@ -4771,130 +4821,4 @@ describe("MADMarketplace721", () => {
       expect(tx).to.be.ok.and.to.eq(3);
     });
   });
-  // describe("Price Fetch", async () => {
-  //   it("Should fetch order's current price", async () => {
-  //     await m721.updateSettings(300, 10, 20);
-  //     const Splitter = await ethers.getContractFactory(
-  //       "SplitterImpl",
-  //     );
-  //     const [owner, amb, mad] = await ethers.getSigners();
-  //     const payees = [
-  //       mad.address,
-  //       amb.address,
-  //       owner.address,
-  //     ];
-  //     const shares = [10, 20, 70];
-
-  //     const splitter = (await Splitter.deploy(
-  //       payees,
-  //       shares,
-  //     )) as SplitterImpl;
-
-  //     const WL = await ethers.getContractFactory(
-  //       "ERC721Whitelist",
-  //     );
-
-  //     const signers = await ethers.getSigners();
-  //     const whitelisted = signers.slice(0, 2);
-
-  //     const leaves = whitelisted.map(account =>
-  //       padBuffer(account.address),
-  //     );
-  //     const tree = new MerkleTree(leaves, keccak256, {
-  //       sort: true,
-  //     });
-  //     const merkleRoot: string = tree.getHexRoot();
-
-  //     const wl = (await WL.deploy(
-  //       "721Whitelist",
-  //       "WHITELIST",
-  //       "ipfs://cid/",
-  //       ethers.utils.parseEther("1"),
-  //       1000,
-  //       splitter.address,
-  //       750,
-  //       owner.address,
-  //     )) as ERC721Whitelist;
-
-  //     await wl.whitelistConfig(
-  //       ethers.utils.parseEther("1"),
-  //       100,
-  //       merkleRoot,
-  //     );
-  //     await wl.freeConfig(1, 10, merkleRoot);
-  //     await wl.giftTokens([
-  //       mad.address,
-  //       acc01.address,
-  //       acc02.address,
-  //     ]);
-  //     await wl.connect(mad).approve(m721.address, 1);
-  //     await wl.connect(acc01).approve(m721.address, 2);
-  //     const tx = await wl.connect(acc02).approve(m721.address, 3);
-  //     const blockTimestamp = (await m721.provider.getBlock(tx.blockNumber || 0)).timestamp;
-
-  //     // `price` is constant in FP
-  //     const fpTx: ContractTransaction = await m721
-  //       .connect(mad)
-  //       .fixedPrice(wl.address, 1, price, blockTimestamp + 301);
-  //     await mineUpTo(100);
-  //     const daTx: ContractTransaction = await m721
-  //       .connect(acc01)
-  //       .dutchAuction(wl.address, 2, price, 0, blockTimestamp + 301);
-  //     const eaTx: ContractTransaction = await m721
-  //       .connect(acc02)
-  //       .englishAuction(wl.address, 3, price, blockTimestamp + 301);
-
-  //     const fpRc: ContractReceipt = await fpTx.wait();
-  //     const fpBn = fpRc.blockNumber;
-  //     const fpOrderId = getOrderId721(
-  //       fpBn,
-  //       wl.address,
-  //       1,
-  //       mad.address,
-  //     );
-  //     const daRc: ContractReceipt = await daTx.wait();
-  //     const daBn = daRc.blockNumber;
-  //     const daOrderId = getOrderId721(
-  //       daBn,
-  //       wl.address,
-  //       2,
-  //       acc01.address,
-  //     );
-  //     const eaRc: ContractReceipt = await eaTx.wait();
-  //     const eaBn = eaRc.blockNumber;
-  //     const eaOrderId = getOrderId721(
-  //       eaBn,
-  //       wl.address,
-  //       3,
-  //       acc02.address,
-  //     );
-
-  //     // update EA `lastBidPrice`
-  //     await m721.connect(amb).bid(eaOrderId, {
-  //       value: price.mul(ethers.constants.Two),
-  //     });
-
-      
-  //     const orderInfo: OrderDetails721 =
-  //       await m721.callStatic.orderInfo(daOrderId);
-  //     const blockTimestamp2 = (await m721.provider.getBlock(await m721.provider.getBlockNumber())).timestamp;
-  //     await setNextBlockTimestamp(blockTimestamp + 200)
-      
-  //     // simulate DA pricing math with ts
-  //     const delta = orderInfo.endTime.sub(orderInfo.startTime);
-  //     const tick = price.div(delta);
-  //     const dec = ethers.BigNumber.from(blockTimestamp2 - orderInfo.startTime.toNumber()).mul(tick);
-  //     const daPrice = price.sub(dec);
-
-  //     expect(
-  //       await m721.callStatic.getCurrentPrice(daOrderId),
-  //     ).to.eq(daPrice);
-  //     expect(
-  //       await m721.callStatic.getCurrentPrice(fpOrderId),
-  //     ).to.eq(price);
-  //     expect(
-  //       await m721.callStatic.getCurrentPrice(eaOrderId),
-  //     ).to.eq(price.mul(ethers.constants.Two));
-  //   });
-  // });
 });

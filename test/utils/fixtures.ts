@@ -47,6 +47,8 @@ type SplitterAndBasic721ERC20 = SplitterFixture &
   BasicFixture721 & ERC20Fixture;
 type SplitterAndWhitelist721 = SplitterFixture &
   WhitelistFixture721;
+type SplitterAndWhitelist721ERC20 = SplitterFixture &
+  WhitelistFixture721 & ERC20Fixture;
 type SplitterAndLazy721 = SplitterFixture & LazyFixture721;
 type SplitterAndLazy721ERC20 = SplitterFixture & 
   LazyFixture721 & ERC20Fixture;
@@ -308,6 +310,7 @@ export async function whitelistFixture721(): Promise<SplitterAndWhitelist721> {
     splitter.address,
     750,
     owner.address,
+    ethers.constants.AddressZero
   )) as ERC721Whitelist;
 
   // asynchronous contract calls
@@ -325,6 +328,81 @@ export async function whitelistFixture721(): Promise<SplitterAndWhitelist721> {
     proof,
     wrongProof,
     merkleRoot,
+  };
+}
+
+export async function whitelistFixture721ERC20(): Promise<SplitterAndWhitelist721ERC20> {
+  const ERC20 = await ethers.getContractFactory(
+    "MockERC20",
+  );
+  const erc20 = (await ERC20.deploy(
+    BigNumber.from(2).pow(255),
+  )) as MockERC20;
+
+  const Splitter = await ethers.getContractFactory(
+    "SplitterImpl",
+  );
+  const [owner, amb, mad /*,  acc01, acc02 */] =
+    await ethers.getSigners();
+  const payees = [mad.address, amb.address, owner.address];
+  const shares = [10, 20, 70];
+
+  const splitter = (await Splitter.deploy(
+    payees,
+    shares,
+  )) as SplitterImpl;
+
+  const WL = await ethers.getContractFactory(
+    "ERC721Whitelist",
+  );
+
+  const signers = await ethers.getSigners();
+  const whitelisted = signers.slice(0, 2);
+  const notwhitelisted = signers.slice(3, 5);
+
+  const leaves = whitelisted.map(account =>
+    padBuffer(account.address),
+  );
+  const tree = new MerkleTree(leaves, keccak256, {
+    sort: true,
+  });
+  const merkleRoot: string = tree.getHexRoot();
+  const proof: string[] = tree.getHexProof(
+    padBuffer(whitelisted[0].address),
+  );
+
+  const wrongProof: string[] = tree.getHexProof(
+    padBuffer(notwhitelisted[0].address),
+  );
+
+  const wl = (await WL.deploy(
+    "721Whitelist",
+    "WHITELIST",
+    "ipfs://cid/",
+    ethers.utils.parseEther("1"),
+    1000,
+    splitter.address,
+    750,
+    owner.address,
+    erc20.address
+  )) as ERC721Whitelist;
+
+  // asynchronous contract calls
+  await wl.whitelistConfig(
+    ethers.utils.parseEther("1"),
+    100,
+    merkleRoot,
+  );
+  // we pass the merkle root of the same addresses for test economy
+  await wl.freeConfig(1, 10, merkleRoot);
+
+  return {
+    wl,
+    splitter,
+    proof,
+    wrongProof,
+    merkleRoot,
+    erc20
   };
 }
 

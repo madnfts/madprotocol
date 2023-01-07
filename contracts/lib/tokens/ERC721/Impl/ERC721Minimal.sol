@@ -98,7 +98,7 @@ contract ERC721Minimal is
 
     /// @dev Can't be reburnt since `minted` is not updated to false.
     /// @dev ERC20 payment for burning compatible with MADRouter.
-    /// @dev Allows msg.value payments only if erc20
+    /// @dev Allows erc20 payments only if erc20 exists
     function burn(address erc20Owner) external payable onlyOwner {
         if (address(erc20) == address(0)) revert("INVALID_TYPE");
         uint256 value = erc20.allowance(erc20Owner, address(this));

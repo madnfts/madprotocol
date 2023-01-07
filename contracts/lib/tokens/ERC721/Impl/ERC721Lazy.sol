@@ -126,6 +126,7 @@ contract ERC721Lazy is
     /// @dev Neither `totalSupply` nor `price` accountings for any of the possible mint
     /// types(e.g., public, free/gifted, toCreator) need to be recorded by the contract;
     /// since its condition checking control flow takes place in offchain databases.
+    /// @dev Allows erc20 payments only if erc20 exists
     function lazyMint(
         Types.Voucher calldata voucher,
         uint8 v,
@@ -174,6 +175,7 @@ contract ERC721Lazy is
         emit BaseURISet(_baseURI);
     }
 
+    /// @dev Allows msg.value payments only if !erc20
     function burn(uint256[] memory ids) external payable onlyOwner {
         if (address(erc20) != address(0)) revert("INVALID_TYPE");
         _feeCheck(0x44df8e70, msg.value);
@@ -198,6 +200,7 @@ contract ERC721Lazy is
         // Transfer event emited by parent ERC721 contract
     }
 
+    /// @dev Allows erc20 payments only if erc20 exists
     function burn(uint256[] memory ids, address erc20Owner) external payable onlyOwner {
         if (address(erc20) == address(0)) revert("INVALID_TYPE");
         uint256 value = erc20.allowance(erc20Owner, address(this));

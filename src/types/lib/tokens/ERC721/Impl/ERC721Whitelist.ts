@@ -32,10 +32,12 @@ export interface ERC721WhitelistInterface extends utils.Interface {
   functions: {
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
+    "burn(uint256[],address)": FunctionFragment;
     "burn(uint256[])": FunctionFragment;
     "claimFree(bytes32[])": FunctionFragment;
     "claimListMerkleRoot()": FunctionFragment;
     "claimed(address)": FunctionFragment;
+    "erc20()": FunctionFragment;
     "freeAmount()": FunctionFragment;
     "freeClaimState()": FunctionFragment;
     "freeConfig(uint256,uint256,bytes32)": FunctionFragment;
@@ -44,11 +46,14 @@ export interface ERC721WhitelistInterface extends utils.Interface {
     "getBaseURI()": FunctionFragment;
     "getMintCount()": FunctionFragment;
     "giftTokens(address[])": FunctionFragment;
+    "giftTokens(address[],address)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "maxFree()": FunctionFragment;
     "maxSupply()": FunctionFragment;
     "maxWhitelistSupply()": FunctionFragment;
+    "mint(uint256,address)": FunctionFragment;
     "mint(uint256)": FunctionFragment;
+    "mintToCreator(uint256,address)": FunctionFragment;
     "mintToCreator(uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
@@ -74,6 +79,7 @@ export interface ERC721WhitelistInterface extends utils.Interface {
     "whitelistConfig(uint256,uint256,bytes32)": FunctionFragment;
     "whitelistMerkleRoot()": FunctionFragment;
     "whitelistMint(uint8,bytes32[])": FunctionFragment;
+    "whitelistMint(uint8,bytes32[],address)": FunctionFragment;
     "whitelistMintState()": FunctionFragment;
     "whitelistMinted()": FunctionFragment;
     "whitelistPrice()": FunctionFragment;
@@ -85,10 +91,12 @@ export interface ERC721WhitelistInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "approve"
       | "balanceOf"
-      | "burn"
+      | "burn(uint256[],address)"
+      | "burn(uint256[])"
       | "claimFree"
       | "claimListMerkleRoot"
       | "claimed"
+      | "erc20"
       | "freeAmount"
       | "freeClaimState"
       | "freeConfig"
@@ -96,13 +104,16 @@ export interface ERC721WhitelistInterface extends utils.Interface {
       | "getApproved"
       | "getBaseURI"
       | "getMintCount"
-      | "giftTokens"
+      | "giftTokens(address[])"
+      | "giftTokens(address[],address)"
       | "isApprovedForAll"
       | "maxFree"
       | "maxSupply"
       | "maxWhitelistSupply"
-      | "mint"
-      | "mintToCreator"
+      | "mint(uint256,address)"
+      | "mint(uint256)"
+      | "mintToCreator(uint256,address)"
+      | "mintToCreator(uint256)"
       | "name"
       | "onERC721Received"
       | "owner"
@@ -126,7 +137,8 @@ export interface ERC721WhitelistInterface extends utils.Interface {
       | "transferFrom"
       | "whitelistConfig"
       | "whitelistMerkleRoot"
-      | "whitelistMint"
+      | "whitelistMint(uint8,bytes32[])"
+      | "whitelistMint(uint8,bytes32[],address)"
       | "whitelistMintState"
       | "whitelistMinted"
       | "whitelistPrice"
@@ -143,7 +155,11 @@ export interface ERC721WhitelistInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "burn",
+    functionFragment: "burn(uint256[],address)",
+    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "burn(uint256[])",
     values: [PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
@@ -158,6 +174,7 @@ export interface ERC721WhitelistInterface extends utils.Interface {
     functionFragment: "claimed",
     values: [PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(functionFragment: "erc20", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "freeAmount",
     values?: undefined
@@ -191,8 +208,12 @@ export interface ERC721WhitelistInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "giftTokens",
+    functionFragment: "giftTokens(address[])",
     values: [PromiseOrValue<string>[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "giftTokens(address[],address)",
+    values: [PromiseOrValue<string>[], PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "isApprovedForAll",
@@ -205,11 +226,19 @@ export interface ERC721WhitelistInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "mint",
+    functionFragment: "mint(uint256,address)",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "mint(uint256)",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "mintToCreator",
+    functionFragment: "mintToCreator(uint256,address)",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "mintToCreator(uint256)",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
@@ -315,8 +344,16 @@ export interface ERC721WhitelistInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "whitelistMint",
+    functionFragment: "whitelistMint(uint8,bytes32[])",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "whitelistMint(uint8,bytes32[],address)",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>[],
+      PromiseOrValue<string>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "whitelistMintState",
@@ -338,13 +375,21 @@ export interface ERC721WhitelistInterface extends utils.Interface {
 
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "burn(uint256[],address)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "burn(uint256[])",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "claimFree", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "claimListMerkleRoot",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "claimed", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "erc20", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "freeAmount", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "freeClaimState",
@@ -361,7 +406,14 @@ export interface ERC721WhitelistInterface extends utils.Interface {
     functionFragment: "getMintCount",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "giftTokens", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "giftTokens(address[])",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "giftTokens(address[],address)",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "isApprovedForAll",
     data: BytesLike
@@ -372,9 +424,20 @@ export interface ERC721WhitelistInterface extends utils.Interface {
     functionFragment: "maxWhitelistSupply",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "mintToCreator",
+    functionFragment: "mint(uint256,address)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "mint(uint256)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "mintToCreator(uint256,address)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "mintToCreator(uint256)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
@@ -446,7 +509,11 @@ export interface ERC721WhitelistInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "whitelistMint",
+    functionFragment: "whitelistMint(uint8,bytes32[])",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "whitelistMint(uint8,bytes32[],address)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -667,7 +734,13 @@ export interface ERC721Whitelist extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    burn(
+    "burn(uint256[],address)"(
+      ids: PromiseOrValue<BigNumberish>[],
+      erc20Owner: PromiseOrValue<string>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "burn(uint256[])"(
       ids: PromiseOrValue<BigNumberish>[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -683,6 +756,8 @@ export interface ERC721Whitelist extends BaseContract {
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    erc20(overrides?: CallOverrides): Promise<[string]>;
 
     freeAmount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -706,8 +781,14 @@ export interface ERC721Whitelist extends BaseContract {
 
     getMintCount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    giftTokens(
+    "giftTokens(address[])"(
       addresses: PromiseOrValue<string>[],
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "giftTokens(address[],address)"(
+      addresses: PromiseOrValue<string>[],
+      erc20Owner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -723,12 +804,24 @@ export interface ERC721Whitelist extends BaseContract {
 
     maxWhitelistSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    mint(
+    "mint(uint256,address)"(
+      amount: PromiseOrValue<BigNumberish>,
+      erc20Owner: PromiseOrValue<string>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "mint(uint256)"(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    mintToCreator(
+    "mintToCreator(uint256,address)"(
+      amount: PromiseOrValue<BigNumberish>,
+      erc20Owner: PromiseOrValue<string>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "mintToCreator(uint256)"(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -840,9 +933,16 @@ export interface ERC721Whitelist extends BaseContract {
 
     whitelistMerkleRoot(overrides?: CallOverrides): Promise<[string]>;
 
-    whitelistMint(
+    "whitelistMint(uint8,bytes32[])"(
       amount: PromiseOrValue<BigNumberish>,
       merkleProof: PromiseOrValue<BytesLike>[],
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "whitelistMint(uint8,bytes32[],address)"(
+      amount: PromiseOrValue<BigNumberish>,
+      merkleProof: PromiseOrValue<BytesLike>[],
+      erc20Owner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -873,7 +973,13 @@ export interface ERC721Whitelist extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  burn(
+  "burn(uint256[],address)"(
+    ids: PromiseOrValue<BigNumberish>[],
+    erc20Owner: PromiseOrValue<string>,
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "burn(uint256[])"(
     ids: PromiseOrValue<BigNumberish>[],
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -889,6 +995,8 @@ export interface ERC721Whitelist extends BaseContract {
     arg0: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<boolean>;
+
+  erc20(overrides?: CallOverrides): Promise<string>;
 
   freeAmount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -912,8 +1020,14 @@ export interface ERC721Whitelist extends BaseContract {
 
   getMintCount(overrides?: CallOverrides): Promise<BigNumber>;
 
-  giftTokens(
+  "giftTokens(address[])"(
     addresses: PromiseOrValue<string>[],
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "giftTokens(address[],address)"(
+    addresses: PromiseOrValue<string>[],
+    erc20Owner: PromiseOrValue<string>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -929,12 +1043,24 @@ export interface ERC721Whitelist extends BaseContract {
 
   maxWhitelistSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
-  mint(
+  "mint(uint256,address)"(
+    amount: PromiseOrValue<BigNumberish>,
+    erc20Owner: PromiseOrValue<string>,
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "mint(uint256)"(
     amount: PromiseOrValue<BigNumberish>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  mintToCreator(
+  "mintToCreator(uint256,address)"(
+    amount: PromiseOrValue<BigNumberish>,
+    erc20Owner: PromiseOrValue<string>,
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "mintToCreator(uint256)"(
     amount: PromiseOrValue<BigNumberish>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -1046,9 +1172,16 @@ export interface ERC721Whitelist extends BaseContract {
 
   whitelistMerkleRoot(overrides?: CallOverrides): Promise<string>;
 
-  whitelistMint(
+  "whitelistMint(uint8,bytes32[])"(
     amount: PromiseOrValue<BigNumberish>,
     merkleProof: PromiseOrValue<BytesLike>[],
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "whitelistMint(uint8,bytes32[],address)"(
+    amount: PromiseOrValue<BigNumberish>,
+    merkleProof: PromiseOrValue<BytesLike>[],
+    erc20Owner: PromiseOrValue<string>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1079,7 +1212,13 @@ export interface ERC721Whitelist extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    burn(
+    "burn(uint256[],address)"(
+      ids: PromiseOrValue<BigNumberish>[],
+      erc20Owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "burn(uint256[])"(
       ids: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1095,6 +1234,8 @@ export interface ERC721Whitelist extends BaseContract {
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    erc20(overrides?: CallOverrides): Promise<string>;
 
     freeAmount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1118,8 +1259,14 @@ export interface ERC721Whitelist extends BaseContract {
 
     getMintCount(overrides?: CallOverrides): Promise<BigNumber>;
 
-    giftTokens(
+    "giftTokens(address[])"(
       addresses: PromiseOrValue<string>[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "giftTokens(address[],address)"(
+      addresses: PromiseOrValue<string>[],
+      erc20Owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1135,12 +1282,24 @@ export interface ERC721Whitelist extends BaseContract {
 
     maxWhitelistSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
-    mint(
+    "mint(uint256,address)"(
+      amount: PromiseOrValue<BigNumberish>,
+      erc20Owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "mint(uint256)"(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    mintToCreator(
+    "mintToCreator(uint256,address)"(
+      amount: PromiseOrValue<BigNumberish>,
+      erc20Owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "mintToCreator(uint256)"(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1252,9 +1411,16 @@ export interface ERC721Whitelist extends BaseContract {
 
     whitelistMerkleRoot(overrides?: CallOverrides): Promise<string>;
 
-    whitelistMint(
+    "whitelistMint(uint8,bytes32[])"(
       amount: PromiseOrValue<BigNumberish>,
       merkleProof: PromiseOrValue<BytesLike>[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "whitelistMint(uint8,bytes32[],address)"(
+      amount: PromiseOrValue<BigNumberish>,
+      merkleProof: PromiseOrValue<BytesLike>[],
+      erc20Owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1392,7 +1558,13 @@ export interface ERC721Whitelist extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    burn(
+    "burn(uint256[],address)"(
+      ids: PromiseOrValue<BigNumberish>[],
+      erc20Owner: PromiseOrValue<string>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "burn(uint256[])"(
       ids: PromiseOrValue<BigNumberish>[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -1408,6 +1580,8 @@ export interface ERC721Whitelist extends BaseContract {
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    erc20(overrides?: CallOverrides): Promise<BigNumber>;
 
     freeAmount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1431,8 +1605,14 @@ export interface ERC721Whitelist extends BaseContract {
 
     getMintCount(overrides?: CallOverrides): Promise<BigNumber>;
 
-    giftTokens(
+    "giftTokens(address[])"(
       addresses: PromiseOrValue<string>[],
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "giftTokens(address[],address)"(
+      addresses: PromiseOrValue<string>[],
+      erc20Owner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1448,12 +1628,24 @@ export interface ERC721Whitelist extends BaseContract {
 
     maxWhitelistSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
-    mint(
+    "mint(uint256,address)"(
+      amount: PromiseOrValue<BigNumberish>,
+      erc20Owner: PromiseOrValue<string>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "mint(uint256)"(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    mintToCreator(
+    "mintToCreator(uint256,address)"(
+      amount: PromiseOrValue<BigNumberish>,
+      erc20Owner: PromiseOrValue<string>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "mintToCreator(uint256)"(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -1563,9 +1755,16 @@ export interface ERC721Whitelist extends BaseContract {
 
     whitelistMerkleRoot(overrides?: CallOverrides): Promise<BigNumber>;
 
-    whitelistMint(
+    "whitelistMint(uint8,bytes32[])"(
       amount: PromiseOrValue<BigNumberish>,
       merkleProof: PromiseOrValue<BytesLike>[],
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "whitelistMint(uint8,bytes32[],address)"(
+      amount: PromiseOrValue<BigNumberish>,
+      merkleProof: PromiseOrValue<BytesLike>[],
+      erc20Owner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1597,7 +1796,13 @@ export interface ERC721Whitelist extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    burn(
+    "burn(uint256[],address)"(
+      ids: PromiseOrValue<BigNumberish>[],
+      erc20Owner: PromiseOrValue<string>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "burn(uint256[])"(
       ids: PromiseOrValue<BigNumberish>[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -1615,6 +1820,8 @@ export interface ERC721Whitelist extends BaseContract {
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    erc20(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     freeAmount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1638,8 +1845,14 @@ export interface ERC721Whitelist extends BaseContract {
 
     getMintCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    giftTokens(
+    "giftTokens(address[])"(
       addresses: PromiseOrValue<string>[],
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "giftTokens(address[],address)"(
+      addresses: PromiseOrValue<string>[],
+      erc20Owner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1657,12 +1870,24 @@ export interface ERC721Whitelist extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    mint(
+    "mint(uint256,address)"(
+      amount: PromiseOrValue<BigNumberish>,
+      erc20Owner: PromiseOrValue<string>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "mint(uint256)"(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    mintToCreator(
+    "mintToCreator(uint256,address)"(
+      amount: PromiseOrValue<BigNumberish>,
+      erc20Owner: PromiseOrValue<string>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "mintToCreator(uint256)"(
       amount: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -1774,9 +1999,16 @@ export interface ERC721Whitelist extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    whitelistMint(
+    "whitelistMint(uint8,bytes32[])"(
       amount: PromiseOrValue<BigNumberish>,
       merkleProof: PromiseOrValue<BytesLike>[],
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "whitelistMint(uint8,bytes32[],address)"(
+      amount: PromiseOrValue<BigNumberish>,
+      merkleProof: PromiseOrValue<BytesLike>[],
+      erc20Owner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

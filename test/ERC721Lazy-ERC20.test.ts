@@ -16,10 +16,9 @@ import {
   MockERC20,
   SplitterImpl,
 } from "../src/types";
-import { ERC20PaymentReleasedEvent } from "../src/types/lib/splitter/SplitterEventsAndErrors";
 import { LazyErrors } from "./utils/errors";
 import {
-  lazyFixture721, lazyFixture721ERC20, // erc20Fixture,
+  lazyFixture721ERC20, // erc20Fixture,
 } from "./utils/fixtures";
 import {
   ERC165Interface,
@@ -30,7 +29,7 @@ import {
   getInterfaceID,
 } from "./utils/interfaces";
 
-describe("ERC721Lazy", () => {
+describe("ERC721Lazy - ERC20", () => {
   /*
   For the sake of solely testing the nft functionalities, we consider
   the user as the contract's owner, and the marketplace just as the

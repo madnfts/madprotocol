@@ -75,7 +75,7 @@ contract ERC721Minimal is
     }
 
     /// @dev Can't be reminted if already minted, due to boolean.
-    /// @dev ERC20 payment minting compatible with MADRouter.
+    /// @dev Allows erc20 payments only if erc20 exists
     /// @dev msg.sender = router
     /// @dev erc20Owner = paying user
     function safeMint(address to, address erc20Owner) external payable onlyOwner {

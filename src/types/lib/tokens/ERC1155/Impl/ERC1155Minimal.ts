@@ -33,6 +33,8 @@ export interface ERC1155MinimalInterface extends utils.Interface {
     "balanceOf(address,uint256)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
     "burn(address,uint256)": FunctionFragment;
+    "burn(address,uint256,address)": FunctionFragment;
+    "erc20()": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "onERC1155Received(address,address,uint256,uint256,bytes)": FunctionFragment;
@@ -40,9 +42,11 @@ export interface ERC1155MinimalInterface extends utils.Interface {
     "ownerOf(uint256,address)": FunctionFragment;
     "price()": FunctionFragment;
     "publicMint(uint256)": FunctionFragment;
+    "publicMint(uint256,address)": FunctionFragment;
     "publicMintState()": FunctionFragment;
     "royaltyInfo(uint256,uint256)": FunctionFragment;
     "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
+    "safeMint(address,uint256,address)": FunctionFragment;
     "safeMint(address,uint256)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
@@ -59,18 +63,22 @@ export interface ERC1155MinimalInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "balanceOf"
       | "balanceOfBatch"
-      | "burn"
+      | "burn(address,uint256)"
+      | "burn(address,uint256,address)"
+      | "erc20"
       | "isApprovedForAll"
       | "onERC1155BatchReceived"
       | "onERC1155Received"
       | "owner"
       | "ownerOf"
       | "price"
-      | "publicMint"
+      | "publicMint(uint256)"
+      | "publicMint(uint256,address)"
       | "publicMintState"
       | "royaltyInfo"
       | "safeBatchTransferFrom"
-      | "safeMint"
+      | "safeMint(address,uint256,address)"
+      | "safeMint(address,uint256)"
       | "safeTransferFrom"
       | "setApprovalForAll"
       | "setOwner"
@@ -91,9 +99,18 @@ export interface ERC1155MinimalInterface extends utils.Interface {
     values: [PromiseOrValue<string>[], PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "burn",
+    functionFragment: "burn(address,uint256)",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "burn(address,uint256,address)",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>
+    ]
+  ): string;
+  encodeFunctionData(functionFragment: "erc20", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "isApprovedForAll",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
@@ -125,8 +142,12 @@ export interface ERC1155MinimalInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "price", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "publicMint",
+    functionFragment: "publicMint(uint256)",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "publicMint(uint256,address)",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "publicMintState",
@@ -147,7 +168,15 @@ export interface ERC1155MinimalInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "safeMint",
+    functionFragment: "safeMint(address,uint256,address)",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "safeMint(address,uint256)",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -192,7 +221,15 @@ export interface ERC1155MinimalInterface extends utils.Interface {
     functionFragment: "balanceOfBatch",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "burn(address,uint256)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "burn(address,uint256,address)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "erc20", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isApprovedForAll",
     data: BytesLike
@@ -208,7 +245,14 @@ export interface ERC1155MinimalInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "ownerOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "price", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "publicMint", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "publicMint(uint256)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "publicMint(uint256,address)",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "publicMintState",
     data: BytesLike
@@ -221,7 +265,14 @@ export interface ERC1155MinimalInterface extends utils.Interface {
     functionFragment: "safeBatchTransferFrom",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "safeMint", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "safeMint(address,uint256,address)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "safeMint(address,uint256)",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "safeTransferFrom",
     data: BytesLike
@@ -398,11 +449,20 @@ export interface ERC1155Minimal extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber[]] & { balances: BigNumber[] }>;
 
-    burn(
+    "burn(address,uint256)"(
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    "burn(address,uint256,address)"(
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      erc20Owner: PromiseOrValue<string>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    erc20(overrides?: CallOverrides): Promise<[string]>;
 
     isApprovedForAll(
       arg0: PromiseOrValue<string>,
@@ -438,8 +498,14 @@ export interface ERC1155Minimal extends BaseContract {
 
     price(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    publicMint(
+    "publicMint(uint256)"(
       balance: PromiseOrValue<BigNumberish>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "publicMint(uint256,address)"(
+      balance: PromiseOrValue<BigNumberish>,
+      erc20Owner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -462,7 +528,14 @@ export interface ERC1155Minimal extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    safeMint(
+    "safeMint(address,uint256,address)"(
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      erc20Owner: PromiseOrValue<string>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "safeMint(address,uint256)"(
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
@@ -527,11 +600,20 @@ export interface ERC1155Minimal extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
-  burn(
+  "burn(address,uint256)"(
     to: PromiseOrValue<string>,
     amount: PromiseOrValue<BigNumberish>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  "burn(address,uint256,address)"(
+    to: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    erc20Owner: PromiseOrValue<string>,
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  erc20(overrides?: CallOverrides): Promise<string>;
 
   isApprovedForAll(
     arg0: PromiseOrValue<string>,
@@ -567,8 +649,14 @@ export interface ERC1155Minimal extends BaseContract {
 
   price(overrides?: CallOverrides): Promise<BigNumber>;
 
-  publicMint(
+  "publicMint(uint256)"(
     balance: PromiseOrValue<BigNumberish>,
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "publicMint(uint256,address)"(
+    balance: PromiseOrValue<BigNumberish>,
+    erc20Owner: PromiseOrValue<string>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -591,7 +679,14 @@ export interface ERC1155Minimal extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  safeMint(
+  "safeMint(address,uint256,address)"(
+    to: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    erc20Owner: PromiseOrValue<string>,
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "safeMint(address,uint256)"(
     to: PromiseOrValue<string>,
     amount: PromiseOrValue<BigNumberish>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
@@ -656,11 +751,20 @@ export interface ERC1155Minimal extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
-    burn(
+    "burn(address,uint256)"(
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    "burn(address,uint256,address)"(
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      erc20Owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    erc20(overrides?: CallOverrides): Promise<string>;
 
     isApprovedForAll(
       arg0: PromiseOrValue<string>,
@@ -696,8 +800,14 @@ export interface ERC1155Minimal extends BaseContract {
 
     price(overrides?: CallOverrides): Promise<BigNumber>;
 
-    publicMint(
+    "publicMint(uint256)"(
       balance: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "publicMint(uint256,address)"(
+      balance: PromiseOrValue<BigNumberish>,
+      erc20Owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -720,7 +830,14 @@ export interface ERC1155Minimal extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    safeMint(
+    "safeMint(address,uint256,address)"(
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      erc20Owner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "safeMint(address,uint256)"(
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -863,11 +980,20 @@ export interface ERC1155Minimal extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    burn(
+    "burn(address,uint256)"(
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    "burn(address,uint256,address)"(
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      erc20Owner: PromiseOrValue<string>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    erc20(overrides?: CallOverrides): Promise<BigNumber>;
 
     isApprovedForAll(
       arg0: PromiseOrValue<string>,
@@ -903,8 +1029,14 @@ export interface ERC1155Minimal extends BaseContract {
 
     price(overrides?: CallOverrides): Promise<BigNumber>;
 
-    publicMint(
+    "publicMint(uint256)"(
       balance: PromiseOrValue<BigNumberish>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "publicMint(uint256,address)"(
+      balance: PromiseOrValue<BigNumberish>,
+      erc20Owner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -925,7 +1057,14 @@ export interface ERC1155Minimal extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    safeMint(
+    "safeMint(address,uint256,address)"(
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      erc20Owner: PromiseOrValue<string>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "safeMint(address,uint256)"(
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
@@ -991,11 +1130,20 @@ export interface ERC1155Minimal extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    burn(
+    "burn(address,uint256)"(
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    "burn(address,uint256,address)"(
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      erc20Owner: PromiseOrValue<string>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    erc20(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     isApprovedForAll(
       arg0: PromiseOrValue<string>,
@@ -1031,8 +1179,14 @@ export interface ERC1155Minimal extends BaseContract {
 
     price(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    publicMint(
+    "publicMint(uint256)"(
       balance: PromiseOrValue<BigNumberish>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "publicMint(uint256,address)"(
+      balance: PromiseOrValue<BigNumberish>,
+      erc20Owner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1053,7 +1207,14 @@ export interface ERC1155Minimal extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    safeMint(
+    "safeMint(address,uint256,address)"(
+      to: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      erc20Owner: PromiseOrValue<string>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "safeMint(address,uint256)"(
       to: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }

@@ -29,6 +29,7 @@ contract ERC1155Minimal is
     bool private minted;
     /// @dev  default := false
     bool public publicMintState;
+    ERC20 public erc20;
 
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
@@ -40,13 +41,15 @@ contract ERC1155Minimal is
         uint256 _price,
         SplitterImpl _splitter,
         uint96 _fraction,
-        address _router
+        address _router,
+        ERC20 _erc20
     ) Owned(_router) {
         _uri = _tokenURI;
         price = _price;
         splitter = _splitter;
         _royaltyFee = _fraction;
         _royaltyRecipient = payable(splitter);
+        erc20 = _erc20;
 
         emit RoyaltyFeeSet(_royaltyFee);
         emit RoyaltyRecipientSet(_royaltyRecipient);
@@ -56,18 +59,49 @@ contract ERC1155Minimal is
     //                          OWNER FX                          //
     ////////////////////////////////////////////////////////////////
 
-    /// @dev Can't be reminted if already minted, due to boolean.
+    /// @dev Can't be reminted if already minted, due to boolean, amount cant be > 1.
+    /// @dev Allows msg.value payments only if !erc20
     function safeMint(address to, uint256 amount) external payable onlyOwner {
-        _feeCheck(0x40d097c3);
+        if (address(erc20) != address(0)) revert("INVALID_TYPE");
+        _feeCheck(0x40d097c3, msg.value);
         if (minted) revert AlreadyMinted();
+        if (amount > 1) revert InvalidId();
 
         minted = true;
         _mint(to, 1, amount, "");
     }
 
+    /// @dev Can't be reminted if already minted, due to boolean, amount cant be > 1.
+    /// @dev Allows erc20 payments only if erc20 exists
+    /// @dev msg.sender = router
+    /// @dev erc20Owner = paying user
+    function safeMint(address to, uint256 amount, address erc20Owner) external payable onlyOwner {
+        if (address(erc20) == address(0)) revert("INVALID_TYPE");
+        uint256 value = erc20.allowance(erc20Owner, address(this));
+        _feeCheck(0x40d097c3, value);
+        if (minted) revert AlreadyMinted();
+        if (amount > 1) revert InvalidId();
+
+        SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
+        minted = true;
+        _mint(to, 1, amount, "");
+    }
+
     /// @dev Can't be reburnt since `minted` is not updated to false.
+    /// @dev Allows msg.value payments only if !erc20
     function burn(address to, uint256 amount) external payable onlyOwner {
-        _feeCheck(0x44df8e70);
+        if (address(erc20) != address(0)) revert("INVALID_TYPE");
+        _feeCheck(0x44df8e70, msg.value);
+        _burn(to, 1, amount);
+    }
+
+    /// @dev Can't be reburnt since `minted` is not updated to false.
+    /// @dev Allows erc20 payments only if erc20 exists
+    function burn(address to, uint256 amount, address erc20Owner) external payable onlyOwner {
+        if (address(erc20) == address(0)) revert("INVALID_TYPE");
+        uint256 value = erc20.allowance(erc20Owner, address(this));
+        _feeCheck(0x44df8e70, value);
+        SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
         _burn(to, 1, amount);
     }
 
@@ -139,11 +173,26 @@ contract ERC1155Minimal is
     //                           USER FX                          //
     ////////////////////////////////////////////////////////////////
 
+    /// @dev Allows msg.value payments only if !erc20
     function publicMint(uint256 balance) external payable {
+        if (address(erc20) != address(0)) revert("INVALID_TYPE");
         if (!publicMintState) revert PublicMintOff();
         if (msg.value != price) revert WrongPrice();
         if (minted) revert AlreadyMinted();
 
+        minted = true;
+        _mint(msg.sender, 1, balance, "");
+    }
+
+    /// @dev Allows erc20 payments only if erc20 exists
+    function publicMint(uint256 balance, address erc20Owner) external payable {
+        if (address(erc20) == address(0)) revert("INVALID_TYPE");
+        if (!publicMintState) revert PublicMintOff();
+        uint256 value = erc20.allowance(erc20Owner, address(this));
+        if (value != price) revert WrongPrice();
+        if (minted) revert AlreadyMinted();
+        
+        SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
         minted = true;
         _mint(msg.sender, 1, balance, "");
     }
@@ -168,7 +217,7 @@ contract ERC1155Minimal is
     //                     INTERNAL FUNCTIONS                     //
     ////////////////////////////////////////////////////////////////
 
-    function _feeCheck(bytes4 _method) internal view {
+    function _feeCheck(bytes4 _method, uint256 _value) internal view {
         address _owner = owner;
         uint32 size;
         assembly {
@@ -179,7 +228,7 @@ contract ERC1155Minimal is
         }
         uint256 _fee = FeeOracle(owner).feeLookup(_method);
         assembly {
-            if iszero(eq(callvalue(), _fee)) {
+            if iszero(eq(_value, _fee)) {
                 mstore(0x00, 0xf7760f25)
                 revert(0x1c, 0x04)
             }

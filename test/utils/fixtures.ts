@@ -55,11 +55,19 @@ type SplitterAndLazy721ERC20 = SplitterFixture &
 
 type SplitterAndMinimal1155 = SplitterFixture &
   MinimalFixture1155;
+type SplitterAndMinimal1155ERC20 = SplitterFixture &
+  MinimalFixture1155 & ERC20Fixture;
 type SplitterAndBasic1155 = SplitterFixture &
   BasicFixture1155;
+type SplitterAndBasic1155ERC20 = SplitterFixture &
+  BasicFixture1155 & ERC20Fixture;
 type SplitterAndWhitelist1155 = SplitterFixture &
   WhitelistFixture1155;
+type SplitterAndWhitelist1155ERC20 = SplitterFixture &
+  WhitelistFixture1155 & ERC20Fixture;
 type SplitterAndLazy1155 = SplitterFixture & LazyFixture1155;
+type SplitterAndLazy1155ERC20 = SplitterFixture & 
+  LazyFixture1155 & ERC20Fixture;
 
 // exported consts
 export const signer = ethers.provider.getSigner();
@@ -781,8 +789,44 @@ export async function minimalFixture1155(): Promise<SplitterAndMinimal1155> {
     splitter.address,
     750,
     owner.address,
+    ethers.constants.AddressZero
   )) as ERC1155Minimal;
   return { minimal, splitter };
+}
+
+export async function minimalFixture1155ERC20(): Promise<SplitterAndMinimal1155ERC20> {
+  const ERC20 = await ethers.getContractFactory(
+    "MockERC20",
+  );
+  const erc20 = (await ERC20.deploy(
+    BigNumber.from(2).pow(255),
+  )) as MockERC20;
+
+  const Splitter = await ethers.getContractFactory(
+    "SplitterImpl",
+  );
+  const [owner, amb, mad] = await ethers.getSigners();
+  const payees = [mad.address, amb.address, owner.address];
+  const shares = [10, 20, 70];
+
+  const splitter = (await Splitter.deploy(
+    payees,
+    shares,
+  )) as SplitterImpl;
+
+  const Minimal = await ethers.getContractFactory(
+    "ERC1155Minimal",
+  );
+
+  const minimal = (await Minimal.deploy(
+    "ipfs://cid/id.json",
+    ethers.utils.parseEther("1"),
+    splitter.address,
+    750,
+    owner.address,
+    erc20.address
+  )) as ERC1155Minimal;
+  return { minimal, splitter, erc20 };
 }
 
 export async function basicFixture1155(): Promise<SplitterAndBasic1155> {
@@ -811,6 +855,42 @@ export async function basicFixture1155(): Promise<SplitterAndBasic1155> {
     owner.address,
   )) as ERC1155Basic;
   return { basic, splitter };
+}
+
+export async function basicFixture1155ERC20(): Promise<SplitterAndBasic1155ERC20> {
+  const ERC20 = await ethers.getContractFactory(
+    "MockERC20",
+  );
+  const erc20 = (await ERC20.deploy(
+    BigNumber.from(2).pow(255),
+  )) as MockERC20;
+
+  const Splitter = await ethers.getContractFactory(
+    "SplitterImpl",
+  );
+  const [owner, amb, mad] = await ethers.getSigners();
+  const payees = [mad.address, amb.address, owner.address];
+  const shares = [10, 20, 70];
+
+  const splitter = (await Splitter.deploy(
+    payees,
+    shares,
+  )) as SplitterImpl;
+
+  const Basic = await ethers.getContractFactory(
+    "ERC1155Basic",
+  );
+
+  const basic = (await Basic.deploy(
+    "ipfs://cid/",
+    ethers.utils.parseEther("1"),
+    1000,
+    splitter.address,
+    750,
+    owner.address,
+    erc20.address
+  )) as ERC1155Basic;
+  return { basic, splitter, erc20 };
 }
 
 export async function whitelistFixture1155(): Promise<SplitterAndWhitelist1155> {

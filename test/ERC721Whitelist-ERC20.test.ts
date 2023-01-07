@@ -23,7 +23,7 @@ import {
   getInterfaceID,
 } from "./utils/interfaces";
 
-describe("ERC721Whitelist", () => {
+describe("ERC721Whitelist - ERC20", () => {
   /*
   For the sake of solely testing the nft functionalities, we consider
   the user as the contract's owner, and the marketplace just as the

@@ -16,7 +16,7 @@ import {
   SplitterImpl,
 } from "../src/types";
 import { MinimalErrors } from "./utils/errors";
-import { minimalFixture721, minimalFixture721ERC20 } from "./utils/fixtures";
+import { minimalFixture721ERC20 } from "./utils/fixtures";
 import {
   ERC165Interface,
   ERC721Interface,

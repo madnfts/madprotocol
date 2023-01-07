@@ -15,6 +15,8 @@ import { SafeTransferLib } from "../../../utils/SafeTransferLib.sol";
 import { Types } from "../../../../Types.sol";
 import { FeeOracle } from "../../common/FeeOracle.sol";
 
+import "hardhat/console.sol";
+
 contract ERC721Lazy is
     ERC721,
     ERC2981,
@@ -57,6 +59,7 @@ contract ERC721Lazy is
     mapping(bytes32 => bool) public usedVouchers;
 
     uint256 private mintCount;
+    ERC20 public erc20;
 
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
@@ -69,13 +72,15 @@ contract ERC721Lazy is
         SplitterImpl _splitter,
         uint96 _fraction,
         address _router,
-        address _signer
+        address _signer,
+        ERC20 _erc20
     ) ERC721(_name, _symbol) Owned(_router) {
         _CHAIN_ID_OG = block.chainid;
         _DOMAIN_SEPARATOR_OG = computeDS();
         signer = _signer;
         baseURI = _baseURI;
         splitter = _splitter;
+        erc20 = _erc20;
 
         _royaltyFee = _fraction;
         _royaltyRecipient = payable(splitter);
@@ -94,14 +99,47 @@ contract ERC721Lazy is
     /// @dev Neither `totalSupply` nor `price` accountings for any of the possible mint
     /// types(e.g., public, free/gifted, toCreator) need to be recorded by the contract;
     /// since its condition checking control flow takes place in offchain databases.
+    /// @dev Allows msg.value payments only if !erc20
     function lazyMint(
         Types.Voucher calldata voucher,
         uint8 v,
         bytes32 r,
         bytes32 s
     ) external payable nonReentrant {
+        if (address(erc20) != address(0)) revert("INVALID_TYPE");
         address _signer = _verify(voucher, v, r, s);
-        _lazyCheck(_signer, voucher);
+        _lazyCheck(_signer, voucher, msg.value);
+        usedVouchers[voucher.voucherId] = true;
+        uint256 len = voucher.users.length;
+        uint256 i;
+        for (i; i < len; ) {
+            _userMint(voucher.amount, voucher.users[i]);
+            // can't overflow due to have been previously validated by signer
+            unchecked {
+                ++i;
+            }
+        }
+    }
+    
+    /// @notice This method enables offchain ledgering of tokens to establish onchain provenance as
+    /// long as a trusted signer can be retrieved as the validator of such contract state update.
+    /// @dev Neither `totalSupply` nor `price` accountings for any of the possible mint
+    /// types(e.g., public, free/gifted, toCreator) need to be recorded by the contract;
+    /// since its condition checking control flow takes place in offchain databases.
+    function lazyMint(
+        Types.Voucher calldata voucher,
+        uint8 v,
+        bytes32 r,
+        bytes32 s,
+        address erc20Owner
+    ) external payable nonReentrant {
+        if (address(erc20) == address(0)) revert("INVALID_TYPE");
+        address _signer = _verify(voucher, v, r, s);
+        uint256 value = erc20.allowance(erc20Owner, address(this));
+
+        _lazyCheck(_signer, voucher, value);        
+        SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
+        
         usedVouchers[voucher.voucherId] = true;
         uint256 len = voucher.users.length;
         uint256 i;
@@ -137,7 +175,35 @@ contract ERC721Lazy is
     }
 
     function burn(uint256[] memory ids) external payable onlyOwner {
-        _feeCheck(0x44df8e70);
+        if (address(erc20) != address(0)) revert("INVALID_TYPE");
+        _feeCheck(0x44df8e70, msg.value);
+        uint256 i;
+        uint256 len = ids.length;
+        // for (uint256 i = 1; i < ids.length; i++) {
+        for (i; i < len; ) {
+            // delId();
+            liveSupply.decrement();
+            _burn(ids[i]);
+            unchecked {
+                ++i;
+            }
+        }
+        // assembly overflow check
+        assembly {
+            if lt(i, len) {
+                mstore(0x00, "LOOP_OVERFLOW")
+                revert(0x00, 0x20)
+            }
+        }
+        // Transfer event emited by parent ERC721 contract
+    }
+
+    function burn(uint256[] memory ids, address erc20Owner) external payable onlyOwner {
+        if (address(erc20) == address(0)) revert("INVALID_TYPE");
+        uint256 value = erc20.allowance(erc20Owner, address(this));
+        _feeCheck(0x44df8e70, value);
+        SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
+        
         uint256 i;
         uint256 len = ids.length;
         // for (uint256 i = 1; i < ids.length; i++) {
@@ -232,13 +298,14 @@ contract ERC721Lazy is
     /// @dev Checks for signer validity and if total balance provided in the message matches to voucher's record.
     function _lazyCheck(
         address _signer,
-        Types.Voucher calldata voucher
+        Types.Voucher calldata voucher,
+        uint256 value
     ) private view {
         if (_signer != signer) revert InvalidSigner();
         if (usedVouchers[voucher.voucherId])
             revert UsedVoucher();
         if (
-            msg.value !=
+            value !=
             (voucher.price *
                 voucher.amount *
                 voucher.users.length)
@@ -404,7 +471,7 @@ contract ERC721Lazy is
     //                     INTERNAL FUNCTIONS                     //
     ////////////////////////////////////////////////////////////////
 
-    function _feeCheck(bytes4 _method) internal view {
+    function _feeCheck(bytes4 _method, uint256 _value) internal view {
         address _owner = owner;
         uint32 size;
         assembly {
@@ -415,7 +482,7 @@ contract ERC721Lazy is
         }
         uint256 _fee = FeeOracle(owner).feeLookup(_method);
         assembly {
-            if iszero(eq(callvalue(), _fee)) {
+            if iszero(eq(_value, _fee)) {
                 mstore(0x00, 0xf7760f25)
                 revert(0x1c, 0x04)
             }

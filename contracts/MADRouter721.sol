@@ -200,11 +200,12 @@ contract MADRouter721 is
                 ? ERC721Minimal(_token).burn(msg.sender) : ERC721Minimal(_token).burn{value: msg.value}()
         : _tokenType == 1
             ? paymentTokenAddress != address(0) 
-                ? ERC721Basic(_token).burn{value: msg.value}(_ids, msg.sender) : ERC721Basic(_token).burn{value: msg.value}(_ids)
+                ? ERC721Basic(_token).burn(_ids, msg.sender) : ERC721Basic(_token).burn{value: msg.value}(_ids)
         : _tokenType == 2
             ? ERC721Whitelist(_token).burn{value: msg.value}(_ids)
         : _tokenType > 2
-            ? ERC721Lazy(_token).burn{value: msg.value}(_ids)
+            ? paymentTokenAddress != address(0) 
+                ? ERC721Lazy(_token).burn(_ids, msg.sender) : ERC721Lazy(_token).burn{value: msg.value}(_ids)
         : revert("INVALID_TYPE");
     }
 

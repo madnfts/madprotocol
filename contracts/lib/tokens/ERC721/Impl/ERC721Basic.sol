@@ -118,6 +118,7 @@ contract ERC721Basic is
         emit PublicMintStateSet(_publicMintState);
     }
 
+    /// @dev Allows msg.value payments only if !erc20
     function mintTo(address to, uint256 amount)
         external
         payable
@@ -145,6 +146,7 @@ contract ERC721Basic is
         // Transfer event emited by parent ERC721 contract
     }
 
+    /// @dev Allows msg.value payments only if erc20 exists
     function mintTo(address to, uint256 amount, address erc20Owner)
         external
         payable
@@ -174,6 +176,7 @@ contract ERC721Basic is
         // Transfer event emited by parent ERC721 contract
     }
 
+    /// @dev Allows msg.value payments only if !erc20
     function burn(uint256[] memory ids) external payable onlyOwner {
         if (address(erc20) != address(0)) revert("INVALID_TYPE");
         _feeCheck(0x44df8e70, msg.value);
@@ -199,6 +202,7 @@ contract ERC721Basic is
         // Transfer event emited by parent ERC721 contract
     }
 
+    /// @dev Allows msg.value payments only if erc20 exists
     function burn(uint256[] memory ids, address erc20Owner) external payable onlyOwner {
         if (address(erc20) == address(0)) revert("INVALID_TYPE");
         uint256 value = erc20.allowance(erc20Owner, address(this));
@@ -285,6 +289,7 @@ contract ERC721Basic is
     //                           USER FX                          //
     ////////////////////////////////////////////////////////////////
 
+    /// @dev Allows msg.value payments only if !erc20
     function mint(uint256 amount)
         external
         payable
@@ -313,6 +318,7 @@ contract ERC721Basic is
         // Transfer event emited by parent ERC721 contract
     }
 
+    /// @dev Allows msg.value payments only if erc20 exists
     function mint(uint256 amount, address erc20Owner)
         external
         payable

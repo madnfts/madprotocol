@@ -937,6 +937,7 @@ export async function whitelistFixture1155(): Promise<SplitterAndWhitelist1155> 
     splitter.address,
     750,
     owner.address,
+    ethers.constants.AddressZero
   )) as ERC1155Whitelist;
 
   // asynchronous contract calls
@@ -954,6 +955,78 @@ export async function whitelistFixture1155(): Promise<SplitterAndWhitelist1155> 
     proof,
     wrongProof,
     merkleRoot,
+  };
+}
+
+export async function whitelistFixture1155ERC20(): Promise<SplitterAndWhitelist1155ERC20> {
+  const ERC20 = await ethers.getContractFactory(
+    "MockERC20",
+  );
+  const erc20 = (await ERC20.deploy(
+    BigNumber.from(2).pow(255),
+  )) as MockERC20;
+
+  const Splitter = await ethers.getContractFactory(
+    "SplitterImpl",
+  );
+  const [owner, amb, mad] = await ethers.getSigners();
+  const payees = [mad.address, amb.address, owner.address];
+  const shares = [10, 20, 70];
+
+  const splitter = (await Splitter.deploy(
+    payees,
+    shares,
+  )) as SplitterImpl;
+
+  const WL = await ethers.getContractFactory(
+    "ERC1155Whitelist",
+  );
+
+  const signers = await ethers.getSigners();
+  const whitelisted = signers.slice(0, 2);
+  const notwhitelisted = signers.slice(3, 5);
+
+  const leaves = whitelisted.map(account =>
+    padBuffer(account.address),
+  );
+  const tree = new MerkleTree(leaves, keccak256, {
+    sort: true,
+  });
+  const merkleRoot: string = tree.getHexRoot();
+  const proof: string[] = tree.getHexProof(
+    padBuffer(whitelisted[0].address),
+  );
+
+  const wrongProof: string[] = tree.getHexProof(
+    padBuffer(notwhitelisted[0].address),
+  );
+
+  const wl = (await WL.deploy(
+    "ipfs://cid/",
+    ethers.utils.parseEther("1"),
+    1000,
+    splitter.address,
+    750,
+    owner.address,
+    erc20.address
+  )) as ERC1155Whitelist;
+
+  // asynchronous contract calls
+  await wl.whitelistConfig(
+    ethers.utils.parseEther("1"),
+    100,
+    merkleRoot,
+  );
+  // we pass the merkle root of the same addresses for test economy
+  await wl.freeConfig(1, 10, merkleRoot);
+
+  return {
+    wl,
+    splitter,
+    proof,
+    wrongProof,
+    merkleRoot,
+    erc20
   };
 }
 

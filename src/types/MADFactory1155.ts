@@ -30,7 +30,7 @@ import type {
 export interface MADFactory1155Interface extends utils.Interface {
   functions: {
     "colInfo(bytes32)": FunctionFragment;
-    "createCollection(uint8,string,string,string,uint256,uint256,string,address,uint256)": FunctionFragment;
+    "createCollection(uint8,string,string,string,uint256,uint256,string,address,uint256,address)": FunctionFragment;
     "creatorAuth(address,address)": FunctionFragment;
     "creatorCheck(bytes32)": FunctionFragment;
     "getColID(address)": FunctionFragment;
@@ -94,7 +94,8 @@ export interface MADFactory1155Interface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
       PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>
     ]
   ): string;
   encodeFunctionData(
@@ -419,6 +420,7 @@ export interface MADFactory1155 extends BaseContract {
       _uri: PromiseOrValue<string>,
       _splitter: PromiseOrValue<string>,
       _royalty: PromiseOrValue<BigNumberish>,
+      _erc20: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -546,6 +548,7 @@ export interface MADFactory1155 extends BaseContract {
     _uri: PromiseOrValue<string>,
     _splitter: PromiseOrValue<string>,
     _royalty: PromiseOrValue<BigNumberish>,
+    _erc20: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -673,6 +676,7 @@ export interface MADFactory1155 extends BaseContract {
       _uri: PromiseOrValue<string>,
       _splitter: PromiseOrValue<string>,
       _royalty: PromiseOrValue<BigNumberish>,
+      _erc20: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -918,6 +922,7 @@ export interface MADFactory1155 extends BaseContract {
       _uri: PromiseOrValue<string>,
       _splitter: PromiseOrValue<string>,
       _royalty: PromiseOrValue<BigNumberish>,
+      _erc20: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1028,6 +1033,7 @@ export interface MADFactory1155 extends BaseContract {
       _uri: PromiseOrValue<string>,
       _splitter: PromiseOrValue<string>,
       _royalty: PromiseOrValue<BigNumberish>,
+      _erc20: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -23,6 +23,7 @@ import { Owned } from "./lib/auth/Owned.sol";
 import { ReentrancyGuard } from "./lib/security/ReentrancyGuard.sol";
 import { DCPrevent } from "./lib/security/DCPrevent.sol";
 import { Types, SplitterImpl } from "./Types.sol";
+import { ERC20 } from "./lib/tokens/ERC20.sol";
 
 import { CREATE3, Bytes32AddressLib } from "./lib/utils/CREATE3.sol";
 
@@ -319,7 +320,8 @@ contract MADFactory1155 is MAD,
         uint256 _maxSupply,
         string memory _uri,
         address _splitter,
-        uint256 _royalty
+        uint256 _royalty,
+        ERC20 _erc20
     )
         external
         nonReentrant
@@ -337,7 +339,8 @@ contract MADFactory1155 is MAD,
                 _price,
                 _splitter,
                 router,
-                _royalty
+                _royalty,
+                _erc20
             );
 
         bytes32 colId = deployed.fillLast12Bytes();
@@ -370,7 +373,8 @@ contract MADFactory1155 is MAD,
                 _maxSupply,
                 _splitter,
                 router,
-                _royalty
+                _royalty,
+                _erc20
             );
 
         bytes32 colId = deployed.fillLast12Bytes();
@@ -403,7 +407,8 @@ contract MADFactory1155 is MAD,
                 _maxSupply,
                 _splitter,
                 router,
-                _royalty
+                _royalty,
+                _erc20
             );
 
         bytes32 colId = deployed.fillLast12Bytes();
@@ -429,14 +434,15 @@ contract MADFactory1155 is MAD,
         }
         if (_tokenType > 2) {
             (bytes32 tokenSalt, address deployed) = 
-            ERC1155LazyDeployer._1155LazyDeploy(
+                ERC1155LazyDeployer._1155LazyDeploy(
                     _tokenSalt,
                     _uri,
                     _splitter,
                     router,
                     signer,
-                    _royalty
-            );
+                    _royalty,
+                    _erc20
+                );
 
         bytes32 colId = deployed.fillLast12Bytes();
         userTokens[tx.origin].push(colId);

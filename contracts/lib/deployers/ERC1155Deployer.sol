@@ -3,6 +3,7 @@
 pragma solidity 0.8.16;
 
 import { SplitterImpl } from "../../Types.sol";
+import { ERC20 } from "../tokens/ERC20.sol";
 
 import { ERC1155Minimal } from "../tokens/ERC1155/Impl/ERC1155Minimal.sol";
 import { ERC1155Basic } from "../tokens/ERC1155/Impl/ERC1155Basic.sol";
@@ -18,7 +19,8 @@ library ERC1155MinimalDeployer {
         uint256 _price,
         address _splitter,
         address _router,
-        uint256 _royalty
+        uint256 _royalty,
+        ERC20 _erc20
     ) public returns (bytes32 tokenSalt, address deployed) {
         SplitterImpl splitter = SplitterImpl(
             payable(_splitter)
@@ -33,7 +35,8 @@ library ERC1155MinimalDeployer {
                     _price,
                     splitter,
                     _royalty,
-                    _router
+                    _router,
+                    _erc20
                 )
             ),
             0
@@ -49,7 +52,8 @@ library ERC1155BasicDeployer {
         uint256 _maxSupply,
         address _splitter,
         address _router,
-        uint256 _royalty
+        uint256 _royalty,
+        ERC20 _erc20
     ) public returns (bytes32 tokenSalt, address deployed) {
         SplitterImpl splitter = SplitterImpl(
             payable(_splitter)
@@ -65,7 +69,8 @@ library ERC1155BasicDeployer {
                     _maxSupply,
                     splitter,
                     _royalty,
-                    _router
+                    _router,
+                    _erc20
                 )
             ),
             0
@@ -81,7 +86,8 @@ library ERC1155WhitelistDeployer {
         uint256 _maxSupply,
         address _splitter,
         address _router,
-        uint256 _royalty
+        uint256 _royalty,
+        ERC20 _erc20
     ) public returns (bytes32 tokenSalt, address deployed) {
         SplitterImpl splitter = SplitterImpl(
             payable(_splitter)
@@ -97,7 +103,8 @@ library ERC1155WhitelistDeployer {
                     _maxSupply,
                     splitter,
                     _royalty,
-                    _router
+                    _router,
+                    _erc20
                 )
             ),
             0
@@ -112,7 +119,8 @@ library ERC1155LazyDeployer {
         address _splitter,
         address _router,
         address _signer,
-        uint256 _royalty
+        uint256 _royalty,
+        ERC20 _erc20
     ) public returns (bytes32 tokenSalt, address deployed) {
         SplitterImpl splitter = SplitterImpl(
             payable(_splitter)
@@ -127,7 +135,8 @@ library ERC1155LazyDeployer {
                     splitter,
                     _royalty,
                     _router,
-                    _signer
+                    _signer,
+                    _erc20
                 )
             ),
             0

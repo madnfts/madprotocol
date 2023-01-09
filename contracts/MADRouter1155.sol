@@ -182,7 +182,7 @@ contract MADRouter1155 is
             : _tokenType == 1
             ? ERC1155Basic(_token).burn{value: msg.value}(to, _ids, _amount)
             : _tokenType == 2
-            ? ERC1155Whitelist(_token).burn{value: msg.value}(to, _ids, _amount)
+            ? ERC1155Whitelist(_token).burn{value: msg.value}(to, _ids, _amount, address(this))
             : _tokenType > 2
             ? ERC1155Lazy(_token).burn{value: msg.value}(to, _ids, _amount)
             : revert("INVALID_TYPE");
@@ -204,7 +204,7 @@ contract MADRouter1155 is
         _tokenType == 1
             ? ERC1155Basic(_token).burnBatch{value: msg.value}(_from, _ids, _balances)
             : _tokenType == 2
-            ? ERC1155Whitelist(_token).burnBatch{value: msg.value}(_from, _ids, _balances)
+            ? ERC1155Whitelist(_token).burnBatch{value: msg.value}(_from, _ids, _balances, msg.sender)
             : _tokenType > 2
             ? ERC1155Lazy(_token).burnBatch{value: msg.value}(_from, _ids, _balances)
             : revert("INVALID_TYPE");
@@ -255,7 +255,7 @@ contract MADRouter1155 is
     {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType == 2) {
-            ERC1155Whitelist(_token).mintToCreator{value: msg.value}(_amount, _balances, totalBalance);
+            ERC1155Whitelist(_token).mintToCreator{value: msg.value}(_amount, _balances, totalBalance, address(this));
         } else revert("INVALID_TYPE");
     }
 
@@ -269,7 +269,7 @@ contract MADRouter1155 is
     ) external payable nonReentrant whenNotPaused {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType == 2) {
-            ERC1155Whitelist(_token).mintBatchToCreator{value: msg.value}(_ids, _balances, totalBalance);
+            ERC1155Whitelist(_token).mintBatchToCreator{value: msg.value}(_ids, _balances, totalBalance, address(this));
         } else revert("INVALID_TYPE");
     }
 
@@ -283,7 +283,7 @@ contract MADRouter1155 is
     ) external payable nonReentrant whenNotPaused {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType == 2) {
-            ERC1155Whitelist(_token).giftTokens{value: msg.value}(_addresses, _balances, totalBalance);
+            ERC1155Whitelist(_token).giftTokens{value: msg.value}(_addresses, _balances, totalBalance, msg.sender);
         } else revert("INVALID_TYPE");
     }
 

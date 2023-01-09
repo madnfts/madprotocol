@@ -108,13 +108,10 @@ contract ERC1155Whitelist is
         _;
     }
 
-    modifier priceCheck(uint256 _price, uint256 amount) {
-        if (_price * amount != msg.value) revert WrongPrice();
-        _;
-    }
-    
-    modifier priceCheckERC20(uint256 _price, uint256 amount, address erc20Owner) {
-        uint256 value = erc20.allowance(erc20Owner, address(this));
+    modifier priceCheck(uint256 _price, uint256 amount, address erc20Owner) {
+        uint256 value = (address(erc20) != address(0)) 
+            ? erc20.allowance(erc20Owner, address(this))
+            : msg.value;
         if (_price * amount != value) revert WrongPrice();
         _;
     }
@@ -174,11 +171,10 @@ contract ERC1155Whitelist is
     //                         OWNER FX                           //
     ////////////////////////////////////////////////////////////////
 
-    function whitelistConfig(
-        uint256 _price,
-        uint256 _supply,
-        bytes32 _root
-    ) external onlyOwner {
+    function whitelistConfig(uint256 _price, uint256 _supply, bytes32 _root) 
+        external 
+        onlyOwner 
+    {
         whitelistPrice = _price;
         maxWhitelistSupply = _supply;
         whitelistMerkleRoot = _root;
@@ -186,11 +182,10 @@ contract ERC1155Whitelist is
         emit WhitelistConfigSet(_price, _supply, _root);
     }
 
-    function freeConfig(
-        uint256 _freeAmount,
-        uint256 _maxFree,
-        bytes32 _claimListMerkleRoot
-    ) external onlyOwner {
+    function freeConfig(uint256 _freeAmount, uint256 _maxFree, bytes32 _claimListMerkleRoot) 
+        external 
+        onlyOwner 
+    {
         freeAmount = _freeAmount;
         maxFree = _maxFree;
         claimListMerkleRoot = _claimListMerkleRoot;
@@ -236,10 +231,12 @@ contract ERC1155Whitelist is
     }
 
     /// @dev Burns an arbitrary length array of ids of different owners.
-    /// @dev Allows msg.value payments only if !erc20
-    function burn(address[] memory owners, uint256[] memory ids, uint256[] memory amounts) external payable onlyOwner {
-        if (address(erc20) != address(0)) revert("INVALID_TYPE");
-        _feeCheck(0x44df8e70, msg.value);
+    function burn(address[] memory owners, uint256[] memory ids, uint256[] memory amounts, address erc20Owner) 
+        external 
+        payable 
+        onlyOwner 
+    {
+        _paymentCheck(erc20Owner, 1);
         uint256 i;
         uint256 len = ids.length;
         require(len == owners.length && len == amounts.length, "INVALID_AMOUNT");
@@ -260,75 +257,12 @@ contract ERC1155Whitelist is
     }
 
     /// @dev Burns an arbitrary length array of ids of different owners.
-    /// @dev Allows erc20 payments only if erc20 exists
-    function burn(address[] memory owners, uint256[] memory ids, uint256[] memory amounts, address erc20Owner) 
-        external 
-        payable 
-        onlyOwner 
-    {
-        if (address(erc20) == address(0)) revert("INVALID_TYPE");
-        uint256 value = erc20.allowance(erc20Owner, address(this));
-        _feeCheck(0x44df8e70, value);
-        SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
-        uint256 i;
-        uint256 len = ids.length;
-        require(len == owners.length && len == amounts.length, "INVALID_AMOUNT");
-        for (i; i < len; ) {
-            liveSupply.decrement();
-            _burn(owners[i], ids[i], amounts[i]);
-            unchecked {
-                ++i;
-            }
-        }
-        assembly {
-            if lt(i, len) {
-                mstore(0x00, 0xdfb035c9)
-                revert(0x1c, 0x04)
-            }
-        }
-        // Transfer events emited by parent ERC1155 contract
-    }
-
-    /// @dev Burns an arbitrary length array of ids owned by a single account.
-    /// @dev Allows msg.value payments only if !erc20
-    function burnBatch(address from, uint256[] memory ids, uint256[] memory amounts)
-        external
-        payable
-        onlyOwner
-    {
-        if (address(erc20) != address(0)) revert("INVALID_TYPE");
-        _feeCheck(0x44df8e70, msg.value);
-        uint256 i;
-        uint256 len = ids.length;
-        require(len == amounts.length, "INVALID_AMOUNT");
-        for (i; i < len; ) {
-            // delId();
-            liveSupply.decrement();
-            unchecked {
-                ++i;
-            }
-        }
-        assembly {
-            if lt(i, len) {
-                mstore(0x00, 0xdfb035c9)
-                revert(0x1c, 0x04)
-            }
-        }
-        _batchBurn(from, ids, amounts);
-        // Transfer events emited by parent ERC1155 contract
-    }
-
-    /// @dev Burns an arbitrary length array of ids owned by a single account.
-    /// @dev Allows msg.value payments only if !erc20
     function burnBatch(address from, uint256[] memory ids, uint256[] memory amounts, address erc20Owner)
         external
         payable
         onlyOwner
     {
-        if (address(erc20) == address(0)) revert("INVALID_TYPE");
-        uint256 value = erc20.allowance(erc20Owner, address(this));
-        _feeCheck(0x44df8e70, value);
-        SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
+        _paymentCheck(erc20Owner, 1);
         uint256 i;
         uint256 len = ids.length;
         require(len == amounts.length, "INVALID_AMOUNT");
@@ -349,35 +283,7 @@ contract ERC1155Whitelist is
         // Transfer events emited by parent ERC1155 contract
     }
 
-    /// @dev Allows msg.value payments only if !erc20
-    function mintToCreator(uint256 amount, uint256[] memory balances, uint256 balanceTotal)
-        external
-        payable
-        nonReentrant
-        onlyOwner
-        canMintFree(balanceTotal)
-        balanceMatchesTotal(amount, balances, balanceTotal)
-    {
-        if (address(erc20) != address(0)) revert("INVALID_TYPE");
-        _feeCheck(0x40d097c3, msg.value);
-        uint256 i;
-        freeSupply += balanceTotal;
-        for (i; i < amount; ) {
-            _mint(tx.origin, _incrementCounter(balances[i]), balances[i], "");
-            unchecked {
-                ++i;
-            }
-        }
-        assembly {
-            if lt(i, amount) {
-                mstore(0x00, 0xdfb035c9)
-                revert(0x1c, 0x04)
-            }
-        }
-        // Transfer events emited by parent ERC1155 contract
-    }
-
-    /// @dev Allows erc20 payments only if erc20 exists
+    /// @dev Mint amount to creator
     function mintToCreator(uint256 amount, uint256[] memory balances, uint256 balanceTotal, address erc20Owner)
         external
         payable
@@ -386,11 +292,7 @@ contract ERC1155Whitelist is
         canMintFree(balanceTotal)
         balanceMatchesTotal(amount, balances, balanceTotal)
     {
-        if (address(erc20) == address(0)) revert("INVALID_TYPE");
-        uint256 value = erc20.allowance(erc20Owner, address(this));
-        _feeCheck(0x40d097c3, value);
-        SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
-
+        _paymentCheck(erc20Owner, 0);
         uint256 i;
         freeSupply += balanceTotal;
         for (i; i < amount; ) {
@@ -408,21 +310,23 @@ contract ERC1155Whitelist is
         // Transfer events emited by parent ERC1155 contract
     }
 
-    /// @dev Allows msg.value payments only if !erc20
-    function mintBatchToCreator(uint256[] memory ids, uint256[] memory balances, uint256 balanceTotal)
+    /// @dev Batch mint amount to creator
+    function mintBatchToCreator(
+        uint256[] memory ids, 
+        uint256[] memory balances, 
+        uint256 balanceTotal, 
+        address erc20Owner
+    )
         external
         payable
         nonReentrant
         onlyOwner
         balanceMatchesTotal(ids.length, balances, balanceTotal)
     {
-        if (address(erc20) != address(0)) revert("INVALID_TYPE");
-        _feeCheck(0x40d097c3, msg.value);
-        uint256 len = ids.length;
-
         _canBatchToCreator(balanceTotal);
+        _paymentCheck(erc20Owner, 0);
+        uint256 len = ids.length;
         freeSupply += balanceTotal;
-
         uint256 i;
 
         for (i; i < len; ) {
@@ -442,46 +346,13 @@ contract ERC1155Whitelist is
         // Transfer event emitted by parent ERC1155 contract
     }
 
-    /// @dev Allows erc20 payments only if erc20 exists
-    function mintBatchToCreator(uint256[] memory ids, uint256[] memory balances, uint256 balanceTotal, address erc20Owner)
-        external
-        payable
-        nonReentrant
-        onlyOwner
-        balanceMatchesTotal(ids.length, balances, balanceTotal)
-    {
-        if (address(erc20) == address(0)) revert("INVALID_TYPE");
-        uint256 value = erc20.allowance(erc20Owner, address(this));
-        _feeCheck(0x40d097c3, value);
-        uint256 len = ids.length;
-
-        _canBatchToCreator(balanceTotal);
-        SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
-
-        freeSupply += balanceTotal;
-
-        uint256 i;
-
-        for (i; i < len; ) {
-            _incrementCounter(balances[i]);
-            unchecked {
-                ++i;
-            }
-        }
-        assembly {
-            if lt(i, len) {
-                mstore(0x00, 0xdfb035c9)
-                revert(0x1c, 0x04)
-            }
-        }
-
-        _batchMint(tx.origin, ids, balances, "");
-        // Transfer event emitted by parent ERC1155 contract
-    }
-
-    /// @dev Mints one token per address.
-    /// @dev Allows msg.value payments only if !erc20
-    function giftTokens(address[] calldata addresses, uint256[] memory balances, uint256 balanceTotal)
+    /// @dev Mints one token per address
+    function giftTokens(
+        address[] calldata addresses, 
+        uint256[] memory balances, 
+        uint256 balanceTotal, 
+        address erc20Owner
+    )
         external
         payable
         nonReentrant
@@ -489,45 +360,7 @@ contract ERC1155Whitelist is
         canMintFree(balanceTotal)
         balanceMatchesTotal(addresses.length, balances, balanceTotal)
     {
-        if (address(erc20) != address(0)) revert("INVALID_TYPE");
-        _feeCheck(0x40d097c3, msg.value);
-        uint256 amountGifted = balanceTotal;
-        uint256 len = addresses.length;
-        
-        freeSupply += amountGifted;
-
-        uint256 i;
-        for (i; i < len; ) {
-            _mint(addresses[i], _incrementCounter(balances[i]), balances[i], "");
-            unchecked {
-                ++i;
-            }
-        }
-
-        assembly {
-            if lt(i, len) {
-                mstore(0x00, 0xdfb035c9)
-                revert(0x1c, 0x04)
-            }
-        }
-        // Transfer events emitted by parent ERC1155 contract
-    }
-
-    /// @dev Mints one token per address.
-    /// @dev Allows erc20 payments only if erc20 exists
-    function giftTokens(address[] calldata addresses, uint256[] memory balances, uint256 balanceTotal, address erc20Owner)
-        external
-        payable
-        nonReentrant
-        onlyOwner
-        canMintFree(balanceTotal)
-        balanceMatchesTotal(addresses.length, balances, balanceTotal)
-    {
-        if (address(erc20) == address(0)) revert("INVALID_TYPE");
-        uint256 value = erc20.allowance(erc20Owner, address(this));
-        _feeCheck(0x40d097c3, value);
-        
-        SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
+        _paymentCheck(erc20Owner, 0);
 
         uint256 amountGifted = balanceTotal;
         uint256 len = addresses.length;
@@ -610,43 +443,14 @@ contract ERC1155Whitelist is
     //                           USER FX                          //
     ////////////////////////////////////////////////////////////////
 
-    /// @dev Allows msg.value payments only if !erc20
-    function mint(uint256 amount, uint256[] memory balances, uint256 balanceTotal)
-        external
-        payable
-        nonReentrant
-        priceCheck(publicPrice, balanceTotal)
-    {
-        _publicMintCheck(amount, balances, balanceTotal, 0);
-        uint256 i;
-
-        for (i; i < amount; ) {
-            _mint(msg.sender, _incrementCounter(balances[i]), balances[i], "");
-            unchecked {
-                ++i;
-            }
-        }
-
-        assembly {
-            if lt(i, amount) {
-                mstore(0x00, 0xdfb035c9)
-                revert(0x1c, 0x04)
-            }
-        }
-
-        // Transfer events emitted by parent ERC1155 contract
-    }
-
-    /// @dev Allows erc20 payments only if erc20 exists
+    /// @dev Public minting function
     function mint(uint256 amount, uint256[] memory balances, uint256 balanceTotal, address erc20Owner)
         external
         payable
         nonReentrant
-        priceCheckERC20(publicPrice, balanceTotal, erc20Owner)
+        priceCheck(publicPrice, balanceTotal, erc20Owner)
     {
-        _publicMintCheck(amount, balances, balanceTotal, 1);
-        uint256 value = erc20.allowance(erc20Owner, address(this));
-        SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
+        _publicMintCheck(amount, balances, balanceTotal, erc20Owner);
 
         uint256 i;
         for (i; i < amount; ) {
@@ -666,45 +470,13 @@ contract ERC1155Whitelist is
         // Transfer events emitted by parent ERC1155 contract
     }
 
-    /// @dev Allows msg.value payments only if !erc20
-    function mintBatch(uint256[] memory ids, uint256[] memory balances)
-        external
-        payable
-        nonReentrant
-        publicMintAccess
-    {
-        if (address(erc20) != address(0)) revert("INVALID_TYPE");
-        uint256 len = ids.length;
-        require(len == balances.length, "INVALID_AMOUNT");
-
-        uint256 i;
-        uint256 total = liveSupply.current();
-        for (i; i < len; ) {
-            _incrementCounter(balances[i]);
-            unchecked {
-                ++i;
-            }
-        }
-        assembly {
-            if lt(i, len) {
-                mstore(0x00, 0xdfb035c9)
-                revert(0x1c, 0x04)
-            }
-        }
-        _canBatchMint(liveSupply.current() - total, msg.value);
-
-        _batchMint(msg.sender, ids, balances, "");
-        // Transfer event emitted by parent ERC1155 contract
-    }
-
-    /// @dev Allows erc20 payments only if erc20 exists
+    /// @dev Public batch minting function
     function mintBatch(uint256[] memory ids, uint256[] memory balances, address erc20Owner)
         external
         payable
         nonReentrant
         publicMintAccess
     {
-        if (address(erc20) == address(0)) revert("INVALID_TYPE");
         uint256 len = ids.length;
         require(len == balances.length, "INVALID_AMOUNT");
 
@@ -723,30 +495,29 @@ contract ERC1155Whitelist is
             }
         }
 
-        uint256 value = erc20.allowance(erc20Owner, address(this));
+        uint256 value = address(erc20) != address(0) ? erc20.allowance(erc20Owner, address(this)) : msg.value;
         _canBatchMint(liveSupply.current() - total, value);
-        SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
+        if (address(erc20) != address(0)) SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
 
         _batchMint(msg.sender, ids, balances, "");
         // Transfer event emitted by parent ERC1155 contract
     }
 
     /// @dev Allows msg.value payments only if !erc20
-    /// @dev We do not support erc20 payments for whitelistMintBatch
     function whitelistMint(
         uint8 amount,
         uint256[] memory balances,
         uint256 balanceTotal,
-        bytes32[] calldata merkleProof
+        bytes32[] calldata merkleProof,
+        address erc20Owner
     )
         external
         payable
         nonReentrant
         whitelistMintAccess
         merkleVerify(merkleProof, whitelistMerkleRoot)
-        whitelistMax(amount)
-        priceCheck(whitelistPrice, balanceTotal)
     {
+        _publicWhitelistMintCheck(amount, balances, balanceTotal, erc20Owner);
         uint256 i;
         uint256 total = 0;
         for (i; i < amount; ) {
@@ -775,7 +546,8 @@ contract ERC1155Whitelist is
     function whitelistMintBatch(
         uint256[] memory ids,
         uint256[] memory balances,
-        bytes32[] calldata merkleProof
+        bytes32[] calldata merkleProof,
+        address erc20Owner
     )
         external
         payable
@@ -783,7 +555,6 @@ contract ERC1155Whitelist is
         whitelistMintAccess
         merkleVerify(merkleProof, whitelistMerkleRoot)
     {
-        if (address(erc20) != address(0)) revert("INVALID_TYPE");
         uint256 len = ids.length;
         require(len == balances.length, "INVALID_AMOUNT");
 
@@ -802,7 +573,12 @@ contract ERC1155Whitelist is
             }
         }
 
-        _canWhitelistBatch(liveSupply.current() - total, msg.value);
+        uint256 value = address(erc20) != address(0)
+            ? erc20.allowance(erc20Owner, address(this))
+            : msg.value ;
+        _canWhitelistBatch(liveSupply.current() - total, value);
+        _paymentCheck(erc20Owner, 2);
+
         whitelistMinted += liveSupply.current() - total;
 
         _batchMint(msg.sender, ids, balances, "");
@@ -946,21 +722,44 @@ contract ERC1155Whitelist is
         }
     }
 
-    function _publicMintCheck(uint256 amount, uint256[] memory balances, uint256 balanceTotal, uint8 paymentType) 
+    /// @dev Checks puiblic mint access and invokes _paymentCheck
+    function _publicMintCheck(uint256 amount, uint256[] memory balances, uint256 balanceTotal, address _erc20Owner) 
         internal 
-        view
         publicMintAccess
         hasReachedMax(balanceTotal)
         balanceMatchesTotal(amount, balances, balanceTotal)
     {
-        if (paymentType == 0) {
-            if (address(erc20) != address(0)) revert("INVALID_TYPE");   
-        } else if (paymentType == 1) {
-            if (address(erc20) == address(0)) revert("INVALID_TYPE");
-        }
+        _paymentCheck(_erc20Owner, 2);
     }
 
-    
+    /// @dev Checks puiblic mint access helper fix, avoiding _publicMintCheck 'Stack too deep'
+    function _publicWhitelistMintCheck(
+        uint8 amount,
+        uint256[] memory balances,
+        uint256 balanceTotal,
+        address erc20Owner
+    )
+        private
+        whitelistMax(amount)
+        priceCheck(whitelistPrice, balanceTotal, erc20Owner) 
+    {}
+
+    /// @dev Checks msg.value if !erc20 OR checks erc20 approval and invokes safeTransferFrom
+    /// @dev _type Passed to _feeCheck to determin the type of fee 0=mint; 1=burn; OR _feeCheck is ignored
+    function _paymentCheck(address _erc20Owner, uint8 _type) internal 
+    {
+        uint256 value = (address(erc20) != address(0)) 
+            ? erc20.allowance(_erc20Owner, address(this))
+            : msg.value;   
+        if (_type == 0) {
+            _feeCheck(0x40d097c3, value);
+        } else if (_type == 1) {
+            _feeCheck(0x44df8e70, value);
+        }
+        if (address(erc20) != address(0)) {
+            SafeTransferLib.safeTransferFrom(erc20, _erc20Owner, address(this), value);
+        }
+    }
 
     ////////////////////////////////////////////////////////////////
     //                     REQUIRED OVERRIDES                     //

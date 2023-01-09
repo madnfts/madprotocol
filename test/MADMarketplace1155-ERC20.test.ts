@@ -128,6 +128,7 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
           "cid/id.json",
           splAddr,
           750,
+          erc20.address
         );
       const min = await ethers.getContractAt(
         "ERC1155Minimal",
@@ -136,7 +137,7 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
       
       await r1155
         .connect(acc02)
-        .minimalSafeMint(min.address, acc02.address, 1, {value: ethers.utils.parseEther("0.25")});
+        .minimalSafeMint(min.address, acc02.address, 1, acc02.address, {value: ethers.utils.parseEther("0.25")});
       const tx = await min.connect(acc02).setApprovalForAll(m1155.address, true);
       const blockTimestamp = (await m1155.provider.getBlock(tx.blockNumber || 0)).timestamp;
 
@@ -178,7 +179,7 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
         "MinSalt",
       );
       await f1155.connect(acc02).createCollection(
-          0, "MinSalt", "1155Minimal", "MIN", price, 1, "cid/id.json", splAddr, 1000,
+          0, "MinSalt", "1155Minimal", "MIN", price, 1, "cid/id.json", splAddr, 1000, erc20.address
         );
       const min = await ethers.getContractAt(
         "ERC1155Minimal",
@@ -264,7 +265,7 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
         "MinSalt",
       );
       await f1155.connect(acc02).createCollection(
-        0, "MinSalt", "1155Minimal", "MIN", price, 1, "cid/id.json", splAddr, 750,
+        0, "MinSalt", "1155Minimal", "MIN", price, 1, "cid/id.json", splAddr, 750, erc20.address
       );
       const min = await ethers.getContractAt(
         "ERC1155Minimal",
@@ -315,7 +316,7 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
         "MinSalt",
       );
       await f1155.connect(acc02).createCollection(
-          0, "MinSalt", "1155Minimal", "MIN", price, 1, "cid/id.json", splAddr, 1000,
+          0, "MinSalt", "1155Minimal", "MIN", price, 1, "cid/id.json", splAddr, 1000, erc20.address
         );
       const min = await ethers.getContractAt(
         "ERC1155Minimal",

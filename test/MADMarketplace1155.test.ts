@@ -2943,7 +2943,7 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .setMintState(basic.address, true, 0);
-      await basic.connect(acc02)["mint(uint256,uint256)"](1, 1, { value: price });
+      await basic.connect(acc02).mint(1, 1, acc02.address, { value: price });
       await basic
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
@@ -3211,7 +3211,7 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .setMintState(basic.address, true, 0);
-      await basic.connect(acc02)["mint(uint256,uint256)"](1, 1, { value: price });
+      await basic.connect(acc02).mint(1, 1, acc02.address, { value: price });
       await basic
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
@@ -3274,7 +3274,7 @@ describe("MADMarketplace1155", () => {
       await extToken.connect(acc02).setPublicMintState(true);
       await extToken
         .connect(acc02)
-        ["mint(uint256,uint256)"](2, 1, { value: price.mul(ethers.constants.Two) });
+        .mint(2, 1, acc02.address, { value: price.mul(ethers.constants.Two) });
       const tx_ = await extToken
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
@@ -3535,7 +3535,7 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .setMintState(basic.address, true, 0);
-      await basic.connect(acc02)["mint(uint256,uint256)"](1, 1, { value: price });
+      await basic.connect(acc02).mint(1, 1, acc02.address, { value: price });
       await basic
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
@@ -3600,7 +3600,7 @@ describe("MADMarketplace1155", () => {
       await extToken.connect(acc02).setPublicMintState(true);
       await extToken
         .connect(acc02)
-        ["mint(uint256,uint256)"](2, 1, { value: price.mul(ethers.constants.Two) });
+        .mint(2, 1, acc02.address, { value: price.mul(ethers.constants.Two) });
       const tx_ = await extToken
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
@@ -3939,7 +3939,7 @@ describe("MADMarketplace1155", () => {
       await extToken.connect(acc02).setPublicMintState(true);
       await extToken
         .connect(acc02)
-        ["mint(uint256,uint256)"](2, 1, { value: price.mul(ethers.constants.Two) });
+        .mint(2, 1, acc02.address, { value: price.mul(ethers.constants.Two) });
       const tx_ = await extToken
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
@@ -4285,7 +4285,7 @@ describe("MADMarketplace1155", () => {
       );
 
       await extToken.connect(acc02).setPublicMintState(true);
-      await extToken.connect(acc02)["mint(uint256,uint256)"](1, 1, { value: price });
+      await extToken.connect(acc02).mint(1, 1, acc02.address, { value: price });
       const tx_ = await extToken
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);

@@ -280,6 +280,7 @@ describe("MADFactory1155", () => {
           "cid/id.json",
           splAddr,
           750,
+          dead
         );
       const colID = await f1155.callStatic.getColID(minAddr);
       const storage = await f1155.callStatic.userTokens(
@@ -301,6 +302,7 @@ describe("MADFactory1155", () => {
           "cid/id.json",
           splAddr,
           750,
+          dead
         );
 
       const fail2 = f1155
@@ -315,6 +317,7 @@ describe("MADFactory1155", () => {
           "cid/id.json",
           splAddr,
           750,
+          dead
         );
 
       expect(tx).to.be.ok;
@@ -373,6 +376,7 @@ describe("MADFactory1155", () => {
           "ipfs://cid/",
           splAddr,
           750,
+          dead
         );
       const colID = await f1155.callStatic.getColID(
         basicAddr,
@@ -396,6 +400,7 @@ describe("MADFactory1155", () => {
           "ipfs://cid/",
           splAddr,
           750,
+          dead
         );
 
       const fail2 = f1155
@@ -410,6 +415,7 @@ describe("MADFactory1155", () => {
           "ipfs://cid/",
           splAddr,
           750,
+          dead
         );
 
       expect(tx).to.be.ok;
@@ -468,6 +474,7 @@ describe("MADFactory1155", () => {
           "ipfs://cid/",
           splAddr,
           750,
+          dead
         );
       const colID = await f1155.callStatic.getColID(wlAddr);
       const storage = await f1155.callStatic.userTokens(
@@ -489,6 +496,7 @@ describe("MADFactory1155", () => {
           "ipfs://cid/",
           splAddr,
           750,
+          dead
         );
 
       const fail2 = f1155
@@ -503,6 +511,7 @@ describe("MADFactory1155", () => {
           "ipfs://cid/",
           splAddr,
           750,
+          dead
         );
 
       expect(tx).to.be.ok;
@@ -558,6 +567,7 @@ describe("MADFactory1155", () => {
           "ipfs://cid/",
           splAddr,
           750,
+          dead
         );
       const lazyAddr = await f1155.callStatic.getDeployedAddr(
         "LazySalt",
@@ -583,6 +593,7 @@ describe("MADFactory1155", () => {
           "ipfs://cid/",
           splAddr,
           750,
+          dead
         );
 
       const fail2 = f1155
@@ -597,6 +608,7 @@ describe("MADFactory1155", () => {
           "ipfs://cid/",
           splAddr,
           750,
+          dead
         );
 
       expect(tx).to.be.ok;
@@ -662,39 +674,6 @@ describe("MADFactory1155", () => {
         .to.emit(f1155, "MarketplaceUpdated")
         .withArgs(owner.address);
     });
-    // it("Should add address to ambassador whitelist", async () => {
-    //   const tx = await f1155.addAmbassador(amb.address);
-    //   const check = f1155.callStatic.ambWhitelist(
-    //     amb.address,
-    //   );
-
-    //   expect(tx).to.be.ok;
-    //   expect(await check).to.be.true;
-    //   await expect(tx)
-    //     .to.emit(f1155, "AmbassadorAdded")
-    //     .withArgs(amb.address);
-    //   await expect(
-    //     f1155.connect(acc02).addAmbassador(acc01.address),
-    //   ).to.be.revertedWith(FactoryErrors.Unauthorized);
-    // });
-    // it("Should delete address from ambassador whitelist", async () => {
-    //   await f1155.addAmbassador(amb.address);
-    //   await f1155.addAmbassador(mad.address);
-
-    //   const tx = await f1155.delAmbassador(amb.address);
-    //   const check = f1155.callStatic.ambWhitelist(
-    //     amb.address,
-    //   );
-
-    //   expect(tx).to.be.ok;
-    //   expect(await check).to.be.false;
-    //   await expect(tx)
-    //     .to.emit(f1155, "AmbassadorDeleted")
-    //     .withArgs(amb.address);
-    //   await expect(
-    //     f1155.connect(acc02).delAmbassador(mad.address),
-    //   ).to.be.revertedWith(FactoryErrors.Unauthorized);
-    // });
     it("Should update ERC1155Lazy signer", async () => {
       const tx = await f1155.setSigner(acc01.address);
       expect(tx).to.be.ok;
@@ -729,7 +708,7 @@ describe("MADFactory1155", () => {
         f1155.splitterCheck("", dead, dead, 0, 0),
       ).to.be.revertedWith(FactoryErrors.Paused);
       await expect(
-        f1155.createCollection(1, "", "", "", 0, 1, "", dead, 750),
+        f1155.createCollection(1, "", "", "", 0, 1, "", dead, 750, dead),
       ).to.be.revertedWith(FactoryErrors.Paused);
       await expect(
         f1155.connect(acc02).unpause(),
@@ -766,6 +745,7 @@ describe("MADFactory1155", () => {
           "ipfs://cid/",
           splAddr,
           750,
+          dead
         );
       await f1155
         .connect(acc02)
@@ -779,6 +759,7 @@ describe("MADFactory1155", () => {
           "ipfs://cid/",
           splAddr,
           750,
+          dead
         );
       await f1155
         .connect(acc02)
@@ -792,6 +773,7 @@ describe("MADFactory1155", () => {
           "ipfs://cid/",
           splAddr,
           750,
+          dead
         );
 
       expect(await f1155.getIDsLength(acc02.address)).to.eq(
@@ -837,6 +819,7 @@ describe("MADFactory1155", () => {
           "cid/id.json",
           splAddr,
           750,
+          dead
         );
       const colID = await f1155.callStatic.getColID(minAddr);
       const min = await ethers.getContractAt(
@@ -893,6 +876,7 @@ describe("MADFactory1155", () => {
           "cid/id.json",
           splAddr,
           750,
+          dead
         );
       const min = await ethers.getContractAt(
         "ERC1155Minimal",
@@ -901,7 +885,7 @@ describe("MADFactory1155", () => {
       await r1155
         .connect(acc02)
         .setMintState(minAddr, true, 0);
-      await min.connect(acc02).publicMint(1, { value: price });
+      await min.connect(acc02).publicMint(1, acc02.address, { value: price });
       const blockTimestamp = (await m1155.provider.getBlock(await m1155.provider.getBlockNumber())).timestamp;
 
       // const blocknum = await m1155.provider.getBlockNumber();
@@ -975,6 +959,7 @@ describe("MADFactory1155", () => {
           "cid/id.json",
           splAddr,
           750,
+          dead
         );
       const colID = await f1155.callStatic.getColID(minAddr);
 

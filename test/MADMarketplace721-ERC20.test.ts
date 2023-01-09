@@ -81,15 +81,15 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
       expect(await m721.minAuctionIncrement()).to.eq(300);
       expect(await m721.minBidValue()).to.eq(20);
       expect(await m721.MADFactory721()).to.eq(f721.address);
-      expect(await r721.paymentTokenAddress()).to.eq(erc20.address);
+      expect(await f721.callStatic.erc20()).to.eq(erc20.address);
     });
   });
   describe("Owner Functions", async () => {
     it("Should update ERC20 payment token address", async () => {
-      const tx = await m721.setPaymentToken(erc20.address);
+      const tx = await f721.setPaymentToken(erc20.address);
 
       expect(tx).to.be.ok;
-      expect(await m721.callStatic.paymentTokenAddress()).to.eq(
+      expect(await m721.callStatic.erc20()).to.eq(
         erc20.address,
       );
       await expect(
@@ -128,8 +128,7 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          erc20.address
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -185,7 +184,7 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
         "MinSalt",
       );
       await f721.connect(acc02).createCollection(
-          0, "MinSalt", "721Minimal", "MIN", price, 1, "cid/id.json", splAddr, 1000, erc20.address
+          0, "MinSalt", "721Minimal", "MIN", price, 1, "cid/id.json", splAddr, 1000
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -274,7 +273,7 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
         "MinSalt",
       );
       await f721.connect(acc02).createCollection(
-        0, "MinSalt", "721Minimal", "MIN", price, 1, "cid/id.json", splAddr, 750, erc20.address
+        0, "MinSalt", "721Minimal", "MIN", price, 1, "cid/id.json", splAddr, 750
       );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -327,7 +326,7 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
         "MinSalt",
       );
       await f721.connect(acc02).createCollection(
-          0, "MinSalt", "721Minimal", "MIN", price, 1, "cid/id.json", splAddr, 1000, erc20.address
+          0, "MinSalt", "721Minimal", "MIN", price, 1, "cid/id.json", splAddr, 1000
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",

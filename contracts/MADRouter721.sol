@@ -50,33 +50,12 @@ contract MADRouter721 is
     uint256 public feeMint = 0.25 ether;
     uint256 public feeBurn = 0;
     
-    address public paymentTokenAddress;
-    ERC20 public erc20;
-    
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    constructor(FactoryVerifier _factory, address _paymentTokenAddress) {
+    constructor(FactoryVerifier _factory) {
         MADFactory721 = _factory;
-        if (_paymentTokenAddress != address(0)) {
-            setPaymentToken(_paymentTokenAddress);
-        }
-    }
-
-    /// @notice Enables the contract's owner to change payment token address.
-    /// @dev Function Signature := ?
-    function setPaymentToken(address _paymentTokenAddress)
-        public
-        onlyOwner
-    {
-        require(_paymentTokenAddress != address(0), "Invalid token address");
-        assembly {
-            // paymentTokenAddress = _paymentTokenAddress;
-            sstore(paymentTokenAddress.slot, _paymentTokenAddress)
-        }
-        erc20 = ERC20(_paymentTokenAddress);
-        emit PaymentTokenUpdated(_paymentTokenAddress);
     }
 
     ////////////////////////////////////////////////////////////////
@@ -161,11 +140,7 @@ contract MADRouter721 is
     {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType != 0) revert("INVALID_TYPE");
-        if (address(erc20) != address(0)) {
-            ERC721Minimal(_token).safeMint{value: msg.value}(_to, msg.sender);
-        } else {
-            ERC721Minimal(_token).safeMint{value: msg.value}(_to, msg.sender);
-        }
+        ERC721Minimal(_token).safeMint{value: msg.value}(_to, msg.sender);
     }
 
     function basicMintTo(
@@ -175,11 +150,7 @@ contract MADRouter721 is
     ) external payable nonReentrant whenNotPaused {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType != 1) revert("INVALID_TYPE");
-        if (address(erc20) != address(0)) {
-            ERC721Basic(_token).mintTo{value: msg.value}(_to, _amount,  msg.sender);
-        } else {
-            ERC721Basic(_token).mintTo{value: msg.value}(_to, _amount,  msg.sender);
-        }
+        ERC721Basic(_token).mintTo{value: msg.value}(_to, _amount,  msg.sender);
     }
 
     /// @notice Global token burn controller/single pusher for all token types.

@@ -98,8 +98,7 @@ describe("MADRouter1155", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
-          750,
-          dead
+          750
         );
       const min = await ethers.getContractAt(
         "ERC1155Minimal",
@@ -140,8 +139,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750,
-          dead
+          750
         );
       const colID = await f1155.callStatic.getColID(
         basicAddr,
@@ -202,8 +200,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750,
-          dead
+          750
         );
       const colID = await f1155.callStatic.getColID(wlAddr);
       const wl = await ethers.getContractAt(
@@ -262,8 +259,7 @@ describe("MADRouter1155", () => {
           ethers.constants.Zero,
           "ipfs://cid/",
           splAddr,
-          750,
-          dead
+          750
         );
       const colID = await f1155.callStatic.getColID(lazyAddr);
       const lazy = await ethers.getContractAt(
@@ -327,8 +323,7 @@ describe("MADRouter1155", () => {
           ethers.constants.Zero,
           "ipfs://cid/",
           splAddr,
-          750,
-          dead
+          750
         );
       // const colID = await f1155.callStatic.getColID(lazyAddr);
       const lazy = await ethers.getContractAt(
@@ -374,8 +369,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750,
-          dead
+          750
         );
       // const colID = await f1155.callStatic.getColID(wlAddr);
       const wl = await ethers.getContractAt(
@@ -430,8 +424,7 @@ describe("MADRouter1155", () => {
           ethers.constants.Zero,
           "ipfs://cid/",
           splAddr,
-          750,
-          dead
+          750
         );
       const lazy = await ethers.getContractAt(
         "ERC1155Lazy",
@@ -476,8 +469,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750,
-          dead
+          750
         );
       const wl = await ethers.getContractAt(
         "ERC1155Whitelist",
@@ -524,8 +516,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750,
-          dead
+          750
         );
       const tx = r1155.minimalSafeMint(wlAddr, acc01.address, 1, {value:ethers.utils.parseEther("0.25")});
       const verArt = await artifacts.readArtifact(
@@ -570,8 +561,7 @@ describe("MADRouter1155", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          dead
+          750
         );
       const min = await ethers.getContractAt(
         "ERC1155Minimal",
@@ -640,8 +630,7 @@ describe("MADRouter1155", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
-          750,
-          dead
+          750
         );
       // const colID = await f1155.callStatic.getColID(minAddr);
       const min = await ethers.getContractAt(
@@ -699,8 +688,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750,
-          dead
+          750
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -764,8 +752,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750,
-          dead
+          750
         );
       const wl = await ethers.getContractAt(
         "ERC1155Whitelist",
@@ -825,8 +812,7 @@ describe("MADRouter1155", () => {
           ethers.constants.Zero,
           "ipfs://cid/",
           splAddr,
-          750,
-          dead
+          750
         );
       const lazy = await ethers.getContractAt(
         "ERC1155Lazy",
@@ -950,8 +936,7 @@ describe("MADRouter1155", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
-          750,
-          dead
+          750
         );
       const min = await ethers.getContractAt(
         "ERC1155Minimal",
@@ -995,8 +980,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750,
-          dead
+          750
         );
       const pmul = await ethers.BigNumber.from(4);
       const basic = await ethers.getContractAt(
@@ -1072,8 +1056,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750,
-          dead
+          750
         );
       const wl = await ethers.getContractAt(
         "ERC1155Whitelist",
@@ -1138,8 +1121,7 @@ describe("MADRouter1155", () => {
           ethers.constants.Zero,
           "ipfs://cid/",
           splAddr,
-          750,
-          dead
+          750
         );
       const lazy = await ethers.getContractAt(
         "ERC1155Lazy",
@@ -1271,8 +1253,7 @@ describe("MADRouter1155", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
-          750,
-          dead
+          750
         );
       const tx = r1155
         .connect(acc02)
@@ -1315,8 +1296,7 @@ describe("MADRouter1155", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
-          750,
-          dead
+          750
         );
       const min = await ethers.getContractAt(
         "ERC1155Minimal",
@@ -1333,8 +1313,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750,
-          dead
+          750
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -1351,8 +1330,7 @@ describe("MADRouter1155", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
-          750,
-          dead
+          750
         );
       const wl = await ethers.getContractAt(
         "ERC1155Whitelist",
@@ -1433,8 +1411,7 @@ describe("MADRouter1155", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
-          750,
-          dead
+          750
         );
       const wlAddr = await f1155.callStatic.getDeployedAddr(
         "WhiteSalt",
@@ -1491,8 +1468,7 @@ describe("MADRouter1155", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
-          750,
-          dead
+          750
         );
       const wlAddr = await f1155.callStatic.getDeployedAddr(
         "WhiteSalt",
@@ -1551,8 +1527,7 @@ describe("MADRouter1155", () => {
           100,
           "ipfs://cid/",
           splAddr,
-          750,
-          dead
+          750
         );
       const basicAddr =
         await f1155.callStatic.getDeployedAddr("BasicSalt");
@@ -1590,8 +1565,7 @@ describe("MADRouter1155", () => {
           100,
           "ipfs://cid/",
           splAddr,
-          750,
-          dead
+          750
         );
       const wlAddr = await f1155.callStatic.getDeployedAddr(
         "WhiteSalt",
@@ -1644,8 +1618,7 @@ describe("MADRouter1155", () => {
           100,
           "ipfs://cid/",
           splAddr,
-          750,
-          dead
+          750
         );
       const basicAddr =
         await f1155.callStatic.getDeployedAddr("BasicSalt");
@@ -1685,8 +1658,7 @@ describe("MADRouter1155", () => {
           100,
           "ipfs://cid/",
           splAddr,
-          750,
-          dead
+          750
         );
       const basicAddr =
         await f1155.callStatic.getDeployedAddr("BasicSalt");
@@ -1724,8 +1696,7 @@ describe("MADRouter1155", () => {
           100,
           "ipfs://cid/",
           splAddr,
-          750,
-          dead
+          750
         );
       const wlAddr = await f1155.callStatic.getDeployedAddr(
         "WhiteSalt",
@@ -1778,8 +1749,7 @@ describe("MADRouter1155", () => {
           100,
           "ipfs://cid/",
           splAddr,
-          750,
-          dead
+          750
         );
       const basicAddr =
         await f1155.callStatic.getDeployedAddr("BasicSalt");
@@ -1813,8 +1783,7 @@ describe("MADRouter1155", () => {
           100,
           "ipfs://cid/",
           splAddr,
-          750,
-          dead
+          750
         );
       const wlAddr = await f1155.callStatic.getDeployedAddr(
         "WhiteSalt",
@@ -1882,8 +1851,7 @@ describe("MADRouter1155", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
-          750,
-          dead
+          750
         );
       const min = await ethers.getContractAt(
         "ERC1155Minimal",
@@ -1935,8 +1903,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           madSpl,
-          750,
-          dead
+          750
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -1982,8 +1949,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           ambSpl,
-          750,
-          dead
+          750
         );
       const wl = await ethers.getContractAt(
         "ERC1155Whitelist",
@@ -2035,8 +2001,7 @@ describe("MADRouter1155", () => {
           ethers.constants.Zero,
           "ipfs://cid/",
           userSpl,
-          750,
-          dead
+          750
         );
       const lazy = await ethers.getContractAt(
         "ERC1155Lazy",
@@ -2317,8 +2282,7 @@ describe("MADRouter1155", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          dead
+          750
         );
       const min = await ethers.getContractAt(
         "ERC1155Minimal",
@@ -2395,8 +2359,7 @@ describe("MADRouter1155", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          dead
+          750
         );
       const min = await ethers.getContractAt(
         "ERC1155Basic",
@@ -2462,8 +2425,7 @@ describe("MADRouter1155", () => {
           2,
           "cid/id.json",
           splAddr,
-          750,
-          dead
+          750
         );
       const min = await ethers.getContractAt(
         "ERC1155Basic",
@@ -2530,8 +2492,7 @@ describe("MADRouter1155", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
-          750,
-          dead
+          750
         );
       await r1155.setFees(ethers.utils.parseEther("2.5"), ethers.utils.parseEther("0.5"));
 
@@ -2597,8 +2558,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750,
-          dead
+          750
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -2674,8 +2634,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750,
-          dead
+          750
         );
       const wl = await ethers.getContractAt(
         "ERC1155Whitelist",
@@ -2750,8 +2709,7 @@ describe("MADRouter1155", () => {
           ethers.constants.Zero,
           "ipfs://cid/",
           splAddr,
-          750,
-          dead
+          750
         );
       const lazy = await ethers.getContractAt(
         "ERC1155Lazy",
@@ -2885,8 +2843,7 @@ describe("MADRouter1155", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
-          750,
-          dead
+          750
         );
       const min = await ethers.getContractAt(
         "ERC1155Minimal",
@@ -2932,8 +2889,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750,
-          dead
+          750
         );
       const pmul = await ethers.BigNumber.from(4);
       const basic = await ethers.getContractAt(
@@ -3020,8 +2976,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750,
-          dead
+          750
         );
       const wl = await ethers.getContractAt(
         "ERC1155Whitelist",
@@ -3103,8 +3058,7 @@ describe("MADRouter1155", () => {
           ethers.constants.Zero,
           "ipfs://cid/",
           splAddr,
-          750,
-          dead
+          750
         );
       const lazy = await ethers.getContractAt(
         "ERC1155Lazy",
@@ -3235,8 +3189,7 @@ describe("MADRouter1155", () => {
           100,
           "ipfs://cid/",
           splAddr,
-          750,
-          dead
+          750
         );
       const basicAddr =
         await f1155.callStatic.getDeployedAddr("BasicSalt");
@@ -3274,8 +3227,7 @@ describe("MADRouter1155", () => {
           100,
           "ipfs://cid/",
           splAddr,
-          750,
-          dead
+          750
         );
       const wlAddr = await f1155.callStatic.getDeployedAddr(
         "WhiteSalt",
@@ -3339,8 +3291,7 @@ describe("MADRouter1155", () => {
           100,
           "ipfs://cid/",
           splAddr,
-          750,
-          dead
+          750
         );
       const wlAddr = await f1155.callStatic.getDeployedAddr(
         "WhiteSalt",
@@ -3403,8 +3354,7 @@ describe("MADRouter1155", () => {
           100,
           "ipfs://cid/",
           splAddr,
-          750,
-          dead
+          750
         );
       const wlAddr = await f1155.callStatic.getDeployedAddr(
         "WhiteSalt",

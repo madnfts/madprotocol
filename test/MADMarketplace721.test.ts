@@ -232,8 +232,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       // const colID = await f721.callStatic.getColID(minAddr);
       const min = await ethers.getContractAt(
@@ -359,8 +358,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -411,8 +409,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -470,8 +467,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -521,8 +517,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -625,8 +620,7 @@ describe("MADMarketplace721", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
 
       const wlAddr = await f721.callStatic.getDeployedAddr(
@@ -897,8 +891,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -948,8 +941,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -1007,8 +999,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -1066,8 +1057,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -1170,8 +1160,7 @@ describe("MADMarketplace721", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
 
       const wlAddr = await f721.callStatic.getDeployedAddr(
@@ -1441,8 +1430,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -1494,8 +1482,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -1554,8 +1541,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -1605,8 +1591,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -1709,8 +1694,7 @@ describe("MADMarketplace721", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
 
       const wlAddr = await f721.callStatic.getDeployedAddr(
@@ -1980,8 +1964,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2055,8 +2038,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2115,8 +2097,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2178,8 +2159,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2242,8 +2222,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2303,8 +2282,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2401,8 +2379,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2462,8 +2439,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2523,8 +2499,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2586,8 +2561,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2650,8 +2624,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2717,8 +2690,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -2761,8 +2733,7 @@ describe("MADMarketplace721", () => {
           1,
           "ipfs://cid/",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const basic = await ethers.getContractAt(
         "ERC721Basic",
@@ -2959,8 +2930,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -3014,8 +2984,7 @@ describe("MADMarketplace721", () => {
           1,
           "ipfs://cid/",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const basic = await ethers.getContractAt(
         "ERC721Basic",
@@ -3282,8 +3251,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -3337,8 +3305,7 @@ describe("MADMarketplace721", () => {
           1,
           "ipfs://cid/",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const basic = await ethers.getContractAt(
         "ERC721Basic",
@@ -3601,8 +3568,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -3679,8 +3645,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -3795,8 +3760,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -3859,8 +3823,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -3992,8 +3955,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -4191,8 +4153,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -4256,8 +4217,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -4333,8 +4293,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -4413,8 +4372,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -4503,8 +4461,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -4593,8 +4550,7 @@ describe("MADMarketplace721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -4682,8 +4638,7 @@ describe("MADMarketplace721", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
 
       const wlAddr = await f721.callStatic.getDeployedAddr(
@@ -4773,8 +4728,7 @@ describe("MADMarketplace721", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
 
       const wlAddr = await f721.callStatic.getDeployedAddr(

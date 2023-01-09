@@ -146,11 +146,11 @@ export async function madFixture721A(): Promise<MADFixture721> {
     m721.address,
     ethers.constants.AddressZero,
     owner[0],
+    dead,
   )) as MADFactory721;
 
   const r721 = (await Router.deploy(
-    f721.address,
-    dead
+    f721.address
   )) as MADRouter721;
 
   await f721.setRouter(r721.address);
@@ -218,11 +218,11 @@ export async function madFixture721B(): Promise<MADFixture721> {
     m721.address,
     ethers.constants.AddressZero,
     owner[0],
+    dead,
   )) as MADFactory721;
 
   const r721 = (await Router.deploy(
-    f721.address,
-    dead
+    f721.address
   )) as MADRouter721;
 
   await f721.setRouter(r721.address);
@@ -290,11 +290,11 @@ export async function madFixture721C(): Promise<MADFixture721> {
     m721.address,
     ethers.constants.AddressZero,
     owner[0],
+    dead
   )) as MADFactory721;
 
   const r721 = (await Router.deploy(
-    f721.address,
-    dead
+    f721.address
   )) as MADRouter721;
 
   await f721.setRouter(r721.address);
@@ -369,12 +369,12 @@ export async function madFixture721D(): Promise<MADFixture721ERC20> {
   const f721 = (await Factory.deploy(
     m721.address,
     ethers.constants.AddressZero,
-    owner[0]
+    owner[0],
+    erc20.address
   )) as MADFactory721;
 
   const r721 = (await Router.deploy(
-    f721.address,
-    erc20.address
+    f721.address
   )) as MADRouter721;
 
   await f721.setRouter(r721.address);
@@ -442,6 +442,7 @@ export async function madFixture1155A(): Promise<MADFixture1155> {
     m1155.address,
     ethers.constants.AddressZero,
     owner[0],
+    dead
   )) as MADFactory1155;
 
   const r1155 = (await Router.deploy(
@@ -513,6 +514,7 @@ export async function madFixture1155B(): Promise<MADFixture1155> {
     m1155.address,
     ethers.constants.AddressZero,
     owner[0],
+    dead
   )) as MADFactory1155;
 
   const r1155 = (await Router.deploy(
@@ -584,6 +586,7 @@ export async function madFixture1155C(): Promise<MADFixture1155> {
     m1155.address,
     ethers.constants.AddressZero,
     owner[0],
+    dead
   )) as MADFactory1155;
 
   const r1155 = (await Router.deploy(
@@ -663,6 +666,7 @@ export async function madFixture1155D(): Promise<MADFixture1155ERC20> {
     m1155.address,
     ethers.constants.AddressZero,
     owner[0],
+    erc20.address
   )) as MADFactory1155;
 
   const r1155 = (await Router.deploy(

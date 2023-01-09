@@ -30,9 +30,10 @@ import type {
 export interface MADFactory1155Interface extends utils.Interface {
   functions: {
     "colInfo(bytes32)": FunctionFragment;
-    "createCollection(uint8,string,string,string,uint256,uint256,string,address,uint256,address)": FunctionFragment;
+    "createCollection(uint8,string,string,string,uint256,uint256,string,address,uint256)": FunctionFragment;
     "creatorAuth(address,address)": FunctionFragment;
     "creatorCheck(bytes32)": FunctionFragment;
+    "erc20()": FunctionFragment;
     "getColID(address)": FunctionFragment;
     "getDeployedAddr(string)": FunctionFragment;
     "getIDsLength(address)": FunctionFragment;
@@ -44,6 +45,7 @@ export interface MADFactory1155Interface extends utils.Interface {
     "router()": FunctionFragment;
     "setMarket(address)": FunctionFragment;
     "setOwner(address)": FunctionFragment;
+    "setPaymentToken(address)": FunctionFragment;
     "setRouter(address)": FunctionFragment;
     "setSigner(address)": FunctionFragment;
     "splitterCheck(string,address,address,uint256,uint256)": FunctionFragment;
@@ -59,6 +61,7 @@ export interface MADFactory1155Interface extends utils.Interface {
       | "createCollection"
       | "creatorAuth"
       | "creatorCheck"
+      | "erc20"
       | "getColID"
       | "getDeployedAddr"
       | "getIDsLength"
@@ -70,6 +73,7 @@ export interface MADFactory1155Interface extends utils.Interface {
       | "router"
       | "setMarket"
       | "setOwner"
+      | "setPaymentToken"
       | "setRouter"
       | "setSigner"
       | "splitterCheck"
@@ -94,8 +98,7 @@ export interface MADFactory1155Interface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
       PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>
+      PromiseOrValue<BigNumberish>
     ]
   ): string;
   encodeFunctionData(
@@ -106,6 +109,7 @@ export interface MADFactory1155Interface extends utils.Interface {
     functionFragment: "creatorCheck",
     values: [PromiseOrValue<BytesLike>]
   ): string;
+  encodeFunctionData(functionFragment: "erc20", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getColID",
     values: [PromiseOrValue<string>]
@@ -130,6 +134,10 @@ export interface MADFactory1155Interface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setOwner",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setPaymentToken",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -177,6 +185,7 @@ export interface MADFactory1155Interface extends utils.Interface {
     functionFragment: "creatorCheck",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "erc20", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getColID", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getDeployedAddr",
@@ -194,6 +203,10 @@ export interface MADFactory1155Interface extends utils.Interface {
   decodeFunctionResult(functionFragment: "router", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setMarket", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setOwner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setPaymentToken",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "setRouter", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setSigner", data: BytesLike): Result;
   decodeFunctionResult(
@@ -219,6 +232,7 @@ export interface MADFactory1155Interface extends utils.Interface {
     "MarketplaceUpdated(address)": EventFragment;
     "OwnerUpdated(address,address)": EventFragment;
     "Paused(address)": EventFragment;
+    "PaymentTokenUpdated(address)": EventFragment;
     "RouterUpdated(address)": EventFragment;
     "SignerUpdated(address)": EventFragment;
     "SplitterCreated(address,uint256[],address[],address,uint256)": EventFragment;
@@ -232,6 +246,7 @@ export interface MADFactory1155Interface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "MarketplaceUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnerUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PaymentTokenUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RouterUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SignerUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SplitterCreated"): EventFragment;
@@ -335,6 +350,17 @@ export type PausedEvent = TypedEvent<[string], PausedEventObject>;
 
 export type PausedEventFilter = TypedEventFilter<PausedEvent>;
 
+export interface PaymentTokenUpdatedEventObject {
+  newPaymentToken: string;
+}
+export type PaymentTokenUpdatedEvent = TypedEvent<
+  [string],
+  PaymentTokenUpdatedEventObject
+>;
+
+export type PaymentTokenUpdatedEventFilter =
+  TypedEventFilter<PaymentTokenUpdatedEvent>;
+
 export interface RouterUpdatedEventObject {
   newRouter: string;
 }
@@ -420,7 +446,6 @@ export interface MADFactory1155 extends BaseContract {
       _uri: PromiseOrValue<string>,
       _splitter: PromiseOrValue<string>,
       _royalty: PromiseOrValue<BigNumberish>,
-      _erc20: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -434,6 +459,8 @@ export interface MADFactory1155 extends BaseContract {
       _colID: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[string, boolean] & { creator: string; check: boolean }>;
+
+    erc20(overrides?: CallOverrides): Promise<[string]>;
 
     getColID(
       _colAddress: PromiseOrValue<string>,
@@ -471,6 +498,11 @@ export interface MADFactory1155 extends BaseContract {
 
     setOwner(
       newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setPaymentToken(
+      _paymentTokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -548,7 +580,6 @@ export interface MADFactory1155 extends BaseContract {
     _uri: PromiseOrValue<string>,
     _splitter: PromiseOrValue<string>,
     _royalty: PromiseOrValue<BigNumberish>,
-    _erc20: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -562,6 +593,8 @@ export interface MADFactory1155 extends BaseContract {
     _colID: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<[string, boolean] & { creator: string; check: boolean }>;
+
+  erc20(overrides?: CallOverrides): Promise<string>;
 
   getColID(
     _colAddress: PromiseOrValue<string>,
@@ -599,6 +632,11 @@ export interface MADFactory1155 extends BaseContract {
 
   setOwner(
     newOwner: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setPaymentToken(
+    _paymentTokenAddress: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -676,7 +714,6 @@ export interface MADFactory1155 extends BaseContract {
       _uri: PromiseOrValue<string>,
       _splitter: PromiseOrValue<string>,
       _royalty: PromiseOrValue<BigNumberish>,
-      _erc20: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -690,6 +727,8 @@ export interface MADFactory1155 extends BaseContract {
       _colID: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[string, boolean] & { creator: string; check: boolean }>;
+
+    erc20(overrides?: CallOverrides): Promise<string>;
 
     getColID(
       _colAddress: PromiseOrValue<string>,
@@ -725,6 +764,11 @@ export interface MADFactory1155 extends BaseContract {
 
     setOwner(
       newOwner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setPaymentToken(
+      _paymentTokenAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -873,6 +917,13 @@ export interface MADFactory1155 extends BaseContract {
     "Paused(address)"(account?: null): PausedEventFilter;
     Paused(account?: null): PausedEventFilter;
 
+    "PaymentTokenUpdated(address)"(
+      newPaymentToken?: PromiseOrValue<string> | null
+    ): PaymentTokenUpdatedEventFilter;
+    PaymentTokenUpdated(
+      newPaymentToken?: PromiseOrValue<string> | null
+    ): PaymentTokenUpdatedEventFilter;
+
     "RouterUpdated(address)"(
       newRouter?: PromiseOrValue<string> | null
     ): RouterUpdatedEventFilter;
@@ -922,7 +973,6 @@ export interface MADFactory1155 extends BaseContract {
       _uri: PromiseOrValue<string>,
       _splitter: PromiseOrValue<string>,
       _royalty: PromiseOrValue<BigNumberish>,
-      _erc20: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -936,6 +986,8 @@ export interface MADFactory1155 extends BaseContract {
       _colID: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    erc20(overrides?: CallOverrides): Promise<BigNumber>;
 
     getColID(
       _colAddress: PromiseOrValue<string>,
@@ -973,6 +1025,11 @@ export interface MADFactory1155 extends BaseContract {
 
     setOwner(
       newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setPaymentToken(
+      _paymentTokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1033,7 +1090,6 @@ export interface MADFactory1155 extends BaseContract {
       _uri: PromiseOrValue<string>,
       _splitter: PromiseOrValue<string>,
       _royalty: PromiseOrValue<BigNumberish>,
-      _erc20: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1047,6 +1103,8 @@ export interface MADFactory1155 extends BaseContract {
       _colID: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    erc20(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getColID(
       _colAddress: PromiseOrValue<string>,
@@ -1084,6 +1142,11 @@ export interface MADFactory1155 extends BaseContract {
 
     setOwner(
       newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setPaymentToken(
+      _paymentTokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

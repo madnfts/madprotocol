@@ -278,7 +278,6 @@ export interface MADRouter1155Interface extends utils.Interface {
     "FreeClaimState(bytes32,uint8,bool)": EventFragment;
     "OwnerUpdated(address,address)": EventFragment;
     "Paused(address)": EventFragment;
-    "PaymentTokenUpdated(address)": EventFragment;
     "PublicMintState(bytes32,uint8,bool)": EventFragment;
     "TokenFundsWithdrawn(bytes32,uint8,address)": EventFragment;
     "Unpaused(address)": EventFragment;
@@ -290,7 +289,6 @@ export interface MADRouter1155Interface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "FreeClaimState"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnerUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PaymentTokenUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PublicMintState"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TokenFundsWithdrawn"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
@@ -345,17 +343,6 @@ export interface PausedEventObject {
 export type PausedEvent = TypedEvent<[string], PausedEventObject>;
 
 export type PausedEventFilter = TypedEventFilter<PausedEvent>;
-
-export interface PaymentTokenUpdatedEventObject {
-  newPaymentToken: string;
-}
-export type PaymentTokenUpdatedEvent = TypedEvent<
-  [string],
-  PaymentTokenUpdatedEventObject
->;
-
-export type PaymentTokenUpdatedEventFilter =
-  TypedEventFilter<PaymentTokenUpdatedEvent>;
 
 export interface PublicMintStateEventObject {
   _id: string;
@@ -886,13 +873,6 @@ export interface MADRouter1155 extends BaseContract {
 
     "Paused(address)"(account?: null): PausedEventFilter;
     Paused(account?: null): PausedEventFilter;
-
-    "PaymentTokenUpdated(address)"(
-      newPaymentToken?: PromiseOrValue<string> | null
-    ): PaymentTokenUpdatedEventFilter;
-    PaymentTokenUpdated(
-      newPaymentToken?: PromiseOrValue<string> | null
-    ): PaymentTokenUpdatedEventFilter;
 
     "PublicMintState(bytes32,uint8,bool)"(
       _id?: PromiseOrValue<BytesLike> | null,

@@ -34,7 +34,6 @@ export interface MADRouter721Interface extends utils.Interface {
     "basicMintTo(address,address,uint256)": FunctionFragment;
     "burn(address,uint256[])": FunctionFragment;
     "creatorMint(address,uint256)": FunctionFragment;
-    "erc20()": FunctionFragment;
     "feeBurn()": FunctionFragment;
     "feeLookup(bytes4)": FunctionFragment;
     "feeMint()": FunctionFragment;
@@ -45,12 +44,10 @@ export interface MADRouter721Interface extends utils.Interface {
     "owner()": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
-    "paymentTokenAddress()": FunctionFragment;
     "setBase(address,string)": FunctionFragment;
     "setFees(uint256,uint256)": FunctionFragment;
     "setMintState(address,bool,uint8)": FunctionFragment;
     "setOwner(address)": FunctionFragment;
-    "setPaymentToken(address)": FunctionFragment;
     "setSigner(address,address)": FunctionFragment;
     "unpause()": FunctionFragment;
     "whitelistSettings(address,uint256,uint256,bytes32)": FunctionFragment;
@@ -63,7 +60,6 @@ export interface MADRouter721Interface extends utils.Interface {
       | "basicMintTo"
       | "burn"
       | "creatorMint"
-      | "erc20"
       | "feeBurn"
       | "feeLookup"
       | "feeMint"
@@ -74,12 +70,10 @@ export interface MADRouter721Interface extends utils.Interface {
       | "owner"
       | "pause"
       | "paused"
-      | "paymentTokenAddress"
       | "setBase"
       | "setFees"
       | "setMintState"
       | "setOwner"
-      | "setPaymentToken"
       | "setSigner"
       | "unpause"
       | "whitelistSettings"
@@ -106,7 +100,6 @@ export interface MADRouter721Interface extends utils.Interface {
     functionFragment: "creatorMint",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(functionFragment: "erc20", values?: undefined): string;
   encodeFunctionData(functionFragment: "feeBurn", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "feeLookup",
@@ -135,10 +128,6 @@ export interface MADRouter721Interface extends utils.Interface {
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "paymentTokenAddress",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "setBase",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
@@ -156,10 +145,6 @@ export interface MADRouter721Interface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setOwner",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setPaymentToken",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -194,7 +179,6 @@ export interface MADRouter721Interface extends utils.Interface {
     functionFragment: "creatorMint",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "erc20", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "feeBurn", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "feeLookup", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "feeMint", data: BytesLike): Result;
@@ -211,10 +195,6 @@ export interface MADRouter721Interface extends utils.Interface {
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "paymentTokenAddress",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "setBase", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setFees", data: BytesLike): Result;
   decodeFunctionResult(
@@ -222,10 +202,6 @@ export interface MADRouter721Interface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setOwner", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "setPaymentToken",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "setSigner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
   decodeFunctionResult(
@@ -240,7 +216,6 @@ export interface MADRouter721Interface extends utils.Interface {
     "FreeClaimState(bytes32,uint8,bool)": EventFragment;
     "OwnerUpdated(address,address)": EventFragment;
     "Paused(address)": EventFragment;
-    "PaymentTokenUpdated(address)": EventFragment;
     "PublicMintState(bytes32,uint8,bool)": EventFragment;
     "TokenFundsWithdrawn(bytes32,uint8,address)": EventFragment;
     "Unpaused(address)": EventFragment;
@@ -252,7 +227,6 @@ export interface MADRouter721Interface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "FreeClaimState"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnerUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PaymentTokenUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PublicMintState"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TokenFundsWithdrawn"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
@@ -307,17 +281,6 @@ export interface PausedEventObject {
 export type PausedEvent = TypedEvent<[string], PausedEventObject>;
 
 export type PausedEventFilter = TypedEventFilter<PausedEvent>;
-
-export interface PaymentTokenUpdatedEventObject {
-  newPaymentToken: string;
-}
-export type PaymentTokenUpdatedEvent = TypedEvent<
-  [string],
-  PaymentTokenUpdatedEventObject
->;
-
-export type PaymentTokenUpdatedEventFilter =
-  TypedEventFilter<PaymentTokenUpdatedEvent>;
 
 export interface PublicMintStateEventObject {
   _id: string;
@@ -412,8 +375,6 @@ export interface MADRouter721 extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    erc20(overrides?: CallOverrides): Promise<[string]>;
-
     feeBurn(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     feeLookup(
@@ -453,8 +414,6 @@ export interface MADRouter721 extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<[boolean]>;
 
-    paymentTokenAddress(overrides?: CallOverrides): Promise<[string]>;
-
     setBase(
       _token: PromiseOrValue<string>,
       _baseURI: PromiseOrValue<string>,
@@ -476,11 +435,6 @@ export interface MADRouter721 extends BaseContract {
 
     setOwner(
       newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setPaymentToken(
-      _paymentTokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -530,8 +484,6 @@ export interface MADRouter721 extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  erc20(overrides?: CallOverrides): Promise<string>;
-
   feeBurn(overrides?: CallOverrides): Promise<BigNumber>;
 
   feeLookup(
@@ -571,8 +523,6 @@ export interface MADRouter721 extends BaseContract {
 
   paused(overrides?: CallOverrides): Promise<boolean>;
 
-  paymentTokenAddress(overrides?: CallOverrides): Promise<string>;
-
   setBase(
     _token: PromiseOrValue<string>,
     _baseURI: PromiseOrValue<string>,
@@ -594,11 +544,6 @@ export interface MADRouter721 extends BaseContract {
 
   setOwner(
     newOwner: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  setPaymentToken(
-    _paymentTokenAddress: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -648,8 +593,6 @@ export interface MADRouter721 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    erc20(overrides?: CallOverrides): Promise<string>;
-
     feeBurn(overrides?: CallOverrides): Promise<BigNumber>;
 
     feeLookup(
@@ -687,8 +630,6 @@ export interface MADRouter721 extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<boolean>;
 
-    paymentTokenAddress(overrides?: CallOverrides): Promise<string>;
-
     setBase(
       _token: PromiseOrValue<string>,
       _baseURI: PromiseOrValue<string>,
@@ -710,11 +651,6 @@ export interface MADRouter721 extends BaseContract {
 
     setOwner(
       newOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setPaymentToken(
-      _paymentTokenAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -780,13 +716,6 @@ export interface MADRouter721 extends BaseContract {
     "Paused(address)"(account?: null): PausedEventFilter;
     Paused(account?: null): PausedEventFilter;
 
-    "PaymentTokenUpdated(address)"(
-      newPaymentToken?: PromiseOrValue<string> | null
-    ): PaymentTokenUpdatedEventFilter;
-    PaymentTokenUpdated(
-      newPaymentToken?: PromiseOrValue<string> | null
-    ): PaymentTokenUpdatedEventFilter;
-
     "PublicMintState(bytes32,uint8,bool)"(
       _id?: PromiseOrValue<BytesLike> | null,
       _type?: PromiseOrValue<BigNumberish> | null,
@@ -846,8 +775,6 @@ export interface MADRouter721 extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    erc20(overrides?: CallOverrides): Promise<BigNumber>;
-
     feeBurn(overrides?: CallOverrides): Promise<BigNumber>;
 
     feeLookup(
@@ -887,8 +814,6 @@ export interface MADRouter721 extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<BigNumber>;
 
-    paymentTokenAddress(overrides?: CallOverrides): Promise<BigNumber>;
-
     setBase(
       _token: PromiseOrValue<string>,
       _baseURI: PromiseOrValue<string>,
@@ -910,11 +835,6 @@ export interface MADRouter721 extends BaseContract {
 
     setOwner(
       newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setPaymentToken(
-      _paymentTokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -965,8 +885,6 @@ export interface MADRouter721 extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    erc20(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     feeBurn(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     feeLookup(
@@ -1006,10 +924,6 @@ export interface MADRouter721 extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    paymentTokenAddress(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     setBase(
       _token: PromiseOrValue<string>,
       _baseURI: PromiseOrValue<string>,
@@ -1031,11 +945,6 @@ export interface MADRouter721 extends BaseContract {
 
     setOwner(
       newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setPaymentToken(
-      _paymentTokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -21,6 +21,7 @@ export interface FactoryEventsAndErrors1155Interface extends utils.Interface {
     "ERC1155MinimalCreated(address,address,string,string,uint256,uint256,uint256)": EventFragment;
     "ERC1155WhitelistCreated(address,address,string,string,uint256,uint256,uint256)": EventFragment;
     "MarketplaceUpdated(address)": EventFragment;
+    "PaymentTokenUpdated(address)": EventFragment;
     "RouterUpdated(address)": EventFragment;
     "SignerUpdated(address)": EventFragment;
     "SplitterCreated(address,uint256[],address[],address,uint256)": EventFragment;
@@ -31,6 +32,7 @@ export interface FactoryEventsAndErrors1155Interface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "ERC1155MinimalCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ERC1155WhitelistCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MarketplaceUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PaymentTokenUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RouterUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SignerUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SplitterCreated"): EventFragment;
@@ -114,6 +116,17 @@ export type MarketplaceUpdatedEvent = TypedEvent<
 
 export type MarketplaceUpdatedEventFilter =
   TypedEventFilter<MarketplaceUpdatedEvent>;
+
+export interface PaymentTokenUpdatedEventObject {
+  newPaymentToken: string;
+}
+export type PaymentTokenUpdatedEvent = TypedEvent<
+  [string],
+  PaymentTokenUpdatedEventObject
+>;
+
+export type PaymentTokenUpdatedEventFilter =
+  TypedEventFilter<PaymentTokenUpdatedEvent>;
 
 export interface RouterUpdatedEventObject {
   newRouter: string;
@@ -256,6 +269,13 @@ export interface FactoryEventsAndErrors1155 extends BaseContract {
     MarketplaceUpdated(
       newMarket?: PromiseOrValue<string> | null
     ): MarketplaceUpdatedEventFilter;
+
+    "PaymentTokenUpdated(address)"(
+      newPaymentToken?: PromiseOrValue<string> | null
+    ): PaymentTokenUpdatedEventFilter;
+    PaymentTokenUpdated(
+      newPaymentToken?: PromiseOrValue<string> | null
+    ): PaymentTokenUpdatedEventFilter;
 
     "RouterUpdated(address)"(
       newRouter?: PromiseOrValue<string> | null

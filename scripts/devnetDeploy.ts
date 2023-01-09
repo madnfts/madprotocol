@@ -3,6 +3,8 @@ import "@nomiclabs/hardhat-etherscan";
 import { ethers } from "hardhat";
 import { resolve } from "path";
 import { config } from "dotenv";
+import { BigNumber } from "ethers";
+import { MockERC20 } from "../src/types";
 
 config({ path: resolve(__dirname, "./.env") });
 const { ERC20_TOKEN } = process.env;
@@ -13,6 +15,20 @@ const main = async () => {
   const [deployer] = await ethers.getSigners();
   console.log(`Deploying contracts with ${deployer.address}`);
 
+  let erc20Address = ethers.constants.AddressZero
+  if (ERC20_TOKEN == 'local') {
+    const ERC20 = await ethers.getContractFactory(
+      "MockERC20",
+    );
+    const erc20 = (await ERC20.deploy(
+      BigNumber.from(2).pow(255),
+    )) as MockERC20;
+    console.log(`MockERC20 address: ${erc20.address}`);
+  } else if (ERC20_TOKEN) {
+    erc20Address = ERC20_TOKEN
+    console.log(`ERC20 address: ${erc20Address}`);
+  }
+
   const MADMarketplace721 = await ethers.getContractFactory(
     "MADMarketplace721",
   );
@@ -20,7 +36,7 @@ const main = async () => {
     deployer.address, // recipient addr
     300, // min order duration
     ethers.constants.AddressZero, // factory addr
-    ERC20_TOKEN || ethers.constants.AddressZero, // ERC20 payment token addr
+    erc20Address, // ERC20 payment token addr
   );
 
   console.log(`ERC721 Marketplace address: ${m721.address}`);
@@ -72,7 +88,7 @@ const main = async () => {
   const MADRouter721 = await ethers.getContractFactory(
     "MADRouter721",
   );
-  const r721 = await MADRouter721.deploy(f721.address);
+  const r721 = await MADRouter721.deploy(f721.address, erc20Address);
   console.log(`ERC721 Router address: ${r721.address}`);
 
   await m721.connect(deployer).setFactory(f721.address);
@@ -87,7 +103,7 @@ const main = async () => {
     deployer.address, // recipient addr
     300, // min order duration
     ethers.constants.AddressZero, // factory addr
-    ERC20_TOKEN || ethers.constants.AddressZero, // ERC20 payment token addr
+    erc20Address, // ERC20 payment token addr
   );
 
   console.log(
@@ -116,7 +132,7 @@ const main = async () => {
   const MADRouter1155 = await ethers.getContractFactory(
     "MADRouter1155",
   );
-  const r1155 = await MADRouter1155.deploy(f1155.address);
+  const r1155 = await MADRouter1155.deploy(f1155.address, erc20Address);
   console.log(`ERC1155 Router address: ${r1155.address}`);
 
   await m1155.connect(deployer).setFactory(f1155.address);

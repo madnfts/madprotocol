@@ -235,6 +235,19 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
+        name: "newPaymentToken",
+        type: "address",
+      },
+    ],
+    name: "PaymentTokenUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
         name: "newRouter",
         type: "address",
       },

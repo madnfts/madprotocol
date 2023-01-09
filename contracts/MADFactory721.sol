@@ -81,6 +81,9 @@ contract MADFactory721 is MAD,
     /// @dev The signer address used for lazy minting voucher validation.
     address private signer;
 
+    /// @dev ERC20 payment token address
+    ERC20 public erc20;
+
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
@@ -89,14 +92,27 @@ contract MADFactory721 is MAD,
     (
         address _marketplace, 
         address _router, 
-        address _signer
+        address _signer,
+        address _paymentTokenAddress
     )
     {
         setMarket(_marketplace);
         setSigner(_signer);
-
+        if (_paymentTokenAddress != address(0)) {
+            setPaymentToken(_paymentTokenAddress);
+        }
         router = _router;
         emit RouterUpdated(_router);
+    }
+
+    /// @notice Enables the contract's owner to change payment token address.
+    /// @dev Function Signature := ?
+    function setPaymentToken(address _paymentTokenAddress)
+        public
+        onlyOwner
+    {
+        erc20 = ERC20(_paymentTokenAddress);
+        emit PaymentTokenUpdated(_paymentTokenAddress);
     }
 
     ////////////////////////////////////////////////////////////////
@@ -324,8 +340,7 @@ contract MADFactory721 is MAD,
         uint256 _maxSupply,
         string memory _baseURI,
         address _splitter,
-        uint256 _royalty,
-        ERC20 erc20
+        uint256 _royalty
     )
         external
         nonReentrant

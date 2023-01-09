@@ -58,6 +58,9 @@ interface FactoryEventsAndErrors721 {
         uint256 maxSupply,
         uint256 mintPrice
     );
+    event PaymentTokenUpdated(
+        address indexed newPaymentToken
+    );
 
     ////////////////////////////////////////////////////////////////
     //                           ERRORS                           //
@@ -121,6 +124,9 @@ interface FactoryEventsAndErrors1155 {
         uint256 royalties,
         uint256 maxSupply,
         uint256 mintPrice
+    );
+    event PaymentTokenUpdated(
+        address indexed newPaymentToken
     );
 
     ////////////////////////////////////////////////////////////////
@@ -330,9 +336,5 @@ interface RouterEvents {
     event FeesUpdated(
         uint256 burnFees,
         uint256 mintFees
-    );
-
-    event PaymentTokenUpdated(
-        address indexed newPaymentToken
     );
 }

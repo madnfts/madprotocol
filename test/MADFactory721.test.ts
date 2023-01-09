@@ -359,8 +359,7 @@ describe("MADFactory721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const colID = await f721.callStatic.getColID(minAddr);
       const storage = await f721.callStatic.userTokens(
@@ -381,8 +380,7 @@ describe("MADFactory721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
 
       const fail2 = f721
@@ -396,8 +394,7 @@ describe("MADFactory721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
 
       expect(tx).to.be.ok;
@@ -456,8 +453,7 @@ describe("MADFactory721", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const colID = await f721.callStatic.getColID(basicAddr);
       const storage = await f721.callStatic.userTokens(
@@ -478,8 +474,7 @@ describe("MADFactory721", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
 
       const fail2 = f721
@@ -493,8 +488,7 @@ describe("MADFactory721", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
 
       expect(tx).to.be.ok;
@@ -552,8 +546,7 @@ describe("MADFactory721", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const colID = await f721.callStatic.getColID(wlAddr);
       const storage = await f721.callStatic.userTokens(
@@ -574,8 +567,7 @@ describe("MADFactory721", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
 
       const fail2 = f721
@@ -589,8 +581,7 @@ describe("MADFactory721", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
 
       expect(tx).to.be.ok;
@@ -645,8 +636,7 @@ describe("MADFactory721", () => {
           ethers.constants.Zero,
           "ipfs://cid/",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const lazyAddr = await f721.callStatic.getDeployedAddr(
         "LazySalt",
@@ -671,8 +661,7 @@ describe("MADFactory721", () => {
           0,
           "ipfs://cid/",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
 
       const fail2 = f721
@@ -686,8 +675,7 @@ describe("MADFactory721", () => {
           0,
           "ipfs://cid/",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
 
       expect(tx).to.be.ok;
@@ -824,8 +812,7 @@ describe("MADFactory721", () => {
           1,
           "",
           dead,
-          750,
-          dead
+          75
         ),
       ).to.be.revertedWith(FactoryErrors.Paused);
       await expect(
@@ -862,8 +849,7 @@ describe("MADFactory721", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       await f721
         .connect(acc02)
@@ -876,8 +862,7 @@ describe("MADFactory721", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       await f721
         .connect(acc02)
@@ -890,8 +875,7 @@ describe("MADFactory721", () => {
           1,
           "ipfs://cid/",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
 
       expect(await f721.getIDsLength(acc02.address)).to.eq(3);
@@ -934,8 +918,7 @@ describe("MADFactory721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const colID = await f721.callStatic.getColID(minAddr);
       const min = await ethers.getContractAt(
@@ -991,8 +974,7 @@ describe("MADFactory721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -1067,8 +1049,7 @@ describe("MADFactory721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750,
-          ethers.constants.AddressZero
+          750
         );
       const colID = await f721.callStatic.getColID(minAddr);
 

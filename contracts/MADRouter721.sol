@@ -202,7 +202,7 @@ contract MADRouter721 is
             ? paymentTokenAddress != address(0) 
                 ? ERC721Basic(_token).burn(_ids, msg.sender) : ERC721Basic(_token).burn{value: msg.value}(_ids)
         : _tokenType == 2
-            ? ERC721Whitelist(_token).burn{value: msg.value}(_ids)
+            ? ERC721Whitelist(_token).burn{value: msg.value}(_ids, msg.sender)
         : _tokenType > 2
             ? paymentTokenAddress != address(0) 
                 ? ERC721Lazy(_token).burn(_ids, msg.sender) : ERC721Lazy(_token).burn{value: msg.value}(_ids)
@@ -254,7 +254,7 @@ contract MADRouter721 is
     {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType == 2) {
-            ERC721Whitelist(_token).mintToCreator{value: msg.value}(_amount);
+            ERC721Whitelist(_token).mintToCreator{value: msg.value}(_amount, msg.sender);
         } else revert("INVALID_TYPE");
     }
 
@@ -266,7 +266,7 @@ contract MADRouter721 is
     ) external payable nonReentrant whenNotPaused {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType == 2) {
-            ERC721Whitelist(_token).giftTokens{value: msg.value}(_addresses);
+            ERC721Whitelist(_token).giftTokens{value: msg.value}(_addresses, msg.sender);
         } else revert("INVALID_TYPE");
     }
 

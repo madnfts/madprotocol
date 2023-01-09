@@ -114,7 +114,9 @@ contract ERC721Whitelist is
     }
     
     modifier priceCheckERC20(uint256 _price, uint256 amount, address erc20Owner) {
-        uint256 value = erc20.allowance(erc20Owner, address(this));
+        uint256 value = address(erc20) != address(0) 
+            ? erc20.allowance(erc20Owner, address(this))
+            : msg.value;
         if (_price * amount != value) revert WrongPrice();
         _;
     }
@@ -229,36 +231,9 @@ contract ERC721Whitelist is
         emit FreeClaimStateSet(_freeClaimState);
     }
 
-    /// @dev Allows msg.value payments only if !erc20
-    function burn(uint256[] memory ids) external payable onlyOwner {
-        if (address(erc20) != address(0)) revert("INVALID_TYPE");
-        _feeCheck(0x44df8e70, msg.value);
-        uint256 i;
-        uint256 len = ids.length;
-        for (i; i < len; ) {
-            // delId();
-            liveSupply.decrement();
-            _burn(ids[i]);
-            unchecked {
-                ++i;
-            }
-        }
-        // assembly overflow check
-        assembly {
-            if lt(i, len) {
-                mstore(0x00, 0xdfb035c9)
-                revert(0x1c, 0x04)
-            }
-        }
-        // Transfer event emited by parent ERC721 contract
-    }
-
-    /// @dev Allows erc20 payments only if erc20 exists
+    /// @dev Owner burn function
     function burn(uint256[] memory ids, address erc20Owner) external payable onlyOwner {
-        if (address(erc20) == address(0)) revert("INVALID_TYPE");
-        uint256 value = erc20.allowance(erc20Owner, address(this));
-        _feeCheck(0x44df8e70,value);
-        SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
+        _paymentCheck(erc20Owner, 1);
         uint256 i;
         uint256 len = ids.length;
         for (i; i < len; ) {
@@ -279,34 +254,7 @@ contract ERC721Whitelist is
         // Transfer event emited by parent ERC721 contract
     }
 
-    /// @dev Allows msg.value payments only if !erc20
-    function mintToCreator(uint256 amount)
-        external
-        payable
-        nonReentrant
-        onlyOwner
-        canMintFree(amount)
-    {
-        if (address(erc20) != address(0)) revert("INVALID_TYPE");
-        _feeCheck(0x40d097c3, msg.value);
-        freeSupply += amount;
-        uint256 i;
-        for (i; i < amount; ) {
-            _safeMint(tx.origin, _incrementCounter());
-            unchecked {
-                ++i;
-            }
-        }
-        assembly {
-            if lt(i, amount) {
-                mstore(0x00, 0xdfb035c9)
-                revert(0x1c, 0x04)
-            }
-        }
-        // Transfer event emitted in parent ERC721 contract
-    }
-
-    /// @dev Allows erc20 payments only if erc20 exists
+    /// @dev Mint to creator method
     function mintToCreator(uint256 amount, address erc20Owner)
         external
         payable
@@ -314,10 +262,7 @@ contract ERC721Whitelist is
         onlyOwner
         canMintFree(amount)
     {
-        if (address(erc20) == address(0)) revert("INVALID_TYPE");
-        uint256 value = erc20.allowance(erc20Owner, address(this));
-        _feeCheck(0x40d097c3, value);
-        SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
+        _paymentCheck(erc20Owner, 1);
 
         freeSupply += amount;
         uint256 i;
@@ -329,35 +274,6 @@ contract ERC721Whitelist is
         }
         assembly {
             if lt(i, amount) {
-                mstore(0x00, 0xdfb035c9)
-                revert(0x1c, 0x04)
-            }
-        }
-        // Transfer event emitted in parent ERC721 contract
-    }
-
-    /// @dev Mints one token per address.
-    /// @dev Allows msg.value payments only if !erc20
-    function giftTokens(address[] calldata addresses)
-        external
-        payable
-        nonReentrant
-        onlyOwner
-        canMintFree(addresses.length)
-    {
-        if (address(erc20) != address(0)) revert("INVALID_TYPE");
-        _feeCheck(0x40d097c3, msg.value);
-        uint256 amountGifted = addresses.length;
-        freeSupply += amountGifted;
-        uint256 i;
-        for (i; i < amountGifted; ) {
-            _safeMint(addresses[i], _incrementCounter());
-            unchecked {
-                ++i;
-            }
-        }
-        assembly {
-            if lt(i, amountGifted) {
                 mstore(0x00, 0xdfb035c9)
                 revert(0x1c, 0x04)
             }
@@ -374,10 +290,7 @@ contract ERC721Whitelist is
         onlyOwner
         canMintFree(addresses.length)
     {
-        if (address(erc20) == address(0)) revert("INVALID_TYPE");
-        uint256 value = erc20.allowance(erc20Owner, address(this));
-        _feeCheck(0x40d097c3, value);
-        SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
+        _paymentCheck(erc20Owner, 1);
 
         uint256 amountGifted = addresses.length;
         freeSupply += amountGifted;
@@ -456,35 +369,7 @@ contract ERC721Whitelist is
     //                           USER FX                          //
     ////////////////////////////////////////////////////////////////
 
-    /// @dev Allows msg.value payments only if !erc20
-    function mint(uint256 amount)
-        external
-        payable
-        nonReentrant
-        publicMintAccess
-        hasReachedMax(amount)
-        priceCheck(publicPrice, amount)
-    {
-        if (address(erc20) != address(0)) revert("INVALID_TYPE");
-        uint256 i;
-        for (i; i < amount; ) {
-            _safeMint(msg.sender, _incrementCounter());
-            unchecked {
-                ++i;
-            }
-        }
-
-        assembly {
-            if lt(i, amount) {
-                mstore(0x00, 0xdfb035c9)
-                revert(0x1c, 0x04)
-            }
-        }
-
-        // Transfer event emitted in parent ERC721 contract
-    }
-
-    /// @dev Allows erc20 payments only if erc20 exists
+    /// @dev Public minting
     function mint(uint256 amount, address erc20Owner)
         external
         payable
@@ -493,9 +378,7 @@ contract ERC721Whitelist is
         hasReachedMax(amount)
         priceCheckERC20(publicPrice, amount, erc20Owner)
     {
-        if (address(erc20) == address(0)) revert("INVALID_TYPE");
-        uint256 value = erc20.allowance(erc20Owner, address(this));
-        SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
+        _paymentCheck(erc20Owner, 2);
 
         uint256 i;
         for (i; i < amount; ) {
@@ -514,42 +397,8 @@ contract ERC721Whitelist is
 
         // Transfer event emitted in parent ERC721 contract
     }
-    
-    /// @dev Allows msg.value payments only if !erc20
-    function whitelistMint(
-        uint8 amount,
-        bytes32[] calldata merkleProof
-    )
-        external
-        payable
-        nonReentrant
-        whitelistMintAccess
-        priceCheck(whitelistPrice, amount)
-        merkleVerify(merkleProof, whitelistMerkleRoot)
-        whitelistMax(amount)
-    {
-        if (address(erc20) != address(0)) revert("INVALID_TYPE");
-        unchecked {
-            whitelistMinted += amount;
-        }
-        uint256 i;
-        for (i; i < amount; ) {
-            _safeMint(msg.sender, _incrementCounter());
-            unchecked {
-                ++i;
-            }
-        }
-        // assembly overflow check
-        assembly {
-            if lt(i, amount) {
-                mstore(0x00, 0xdfb035c9)
-                revert(0x1c, 0x04)
-            }
-        }
-        // Transfer event emitted in parent ERC721 contract
-    }
 
-    /// @dev Allows erc20 payments only if erc20 exists
+    /// @dev Public whilist mint
     function whitelistMint(
         uint8 amount,
         bytes32[] calldata merkleProof,
@@ -563,9 +412,7 @@ contract ERC721Whitelist is
         merkleVerify(merkleProof, whitelistMerkleRoot)
         whitelistMax(amount)
     {
-        if (address(erc20) == address(0)) revert("INVALID_TYPE");
-        uint256 value = erc20.allowance(erc20Owner, address(this));
-        SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
+        _paymentCheck(erc20Owner, 2);
         
         unchecked {
             whitelistMinted += amount;
@@ -692,6 +539,24 @@ contract ERC721Whitelist is
             }
         }
     }
+
+    /// @dev Checks msg.value if !erc20 OR checks erc20 approval and invokes safeTransferFrom
+    /// @dev _type Passed to _feeCheck to determin the type of fee 0=mint; 1=burn; OR _feeCheck is ignored
+    function _paymentCheck(address _erc20Owner, uint8 _type) internal 
+    {
+        uint256 value = (address(erc20) != address(0)) 
+            ? erc20.allowance(_erc20Owner, address(this))
+            : msg.value;   
+        if (_type == 0) {
+            _feeCheck(0x40d097c3, value);
+        } else if (_type == 1) {
+            _feeCheck(0x44df8e70, value);
+        }
+        if (address(erc20) != address(0)) {
+            SafeTransferLib.safeTransferFrom(erc20, _erc20Owner, address(this), value);
+        }
+    }
+    
     ////////////////////////////////////////////////////////////////
     //                     REQUIRED OVERRIDES                     //
     ////////////////////////////////////////////////////////////////

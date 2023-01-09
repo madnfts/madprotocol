@@ -255,8 +255,8 @@ describe("ERC721Whitelist - ERC20", () => {
       const erc20ApproveTx = await erc20.connect(owner).approve(wl.address, price);
       expect(erc20ApproveTx).to.be.ok
 
-      const tx = wl["mint(uint256,address)"](ethers.constants.NegativeOne, owner.address);
-      const tx2 = wl["mint(uint256,address)"](over, owner.address);
+      const tx = wl.mint(ethers.constants.NegativeOne, owner.address);
+      const tx2 = wl.mint(over, owner.address);
 
       await expect(tx).to.be.reverted.revertedWithoutReason;
       await expect(tx2).to.be.reverted.revertedWithoutReason;
@@ -265,7 +265,7 @@ describe("ERC721Whitelist - ERC20", () => {
     it("Should revert if public mint state is off", async () => {
       const erc20ApproveTx = await erc20.connect(acc02).approve(wl.address, price);
       expect(erc20ApproveTx).to.be.ok
-      const tx = wl.connect(acc02)["mint(uint256,address)"](1, acc02.address);
+      const tx = wl.connect(acc02).mint(1, acc02.address);
 
       await expect(tx).be.revertedWithCustomError(
         wl,
@@ -285,8 +285,8 @@ describe("ERC721Whitelist - ERC20", () => {
 
       // total avaiable should eq to:
       // 1000(totalsupply) - 100(whitelist) - 10(freeclaim)
-      await wl.connect(acc01)["mint(uint256,address)"](890, acc01.address);
-      const tx = wl.connect(acc02)["mint(uint256,address)"](1, acc02.address);
+      await wl.connect(acc01).mint(890, acc01.address);
+      const tx = wl.connect(acc02).mint(1, acc02.address);
 
       await expect(tx).to.be.revertedWithCustomError(
         wl,
@@ -299,7 +299,7 @@ describe("ERC721Whitelist - ERC20", () => {
 
       const erc20ApproveTx = await erc20.connect(acc02).approve(wl.address, 100);
       expect(erc20ApproveTx).to.be.ok
-      const tx = wl.connect(acc02)["mint(uint256,address)"](1, acc02.address);
+      const tx = wl.connect(acc02).mint(1, acc02.address);
 
       await expect(tx).be.revertedWithCustomError(
         wl,
@@ -319,7 +319,7 @@ describe("ERC721Whitelist - ERC20", () => {
 
       const tx = await wl
         .connect(acc01)
-        ["mint(uint256,address)"](2, acc01.address);
+        .mint(2, acc01.address);
       const sup2 = wl.callStatic.totalSupply();
       const bal2 = wl.callStatic.balanceOf(acc01.address);
       const ownerOfA = wl.callStatic.ownerOf(1);
@@ -348,12 +348,12 @@ describe("ERC721Whitelist - ERC20", () => {
   describe("Whitelist mint", async () => {
     it("Should revert if value under/overflows", async () => {
       await wl.setWhitelistMintState(true);
-      const tx = wl["whitelistMint(uint8,bytes32[],address)"](
+      const tx = wl.whitelistMint(
         ethers.constants.NegativeOne,
         proof,
         owner.address
       );
-      const tx2 = wl["whitelistMint(uint8,bytes32[],address)"](256, proof, owner.address);
+      const tx2 = wl.whitelistMint(256, proof, owner.address);
 
       await expect(tx).to.be.revertedWithoutReason;
       await expect(tx2).to.be.revertedWithoutReason;
@@ -362,7 +362,7 @@ describe("ERC721Whitelist - ERC20", () => {
     it("Should revert if whitelist mint state is off", async () => {
       const erc20ApproveTx = await erc20.connect(owner).approve(wl.address, price);
       expect(erc20ApproveTx).to.be.ok
-      const tx = wl["whitelistMint(uint8,bytes32[],address)"](1, proof, owner.address);
+      const tx = wl.whitelistMint(1, proof, owner.address);
 
       await expect(tx).to.be.revertedWithCustomError(
         wl,
@@ -376,20 +376,20 @@ describe("ERC721Whitelist - ERC20", () => {
       const amount = ethers.BigNumber.from(890);
       const erc20ApproveTx = await erc20.connect(acc01).approve(wl.address, price.mul(amount));
       expect(erc20ApproveTx).to.be.ok
-      await wl.connect(acc01)["mint(uint256,address)"](890, acc01.address);
+      await wl.connect(acc01).mint(890, acc01.address);
       
       await wl.setWhitelistMintState(true);
 
       const amount2 = ethers.BigNumber.from(100);
       const erc20ApproveTx2 = await erc20.connect(owner).approve(wl.address, price.mul(amount2));
       expect(erc20ApproveTx2).to.be.ok
-      await wl.connect(owner)["whitelistMint(uint8,bytes32[],address)"](100, proof, owner.address);
+      await wl.connect(owner).whitelistMint(100, proof, owner.address);
       const erc20ApproveTx3 = await erc20.connect(owner).approve(wl.address, price);
       expect(erc20ApproveTx3).to.be.ok
 
       expect(await wl.callStatic.totalSupply()).to.eq(990);
       expect(
-        wl.connect(owner)["whitelistMint(uint8,bytes32[],address)"](1, proof, owner.address)
+        wl.connect(owner).whitelistMint(1, proof, owner.address)
       ).to.be.revertedWithCustomError(
         wl,
         WhitelistErrors.MaxWhitelistReached,
@@ -401,7 +401,7 @@ describe("ERC721Whitelist - ERC20", () => {
       expect(erc20ApproveTx).to.be.ok
 
       await wl.setWhitelistMintState(true);
-      const tx = wl.connect(owner)["whitelistMint(uint8,bytes32[],address)"](1, proof, owner.address);
+      const tx = wl.connect(owner).whitelistMint(1, proof, owner.address);
 
       await expect(tx).be.revertedWithCustomError(
         wl,
@@ -431,7 +431,7 @@ describe("ERC721Whitelist - ERC20", () => {
       const erc20ApproveTx = await erc20.connect(acc01).approve(wl.address, price);
       expect(erc20ApproveTx).to.be.ok
       const tx = wl.connect(acc01)
-        ["whitelistMint(uint8,bytes32[],address)"](1, wrongProof, acc01.address);
+      .whitelistMint(1, wrongProof, acc01.address);
 
       await expect(tx).to.be.revertedWithCustomError(
         wl,
@@ -456,7 +456,7 @@ describe("ERC721Whitelist - ERC20", () => {
       await erc20.connect(owner).approve(wl.address, price.mul(amount));
       const tx = await wl
         .connect(owner)
-        ["whitelistMint(uint8,bytes32[],address)"](2, proof, owner.address);
+        .whitelistMint(2, proof, owner.address);
       const sup2 = wl.callStatic.totalSupply();
       const bal2 = wl.callStatic.balanceOf(owner.address);
       const ownerOfA = wl.callStatic.ownerOf(1);
@@ -504,10 +504,10 @@ describe("ERC721Whitelist - ERC20", () => {
       await erc20.connect(acc01).approve(wl.address, price.mul(amount));
       await wl
         .connect(acc01)
-        ["mint(uint256,address)"](890, acc01.address);
+        .mint(890, acc01.address);
 
       await erc20.connect(owner).approve(wl.address, price.mul(amount2));
-      await wl.connect(owner)["whitelistMint(uint8,bytes32[],address)"](100, proof, owner.address);
+      await wl.connect(owner).whitelistMint(100, proof, owner.address);
       
       const tx = await wl.connect(owner).claimFree(proof);
       const fail = wl.connect(owner).claimFree(proof);
@@ -570,7 +570,7 @@ describe("ERC721Whitelist - ERC20", () => {
     });
 
     it("Should mint to creator", async () => {
-      const tx = await wl["mintToCreator(uint256,address)"](10, owner.address);
+      const tx = await wl.mintToCreator(10, owner.address);
 
       expect(tx).to.be.ok;
       expect(await wl.callStatic.freeSupply()).to.eq(10);
@@ -582,10 +582,10 @@ describe("ERC721Whitelist - ERC20", () => {
       );
 
       await expect(
-        wl.connect(acc01)["mintToCreator(uint256,address)"](100, acc01.address),
+        wl.connect(acc01).mintToCreator(100, acc01.address),
       ).to.be.revertedWith(WhitelistErrors.Unauthorized);
       await expect(
-        wl["mintToCreator(uint256,address)"](10, owner.address),
+        wl.mintToCreator(10, owner.address),
       ).to.be.revertedWithCustomError(
         wl,
         WhitelistErrors.MaxFreeReached,
@@ -596,7 +596,7 @@ describe("ERC721Whitelist - ERC20", () => {
       await wl.setFreeClaimState(true);
       const defaultSigners = await ethers.getSigners();
       const gifted = getSignerAddrs(10, defaultSigners);
-      const tx = await wl["giftTokens(address[],address)"](gifted, owner.address);
+      const tx = await wl.giftTokens(gifted, owner.address);
 
       expect(tx).to.be.ok;
       expect(await wl.callStatic.freeSupply()).to.eq(10);
@@ -620,10 +620,10 @@ describe("ERC721Whitelist - ERC20", () => {
       );
 
       await expect(
-        wl.connect(acc01)["giftTokens(address[],address)"](gifted, acc01.address),
+        wl.connect(acc01).giftTokens(gifted, acc01.address),
       ).to.be.revertedWith(WhitelistErrors.Unauthorized);
       await expect(
-        wl["mintToCreator(uint256,address)"](10, owner.address),
+        wl.mintToCreator(10, owner.address),
       ).to.be.revertedWithCustomError(
         wl,
         WhitelistErrors.MaxFreeReached,
@@ -635,7 +635,7 @@ describe("ERC721Whitelist - ERC20", () => {
         WhitelistErrors.MaxFreeReached,
       );
       await expect(
-        wl["giftTokens(address[],address)"](gifted, owner.address),
+        wl.giftTokens(gifted, owner.address),
       ).to.be.revertedWithCustomError(
         wl,
         WhitelistErrors.MaxFreeReached,
@@ -646,7 +646,7 @@ describe("ERC721Whitelist - ERC20", () => {
   describe("Burn", async () => {
     it("Should revert if not owner", async () => {
       await expect(
-        wl.connect(acc01)["burn(uint256[])"]([1]),
+        wl.connect(acc01).burn([1], acc01.address),
       ).to.be.revertedWith(WhitelistErrors.Unauthorized);
     });
 
@@ -657,8 +657,8 @@ describe("ERC721Whitelist - ERC20", () => {
       await erc20.connect(acc02).approve(wl.address, price.mul(amount));
       await wl
         .connect(acc02)
-        ["mint(uint256,address)"](4, acc02.address);
-      const tx = wl.connect(owner)["burn(uint256[],address)"](ids, owner.address);
+        .mint(4, acc02.address);
+      const tx = wl.connect(owner).burn(ids, owner.address);
 
       await expect(tx).to.be.revertedWith(
         WhitelistErrors.NotMinted,
@@ -670,7 +670,7 @@ describe("ERC721Whitelist - ERC20", () => {
         "Counters",
       );
       await expect(
-        wl["burn(uint256[],address)"]([1], owner.address),
+        wl.burn([1], owner.address),
       ).to.be.revertedWithCustomError(
         Counters,
         WhitelistErrors.DecrementOverflow,
@@ -679,13 +679,13 @@ describe("ERC721Whitelist - ERC20", () => {
 
     it("Should mint, burn then mint again, update storage and emit event", async () => {
       await wl.setPublicMintState(true);
-      await wl["giftTokens(address[],address)"]([acc02.address, acc01.address], owner.address);
-      await wl["giftTokens(address[],address)"]([acc02.address, acc01.address], owner.address);
+      await wl.giftTokens([acc02.address, acc01.address], owner.address);
+      await wl.giftTokens([acc02.address, acc01.address], owner.address);
 
       const ids = [1, 2, 3, 4];
-      const tx = await wl["burn(uint256[],address)"](ids, owner.address);
+      const tx = await wl.burn(ids, owner.address);
 
-      await wl["giftTokens(address[],address)"]([acc02.address, acc01.address], owner.address);
+      await wl.giftTokens([acc02.address, acc01.address], owner.address);
 
       const dead = ethers.constants.AddressZero;
       const bal1 = await wl.callStatic.balanceOf(
@@ -727,10 +727,10 @@ describe("ERC721Whitelist - ERC20", () => {
       const amount = ethers.BigNumber.from(4);
       await wl.setPublicMintState(true);
       await erc20.connect(owner).approve(wl.address, price.mul(amount));
-      await wl["mint(uint256,address)"](4, owner.address);
+      await wl.mint(4, owner.address);
       const base = await wl.callStatic.getBaseURI();
       const sup = await wl.callStatic.totalSupply();
-      await wl["burn(uint256[],address)"]([1, 2], owner.address);
+      await wl.burn([1, 2], owner.address);
       await wl.setBaseURI(res);
       const base2 = await wl.callStatic.getBaseURI();
 
@@ -744,7 +744,7 @@ describe("ERC721Whitelist - ERC20", () => {
     });
 
     it("Should retrive tokenURI and revert if not yet minted", async () => {
-      await wl["mintToCreator(uint256,address)"](1, owner.address);
+      await wl.mintToCreator(1, owner.address);
       const tx = await wl.callStatic.tokenURI(1);
 
       expect(tx).to.be.ok;
@@ -797,7 +797,7 @@ describe("ERC721Whitelist - ERC20", () => {
     it("Should revert if not the owner", async () => {
       await erc20.connect(acc02).approve(wl.address, price);
       await wl.connect(owner).setPublicMintState(true);
-      await wl.connect(acc02)["mint(uint256,address)"](1, acc02.address);
+      await wl.connect(acc02).mint(1, acc02.address);
 
       await expect(
         wl.connect(acc01).withdraw(),
@@ -807,7 +807,7 @@ describe("ERC721Whitelist - ERC20", () => {
     it("Should mint update and withdraw ERC20 balances of contract and owner", async () => {
       await wl.connect(owner).setPublicMintState(true);
       await erc20.connect(acc02).approve(wl.address, price);      
-      await wl.connect(acc02)["mint(uint256,address)"](1, acc02.address);
+      await wl.connect(acc02).mint(1, acc02.address);
       const addrs = [
         mad.address,
         amb.address,

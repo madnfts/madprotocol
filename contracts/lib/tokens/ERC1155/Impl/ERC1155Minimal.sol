@@ -72,7 +72,7 @@ contract ERC1155Minimal is
 
     /// @dev Can't be reburnt since `minted` is not updated to false.
     function burn(address to, uint256 amount, address erc20Owner) external payable onlyOwner {
-        _paymentCheck(erc20Owner, 0);
+        _paymentCheck(erc20Owner, 1);
         _burn(to, 1, amount);
     }
 

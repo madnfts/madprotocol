@@ -60,13 +60,11 @@ export interface ERC721LazyInterface extends utils.Interface {
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "burn(uint256[],address)": FunctionFragment;
-    "burn(uint256[])": FunctionFragment;
     "erc20()": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "getBaseURI()": FunctionFragment;
     "getMintCount()": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
-    "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32)": FunctionFragment;
     "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32,address)": FunctionFragment;
     "name()": FunctionFragment;
     "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
@@ -98,15 +96,13 @@ export interface ERC721LazyInterface extends utils.Interface {
       | "_verifyVoucher"
       | "approve"
       | "balanceOf"
-      | "burn(uint256[],address)"
-      | "burn(uint256[])"
+      | "burn"
       | "erc20"
       | "getApproved"
       | "getBaseURI"
       | "getMintCount"
       | "isApprovedForAll"
-      | "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32)"
-      | "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32,address)"
+      | "lazyMint"
       | "name"
       | "onERC721Received"
       | "owner"
@@ -161,12 +157,8 @@ export interface ERC721LazyInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "burn(uint256[],address)",
+    functionFragment: "burn",
     values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "burn(uint256[])",
-    values: [PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(functionFragment: "erc20", values?: undefined): string;
   encodeFunctionData(
@@ -186,16 +178,7 @@ export interface ERC721LazyInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32)",
-    values: [
-      Types.VoucherStruct,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BytesLike>,
-      PromiseOrValue<BytesLike>
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32,address)",
+    functionFragment: "lazyMint",
     values: [
       Types.VoucherStruct,
       PromiseOrValue<BigNumberish>,
@@ -300,14 +283,7 @@ export interface ERC721LazyInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "burn(uint256[],address)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "burn(uint256[])",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "erc20", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getApproved",
@@ -322,14 +298,7 @@ export interface ERC721LazyInterface extends utils.Interface {
     functionFragment: "isApprovedForAll",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32,address)",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "lazyMint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "onERC721Received",
@@ -541,14 +510,9 @@ export interface ERC721Lazy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    "burn(uint256[],address)"(
+    burn(
       ids: PromiseOrValue<BigNumberish>[],
       erc20Owner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "burn(uint256[])"(
-      ids: PromiseOrValue<BigNumberish>[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -569,15 +533,7 @@ export interface ERC721Lazy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32)"(
-      voucher: Types.VoucherStruct,
-      v: PromiseOrValue<BigNumberish>,
-      r: PromiseOrValue<BytesLike>,
-      s: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32,address)"(
+    lazyMint(
       voucher: Types.VoucherStruct,
       v: PromiseOrValue<BigNumberish>,
       r: PromiseOrValue<BytesLike>,
@@ -716,14 +672,9 @@ export interface ERC721Lazy extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  "burn(uint256[],address)"(
+  burn(
     ids: PromiseOrValue<BigNumberish>[],
     erc20Owner: PromiseOrValue<string>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "burn(uint256[])"(
-    ids: PromiseOrValue<BigNumberish>[],
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -744,15 +695,7 @@ export interface ERC721Lazy extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32)"(
-    voucher: Types.VoucherStruct,
-    v: PromiseOrValue<BigNumberish>,
-    r: PromiseOrValue<BytesLike>,
-    s: PromiseOrValue<BytesLike>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32,address)"(
+  lazyMint(
     voucher: Types.VoucherStruct,
     v: PromiseOrValue<BigNumberish>,
     r: PromiseOrValue<BytesLike>,
@@ -889,14 +832,9 @@ export interface ERC721Lazy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "burn(uint256[],address)"(
+    burn(
       ids: PromiseOrValue<BigNumberish>[],
       erc20Owner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "burn(uint256[])"(
-      ids: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -917,15 +855,7 @@ export interface ERC721Lazy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32)"(
-      voucher: Types.VoucherStruct,
-      v: PromiseOrValue<BigNumberish>,
-      r: PromiseOrValue<BytesLike>,
-      s: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32,address)"(
+    lazyMint(
       voucher: Types.VoucherStruct,
       v: PromiseOrValue<BigNumberish>,
       r: PromiseOrValue<BytesLike>,
@@ -1135,14 +1065,9 @@ export interface ERC721Lazy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "burn(uint256[],address)"(
+    burn(
       ids: PromiseOrValue<BigNumberish>[],
       erc20Owner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "burn(uint256[])"(
-      ids: PromiseOrValue<BigNumberish>[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1163,15 +1088,7 @@ export interface ERC721Lazy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32)"(
-      voucher: Types.VoucherStruct,
-      v: PromiseOrValue<BigNumberish>,
-      r: PromiseOrValue<BytesLike>,
-      s: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32,address)"(
+    lazyMint(
       voucher: Types.VoucherStruct,
       v: PromiseOrValue<BigNumberish>,
       r: PromiseOrValue<BytesLike>,
@@ -1309,14 +1226,9 @@ export interface ERC721Lazy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "burn(uint256[],address)"(
+    burn(
       ids: PromiseOrValue<BigNumberish>[],
       erc20Owner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "burn(uint256[])"(
-      ids: PromiseOrValue<BigNumberish>[],
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1337,15 +1249,7 @@ export interface ERC721Lazy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32)"(
-      voucher: Types.VoucherStruct,
-      v: PromiseOrValue<BigNumberish>,
-      r: PromiseOrValue<BytesLike>,
-      s: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32,address)"(
+    lazyMint(
       voucher: Types.VoucherStruct,
       v: PromiseOrValue<BigNumberish>,
       r: PromiseOrValue<BytesLike>,

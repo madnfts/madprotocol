@@ -204,8 +204,7 @@ contract MADRouter721 is
         : _tokenType == 2
             ? ERC721Whitelist(_token).burn{value: msg.value}(_ids, msg.sender)
         : _tokenType > 2
-            ? paymentTokenAddress != address(0) 
-                ? ERC721Lazy(_token).burn(_ids, msg.sender) : ERC721Lazy(_token).burn{value: msg.value}(_ids)
+            ? ERC721Lazy(_token).burn(_ids, msg.sender)
         : revert("INVALID_TYPE");
     }
 

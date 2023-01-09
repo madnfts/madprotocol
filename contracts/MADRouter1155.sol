@@ -139,7 +139,7 @@ contract MADRouter1155 is
     { 
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType != 0) revert("INVALID_TYPE");
-        ERC1155Minimal(_token).safeMint{value: msg.value}(_to, balance);
+        ERC1155Minimal(_token).safeMint{value: msg.value}(_to, balance, msg.sender);
     }
 
     function basicMintTo(
@@ -178,7 +178,7 @@ contract MADRouter1155 is
         (, uint8 _tokenType) = _tokenRender(_token);
 
         _tokenType < 1
-            ? ERC1155Minimal(_token).burn{value: msg.value}(to[0], _amount[0])
+            ? ERC1155Minimal(_token).burn{value: msg.value}(to[0], _amount[0], msg.sender)
             : _tokenType == 1
             ? ERC1155Basic(_token).burn{value: msg.value}(to, _ids, _amount)
             : _tokenType == 2

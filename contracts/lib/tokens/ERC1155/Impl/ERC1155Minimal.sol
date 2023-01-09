@@ -60,48 +60,19 @@ contract ERC1155Minimal is
     ////////////////////////////////////////////////////////////////
 
     /// @dev Can't be reminted if already minted, due to boolean, amount cant be > 1.
-    /// @dev Allows msg.value payments only if !erc20
-    function safeMint(address to, uint256 amount) external payable onlyOwner {
-        if (address(erc20) != address(0)) revert("INVALID_TYPE");
-        _feeCheck(0x40d097c3, msg.value);
-        if (minted) revert AlreadyMinted();
-        if (amount > 1) revert InvalidId();
-
-        minted = true;
-        _mint(to, 1, amount, "");
-    }
-
-    /// @dev Can't be reminted if already minted, due to boolean, amount cant be > 1.
-    /// @dev Allows erc20 payments only if erc20 exists
     /// @dev msg.sender = router
     /// @dev erc20Owner = paying user
-    function safeMint(address to, uint256 amount, address erc20Owner) external payable onlyOwner {
-        if (address(erc20) == address(0)) revert("INVALID_TYPE");
-        uint256 value = erc20.allowance(erc20Owner, address(this));
-        _feeCheck(0x40d097c3, value);
+    function safeMint(address to, uint256 amount, address erc20Owner) external payable onlyOwner {        
         if (minted) revert AlreadyMinted();
         if (amount > 1) revert InvalidId();
-
-        SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
+        _paymentCheck(erc20Owner, 0);
         minted = true;
         _mint(to, 1, amount, "");
     }
 
     /// @dev Can't be reburnt since `minted` is not updated to false.
-    /// @dev Allows msg.value payments only if !erc20
-    function burn(address to, uint256 amount) external payable onlyOwner {
-        if (address(erc20) != address(0)) revert("INVALID_TYPE");
-        _feeCheck(0x44df8e70, msg.value);
-        _burn(to, 1, amount);
-    }
-
-    /// @dev Can't be reburnt since `minted` is not updated to false.
-    /// @dev Allows erc20 payments only if erc20 exists
     function burn(address to, uint256 amount, address erc20Owner) external payable onlyOwner {
-        if (address(erc20) == address(0)) revert("INVALID_TYPE");
-        uint256 value = erc20.allowance(erc20Owner, address(this));
-        _feeCheck(0x44df8e70, value);
-        SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
+        _paymentCheck(erc20Owner, 0);
         _burn(to, 1, amount);
     }
 
@@ -173,26 +144,16 @@ contract ERC1155Minimal is
     //                           USER FX                          //
     ////////////////////////////////////////////////////////////////
 
-    /// @dev Allows msg.value payments only if !erc20
-    function publicMint(uint256 balance) external payable {
-        if (address(erc20) != address(0)) revert("INVALID_TYPE");
-        if (!publicMintState) revert PublicMintOff();
-        if (msg.value != price) revert WrongPrice();
-        if (minted) revert AlreadyMinted();
-
-        minted = true;
-        _mint(msg.sender, 1, balance, "");
-    }
-
-    /// @dev Allows erc20 payments only if erc20 exists
+    /// @dev Allows public minting
     function publicMint(uint256 balance, address erc20Owner) external payable {
-        if (address(erc20) == address(0)) revert("INVALID_TYPE");
         if (!publicMintState) revert PublicMintOff();
-        uint256 value = erc20.allowance(erc20Owner, address(this));
+        uint256 value = (address(erc20) != address(0)) 
+            ? erc20.allowance(erc20Owner, address(this))
+            : msg.value;
         if (value != price) revert WrongPrice();
         if (minted) revert AlreadyMinted();
+        _paymentCheck(erc20Owner, 2);
         
-        SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
         minted = true;
         _mint(msg.sender, 1, balance, "");
     }
@@ -232,6 +193,23 @@ contract ERC1155Minimal is
                 mstore(0x00, 0xf7760f25)
                 revert(0x1c, 0x04)
             }
+        }
+    }
+
+    /// @dev Checks msg.value if !erc20 OR checks erc20 approval and invokes safeTransferFrom
+    /// @dev _type Passed to _feeCheck to determin the type of fee 0=mint; 1=burn; OR _feeCheck is ignored
+    function _paymentCheck(address _erc20Owner, uint8 _type) internal 
+    {
+        uint256 value = (address(erc20) != address(0)) 
+            ? erc20.allowance(_erc20Owner, address(this))
+            : msg.value;   
+        if (_type == 0) {
+            _feeCheck(0x40d097c3, value);
+        } else if (_type == 1) {
+            _feeCheck(0x44df8e70, value);
+        }
+        if (address(erc20) != address(0)) {
+            SafeTransferLib.safeTransferFrom(erc20, _erc20Owner, address(this), value);
         }
     }
 

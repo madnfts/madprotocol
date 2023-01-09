@@ -183,7 +183,7 @@ describe("ERC721Basic", () => {
 
   describe("Mint", async () => {
     it("Should revert if public mint is turned off", async () => {
-      const tx = basic.connect(acc01)["mint(uint256)"](1);
+      const tx = basic.connect(acc01).mint(1, acc01.address);
 
       await expect(tx).to.be.revertedWithCustomError(
         basic,
@@ -196,10 +196,10 @@ describe("ERC721Basic", () => {
       const amount = BigNumber.from(1000);
       await basic
         .connect(acc01)
-        ["mint(uint256)"](1000, { value: price.mul(amount) });
+        .mint(1000, acc01.address, { value: price.mul(amount) });
       const tx = basic
         .connect(acc02)
-        ["mint(uint256)"](1, { value: price });
+        .mint(1, acc02.address, { value: price });
       await expect(tx).to.be.revertedWithCustomError(
         basic,
         BasicErrors.MaxSupplyReached,
@@ -208,7 +208,7 @@ describe("ERC721Basic", () => {
 
     it("Should revert if price is wrong", async () => {
       await basic.setPublicMintState(true);
-      const tx = basic.connect(acc02)["mint(uint256)"](1, { value: 0 });
+      const tx = basic.connect(acc02).mint(1, acc02.address, { value: 0 });
 
       await expect(tx).to.be.revertedWithCustomError(
         basic,
@@ -218,7 +218,7 @@ describe("ERC721Basic", () => {
 
     it("Should revert if price is wrong - ERC20", async () => {
       await basic.setPublicMintState(true);
-      const tx = basic.connect(acc02)["mint(uint256)"](1, { value: 0 });
+      const tx = basic.connect(acc02).mint(1, acc02.address, { value: 0 });
 
       await expect(tx).to.be.revertedWithCustomError(
         basic,
@@ -230,7 +230,7 @@ describe("ERC721Basic", () => {
       await basic.setPublicMintState(true);
       const tx = await basic
         .connect(acc02)
-        ["mint(uint256)"](1, { value: price });
+        .mint(1, acc02.address, { value: price });
       const from = ethers.constants.AddressZero;
       const ownerOf = await basic.callStatic.ownerOf(1);
       const bal = await basic.callStatic.balanceOf(
@@ -256,19 +256,19 @@ describe("ERC721Basic", () => {
 
       const tx1 = await basic
         .connect(acc01)
-        ["mint(uint256)"](10, { value: price.mul(txamount) });
+        .mint(10, acc01.address, { value: price.mul(txamount) });
       const tx2 = await basic
         .connect(acc02)
-        ["mint(uint256)"](68, { value: price.mul(tx2amount) });
+        .mint(68, acc02.address, { value: price.mul(tx2amount) });
       const tx3 = await basic
         .connect(acc02)
-        ["mint(uint256)"](100, { value: price.mul(tx3amount) });
+        .mint(100, acc02.address, { value: price.mul(tx3amount) });
       const tx4 = await basic
         .connect(acc02)
-        ["mint(uint256)"](500, { value: price.mul(tx4amount) });
+        .mint(500, acc02.address, { value: price.mul(tx4amount) });
       const tx5 = await basic
         .connect(acc02)
-        ["mint(uint256)"](322, { value: price.mul(tx5amount) });
+        .mint(322, acc02.address, { value: price.mul(tx5amount) });
 
       expect(tx1).to.be.ok;
       expect(tx2).to.be.ok;
@@ -281,7 +281,7 @@ describe("ERC721Basic", () => {
   describe("Burn", async () => {
     it("Should revert if not owner", async () => {
       const ids = [1];
-      const tx = basic.connect(acc02)["burn(uint256[])"](ids);
+      const tx = basic.connect(acc02).burn(ids, acc02.address);
 
       await expect(tx).to.be.revertedWith(
         BasicErrors.Unauthorized,
@@ -294,8 +294,8 @@ describe("ERC721Basic", () => {
       await basic.setPublicMintState(true);
       await basic
         .connect(acc02)
-        ["mint(uint256)"](4, { value: price.mul(amount) });
-      const tx = basic.connect(owner)["burn(uint256[])"](ids);
+        .mint(4, acc02.address, { value: price.mul(amount) });
+      const tx = basic.connect(owner).burn(ids, owner.address);
 
       await expect(tx).to.be.revertedWith(
         BasicErrors.NotMinted,
@@ -306,9 +306,9 @@ describe("ERC721Basic", () => {
       const Counters = await ethers.getContractFactory(
         "Counters",
       );
-      //await basic.connect(acc01)["mint(uint256)"](5, {value: price})
+      //await basic.connect(acc01).mint(5, {value: price})
       await expect(
-        basic["burn(uint256[])"]([1]),
+        basic.burn([1], owner.address),
       ).to.be.revertedWithCustomError(
         Counters,
         BasicErrors.DecrementOverflow,
@@ -320,16 +320,16 @@ describe("ERC721Basic", () => {
       await basic.setPublicMintState(true);
       await basic
         .connect(acc02)
-        ["mint(uint256)"](2, { value: price.mul(amount) });
+        .mint(2, acc02.address, { value: price.mul(amount) });
       await basic
         .connect(acc01)
-        ["mint(uint256)"](2, { value: price.mul(amount) });
+        .mint(2, acc01.address, { value: price.mul(amount) });
       const ids = [1, 2, 3, 4];
-      const tx = await basic["burn(uint256[])"](ids);
+      const tx = await basic.burn(ids, owner.address);
       const dead = ethers.constants.AddressZero;
       await basic
         .connect(acc01)
-        ["mint(uint256)"](2, { value: price.mul(amount) });
+        .mint(2, acc01.address, { value: price.mul(amount) });
       const bal1 = await basic.callStatic.balanceOf(
         acc01.address,
       );
@@ -369,7 +369,7 @@ describe("ERC721Basic", () => {
   describe("Withdraw", async () => {
     it("Should withdraw contract's funds", async () => {
       await basic.setPublicMintState(true);
-      await basic.connect(acc02)["mint(uint256)"](1, { value: price });
+      await basic.connect(acc02).mint(1, acc02.address, { value: price });
 
       const addrs = [
         mad.address,
@@ -458,7 +458,7 @@ describe("ERC721Basic", () => {
 
     it("Should query token uri and revert if not yet minted", async () => {
       await basic.setPublicMintState(true);
-      await basic.connect(acc01)["mint(uint256)"](1, { value: price });
+      await basic.connect(acc01).mint(1, acc01.address, { value: price });
       const tx = await basic.callStatic.tokenURI(1);
       const fail = basic.callStatic.tokenURI(2);
 

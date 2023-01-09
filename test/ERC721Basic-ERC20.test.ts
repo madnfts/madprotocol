@@ -181,7 +181,7 @@ describe("ERC721Basic - ERC20", () => {
 
   describe("Mint", async () => {
     it("Should revert if public mint is turned off", async () => {
-      const tx = basic.connect(acc01)["mint(uint256,address)"](1, acc01.address);
+      const tx = basic.connect(acc01).mint(1, acc01.address);
       await expect(tx).to.be.revertedWithCustomError(
         basic,
         BasicErrors.PublicMintClosed,
@@ -194,12 +194,12 @@ describe("ERC721Basic - ERC20", () => {
       expect(erc20MintTx).to.be.ok
       await basic
         .connect(acc01)
-        ["mint(uint256,address)"](1000, acc01.address);
+        .mint(1000, acc01.address);
       const erc20MintTx2 = await erc20.connect(acc02).approve(basic.address, price.mul(BigNumber.from(1)))
       expect(erc20MintTx2).to.be.ok
       const tx = basic
         .connect(acc02)
-        ["mint(uint256,address)"](1, acc02.address);
+        .mint(1, acc02.address);
       await expect(tx).to.be.revertedWithCustomError(
         basic,
         BasicErrors.MaxSupplyReached,
@@ -210,7 +210,7 @@ describe("ERC721Basic - ERC20", () => {
       const erc20MintTx = await erc20.connect(acc02).approve(basic.address, 999)
       expect(erc20MintTx).to.be.ok
       await basic.setPublicMintState(true);
-      const tx = basic.connect(acc02)["mint(uint256,address)"](1, acc02.address);
+      const tx = basic.connect(acc02).mint(1, acc02.address);
 
       await expect(tx).to.be.revertedWithCustomError(
         basic,
@@ -225,7 +225,7 @@ describe("ERC721Basic - ERC20", () => {
       await basic.setPublicMintState(true);
       const tx = await basic
         .connect(acc02)
-        ["mint(uint256,address)"](1, acc02.address);
+        .mint(1, acc02.address);
       const from = ethers.constants.AddressZero;
       const ownerOf = await basic.callStatic.ownerOf(1);
       const bal = await basic.callStatic.balanceOf(
@@ -252,23 +252,23 @@ describe("ERC721Basic - ERC20", () => {
       await erc20.connect(acc01).approve(basic.address, price.mul(txamount))
       const tx1 = await basic
         .connect(acc01)
-        ["mint(uint256,address)"](10, acc01.address);
+        .mint(10, acc01.address);
       await erc20.connect(acc02).approve(basic.address, price.mul(tx2amount))
       const tx2 = await basic
         .connect(acc02)
-        ["mint(uint256,address)"](68, acc02.address);
+        .mint(68, acc02.address);
       await erc20.connect(acc02).approve(basic.address, price.mul(tx3amount))
       const tx3 = await basic
         .connect(acc02)
-        ["mint(uint256,address)"](100, acc02.address);
+        .mint(100, acc02.address);
       await erc20.connect(acc02).approve(basic.address, price.mul(tx4amount))
       const tx4 = await basic
         .connect(acc02)
-        ["mint(uint256,address)"](500, acc02.address);
+        .mint(500, acc02.address);
       await erc20.connect(acc02).approve(basic.address, price.mul(tx5amount))
       const tx5 = await basic
         .connect(acc02)
-        ["mint(uint256,address)"](322, acc02.address);
+        .mint(322, acc02.address);
 
       expect(tx1).to.be.ok;
       expect(tx2).to.be.ok;
@@ -281,7 +281,7 @@ describe("ERC721Basic - ERC20", () => {
   describe("Burn", async () => {
     it("Should revert if not owner", async () => {
       const ids = [1];
-      const tx = basic.connect(acc02)["burn(uint256[],address)"](ids, acc02.address);
+      const tx = basic.connect(acc02).burn(ids, acc02.address);
 
       await expect(tx).to.be.revertedWith(
         BasicErrors.Unauthorized,
@@ -296,8 +296,8 @@ describe("ERC721Basic - ERC20", () => {
       await basic.setPublicMintState(true);
       await basic
         .connect(acc02)
-        ["mint(uint256,address)"](4, acc02.address);
-      const tx = basic.connect(owner)["burn(uint256[],address)"](ids, acc02.address);
+        .mint(4, acc02.address);
+      const tx = basic.connect(owner).burn(ids, acc02.address);
 
       await expect(tx).to.be.revertedWith(
         BasicErrors.NotMinted,
@@ -309,7 +309,7 @@ describe("ERC721Basic - ERC20", () => {
         "Counters",
       );
       await expect(
-        basic["burn(uint256[],address)"]([1], acc01.address),
+        basic.burn([1], acc01.address),
       ).to.be.revertedWithCustomError(
         Counters,
         BasicErrors.DecrementOverflow,
@@ -322,18 +322,18 @@ describe("ERC721Basic - ERC20", () => {
       await erc20.connect(acc02).approve(basic.address, price.mul(amount))
       await basic
         .connect(acc02)
-        ["mint(uint256,address)"](2, acc02.address);
+        .mint(2, acc02.address);
       await erc20.connect(acc01).approve(basic.address, price.mul(amount))
       await basic
         .connect(acc01)
-        ["mint(uint256,address)"](2, acc01.address);
+        .mint(2, acc01.address);
       const ids = [1, 2, 3, 4];
-      const tx = await basic["burn(uint256[],address)"](ids, acc01.address);
+      const tx = await basic.burn(ids, acc01.address);
       const dead = ethers.constants.AddressZero;
       await erc20.connect(acc01).approve(basic.address, price.mul(amount))
       await basic
         .connect(acc01)
-        ["mint(uint256,address)"](2, acc01.address);
+        .mint(2, acc01.address);
       const bal1 = await basic.callStatic.balanceOf(
         acc01.address,
       );
@@ -374,7 +374,7 @@ describe("ERC721Basic - ERC20", () => {
     it("Should withdraw contract's ERC20 royality funds", async () => {
       await basic.setPublicMintState(true);
       await erc20.connect(acc02).approve(basic.address, price)
-      await basic.connect(acc02)["mint(uint256,address)"](1, acc02.address);
+      await basic.connect(acc02).mint(1, acc02.address);
 
       const addrs = [
         mad.address,
@@ -465,7 +465,7 @@ describe("ERC721Basic - ERC20", () => {
 
       await erc20.connect(acc01).approve(basic.address, price);
       await basic.setPublicMintState(true);
-      await basic.connect(acc01)["mint(uint256,address)"](1, acc01.address);
+      await basic.connect(acc01).mint(1, acc01.address);
       const tx = await basic.callStatic.tokenURI(1);
       const fail = basic.callStatic.tokenURI(2);
 

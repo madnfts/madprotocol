@@ -178,7 +178,7 @@ contract MADRouter721 is
         if (address(erc20) != address(0)) {
             ERC721Basic(_token).mintTo{value: msg.value}(_to, _amount,  msg.sender);
         } else {
-            ERC721Basic(_token).mintTo{value: msg.value}(_to, _amount);
+            ERC721Basic(_token).mintTo{value: msg.value}(_to, _amount,  msg.sender);
         }
     }
 
@@ -199,8 +199,7 @@ contract MADRouter721 is
             ? paymentTokenAddress != address(0) 
                 ? ERC721Minimal(_token).burn(msg.sender) : ERC721Minimal(_token).burn{value: msg.value}()
         : _tokenType == 1
-            ? paymentTokenAddress != address(0) 
-                ? ERC721Basic(_token).burn(_ids, msg.sender) : ERC721Basic(_token).burn{value: msg.value}(_ids)
+            ? ERC721Basic(_token).burn(_ids, msg.sender)
         : _tokenType == 2
             ? ERC721Whitelist(_token).burn{value: msg.value}(_ids, msg.sender)
         : _tokenType > 2

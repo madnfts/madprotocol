@@ -164,7 +164,7 @@ contract MADRouter721 is
         if (address(erc20) != address(0)) {
             ERC721Minimal(_token).safeMint{value: msg.value}(_to, msg.sender);
         } else {
-            ERC721Minimal(_token).safeMint{value: msg.value}(_to);
+            ERC721Minimal(_token).safeMint{value: msg.value}(_to, msg.sender);
         }
     }
 
@@ -196,14 +196,13 @@ contract MADRouter721 is
         (, uint8 _tokenType) = _tokenRender(_token);
 
         _tokenType < 1
-            ? paymentTokenAddress != address(0) 
-                ? ERC721Minimal(_token).burn(msg.sender) : ERC721Minimal(_token).burn{value: msg.value}()
+            ? ERC721Minimal(_token).burn{value: msg.value}(msg.sender)
         : _tokenType == 1
-            ? ERC721Basic(_token).burn(_ids, msg.sender)
+            ? ERC721Basic(_token).burn{value: msg.value}(_ids, msg.sender)
         : _tokenType == 2
             ? ERC721Whitelist(_token).burn{value: msg.value}(_ids, msg.sender)
         : _tokenType > 2
-            ? ERC721Lazy(_token).burn(_ids, msg.sender)
+            ? ERC721Lazy(_token).burn{value: msg.value}(_ids, msg.sender)
         : revert("INVALID_TYPE");
     }
 

@@ -1001,7 +1001,7 @@ describe("MADFactory721", () => {
       await r721
         .connect(acc02)
         .setMintState(minAddr, true, 0);
-      await min.connect(acc02)["publicMint()"]({ value: price });
+      await min.connect(acc02).publicMint(acc02.address, { value: price });
       const tx_ = await min.connect(acc02).approve(m721.address, 1);
       const blockTimestamp = (await m721.provider.getBlock(tx_.blockNumber || 0)).timestamp;
       const daTx = await m721

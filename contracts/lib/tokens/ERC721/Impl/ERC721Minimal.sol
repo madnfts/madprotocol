@@ -69,7 +69,7 @@ contract ERC721Minimal is
     /// @dev erc20Owner = paying user
     function safeMint(address to, address erc20Owner) external payable onlyOwner {
         if (minted) revert AlreadyMinted();
-        _paymentCheck(erc20Owner, 2);
+        _paymentCheck(erc20Owner, 0);
         minted = true;
         _safeMint(to, 1);
     }

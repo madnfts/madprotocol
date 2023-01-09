@@ -262,7 +262,7 @@ contract ERC721Whitelist is
         onlyOwner
         canMintFree(amount)
     {
-        _paymentCheck(erc20Owner, 1);
+        _paymentCheck(erc20Owner, 0);
 
         freeSupply += amount;
         uint256 i;
@@ -290,7 +290,7 @@ contract ERC721Whitelist is
         onlyOwner
         canMintFree(addresses.length)
     {
-        _paymentCheck(erc20Owner, 1);
+        _paymentCheck(erc20Owner, 0);
 
         uint256 amountGifted = addresses.length;
         freeSupply += amountGifted;

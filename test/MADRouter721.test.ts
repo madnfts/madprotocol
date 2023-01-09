@@ -711,7 +711,7 @@ describe("MADRouter721", () => {
       await r721
         .connect(acc02)
         .setMintState(minAddr, true, 0);
-      await min.connect(acc01)["publicMint()"]({ value: price });
+      await min.connect(acc01).publicMint(acc01.address, { value: price });
       const tx = await r721.connect(acc02).burn(minAddr, []);
       const verArt = await artifacts.readArtifact(
         "FactoryVerifier",
@@ -770,7 +770,8 @@ describe("MADRouter721", () => {
       await r721
         .connect(acc02)
         .setMintState(basicAddr, true, 0);
-      await basic.connect(acc01)["mint(uint256)"](1, { value: price });
+      
+      await basic.connect(acc01).mint(1, acc01.address, { value: price });
       const tx = await r721
         .connect(acc02)
         .burn(basicAddr, [1]);
@@ -952,11 +953,12 @@ describe("MADRouter721", () => {
 
       await lazy
         .connect(acc02)
-        ["lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32)"](
+        .lazyMint(
           Voucher,
           sigSplit.v,
           sigSplit.r,
           sigSplit.s,
+          acc02.address,
           { value: price.mul(ethers.BigNumber.from(2)) },
         );
       const tx = await r721
@@ -1505,7 +1507,7 @@ describe("MADRouter721", () => {
       await r721
         .connect(acc02)
         .setMintState(min.address, true, 0);
-      await min.connect(acc01)["publicMint()"]({ value: price });
+      await min.connect(acc01).publicMint(acc01.address, { value: price });
       const bal1 = await ethers.provider.getBalance(
         acc02.address,
       );
@@ -1559,7 +1561,7 @@ describe("MADRouter721", () => {
       await r721
         .connect(mad)
         .setMintState(basic.address, true, 0);
-      await basic.connect(acc01)["mint(uint256)"](1, { value: price });
+      await basic.connect(acc01).mint(1, acc01.address, { value: price });
       const bala = await ethers.provider.getBalance(
         mad.address,
       );
@@ -1606,7 +1608,7 @@ describe("MADRouter721", () => {
       await r721
         .connect(amb)
         .setMintState(wl.address, true, 0);
-      await wl.connect(acc01)["mint(uint256)"](1, { value: price });
+      await wl.connect(acc01).mint(1, acc01.address, { value: price });
       const balc = await ethers.provider.getBalance(
         amb.address,
       );
@@ -1717,11 +1719,12 @@ describe("MADRouter721", () => {
       
       await lazy
         .connect(acc01)
-        ["lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32)"](
+        .lazyMint(
           Voucher,
           sigSplit.v,
           sigSplit.r,
           sigSplit.s,
+          acc01.address,
           { value: price },
         );
 
@@ -2020,7 +2023,7 @@ describe("MADRouter721", () => {
       await r721
         .connect(acc02)
         .setMintState(basicAddr, true, 0);
-      await basic.connect(acc01)["mint(uint256)"](1, { value: price });
+      await basic.connect(acc01).mint(1, acc01.address, { value: price });
 
       await expect(r721
         .connect(acc02)
@@ -2212,11 +2215,12 @@ describe("MADRouter721", () => {
       await r721.setFees(ethers.utils.parseEther("2.5"), ethers.utils.parseEther("0.5"));
       await lazy
         .connect(acc02)
-        ["lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32)"](
+        .lazyMint(
           Voucher,
           sigSplit.v,
           sigSplit.r,
           sigSplit.s,
+          acc02.address,
           { value: price.mul(ethers.BigNumber.from(2)) },
         );
       await expect(r721

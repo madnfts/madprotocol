@@ -58,11 +58,6 @@ contract ERC721Basic is
         _;
     }
 
-    modifier priceCheck(uint256 _price, uint256 amount) {
-        if (_price * amount != msg.value) revert WrongPrice();
-        _;
-    }
-
     modifier priceCheckERC20(uint256 _price, uint256 amount, address erc20Owner) {
         uint256 value = (address(erc20) != address(0)) 
             ? erc20.allowance(erc20Owner, address(this))
@@ -240,7 +235,7 @@ contract ERC721Basic is
         hasReachedMax(amount)
         priceCheckERC20(price, amount, erc20Owner)
     {
-        _paymentCheck(erc20Owner, 0);
+        _paymentCheck(erc20Owner, 2);
         uint256 i;
         // for (uint256 i = 0; i < amount; i++) {
         for (i; i < amount; ) {

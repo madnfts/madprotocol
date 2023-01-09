@@ -79,18 +79,14 @@ export interface ERC1155LazyInterface extends utils.Interface {
     "DOMAIN_SEPARATOR()": FunctionFragment;
     "balanceOf(address,uint256)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
-    "burn(address[],uint256[],uint256[])": FunctionFragment;
     "burn(address[],uint256[],uint256[],address)": FunctionFragment;
-    "burnBatch(address,uint256[],uint256[])": FunctionFragment;
     "burnBatch(address,uint256[],uint256[],address)": FunctionFragment;
     "erc20()": FunctionFragment;
     "getMintCount()": FunctionFragment;
     "getURI()": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
-    "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32)": FunctionFragment;
     "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32,address)": FunctionFragment;
     "lazyMintBatch((bytes32,uint256[],uint256[],uint256,address),uint8,bytes32,bytes32,address)": FunctionFragment;
-    "lazyMintBatch((bytes32,uint256[],uint256[],uint256,address),uint8,bytes32,bytes32)": FunctionFragment;
     "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "onERC1155Received(address,address,uint256,uint256,bytes)": FunctionFragment;
     "owner()": FunctionFragment;
@@ -116,18 +112,14 @@ export interface ERC1155LazyInterface extends utils.Interface {
       | "DOMAIN_SEPARATOR"
       | "balanceOf"
       | "balanceOfBatch"
-      | "burn(address[],uint256[],uint256[])"
-      | "burn(address[],uint256[],uint256[],address)"
-      | "burnBatch(address,uint256[],uint256[])"
-      | "burnBatch(address,uint256[],uint256[],address)"
+      | "burn"
+      | "burnBatch"
       | "erc20"
       | "getMintCount"
       | "getURI"
       | "isApprovedForAll"
-      | "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32)"
-      | "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32,address)"
-      | "lazyMintBatch((bytes32,uint256[],uint256[],uint256,address),uint8,bytes32,bytes32,address)"
-      | "lazyMintBatch((bytes32,uint256[],uint256[],uint256,address),uint8,bytes32,bytes32)"
+      | "lazyMint"
+      | "lazyMintBatch"
       | "onERC1155BatchReceived"
       | "onERC1155Received"
       | "owner"
@@ -161,15 +153,7 @@ export interface ERC1155LazyInterface extends utils.Interface {
     values: [PromiseOrValue<string>[], PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "burn(address[],uint256[],uint256[])",
-    values: [
-      PromiseOrValue<string>[],
-      PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<BigNumberish>[]
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "burn(address[],uint256[],uint256[],address)",
+    functionFragment: "burn",
     values: [
       PromiseOrValue<string>[],
       PromiseOrValue<BigNumberish>[],
@@ -178,15 +162,7 @@ export interface ERC1155LazyInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "burnBatch(address,uint256[],uint256[])",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<BigNumberish>[]
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "burnBatch(address,uint256[],uint256[],address)",
+    functionFragment: "burnBatch",
     values: [
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>[],
@@ -205,16 +181,7 @@ export interface ERC1155LazyInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32)",
-    values: [
-      Types.VoucherStruct,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BytesLike>,
-      PromiseOrValue<BytesLike>
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32,address)",
+    functionFragment: "lazyMint",
     values: [
       Types.VoucherStruct,
       PromiseOrValue<BigNumberish>,
@@ -224,22 +191,13 @@ export interface ERC1155LazyInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "lazyMintBatch((bytes32,uint256[],uint256[],uint256,address),uint8,bytes32,bytes32,address)",
+    functionFragment: "lazyMintBatch",
     values: [
       Types.UserBatchStruct,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BytesLike>,
       PromiseOrValue<BytesLike>,
       PromiseOrValue<string>
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "lazyMintBatch((bytes32,uint256[],uint256[],uint256,address),uint8,bytes32,bytes32)",
-    values: [
-      Types.UserBatchStruct,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BytesLike>,
-      PromiseOrValue<BytesLike>
     ]
   ): string;
   encodeFunctionData(
@@ -339,22 +297,8 @@ export interface ERC1155LazyInterface extends utils.Interface {
     functionFragment: "balanceOfBatch",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "burn(address[],uint256[],uint256[])",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "burn(address[],uint256[],uint256[],address)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "burnBatch(address,uint256[],uint256[])",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "burnBatch(address,uint256[],uint256[],address)",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "burnBatch", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "erc20", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getMintCount",
@@ -365,20 +309,9 @@ export interface ERC1155LazyInterface extends utils.Interface {
     functionFragment: "isApprovedForAll",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "lazyMint", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32,address)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "lazyMintBatch((bytes32,uint256[],uint256[],uint256,address),uint8,bytes32,bytes32,address)",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "lazyMintBatch((bytes32,uint256[],uint256[],uint256,address),uint8,bytes32,bytes32)",
+    functionFragment: "lazyMintBatch",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -588,14 +521,7 @@ export interface ERC1155Lazy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber[]] & { balances: BigNumber[] }>;
 
-    "burn(address[],uint256[],uint256[])"(
-      from: PromiseOrValue<string>[],
-      ids: PromiseOrValue<BigNumberish>[],
-      balances: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "burn(address[],uint256[],uint256[],address)"(
+    burn(
       from: PromiseOrValue<string>[],
       ids: PromiseOrValue<BigNumberish>[],
       balances: PromiseOrValue<BigNumberish>[],
@@ -603,14 +529,7 @@ export interface ERC1155Lazy extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "burnBatch(address,uint256[],uint256[])"(
-      from: PromiseOrValue<string>,
-      ids: PromiseOrValue<BigNumberish>[],
-      balances: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "burnBatch(address,uint256[],uint256[],address)"(
+    burnBatch(
       from: PromiseOrValue<string>,
       ids: PromiseOrValue<BigNumberish>[],
       balances: PromiseOrValue<BigNumberish>[],
@@ -630,15 +549,7 @@ export interface ERC1155Lazy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32)"(
-      voucher: Types.VoucherStruct,
-      v: PromiseOrValue<BigNumberish>,
-      r: PromiseOrValue<BytesLike>,
-      s: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32,address)"(
+    lazyMint(
       voucher: Types.VoucherStruct,
       v: PromiseOrValue<BigNumberish>,
       r: PromiseOrValue<BytesLike>,
@@ -647,20 +558,12 @@ export interface ERC1155Lazy extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    "lazyMintBatch((bytes32,uint256[],uint256[],uint256,address),uint8,bytes32,bytes32,address)"(
+    lazyMintBatch(
       userBatch: Types.UserBatchStruct,
       v: PromiseOrValue<BigNumberish>,
       r: PromiseOrValue<BytesLike>,
       s: PromiseOrValue<BytesLike>,
       erc20Owner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "lazyMintBatch((bytes32,uint256[],uint256[],uint256,address),uint8,bytes32,bytes32)"(
-      userBatch: Types.UserBatchStruct,
-      v: PromiseOrValue<BigNumberish>,
-      r: PromiseOrValue<BytesLike>,
-      s: PromiseOrValue<BytesLike>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -780,14 +683,7 @@ export interface ERC1155Lazy extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
-  "burn(address[],uint256[],uint256[])"(
-    from: PromiseOrValue<string>[],
-    ids: PromiseOrValue<BigNumberish>[],
-    balances: PromiseOrValue<BigNumberish>[],
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "burn(address[],uint256[],uint256[],address)"(
+  burn(
     from: PromiseOrValue<string>[],
     ids: PromiseOrValue<BigNumberish>[],
     balances: PromiseOrValue<BigNumberish>[],
@@ -795,14 +691,7 @@ export interface ERC1155Lazy extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "burnBatch(address,uint256[],uint256[])"(
-    from: PromiseOrValue<string>,
-    ids: PromiseOrValue<BigNumberish>[],
-    balances: PromiseOrValue<BigNumberish>[],
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "burnBatch(address,uint256[],uint256[],address)"(
+  burnBatch(
     from: PromiseOrValue<string>,
     ids: PromiseOrValue<BigNumberish>[],
     balances: PromiseOrValue<BigNumberish>[],
@@ -822,15 +711,7 @@ export interface ERC1155Lazy extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32)"(
-    voucher: Types.VoucherStruct,
-    v: PromiseOrValue<BigNumberish>,
-    r: PromiseOrValue<BytesLike>,
-    s: PromiseOrValue<BytesLike>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32,address)"(
+  lazyMint(
     voucher: Types.VoucherStruct,
     v: PromiseOrValue<BigNumberish>,
     r: PromiseOrValue<BytesLike>,
@@ -839,20 +720,12 @@ export interface ERC1155Lazy extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  "lazyMintBatch((bytes32,uint256[],uint256[],uint256,address),uint8,bytes32,bytes32,address)"(
+  lazyMintBatch(
     userBatch: Types.UserBatchStruct,
     v: PromiseOrValue<BigNumberish>,
     r: PromiseOrValue<BytesLike>,
     s: PromiseOrValue<BytesLike>,
     erc20Owner: PromiseOrValue<string>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "lazyMintBatch((bytes32,uint256[],uint256[],uint256,address),uint8,bytes32,bytes32)"(
-    userBatch: Types.UserBatchStruct,
-    v: PromiseOrValue<BigNumberish>,
-    r: PromiseOrValue<BytesLike>,
-    s: PromiseOrValue<BytesLike>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -972,14 +845,7 @@ export interface ERC1155Lazy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
-    "burn(address[],uint256[],uint256[])"(
-      from: PromiseOrValue<string>[],
-      ids: PromiseOrValue<BigNumberish>[],
-      balances: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "burn(address[],uint256[],uint256[],address)"(
+    burn(
       from: PromiseOrValue<string>[],
       ids: PromiseOrValue<BigNumberish>[],
       balances: PromiseOrValue<BigNumberish>[],
@@ -987,14 +853,7 @@ export interface ERC1155Lazy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "burnBatch(address,uint256[],uint256[])"(
-      from: PromiseOrValue<string>,
-      ids: PromiseOrValue<BigNumberish>[],
-      balances: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "burnBatch(address,uint256[],uint256[],address)"(
+    burnBatch(
       from: PromiseOrValue<string>,
       ids: PromiseOrValue<BigNumberish>[],
       balances: PromiseOrValue<BigNumberish>[],
@@ -1014,15 +873,7 @@ export interface ERC1155Lazy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32)"(
-      voucher: Types.VoucherStruct,
-      v: PromiseOrValue<BigNumberish>,
-      r: PromiseOrValue<BytesLike>,
-      s: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32,address)"(
+    lazyMint(
       voucher: Types.VoucherStruct,
       v: PromiseOrValue<BigNumberish>,
       r: PromiseOrValue<BytesLike>,
@@ -1031,20 +882,12 @@ export interface ERC1155Lazy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "lazyMintBatch((bytes32,uint256[],uint256[],uint256,address),uint8,bytes32,bytes32,address)"(
+    lazyMintBatch(
       userBatch: Types.UserBatchStruct,
       v: PromiseOrValue<BigNumberish>,
       r: PromiseOrValue<BytesLike>,
       s: PromiseOrValue<BytesLike>,
       erc20Owner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "lazyMintBatch((bytes32,uint256[],uint256[],uint256,address),uint8,bytes32,bytes32)"(
-      userBatch: Types.UserBatchStruct,
-      v: PromiseOrValue<BigNumberish>,
-      r: PromiseOrValue<BytesLike>,
-      s: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1249,14 +1092,7 @@ export interface ERC1155Lazy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "burn(address[],uint256[],uint256[])"(
-      from: PromiseOrValue<string>[],
-      ids: PromiseOrValue<BigNumberish>[],
-      balances: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "burn(address[],uint256[],uint256[],address)"(
+    burn(
       from: PromiseOrValue<string>[],
       ids: PromiseOrValue<BigNumberish>[],
       balances: PromiseOrValue<BigNumberish>[],
@@ -1264,14 +1100,7 @@ export interface ERC1155Lazy extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "burnBatch(address,uint256[],uint256[])"(
-      from: PromiseOrValue<string>,
-      ids: PromiseOrValue<BigNumberish>[],
-      balances: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "burnBatch(address,uint256[],uint256[],address)"(
+    burnBatch(
       from: PromiseOrValue<string>,
       ids: PromiseOrValue<BigNumberish>[],
       balances: PromiseOrValue<BigNumberish>[],
@@ -1291,15 +1120,7 @@ export interface ERC1155Lazy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32)"(
-      voucher: Types.VoucherStruct,
-      v: PromiseOrValue<BigNumberish>,
-      r: PromiseOrValue<BytesLike>,
-      s: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32,address)"(
+    lazyMint(
       voucher: Types.VoucherStruct,
       v: PromiseOrValue<BigNumberish>,
       r: PromiseOrValue<BytesLike>,
@@ -1308,20 +1129,12 @@ export interface ERC1155Lazy extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    "lazyMintBatch((bytes32,uint256[],uint256[],uint256,address),uint8,bytes32,bytes32,address)"(
+    lazyMintBatch(
       userBatch: Types.UserBatchStruct,
       v: PromiseOrValue<BigNumberish>,
       r: PromiseOrValue<BytesLike>,
       s: PromiseOrValue<BytesLike>,
       erc20Owner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "lazyMintBatch((bytes32,uint256[],uint256[],uint256,address),uint8,bytes32,bytes32)"(
-      userBatch: Types.UserBatchStruct,
-      v: PromiseOrValue<BigNumberish>,
-      r: PromiseOrValue<BytesLike>,
-      s: PromiseOrValue<BytesLike>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1440,14 +1253,7 @@ export interface ERC1155Lazy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "burn(address[],uint256[],uint256[])"(
-      from: PromiseOrValue<string>[],
-      ids: PromiseOrValue<BigNumberish>[],
-      balances: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "burn(address[],uint256[],uint256[],address)"(
+    burn(
       from: PromiseOrValue<string>[],
       ids: PromiseOrValue<BigNumberish>[],
       balances: PromiseOrValue<BigNumberish>[],
@@ -1455,14 +1261,7 @@ export interface ERC1155Lazy extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "burnBatch(address,uint256[],uint256[])"(
-      from: PromiseOrValue<string>,
-      ids: PromiseOrValue<BigNumberish>[],
-      balances: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "burnBatch(address,uint256[],uint256[],address)"(
+    burnBatch(
       from: PromiseOrValue<string>,
       ids: PromiseOrValue<BigNumberish>[],
       balances: PromiseOrValue<BigNumberish>[],
@@ -1482,15 +1281,7 @@ export interface ERC1155Lazy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32)"(
-      voucher: Types.VoucherStruct,
-      v: PromiseOrValue<BigNumberish>,
-      r: PromiseOrValue<BytesLike>,
-      s: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32,address)"(
+    lazyMint(
       voucher: Types.VoucherStruct,
       v: PromiseOrValue<BigNumberish>,
       r: PromiseOrValue<BytesLike>,
@@ -1499,20 +1290,12 @@ export interface ERC1155Lazy extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    "lazyMintBatch((bytes32,uint256[],uint256[],uint256,address),uint8,bytes32,bytes32,address)"(
+    lazyMintBatch(
       userBatch: Types.UserBatchStruct,
       v: PromiseOrValue<BigNumberish>,
       r: PromiseOrValue<BytesLike>,
       s: PromiseOrValue<BytesLike>,
       erc20Owner: PromiseOrValue<string>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "lazyMintBatch((bytes32,uint256[],uint256[],uint256,address),uint8,bytes32,bytes32)"(
-      userBatch: Types.UserBatchStruct,
-      v: PromiseOrValue<BigNumberish>,
-      r: PromiseOrValue<BytesLike>,
-      s: PromiseOrValue<BytesLike>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -182,9 +182,9 @@ contract MADRouter1155 is
             : _tokenType == 1
             ? ERC1155Basic(_token).burn{value: msg.value}(to, _ids, _amount, msg.sender)
             : _tokenType == 2
-            ? ERC1155Whitelist(_token).burn{value: msg.value}(to, _ids, _amount, address(this))
+            ? ERC1155Whitelist(_token).burn{value: msg.value}(to, _ids, _amount, msg.sender)
             : _tokenType > 2
-            ? ERC1155Lazy(_token).burn{value: msg.value}(to, _ids, _amount)
+            ? ERC1155Lazy(_token).burn{value: msg.value}(to, _ids, _amount, msg.sender)
             : revert("INVALID_TYPE");
     }
 
@@ -206,7 +206,7 @@ contract MADRouter1155 is
             : _tokenType == 2
             ? ERC1155Whitelist(_token).burnBatch{value: msg.value}(_from, _ids, _balances, msg.sender)
             : _tokenType > 2
-            ? ERC1155Lazy(_token).burnBatch{value: msg.value}(_from, _ids, _balances)
+            ? ERC1155Lazy(_token).burnBatch{value: msg.value}(_from, _ids, _balances, msg.sender)
             : revert("INVALID_TYPE");
     }
 

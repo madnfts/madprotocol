@@ -65,45 +65,20 @@ contract ERC721Minimal is
     ////////////////////////////////////////////////////////////////
 
     /// @dev Can't be reminted if already minted, due to boolean.
-    /// @dev Allows msg.value payments only if !erc20
-    function safeMint(address to) external payable onlyOwner {
-        if (address(erc20) != address(0)) revert("INVALID_TYPE");
-        _feeCheck(0x40d097c3, msg.value);
-        if (minted) revert AlreadyMinted();
-        minted = true;
-        _safeMint(to, 1);
-    }
-
-    /// @dev Can't be reminted if already minted, due to boolean.
-    /// @dev Allows erc20 payments only if erc20 exists
     /// @dev msg.sender = router
     /// @dev erc20Owner = paying user
     function safeMint(address to, address erc20Owner) external payable onlyOwner {
-        if (address(erc20) == address(0)) revert("INVALID_TYPE");
-        uint256 value = erc20.allowance(erc20Owner, address(this));
-        _feeCheck(0x40d097c3, value);
         if (minted) revert AlreadyMinted();
-        SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
+        _paymentCheck(erc20Owner, 2);
         minted = true;
         _safeMint(to, 1);
-    }
-
-    /// @dev Can't be reburnt since `minted` is not updated to false.
-    /// @dev Allows msg.value payments only if !erc20
-    function burn() external payable onlyOwner {
-        if (address(erc20) != address(0)) revert("INVALID_TYPE");
-        _feeCheck(0x44df8e70, msg.value);
-        _burn(1);
     }
 
     /// @dev Can't be reburnt since `minted` is not updated to false.
     /// @dev ERC20 payment for burning compatible with MADRouter.
     /// @dev Allows erc20 payments only if erc20 exists
     function burn(address erc20Owner) external payable onlyOwner {
-        if (address(erc20) == address(0)) revert("INVALID_TYPE");
-        uint256 value = erc20.allowance(erc20Owner, address(this));
-        _feeCheck(0x44df8e70, value);
-        SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
+        _paymentCheck(erc20Owner, 1);
         _burn(1);
     }
 
@@ -175,26 +150,16 @@ contract ERC721Minimal is
     //                           USER FX                          //
     ////////////////////////////////////////////////////////////////
 
-    function publicMint() external payable nonReentrant {
-        if (address(erc20) != address(0)) revert("INVALID_TYPE");
-        if (!publicMintState) revert PublicMintOff();
-        if (msg.value != price) revert WrongPrice();
-        if (minted) revert AlreadyMinted();
-
-        minted = true;
-        
-        _safeMint(msg.sender, 1);
-    }
-
     function publicMint(address erc20Owner) external payable nonReentrant {
-        if (address(erc20) == address(0)) revert("INVALID_TYPE");
-        uint256 value = erc20.allowance(erc20Owner, address(this));
+        uint256 value = (address(erc20) != address(0)) 
+            ? erc20.allowance(erc20Owner, address(this))
+            : msg.value;
         
         if (!publicMintState) revert PublicMintOff();
         if (value != price) revert WrongPrice();
         if (minted) revert AlreadyMinted();
 
-        SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
+        _paymentCheck(erc20Owner, 2);
         minted = true;
 
         _safeMint(msg.sender, 1);
@@ -235,6 +200,23 @@ contract ERC721Minimal is
                 mstore(0x00, 0xf7760f25)
                 revert(0x1c, 0x04)
             }
+        }
+    }
+
+    /// @dev Checks msg.value if !erc20 OR checks erc20 approval and invokes safeTransferFrom
+    /// @dev _type Passed to _feeCheck to determin the type of fee 0=mint; 1=burn; OR _feeCheck is ignored
+    function _paymentCheck(address _erc20Owner, uint8 _type) internal 
+    {
+        uint256 value = (address(erc20) != address(0)) 
+            ? erc20.allowance(_erc20Owner, address(this))
+            : msg.value;   
+        if (_type == 0) {
+            _feeCheck(0x40d097c3, value);
+        } else if (_type == 1) {
+            _feeCheck(0x44df8e70, value);
+        }
+        if (address(erc20) != address(0)) {
+            SafeTransferLib.safeTransferFrom(erc20, _erc20Owner, address(this), value);
         }
     }
 

@@ -15,11 +15,11 @@ import {
   ERC721Lazy,
   MockERC20,
   SplitterImpl,
-} from "../src/types";
-import { LazyErrors } from "./utils/errors";
+} from "../../src/types";
+import { LazyErrors } from "./../utils/errors";
 import {
   lazyFixture721ERC20, // erc20Fixture,
-} from "./utils/fixtures";
+} from "./../utils/fixtures";
 import {
   ERC165Interface,
   ERC721Interface,
@@ -27,7 +27,7 @@ import {
   ERC2981Interface,
   Voucher,
   getInterfaceID,
-} from "./utils/interfaces";
+} from "./../utils/interfaces";
 
 describe("ERC721Lazy - ERC20", () => {
   /*
@@ -187,7 +187,6 @@ describe("ERC721Lazy - ERC20", () => {
         sigSplit.v,
         sigSplit.r,
         sigSplit.s,
-        owner.address
       );
       const sup2 = lazy.callStatic.totalSupply();
       const ownerOfA = lazy.callStatic.ownerOf(1);
@@ -236,14 +235,12 @@ describe("ERC721Lazy - ERC20", () => {
         sigSplit.v,
         sigSplit.r,
         sigSplit.s,
-        owner.address
       );
       const tx = lazy.lazyMint(
         voucher,
         sigSplit.v,
         sigSplit.r,
         sigSplit.s,
-        owner.address
       );
 
       await expect(tx).to.be.revertedWithCustomError(
@@ -260,7 +257,6 @@ describe("ERC721Lazy - ERC20", () => {
         wSigSplit.v,
         wSigSplit.r,
         wSigSplit.s,
-        owner.address
       );
 
       await expect(tx).to.be.revertedWithCustomError(
@@ -276,7 +272,6 @@ describe("ERC721Lazy - ERC20", () => {
         sigSplit.v,
         sigSplit.r,
         sigSplit.s,
-        owner.address
       );
 
       await expect(tx).to.be.revertedWithCustomError(
@@ -309,7 +304,6 @@ describe("ERC721Lazy - ERC20", () => {
         sigSplit.v,
         sigSplit.r,
         sigSplit.s,
-        owner.address
       );
       const addrs = [
         mad.address,
@@ -353,7 +347,6 @@ describe("ERC721Lazy - ERC20", () => {
         sigSplit.v,
         sigSplit.r,
         sigSplit.s,
-        owner.address
       );
       const ids = [1, 33, 7];
       const tx = lazy.connect(owner).burn(ids, owner.address);
@@ -381,7 +374,6 @@ describe("ERC721Lazy - ERC20", () => {
         sigSplit.v,
         sigSplit.r,
         sigSplit.s,
-        owner.address
       );
 
       const ids = [1, 13, 20, 30];
@@ -394,7 +386,6 @@ describe("ERC721Lazy - ERC20", () => {
         sigSplit2.v,
         sigSplit2.r,
         sigSplit2.s,
-        owner.address
       );
 
       const dead = ethers.constants.AddressZero;
@@ -451,7 +442,6 @@ describe("ERC721Lazy - ERC20", () => {
         sigSplit.v,
         sigSplit.r,
         sigSplit.s,
-        owner.address
       );
       const base = await lazy.callStatic.getBaseURI();
       const sup = await lazy.callStatic.totalSupply();
@@ -476,7 +466,6 @@ describe("ERC721Lazy - ERC20", () => {
         sigSplit.v,
         sigSplit.r,
         sigSplit.s,
-        owner.address
       );
       const tx = await lazy.callStatic.tokenURI(1);
 

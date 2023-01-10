@@ -65,7 +65,6 @@ const main = async () => {
   const md721 = await ERC721MinimalDeployer.deploy()
   const wd721 = await ERC721WhitelistDeployer.deploy()
 
-
   const MADFactory721 = await ethers.getContractFactory(
     "MADFactory721",
     {
@@ -82,13 +81,14 @@ const main = async () => {
     m721.address, // marketplace addr
     ethers.constants.AddressZero, // router addr
     deployer.address, // lazy signer addr
+    erc20Address
   );
   console.log(`ERC721 Factory address: ${f721.address}`);
 
   const MADRouter721 = await ethers.getContractFactory(
     "MADRouter721",
   );
-  const r721 = await MADRouter721.deploy(f721.address, erc20Address);
+  const r721 = await MADRouter721.deploy(f721.address);
   console.log(`ERC721 Router address: ${r721.address}`);
 
   await m721.connect(deployer).setFactory(f721.address);
@@ -126,13 +126,14 @@ const main = async () => {
     m1155.address, // marketplace addr
     ethers.constants.AddressZero, // router addr
     deployer.address, // lazy signer addr
+    erc20Address
   );
   console.log(`ERC1155 Factory address: ${f1155.address}`);
 
   const MADRouter1155 = await ethers.getContractFactory(
     "MADRouter1155",
   );
-  const r1155 = await MADRouter1155.deploy(f1155.address, erc20Address);
+  const r1155 = await MADRouter1155.deploy(f1155.address);
   console.log(`ERC1155 Router address: ${r1155.address}`);
 
   await m1155.connect(deployer).setFactory(f1155.address);

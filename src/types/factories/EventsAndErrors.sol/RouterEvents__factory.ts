@@ -11,6 +11,11 @@ import type {
 
 const _abi = [
   {
+    inputs: [],
+    name: "WrongPrice",
+    type: "error",
+  },
+  {
     anonymous: false,
     inputs: [
       {
@@ -71,6 +76,19 @@ const _abi = [
       },
     ],
     name: "FreeClaimState",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "newPaymentToken",
+        type: "address",
+      },
+    ],
+    name: "PaymentTokenUpdated",
     type: "event",
   },
   {

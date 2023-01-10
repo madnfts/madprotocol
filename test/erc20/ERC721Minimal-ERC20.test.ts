@@ -14,16 +14,16 @@ import {
   ERC721Minimal,
   MockERC20,
   SplitterImpl,
-} from "../src/types";
-import { MinimalErrors } from "./utils/errors";
-import { minimalFixture721ERC20 } from "./utils/fixtures";
+} from "../../src/types";
+import { MinimalErrors } from "./../utils/errors";
+import { minimalFixture721ERC20 } from "./../utils/fixtures";
 import {
   ERC165Interface,
   ERC721Interface,
   ERC721MetadataInterface,
   ERC2981Interface,
   getInterfaceID,
-} from "./utils/interfaces";
+} from "./../utils/interfaces";
 
 // hint:
 // import { BinaryLike, BinaryToTextEncoding, Encoding } from "crypto";
@@ -270,7 +270,7 @@ describe("ERC721Minimal - ERC20", () => {
 
     it("Should revert if public mint is off", async () => {
       await expect(
-        minimal.connect(acc01).publicMint(acc01.address),
+        minimal.connect(acc01).publicMint(),
       ).to.be.revertedWithCustomError(
         minimal,
         MinimalErrors.PublicMintOff,
@@ -286,7 +286,7 @@ describe("ERC721Minimal - ERC20", () => {
       await expect(
         minimal
           .connect(acc02)
-          .publicMint(acc02.address),
+          .publicMint(),
       ).to.be.revertedWithCustomError(
         minimal,
         MinimalErrors.WrongPrice,
@@ -301,13 +301,13 @@ describe("ERC721Minimal - ERC20", () => {
 
       await minimal
         .connect(acc02)
-        .publicMint(acc02.address);
+        .publicMint();
 
       const erc20MintTx2 = await erc20.connect(acc01).approve(minimal.address, price)
       expect(erc20MintTx2).to.be.ok
       
       await expect(
-        minimal.connect(acc01).publicMint(acc01.address),
+        minimal.connect(acc01).publicMint(),
       ).to.be.revertedWithCustomError(
         minimal,
         MinimalErrors.AlreadyMinted,
@@ -322,7 +322,7 @@ describe("ERC721Minimal - ERC20", () => {
 
       const tx: ContractTransaction = await minimal
         .connect(acc02)
-        .publicMint(acc02.address);
+        .publicMint();
       const rc: ContractReceipt = await tx.wait();
       const event = rc.events?.find(
         event => event.event === "Transfer",
@@ -358,7 +358,7 @@ describe("ERC721Minimal - ERC20", () => {
 
       await minimal
         .connect(acc02)
-        .publicMint(acc02.address);
+        .publicMint();
 
       await expect(
         minimal.connect(acc01).withdraw(),
@@ -373,7 +373,7 @@ describe("ERC721Minimal - ERC20", () => {
       
       await minimal
         .connect(acc02)
-        .publicMint(acc02.address);
+        .publicMint();
 
       const addrs = [
         mad.address,

@@ -97,21 +97,20 @@ contract ERC721Lazy is
     /// @dev Neither `totalSupply` nor `price` accountings for any of the possible mint
     /// types(e.g., public, free/gifted, toCreator) need to be recorded by the contract;
     /// since its condition checking control flow takes place in offchain databases.
-    /// @dev Allows erc20 payments only if erc20 exists
     function lazyMint(
         Types.Voucher calldata voucher,
         uint8 v,
         bytes32 r,
-        bytes32 s,
-        address erc20Owner
+        bytes32 s
     ) external payable nonReentrant {
         address _signer = _verify(voucher, v, r, s);
-        uint256 value = _getPriceValue(erc20Owner);
+        uint256 value = _getPriceValue(msg.sender);
 
         _lazyCheck(_signer, voucher, value);        
         
+        // Only attempt to transfer if the sender is the _erc20Owner (not envoked through proxy)
         if (address(erc20) != address(0)) {
-            SafeTransferLib.safeTransferFrom(erc20, erc20Owner, address(this), value);
+            SafeTransferLib.safeTransferFrom(erc20, msg.sender, address(this), value);
         }
         
         usedVouchers[voucher.voucherId] = true;
@@ -419,6 +418,31 @@ contract ERC721Lazy is
     //                     INTERNAL FUNCTIONS                     //
     ////////////////////////////////////////////////////////////////
 
+    /// @dev Checks if mint / burn fees are paid
+    /// @dev If non router deploy we check msg.value if !erc20 OR checks erc20 approval and transfers
+    /// @dev If router deploy we check msg.value if !erc20 BUT checks erc20 approval and transfers are via the router
+    /// @param _erc20Owner Non router deploy =msg.sender; Router deploy =payer.address (msg.sender = router.address)
+    /// @param _type Passed to _feeCheck to determin the fee 0=mint; 1=burn; ELSE _feeCheck is ignored
+    function _paymentCheck(address _erc20Owner, uint8 _type) internal 
+    {
+        uint256 value = (address(erc20) != address(0))
+            ? erc20.allowance(_erc20Owner, address(this))
+            : msg.value; 
+        
+        // Check fees are paid 
+        // ERC20 fees for router calls are checked and transfered via in the router
+        if (address(msg.sender) == address(_erc20Owner) || (address(erc20) == address(0))) {
+            if (_type == 0) {
+                _feeCheck(0x40d097c3, value);
+            } else if (_type == 1) {
+                _feeCheck(0x44df8e70, value);
+            }   
+            if (address(erc20) != address(0)) {
+                SafeTransferLib.safeTransferFrom(erc20, _erc20Owner, address(this), value);
+            }
+        }
+    }
+    
     function _feeCheck(bytes4 _method, uint256 _value) internal view {
         address _owner = owner;
         uint32 size;
@@ -434,21 +458,6 @@ contract ERC721Lazy is
                 mstore(0x00, 0xf7760f25)
                 revert(0x1c, 0x04)
             }
-        }
-    }
-
-    /// @dev Checks msg.value if !erc20 OR checks erc20 approval and invokes safeTransferFrom
-    /// @dev _type Passed to _feeCheck to determin the type of fee 0=mint; 1=burn; OR _feeCheck is ignored
-    function _paymentCheck(address _erc20Owner, uint8 _type) internal 
-    {
-        uint256 value = _getPriceValue(_erc20Owner);   
-        if (_type == 0) {
-            _feeCheck(0x40d097c3, value);
-        } else if (_type == 1) {
-            _feeCheck(0x44df8e70, value);
-        }
-        if (address(erc20) != address(0)) {
-            SafeTransferLib.safeTransferFrom(erc20, _erc20Owner, address(this), value);
         }
     }
 

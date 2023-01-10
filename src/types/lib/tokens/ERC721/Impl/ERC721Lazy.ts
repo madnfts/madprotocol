@@ -65,7 +65,7 @@ export interface ERC721LazyInterface extends utils.Interface {
     "getBaseURI()": FunctionFragment;
     "getMintCount()": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
-    "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32,address)": FunctionFragment;
+    "lazyMint((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32)": FunctionFragment;
     "name()": FunctionFragment;
     "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
     "owner()": FunctionFragment;
@@ -183,8 +183,7 @@ export interface ERC721LazyInterface extends utils.Interface {
       Types.VoucherStruct,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BytesLike>,
-      PromiseOrValue<BytesLike>,
-      PromiseOrValue<string>
+      PromiseOrValue<BytesLike>
     ]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
@@ -538,7 +537,6 @@ export interface ERC721Lazy extends BaseContract {
       v: PromiseOrValue<BigNumberish>,
       r: PromiseOrValue<BytesLike>,
       s: PromiseOrValue<BytesLike>,
-      erc20Owner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -700,7 +698,6 @@ export interface ERC721Lazy extends BaseContract {
     v: PromiseOrValue<BigNumberish>,
     r: PromiseOrValue<BytesLike>,
     s: PromiseOrValue<BytesLike>,
-    erc20Owner: PromiseOrValue<string>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -860,7 +857,6 @@ export interface ERC721Lazy extends BaseContract {
       v: PromiseOrValue<BigNumberish>,
       r: PromiseOrValue<BytesLike>,
       s: PromiseOrValue<BytesLike>,
-      erc20Owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1093,7 +1089,6 @@ export interface ERC721Lazy extends BaseContract {
       v: PromiseOrValue<BigNumberish>,
       r: PromiseOrValue<BytesLike>,
       s: PromiseOrValue<BytesLike>,
-      erc20Owner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1254,7 +1249,6 @@ export interface ERC721Lazy extends BaseContract {
       v: PromiseOrValue<BigNumberish>,
       r: PromiseOrValue<BytesLike>,
       s: PromiseOrValue<BytesLike>,
-      erc20Owner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

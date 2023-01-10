@@ -150,7 +150,8 @@ export async function madFixture721A(): Promise<MADFixture721> {
   )) as MADFactory721;
 
   const r721 = (await Router.deploy(
-    f721.address
+    f721.address,
+    dead
   )) as MADRouter721;
 
   await f721.setRouter(r721.address);
@@ -222,7 +223,8 @@ export async function madFixture721B(): Promise<MADFixture721> {
   )) as MADFactory721;
 
   const r721 = (await Router.deploy(
-    f721.address
+    f721.address,
+    dead
   )) as MADRouter721;
 
   await f721.setRouter(r721.address);
@@ -294,7 +296,8 @@ export async function madFixture721C(): Promise<MADFixture721> {
   )) as MADFactory721;
 
   const r721 = (await Router.deploy(
-    f721.address
+    f721.address,
+    dead
   )) as MADRouter721;
 
   await f721.setRouter(r721.address);
@@ -374,7 +377,89 @@ export async function madFixture721D(): Promise<MADFixture721ERC20> {
   )) as MADFactory721;
 
   const r721 = (await Router.deploy(
-    f721.address
+    f721.address,
+    erc20.address
+  )) as MADRouter721;
+
+  await f721.setRouter(r721.address);
+  await m721.setFactory(f721.address);
+
+  return { f721, m721, r721, erc20 };
+}
+
+export async function madFixture721E(): Promise<MADFixture721ERC20> {
+  const ERC20 = await ethers.getContractFactory(
+    "MockERC20",
+  );
+  const erc20 = (await ERC20.deploy(
+    BigNumber.from(2).pow(255),
+  )) as MockERC20;
+  await erc20.deployed();
+
+  const SplitterDeployer = await ethers.getContractFactory(
+    "SplitterDeployer",
+  );
+  const splDep = await SplitterDeployer.deploy();
+
+  const MinimalDeployer = await ethers.getContractFactory(
+    "ERC721MinimalDeployer",
+  );
+  const minDep = await MinimalDeployer.deploy();
+
+  const BasicDeployer = await ethers.getContractFactory(
+    "ERC721BasicDeployer",
+  );
+  const basDep = await BasicDeployer.deploy();
+
+  const WhitelistDeployer = await ethers.getContractFactory(
+    "ERC721WhitelistDeployer",
+  );
+  const wlDep = await WhitelistDeployer.deploy();
+
+  const LazyDeployer = await ethers.getContractFactory(
+    "ERC721LazyDeployer",
+  );
+  const lazyDep = await LazyDeployer.deploy();
+
+  const Factory = await ethers.getContractFactory(
+    "MADFactory721",
+    {
+      libraries: {
+        ERC721MinimalDeployer: minDep.address,
+        ERC721BasicDeployer: basDep.address,
+        ERC721WhitelistDeployer: wlDep.address,
+        ERC721LazyDeployer: lazyDep.address,
+        SplitterDeployer: splDep.address,
+      },
+    },
+  );
+  const Marketplace = await ethers.getContractFactory(
+    "MADMarketplace721",
+  );
+  const Router = await ethers.getContractFactory(
+    "MADRouter721",
+  );
+
+  const allSigners = await ethers.getSigners();
+  const owner = getSignerAddrs(1, allSigners);
+
+  const m721 = (await Marketplace.deploy(
+    owner[0],
+    300,
+    dead,
+    erc20.address
+  )) as MADMarketplace721;
+
+  const f721 = (await Factory.deploy(
+    m721.address,
+    ethers.constants.AddressZero,
+    owner[0],
+    erc20.address
+  )) as MADFactory721;
+
+  const r721 = (await Router.deploy(
+    f721.address,
+    erc20.address
   )) as MADRouter721;
 
   await f721.setRouter(r721.address);

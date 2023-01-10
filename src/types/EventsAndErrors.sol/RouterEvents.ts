@@ -26,6 +26,7 @@ export interface RouterEventsInterface extends utils.Interface {
     "BaseURI(bytes32,string)": EventFragment;
     "FeesUpdated(uint256,uint256)": EventFragment;
     "FreeClaimState(bytes32,uint8,bool)": EventFragment;
+    "PaymentTokenUpdated(address)": EventFragment;
     "PublicMintState(bytes32,uint8,bool)": EventFragment;
     "TokenFundsWithdrawn(bytes32,uint8,address)": EventFragment;
     "WhitelistMintState(bytes32,uint8,bool)": EventFragment;
@@ -34,6 +35,7 @@ export interface RouterEventsInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "BaseURI"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FeesUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FreeClaimState"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PaymentTokenUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PublicMintState"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TokenFundsWithdrawn"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "WhitelistMintState"): EventFragment;
@@ -69,6 +71,17 @@ export type FreeClaimStateEvent = TypedEvent<
 >;
 
 export type FreeClaimStateEventFilter = TypedEventFilter<FreeClaimStateEvent>;
+
+export interface PaymentTokenUpdatedEventObject {
+  newPaymentToken: string;
+}
+export type PaymentTokenUpdatedEvent = TypedEvent<
+  [string],
+  PaymentTokenUpdatedEventObject
+>;
+
+export type PaymentTokenUpdatedEventFilter =
+  TypedEventFilter<PaymentTokenUpdatedEvent>;
 
 export interface PublicMintStateEventObject {
   _id: string;
@@ -164,6 +177,13 @@ export interface RouterEvents extends BaseContract {
       _type?: PromiseOrValue<BigNumberish> | null,
       _state?: PromiseOrValue<boolean> | null
     ): FreeClaimStateEventFilter;
+
+    "PaymentTokenUpdated(address)"(
+      newPaymentToken?: PromiseOrValue<string> | null
+    ): PaymentTokenUpdatedEventFilter;
+    PaymentTokenUpdated(
+      newPaymentToken?: PromiseOrValue<string> | null
+    ): PaymentTokenUpdatedEventFilter;
 
     "PublicMintState(bytes32,uint8,bool)"(
       _id?: PromiseOrValue<BytesLike> | null,

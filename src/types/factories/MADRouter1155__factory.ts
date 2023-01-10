@@ -19,6 +19,11 @@ const _abi = [
     type: "constructor",
   },
   {
+    inputs: [],
+    name: "WrongPrice",
+    type: "error",
+  },
+  {
     anonymous: false,
     inputs: [
       {
@@ -111,6 +116,19 @@ const _abi = [
       },
     ],
     name: "Paused",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "newPaymentToken",
+        type: "address",
+      },
+    ],
+    name: "PaymentTokenUpdated",
     type: "event",
   },
   {

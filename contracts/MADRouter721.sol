@@ -10,7 +10,7 @@ import { ERC721Minimal } from "./lib/tokens/ERC721/Impl/ERC721Minimal.sol";
 import { ERC721Basic } from "./lib/tokens/ERC721/Impl/ERC721Basic.sol";
 import { ERC721Whitelist } from "./lib/tokens/ERC721/Impl/ERC721Whitelist.sol";
 import { ERC721Lazy } from "./lib/tokens/ERC721/Impl/ERC721Lazy.sol";
-
+import { SafeTransferLib } from "./lib/utils/SafeTransferLib.sol";
 import { ReentrancyGuard } from "./lib/security/ReentrancyGuard.sol";
 import { Pausable } from "./lib/security/Pausable.sol";
 import { Owned } from "./lib/auth/Owned.sol";
@@ -49,13 +49,30 @@ contract MADRouter721 is
 
     uint256 public feeMint = 0.25 ether;
     uint256 public feeBurn = 0;
+
+    /// @dev ERC20 payment token address
+    ERC20 public erc20;
+
     
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    constructor(FactoryVerifier _factory) {
+    constructor(FactoryVerifier _factory, address _paymentTokenAddress) {
         MADFactory721 = _factory;
+        if (_paymentTokenAddress != address(0)) {
+            setPaymentToken(_paymentTokenAddress);
+        }
+    }
+
+    /// @notice Enables the contract's owner to change payment token address.
+    /// @dev Function Signature := ?
+    function setPaymentToken(address _paymentTokenAddress)
+        public
+        onlyOwner
+    {
+        erc20 = ERC20(_paymentTokenAddress);
+        emit PaymentTokenUpdated(_paymentTokenAddress);
     }
 
     ////////////////////////////////////////////////////////////////
@@ -140,6 +157,7 @@ contract MADRouter721 is
     {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType != 0) revert("INVALID_TYPE");
+        _paymentCheck(0x40d097c3);
         ERC721Minimal(_token).safeMint{value: msg.value}(_to, msg.sender);
     }
 
@@ -150,6 +168,7 @@ contract MADRouter721 is
     ) external payable nonReentrant whenNotPaused {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType != 1) revert("INVALID_TYPE");
+        _paymentCheck(0x40d097c3);
         ERC721Basic(_token).mintTo{value: msg.value}(_to, _amount,  msg.sender);
     }
 
@@ -165,7 +184,7 @@ contract MADRouter721 is
         whenNotPaused
     {
         (, uint8 _tokenType) = _tokenRender(_token);
-
+        _paymentCheck(0x44df8e70);
         _tokenType < 1
             ? ERC721Minimal(_token).burn{value: msg.value}(msg.sender)
         : _tokenType == 1
@@ -222,6 +241,7 @@ contract MADRouter721 is
     {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType == 2) {
+            _paymentCheck(0x40d097c3);
             ERC721Whitelist(_token).mintToCreator{value: msg.value}(_amount, msg.sender);
         } else revert("INVALID_TYPE");
     }
@@ -234,6 +254,7 @@ contract MADRouter721 is
     ) external payable nonReentrant whenNotPaused {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType == 2) {
+            _paymentCheck(0x40d097c3);
             ERC721Whitelist(_token).giftTokens{value: msg.value}(_addresses, msg.sender);
         } else revert("INVALID_TYPE");
     }
@@ -414,6 +435,22 @@ contract MADRouter721 is
         if (_tokenType == 2) {
             ERC721Whitelist(_token).setFreeClaimState(_state);
         } else revert("INVALID_TYPE");
+    }
+
+    /// @dev Check if erc20 payments are required and matches required fee, envokes safeTransferFrom
+    /// @dev Checks for msg.value payments are performed in each 721 impl
+    function _paymentCheck(bytes4 _method) internal {
+        if (address(erc20) != address(0)) {
+            uint256 value = erc20.allowance(msg.sender, address(this));
+            uint256 _fee = FeeOracle(this).feeLookup(_method);
+            assembly {
+                if iszero(eq(value, _fee)) {
+                    mstore(0x00, 0xf7760f25)
+                    revert(0x1c, 0x04)
+                }
+            }
+            SafeTransferLib.safeTransferFrom(erc20, msg.sender, address(this), value);
+        }
     }
 
     ////////////////////////////////////////////////////////////////

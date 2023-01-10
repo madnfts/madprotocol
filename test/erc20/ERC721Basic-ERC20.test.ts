@@ -9,18 +9,18 @@ import {
   ERC721Basic,
   MockERC20,
   SplitterImpl,
-} from "../src/types";
-import { BasicErrors } from "./utils/errors";
+} from "../../src/types";
+import { BasicErrors } from "../utils/errors";
 import {
   basicFixture721ERC20,
-} from "./utils/fixtures";
+} from "../utils/fixtures";
 import {
   ERC165Interface,
   ERC721Interface,
   ERC721MetadataInterface,
   ERC2981Interface,
   getInterfaceID,
-} from "./utils/interfaces";
+} from "../utils/interfaces";
 
 // hint:
 // import { base64 } from "ethers/lib/utils";
@@ -181,7 +181,7 @@ describe("ERC721Basic - ERC20", () => {
 
   describe("Mint", async () => {
     it("Should revert if public mint is turned off", async () => {
-      const tx = basic.connect(acc01).mint(1, acc01.address);
+      const tx = basic.connect(acc01).mint(1);
       await expect(tx).to.be.revertedWithCustomError(
         basic,
         BasicErrors.PublicMintClosed,
@@ -194,12 +194,12 @@ describe("ERC721Basic - ERC20", () => {
       expect(erc20MintTx).to.be.ok
       await basic
         .connect(acc01)
-        .mint(1000, acc01.address);
+        .mint(1000);
       const erc20MintTx2 = await erc20.connect(acc02).approve(basic.address, price.mul(BigNumber.from(1)))
       expect(erc20MintTx2).to.be.ok
       const tx = basic
         .connect(acc02)
-        .mint(1, acc02.address);
+        .mint(1);
       await expect(tx).to.be.revertedWithCustomError(
         basic,
         BasicErrors.MaxSupplyReached,
@@ -210,7 +210,7 @@ describe("ERC721Basic - ERC20", () => {
       const erc20MintTx = await erc20.connect(acc02).approve(basic.address, 999)
       expect(erc20MintTx).to.be.ok
       await basic.setPublicMintState(true);
-      const tx = basic.connect(acc02).mint(1, acc02.address);
+      const tx = basic.connect(acc02).mint(1);
 
       await expect(tx).to.be.revertedWithCustomError(
         basic,
@@ -225,7 +225,7 @@ describe("ERC721Basic - ERC20", () => {
       await basic.setPublicMintState(true);
       const tx = await basic
         .connect(acc02)
-        .mint(1, acc02.address);
+        .mint(1);
       const from = ethers.constants.AddressZero;
       const ownerOf = await basic.callStatic.ownerOf(1);
       const bal = await basic.callStatic.balanceOf(
@@ -252,23 +252,23 @@ describe("ERC721Basic - ERC20", () => {
       await erc20.connect(acc01).approve(basic.address, price.mul(txamount))
       const tx1 = await basic
         .connect(acc01)
-        .mint(10, acc01.address);
+        .mint(10);
       await erc20.connect(acc02).approve(basic.address, price.mul(tx2amount))
       const tx2 = await basic
         .connect(acc02)
-        .mint(68, acc02.address);
+        .mint(68);
       await erc20.connect(acc02).approve(basic.address, price.mul(tx3amount))
       const tx3 = await basic
         .connect(acc02)
-        .mint(100, acc02.address);
+        .mint(100);
       await erc20.connect(acc02).approve(basic.address, price.mul(tx4amount))
       const tx4 = await basic
         .connect(acc02)
-        .mint(500, acc02.address);
+        .mint(500);
       await erc20.connect(acc02).approve(basic.address, price.mul(tx5amount))
       const tx5 = await basic
         .connect(acc02)
-        .mint(322, acc02.address);
+        .mint(322);
 
       expect(tx1).to.be.ok;
       expect(tx2).to.be.ok;
@@ -296,7 +296,7 @@ describe("ERC721Basic - ERC20", () => {
       await basic.setPublicMintState(true);
       await basic
         .connect(acc02)
-        .mint(4, acc02.address);
+        .mint(4);
       const tx = basic.connect(owner).burn(ids, acc02.address);
 
       await expect(tx).to.be.revertedWith(
@@ -322,18 +322,18 @@ describe("ERC721Basic - ERC20", () => {
       await erc20.connect(acc02).approve(basic.address, price.mul(amount))
       await basic
         .connect(acc02)
-        .mint(2, acc02.address);
+        .mint(2);
       await erc20.connect(acc01).approve(basic.address, price.mul(amount))
       await basic
         .connect(acc01)
-        .mint(2, acc01.address);
+        .mint(2);
       const ids = [1, 2, 3, 4];
       const tx = await basic.burn(ids, acc01.address);
       const dead = ethers.constants.AddressZero;
       await erc20.connect(acc01).approve(basic.address, price.mul(amount))
       await basic
         .connect(acc01)
-        .mint(2, acc01.address);
+        .mint(2);
       const bal1 = await basic.callStatic.balanceOf(
         acc01.address,
       );
@@ -374,7 +374,7 @@ describe("ERC721Basic - ERC20", () => {
     it("Should withdraw contract's ERC20 royality funds", async () => {
       await basic.setPublicMintState(true);
       await erc20.connect(acc02).approve(basic.address, price)
-      await basic.connect(acc02).mint(1, acc02.address);
+      await basic.connect(acc02).mint(1);
 
       const addrs = [
         mad.address,
@@ -465,7 +465,7 @@ describe("ERC721Basic - ERC20", () => {
 
       await erc20.connect(acc01).approve(basic.address, price);
       await basic.setPublicMintState(true);
-      await basic.connect(acc01).mint(1, acc01.address);
+      await basic.connect(acc01).mint(1);
       const tx = await basic.callStatic.tokenURI(1);
       const fail = basic.callStatic.tokenURI(2);
 

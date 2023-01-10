@@ -15,11 +15,11 @@ import {
   ERC1155Lazy,
   MockERC20,
   SplitterImpl,
-} from "../src/types";
-import { LazyErrors } from "./utils/errors";
+} from "../../src/types";
+import { LazyErrors } from "./../utils/errors";
 import {
   lazyFixture1155, lazyFixture1155ERC20, // erc20Fixture,
-} from "./utils/fixtures";
+} from "./../utils/fixtures";
 import {
   ERC165Interface,
   ERC1155Interface,
@@ -28,7 +28,7 @@ import {
   UserBatch,
   Voucher,
   getInterfaceID,
-} from "./utils/interfaces";
+} from "./../utils/interfaces";
 
 describe("ERC1155Lazy", () => {
   /* 

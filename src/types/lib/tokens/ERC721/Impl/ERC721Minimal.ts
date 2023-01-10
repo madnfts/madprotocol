@@ -41,7 +41,7 @@ export interface ERC721MinimalInterface extends utils.Interface {
     "owner()": FunctionFragment;
     "ownerOf(uint256)": FunctionFragment;
     "price()": FunctionFragment;
-    "publicMint(address)": FunctionFragment;
+    "publicMint()": FunctionFragment;
     "publicMintState()": FunctionFragment;
     "royaltyInfo(uint256,uint256)": FunctionFragment;
     "safeMint(address,address)": FunctionFragment;
@@ -129,7 +129,7 @@ export interface ERC721MinimalInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "price", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "publicMint",
-    values: [PromiseOrValue<string>]
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "publicMintState",
@@ -434,7 +434,6 @@ export interface ERC721Minimal extends BaseContract {
     price(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     publicMint(
-      erc20Owner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -565,7 +564,6 @@ export interface ERC721Minimal extends BaseContract {
   price(overrides?: CallOverrides): Promise<BigNumber>;
 
   publicMint(
-    erc20Owner: PromiseOrValue<string>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -695,10 +693,7 @@ export interface ERC721Minimal extends BaseContract {
 
     price(overrides?: CallOverrides): Promise<BigNumber>;
 
-    publicMint(
-      erc20Owner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    publicMint(overrides?: CallOverrides): Promise<void>;
 
     publicMintState(overrides?: CallOverrides): Promise<boolean>;
 
@@ -891,7 +886,6 @@ export interface ERC721Minimal extends BaseContract {
     price(overrides?: CallOverrides): Promise<BigNumber>;
 
     publicMint(
-      erc20Owner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1021,7 +1015,6 @@ export interface ERC721Minimal extends BaseContract {
     price(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     publicMint(
-      erc20Owner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

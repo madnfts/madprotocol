@@ -2742,7 +2742,7 @@ describe("MADMarketplace721", () => {
       await r721
         .connect(acc02)
         .setMintState(basic.address, true, 0);
-      await basic.connect(acc02).mint(1, acc02.address, { value: price });
+      await basic.connect(acc02).mint(1, { value: price });
       await basic.connect(acc02).approve(m721.address, 1);
       const daTx = await m721
         .connect(acc02)
@@ -2993,7 +2993,7 @@ describe("MADMarketplace721", () => {
       await r721
         .connect(acc02)
         .setMintState(basic.address, true, 0);
-      await basic.connect(acc02).mint(1, acc02.address, { value: price });
+      await basic.connect(acc02).mint(1, { value: price });
       await basic.connect(acc02).approve(m721.address, 1);
       const daTx = await m721
         .connect(acc02)
@@ -3056,7 +3056,7 @@ describe("MADMarketplace721", () => {
       await extToken.connect(acc02).setPublicMintState(true);
       await extToken
         .connect(acc02)
-        .mint(2, acc02.address, { value: price.mul(ethers.constants.Two) });
+        .mint(2, { value: price.mul(ethers.constants.Two) });
       await extToken.connect(acc02).approve(m721.address, 1);
       const tx = await extToken.connect(acc02).approve(m721.address, 2);
       const blockTimestamp = (await m721.provider.getBlock(tx.blockNumber || 0)).timestamp;
@@ -3314,7 +3314,7 @@ describe("MADMarketplace721", () => {
       await r721
         .connect(acc02)
         .setMintState(basic.address, true, 0);
-      await basic.connect(acc02).mint(1, acc02.address, { value: price });
+      await basic.connect(acc02).mint(1, { value: price });
       await basic.connect(acc02).approve(m721.address, 1);
       const daTx = await m721
         .connect(acc02)
@@ -3378,7 +3378,7 @@ describe("MADMarketplace721", () => {
       await extToken.connect(acc02).setPublicMintState(true);
       await extToken
         .connect(acc02)
-        .mint(2, acc02.address, { value: price.mul(ethers.constants.Two) });
+        .mint(2, { value: price.mul(ethers.constants.Two) });
       await extToken.connect(acc02).approve(m721.address, 1);
       const tx = await extToken.connect(acc02).approve(m721.address, 2);
       const blockTimestamp = (await m721.provider.getBlock(tx.blockNumber || 0)).timestamp;
@@ -3707,7 +3707,7 @@ describe("MADMarketplace721", () => {
       await extToken.connect(acc02).setPublicMintState(true);
       await extToken
         .connect(acc02)
-        .mint(2, acc02.address, { value: price.mul(ethers.constants.Two) });
+        .mint(2, { value: price.mul(ethers.constants.Two) });
       await extToken.connect(acc02).approve(m721.address, 1);
       const tx = await extToken.connect(acc02).approve(m721.address, 2);
       const blockTimestamp = (await m721.provider.getBlock(tx.blockNumber || 0)).timestamp;
@@ -4030,7 +4030,7 @@ describe("MADMarketplace721", () => {
       );
 
       await extToken.connect(acc02).setPublicMintState(true);
-      await extToken.connect(acc02).mint(1, acc02.address, { value: price });
+      await extToken.connect(acc02).mint(1, { value: price });
       const tx = await extToken.connect(acc02).approve(m721.address, 1);
       const blockTimestamp = (await m721.provider.getBlock(tx.blockNumber || 0)).timestamp;
 

@@ -145,14 +145,15 @@ contract ERC1155Minimal is
     ////////////////////////////////////////////////////////////////
 
     /// @dev Allows public minting
-    function publicMint(uint256 balance, address erc20Owner) external payable {
+    function publicMint(uint256 balance) external payable {
         if (!publicMintState) revert PublicMintOff();
         uint256 value = (address(erc20) != address(0)) 
-            ? erc20.allowance(erc20Owner, address(this))
+            ? erc20.allowance(msg.sender, address(this))
             : msg.value;
+
         if (value != price) revert WrongPrice();
         if (minted) revert AlreadyMinted();
-        _paymentCheck(erc20Owner, 2);
+        _paymentCheck(msg.sender, 2);
         
         minted = true;
         _mint(msg.sender, 1, balance, "");
@@ -177,6 +178,31 @@ contract ERC1155Minimal is
     ////////////////////////////////////////////////////////////////
     //                     INTERNAL FUNCTIONS                     //
     ////////////////////////////////////////////////////////////////
+    
+    /// @dev Checks if mint / burn fees are paid
+    /// @dev If non router deploy we check msg.value if !erc20 OR checks erc20 approval and transfers
+    /// @dev If router deploy we check msg.value if !erc20 BUT checks erc20 approval and transfers are via the router
+    /// @param _erc20Owner Non router deploy =msg.sender; Router deploy =payer.address (msg.sender = router.address)
+    /// @param _type Passed to _feeCheck to determin the fee 0=mint; 1=burn; ELSE _feeCheck is ignored
+    function _paymentCheck(address _erc20Owner, uint8 _type) internal 
+    {
+        uint256 value = (address(erc20) != address(0))
+            ? erc20.allowance(_erc20Owner, address(this))
+            : msg.value; 
+        
+        // Check fees are paid 
+        // ERC20 fees for router calls are checked and transfered via in the router
+        if (address(msg.sender) == address(_erc20Owner) || (address(erc20) == address(0))) {
+            if (_type == 0) {
+                _feeCheck(0x40d097c3, value);
+            } else if (_type == 1) {
+                _feeCheck(0x44df8e70, value);
+            }   
+            if (address(erc20) != address(0)) {
+                SafeTransferLib.safeTransferFrom(erc20, _erc20Owner, address(this), value);
+            }
+        }
+    }
 
     function _feeCheck(bytes4 _method, uint256 _value) internal view {
         address _owner = owner;
@@ -193,23 +219,6 @@ contract ERC1155Minimal is
                 mstore(0x00, 0xf7760f25)
                 revert(0x1c, 0x04)
             }
-        }
-    }
-
-    /// @dev Checks msg.value if !erc20 OR checks erc20 approval and invokes safeTransferFrom
-    /// @dev _type Passed to _feeCheck to determin the type of fee 0=mint; 1=burn; OR _feeCheck is ignored
-    function _paymentCheck(address _erc20Owner, uint8 _type) internal 
-    {
-        uint256 value = (address(erc20) != address(0)) 
-            ? erc20.allowance(_erc20Owner, address(this))
-            : msg.value;   
-        if (_type == 0) {
-            _feeCheck(0x40d097c3, value);
-        } else if (_type == 1) {
-            _feeCheck(0x44df8e70, value);
-        }
-        if (address(erc20) != address(0)) {
-            SafeTransferLib.safeTransferFrom(erc20, _erc20Owner, address(this), value);
         }
     }
 

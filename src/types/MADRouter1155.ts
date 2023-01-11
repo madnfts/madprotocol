@@ -37,6 +37,7 @@ export interface MADRouter1155Interface extends utils.Interface {
     "burn(address,uint256[],address[],uint256[])": FunctionFragment;
     "creatorBatchMint(address,uint256[],uint256[],uint256)": FunctionFragment;
     "creatorMint(address,uint256,uint256[],uint256)": FunctionFragment;
+    "erc20()": FunctionFragment;
     "feeBurn()": FunctionFragment;
     "feeLookup(bytes4)": FunctionFragment;
     "feeMint()": FunctionFragment;
@@ -50,6 +51,7 @@ export interface MADRouter1155Interface extends utils.Interface {
     "setFees(uint256,uint256)": FunctionFragment;
     "setMintState(address,bool,uint8)": FunctionFragment;
     "setOwner(address)": FunctionFragment;
+    "setPaymentToken(address)": FunctionFragment;
     "setSigner(address,address)": FunctionFragment;
     "setURI(address,string)": FunctionFragment;
     "unpause()": FunctionFragment;
@@ -66,6 +68,7 @@ export interface MADRouter1155Interface extends utils.Interface {
       | "burn"
       | "creatorBatchMint"
       | "creatorMint"
+      | "erc20"
       | "feeBurn"
       | "feeLookup"
       | "feeMint"
@@ -79,6 +82,7 @@ export interface MADRouter1155Interface extends utils.Interface {
       | "setFees"
       | "setMintState"
       | "setOwner"
+      | "setPaymentToken"
       | "setSigner"
       | "setURI"
       | "unpause"
@@ -144,6 +148,7 @@ export interface MADRouter1155Interface extends utils.Interface {
       PromiseOrValue<BigNumberish>
     ]
   ): string;
+  encodeFunctionData(functionFragment: "erc20", values?: undefined): string;
   encodeFunctionData(functionFragment: "feeBurn", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "feeLookup",
@@ -197,6 +202,10 @@ export interface MADRouter1155Interface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "setPaymentToken",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setSigner",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
@@ -241,6 +250,7 @@ export interface MADRouter1155Interface extends utils.Interface {
     functionFragment: "creatorMint",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "erc20", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "feeBurn", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "feeLookup", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "feeMint", data: BytesLike): Result;
@@ -263,6 +273,10 @@ export interface MADRouter1155Interface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setOwner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setPaymentToken",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "setSigner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setURI", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
@@ -479,6 +493,8 @@ export interface MADRouter1155 extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    erc20(overrides?: CallOverrides): Promise<[string]>;
+
     feeBurn(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     feeLookup(
@@ -536,6 +552,11 @@ export interface MADRouter1155 extends BaseContract {
 
     setOwner(
       newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setPaymentToken(
+      _paymentTokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -620,6 +641,8 @@ export interface MADRouter1155 extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  erc20(overrides?: CallOverrides): Promise<string>;
+
   feeBurn(overrides?: CallOverrides): Promise<BigNumber>;
 
   feeLookup(
@@ -677,6 +700,11 @@ export interface MADRouter1155 extends BaseContract {
 
   setOwner(
     newOwner: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setPaymentToken(
+    _paymentTokenAddress: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -761,6 +789,8 @@ export interface MADRouter1155 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    erc20(overrides?: CallOverrides): Promise<string>;
+
     feeBurn(overrides?: CallOverrides): Promise<BigNumber>;
 
     feeLookup(
@@ -816,6 +846,11 @@ export interface MADRouter1155 extends BaseContract {
 
     setOwner(
       newOwner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setPaymentToken(
+      _paymentTokenAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -982,6 +1017,8 @@ export interface MADRouter1155 extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    erc20(overrides?: CallOverrides): Promise<BigNumber>;
+
     feeBurn(overrides?: CallOverrides): Promise<BigNumber>;
 
     feeLookup(
@@ -1039,6 +1076,11 @@ export interface MADRouter1155 extends BaseContract {
 
     setOwner(
       newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setPaymentToken(
+      _paymentTokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1124,6 +1166,8 @@ export interface MADRouter1155 extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    erc20(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     feeBurn(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     feeLookup(
@@ -1181,6 +1225,11 @@ export interface MADRouter1155 extends BaseContract {
 
     setOwner(
       newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setPaymentToken(
+      _paymentTokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

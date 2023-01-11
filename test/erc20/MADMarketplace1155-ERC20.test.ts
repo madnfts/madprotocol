@@ -75,7 +75,8 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
     it("Marketplace should initialize with ERC20 payment token", async () => {
       expect(m1155).to.be.ok;
       expect(await m1155.callStatic.name()).to.eq("market");
-      expect(await m1155.paymentTokenAddress()).to.eq(erc20.address);
+      expect(await m1155.erc20()).to.eq(erc20.address);
+      expect(await r1155.erc20()).to.eq(erc20.address);
       expect(await m1155.recipient()).to.eq(owner.address);
       expect(await m1155.minOrderDuration()).to.eq(300);
       expect(await m1155.minAuctionIncrement()).to.eq(300);
@@ -134,7 +135,7 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
         minAddr,
       );
       
-      await erc20.connect(acc02).approve(min.address, ethers.utils.parseEther("0.25"))
+      await erc20.connect(acc02).approve(r1155.address, ethers.utils.parseEther("0.25"))
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address, 1, {value: ethers.utils.parseEther("0.25")});
@@ -162,7 +163,7 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
       );
     });
     it("Should buy token with ERC20, distribute ERC20 splitter and fees", async () => {
-      // acc02 = seller > should recieve 0.825 payment for this sale
+      // acc02 = seller
       // acc01 = buyer
 
       const ownerERC20Bal = await erc20.balanceOf(await m1155.callStatic.recipient())
@@ -189,13 +190,21 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
         "SplitterImpl",
         splAddr,
       );
-      await erc20.connect(acc02).approve(min.address, ethers.utils.parseEther("0.25"))
+
+      // Mint the token with erc20
+      await erc20.connect(acc02).approve(r1155.address, ethers.utils.parseEther("0.25"))
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address, 1);
+     
+      // acc02 = erc20Balance - 0.25
+      expect(
+        await erc20.balanceOf(acc02.address)
+      ).to.equal(erc20Balance.sub(ethers.utils.parseEther("0.25")))
+
+      // Create marketplace order
       const tx = await min.connect(acc02).setApprovalForAll(m1155.address, true);
       const blockTimestamp = (await m1155.provider.getBlock(tx.blockNumber || 0)).timestamp;
-
       const fpTx = await m1155
         .connect(acc02)
         .fixedPrice(min.address, 1, 1, price, blockTimestamp + 301);
@@ -211,8 +220,6 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
       await mine(10);
       
       // Set ERC20 balances and approve for maretplace purchase
-      const balance = await erc20.balanceOf(acc01.address)
-      expect(balance).to.equal(erc20Balance)
       const erc20Tx = await erc20.connect(acc01).approve(m1155.address, price)
       expect(erc20Tx).to.be.ok
       const result = await erc20.callStatic.allowance(acc01.address, m1155.address)
@@ -226,19 +233,22 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
         .withArgs(minAddr, 1, 1, fpOrderId, acc02.address, acc01.address, price);
       
       // Validate buyer and seller ERC20 balances
+      // acc02 = erc20Balance - 0.25 + (1 - 10%.royalties - 10%.fee)
       expect(
         await erc20.balanceOf(acc02.address)
-      ).to.equal(erc20Balance.add(ethers.utils.parseEther("0.55")))
+      ).to.equal(erc20Balance.sub(ethers.utils.parseEther("0.25")).add(ethers.utils.parseEther("0.8")))
+      
       expect(
         await erc20.balanceOf(acc01.address)
       ).to.equal(erc20Balance.sub(ethers.utils.parseEther("1")))
 
       // Validate buyer ERC20 balances after royalties paid out
+      // acc02 = erc20Balance - 0.25 + (1 - 10%.royalties - 10%.fee) + 10%.royalties
       const splitTxCreator = await splitter["release(address,address)"](erc20.address, acc02.address)
       expect(splitTxCreator).to.be.ok
       expect(
         await erc20.balanceOf(acc02.address)
-      ).to.equal(erc20Balance.add(ethers.utils.parseEther("0.63")))
+      ).to.equal(erc20Balance.sub(ethers.utils.parseEther("0.25")).add(ethers.utils.parseEther("0.8")).add(ethers.utils.parseEther("0.08")))
 
       // Validate ERC2O amb payout balances
       const splitTxAmb = await splitter["release(address,address)"](erc20.address, amb.address)
@@ -272,7 +282,7 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
         "ERC1155Minimal",
         minAddr,
       );
-      erc20.connect(acc02).approve(min.address, ethers.utils.parseEther("0.25"))
+      erc20.connect(acc02).approve(r1155.address, ethers.utils.parseEther("0.25"))
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address, 1, {value: ethers.utils.parseEther("0.25")});
@@ -300,7 +310,7 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
       );
     });
     it("Should bid and win token with ERC20, distribute ERC20 splitter and fees", async () => {
-      // acc02 = seller > should recieve 0.825 payment for this sale
+      // acc02 = seller
       // acc01 = buyer
 
       const ownerERC20Bal = await erc20.balanceOf(await m1155.callStatic.recipient())
@@ -327,14 +337,21 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
         "SplitterImpl",
         splAddr,
       );
-      erc20.connect(acc02).approve(min.address, ethers.utils.parseEther("0.25"))
+      
+      // Mint the token with erc20
+      erc20.connect(acc02).approve(r1155.address, ethers.utils.parseEther("0.25"))
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address, 1);
+
+      // acc02 = erc20Balance - 0.25
+      expect(
+        await erc20.balanceOf(acc02.address)
+      ).to.equal(erc20Balance.sub(ethers.utils.parseEther("0.25")))
+
+      // Create marketplace order
       const tx = await min.connect(acc02).setApprovalForAll(m1155.address, true);
       const blockTimestamp = (await m1155.provider.getBlock(tx.blockNumber || 0)).timestamp;
-      
-      // List token
       const fpTx = await m1155
         .connect(acc02)
         .englishAuction(min.address, 1, 1, price, blockTimestamp + 301);
@@ -345,32 +362,33 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
       );
       
       // Set ERC20 balances and approve for maretplace purchase
-      const balance = await erc20.balanceOf(acc01.address)
-      expect(balance).to.equal(erc20Balance)
       const erc20Tx = await erc20.connect(acc01).approve(m1155.address, price)
       expect(erc20Tx).to.be.ok
       const result = await erc20.callStatic.allowance(acc01.address, m1155.address)
       expect(result).to.equal(price)
       
-      // Bid for the token and wait for auction to close
+      // Bid for the token and wait for auction to close and claim 
       const bidTx = await m1155.connect(acc01).bid(fpOrderId);
       expect(bidTx).to.be.ok
       await mine(600);
+      const claimTx = await m1155.connect(acc01).claim(fpOrderId);
       
       // Test ERC20 buy response
-      const claimTx = await m1155.connect(acc01).claim(fpOrderId);
       await expect(claimTx).to.be.ok.and.to.emit(m1155, "Claim")
         .withArgs(minAddr, 1, 1, fpOrderId, acc02.address, acc01.address, price);
       
       // Validate buyer and seller ERC20 balances
+      // acc02 = erc20Balance - 0.25 + (1 - 10%.royalties - 10%.fee
       expect(
         await erc20.balanceOf(acc02.address)
-      ).to.equal(erc20Balance.add(ethers.utils.parseEther("0.55")))
+        ).to.equal(erc20Balance.sub(ethers.utils.parseEther("0.25")).add(ethers.utils.parseEther("0.8")))
+      
       expect(
         await erc20.balanceOf(acc01.address)
       ).to.equal(erc20Balance.sub(ethers.utils.parseEther("1")))
 
       // Validate buyer ERC20 balances after royalties paid out
+      // acc02 = erc20Balance - 0.25 + (1 - 10%.royalties - 10%.fee) + 10%.royalties
       const splitTxCreator = await splitter["release(address,address)"](erc20.address, acc02.address)
       expect(splitTxCreator).to.be.ok
       expect(

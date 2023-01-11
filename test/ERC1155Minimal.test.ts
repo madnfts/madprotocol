@@ -267,7 +267,7 @@ describe("ERC1155Minimal", () => {
 
     it("Should revert if public mint is off", async () => {
       await expect(
-        minimal.connect(acc01).publicMint(1, acc01.address),
+        minimal.connect(acc01).publicMint(1),
       ).to.be.revertedWithCustomError(
         minimal,
         MinimalErrors.PublicMintOff,
@@ -280,7 +280,7 @@ describe("ERC1155Minimal", () => {
       await expect(
         minimal
           .connect(acc02)
-          .publicMint(1, acc02.address, { value: 10100111001 }),
+          .publicMint(1, { value: 10100111001 }),
       ).to.be.revertedWithCustomError(
         minimal,
         MinimalErrors.WrongPrice,
@@ -291,10 +291,10 @@ describe("ERC1155Minimal", () => {
       await minimal.connect(owner).setPublicMintState(true);
       await minimal
         .connect(acc02)
-        .publicMint(1, acc02.address, { value: price });
+        .publicMint(1, { value: price });
 
       await expect(
-        minimal.connect(acc01).publicMint(1, acc01.address, { value: price }),
+        minimal.connect(acc01).publicMint(1, { value: price }),
       ).to.be.revertedWithCustomError(
         minimal,
         MinimalErrors.AlreadyMinted,
@@ -305,7 +305,7 @@ describe("ERC1155Minimal", () => {
       await minimal.connect(owner).setPublicMintState(true);
       const tx: ContractTransaction = await minimal
         .connect(acc02)
-        .publicMint(1, acc02.address, { value: price });
+        .publicMint(1, { value: price });
       const rc: ContractReceipt = await tx.wait();
       const event = rc.events?.find(
         event => event.event === "TransferSingle",
@@ -344,7 +344,7 @@ describe("ERC1155Minimal", () => {
       await minimal.connect(owner).setPublicMintState(true);
       await minimal
         .connect(acc02)
-        .publicMint(1, acc02.address, { value: price });
+        .publicMint(1, { value: price });
 
       await expect(
         minimal.connect(acc01).withdraw(),
@@ -355,7 +355,7 @@ describe("ERC1155Minimal", () => {
       await minimal.connect(owner).setPublicMintState(true);
       await minimal
         .connect(acc02)
-        .publicMint(1, owner.address, { value: price });
+        .publicMint(1, { value: price });
 
       const addrs = [
         mad.address,

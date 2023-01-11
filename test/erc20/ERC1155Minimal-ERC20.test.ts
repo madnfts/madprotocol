@@ -274,7 +274,7 @@ describe("ERC1155Minimal - ERC20", () => {
     it("Should revert if public mint is off", async () => {
       await erc20.connect(acc01).approve(minimal.address, price)
       await expect(
-        minimal.connect(acc01).publicMint(1, acc01.address),
+        minimal.connect(acc01).publicMint(1),
       ).to.be.revertedWithCustomError(
         minimal,
         MinimalErrors.PublicMintOff,
@@ -287,7 +287,7 @@ describe("ERC1155Minimal - ERC20", () => {
       await expect(
         minimal
           .connect(acc02)
-          .publicMint(1, acc02.address),
+          .publicMint(1),
       ).to.be.revertedWithCustomError(
         minimal,
         MinimalErrors.WrongPrice,
@@ -299,11 +299,11 @@ describe("ERC1155Minimal - ERC20", () => {
       await erc20.connect(acc02).approve(minimal.address, price)
       await minimal
         .connect(acc02)
-        .publicMint(1, acc02.address);
+        .publicMint(1);
 
       await erc20.connect(acc01).approve(minimal.address, price)
       await expect(
-        minimal.connect(acc01).publicMint(1, acc01.address),
+        minimal.connect(acc01).publicMint(1),
       ).to.be.revertedWithCustomError(
         minimal,
         MinimalErrors.AlreadyMinted,
@@ -315,7 +315,7 @@ describe("ERC1155Minimal - ERC20", () => {
       await erc20.connect(acc02).approve(minimal.address, price)
       const tx: ContractTransaction = await minimal
         .connect(acc02)
-        .publicMint(1, acc02.address);
+        .publicMint(1);
       const rc: ContractReceipt = await tx.wait();
       const event = rc.events?.find(
         event => event.event === "TransferSingle",
@@ -353,7 +353,7 @@ describe("ERC1155Minimal - ERC20", () => {
       await erc20.connect(acc02).approve(minimal.address, price)
       await minimal
         .connect(acc02)
-        .publicMint(1, acc02.address);
+        .publicMint(1);
 
       await expect(
         minimal.connect(acc01).withdrawERC20(erc20.address),
@@ -365,7 +365,7 @@ describe("ERC1155Minimal - ERC20", () => {
       await erc20.connect(acc02).approve(minimal.address, price)
       await minimal
         .connect(acc02)
-        .publicMint(1, acc02.address);
+        .publicMint(1);
 
       const addrs = [
         mad.address,

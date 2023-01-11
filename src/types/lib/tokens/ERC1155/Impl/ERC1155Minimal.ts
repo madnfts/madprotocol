@@ -40,7 +40,7 @@ export interface ERC1155MinimalInterface extends utils.Interface {
     "owner()": FunctionFragment;
     "ownerOf(uint256,address)": FunctionFragment;
     "price()": FunctionFragment;
-    "publicMint(uint256,address)": FunctionFragment;
+    "publicMint(uint256)": FunctionFragment;
     "publicMintState()": FunctionFragment;
     "royaltyInfo(uint256,uint256)": FunctionFragment;
     "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
@@ -133,7 +133,7 @@ export interface ERC1155MinimalInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "price", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "publicMint",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "publicMintState",
@@ -455,7 +455,6 @@ export interface ERC1155Minimal extends BaseContract {
 
     publicMint(
       balance: PromiseOrValue<BigNumberish>,
-      erc20Owner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -589,7 +588,6 @@ export interface ERC1155Minimal extends BaseContract {
 
   publicMint(
     balance: PromiseOrValue<BigNumberish>,
-    erc20Owner: PromiseOrValue<string>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -723,7 +721,6 @@ export interface ERC1155Minimal extends BaseContract {
 
     publicMint(
       balance: PromiseOrValue<BigNumberish>,
-      erc20Owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -935,7 +932,6 @@ export interface ERC1155Minimal extends BaseContract {
 
     publicMint(
       balance: PromiseOrValue<BigNumberish>,
-      erc20Owner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1068,7 +1064,6 @@ export interface ERC1155Minimal extends BaseContract {
 
     publicMint(
       balance: PromiseOrValue<BigNumberish>,
-      erc20Owner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

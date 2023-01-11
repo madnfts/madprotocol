@@ -868,7 +868,7 @@ describe("MADFactory1155", () => {
       await r1155
         .connect(acc02)
         .setMintState(minAddr, true, 0);
-      await min.connect(acc02).publicMint(1, acc02.address, { value: price });
+      await min.connect(acc02).publicMint(1, { value: price });
       const blockTimestamp = (await m1155.provider.getBlock(await m1155.provider.getBlockNumber())).timestamp;
 
       // const blocknum = await m1155.provider.getBlockNumber();

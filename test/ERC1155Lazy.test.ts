@@ -193,7 +193,6 @@ describe("ERC1155Lazy", () => {
         vSigSplit.v,
         vSigSplit.r,
         vSigSplit.s,
-        owner.address,
         { value: price.mul(amount) },
       );
       const sup2 = lazy.callStatic.totalSupply();
@@ -241,7 +240,6 @@ describe("ERC1155Lazy", () => {
         vSigSplit.v,
         vSigSplit.r,
         vSigSplit.s,
-        owner.address,
         { value: price.mul(amount) },
       );
       const tx = lazy.lazyMint(
@@ -249,7 +247,6 @@ describe("ERC1155Lazy", () => {
         vSigSplit.v,
         vSigSplit.r,
         vSigSplit.s,
-        owner.address,
         { value: price.mul(amount) },
       );
 
@@ -265,7 +262,6 @@ describe("ERC1155Lazy", () => {
         wSigSplit.v,
         wSigSplit.r,
         wSigSplit.s,
-        owner.address,
         { value: price.mul(amount) },
       );
 
@@ -280,7 +276,6 @@ describe("ERC1155Lazy", () => {
         vSigSplit.v,
         vSigSplit.r,
         vSigSplit.s,
-        owner.address,
         { value: price },
       );
 
@@ -323,7 +318,6 @@ describe("ERC1155Lazy", () => {
         ubSigSplit.v,
         ubSigSplit.r,
         ubSigSplit.s,
-        owner.address,
         { value: price.mul(ethers.BigNumber.from(3)) },
       );
       const sup2 = lazy.callStatic.totalSupply();
@@ -374,7 +368,6 @@ describe("ERC1155Lazy", () => {
         ubSigSplit.v,
         ubSigSplit.r,
         ubSigSplit.s,
-        owner.address,
         { value: price.mul(ethers.BigNumber.from(3)) },
       );
       const tx = lazy.lazyMintBatch(
@@ -382,7 +375,6 @@ describe("ERC1155Lazy", () => {
         ubSigSplit.v,
         ubSigSplit.r,
         ubSigSplit.s,
-        owner.address,
         { value: price.mul(ethers.BigNumber.from(3)) },
       );
 
@@ -398,7 +390,6 @@ describe("ERC1155Lazy", () => {
         wSigSplit.v,
         wSigSplit.r,
         wSigSplit.s,
-        owner.address,
         { value: price.mul(ethers.BigNumber.from(3)) },
       );
 
@@ -413,7 +404,6 @@ describe("ERC1155Lazy", () => {
         ubSigSplit.v,
         ubSigSplit.r,
         ubSigSplit.s,
-        owner.address,
         { value: price },
       );
 
@@ -453,7 +443,6 @@ describe("ERC1155Lazy", () => {
         vSigSplit.v,
         vSigSplit.r,
         vSigSplit.s,
-        owner.address,
         { value: price.mul(amount) }, // amount := 30
       );
       await erc20.mint(lazy.address, price);
@@ -525,7 +514,6 @@ describe("ERC1155Lazy", () => {
         vSigSplit.v,
         vSigSplit.r,
         vSigSplit.s,
-        owner.address,
         { value: price.mul(amount) },
       );
       const ids = [1, 33, 7];
@@ -552,7 +540,6 @@ describe("ERC1155Lazy", () => {
         vSigSplit.v,
         vSigSplit.r,
         vSigSplit.s,
-        owner.address,
         { value: price.mul(amount) },
       );
 
@@ -564,7 +551,6 @@ describe("ERC1155Lazy", () => {
         vSigSplit2.v,
         vSigSplit2.r,
         vSigSplit2.s,
-        owner.address,
         { value: price.mul(amount) },
       );
 
@@ -609,7 +595,6 @@ describe("ERC1155Lazy", () => {
         vSigSplit.v,
         vSigSplit.r,
         vSigSplit.s,
-        owner.address,
         { value: price.mul(amount) },
       );
       const tx = lazy
@@ -627,7 +612,6 @@ describe("ERC1155Lazy", () => {
         vSigSplit.v,
         vSigSplit.r,
         vSigSplit.s,
-        owner.address,
         { value: price.mul(amount) },
       );
       const tx = lazy
@@ -647,7 +631,6 @@ describe("ERC1155Lazy", () => {
         vSigSplit.v,
         vSigSplit.r,
         vSigSplit.s,
-        owner.address,
         { value: price.mul(amount) },
       );
       const ids = [1, 2, 3, 4];
@@ -694,7 +677,6 @@ describe("ERC1155Lazy", () => {
         vSigSplit.v,
         vSigSplit.r,
         vSigSplit.s,
-        owner.address,
         { value: price.mul(amount) },
       );
       const ids1 = [1, 2, 3, 4, 5];
@@ -772,7 +754,6 @@ describe("ERC1155Lazy", () => {
         vSigSplit.v,
         vSigSplit.r,
         vSigSplit.s,
-        owner.address,
         { value: price.mul(amount) },
       );
       const base = await lazy.callStatic.getURI();
@@ -809,7 +790,6 @@ describe("ERC1155Lazy", () => {
         vSigSplit.v,
         vSigSplit.r,
         vSigSplit.s,
-        owner.address,
         { value: price.mul(amount) },
       );
       const tx = await lazy.callStatic.uri(1);

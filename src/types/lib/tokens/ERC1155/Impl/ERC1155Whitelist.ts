@@ -49,8 +49,8 @@ export interface ERC1155WhitelistInterface extends utils.Interface {
     "maxFree()": FunctionFragment;
     "maxSupply()": FunctionFragment;
     "maxWhitelistSupply()": FunctionFragment;
-    "mint(uint256,uint256[],uint256,address)": FunctionFragment;
-    "mintBatch(uint256[],uint256[],address)": FunctionFragment;
+    "mint(uint256,uint256[],uint256)": FunctionFragment;
+    "mintBatch(uint256[],uint256[])": FunctionFragment;
     "mintBatchToCreator(uint256[],uint256[],uint256,address)": FunctionFragment;
     "mintToCreator(uint256,uint256[],uint256,address)": FunctionFragment;
     "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)": FunctionFragment;
@@ -74,8 +74,8 @@ export interface ERC1155WhitelistInterface extends utils.Interface {
     "uri(uint256)": FunctionFragment;
     "whitelistConfig(uint256,uint256,bytes32)": FunctionFragment;
     "whitelistMerkleRoot()": FunctionFragment;
-    "whitelistMint(uint8,uint256[],uint256,bytes32[],address)": FunctionFragment;
-    "whitelistMintBatch(uint256[],uint256[],bytes32[],address)": FunctionFragment;
+    "whitelistMint(uint8,uint256[],uint256,bytes32[])": FunctionFragment;
+    "whitelistMintBatch(uint256[],uint256[],bytes32[])": FunctionFragment;
     "whitelistMintState()": FunctionFragment;
     "whitelistMinted()": FunctionFragment;
     "whitelistPrice()": FunctionFragment;
@@ -230,17 +230,12 @@ export interface ERC1155WhitelistInterface extends utils.Interface {
     values: [
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>
+      PromiseOrValue<BigNumberish>
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "mintBatch",
-    values: [
-      PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<string>
-    ]
+    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "mintBatchToCreator",
@@ -372,8 +367,7 @@ export interface ERC1155WhitelistInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>[],
       PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BytesLike>[],
-      PromiseOrValue<string>
+      PromiseOrValue<BytesLike>[]
     ]
   ): string;
   encodeFunctionData(
@@ -381,8 +375,7 @@ export interface ERC1155WhitelistInterface extends utils.Interface {
     values: [
       PromiseOrValue<BigNumberish>[],
       PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<BytesLike>[],
-      PromiseOrValue<string>
+      PromiseOrValue<BytesLike>[]
     ]
   ): string;
   encodeFunctionData(
@@ -830,14 +823,12 @@ export interface ERC1155Whitelist extends BaseContract {
       amount: PromiseOrValue<BigNumberish>,
       balances: PromiseOrValue<BigNumberish>[],
       balanceTotal: PromiseOrValue<BigNumberish>,
-      erc20Owner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     mintBatch(
       ids: PromiseOrValue<BigNumberish>[],
       balances: PromiseOrValue<BigNumberish>[],
-      erc20Owner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -972,7 +963,6 @@ export interface ERC1155Whitelist extends BaseContract {
       balances: PromiseOrValue<BigNumberish>[],
       balanceTotal: PromiseOrValue<BigNumberish>,
       merkleProof: PromiseOrValue<BytesLike>[],
-      erc20Owner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -980,7 +970,6 @@ export interface ERC1155Whitelist extends BaseContract {
       ids: PromiseOrValue<BigNumberish>[],
       balances: PromiseOrValue<BigNumberish>[],
       merkleProof: PromiseOrValue<BytesLike>[],
-      erc20Owner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1085,14 +1074,12 @@ export interface ERC1155Whitelist extends BaseContract {
     amount: PromiseOrValue<BigNumberish>,
     balances: PromiseOrValue<BigNumberish>[],
     balanceTotal: PromiseOrValue<BigNumberish>,
-    erc20Owner: PromiseOrValue<string>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   mintBatch(
     ids: PromiseOrValue<BigNumberish>[],
     balances: PromiseOrValue<BigNumberish>[],
-    erc20Owner: PromiseOrValue<string>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1227,7 +1214,6 @@ export interface ERC1155Whitelist extends BaseContract {
     balances: PromiseOrValue<BigNumberish>[],
     balanceTotal: PromiseOrValue<BigNumberish>,
     merkleProof: PromiseOrValue<BytesLike>[],
-    erc20Owner: PromiseOrValue<string>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1235,7 +1221,6 @@ export interface ERC1155Whitelist extends BaseContract {
     ids: PromiseOrValue<BigNumberish>[],
     balances: PromiseOrValue<BigNumberish>[],
     merkleProof: PromiseOrValue<BytesLike>[],
-    erc20Owner: PromiseOrValue<string>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1340,14 +1325,12 @@ export interface ERC1155Whitelist extends BaseContract {
       amount: PromiseOrValue<BigNumberish>,
       balances: PromiseOrValue<BigNumberish>[],
       balanceTotal: PromiseOrValue<BigNumberish>,
-      erc20Owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     mintBatch(
       ids: PromiseOrValue<BigNumberish>[],
       balances: PromiseOrValue<BigNumberish>[],
-      erc20Owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1482,7 +1465,6 @@ export interface ERC1155Whitelist extends BaseContract {
       balances: PromiseOrValue<BigNumberish>[],
       balanceTotal: PromiseOrValue<BigNumberish>,
       merkleProof: PromiseOrValue<BytesLike>[],
-      erc20Owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1490,7 +1472,6 @@ export interface ERC1155Whitelist extends BaseContract {
       ids: PromiseOrValue<BigNumberish>[],
       balances: PromiseOrValue<BigNumberish>[],
       merkleProof: PromiseOrValue<BytesLike>[],
-      erc20Owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1716,14 +1697,12 @@ export interface ERC1155Whitelist extends BaseContract {
       amount: PromiseOrValue<BigNumberish>,
       balances: PromiseOrValue<BigNumberish>[],
       balanceTotal: PromiseOrValue<BigNumberish>,
-      erc20Owner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     mintBatch(
       ids: PromiseOrValue<BigNumberish>[],
       balances: PromiseOrValue<BigNumberish>[],
-      erc20Owner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1856,7 +1835,6 @@ export interface ERC1155Whitelist extends BaseContract {
       balances: PromiseOrValue<BigNumberish>[],
       balanceTotal: PromiseOrValue<BigNumberish>,
       merkleProof: PromiseOrValue<BytesLike>[],
-      erc20Owner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1864,7 +1842,6 @@ export interface ERC1155Whitelist extends BaseContract {
       ids: PromiseOrValue<BigNumberish>[],
       balances: PromiseOrValue<BigNumberish>[],
       merkleProof: PromiseOrValue<BytesLike>[],
-      erc20Owner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1974,14 +1951,12 @@ export interface ERC1155Whitelist extends BaseContract {
       amount: PromiseOrValue<BigNumberish>,
       balances: PromiseOrValue<BigNumberish>[],
       balanceTotal: PromiseOrValue<BigNumberish>,
-      erc20Owner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     mintBatch(
       ids: PromiseOrValue<BigNumberish>[],
       balances: PromiseOrValue<BigNumberish>[],
-      erc20Owner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2116,7 +2091,6 @@ export interface ERC1155Whitelist extends BaseContract {
       balances: PromiseOrValue<BigNumberish>[],
       balanceTotal: PromiseOrValue<BigNumberish>,
       merkleProof: PromiseOrValue<BytesLike>[],
-      erc20Owner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2124,7 +2098,6 @@ export interface ERC1155Whitelist extends BaseContract {
       ids: PromiseOrValue<BigNumberish>[],
       balances: PromiseOrValue<BigNumberish>[],
       merkleProof: PromiseOrValue<BytesLike>[],
-      erc20Owner: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

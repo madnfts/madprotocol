@@ -345,16 +345,20 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
       );
 
       // Mint the token with erc20
-      // acc02 = erc20Balance - 0.25
       const erc20MintTx = await erc20.connect(acc02).approve(r721.address, ethers.utils.parseEther("0.25"))
       expect(erc20MintTx).to.be.ok
       await r721
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      const tx = await min.connect(acc02).approve(m721.address, 1);
-      const blockTimestamp = (await m721.provider.getBlock(tx.blockNumber || 0)).timestamp;
+     
+      // acc02 = erc20Balance - 0.25
+      expect(
+        await erc20.balanceOf(acc02.address)
+      ).to.equal(erc20Balance.sub(ethers.utils.parseEther("0.25")))
       
       // List token
+      const tx = await min.connect(acc02).approve(m721.address, 1);
+      const blockTimestamp = (await m721.provider.getBlock(tx.blockNumber || 0)).timestamp;
       const fpTx = await m721
         .connect(acc02)
         .englishAuction(min.address, 1, price, blockTimestamp + 301);
@@ -365,20 +369,18 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
       );
       
       // Set ERC20 balances and approve for maretplace purchase
-      const balance = await erc20.balanceOf(acc01.address)
-      expect(balance).to.equal(erc20Balance)
       const erc20Tx = await erc20.connect(acc01).approve(m721.address, price)
       expect(erc20Tx).to.be.ok
       const result = await erc20.callStatic.allowance(acc01.address, m721.address)
       expect(result).to.equal(price)
       
-      // Bid for the token and wait for auction to close
+      // Bid for the token and wait for auction to close, then claim
       const bidTx = await m721.connect(acc01).bid(fpOrderId);
       expect(bidTx).to.be.ok
       await mine(600);
-      
-      // Test ERC20 buy response
       const claimTx = await m721.connect(acc01).claim(fpOrderId);
+
+      // Test ERC20 buy response
       await expect(claimTx).to.be.ok.and.to.emit(m721, "Claim")
         .withArgs(minAddr, 1, fpOrderId, acc02.address, acc01.address, price);
       

@@ -174,7 +174,7 @@ describe("ERC1155Basic", () => {
 
   describe("Mint", async () => {
     it("Should revert if public mint is turned off", async () => {
-      const tx = basic.connect(acc01).mint(1, 1, acc01.address);
+      const tx = basic.connect(acc01).mint(1, 1);
 
       await expect(tx).to.be.revertedWithCustomError(
         basic,
@@ -188,11 +188,11 @@ describe("ERC1155Basic", () => {
       await erc20.connect(acc01).approve(basic.address, price.mul(amount))
       await basic
         .connect(acc01)
-        .mint(1000, 1, acc01.address);
+        .mint(1000, 1);
       await erc20.connect(acc02).approve(basic.address, price.mul(amount))
       const tx = basic
         .connect(acc02)
-        .mint(1, 1, acc02.address);
+        .mint(1, 1);
 
       await expect(tx).to.be.revertedWithCustomError(
         basic,
@@ -203,7 +203,7 @@ describe("ERC1155Basic", () => {
     it("Should revert if price is wrong", async () => {
       await basic.setPublicMintState(true);
       await erc20.connect(acc02).approve(basic.address, 101010)
-      const tx = basic.connect(acc02).mint(1, 1, acc02.address);
+      const tx = basic.connect(acc02).mint(1, 1);
 
       await expect(tx).to.be.revertedWithCustomError(
         basic,
@@ -216,7 +216,7 @@ describe("ERC1155Basic", () => {
       await erc20.connect(acc02).approve(basic.address, price)
       const tx = await basic
         .connect(acc02)
-        .mint(1, 1, acc02.address);
+        .mint(1, 1);
       const from = ethers.constants.AddressZero;
 
       const bal = await basic.callStatic.balanceOf(
@@ -242,23 +242,23 @@ describe("ERC1155Basic", () => {
       await erc20.connect(acc01).approve(basic.address, price.mul(txamount))
       const tx1 = await basic
         .connect(acc01)
-        .mint(10, 1, acc01.address);
+        .mint(10, 1);
       await erc20.connect(acc02).approve(basic.address, price.mul(tx2amount))
       const tx2 = await basic
         .connect(acc02)
-        .mint(68, 1, acc02.address);
+        .mint(68, 1);
       await erc20.connect(acc02).approve(basic.address, price.mul(tx3amount))
       const tx3 = await basic
         .connect(acc02)
-        .mint(100, 1, acc02.address);
+        .mint(100, 1);
       await erc20.connect(acc02).approve(basic.address, price.mul(tx4amount))
       const tx4 = await basic
         .connect(acc02)
-        .mint(500, 1, acc02.address);
+        .mint(500, 1);
       await erc20.connect(acc02).approve(basic.address, price.mul(tx5amount))
       const tx5 = await basic
         .connect(acc02)
-        .mint(322, 1, acc02.address);
+        .mint(322, 1);
 
       expect(tx1).to.be.ok;
       expect(tx2).to.be.ok;
@@ -274,11 +274,11 @@ describe("ERC1155Basic", () => {
       const id = [24];
       const amount = ethers.BigNumber.from(1000);
       await erc20.connect(owner).approve(basic.address, price.mul(amount))
-      await basic.mint(1000, 1, owner.address);
+      await basic.mint(1000, 1);
       await erc20.connect(mad).approve(basic.address, price)
       const tx = basic
         .connect(mad)
-        .mintBatch(id, [1], mad.address);
+        .mintBatch(id, [1]);
 
       await expect(tx).to.be.revertedWithCustomError(
         basic,
@@ -291,7 +291,7 @@ describe("ERC1155Basic", () => {
       await erc20.connect(acc01).approve(basic.address, price)
       const tx = basic
         .connect(acc01)
-        .mint(id, [1], acc01.address);
+        .mint(id, [1]);
 
       await expect(tx).to.be.revertedWithCustomError(
         basic,
@@ -305,7 +305,7 @@ describe("ERC1155Basic", () => {
       const ids = [23, 13, 400];
       
       await erc20.connect(owner).approve(basic.address, price.mul(amount))
-      const tx = basic.mintBatch(ids, [1, 1, 1], owner.address);
+      const tx = basic.mintBatch(ids, [1, 1, 1]);
 
       await expect(tx).to.be.revertedWithCustomError(
         basic,
@@ -325,7 +325,7 @@ describe("ERC1155Basic", () => {
       await erc20.connect(acc02).approve(basic.address, price.mul(amount))
       const tx = await basic
         .connect(acc02)
-        .mintBatch(ids, [1, 1, 1], acc02.address);
+        .mintBatch(ids, [1, 1, 1]);
       // const ownerOfNull = await basic.callStatic.ownerOf(1);
       // const ownerOfA = await basic.callStatic.ownerOf(123);
       // const ownerOfB = await basic.callStatic.ownerOf(14);
@@ -381,17 +381,17 @@ describe("ERC1155Basic", () => {
       await erc20.connect(acc02).approve(basic.address, price.mul(amount))
       const tx1 = await basic
         .connect(acc02)
-        .mintBatch(ids1, [1, 1, 1], acc02.address);
+        .mintBatch(ids1, [1, 1, 1]);
 
       await erc20.connect(owner).approve(basic.address, price.mul(amount))
       const tx2 = await basic
         .connect(owner)
-        .mintBatch(ids2, [1, 1, 1], owner.address);
+        .mintBatch(ids2, [1, 1, 1]);
 
       await erc20.connect(amb).approve(basic.address, price.mul(amount))
       const tx3 = await basic
         .connect(amb)
-        .mintBatch(ids3, [1, 1, 1], amb.address);
+        .mintBatch(ids3, [1, 1, 1]);
       
       const balNull = await basic.callStatic.balanceOf(
         acc02.address,
@@ -468,7 +468,7 @@ describe("ERC1155Basic", () => {
       await erc20.connect(acc02).approve(basic.address, price.mul(amount))
       await basic
         .connect(acc02)
-        .mint(4, 1, acc02.address);
+        .mint(4, 1);
       const tx = basic.connect(owner).burn([acc02.address, acc02.address, acc02.address], ids, [1, 1, 1], owner.address);
 
       await expect(tx).to.be.revertedWith(
@@ -499,12 +499,12 @@ describe("ERC1155Basic", () => {
       await erc20.connect(acc02).approve(basic.address, price.mul(amount))
       await basic
         .connect(acc02)
-        .mint(2, 1, acc02.address); // mintCount = 2
+        .mint(2, 1); // mintCount = 2
 
       await erc20.connect(acc01).approve(basic.address, price.mul(amount))
       await basic
         .connect(acc01)
-        .mint(2, 1, acc01.address); // mintCount = 4
+        .mint(2, 1); // mintCount = 4
 
       // this will not effect mintCount as we are not decrementing the counter, only the liveSupply is decrementing
       const tx = await basic.burn([acc02.address, acc02.address], [1, 2], [1, 1], owner.address);
@@ -513,7 +513,7 @@ describe("ERC1155Basic", () => {
       await erc20.connect(acc02).approve(basic.address, price.mul(amount))
       await basic
         .connect(acc02)
-        .mint(2, 2, acc02.address); // mintCount = 6
+        .mint(2, 2); // mintCount = 6
 
       const bal1 = await basic.callStatic.balanceOf(
         acc01.address,
@@ -556,7 +556,7 @@ describe("ERC1155Basic", () => {
       const ids = [1, 2, 3];
       await basic.setPublicMintState(true);
       await erc20.connect(owner).approve(basic.address, price.mul(amount))
-      await basic.mint(3, 1, owner.address);
+      await basic.mint(3, 1);
       await erc20.connect(acc02).approve(basic.address, price.mul(amount))
       const tx = basic
         .connect(acc02)
@@ -575,7 +575,7 @@ describe("ERC1155Basic", () => {
       await erc20.connect(acc02).approve(basic.address, price.mul(amount))
       await basic
         .connect(acc02)
-        .mint(4, 1, acc02.address);
+        .mint(4, 1);
       const tx = basic
         .connect(owner)
         .burnBatch(acc02.address, ids, [1, 1, 1], owner.address);
@@ -595,11 +595,11 @@ describe("ERC1155Basic", () => {
       await erc20.connect(acc02).approve(basic.address, price.mul(amount))
       await basic
         .connect(acc02)
-        .mint(2, 1, acc02.address);
+        .mint(2, 1);
       await erc20.connect(acc01).approve(basic.address, price.mul(amount))
       await basic
         .connect(acc01)
-        .mint(2, 1, acc01.address);
+        .mint(2, 1);
       const ids1 = [1, 2];
       const ids2 = [3, 4];
       const tx1 = await basic.burnBatch(acc02.address, ids1, [1, 1], owner.address);
@@ -657,7 +657,7 @@ describe("ERC1155Basic", () => {
       await erc20.connect(acc02).approve(basic.address, price.mul(amount))
       await basic
         .connect(acc02)
-        .mint(20, 1, acc02.address);
+        .mint(20, 1);
       const ids1 = [1, 2, 3, 4, 5];
       const ids2 = [6, 7, 8, 9, 10];
       const ids3 = [11, 12, 13, 14, 15];
@@ -714,7 +714,7 @@ describe("ERC1155Basic", () => {
     it("Should mint with ERC20, then withdraw contract's ERC20 funds", async () => {
       await basic.setPublicMintState(true);
       await erc20.connect(acc02).approve(basic.address, price)
-      await basic.connect(acc02).mint(1, 1, acc02.address);
+      await basic.connect(acc02).mint(1, 1);
 
       const addrs = [
         mad.address,
@@ -804,7 +804,7 @@ describe("ERC1155Basic", () => {
     it("Should query token uri and revert if not yet minted", async () => {
       await basic.setPublicMintState(true);
       await erc20.connect(acc01).approve(basic.address, price)
-      await basic.connect(acc01).mint(1, 1, acc01.address);
+      await basic.connect(acc01).mint(1, 1);
       const tx = await basic.callStatic.uri(1);
 
       expect(tx).to.be.ok;

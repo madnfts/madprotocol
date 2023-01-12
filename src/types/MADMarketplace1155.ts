@@ -57,7 +57,6 @@ export interface MADMarketplace1155Interface extends utils.Interface {
     "owner()": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
-    "paymentTokenAddress()": FunctionFragment;
     "recipient()": FunctionFragment;
     "sellerOrderLength(address)": FunctionFragment;
     "setFactory(address)": FunctionFragment;
@@ -69,6 +68,7 @@ export interface MADMarketplace1155Interface extends utils.Interface {
     "unpause()": FunctionFragment;
     "updateSettings(uint256,uint256,uint256)": FunctionFragment;
     "withdraw()": FunctionFragment;
+    "withdrawERC20(address)": FunctionFragment;
   };
 
   getFunction(
@@ -100,7 +100,6 @@ export interface MADMarketplace1155Interface extends utils.Interface {
       | "owner"
       | "pause"
       | "paused"
-      | "paymentTokenAddress"
       | "recipient"
       | "sellerOrderLength"
       | "setFactory"
@@ -112,6 +111,7 @@ export interface MADMarketplace1155Interface extends utils.Interface {
       | "unpause"
       | "updateSettings"
       | "withdraw"
+      | "withdrawERC20"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -247,10 +247,6 @@ export interface MADMarketplace1155Interface extends utils.Interface {
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "paymentTokenAddress",
-    values?: undefined
-  ): string;
   encodeFunctionData(functionFragment: "recipient", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "sellerOrderLength",
@@ -294,6 +290,10 @@ export interface MADMarketplace1155Interface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(functionFragment: "withdraw", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "withdrawERC20",
+    values: [PromiseOrValue<string>]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "MADFactory1155",
@@ -364,10 +364,6 @@ export interface MADMarketplace1155Interface extends utils.Interface {
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "paymentTokenAddress",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "recipient", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "sellerOrderLength",
@@ -394,6 +390,10 @@ export interface MADMarketplace1155Interface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "withdrawERC20",
+    data: BytesLike
+  ): Result;
 
   events: {
     "AuctionSettingsUpdated(uint256,uint256,uint256)": EventFragment;
@@ -751,8 +751,6 @@ export interface MADMarketplace1155 extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<[boolean]>;
 
-    paymentTokenAddress(overrides?: CallOverrides): Promise<[string]>;
-
     recipient(overrides?: CallOverrides): Promise<[string]>;
 
     sellerOrderLength(
@@ -805,6 +803,11 @@ export interface MADMarketplace1155 extends BaseContract {
     ): Promise<ContractTransaction>;
 
     withdraw(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    withdrawERC20(
+      _token: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
@@ -969,8 +972,6 @@ export interface MADMarketplace1155 extends BaseContract {
 
   paused(overrides?: CallOverrides): Promise<boolean>;
 
-  paymentTokenAddress(overrides?: CallOverrides): Promise<string>;
-
   recipient(overrides?: CallOverrides): Promise<string>;
 
   sellerOrderLength(
@@ -1023,6 +1024,11 @@ export interface MADMarketplace1155 extends BaseContract {
   ): Promise<ContractTransaction>;
 
   withdraw(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  withdrawERC20(
+    _token: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1185,8 +1191,6 @@ export interface MADMarketplace1155 extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<boolean>;
 
-    paymentTokenAddress(overrides?: CallOverrides): Promise<string>;
-
     recipient(overrides?: CallOverrides): Promise<string>;
 
     sellerOrderLength(
@@ -1237,6 +1241,11 @@ export interface MADMarketplace1155 extends BaseContract {
     ): Promise<void>;
 
     withdraw(overrides?: CallOverrides): Promise<void>;
+
+    withdrawERC20(
+      _token: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {
@@ -1493,8 +1502,6 @@ export interface MADMarketplace1155 extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<BigNumber>;
 
-    paymentTokenAddress(overrides?: CallOverrides): Promise<BigNumber>;
-
     recipient(overrides?: CallOverrides): Promise<BigNumber>;
 
     sellerOrderLength(
@@ -1547,6 +1554,11 @@ export interface MADMarketplace1155 extends BaseContract {
     ): Promise<BigNumber>;
 
     withdraw(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    withdrawERC20(
+      _token: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
@@ -1686,10 +1698,6 @@ export interface MADMarketplace1155 extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    paymentTokenAddress(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     recipient(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     sellerOrderLength(
@@ -1742,6 +1750,11 @@ export interface MADMarketplace1155 extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     withdraw(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    withdrawERC20(
+      _token: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };

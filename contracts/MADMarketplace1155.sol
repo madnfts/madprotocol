@@ -68,7 +68,6 @@ contract MADMarketplace1155 is
     address public recipient;
     FactoryVerifier public MADFactory1155;
     
-    address public paymentTokenAddress;
     ERC20 public erc20;
 
     ////////////////////////////////////////////////////////////////
@@ -172,7 +171,7 @@ contract MADMarketplace1155 is
         Types.Order1155 storage order = orderInfo[_order];
 
         uint256 lastBidPrice = order.lastBidPrice;
-        uint256 bidValue = paymentTokenAddress != address(0)
+        uint256 bidValue = address(erc20) != address(0)
             ? erc20.allowance(msg.sender, address(this)) : msg.value;
 
         _bidChecks(
@@ -184,7 +183,7 @@ contract MADMarketplace1155 is
             bidValue
         );
 
-        if (paymentTokenAddress != address(0)) {
+        if (address(erc20) != address(0)) {
             SafeTransferLib.safeTransferFrom(erc20, msg.sender, address(this), bidValue);
         }
 
@@ -241,7 +240,7 @@ contract MADMarketplace1155 is
         );
 
         uint256 currentPrice = getCurrentPrice(_order);
-        if (paymentTokenAddress != address(0)) {
+        if (address(erc20) != address(0)) {
             if (erc20.allowance(msg.sender, address(this)) < currentPrice) revert WrongPrice();
             SafeTransferLib.safeTransferFrom(erc20, msg.sender, address(this), currentPrice);
         } else {
@@ -484,11 +483,6 @@ contract MADMarketplace1155 is
         onlyOwner
     {
         require(_paymentTokenAddress != address(0), "Invalid token address");
-
-        assembly {
-            // paymentTokenAddress = _paymentTokenAddress;
-            sstore(paymentTokenAddress.slot, _paymentTokenAddress)
-        }
         erc20 = ERC20(_paymentTokenAddress);
 
         emit PaymentTokenUpdated(_paymentTokenAddress);
@@ -529,6 +523,14 @@ contract MADMarketplace1155 is
     /// @dev Function Signature := 0x3ccfd60b
     function withdraw() external onlyOwner whenPaused {
         SafeTransferLib.safeTransferETH(
+            msg.sender,
+            address(this).balance
+        );
+    }
+
+    function withdrawERC20(ERC20 _token) external onlyOwner whenPaused {
+        SafeTransferLib.safeTransfer(
+            _token,
             msg.sender,
             address(this).balance
         );
@@ -697,7 +699,7 @@ contract MADMarketplace1155 is
             .token
             .royaltyInfo(_order.tokenId, _price);
         // transfer royalties
-        if (paymentTokenAddress != address(0)) {
+        if (address(erc20) != address(0)) {
             SafeTransferLib.safeTransfer(
                 erc20,
                 payable(_receiver),
@@ -711,7 +713,7 @@ contract MADMarketplace1155 is
         }
         // update price and transfer fee to recipient
         uint256 fee = (_price * feePercent) / basisPoints;
-        if (paymentTokenAddress != address(0)) {
+        if (address(erc20) != address(0)) {
             SafeTransferLib.safeTransfer(
                 erc20,
                 payable(recipient),
@@ -724,7 +726,7 @@ contract MADMarketplace1155 is
             );
         }
         // transfer remaining value to seller
-        if (paymentTokenAddress != address(0)) {
+        if (address(erc20) != address(0)) {
             SafeTransferLib.safeTransfer(
                 erc20,
                 payable(_order.seller),
@@ -771,21 +773,46 @@ contract MADMarketplace1155 is
             .token
             .royaltyInfo(_order.tokenId, _price);
         // transfer royalties
-        SafeTransferLib.safeTransferETH(
-            payable(_receiver),
-            _amount
-        );
+        if (address(erc20) != address(0)) {
+            SafeTransferLib.safeTransfer(
+                erc20,
+                payable(_receiver),
+                _amount
+            );
+        } else {
+            SafeTransferLib.safeTransferETH(
+                payable(_receiver),
+                _amount
+            );
+        }
         // update price and transfer fee to recipient
         uint256 fee = (_price * feePercent) / basisPoints;
-        SafeTransferLib.safeTransferETH(
-            payable(recipient),
-            fee
-        );
+
+        if (address(erc20) != address(0)) {
+            SafeTransferLib.safeTransfer(
+                erc20,
+                payable(recipient),
+                fee
+            );
+        } else {
+            SafeTransferLib.safeTransferETH(
+                payable(recipient),
+                fee
+            );
+        }
         // transfer remaining value to seller
-        SafeTransferLib.safeTransferETH(
-            payable(_order.seller),
-            (_price - (_amount + fee))
-        );
+        if (address(erc20) != address(0)) {
+            SafeTransferLib.safeTransfer(
+                erc20,
+                payable(_order.seller),
+                (_price - (_amount + fee))
+            );
+        } else {
+            SafeTransferLib.safeTransferETH(
+                payable(_order.seller),
+                (_price - (_amount + fee))
+            );
+        }
 
         emit Claim(
             _order.token,
@@ -819,14 +846,28 @@ contract MADMarketplace1155 is
         //     _order.amount
         // );
         uint256 fee = (_price * feePercent) / basisPoints;
-        SafeTransferLib.safeTransferETH(
-            payable(recipient),
-            fee
-        );
-        SafeTransferLib.safeTransferETH(
-            payable(_order.seller),
-            _price - fee
-        );
+
+        if (address(erc20) != address(0)) {
+            SafeTransferLib.safeTransfer(
+                erc20,
+                payable(recipient),
+                fee
+            );
+            SafeTransferLib.safeTransfer(
+                erc20,
+                payable(_order.seller),
+                _price - fee
+            );
+        } else {
+            SafeTransferLib.safeTransferETH(
+                payable(recipient),
+                fee
+            );
+            SafeTransferLib.safeTransferETH(
+                payable(_order.seller),
+                _price - fee
+            );
+        }
         emit Claim(
             _order.token,
             _order.tokenId,

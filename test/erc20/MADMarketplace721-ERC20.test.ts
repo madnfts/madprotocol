@@ -75,7 +75,7 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
     it("Marketplace should initialize with ERC20 payment token", async () => {
       expect(m721).to.be.ok;
       expect(await m721.callStatic.name()).to.eq("market");
-      expect(await m721.paymentTokenAddress()).to.eq(erc20.address);
+      expect(await m721.erc20()).to.eq(erc20.address);
       expect(await m721.recipient()).to.eq(owner.address);
       expect(await m721.minOrderDuration()).to.eq(300);
       expect(await m721.minAuctionIncrement()).to.eq(300);

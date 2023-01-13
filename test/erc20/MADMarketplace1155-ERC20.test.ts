@@ -89,7 +89,7 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
       const tx = await m1155.setPaymentToken(erc20.address);
 
       expect(tx).to.be.ok;
-      expect(await m1155.callStatic.paymentTokenAddress()).to.eq(
+      expect(await m1155.callStatic.erc20()).to.eq(
         erc20.address,
       );
       await expect(

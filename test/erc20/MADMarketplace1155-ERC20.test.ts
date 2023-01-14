@@ -309,7 +309,7 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
         MarketplaceErrors.WrongPrice,
       );
     });
-    it("Should bid and win token with ERC20, distribute ERC20 splitter and fees", async () => {
+    it("Should bid, then out bid, and win token with ERC20, distribute ERC20 splitter and fees", async () => {
       // acc02 = seller
       // acc01 = buyer
 
@@ -339,7 +339,7 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
       );
       
       // Mint the token with erc20
-      erc20.connect(acc02).approve(r1155.address, ethers.utils.parseEther("0.25"))
+      await erc20.connect(acc02).approve(r1155.address, ethers.utils.parseEther("0.25"))
       await r1155
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address, 1);
@@ -349,27 +349,30 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
         await erc20.balanceOf(acc02.address)
       ).to.equal(erc20Balance.sub(ethers.utils.parseEther("0.25")))
 
-      // Create marketplace order
+      // List token
       const tx = await min.connect(acc02).setApprovalForAll(m1155.address, true);
       const blockTimestamp = (await m1155.provider.getBlock(tx.blockNumber || 0)).timestamp;
       const fpTx = await m1155
         .connect(acc02)
-        .englishAuction(min.address, 1, 1, price, blockTimestamp + 301);
+        .englishAuction(min.address, 1, 1, ethers.utils.parseEther("0.1"), blockTimestamp + 301);
       const fpRc: ContractReceipt = await fpTx.wait();
       const fpBn = fpRc.blockNumber;
       const fpOrderId = getOrderId1155(
         fpBn, min.address, 1, 1, acc02.address,
       );
       
-      // Set ERC20 balances and approve for maretplace purchase
-      const erc20Tx = await erc20.connect(acc01).approve(m1155.address, price)
-      expect(erc20Tx).to.be.ok
-      const result = await erc20.callStatic.allowance(acc01.address, m1155.address)
-      expect(result).to.equal(price)
-      
-      // Bid for the token and wait for auction to close and claim 
+      // Bid for the token
+      await erc20.connect(acc01).approve(m1155.address, ethers.utils.parseEther("0.1"))
       const bidTx = await m1155.connect(acc01).bid(fpOrderId);
       expect(bidTx).to.be.ok
+      await mine(300);
+      
+      // Bid again for the token with a higher price
+      await erc20.connect(acc01).approve(m1155.address, price)
+      const bidTx2 = await m1155.connect(acc01).bid(fpOrderId);
+      expect(bidTx2).to.be.ok
+
+      // wait for auction to close and claim 
       await mine(600);
       const claimTx = await m1155.connect(acc01).claim(fpOrderId);
       

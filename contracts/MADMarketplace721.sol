@@ -188,10 +188,18 @@ contract MADMarketplace721 is
         }
 
         if (lastBidPrice != 0) {
-            SafeTransferLib.safeTransferETH(
-                order.lastBidder,
-                lastBidPrice
-            );
+            if (address(erc20) != address(0)) {
+                SafeTransferLib.safeTransfer(
+                    erc20,
+                    order.lastBidder,
+                    lastBidPrice
+                );
+            } else {
+                SafeTransferLib.safeTransferETH(
+                    order.lastBidder,
+                    lastBidPrice
+                );
+            }
         }
 
         emit Bid(

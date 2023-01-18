@@ -9,19 +9,19 @@ import {
   ERC1155Whitelist,
   MockERC20,
   SplitterImpl,
-} from "../../src/types";
-import { WhitelistErrors } from "./../utils/errors";
+} from "../../../src/types";
+import { WhitelistErrors } from "./../../utils/errors";
 import {
   getSignerAddrs,
   whitelistFixture1155ERC20,
-} from "./../utils/fixtures";
+} from "./../../utils/fixtures";
 import {
   ERC165Interface,
   ERC1155Interface,
   ERC1155MetadataInterface,
   ERC2981Interface,
   getInterfaceID,
-} from "./../utils/interfaces";
+} from "./../../utils/interfaces";
 
 describe("ERC1155Whitelist - ERC20", () => {
   /*

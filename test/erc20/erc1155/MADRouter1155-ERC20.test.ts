@@ -14,10 +14,10 @@ import {
   MADMarketplace1155,
   MADRouter1155,
   MockERC20,
-} from "../../src/types";
-import { BasicErrors, LazyErrors, MinimalErrors, RouterErrors, WhitelistErrors } from "../utils/errors";
-import { getSignerAddrs } from "../utils/fixtures";
-import { dead, madFixture1155E } from "../utils/madFixtures";
+} from "../../../src/types";
+import { BasicErrors, LazyErrors, MinimalErrors, RouterErrors, WhitelistErrors } from "../../utils/errors";
+import { getSignerAddrs } from "../../utils/fixtures";
+import { dead, madFixture1155E } from "../../utils/madFixtures";
 
 describe("MADRouter1155 - ERC20", () => {
   type WalletWithAddress = Wallet & SignerWithAddress;

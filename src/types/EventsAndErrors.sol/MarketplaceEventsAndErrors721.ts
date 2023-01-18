@@ -24,7 +24,7 @@ export interface MarketplaceEventsAndErrors721Interface
   functions: {};
 
   events: {
-    "AuctionSettingsUpdated(uint256,uint256,uint256)": EventFragment;
+    "AuctionSettingsUpdated(uint256,uint256,uint256,uint256)": EventFragment;
     "Bid(address,uint256,bytes32,address,uint256)": EventFragment;
     "CancelOrder(address,uint256,bytes32,address)": EventFragment;
     "Claim(address,uint256,bytes32,address,address,uint256)": EventFragment;
@@ -50,9 +50,10 @@ export interface AuctionSettingsUpdatedEventObject {
   newMinDuration: BigNumber;
   newIncrement: BigNumber;
   newMinBidValue: BigNumber;
+  newMaxDuration: BigNumber;
 }
 export type AuctionSettingsUpdatedEvent = TypedEvent<
-  [BigNumber, BigNumber, BigNumber],
+  [BigNumber, BigNumber, BigNumber, BigNumber],
   AuctionSettingsUpdatedEventObject
 >;
 
@@ -188,15 +189,17 @@ export interface MarketplaceEventsAndErrors721 extends BaseContract {
   callStatic: {};
 
   filters: {
-    "AuctionSettingsUpdated(uint256,uint256,uint256)"(
+    "AuctionSettingsUpdated(uint256,uint256,uint256,uint256)"(
       newMinDuration?: PromiseOrValue<BigNumberish> | null,
       newIncrement?: PromiseOrValue<BigNumberish> | null,
-      newMinBidValue?: PromiseOrValue<BigNumberish> | null
+      newMinBidValue?: null,
+      newMaxDuration?: PromiseOrValue<BigNumberish> | null
     ): AuctionSettingsUpdatedEventFilter;
     AuctionSettingsUpdated(
       newMinDuration?: PromiseOrValue<BigNumberish> | null,
       newIncrement?: PromiseOrValue<BigNumberish> | null,
-      newMinBidValue?: PromiseOrValue<BigNumberish> | null
+      newMinBidValue?: null,
+      newMaxDuration?: PromiseOrValue<BigNumberish> | null
     ): AuctionSettingsUpdatedEventFilter;
 
     "Bid(address,uint256,bytes32,address,uint256)"(

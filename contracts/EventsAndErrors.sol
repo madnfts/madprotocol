@@ -151,7 +151,8 @@ interface MarketplaceEventsAndErrors721 {
     event AuctionSettingsUpdated(
         uint256 indexed newMinDuration,
         uint256 indexed newIncrement,
-        uint256 indexed newMinBidValue
+        uint256 newMinBidValue,
+        uint256 indexed newMaxDuration
     );
 
     event MakeOrder(
@@ -229,7 +230,8 @@ interface MarketplaceEventsAndErrors1155 {
     event AuctionSettingsUpdated(
         uint256 indexed newMinDuration,
         uint256 indexed newIncrement,
-        uint256 indexed newMinBidValue
+        uint256 newMinBidValue,
+        uint256 indexed newMaxDuration
     );
 
     event MakeOrder(

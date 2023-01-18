@@ -15,11 +15,11 @@ import {
   ERC721Lazy,
   MockERC20,
   SplitterImpl,
-} from "../src/types";
-import { LazyErrors } from "./utils/errors";
+} from "../../../src/types";
+import { LazyErrors } from "./../../utils/errors";
 import {
-  lazyFixture721, // erc20Fixture,
-} from "./utils/fixtures";
+  lazyFixture721ERC20, // erc20Fixture,
+} from "./../../utils/fixtures";
 import {
   ERC165Interface,
   ERC721Interface,
@@ -27,9 +27,9 @@ import {
   ERC2981Interface,
   Voucher,
   getInterfaceID,
-} from "./utils/interfaces";
+} from "./../../utils/interfaces";
 
-describe("ERC721Lazy", () => {
+describe("ERC721Lazy - ERC20", () => {
   /*
   For the sake of solely testing the nft functionalities, we consider
   the user as the contract's owner, and the marketplace just as the
@@ -68,6 +68,7 @@ describe("ERC721Lazy", () => {
   let signer: Wallet;
   let sigSplit: Signature;
   let sigSplit2: Signature;
+  let erc20: MockERC20;
 
   const fundAmount: BigNumber =
     ethers.utils.parseEther("10000");
@@ -95,11 +96,12 @@ describe("ERC721Lazy", () => {
       sigSplit2,
       voucher,
       voucher2,
-    } = await loadFixture(lazyFixture721));
+      erc20,
+    } = await loadFixture(lazyFixture721ERC20));
   });
 
   describe("Init", async () => {
-    it("Splitter and ERC721 should initialize", async () => {
+    it("Splitter and ERC721 should initialize with ERC20", async () => {
       await lazy.deployed();
       await splitter.deployed();
       expect(lazy).to.be.ok;
@@ -108,6 +110,7 @@ describe("ERC721Lazy", () => {
       // deployment settings check
       expect(await lazy.callStatic.name()).to.eq("721Lazy");
       expect(await lazy.callStatic.symbol()).to.eq("LAZY");
+      expect(await lazy.callStatic.erc20()).to.eq(erc20.address);
 
       await expect(await lazy.deployTransaction)
         .to.emit(lazy, "RoyaltyFeeSet")
@@ -138,8 +141,6 @@ describe("ERC721Lazy", () => {
       // can't be eq to ethAmount due to contract deployment cost
       res = await ethers.provider.getBalance(owner.address);
       expect(res.toString()).to.have.lengthOf(22);
-      // console.log(res); // lengthOf = 22
-      // console.log(ethAmount); // lengthOf = 23
 
       // those should eq to hardhat prefunded account's value
       expect(
@@ -158,10 +159,8 @@ describe("ERC721Lazy", () => {
   });
 
   describe("Lazy mint", async () => {
-    it("Should mint, update storage and emit events", async () => {
-      // const sigSplit = ethers.utils.splitSignature(signature);
+    it("Should mint with ERC20, update storage and emit events", async () => {
       const dead = ethers.constants.AddressZero;
-      // const cDomain = await lazy.DOMAIN_SEPARATOR();
       const deploy: ContractTransaction =
         await lazy.deployTransaction;
       const rc: ContractReceipt = await deploy.wait();
@@ -180,12 +179,14 @@ describe("ERC721Lazy", () => {
         mad.address,
       );
       const sup = await lazy.callStatic.totalSupply();
+
+      const erc20ApproveTx = await erc20.connect(owner).approve(lazy.address, price.mul(amount));
+      expect(erc20ApproveTx).to.be.ok
       const tx = await lazy.lazyMint(
         voucher,
         sigSplit.v,
         sigSplit.r,
         sigSplit.s,
-        { value: price.mul(amount) },
       );
       const sup2 = lazy.callStatic.totalSupply();
       const ownerOfA = lazy.callStatic.ownerOf(1);
@@ -227,20 +228,19 @@ describe("ERC721Lazy", () => {
         .withArgs(dead, mad.address, 27);
     });
     it("Should revert if voucher has already been used", async () => {
-      // const sigSplit = ethers.utils.splitSignature(signature);
+      const erc20ApproveTx = await erc20.connect(owner).approve(lazy.address, price.mul(amount));
+      expect(erc20ApproveTx).to.be.ok
       await lazy.lazyMint(
         voucher,
         sigSplit.v,
         sigSplit.r,
         sigSplit.s,
-        { value: price.mul(amount) },
       );
       const tx = lazy.lazyMint(
         voucher,
         sigSplit.v,
         sigSplit.r,
         sigSplit.s,
-        { value: price.mul(amount) },
       );
 
       await expect(tx).to.be.revertedWithCustomError(
@@ -249,13 +249,14 @@ describe("ERC721Lazy", () => {
       );
     });
     it("Should revert if signature is invalid", async () => {
+      const erc20ApproveTx = await erc20.connect(owner).approve(lazy.address, price.mul(amount));
+      expect(erc20ApproveTx).to.be.ok
       const wSigSplit = ethers.utils.splitSignature(wrongSig);
       const tx = lazy.lazyMint(
         voucher,
         wSigSplit.v,
         wSigSplit.r,
         wSigSplit.s,
-        { value: price.mul(amount) },
       );
 
       await expect(tx).to.be.revertedWithCustomError(
@@ -264,13 +265,13 @@ describe("ERC721Lazy", () => {
       );
     });
     it("Should revert if price is wrong", async () => {
-      // const sigSplit = ethers.utils.splitSignature(signature);
+      const erc20ApproveTx = await erc20.connect(owner).approve(lazy.address, price);
+      expect(erc20ApproveTx).to.be.ok
       const tx = lazy.lazyMint(
         voucher,
         sigSplit.v,
         sigSplit.r,
         sigSplit.s,
-        { value: price },
       );
 
       await expect(tx).to.be.revertedWithCustomError(
@@ -295,29 +296,20 @@ describe("ERC721Lazy", () => {
         LazyErrors.Unauthorized,
       );
     });
-    it("Should withdraw and update balances", async () => {
-      const prevBal = BigNumber.from(2).pow(255);
-      const ERC20 = await ethers.getContractFactory(
-        "MockERC20",
-      );
-      const erc20 = (await ERC20.deploy(
-        prevBal,
-      )) as MockERC20;
-
+    it("Should withdraw ERC20 and update balances", async () => {
+      const erc20ApproveTx = await erc20.connect(owner).approve(lazy.address, price.mul(amount));
+      expect(erc20ApproveTx).to.be.ok
       await lazy.lazyMint(
         voucher,
         sigSplit.v,
         sigSplit.r,
         sigSplit.s,
-        { value: price.mul(amount) }, // amount := 30
       );
-      await erc20.mint(lazy.address, price);
-      const tx = await lazy.withdrawERC20(erc20.address);
       const addrs = [
         mad.address,
         amb.address,
         owner.address,
-        lazy.address,
+        lazy.address
       ];
       const shares = [
         ethers.BigNumber.from(1000),
@@ -331,41 +323,13 @@ describe("ERC721Lazy", () => {
         "-30000000000000000000",
       ];
 
-      const vals2 = [
-        shares[0].mul(price).div(10_000),
-        shares[1].mul(price).div(10_000),
-        shares[2].mul(price).div(10_000).add(prevBal),
-      ];
-
       await expect(() =>
-        lazy.withdraw(),
-      ).to.changeEtherBalances(addrs, vals);
+        lazy.withdrawERC20(erc20.address)
+      ).to.changeTokenBalances(erc20, addrs, vals);
 
-      expect(tx).to.be.ok;
-      expect(
-        await erc20.callStatic.balanceOf(addrs[0]),
-      ).to.eq(vals2[0]);
-      expect(
-        await erc20.callStatic.balanceOf(addrs[1]),
-      ).to.eq(vals2[1]);
-      expect(
-        await erc20.callStatic.balanceOf(addrs[2]),
-      ).to.eq(vals2[2]);
-
-      await expect(
-        lazy.connect(acc01).withdraw(),
-      ).to.be.revertedWith(LazyErrors.Unauthorized);
       await expect(
         lazy.connect(acc02).withdrawERC20(erc20.address),
       ).to.be.revertedWith(LazyErrors.Unauthorized);
-
-      expect(await erc20.balanceOf(lazy.address)).to.eq(
-        ethers.constants.Zero,
-      );
-
-      expect(
-        await ethers.provider.getBalance(lazy.address),
-      ).to.eq(ethers.constants.Zero);
     });
   });
 
@@ -376,12 +340,13 @@ describe("ERC721Lazy", () => {
       ).to.be.revertedWith(LazyErrors.Unauthorized);
     });
     it("Should revert if id is already burnt/hasn't been minted", async () => {
+      const erc20ApproveTx = await erc20.connect(owner).approve(lazy.address, price.mul(amount));
+      expect(erc20ApproveTx).to.be.ok
       await lazy.lazyMint(
         voucher,
         sigSplit.v,
         sigSplit.r,
         sigSplit.s,
-        { value: price.mul(amount) },
       );
       const ids = [1, 33, 7];
       const tx = lazy.connect(owner).burn(ids, owner.address);
@@ -401,24 +366,26 @@ describe("ERC721Lazy", () => {
         LazyErrors.DecrementOverflow,
       );
     });
-    it("Should mint, burn then mint again, update storage and emit event", async () => {
+    it("Should spend ERC20 to mint, burn then mint again, update storage and emit event", async () => {
+      const erc20ApproveTx = await erc20.connect(owner).approve(lazy.address, price.mul(amount));
+      expect(erc20ApproveTx).to.be.ok
       await lazy.lazyMint(
         voucher,
         sigSplit.v,
         sigSplit.r,
         sigSplit.s,
-        { value: price.mul(amount) },
       );
 
       const ids = [1, 13, 20, 30];
       const tx = await lazy.burn(ids, owner.address);
 
+      const erc20ApproveTx2 = await erc20.connect(owner).approve(lazy.address, price.mul(amount));
+      expect(erc20ApproveTx2).to.be.ok
       await lazy.lazyMint(
         voucher2,
         sigSplit2.v,
         sigSplit2.r,
         sigSplit2.s,
-        { value: price.mul(amount) },
       );
 
       const dead = ethers.constants.AddressZero;
@@ -467,13 +434,14 @@ describe("ERC721Lazy", () => {
     });
 
     it("Should retrive baseURI and total supply", async () => {
+      const erc20ApproveTx = await erc20.connect(owner).approve(lazy.address, price.mul(amount));
+      expect(erc20ApproveTx).to.be.ok
       const res = "0x70616b6d616e";
       await lazy.lazyMint(
         voucher,
         sigSplit.v,
         sigSplit.r,
         sigSplit.s,
-        { value: price.mul(amount) },
       );
       const base = await lazy.callStatic.getBaseURI();
       const sup = await lazy.callStatic.totalSupply();
@@ -489,13 +457,15 @@ describe("ERC721Lazy", () => {
       expect(sup).to.eq(30);
       expect(sup2).to.eq(28);
     });
+    
     it("Should retrive tokenURI and revert if not yet minted", async () => {
+      const erc20ApproveTx = await erc20.connect(owner).approve(lazy.address, price.mul(amount));
+      expect(erc20ApproveTx).to.be.ok
       await lazy.lazyMint(
         voucher,
         sigSplit.v,
         sigSplit.r,
         sigSplit.s,
-        { value: price.mul(amount) },
       );
       const tx = await lazy.callStatic.tokenURI(1);
 
@@ -508,6 +478,7 @@ describe("ERC721Lazy", () => {
         LazyErrors.NotMintedYet,
       );
     });
+
     it("Should query royalty info", async () => {
       const share = BigNumber.from(750);
       const base = BigNumber.from(10000);

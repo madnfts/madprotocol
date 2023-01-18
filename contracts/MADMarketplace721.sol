@@ -40,12 +40,12 @@ contract MADMarketplace721 is
 
     // uint256 constant NAME_SLOT =
     // 0x8b30951df380b6b10da747e1167dd8e40bf8604c88c75b245dc172767f3b7320;
-    uint256 public feeVal2 = 1.0e3;
-    uint256 public feeVal3 = 2.5e2;
+    uint256 public feeVal2 = 1.0e3; // 1000
+    uint256 public feeVal3 = 2.5e2; // 250
 
     // uint16 public constant feePercent1 = 2.5e2;
     // uint16 public constant feePercent0 = 1.0e3;
-    uint16 public constant basisPoints = 1.0e4;
+    uint16 public constant basisPoints = 1.0e4; // 10000
 
     /// @dev token => id => orderID[]
     mapping(IERC721 => mapping(uint256 => bytes32[]))
@@ -62,6 +62,7 @@ contract MADMarketplace721 is
         public feeSelector;
 
     uint256 public minOrderDuration;
+    uint256 public maxOrderDuration;
     uint256 public minAuctionIncrement;
     uint256 public minBidValue;
 
@@ -88,7 +89,8 @@ contract MADMarketplace721 is
         updateSettings(
             300, // 5 min 
             _minOrderDuration,
-            20 // 5% (1/20th)
+            20, // 5% (1/20th)
+            31536000 // 24 months
         );
     }
 
@@ -424,12 +426,15 @@ contract MADMarketplace721 is
     function updateSettings(
         uint256 _minAuctionIncrement,
         uint256 _minOrderDuration,
-        uint256 _minBidValue
+        uint256 _minBidValue,
+        uint256 _maxOrderDuration
     ) public onlyOwner {
         // minOrderDuration = _minOrderDuration;
         // minAuctionIncrement = _minAuctionIncrement;
         // minBidValue = _minBidValue;
-        require(_minAuctionIncrement <= 1200 && _minOrderDuration <= 600 && _minBidValue > 0, "Invalid Settings");
+        // maxOrderDuration = _maxOrderDuration;
+        require((_minAuctionIncrement <= 1200 && _minOrderDuration <= 600 && _minBidValue > 0) 
+            || _maxOrderDuration >= _minOrderDuration, "Invalid Settings");
 
         assembly {
             sstore(minOrderDuration.slot, _minOrderDuration)
@@ -438,12 +443,14 @@ contract MADMarketplace721 is
                 _minAuctionIncrement
             )
             sstore(minBidValue.slot, _minBidValue)
+            sstore(maxOrderDuration.slot, _maxOrderDuration)
         }
 
         emit AuctionSettingsUpdated(
             _minOrderDuration,
             _minAuctionIncrement,
-            _minBidValue
+            _minBidValue,
+            _maxOrderDuration
         );
     }
 
@@ -902,6 +909,16 @@ contract MADMarketplace721 is
                             sload(minOrderDuration.slot)
                         )
                     )
+                )
+            ) {
+                mstore(0x00, 0x921dbfec)
+                revert(0x1c, 0x04)
+            }
+            // Exceeds max time - NeedMoreTime()
+            if iszero(
+                lt(
+                    sub(_endTime, timestamp()),
+                    sload(maxOrderDuration.slot)
                 )
             ) {
                 mstore(0x00, 0x921dbfec)

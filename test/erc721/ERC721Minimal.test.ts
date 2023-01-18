@@ -14,16 +14,16 @@ import {
   ERC721Minimal,
   MockERC20,
   SplitterImpl,
-} from "../src/types";
-import { MinimalErrors } from "./utils/errors";
-import { minimalFixture721 } from "./utils/fixtures";
+} from "../../src/types";
+import { MinimalErrors } from "./../utils/errors";
+import { minimalFixture721 } from "./../utils/fixtures";
 import {
   ERC165Interface,
   ERC721Interface,
   ERC721MetadataInterface,
   ERC2981Interface,
   getInterfaceID,
-} from "./utils/interfaces";
+} from "./../utils/interfaces";
 
 // hint:
 // import { BinaryLike, BinaryToTextEncoding, Encoding } from "crypto";

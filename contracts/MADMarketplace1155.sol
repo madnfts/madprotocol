@@ -72,6 +72,7 @@ contract MADMarketplace1155 is
     uint256 public minOrderDuration;
     uint256 public minAuctionIncrement;
     uint256 public minBidValue;
+    uint256 public maxOrderDuration;
 
     address public recipient;
     FactoryVerifier public MADFactory1155;
@@ -90,7 +91,8 @@ contract MADMarketplace1155 is
         updateSettings(
             300, // 5 min
             _minOrderDuration,
-            20 // 5% (1/20th)
+            20, // 5% (1/20th)
+            31536000 // 24 months
         );
     }
 
@@ -427,16 +429,20 @@ contract MADMarketplace1155 is
     /// @param _minAuctionIncrement Min. time threshold for Auction extension.
     /// @param _minOrderDuration Min. order listing duration
     /// @param _minBidValue Min. value for a bid to be considered.
+    /// @param _maxOrderDuration Max. order listing duration.
     function updateSettings(
         uint256 _minAuctionIncrement,
         uint256 _minOrderDuration,
-        uint256 _minBidValue
+        uint256 _minBidValue,
+        uint256 _maxOrderDuration
     ) public onlyOwner {
 
         // minOrderDuration = _minOrderDuration;
         // minAuctionIncrement = _minAuctionIncrement;
         // minBidValue = _minBidValue;
-        require(_minAuctionIncrement <= 1200 && _minOrderDuration <= 600 && _minBidValue > 0, "Invalid Settings");
+        // maxOrderDuration = _maxOrderDuration;
+        require((_minAuctionIncrement <= 1200 && _minOrderDuration <= 600 && _minBidValue > 0) 
+            || _maxOrderDuration >= _minOrderDuration, "Invalid Settings");
 
         assembly {
             sstore(minOrderDuration.slot, _minOrderDuration)
@@ -445,12 +451,14 @@ contract MADMarketplace1155 is
                 _minAuctionIncrement
             )
             sstore(minBidValue.slot, _minBidValue)
+            sstore(maxOrderDuration.slot, _maxOrderDuration)
         }
 
         emit AuctionSettingsUpdated(
             _minOrderDuration,
             _minAuctionIncrement,
-            _minBidValue
+            _minBidValue,
+            _maxOrderDuration
         );
     }
 
@@ -880,6 +888,16 @@ contract MADMarketplace1155 is
                             sload(minOrderDuration.slot)
                         )
                     )
+                )
+            ) {
+                mstore(0x00, 0x921dbfec)
+                revert(0x1c, 0x04)
+            }
+            // Exceeds max time - NeedMoreTime()
+            if iszero(
+                lt(
+                    sub(_endTime, timestamp()),
+                    sload(maxOrderDuration.slot)
                 )
             ) {
                 mstore(0x00, 0x921dbfec)

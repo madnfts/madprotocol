@@ -15,11 +15,11 @@ import {
   ERC1155Lazy,
   MockERC20,
   SplitterImpl,
-} from "../src/types";
-import { LazyErrors } from "./utils/errors";
+} from "../../src/types";
+import { LazyErrors } from "./../utils/errors";
 import {
-  lazyFixture1155, // erc20Fixture,
-} from "./utils/fixtures";
+  lazyFixture1155, lazyFixture1155ERC20, // erc20Fixture,
+} from "./../utils/fixtures";
 import {
   ERC165Interface,
   ERC1155Interface,
@@ -28,7 +28,7 @@ import {
   UserBatch,
   Voucher,
   getInterfaceID,
-} from "./utils/interfaces";
+} from "./../utils/interfaces";
 
 describe("ERC1155Lazy", () => {
   /* 
@@ -62,17 +62,21 @@ describe("ERC1155Lazy", () => {
   // let erc20: MockERC20;
   let vSig: string;
   let vSigSplit: Signature;
+  let vSigSplit2: Signature;
   let vRecover: string;
   let ubRecover: string;
   let ubSig: string;
   let ubSigSplit: Signature;
   let wrongSig: string;
   let voucher: Voucher;
+  let voucher2: Voucher;
   let userBatch: UserBatch;
   let signerAddr: string;
   let domainCheck: string;
   let signer: Wallet;
+  let erc20: MockERC20;
 
+  const erc20Balance: BigNumber = ethers.utils.parseEther("10000");
   const fundAmount: BigNumber =
     ethers.utils.parseEther("10000");
   const price: BigNumber = ethers.utils.parseEther("1");
@@ -92,6 +96,7 @@ describe("ERC1155Lazy", () => {
       lazy,
       vSig,
       vSigSplit,
+      vSigSplit2,
       vRecover,
       ubSig,
       ubSigSplit,
@@ -101,12 +106,16 @@ describe("ERC1155Lazy", () => {
       domainCheck,
       wrongSig,
       voucher,
+      voucher2,
       userBatch,
-    } = await loadFixture(lazyFixture1155));
+      erc20
+    } = await loadFixture(lazyFixture1155ERC20));
+    await erc20.transfer(acc01.address, erc20Balance);
+    await erc20.transfer(acc02.address, erc20Balance);
   });
 
   describe("Init", async () => {
-    it("Splitter and ERC1155 should initialize", async () => {
+    it("Splitter and ERC1155 should initialize with ERC20", async () => {
       await lazy.deployed();
       await splitter.deployed();
       expect(lazy).to.be.ok;
@@ -121,6 +130,10 @@ describe("ERC1155Lazy", () => {
         .and.to.emit(lazy, "SignerUpdated")
         .withArgs(signer.address);
 
+      expect(await lazy.callStatic.erc20()).to.eq(
+        erc20.address
+      );
+      
       // splitter settings
       expect(await lazy.callStatic.splitter()).to.eq(
         splitter.address,
@@ -138,6 +151,7 @@ describe("ERC1155Lazy", () => {
         owner.address,
       );
     });
+
     it("accounts have been funded", async () => {
       // can't be eq to ethAmount due to contract deployment cost
       res = await ethers.provider.getBalance(owner.address);
@@ -160,6 +174,7 @@ describe("ERC1155Lazy", () => {
       ).to.eq(fundAmount);
     });
   });
+
   describe("Lazy mint", async () => {
     it("Should mint, update storage and emit events", async () => {
       const dead = ethers.constants.AddressZero;
@@ -184,12 +199,13 @@ describe("ERC1155Lazy", () => {
         21,
       );
       const sup = await lazy.callStatic.totalSupply();
+      
+      await erc20.connect(owner).approve(lazy.address, price.mul(amount))
       const tx = await lazy.lazyMint(
         voucher,
         vSigSplit.v,
         vSigSplit.r,
-        vSigSplit.s,
-        { value: price.mul(amount) },
+        vSigSplit.s
       );
       const sup2 = lazy.callStatic.totalSupply();
       // const ownerOfA = lazy.callStatic.ownerOf(1);
@@ -229,21 +245,21 @@ describe("ERC1155Lazy", () => {
         .and.to.emit(lazy, "TransferSingle")
         .withArgs(owner.address, dead, mad.address, 21, 1);
     });
+
     it("Should revert if voucher has already been used", async () => {
       // const sigSplit = ethers.utils.splitSignature(signature);
+      await erc20.connect(owner).approve(lazy.address, price.mul(amount))
       await lazy.lazyMint(
         voucher,
         vSigSplit.v,
         vSigSplit.r,
-        vSigSplit.s,
-        { value: price.mul(amount) },
+        vSigSplit.s
       );
       const tx = lazy.lazyMint(
         voucher,
         vSigSplit.v,
         vSigSplit.r,
-        vSigSplit.s,
-        { value: price.mul(amount) },
+        vSigSplit.s
       );
 
       await expect(tx).to.be.revertedWithCustomError(
@@ -251,14 +267,15 @@ describe("ERC1155Lazy", () => {
         LazyErrors.UsedVoucher,
       );
     });
+
     it("Should revert if signature is invalid", async () => {
       const wSigSplit = ethers.utils.splitSignature(wrongSig);
+      await erc20.connect(owner).approve(lazy.address, price.mul(amount))
       const tx = lazy.lazyMint(
         voucher,
         wSigSplit.v,
         wSigSplit.r,
-        wSigSplit.s,
-        { value: price.mul(amount) },
+        wSigSplit.s
       );
 
       await expect(tx).to.be.revertedWithCustomError(
@@ -266,13 +283,14 @@ describe("ERC1155Lazy", () => {
         LazyErrors.InvalidSigner,
       );
     });
+
     it("Should revert if price is wrong", async () => {
+      await erc20.connect(owner).approve(lazy.address, price)
       const tx = lazy.lazyMint(
         voucher,
         vSigSplit.v,
         vSigSplit.r,
-        vSigSplit.s,
-        { value: price },
+        vSigSplit.s
       );
 
       await expect(tx).to.be.revertedWithCustomError(
@@ -281,6 +299,7 @@ describe("ERC1155Lazy", () => {
       );
     });
   });
+
   describe("Lazy batch mint", async () => {
     it("Should mint, update storage and emit events", async () => {
       const dead = ethers.constants.AddressZero;
@@ -309,12 +328,12 @@ describe("ERC1155Lazy", () => {
       );
       const sup = await lazy.callStatic.totalSupply();
       
+      await erc20.connect(owner).approve(lazy.address, price.mul(ethers.BigNumber.from(3)))
       const tx = await lazy.lazyMintBatch(
         userBatch,
         ubSigSplit.v,
         ubSigSplit.r,
-        ubSigSplit.s,
-        { value: price.mul(ethers.BigNumber.from(3)) },
+        ubSigSplit.s
       );
       const sup2 = lazy.callStatic.totalSupply();
       // const ownerOfA = lazy.callStatic.ownerOf(1);
@@ -358,20 +377,21 @@ describe("ERC1155Lazy", () => {
           amounts,
         );
     });
+
     it("Should revert if voucherId has already been used", async () => {
+      await erc20.connect(owner).approve(lazy.address, price.mul(ethers.BigNumber.from(3)))
       await lazy.lazyMintBatch(
         userBatch,
         ubSigSplit.v,
         ubSigSplit.r,
-        ubSigSplit.s,
-        { value: price.mul(ethers.BigNumber.from(3)) },
+        ubSigSplit.s
       );
+      await erc20.connect(owner).approve(lazy.address, price.mul(ethers.BigNumber.from(3)))
       const tx = lazy.lazyMintBatch(
         userBatch,
         ubSigSplit.v,
         ubSigSplit.r,
-        ubSigSplit.s,
-        { value: price.mul(ethers.BigNumber.from(3)) },
+        ubSigSplit.s
       );
 
       await expect(tx).to.be.revertedWithCustomError(
@@ -379,14 +399,15 @@ describe("ERC1155Lazy", () => {
         LazyErrors.UsedVoucher,
       );
     });
+
     it("Should revert if signature is invalid", async () => {
       const wSigSplit = ethers.utils.splitSignature(wrongSig);
+      await erc20.connect(owner).approve(lazy.address, price.mul(ethers.BigNumber.from(3)))
       const tx = lazy.lazyMintBatch(
         userBatch,
         wSigSplit.v,
         wSigSplit.r,
-        wSigSplit.s,
-        { value: price.mul(ethers.BigNumber.from(3)) },
+        wSigSplit.s
       );
 
       await expect(tx).to.be.revertedWithCustomError(
@@ -394,13 +415,14 @@ describe("ERC1155Lazy", () => {
         LazyErrors.InvalidSigner,
       );
     });
+
     it("Should revert if price is wrong", async () => {
+      await erc20.connect(owner).approve(lazy.address, price)
       const tx = lazy.lazyMintBatch(
         userBatch,
         ubSigSplit.v,
         ubSigSplit.r,
-        ubSigSplit.s,
-        { value: price },
+        ubSigSplit.s
       );
 
       await expect(tx).to.be.revertedWithCustomError(
@@ -425,24 +447,16 @@ describe("ERC1155Lazy", () => {
         LazyErrors.Unauthorized,
       );
     });
-    it("Should withdraw and update balances", async () => {
-      const prevBal = BigNumber.from(2).pow(255);
-      const ERC20 = await ethers.getContractFactory(
-        "MockERC20",
-      );
-      const erc20 = (await ERC20.deploy(
-        prevBal,
-      )) as MockERC20;
 
+    it("Should withdraw ERC20 and update balances", async () => {
+      await erc20.connect(owner).approve(lazy.address, price.mul(amount))
       await lazy.lazyMint(
         voucher,
         vSigSplit.v,
         vSigSplit.r,
-        vSigSplit.s,
-        { value: price.mul(amount) }, // amount := 30
+        vSigSplit.s, // amount := 30
       );
-      await erc20.mint(lazy.address, price);
-      const tx = await lazy.withdrawERC20(erc20.address);
+
       const addrs = [
         mad.address,
         amb.address,
@@ -461,87 +475,77 @@ describe("ERC1155Lazy", () => {
         "-30000000000000000000",
       ];
 
-      const vals2 = [
-        shares[0].mul(price).div(10_000),
-        shares[1].mul(price).div(10_000),
-        shares[2].mul(price).div(10_000).add(prevBal),
-      ];
-
       await expect(() =>
-        lazy.withdraw(),
-      ).to.changeEtherBalances(addrs, vals);
-
-      expect(tx).to.be.ok;
-      expect(
-        await erc20.callStatic.balanceOf(addrs[0]),
-      ).to.eq(vals2[0]);
-      expect(
-        await erc20.callStatic.balanceOf(addrs[1]),
-      ).to.eq(vals2[1]);
-      expect(
-        await erc20.callStatic.balanceOf(addrs[2]),
-      ).to.eq(vals2[2]);
+        lazy.withdrawERC20(erc20.address)
+      ).to.changeTokenBalances(erc20, addrs, vals);
 
       await expect(
-        lazy.connect(acc01).withdraw(),
-      ).to.be.revertedWith(LazyErrors.Unauthorized);
-      await expect(
-        lazy.connect(acc02).withdrawERC20(erc20.address),
+        lazy.connect(acc01).withdrawERC20(erc20.address),
       ).to.be.revertedWith(LazyErrors.Unauthorized);
 
       expect(await erc20.balanceOf(lazy.address)).to.eq(
         ethers.constants.Zero,
       );
-
-      expect(
-        await ethers.provider.getBalance(lazy.address),
-      ).to.eq(ethers.constants.Zero);
     });
   });
+  
   describe("Burn", async () => {
     it("Should revert if not owner", async () => {
       await expect(
-        lazy.connect(acc01).burn([acc01.address], [1], [1]),
+        lazy.connect(acc01).burn([acc01.address], [1], [1], acc01.address),
       ).to.be.revertedWith(LazyErrors.Unauthorized);
     });
+
     it("Should revert if id is already burnt/hasn't been minted", async () => {
+      await erc20.connect(owner).approve(lazy.address, price.mul(amount))
       await lazy.lazyMint(
         voucher,
         vSigSplit.v,
         vSigSplit.r,
-        vSigSplit.s,
-        { value: price.mul(amount) },
+        vSigSplit.s
       );
       const ids = [1, 33, 7];
-      const tx = lazy.connect(owner).burn([owner.address, owner.address, owner.address], ids, [1, 1, 1]);
+      const tx = lazy.connect(owner).burn([owner.address, owner.address, owner.address], ids, [1, 1, 1], owner.address);
 
       await expect(tx).to.be.revertedWith(
         LazyErrors.InvalidAmount,
       );
     });
+
     it("Should revert if ids length is less than 2", async () => {
       const Counters = await ethers.getContractFactory(
         "Counters",
       );
       await expect(
-        lazy.burn([owner.address], [1], [1]),
+        lazy.burn([owner.address], [1], [1], owner.address),
       ).to.be.revertedWithCustomError(
         Counters,
         LazyErrors.DecrementOverflow,
       );
     });
-    it("Should burn update storage and emit events", async () => {
+
+    it("Should mint, burn, mint again, update storage and emit events", async () => {
+      await erc20.connect(owner).approve(lazy.address, price.mul(amount))
       await lazy.lazyMint(
         voucher,
         vSigSplit.v,
         vSigSplit.r,
-        vSigSplit.s,
-        { value: price.mul(amount) },
+        vSigSplit.s
       );
 
       const ids = [1, 13, 20, 30];
-      const tx = await lazy.burn([voucher.users[0], voucher.users[1], voucher.users[1], voucher.users[2]], ids, [1, 1, 1, 1]);
+      const tx = await lazy.burn([voucher.users[0], voucher.users[1], voucher.users[1], voucher.users[2]], ids, [1, 1, 1, 1], owner.address);
+
+      await erc20.connect(owner).approve(lazy.address, price.mul(amount))
+      await lazy.lazyMint(
+        voucher2,
+        vSigSplit2.v,
+        vSigSplit2.r,
+        vSigSplit2.s
+      );
+
       const dead = ethers.constants.AddressZero;
+      const mintCounter = await lazy.callStatic.getMintCount();
       const bal1 = await lazy.callStatic.balanceOf(
         owner.address,
         1,
@@ -559,6 +563,7 @@ describe("ERC1155Lazy", () => {
       expect(bal1).to.eq(0);
       expect(bal2).to.eq(0);
       expect(bal3).to.eq(0);
+      expect(mintCounter).to.eq(60);
 
       await expect(tx)
         .to.emit(lazy, "TransferSingle")
@@ -574,52 +579,55 @@ describe("ERC1155Lazy", () => {
 
   describe("Batch burn", async () => {
     it("Should revert if caller is not the owner", async () => {
+      await erc20.connect(owner).approve(lazy.address, price.mul(amount))
       const ids = [1, 2, 3];
       await lazy.lazyMint(
         voucher,
         vSigSplit.v,
         vSigSplit.r,
-        vSigSplit.s,
-        { value: price.mul(amount) },
+        vSigSplit.s
       );
       const tx = lazy
         .connect(acc02)
-        .burnBatch(owner.address, ids, [1, 1, 1]);
+        .burnBatch(owner.address, ids, [1, 1, 1], acc02.address);
 
       await expect(tx).to.be.revertedWith(
         LazyErrors.Unauthorized,
       );
     });
+
     it("Should revert if id is already burnt/hasn't been minted", async () => {
       const ids = [1, 2, 5];
+      await erc20.connect(owner).approve(lazy.address, price.mul(amount))
       await lazy.lazyMint(
         voucher,
         vSigSplit.v,
         vSigSplit.r,
-        vSigSplit.s,
-        { value: price.mul(amount) },
+        vSigSplit.s
       );
       const tx = lazy
         .connect(owner)
-        .burnBatch(acc02.address, ids, [1, 1, 1]);
+        .burnBatch(acc02.address, ids, [1, 1, 1], owner.address);
 
       await expect(tx).to.be.revertedWith(
         LazyErrors.WrongFrom,
       );
     });
+
     it("Should batch burn tokens, update storage and emit event", async () => {
       const dead = ethers.constants.AddressZero;
       const one = ethers.constants.One;
       const amounts = [one, one, one, one];
+      await erc20.connect(owner).approve(lazy.address, price.mul(amount))
       await lazy.lazyMint(
         voucher,
         vSigSplit.v,
         vSigSplit.r,
-        vSigSplit.s,
-        { value: price.mul(amount) },
+        vSigSplit.s
       );
       const ids = [1, 2, 3, 4];
-      const tx = await lazy.burnBatch(owner.address, ids, [1, 1, 1, 1]);
+      await erc20.connect(owner).approve(lazy.address, price.mul(amount))
+      const tx = await lazy.burnBatch(owner.address, ids, [1, 1, 1, 1], owner.address);
       const bal1 = await lazy.callStatic.balanceOf(
         owner.address,
         1,
@@ -653,25 +661,26 @@ describe("ERC1155Lazy", () => {
           amounts,
         );
     });
+
     it("Should handle multiple batch burns", async () => {
       const dead = ethers.constants.AddressZero;
       const one = ethers.constants.One;
       const amounts = [one, one, one, one, one];
+      await erc20.connect(owner).approve(lazy.address, price.mul(amount))
       await lazy.lazyMint(
         voucher,
         vSigSplit.v,
         vSigSplit.r,
-        vSigSplit.s,
-        { value: price.mul(amount) },
+        vSigSplit.s
       );
       const ids1 = [1, 2, 3, 4, 5];
       const ids2 = [6, 7, 8, 9, 10];
       const ids3 = [11, 12, 13, 14, 15];
       const ids4 = [16, 17, 18, 19, 20];
-      const tx1 = await lazy.burnBatch(owner.address, ids1, [1, 1, 1, 1, 1]);
-      const tx2 = await lazy.burnBatch(owner.address, ids2, [1, 1, 1, 1, 1]);
-      const tx3 = await lazy.burnBatch(amb.address, ids3, [1, 1, 1, 1, 1]);
-      const tx4 = await lazy.burnBatch(amb.address, ids4, [1, 1 ,1 ,1 ,1]);
+      const tx1 = await lazy.burnBatch(owner.address, ids1, [1, 1, 1, 1, 1], owner.address);
+      const tx2 = await lazy.burnBatch(owner.address, ids2, [1, 1, 1, 1, 1], owner.address);
+      const tx3 = await lazy.burnBatch(amb.address, ids3, [1, 1, 1, 1, 1], owner.address);
+      const tx4 = await lazy.burnBatch(amb.address, ids4, [1, 1 ,1 ,1 ,1], owner.address);
 
       expect(tx1).to.be.ok;
       expect(tx2).to.be.ok;
@@ -726,6 +735,7 @@ describe("ERC1155Lazy", () => {
       expect(tx[0]).to.eq(splitter.address);
       expect(tx[1]).to.eq(amount);
     });
+
     it("Should retrieve the domain separator", async () => {
       const cDomain = await lazy.DOMAIN_SEPARATOR();
 
@@ -734,16 +744,16 @@ describe("ERC1155Lazy", () => {
 
     it("Should retrive URI and total supply", async () => {
       const res = "0x70616b6d616e";
+      await erc20.connect(owner).approve(lazy.address, price.mul(amount))
       await lazy.lazyMint(
         voucher,
         vSigSplit.v,
         vSigSplit.r,
-        vSigSplit.s,
-        { value: price.mul(amount) },
+        vSigSplit.s
       );
       const base = await lazy.callStatic.getURI();
       const sup = await lazy.callStatic.totalSupply();
-      await lazy.burn([voucher.users[0], voucher.users[0]], [1, 2], [1, 1]);
+      await lazy.burn([voucher.users[0], voucher.users[0]], [1, 2], [1, 1], owner.address);
       await lazy.setURI(res);
       const base2 = await lazy.callStatic.getURI();
 
@@ -755,13 +765,27 @@ describe("ERC1155Lazy", () => {
       expect(sup).to.eq(30);
       expect(sup2).to.eq(28);
     });
+
+    it("Should query total supply", async () => {
+      const tx = await lazy.callStatic.totalSupply();
+
+      expect(tx).to.be.ok;
+      expect(tx).to.eq(0);
+    });
+
+    it("Should query mint count", async () => {
+      const tx = await lazy.callStatic.getMintCount();
+      expect(tx).to.be.ok;
+      expect(tx).to.eq(0);
+    });
+
     it("Should retrive tokenURI and revert if not yet minted", async () => {
+      await erc20.connect(owner).approve(lazy.address, price.mul(amount))
       await lazy.lazyMint(
         voucher,
         vSigSplit.v,
         vSigSplit.r,
-        vSigSplit.s,
-        { value: price.mul(amount) },
+        vSigSplit.s
       );
       const tx = await lazy.callStatic.uri(1);
 
@@ -774,6 +798,7 @@ describe("ERC1155Lazy", () => {
         LazyErrors.NotMintedYet,
       );
     });
+    
     it("Should support interfaces", async () => {
       const erc165 =
         getInterfaceID(ERC165Interface).interfaceID._hex;

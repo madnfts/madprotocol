@@ -44,6 +44,7 @@ export interface MADMarketplace1155Interface extends utils.Interface {
     "feeVal3()": FunctionFragment;
     "fixedPrice(address,uint256,uint256,uint256,uint256)": FunctionFragment;
     "getCurrentPrice(bytes32)": FunctionFragment;
+    "maxOrderDuration()": FunctionFragment;
     "minAuctionIncrement()": FunctionFragment;
     "minBidValue()": FunctionFragment;
     "minOrderDuration()": FunctionFragment;
@@ -64,7 +65,7 @@ export interface MADMarketplace1155Interface extends utils.Interface {
     "setRecipient(address)": FunctionFragment;
     "tokenOrderLength(address,uint256,uint256)": FunctionFragment;
     "unpause()": FunctionFragment;
-    "updateSettings(uint256,uint256,uint256)": FunctionFragment;
+    "updateSettings(uint256,uint256,uint256,uint256)": FunctionFragment;
     "withdraw()": FunctionFragment;
   };
 
@@ -84,6 +85,7 @@ export interface MADMarketplace1155Interface extends utils.Interface {
       | "feeVal3"
       | "fixedPrice"
       | "getCurrentPrice"
+      | "maxOrderDuration"
       | "minAuctionIncrement"
       | "minBidValue"
       | "minOrderDuration"
@@ -188,6 +190,10 @@ export interface MADMarketplace1155Interface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
+    functionFragment: "maxOrderDuration",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "minAuctionIncrement",
     values?: undefined
   ): string;
@@ -275,6 +281,7 @@ export interface MADMarketplace1155Interface extends utils.Interface {
     values: [
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>
     ]
   ): string;
@@ -313,6 +320,10 @@ export interface MADMarketplace1155Interface extends utils.Interface {
   decodeFunctionResult(functionFragment: "fixedPrice", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getCurrentPrice",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "maxOrderDuration",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -372,7 +383,7 @@ export interface MADMarketplace1155Interface extends utils.Interface {
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
 
   events: {
-    "AuctionSettingsUpdated(uint256,uint256,uint256)": EventFragment;
+    "AuctionSettingsUpdated(uint256,uint256,uint256,uint256)": EventFragment;
     "Bid(address,uint256,uint256,bytes32,address,uint256)": EventFragment;
     "CancelOrder(address,uint256,uint256,bytes32,address)": EventFragment;
     "Claim(address,uint256,uint256,bytes32,address,address,uint256)": EventFragment;
@@ -402,9 +413,10 @@ export interface AuctionSettingsUpdatedEventObject {
   newMinDuration: BigNumber;
   newIncrement: BigNumber;
   newMinBidValue: BigNumber;
+  newMaxDuration: BigNumber;
 }
 export type AuctionSettingsUpdatedEvent = TypedEvent<
-  [BigNumber, BigNumber, BigNumber],
+  [BigNumber, BigNumber, BigNumber, BigNumber],
   AuctionSettingsUpdatedEventObject
 >;
 
@@ -631,6 +643,8 @@ export interface MADMarketplace1155 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { price: BigNumber }>;
 
+    maxOrderDuration(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     minAuctionIncrement(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     minBidValue(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -755,6 +769,7 @@ export interface MADMarketplace1155 extends BaseContract {
       _minAuctionIncrement: PromiseOrValue<BigNumberish>,
       _minOrderDuration: PromiseOrValue<BigNumberish>,
       _minBidValue: PromiseOrValue<BigNumberish>,
+      _maxOrderDuration: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -839,6 +854,8 @@ export interface MADMarketplace1155 extends BaseContract {
     _order: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  maxOrderDuration(overrides?: CallOverrides): Promise<BigNumber>;
 
   minAuctionIncrement(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -964,6 +981,7 @@ export interface MADMarketplace1155 extends BaseContract {
     _minAuctionIncrement: PromiseOrValue<BigNumberish>,
     _minOrderDuration: PromiseOrValue<BigNumberish>,
     _minBidValue: PromiseOrValue<BigNumberish>,
+    _maxOrderDuration: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1048,6 +1066,8 @@ export interface MADMarketplace1155 extends BaseContract {
       _order: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    maxOrderDuration(overrides?: CallOverrides): Promise<BigNumber>;
 
     minAuctionIncrement(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1169,6 +1189,7 @@ export interface MADMarketplace1155 extends BaseContract {
       _minAuctionIncrement: PromiseOrValue<BigNumberish>,
       _minOrderDuration: PromiseOrValue<BigNumberish>,
       _minBidValue: PromiseOrValue<BigNumberish>,
+      _maxOrderDuration: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1176,15 +1197,17 @@ export interface MADMarketplace1155 extends BaseContract {
   };
 
   filters: {
-    "AuctionSettingsUpdated(uint256,uint256,uint256)"(
+    "AuctionSettingsUpdated(uint256,uint256,uint256,uint256)"(
       newMinDuration?: PromiseOrValue<BigNumberish> | null,
       newIncrement?: PromiseOrValue<BigNumberish> | null,
-      newMinBidValue?: PromiseOrValue<BigNumberish> | null
+      newMinBidValue?: null,
+      newMaxDuration?: PromiseOrValue<BigNumberish> | null
     ): AuctionSettingsUpdatedEventFilter;
     AuctionSettingsUpdated(
       newMinDuration?: PromiseOrValue<BigNumberish> | null,
       newIncrement?: PromiseOrValue<BigNumberish> | null,
-      newMinBidValue?: PromiseOrValue<BigNumberish> | null
+      newMinBidValue?: null,
+      newMaxDuration?: PromiseOrValue<BigNumberish> | null
     ): AuctionSettingsUpdatedEventFilter;
 
     "Bid(address,uint256,uint256,bytes32,address,uint256)"(
@@ -1367,6 +1390,8 @@ export interface MADMarketplace1155 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    maxOrderDuration(overrides?: CallOverrides): Promise<BigNumber>;
+
     minAuctionIncrement(overrides?: CallOverrides): Promise<BigNumber>;
 
     minBidValue(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1463,6 +1488,7 @@ export interface MADMarketplace1155 extends BaseContract {
       _minAuctionIncrement: PromiseOrValue<BigNumberish>,
       _minOrderDuration: PromiseOrValue<BigNumberish>,
       _minBidValue: PromiseOrValue<BigNumberish>,
+      _maxOrderDuration: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1548,6 +1574,8 @@ export interface MADMarketplace1155 extends BaseContract {
       _order: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    maxOrderDuration(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     minAuctionIncrement(
       overrides?: CallOverrides
@@ -1647,6 +1675,7 @@ export interface MADMarketplace1155 extends BaseContract {
       _minAuctionIncrement: PromiseOrValue<BigNumberish>,
       _minOrderDuration: PromiseOrValue<BigNumberish>,
       _minBidValue: PromiseOrValue<BigNumberish>,
+      _maxOrderDuration: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -8,6 +8,24 @@ const main = async () => {
   const [deployer] = await ethers.getSigners();
   console.log(`Deploying contracts with ${deployer.address}`);
 
+<<<<<<< Updated upstream
+=======
+  let erc20Address = ethers.constants.AddressZero
+  if (ERC20_TOKEN == 'local') {
+    const ERC20 = await ethers.getContractFactory(
+      "MockERC20",
+    );
+    const erc20 = (await ERC20.deploy(
+      BigNumber.from(2).pow(255),
+    )) as MockERC20;
+    erc20Address = erc20.address;
+    console.log(`MockERC20 address: ${erc20.address}`);
+  } else if (ERC20_TOKEN) {
+    erc20Address = ERC20_TOKEN
+    console.log(`ERC20 address: ${erc20Address}`);
+  }
+
+>>>>>>> Stashed changes
   const MADMarketplace721 = await ethers.getContractFactory(
     "MADMarketplace721",
   );

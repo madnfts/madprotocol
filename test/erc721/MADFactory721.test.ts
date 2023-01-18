@@ -18,14 +18,14 @@ import {
   MADFactory721,
   MADMarketplace721,
   MADRouter721,
-} from "../src/types";
-import { FactoryErrors } from "./utils/errors";
+} from "../../src/types";
+import { FactoryErrors } from "./../utils/errors";
 import {
   Collection,
   SplitterConfig,
   dead,
   madFixture721A
-} from "./utils/madFixtures";
+} from "./../utils/madFixtures";
 
 describe("MADFactory721", () => {
   type WalletWithAddress = Wallet & SignerWithAddress;

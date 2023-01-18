@@ -18,14 +18,14 @@ import {
   MADFactory1155,
   MADMarketplace1155,
   MADRouter1155,
-} from "../src/types";
-import { FactoryErrors } from "./utils/errors";
+} from "../../src/types";
+import { FactoryErrors } from "./../utils/errors";
 import {
   Collection,
   SplitterConfig,
   dead,
   madFixture1155A,
-} from "./utils/madFixtures";
+} from "./../utils/madFixtures";
 
 describe("MADFactory1155", () => {
   type WalletWithAddress = Wallet & SignerWithAddress;

@@ -56,6 +56,9 @@ contract ERC1155Lazy is
 
     Counters.Counter private liveSupply;
 
+    /// @notice Lock the URI default := false.
+    bool public URILock;
+
     string private _uri;
 
     SplitterImpl public splitter;
@@ -196,9 +199,18 @@ contract ERC1155Lazy is
     /// @notice Changes the `_uri` value in storage.
     /// @dev Can only be accessed by the collection creator.
     function setURI(string memory __uri) external onlyOwner {
+        if (URILock == true) revert UriLocked();
         _uri = __uri;
 
         emit BaseURISet(__uri);
+    }
+
+    function setURILock()
+        external
+        onlyOwner
+    {
+        URILock = true;
+        emit BaseURILocked(_uri);
     }
 
     /// @dev Burns an arbitrary length array of ids of different owners.

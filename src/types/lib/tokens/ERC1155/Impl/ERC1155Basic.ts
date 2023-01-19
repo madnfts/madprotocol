@@ -30,6 +30,7 @@ import type {
 
 export interface ERC1155BasicInterface extends utils.Interface {
   functions: {
+    "URILock()": FunctionFragment;
     "balanceOf(address,uint256)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
     "burn(address[],uint256[],uint256[],address)": FunctionFragment;
@@ -56,6 +57,7 @@ export interface ERC1155BasicInterface extends utils.Interface {
     "setOwner(address)": FunctionFragment;
     "setPublicMintState(bool)": FunctionFragment;
     "setURI(string)": FunctionFragment;
+    "setURILock()": FunctionFragment;
     "splitter()": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "totalSupply()": FunctionFragment;
@@ -66,6 +68,7 @@ export interface ERC1155BasicInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "URILock"
       | "balanceOf"
       | "balanceOfBatch"
       | "burn"
@@ -92,6 +95,7 @@ export interface ERC1155BasicInterface extends utils.Interface {
       | "setOwner"
       | "setPublicMintState"
       | "setURI"
+      | "setURILock"
       | "splitter"
       | "supportsInterface"
       | "totalSupply"
@@ -100,6 +104,7 @@ export interface ERC1155BasicInterface extends utils.Interface {
       | "withdrawERC20"
   ): FunctionFragment;
 
+  encodeFunctionData(functionFragment: "URILock", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "balanceOf",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
@@ -233,6 +238,10 @@ export interface ERC1155BasicInterface extends utils.Interface {
     functionFragment: "setURI",
     values: [PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "setURILock",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "splitter", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
@@ -252,6 +261,7 @@ export interface ERC1155BasicInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
 
+  decodeFunctionResult(functionFragment: "URILock", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "balanceOfBatch",
@@ -314,6 +324,7 @@ export interface ERC1155BasicInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setURI", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "setURILock", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "splitter", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
@@ -332,6 +343,7 @@ export interface ERC1155BasicInterface extends utils.Interface {
 
   events: {
     "ApprovalForAll(address,address,bool)": EventFragment;
+    "BaseURILocked(string)": EventFragment;
     "BaseURISet(string)": EventFragment;
     "OwnerUpdated(address,address)": EventFragment;
     "PublicMintStateSet(bool)": EventFragment;
@@ -343,6 +355,7 @@ export interface ERC1155BasicInterface extends utils.Interface {
   };
 
   getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BaseURILocked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BaseURISet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnerUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PublicMintStateSet"): EventFragment;
@@ -364,6 +377,13 @@ export type ApprovalForAllEvent = TypedEvent<
 >;
 
 export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
+
+export interface BaseURILockedEventObject {
+  baseURI: string;
+}
+export type BaseURILockedEvent = TypedEvent<[string], BaseURILockedEventObject>;
+
+export type BaseURILockedEventFilter = TypedEventFilter<BaseURILockedEvent>;
 
 export interface BaseURISetEventObject {
   newBaseURI: string;
@@ -478,6 +498,8 @@ export interface ERC1155Basic extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    URILock(overrides?: CallOverrides): Promise<[boolean]>;
+
     balanceOf(
       owner: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
@@ -625,6 +647,10 @@ export interface ERC1155Basic extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    setURILock(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     splitter(overrides?: CallOverrides): Promise<[string]>;
 
     supportsInterface(
@@ -648,6 +674,8 @@ export interface ERC1155Basic extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
+
+  URILock(overrides?: CallOverrides): Promise<boolean>;
 
   balanceOf(
     owner: PromiseOrValue<string>,
@@ -796,6 +824,10 @@ export interface ERC1155Basic extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  setURILock(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   splitter(overrides?: CallOverrides): Promise<string>;
 
   supportsInterface(
@@ -820,6 +852,8 @@ export interface ERC1155Basic extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    URILock(overrides?: CallOverrides): Promise<boolean>;
+
     balanceOf(
       owner: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
@@ -967,6 +1001,8 @@ export interface ERC1155Basic extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setURILock(overrides?: CallOverrides): Promise<void>;
+
     splitter(overrides?: CallOverrides): Promise<string>;
 
     supportsInterface(
@@ -1000,6 +1036,13 @@ export interface ERC1155Basic extends BaseContract {
       operator?: PromiseOrValue<string> | null,
       approved?: null
     ): ApprovalForAllEventFilter;
+
+    "BaseURILocked(string)"(
+      baseURI?: PromiseOrValue<string> | null
+    ): BaseURILockedEventFilter;
+    BaseURILocked(
+      baseURI?: PromiseOrValue<string> | null
+    ): BaseURILockedEventFilter;
 
     "BaseURISet(string)"(
       newBaseURI?: PromiseOrValue<string> | null
@@ -1076,6 +1119,8 @@ export interface ERC1155Basic extends BaseContract {
   };
 
   estimateGas: {
+    URILock(overrides?: CallOverrides): Promise<BigNumber>;
+
     balanceOf(
       owner: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
@@ -1221,6 +1266,10 @@ export interface ERC1155Basic extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    setURILock(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     splitter(overrides?: CallOverrides): Promise<BigNumber>;
 
     supportsInterface(
@@ -1246,6 +1295,8 @@ export interface ERC1155Basic extends BaseContract {
   };
 
   populateTransaction: {
+    URILock(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     balanceOf(
       owner: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
@@ -1388,6 +1439,10 @@ export interface ERC1155Basic extends BaseContract {
 
     setURI(
       __uri: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setURILock(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

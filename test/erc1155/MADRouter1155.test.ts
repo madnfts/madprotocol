@@ -121,6 +121,130 @@ describe("MADRouter1155", () => {
         RouterErrors.InvalidType,
       );
     });
+
+    it("Should revert for locked base URI", async () => {
+      await f1155
+        .connect(acc02)
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
+      const splAddr = await f1155.callStatic.getDeployedAddr(
+        "MADSplitter1",
+      );
+
+      // Basic
+      const basicAddr = await f1155.callStatic.getDeployedAddr(
+        "BasicSalt",
+      );
+      await f1155
+        .connect(acc02)
+        .createCollection(
+          1,
+          "BasicSalt",
+          "1155Basic",
+          "BASIC",
+          price,
+          1,
+          "ipfs://cid/id.json",
+          splAddr,
+          750,
+        );
+      const basic = await ethers.getContractAt(
+        "ERC1155Basic",
+        basicAddr,
+      );
+      const tx1 = r1155
+        .connect(acc02)
+        .setURI(basic.address, "null");
+      const tx2 = r1155
+        .connect(acc02)
+        .setURILock(basic.address);
+      expect(await tx1).to.be.ok
+      expect(await tx2).to.be.ok
+      await expect(r1155
+        .connect(acc02)
+        .setURI(basic.address, "null")).to.be.revertedWithCustomError(
+          basic,
+          RouterErrors.UriLocked,
+      );
+
+      // Lazy
+      const lazyAddr = await f1155.callStatic.getDeployedAddr(
+        "LazySalt",
+      );
+      await f1155
+        .connect(acc02)
+        .createCollection(
+          2,
+          "LazySalt",
+          "1155Lazy",
+          "LAZY",
+          price,
+          1,
+          "ipfs://cid/id.json",
+          splAddr,
+          750,
+        );
+      const lazy = await ethers.getContractAt(
+        "ERC1155Lazy",
+        lazyAddr,
+      );
+      const lazytx1 = r1155
+        .connect(acc02)
+        .setURI(lazy.address, "null");
+      const lazytx2 = r1155
+        .connect(acc02)
+        .setURILock(lazy.address);
+      expect(await lazytx1).to.be.ok
+      expect(await lazytx2).to.be.ok
+      await expect(r1155
+        .connect(acc02)
+        .setURI(lazy.address, "null")).to.be.revertedWithCustomError(
+          lazy,
+          RouterErrors.UriLocked,
+      );
+
+      // Whitlist
+      const wlAddr = await f1155.callStatic.getDeployedAddr(
+        "WlSalt",
+      );
+      await f1155
+        .connect(acc02)
+        .createCollection(
+          2,
+          "WlSalt",
+          "1155Whitelist",
+          "WL",
+          price,
+          1,
+          "ipfs://cid/id.json",
+          splAddr,
+          750,
+        );
+      const wl = await ethers.getContractAt(
+        "ERC1155Whitelist",
+        wlAddr,
+      );
+      const wltx1 = r1155
+        .connect(acc02)
+        .setURI(wl.address, "null");
+      const wltx2 = r1155
+        .connect(acc02)
+        .setURILock(wl.address);
+      expect(await wltx1).to.be.ok
+      expect(await wltx2).to.be.ok
+      await expect(r1155
+        .connect(acc02)
+        .setURI(wl.address, "null")).to.be.revertedWithCustomError(
+          wl,
+          RouterErrors.UriLocked,
+      );
+    });
+
     it("Should set URI for 1155Basic collection type", async () => {
       // await f1155.addAmbassador(amb.address);
       await f1155

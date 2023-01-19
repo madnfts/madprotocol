@@ -33,6 +33,9 @@ contract ERC1155Whitelist is
 
     Counters.Counter private liveSupply;
 
+    /// @notice Lock the URI default := false.
+    bool public URILock;
+
     string private _uri;
     uint256 public publicPrice;
     uint256 public maxSupply;
@@ -207,9 +210,18 @@ contract ERC1155Whitelist is
     }
 
     function setURI(string memory __uri) external onlyOwner {
+        if (URILock == true) revert UriLocked();
         _uri = __uri;
 
         emit BaseURISet(__uri);
+    }
+
+    function setURILock()
+        external
+        onlyOwner
+    {
+        URILock = true;
+        emit BaseURILocked(_uri);
     }
 
     function setPublicMintState(bool _publicMintState)

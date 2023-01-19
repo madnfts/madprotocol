@@ -122,6 +122,12 @@ contract MADRouter721 is
         }
     }
 
+    /// @notice Collection baseURI locker preventing URI updates when set.
+    ///      Cannot be unset!
+    /// @dev Only available for Basic, Whitelist and Lazy token types. Events logged 
+    ///      by each tokens' setBaseURILock functions.
+    ///      Function Sighash := ?
+    /// @param _token 721 token address.
     function setBaseLock(address _token)
         external
         nonReentrant

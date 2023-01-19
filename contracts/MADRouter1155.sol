@@ -121,6 +121,34 @@ contract MADRouter1155 is
             revert("INVALID_TYPE");
         }
     }
+
+
+
+    /// @notice Collection baseURI locker preventing URI updates when set.
+    ///      Cannot be unset!
+    /// @dev Only available for Basic, Whitelist and Lazy token types. Events logged 
+    ///      by each tokens' setBaseURILock functions.
+    ///      Function Sighash := ?
+    /// @param _token 721 token address.
+    function setURILock(address _token)
+        external
+        nonReentrant
+        whenNotPaused
+    {
+        (, uint8 _tokenType) = _tokenRender(
+            _token
+        );
+
+        if (_tokenType == 1) {
+            ERC1155Basic(_token).setURILock();
+        } else if (_tokenType == 2) {
+            ERC1155Whitelist(_token).setURILock();
+        } else if (_tokenType > 2) {
+            ERC1155Lazy(_token).setURILock();
+        } else {
+            revert("INVALID_TYPE");
+        }
+    }
     
     /// @notice Global MintState setter/controller  
     /// @dev Switch cases/control flow handling conditioned by both `_stateType` and `_tokenType`. 

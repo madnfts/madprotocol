@@ -22,6 +22,11 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "UriLocked",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "UsedVoucher",
     type: "error",
   },
@@ -29,6 +34,19 @@ const _abi = [
     inputs: [],
     name: "WrongPrice",
     type: "error",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "string",
+        name: "baseURI",
+        type: "string",
+      },
+    ],
+    name: "BaseURILocked",
+    type: "event",
   },
   {
     anonymous: false,

@@ -24,6 +24,7 @@ export interface ERC1155WhitelistEventsAndErrorsInterface
   functions: {};
 
   events: {
+    "BaseURILocked(string)": EventFragment;
     "BaseURISet(string)": EventFragment;
     "FreeClaimStateSet(bool)": EventFragment;
     "FreeConfigSet(uint256,uint256,bytes32)": EventFragment;
@@ -34,6 +35,7 @@ export interface ERC1155WhitelistEventsAndErrorsInterface
     "WhitelistMintStateSet(bool)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "BaseURILocked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BaseURISet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FreeClaimStateSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FreeConfigSet"): EventFragment;
@@ -43,6 +45,13 @@ export interface ERC1155WhitelistEventsAndErrorsInterface
   getEvent(nameOrSignatureOrTopic: "WhitelistConfigSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "WhitelistMintStateSet"): EventFragment;
 }
+
+export interface BaseURILockedEventObject {
+  baseURI: string;
+}
+export type BaseURILockedEvent = TypedEvent<[string], BaseURILockedEventObject>;
+
+export type BaseURILockedEventFilter = TypedEventFilter<BaseURILockedEvent>;
 
 export interface BaseURISetEventObject {
   newBaseURI: string;
@@ -161,6 +170,13 @@ export interface ERC1155WhitelistEventsAndErrors extends BaseContract {
   callStatic: {};
 
   filters: {
+    "BaseURILocked(string)"(
+      baseURI?: PromiseOrValue<string> | null
+    ): BaseURILockedEventFilter;
+    BaseURILocked(
+      baseURI?: PromiseOrValue<string> | null
+    ): BaseURILockedEventFilter;
+
     "BaseURISet(string)"(
       newBaseURI?: PromiseOrValue<string> | null
     ): BaseURISetEventFilter;

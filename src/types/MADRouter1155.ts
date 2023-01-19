@@ -54,6 +54,7 @@ export interface MADRouter1155Interface extends utils.Interface {
     "setPaymentToken(address)": FunctionFragment;
     "setSigner(address,address)": FunctionFragment;
     "setURI(address,string)": FunctionFragment;
+    "setURILock(address)": FunctionFragment;
     "unpause()": FunctionFragment;
     "whitelistSettings(address,uint256,uint256,bytes32)": FunctionFragment;
     "withdraw(address,address)": FunctionFragment;
@@ -85,6 +86,7 @@ export interface MADRouter1155Interface extends utils.Interface {
       | "setPaymentToken"
       | "setSigner"
       | "setURI"
+      | "setURILock"
       | "unpause"
       | "whitelistSettings"
       | "withdraw"
@@ -213,6 +215,10 @@ export interface MADRouter1155Interface extends utils.Interface {
     functionFragment: "setURI",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "setURILock",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "whitelistSettings",
@@ -279,6 +285,7 @@ export interface MADRouter1155Interface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "setSigner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setURI", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "setURILock", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "whitelistSettings",
@@ -572,6 +579,11 @@ export interface MADRouter1155 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    setURILock(
+      _token: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     unpause(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -720,6 +732,11 @@ export interface MADRouter1155 extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  setURILock(
+    _token: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   unpause(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -863,6 +880,11 @@ export interface MADRouter1155 extends BaseContract {
     setURI(
       _token: PromiseOrValue<string>,
       _uri: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setURILock(
+      _token: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1096,6 +1118,11 @@ export interface MADRouter1155 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    setURILock(
+      _token: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     unpause(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -1242,6 +1269,11 @@ export interface MADRouter1155 extends BaseContract {
     setURI(
       _token: PromiseOrValue<string>,
       _uri: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setURILock(
+      _token: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

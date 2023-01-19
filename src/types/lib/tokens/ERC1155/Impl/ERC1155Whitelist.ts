@@ -30,6 +30,7 @@ import type {
 
 export interface ERC1155WhitelistInterface extends utils.Interface {
   functions: {
+    "URILock()": FunctionFragment;
     "balanceOf(address,uint256)": FunctionFragment;
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
     "burn(address[],uint256[],uint256[],address)": FunctionFragment;
@@ -67,6 +68,7 @@ export interface ERC1155WhitelistInterface extends utils.Interface {
     "setOwner(address)": FunctionFragment;
     "setPublicMintState(bool)": FunctionFragment;
     "setURI(string)": FunctionFragment;
+    "setURILock()": FunctionFragment;
     "setWhitelistMintState(bool)": FunctionFragment;
     "splitter()": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
@@ -85,6 +87,7 @@ export interface ERC1155WhitelistInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "URILock"
       | "balanceOf"
       | "balanceOfBatch"
       | "burn"
@@ -122,6 +125,7 @@ export interface ERC1155WhitelistInterface extends utils.Interface {
       | "setOwner"
       | "setPublicMintState"
       | "setURI"
+      | "setURILock"
       | "setWhitelistMintState"
       | "splitter"
       | "supportsInterface"
@@ -138,6 +142,7 @@ export interface ERC1155WhitelistInterface extends utils.Interface {
       | "withdrawERC20"
   ): FunctionFragment;
 
+  encodeFunctionData(functionFragment: "URILock", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "balanceOf",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
@@ -333,6 +338,10 @@ export interface ERC1155WhitelistInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "setURILock",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "setWhitelistMintState",
     values: [PromiseOrValue<boolean>]
   ): string;
@@ -396,6 +405,7 @@ export interface ERC1155WhitelistInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
 
+  decodeFunctionResult(functionFragment: "URILock", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "balanceOfBatch",
@@ -487,6 +497,7 @@ export interface ERC1155WhitelistInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setURI", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "setURILock", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setWhitelistMintState",
     data: BytesLike
@@ -537,6 +548,7 @@ export interface ERC1155WhitelistInterface extends utils.Interface {
 
   events: {
     "ApprovalForAll(address,address,bool)": EventFragment;
+    "BaseURILocked(string)": EventFragment;
     "BaseURISet(string)": EventFragment;
     "FreeClaimStateSet(bool)": EventFragment;
     "FreeConfigSet(uint256,uint256,bytes32)": EventFragment;
@@ -552,6 +564,7 @@ export interface ERC1155WhitelistInterface extends utils.Interface {
   };
 
   getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BaseURILocked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BaseURISet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FreeClaimStateSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FreeConfigSet"): EventFragment;
@@ -577,6 +590,13 @@ export type ApprovalForAllEvent = TypedEvent<
 >;
 
 export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
+
+export interface BaseURILockedEventObject {
+  baseURI: string;
+}
+export type BaseURILockedEvent = TypedEvent<[string], BaseURILockedEventObject>;
+
+export type BaseURILockedEventFilter = TypedEventFilter<BaseURILockedEvent>;
 
 export interface BaseURISetEventObject {
   newBaseURI: string;
@@ -738,6 +758,8 @@ export interface ERC1155Whitelist extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    URILock(overrides?: CallOverrides): Promise<[boolean]>;
+
     balanceOf(
       owner: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
@@ -930,6 +952,10 @@ export interface ERC1155Whitelist extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    setURILock(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     setWhitelistMintState(
       _whitelistMintState: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -988,6 +1014,8 @@ export interface ERC1155Whitelist extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
+
+  URILock(overrides?: CallOverrides): Promise<boolean>;
 
   balanceOf(
     owner: PromiseOrValue<string>,
@@ -1181,6 +1209,10 @@ export interface ERC1155Whitelist extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  setURILock(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   setWhitelistMintState(
     _whitelistMintState: PromiseOrValue<boolean>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1240,6 +1272,8 @@ export interface ERC1155Whitelist extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    URILock(overrides?: CallOverrides): Promise<boolean>;
+
     balanceOf(
       owner: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
@@ -1432,6 +1466,8 @@ export interface ERC1155Whitelist extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setURILock(overrides?: CallOverrides): Promise<void>;
+
     setWhitelistMintState(
       _whitelistMintState: PromiseOrValue<boolean>,
       overrides?: CallOverrides
@@ -1500,6 +1536,13 @@ export interface ERC1155Whitelist extends BaseContract {
       operator?: PromiseOrValue<string> | null,
       approved?: null
     ): ApprovalForAllEventFilter;
+
+    "BaseURILocked(string)"(
+      baseURI?: PromiseOrValue<string> | null
+    ): BaseURILockedEventFilter;
+    BaseURILocked(
+      baseURI?: PromiseOrValue<string> | null
+    ): BaseURILockedEventFilter;
 
     "BaseURISet(string)"(
       newBaseURI?: PromiseOrValue<string> | null
@@ -1612,6 +1655,8 @@ export interface ERC1155Whitelist extends BaseContract {
   };
 
   estimateGas: {
+    URILock(overrides?: CallOverrides): Promise<BigNumber>;
+
     balanceOf(
       owner: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
@@ -1802,6 +1847,10 @@ export interface ERC1155Whitelist extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    setURILock(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     setWhitelistMintState(
       _whitelistMintState: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1862,6 +1911,8 @@ export interface ERC1155Whitelist extends BaseContract {
   };
 
   populateTransaction: {
+    URILock(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     balanceOf(
       owner: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
@@ -2053,6 +2104,10 @@ export interface ERC1155Whitelist extends BaseContract {
 
     setURI(
       __uri: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setURILock(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -173,7 +173,7 @@ describe("MADRouter721", () => {
       await f721
         .connect(acc02)
         .createCollection(
-          2,
+          3,
           "WlSalt",
           "721Whitelist",
           "WL",

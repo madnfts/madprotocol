@@ -13,9 +13,9 @@ import {
   MockERC20__factory,
   SplitterImpl,
   SplitterImpl__factory,
-} from "../src/types";
-import { SplitterErrors } from "./utils/errors";
-import { splitterFixture } from "./utils/fixtures";
+} from "../../src/types";
+import { SplitterErrors } from "../utils/errors";
+import { splitterFixture } from "../utils/fixtures";
 
 describe("Splitter", () => {
   type WalletWithAddress = Wallet & SignerWithAddress;

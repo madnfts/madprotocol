@@ -2,6 +2,6 @@
 
 describe("_", () => {
   console.log(
-    '/// Test group - Native payment support for ERC1155 contracts',
+    '\r\n/// Test group - Royality and Splitter contracts',
   );
 });

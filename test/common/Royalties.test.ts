@@ -5,13 +5,13 @@ import { expect } from "chai";
 import { BigNumber, Wallet } from "ethers";
 import { ethers, network } from "hardhat";
 
-import { MockERC2981 } from "../src/types";
-import { erc2981Fixture } from "./utils/fixtures";
+import { MockERC2981 } from "../../src/types";
+import { erc2981Fixture } from "../utils/fixtures";
 import {
   ERC165Interface,
   ERC2981Interface,
   getInterfaceID,
-} from "./utils/interfaces";
+} from "../utils/interfaces";
 
 describe("Royalties", () => {
   type WalletWithAddress = Wallet & SignerWithAddress;

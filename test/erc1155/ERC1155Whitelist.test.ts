@@ -74,7 +74,7 @@ describe("ERC1155Whitelist", () => {
   });
 
   describe("Init", async () => {
-    it("Splitter and ERC721 should initialize", async () => {
+    it("Splitter and ERC1155 should initialize", async () => {
       await wl.deployed();
       await splitter.deployed();
       expect(wl).to.be.ok;
@@ -170,12 +170,6 @@ describe("ERC1155Whitelist", () => {
         merkleRoot,
       );
       const tx2 = await wl.freeConfig(1, 10, merkleRoot);
-      const tx3 = wl
-        .connect(acc02)
-        .whitelistConfig(price, 100, merkleRoot);
-      const tx4 = wl
-        .connect(acc01)
-        .freeConfig(1, 10, merkleRoot);
 
       expect(tx1).to.be.ok;
       expect(tx2).to.be.ok;
@@ -185,10 +179,16 @@ describe("ERC1155Whitelist", () => {
       await expect(tx2)
         .to.emit(wl, "FreeConfigSet")
         .withArgs(1, 10, merkleRoot);
-      await expect(tx3).to.be.revertedWith(
+      await expect(wl
+        .connect(acc02)
+        .whitelistConfig(price, 100, merkleRoot)
+      ).to.be.revertedWith(
         WhitelistErrors.Unauthorized,
       );
-      await expect(tx4).to.be.revertedWith(
+      await expect(wl
+        .connect(acc01)
+        .freeConfig(1, 10, merkleRoot)
+      ).to.be.revertedWith(
         WhitelistErrors.Unauthorized,
       );
     });

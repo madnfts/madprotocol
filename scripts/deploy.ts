@@ -7,14 +7,15 @@ import { BigNumber } from "ethers";
 import { MockERC20 } from "../src/types";
 
 config({ path: resolve(__dirname, "./.env") });
+
 const { ERC20_TOKEN } = process.env;
 const hre = require("hardhat");
 
 const main = async () => {
-  console.log(ERC20_TOKEN);
   const [deployer] = await ethers.getSigners();
-  console.log(`Deploying contracts with ${deployer.address}`);
+  console.log(`Deploying contracts with ${deployer.address}`)
 
+  // Deploying with / withour ERC20 support
   let erc20Address = ethers.constants.AddressZero
   if (ERC20_TOKEN == 'local') {
     const ERC20 = await ethers.getContractFactory(
@@ -94,7 +95,7 @@ const main = async () => {
   await m721.connect(deployer).setFactory(f721.address);
   await f721.connect(deployer).setRouter(r721.address);
 
-  console.log(` Core 721 Auth transfers executed.`);
+  console.log(`721 Contracts deployed successfully.`);
 
   const MADMarketplace1155 = await ethers.getContractFactory(
     "MADMarketplace1155",
@@ -126,7 +127,7 @@ const main = async () => {
     m1155.address, // marketplace addr
     ethers.constants.AddressZero, // router addr
     deployer.address, // lazy signer addr
-    erc20Address
+    erc20Address // ERC20 payment token addr
   );
   console.log(`ERC1155 Factory address: ${f1155.address}`);
 
@@ -139,52 +140,8 @@ const main = async () => {
   await m1155.connect(deployer).setFactory(f1155.address);
   await f1155.connect(deployer).setRouter(r1155.address);
 
-  console.log(`Core 1155 Auth transfers executed.`);
-
-  //verify
-//   await hre.run("verify:verify", {
-//     address: m721.address,
-//     constructorArguments: [
-//       deployer.address,
-//       300,
-//       ethers.constants.AddressZero,
-//     ],
-//   });
-//   await hre.run("verify:verify", {
-//     address: m1155.address,
-//     constructorArguments: [
-//       deployer.address,
-//       300,
-//       ethers.constants.AddressZero,
-//     ],
-//   });
-
-//   await hre.run("verify:verify", {
-//     address: r721.address,
-//     constructorArguments: [f721.address],
-//   });
-//   await hre.run("verify:verify", {
-//     address: r1155.address,
-//     constructorArguments: [f1155.address],
-//   });
-
-//   await hre.run("verify:verify", {
-//     address: f721.address,
-//     constructorArguments: [
-//       m721.address,
-//       ethers.constants.AddressZero,
-//       ethers.constants.AddressZero,
-//     ],
-//   });
-//   await hre.run("verify:verify", {
-//     address: f1155.address,
-//     constructorArguments: [
-//       m1155.address,
-//       ethers.constants.AddressZero,
-//       ethers.constants.AddressZero,
-//     ],
-//   });
- };
+  console.log(`1155 Contracts deployed successfully.`);
+};
 
 main()
   .then(() => process.exit(0))
@@ -192,7 +149,4 @@ main()
     console.log(error);
     process.exit(1);
   });
-function dotenvConfig(arg0: { path: any; }) {
-  throw new Error("Function not implemented.");
-}
 

@@ -158,8 +158,8 @@ contract MADRouter721 is
         }
     }
 
-    /// @notice `ERC721Whitelist` whitelist config setter.
-    /// @dev Events event emitted by `ERC721Whitelist` token implementation contracts.
+    /// @notice ERC721Whitelist whitelist config setter.
+    /// @dev Events event emitted by ERC721Whitelist token implementation contracts.
     ///      Function Sighash := 0xa123c38d
     /// @param _token 721 token address.
     /// @param _price Whitelist price per token.
@@ -181,8 +181,8 @@ contract MADRouter721 is
         } else revert("INVALID_TYPE");
     }
 
-    /// @notice `ERC721Whitelist` free claim config setter.
-    /// @dev Event emitted by `ERC721Whitelist` token implementation contracts.
+    /// @notice ERC721Whitelist free claim config setter.
+    /// @dev Event emitted by ERC721Whitelist token implementation contracts.
     ///      Function Sighash := 0xcab2e41f
     /// @param _token 721 token address.
     /// @param _freeAmount Num tokens per address.
@@ -282,7 +282,6 @@ contract MADRouter721 is
             }(_addresses, msg.sender);
         } else revert("INVALID_TYPE");
     }
-
 
     /// @notice Global token burn controller/single pusher for all token types.
     /// @dev Function Sighash := 0xba36b92d

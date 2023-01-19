@@ -35,7 +35,7 @@ function basicMintTo(address _token, address _to, uint256 _amount) external paya
 
 ERC721Basic creator mint function handler.
 
-*Function Sighash := ?*
+*Function Sighash := 0x490f7027*
 
 #### Parameters
 
@@ -121,7 +121,7 @@ function feeLookup(bytes4 sigHash) external view returns (uint256 fee)
 
 Mint and burn fee lookup.
 
-*Function Sighash := ?*
+*Function Sighash := 0xedc9e7a4*
 
 #### Parameters
 
@@ -158,9 +158,9 @@ Mint fee store.
 function freeSettings(address _token, uint256 _freeAmount, uint256 _maxFree, bytes32 _claimRoot) external nonpayable
 ```
 
-`ERC721Whitelist` free claim config setter.
+ERC721Whitelist free claim config setter.
 
-*Event emitted by `ERC721Whitelist` token implementation contracts.      Function Sighash := 0xcab2e41f*
+*Event emitted by ERC721Whitelist token implementation contracts.      Function Sighash := 0xcab2e41f*
 
 #### Parameters
 
@@ -292,7 +292,7 @@ function setFees(uint256 _feeMint, uint256 _feeBurn) external nonpayable
 
 Change the Routers mint and burn fees.
 
-*Event emitted by token contract.      Function Sighash := ?*
+*Event emitted by token contract.      Function Sighash := 0x0b78f9c0*
 
 #### Parameters
 
@@ -343,7 +343,7 @@ function setPaymentToken(address _paymentTokenAddress) external nonpayable
 
 Enables the contract&#39;s owner to change payment token address.
 
-*Function Signature := ?*
+*Function Signature := 0x6a326ab1*
 
 #### Parameters
 
@@ -385,9 +385,9 @@ Unpaused state initializer for security risk mitigation pratice.
 function whitelistSettings(address _token, uint256 _price, uint256 _supply, bytes32 _root) external nonpayable
 ```
 
-`ERC721Whitelist` whitelist config setter.
+ERC721Whitelist whitelist config setter.
 
-*Events event emitted by `ERC721Whitelist` token implementation contracts.      Function Sighash := 0xa123c38d*
+*Events event emitted by ERC721Whitelist token implementation contracts.      Function Sighash := 0xa123c38d*
 
 #### Parameters
 
@@ -406,7 +406,7 @@ function withdraw(address _token, contract ERC20 _erc20) external nonpayable
 
 Withdraw both ERC20 and ONE from ERC721 contract&#39;s balance.
 
-*Leave `_token` param empty for withdrawing eth only. No withdraw min needs to be passed as params, since      all balance from the token&#39;s contract is emptied.      Function Sighash := 0x9547ed5d*
+*Leave `_token` param empty for withdrawing eth only. No withdraw min needs to be passed as params, since      all balance from the token&#39;s contract is emptied.      Function Sighash := 0xf940e385*
 
 #### Parameters
 

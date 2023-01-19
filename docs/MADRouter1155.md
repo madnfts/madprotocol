@@ -16,7 +16,7 @@
 function MADFactory1155() external view returns (contract FactoryVerifier)
 ```
 
-
+FactoryVerifier connecting the router to MADFactory1155.
 
 
 
@@ -33,18 +33,18 @@ function MADFactory1155() external view returns (contract FactoryVerifier)
 function basicMintBatchTo(address _token, address _to, uint256[] _ids, uint256[] _balances) external payable
 ```
 
+ERC1155Whitelist mint to creator function handler.
 
-
-
+*Function Sighash := 0x182ee485*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| _token | address | undefined |
+| _token | address | 1155 token address. |
 | _to | address | undefined |
-| _ids | uint256[] | undefined |
-| _balances | uint256[] | undefined |
+| _ids | uint256[] | Receiver token _ids array. |
+| _balances | uint256[] | Receiver token balances array, length should be = _ids.length. |
 
 ### basicMintTo
 
@@ -52,18 +52,18 @@ function basicMintBatchTo(address _token, address _to, uint256[] _ids, uint256[]
 function basicMintTo(address _token, address _to, uint256 _amount, uint256[] _balances) external payable
 ```
 
+ERC1155Basic creator mint function handler.
 
-
-
+*Function Sighash := 0x490f7027*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| _token | address | undefined |
-| _to | address | undefined |
-| _amount | uint256 | undefined |
-| _balances | uint256[] | undefined |
+| _token | address | 1155 token address. |
+| _to | address | Receiver token address. |
+| _amount | uint256 | Num tokens to mint and send. |
+| _balances | uint256[] | Receiver token balances array, length should be = _amount. |
 
 ### batchBurn
 
@@ -73,16 +73,16 @@ function batchBurn(address _token, address _from, uint256[] _ids, uint256[] _bal
 
 Global token batch burn controller/single pusher for all token types.
 
-*Function Sighash := 0xba36b92dTransfer events emitted by nft implementation contracts.*
+*Function Sighash := 0xba36b92d*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| _token | address | undefined |
-| _from | address | undefined |
-| _ids | uint256[] | The token IDs of each token to be burnt; should be left empty for the `ERC1155Minimal` type. |
-| _balances | uint256[] | undefined |
+| _token | address | 1155 token address. |
+| _from | address | Array of addresses who own each token. |
+| _ids | uint256[] | The token IDs of each token to be burnt;        should be left empty for the `ERC1155Minimal` type. |
+| _balances | uint256[] | Array of corresponding token balances to burn. |
 
 ### burn
 
@@ -92,16 +92,16 @@ function burn(address _token, uint256[] _ids, address[] to, uint256[] _amount) e
 
 Global token burn controller/single pusher for all token types.
 
-*Function Sighash := 0xba36b92dTransfer events emitted by nft implementation contracts.*
+*Function Sighash := 0xba36b92d*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| _token | address | undefined |
-| _ids | uint256[] | The token IDs of each token to be burnt; should be left empty for the `ERC1155Minimal` type. |
-| to | address[] | undefined |
-| _amount | uint256[] | undefined |
+| _token | address | 1155 token address. |
+| _ids | uint256[] | The token IDs of each token to be burnt;        should be left empty for the `ERC1155Minimal` type. |
+| to | address[] | Array of addresses who own each token. |
+| _amount | uint256[] | Array of receiver token balances array. |
 
 ### creatorBatchMint
 
@@ -109,7 +109,7 @@ Global token burn controller/single pusher for all token types.
 function creatorBatchMint(address _token, uint256[] _ids, uint256[] _balances, uint256 totalBalance) external payable
 ```
 
-`ERC1155Whitelist` batch mint to creator function handler.
+ERC1155Whitelist batch mint to creator function handler.
 
 *Function Sighash := 0x182ee485*
 
@@ -117,10 +117,10 @@ function creatorBatchMint(address _token, uint256[] _ids, uint256[] _balances, u
 
 | Name | Type | Description |
 |---|---|---|
-| _token | address | undefined |
-| _ids | uint256[] | undefined |
-| _balances | uint256[] | undefined |
-| totalBalance | uint256 | undefined |
+| _token | address | 1155 token address. |
+| _ids | uint256[] | Receiver token _ids array. |
+| _balances | uint256[] | Receiver token balances array, length should be = _ids.length. |
+| totalBalance | uint256 | Totaled token amounts. |
 
 ### creatorMint
 
@@ -128,7 +128,7 @@ function creatorBatchMint(address _token, uint256[] _ids, uint256[] _balances, u
 function creatorMint(address _token, uint256 _amount, uint256[] _balances, uint256 totalBalance) external payable
 ```
 
-`ERC1155Whitelist` mint to creator function handler.
+ERC1155Whitelist mint to creator function handler.
 
 *Function Sighash := 0x182ee485*
 
@@ -136,10 +136,10 @@ function creatorMint(address _token, uint256 _amount, uint256[] _balances, uint2
 
 | Name | Type | Description |
 |---|---|---|
-| _token | address | undefined |
-| _amount | uint256 | undefined |
-| _balances | uint256[] | undefined |
-| totalBalance | uint256 | undefined |
+| _token | address | 1155 token address. |
+| _amount | uint256 | Num tokens to mint and send. |
+| _balances | uint256[] | Receiver token balances array, length should be = _amount. |
+| totalBalance | uint256 | Totaled token amounts. |
 
 ### erc20
 
@@ -147,9 +147,9 @@ function creatorMint(address _token, uint256 _amount, uint256[] _balances, uint2
 function erc20() external view returns (contract ERC20)
 ```
 
+ERC20 payment token address.
 
 
-*ERC20 payment token address*
 
 
 #### Returns
@@ -164,7 +164,7 @@ function erc20() external view returns (contract ERC20)
 function feeBurn() external view returns (uint256)
 ```
 
-
+Burn fee store.
 
 
 
@@ -181,15 +181,15 @@ function feeBurn() external view returns (uint256)
 function feeLookup(bytes4 sigHash) external view returns (uint256 fee)
 ```
 
+Mint and burn fee lookup.
 
-
-
+*Function Sighash := 0xedc9e7a4*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| sigHash | bytes4 | undefined |
+| sigHash | bytes4 | MINSAFEMINT | MINBURN |
 
 #### Returns
 
@@ -203,7 +203,7 @@ function feeLookup(bytes4 sigHash) external view returns (uint256 fee)
 function feeMint() external view returns (uint256)
 ```
 
-
+Mint fee store.
 
 
 
@@ -220,18 +220,18 @@ function feeMint() external view returns (uint256)
 function freeSettings(address _token, uint256 _freeAmount, uint256 _maxFree, bytes32 _claimRoot) external nonpayable
 ```
 
-`ERC1155Whitelist` free claim config setter.
+ERC1155Whitelist free claim config setter.
 
-*Function Sighash := 0xcab2e41fEvent emitted by `ERC1155Whitelist` token implementation contracts.*
+*Event emitted by ERC1155Whitelist token implementation contracts.      Function Sighash := 0xcab2e41f*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| _token | address | undefined |
-| _freeAmount | uint256 | undefined |
-| _maxFree | uint256 | undefined |
-| _claimRoot | bytes32 | undefined |
+| _token | address | 1155 token address. |
+| _freeAmount | uint256 | Num tokens per address. |
+| _maxFree | uint256 | Max free tokens available. |
+| _claimRoot | bytes32 | Merkel root. |
 
 ### gift
 
@@ -239,7 +239,7 @@ function freeSettings(address _token, uint256 _freeAmount, uint256 _maxFree, byt
 function gift(address _token, address[] _addresses, uint256[] _balances, uint256 totalBalance) external payable
 ```
 
-`ERC1155Whitelist` gift tokens function handler.
+ERC1155Whitelist gift tokens function handler.
 
 *Function Sighash := 0x67b5a642*
 
@@ -247,10 +247,10 @@ function gift(address _token, address[] _addresses, uint256[] _balances, uint256
 
 | Name | Type | Description |
 |---|---|---|
-| _token | address | undefined |
-| _addresses | address[] | undefined |
-| _balances | uint256[] | undefined |
-| totalBalance | uint256 | undefined |
+| _token | address | 1155 token address. |
+| _addresses | address[] | Array of addresses to gift too. |
+| _balances | uint256[] | Receiver token balances array, length should be = _ids.length. |
+| totalBalance | uint256 | Totaled token amounts. |
 
 ### minimalSafeMint
 
@@ -258,7 +258,7 @@ function gift(address _token, address[] _addresses, uint256[] _balances, uint256
 function minimalSafeMint(address _token, address _to, uint256 balance) external payable
 ```
 
-`ERC1155Minimal` creator mint function handler.
+ERC1155Minimal creator mint function handler.
 
 *Function Sighash := 0x42a42752*
 
@@ -266,9 +266,9 @@ function minimalSafeMint(address _token, address _to, uint256 balance) external 
 
 | Name | Type | Description |
 |---|---|---|
-| _token | address | undefined |
-| _to | address | undefined |
-| balance | uint256 | undefined |
+| _token | address | 1155 token address. |
+| _to | address | Receiver token address. |
+| balance | uint256 | Receiver token balance. |
 
 ### name
 
@@ -276,7 +276,7 @@ function minimalSafeMint(address _token, address _to, uint256 balance) external 
 function name() external pure returns (string)
 ```
 
-
+Contract name.
 
 *Function Sighash := 0x06fdde03*
 
@@ -338,16 +338,16 @@ function paused() external view returns (bool)
 function setFees(uint256 _feeMint, uint256 _feeBurn) external nonpayable
 ```
 
+Change the Routers mint and burn fees.
 
-
-
+*Event emitted by token contract.      Function Sighash := 0x0b78f9c0*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| _feeMint | uint256 | undefined |
-| _feeBurn | uint256 | undefined |
+| _feeMint | uint256 | New mint fee. |
+| _feeBurn | uint256 | New burn fee. |
 
 ### setMintState
 
@@ -355,17 +355,17 @@ function setFees(uint256 _feeMint, uint256 _feeBurn) external nonpayable
 function setMintState(address _token, bool _state, uint8 _stateType) external nonpayable
 ```
 
-Global MintState setter/controller with switch cases/control flow handling conditioned by both `_stateType` and `_tokenType`.
+Global MintState setter/controller  
 
-*Function Sighash := 0xab9acd57Events logged by each tokens&#39; `setState` functions.*
+*Switch cases/control flow handling conditioned by both `_stateType` and `_tokenType`.       Events logged by each tokens&#39; `setState` functions.      Function Sighash := 0xab9acd57*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| _token | address | undefined |
-| _state | bool | undefined |
-| _stateType | uint8 | Values legend: 0 := PublicMintState (minimal, basic, whitelist); 1 := WhitelistMintState (whitelist); 2 := FreeClaimState (whitelist). |
+| _token | address | 1155 token address. |
+| _state | bool | Set state to true or false. |
+| _stateType | uint8 | Values:      0 := PublicMintState (minimal, basic, whitelist);      1 := WhitelistMintState (whitelist);      2 := FreeClaimState (whitelist). |
 
 ### setOwner
 
@@ -373,7 +373,7 @@ Global MintState setter/controller with switch cases/control flow handling condi
 function setOwner(address newOwner) external nonpayable
 ```
 
-
+Set the Routers owner address.
 
 *Function Signature := 0x13af4035*
 
@@ -381,7 +381,7 @@ function setOwner(address newOwner) external nonpayable
 
 | Name | Type | Description |
 |---|---|---|
-| newOwner | address | undefined |
+| newOwner | address | New owners address. |
 
 ### setPaymentToken
 
@@ -391,13 +391,13 @@ function setPaymentToken(address _paymentTokenAddress) external nonpayable
 
 Enables the contract&#39;s owner to change payment token address.
 
-*Function Signature := ?*
+*Function Signature := 0x6a326ab1*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| _paymentTokenAddress | address | undefined |
+| _paymentTokenAddress | address | erc20 token address | address(0). |
 
 ### setSigner
 
@@ -407,14 +407,14 @@ function setSigner(address _token, address _signer) external nonpayable
 
 Change the address used for lazy minting voucher validation.
 
-*Function Sighash := 0x17f9fad1Event emitted by token contract.*
+*Event emitted by token contract.      Function Sighash := 0x17f9fad1*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| _token | address | undefined |
-| _signer | address | undefined |
+| _token | address | 1155 token address. |
+| _signer | address | New signers address. |
 
 ### setURI
 
@@ -422,16 +422,16 @@ Change the address used for lazy minting voucher validation.
 function setURI(address _token, string _uri) external nonpayable
 ```
 
-Collection `_uri` setter.
+Collection baseURI setter.
 
-*Only available for Basic, Whitelist and Lazy token types.Function Sighash := 0x4328bd00Events logged by each tokens&#39; functions.*
+*Only available for Basic, Whitelist and Lazy token types. Events logged       by each tokens&#39; BaseURISet functions.      Function Sighash := 0x4328bd00*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| _token | address | undefined |
-| _uri | string | undefined |
+| _token | address | 1155 token address. |
+| _uri | string | New URI string. |
 
 ### unpause
 
@@ -450,18 +450,18 @@ Unpaused state initializer for security risk mitigation pratice.
 function whitelistSettings(address _token, uint256 _price, uint256 _supply, bytes32 _root) external nonpayable
 ```
 
-`ERC1155Whitelist` whitelist config setter.
+ERC1155Whitelist whitelist config setter.
 
-*Function Sighash := 0xa123c38dEvent emitted by `ERC1155Whitelist` token implementation contracts.*
+*Events event emitted by ERC1155Whitelist token implementation contracts.      Function Sighash := 0xa123c38d*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| _token | address | undefined |
-| _price | uint256 | undefined |
-| _supply | uint256 | undefined |
-| _root | bytes32 | undefined |
+| _token | address | 1155 token address. |
+| _price | uint256 | Whitelist price per token. |
+| _supply | uint256 | Num tokens per address. |
+| _root | bytes32 | Merkel root. |
 
 ### withdraw
 
@@ -471,14 +471,14 @@ function withdraw(address _token, contract ERC20 _erc20) external nonpayable
 
 Withdraw both ERC20 and ONE from ERC1155 contract&#39;s balance.
 
-*Function Sighash := 0x9547ed5dLeave `_token` param empty for withdrawing eth only.No withdraw min needs to be passed as params, since all balance from the token&#39;s contract is emptied.*
+*Leave `_token` param empty for withdrawing eth only. No withdraw min needs to be passed as params, since      all balance from the token&#39;s contract is emptied.      Function Sighash := 0xf940e385*
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
-| _token | address | undefined |
-| _erc20 | contract ERC20 | undefined |
+| _token | address | 1155 token address. |
+| _erc20 | contract ERC20 | ERC20 token address. |
 
 
 

@@ -15,9 +15,18 @@ import {
   MADRouter1155,
   MockERC20,
 } from "../../src/types";
-import { BasicErrors, LazyErrors, MinimalErrors, RouterErrors, WhitelistErrors } from "./../utils/errors";
+import {
+  BasicErrors,
+  LazyErrors,
+  MinimalErrors,
+  RouterErrors,
+  WhitelistErrors,
+} from "./../utils/errors";
 import { getSignerAddrs } from "./../utils/fixtures";
-import { dead, madFixture1155B } from "./../utils/madFixtures";
+import {
+  dead,
+  madFixture1155B,
+} from "./../utils/madFixtures";
 
 describe("MADRouter1155", () => {
   type WalletWithAddress = Wallet & SignerWithAddress;
@@ -98,7 +107,7 @@ describe("MADRouter1155", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
-          750
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC1155Minimal",
@@ -139,7 +148,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const colID = await f1155.callStatic.getColID(
         basicAddr,
@@ -200,7 +209,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const colID = await f1155.callStatic.getColID(wlAddr);
       const wl = await ethers.getContractAt(
@@ -259,7 +268,7 @@ describe("MADRouter1155", () => {
           ethers.constants.Zero,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const colID = await f1155.callStatic.getColID(lazyAddr);
       const lazy = await ethers.getContractAt(
@@ -323,7 +332,7 @@ describe("MADRouter1155", () => {
           ethers.constants.Zero,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       // const colID = await f1155.callStatic.getColID(lazyAddr);
       const lazy = await ethers.getContractAt(
@@ -369,7 +378,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       // const colID = await f1155.callStatic.getColID(wlAddr);
       const wl = await ethers.getContractAt(
@@ -424,7 +433,7 @@ describe("MADRouter1155", () => {
           ethers.constants.Zero,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const lazy = await ethers.getContractAt(
         "ERC1155Lazy",
@@ -469,7 +478,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const wl = await ethers.getContractAt(
         "ERC1155Whitelist",
@@ -516,9 +525,14 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
-      const tx = r1155.minimalSafeMint(wlAddr, acc01.address, 1, {value:ethers.utils.parseEther("0.25")});
+      const tx = r1155.minimalSafeMint(
+        wlAddr,
+        acc01.address,
+        1,
+        { value: ethers.utils.parseEther("0.25") },
+      );
       const verArt = await artifacts.readArtifact(
         "FactoryVerifier",
       );
@@ -561,7 +575,7 @@ describe("MADRouter1155", () => {
           1,
           "cid/id.json",
           splAddr,
-          750
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC1155Minimal",
@@ -569,7 +583,9 @@ describe("MADRouter1155", () => {
       );
       const tx = await r1155
         .connect(acc02)
-        .minimalSafeMint(minAddr, acc01.address, 1, {value:ethers.utils.parseEther("0.25")});
+        .minimalSafeMint(minAddr, acc01.address, 1, {
+          value: ethers.utils.parseEther("0.25"),
+        });
 
       expect(tx).to.be.ok;
       // expect(await min.callStatic.ownerOf(1)).to.eq(
@@ -586,7 +602,9 @@ describe("MADRouter1155", () => {
       await expect(
         r1155
           .connect(mad)
-          .minimalSafeMint(minAddr, acc02.address, 1, {value:ethers.utils.parseEther("0.25")}),
+          .minimalSafeMint(minAddr, acc02.address, 1, {
+            value: ethers.utils.parseEther("0.25"),
+          }),
       ).to.be.revertedWithCustomError(
         ver,
         RouterErrors.AccessDenied,
@@ -594,7 +612,9 @@ describe("MADRouter1155", () => {
       await expect(
         r1155
           .connect(acc02)
-          .minimalSafeMint(minAddr, acc02.address, 1, {value:ethers.utils.parseEther("0.25")}),
+          .minimalSafeMint(minAddr, acc02.address, 1, {
+            value: ethers.utils.parseEther("0.25"),
+          }),
       ).to.be.revertedWithCustomError(
         min,
         RouterErrors.AlreadyMinted,
@@ -630,7 +650,7 @@ describe("MADRouter1155", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
-          750
+          750,
         );
       // const colID = await f1155.callStatic.getColID(minAddr);
       const min = await ethers.getContractAt(
@@ -640,8 +660,12 @@ describe("MADRouter1155", () => {
       await r1155
         .connect(acc02)
         .setMintState(minAddr, true, 0);
-      await min.connect(acc01).publicMint(1, { value: price });
-      const tx = await r1155.connect(acc02).burn(minAddr, [1], [acc01.address], [1]);
+      await min
+        .connect(acc01)
+        .publicMint(1, { value: price });
+      const tx = await r1155
+        .connect(acc02)
+        .burn(minAddr, [1], [acc01.address], [1]);
       const verArt = await artifacts.readArtifact(
         "FactoryVerifier",
       );
@@ -688,7 +712,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -752,7 +776,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const wl = await ethers.getContractAt(
         "ERC1155Whitelist",
@@ -761,8 +785,14 @@ describe("MADRouter1155", () => {
       await r1155
         .connect(acc02)
         .freeSettings(wl.address, 1, 10, root);
-      await r1155.connect(acc02).creatorMint(wlAddr, 1, [1], 1, {value:ethers.utils.parseEther("0.25")});
-      const tx = await r1155.connect(acc02).burn(wlAddr, [1], [acc02.address], [1]);
+      await r1155
+        .connect(acc02)
+        .creatorMint(wlAddr, 1, [1], 1, {
+          value: ethers.utils.parseEther("0.25"),
+        });
+      const tx = await r1155
+        .connect(acc02)
+        .burn(wlAddr, [1], [acc02.address], [1]);
       const verArt = await artifacts.readArtifact(
         "FactoryVerifier",
       );
@@ -812,7 +842,7 @@ describe("MADRouter1155", () => {
           ethers.constants.Zero,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const lazy = await ethers.getContractAt(
         "ERC1155Lazy",
@@ -839,7 +869,7 @@ describe("MADRouter1155", () => {
       const voucherType = [
         { name: "voucherId", type: "bytes32" },
         { name: "users", type: "address[]" },
-        { name: "balances", type: "uint256[]"},
+        { name: "balances", type: "uint256[]" },
         { name: "amount", type: "uint256" },
         { name: "price", type: "uint256" },
       ];
@@ -873,7 +903,7 @@ describe("MADRouter1155", () => {
         version: SignTypedDataVersion.V4,
       });
       const sigSplit = ethers.utils.splitSignature(signature);
-      
+
       await lazy
         .connect(acc02)
         .lazyMint(
@@ -885,7 +915,12 @@ describe("MADRouter1155", () => {
         );
       const tx = await r1155
         .connect(acc02)
-        .burn(lazyAddr, [1, 2], [Voucher.users[0], Voucher.users[1]], [1, 1]);
+        .burn(
+          lazyAddr,
+          [1, 2],
+          [Voucher.users[0], Voucher.users[1]],
+          [1, 1],
+        );
       const verArt = await artifacts.readArtifact(
         "FactoryVerifier",
       );
@@ -935,7 +970,7 @@ describe("MADRouter1155", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
-          750
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC1155Minimal",
@@ -944,7 +979,9 @@ describe("MADRouter1155", () => {
       await r1155
         .connect(acc02)
         .setMintState(minAddr, true, 0);
-      await min.connect(acc01).publicMint(1, { value: price });
+      await min
+        .connect(acc01)
+        .publicMint(1, { value: price });
 
       await expect(
         r1155
@@ -979,7 +1016,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const pmul = await ethers.BigNumber.from(4);
       const basic = await ethers.getContractAt(
@@ -994,7 +1031,12 @@ describe("MADRouter1155", () => {
         .mint(4, 1, { value: price.mul(pmul) });
       const tx = await r1155
         .connect(acc02)
-        .batchBurn(basicAddr, acc01.address, [1, 2, 3, 4], [1, 1, 1, 1]);
+        .batchBurn(
+          basicAddr,
+          acc01.address,
+          [1, 2, 3, 4],
+          [1, 1, 1, 1],
+        );
 
       expect(tx).to.be.ok;
       expect(
@@ -1055,7 +1097,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const wl = await ethers.getContractAt(
         "ERC1155Whitelist",
@@ -1064,7 +1106,11 @@ describe("MADRouter1155", () => {
       await r1155
         .connect(acc02)
         .freeSettings(wl.address, 1, 10, root);
-      await r1155.connect(acc02).creatorMint(wlAddr, 2, [1, 1], 2, {value:ethers.utils.parseEther("0.25")});
+      await r1155
+        .connect(acc02)
+        .creatorMint(wlAddr, 2, [1, 1], 2, {
+          value: ethers.utils.parseEther("0.25"),
+        });
       const tx = await r1155
         .connect(acc02)
         .batchBurn(wlAddr, acc02.address, [1, 2], [1, 1]);
@@ -1120,7 +1166,7 @@ describe("MADRouter1155", () => {
           ethers.constants.Zero,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const lazy = await ethers.getContractAt(
         "ERC1155Lazy",
@@ -1147,7 +1193,7 @@ describe("MADRouter1155", () => {
       const voucherType = [
         { name: "voucherId", type: "bytes32" },
         { name: "users", type: "address[]" },
-        { name: "balances", type: "uint256[]"},
+        { name: "balances", type: "uint256[]" },
         { name: "amount", type: "uint256" },
         { name: "price", type: "uint256" },
       ];
@@ -1192,7 +1238,12 @@ describe("MADRouter1155", () => {
         );
       const tx = await r1155
         .connect(acc02)
-        .batchBurn(lazyAddr, owner.address, [3, 2, 1], [1, 1, 1]);
+        .batchBurn(
+          lazyAddr,
+          owner.address,
+          [3, 2, 1],
+          [1, 1, 1],
+        );
       const verArt = await artifacts.readArtifact(
         "FactoryVerifier",
       );
@@ -1251,7 +1302,7 @@ describe("MADRouter1155", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
-          750
+          750,
         );
       const tx = r1155
         .connect(acc02)
@@ -1294,7 +1345,7 @@ describe("MADRouter1155", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
-          750
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC1155Minimal",
@@ -1311,7 +1362,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -1328,7 +1379,7 @@ describe("MADRouter1155", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
-          750
+          750,
         );
       const wl = await ethers.getContractAt(
         "ERC1155Whitelist",
@@ -1409,7 +1460,7 @@ describe("MADRouter1155", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
-          750
+          750,
         );
       const wlAddr = await f1155.callStatic.getDeployedAddr(
         "WhiteSalt",
@@ -1466,7 +1517,7 @@ describe("MADRouter1155", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
-          750
+          750,
         );
       const wlAddr = await f1155.callStatic.getDeployedAddr(
         "WhiteSalt",
@@ -1525,7 +1576,7 @@ describe("MADRouter1155", () => {
           100,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const basicAddr =
         await f1155.callStatic.getDeployedAddr("BasicSalt");
@@ -1535,7 +1586,11 @@ describe("MADRouter1155", () => {
       );
 
       await expect(
-        r1155.connect(acc02).creatorMint(basic.address, 2, [1, 1], 2, {value: ethers.utils.parseEther("0.25")}),
+        r1155
+          .connect(acc02)
+          .creatorMint(basic.address, 2, [1, 1], 2, {
+            value: ethers.utils.parseEther("0.25"),
+          }),
       ).to.be.revertedWith(RouterErrors.InvalidType);
     });
     it("Should mint to creator", async () => {
@@ -1563,7 +1618,7 @@ describe("MADRouter1155", () => {
           100,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const wlAddr = await f1155.callStatic.getDeployedAddr(
         "WhiteSalt",
@@ -1584,7 +1639,9 @@ describe("MADRouter1155", () => {
         .setMintState(wlAddr, true, 2);
       const tx = await r1155
         .connect(acc02)
-        .creatorMint(wlAddr, 2, [1, 1], 2, {value: ethers.utils.parseEther("0.25")});
+        .creatorMint(wlAddr, 2, [1, 1], 2, {
+          value: ethers.utils.parseEther("0.25"),
+        });
 
       expect(tx).to.be.ok;
       expect(await wl.callStatic.freeClaimState()).to.be.true;
@@ -1616,7 +1673,7 @@ describe("MADRouter1155", () => {
           100,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const basicAddr =
         await f1155.callStatic.getDeployedAddr("BasicSalt");
@@ -1628,7 +1685,12 @@ describe("MADRouter1155", () => {
       await expect(
         r1155
           .connect(acc02)
-          .creatorBatchMint(basic.address, [1, 3, 3, 7], [1, 1, 1, 1], 4),
+          .creatorBatchMint(
+            basic.address,
+            [1, 3, 3, 7],
+            [1, 1, 1, 1],
+            4,
+          ),
       ).to.be.revertedWith(RouterErrors.InvalidType);
     });
     it("Should batch mint to creator", async () => {
@@ -1656,7 +1718,7 @@ describe("MADRouter1155", () => {
           100,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const basicAddr =
         await f1155.callStatic.getDeployedAddr("BasicSalt");
@@ -1666,7 +1728,11 @@ describe("MADRouter1155", () => {
       );
 
       await expect(
-        r1155.connect(acc02).creatorMint(basic.address, 2, [1, 1], 2, {value: ethers.utils.parseEther("0.25")}),
+        r1155
+          .connect(acc02)
+          .creatorMint(basic.address, 2, [1, 1], 2, {
+            value: ethers.utils.parseEther("0.25"),
+          }),
       ).to.be.revertedWith(RouterErrors.InvalidType);
     });
     it("Should mint to creator", async () => {
@@ -1694,7 +1760,7 @@ describe("MADRouter1155", () => {
           100,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const wlAddr = await f1155.callStatic.getDeployedAddr(
         "WhiteSalt",
@@ -1715,7 +1781,13 @@ describe("MADRouter1155", () => {
         .setMintState(wlAddr, true, 2);
       const tx = await r1155
         .connect(acc02)
-        .creatorBatchMint(wlAddr, [7, 4, 6, 5, 73, 74], [1, 1, 1, 1, 1, 1], 6, {value: ethers.utils.parseEther("0.25")});
+        .creatorBatchMint(
+          wlAddr,
+          [7, 4, 6, 5, 73, 74],
+          [1, 1, 1, 1, 1, 1],
+          6,
+          { value: ethers.utils.parseEther("0.25") },
+        );
 
       expect(tx).to.be.ok;
       expect(await wl.callStatic.freeClaimState()).to.be.true;
@@ -1747,13 +1819,15 @@ describe("MADRouter1155", () => {
           100,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const basicAddr =
         await f1155.callStatic.getDeployedAddr("BasicSalt");
       const addrs = [owner.address, mad.address];
       await expect(
-        r1155.connect(acc02).gift(basicAddr, addrs, [1, 1], 2),
+        r1155
+          .connect(acc02)
+          .gift(basicAddr, addrs, [1, 1], 2),
       ).to.be.revertedWith(RouterErrors.InvalidType);
     });
     it("Should gift tokens", async () => {
@@ -1781,7 +1855,7 @@ describe("MADRouter1155", () => {
           100,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const wlAddr = await f1155.callStatic.getDeployedAddr(
         "WhiteSalt",
@@ -1802,7 +1876,9 @@ describe("MADRouter1155", () => {
         .setMintState(wlAddr, true, 2);
       const tx = await r1155
         .connect(acc02)
-        .gift(wlAddr, addrs, [1, 1], 2, {value: ethers.utils.parseEther("0.25")});
+        .gift(wlAddr, addrs, [1, 1], 2, {
+          value: ethers.utils.parseEther("0.25"),
+        });
 
       expect(tx).to.be.ok;
       expect(
@@ -1849,7 +1925,7 @@ describe("MADRouter1155", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
-          750
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC1155Minimal",
@@ -1859,7 +1935,9 @@ describe("MADRouter1155", () => {
       await r1155
         .connect(acc02)
         .setMintState(min.address, true, 0);
-      await min.connect(acc01).publicMint(1, { value: price });
+      await min
+        .connect(acc01)
+        .publicMint(1, { value: price });
       const bal1 = await ethers.provider.getBalance(
         acc02.address,
       );
@@ -1901,7 +1979,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           madSpl,
-          750
+          750,
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -1947,7 +2025,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           ambSpl,
-          750
+          750,
         );
       const wl = await ethers.getContractAt(
         "ERC1155Whitelist",
@@ -1957,7 +2035,9 @@ describe("MADRouter1155", () => {
       await r1155
         .connect(amb)
         .setMintState(wl.address, true, 0);
-      await wl.connect(acc01).mint(1, [1], 1, { value: price });
+      await wl
+        .connect(acc01)
+        .mint(1, [1], 1, { value: price });
       const balc = await ethers.provider.getBalance(
         amb.address,
       );
@@ -1999,7 +2079,7 @@ describe("MADRouter1155", () => {
           ethers.constants.Zero,
           "ipfs://cid/",
           userSpl,
-          750
+          750,
         );
       const lazy = await ethers.getContractAt(
         "ERC1155Lazy",
@@ -2029,7 +2109,7 @@ describe("MADRouter1155", () => {
       const voucherType = [
         { name: "voucherId", type: "bytes32" },
         { name: "users", type: "address[]" },
-        { name: "balances", type: "uint256[]"},
+        { name: "balances", type: "uint256[]" },
         { name: "amount", type: "uint256" },
         { name: "price", type: "uint256" },
       ];
@@ -2228,16 +2308,28 @@ describe("MADRouter1155", () => {
         r1155.minimalSafeMint(addr, acc01.address, 1),
       ).to.be.revertedWith(RouterErrors.Paused);
       await expect(
-        r1155.burn(addr, [1, 2, 3], [acc01.address, acc01.address, acc01.address], [1, 1, 1]),
+        r1155.burn(
+          addr,
+          [1, 2, 3],
+          [acc01.address, acc01.address, acc01.address],
+          [1, 1, 1],
+        ),
       ).to.be.revertedWith(RouterErrors.Paused);
       await expect(
         r1155.setMintState(addr, false, 2),
       ).to.be.revertedWith(RouterErrors.Paused);
       await expect(
-        r1155.creatorMint(addr, 1, [1, 1], 2, {value: ethers.utils.parseEther("0.25")}),
+        r1155.creatorMint(addr, 1, [1, 1], 2, {
+          value: ethers.utils.parseEther("0.25"),
+        }),
       ).to.be.revertedWith(RouterErrors.Paused);
       await expect(
-        r1155.gift(addr, [acc01.address, mad.address], [1, 1], 2),
+        r1155.gift(
+          addr,
+          [acc01.address, mad.address],
+          [1, 1],
+          2,
+        ),
       ).to.be.revertedWith(RouterErrors.Paused);
       await expect(
         r1155.withdraw(addr, addr),
@@ -2279,24 +2371,32 @@ describe("MADRouter1155", () => {
           1,
           "cid/id.json",
           splAddr,
-          750
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC1155Minimal",
         minAddr,
       );
-      await r1155.setFees(ethers.utils.parseEther("2.5"), ethers.utils.parseEther("0.5"));
-      await expect(r1155
-        .connect(acc02)
-        .minimalSafeMint(minAddr, acc01.address, 1, {value:ethers.utils.parseEther("0.25")})
+      await r1155.setFees(
+        ethers.utils.parseEther("2.5"),
+        ethers.utils.parseEther("0.5"),
+      );
+      await expect(
+        r1155
+          .connect(acc02)
+          .minimalSafeMint(minAddr, acc01.address, 1, {
+            value: ethers.utils.parseEther("0.25"),
+          }),
       ).to.be.revertedWithCustomError(
         min,
-        MinimalErrors.WrongPrice
+        MinimalErrors.WrongPrice,
       );
 
       const tx = await r1155
         .connect(acc02)
-        .minimalSafeMint(minAddr, acc01.address, 1, {value:ethers.utils.parseEther("2.5")});
+        .minimalSafeMint(minAddr, acc01.address, 1, {
+          value: ethers.utils.parseEther("2.5"),
+        });
 
       expect(tx).to.be.ok;
       // expect(await min.callStatic.ownerOf(1)).to.eq(
@@ -2313,7 +2413,9 @@ describe("MADRouter1155", () => {
       await expect(
         r1155
           .connect(mad)
-          .minimalSafeMint(minAddr, acc02.address, 1, {value:ethers.utils.parseEther("2.5")}),
+          .minimalSafeMint(minAddr, acc02.address, 1, {
+            value: ethers.utils.parseEther("2.5"),
+          }),
       ).to.be.revertedWithCustomError(
         ver,
         RouterErrors.AccessDenied,
@@ -2321,7 +2423,9 @@ describe("MADRouter1155", () => {
       await expect(
         r1155
           .connect(acc02)
-          .minimalSafeMint(minAddr, acc02.address, 1, {value:ethers.utils.parseEther("2.5")}),
+          .minimalSafeMint(minAddr, acc02.address, 1, {
+            value: ethers.utils.parseEther("2.5"),
+          }),
       ).to.be.revertedWithCustomError(
         min,
         RouterErrors.AlreadyMinted,
@@ -2356,24 +2460,32 @@ describe("MADRouter1155", () => {
           1,
           "cid/id.json",
           splAddr,
-          750
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC1155Basic",
         minAddr,
       );
-      await r1155.setFees(ethers.utils.parseEther("2.5"), ethers.utils.parseEther("0.5"));
-      await expect(r1155
-        .connect(acc02)
-        .basicMintTo(minAddr, acc01.address, 1, [1], {value:ethers.utils.parseEther("0.25")})
+      await r1155.setFees(
+        ethers.utils.parseEther("2.5"),
+        ethers.utils.parseEther("0.5"),
+      );
+      await expect(
+        r1155
+          .connect(acc02)
+          .basicMintTo(minAddr, acc01.address, 1, [1], {
+            value: ethers.utils.parseEther("0.25"),
+          }),
       ).to.be.revertedWithCustomError(
         min,
-        BasicErrors.WrongPrice
+        BasicErrors.WrongPrice,
       );
 
       const tx = await r1155
         .connect(acc02)
-        .basicMintTo(minAddr, acc01.address, 1, [1], {value:ethers.utils.parseEther("2.5")});
+        .basicMintTo(minAddr, acc01.address, 1, [1], {
+          value: ethers.utils.parseEther("2.5"),
+        });
 
       expect(tx).to.be.ok;
       const verArt = await artifacts.readArtifact(
@@ -2387,7 +2499,9 @@ describe("MADRouter1155", () => {
       await expect(
         r1155
           .connect(mad)
-          .basicMintTo(minAddr, acc02.address, 1, [1], {value:ethers.utils.parseEther("2.5")}),
+          .basicMintTo(minAddr, acc02.address, 1, [1], {
+            value: ethers.utils.parseEther("2.5"),
+          }),
       ).to.be.revertedWithCustomError(
         ver,
         RouterErrors.AccessDenied,
@@ -2422,24 +2536,40 @@ describe("MADRouter1155", () => {
           2,
           "cid/id.json",
           splAddr,
-          750
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC1155Basic",
         minAddr,
       );
-      await r1155.setFees(ethers.utils.parseEther("2.5"), ethers.utils.parseEther("0.5"));
-      await expect(r1155
-        .connect(acc02)
-        .basicMintBatchTo(minAddr, acc01.address, [1, 2], [1, 1], {value:ethers.utils.parseEther("0.25")})
+      await r1155.setFees(
+        ethers.utils.parseEther("2.5"),
+        ethers.utils.parseEther("0.5"),
+      );
+      await expect(
+        r1155
+          .connect(acc02)
+          .basicMintBatchTo(
+            minAddr,
+            acc01.address,
+            [1, 2],
+            [1, 1],
+            { value: ethers.utils.parseEther("0.25") },
+          ),
       ).to.be.revertedWithCustomError(
         min,
-        BasicErrors.WrongPrice
+        BasicErrors.WrongPrice,
       );
 
       const tx = await r1155
         .connect(acc02)
-        .basicMintBatchTo(minAddr, acc01.address, [1, 2], [1, 1], {value:ethers.utils.parseEther("2.5")});
+        .basicMintBatchTo(
+          minAddr,
+          acc01.address,
+          [1, 2],
+          [1, 1],
+          { value: ethers.utils.parseEther("2.5") },
+        );
 
       expect(tx).to.be.ok;
       const verArt = await artifacts.readArtifact(
@@ -2453,7 +2583,13 @@ describe("MADRouter1155", () => {
       await expect(
         r1155
           .connect(mad)
-          .basicMintBatchTo(minAddr, acc02.address, [1, 2], [1, 1], {value:ethers.utils.parseEther("2.5")}),
+          .basicMintBatchTo(
+            minAddr,
+            acc02.address,
+            [1, 2],
+            [1, 1],
+            { value: ethers.utils.parseEther("2.5") },
+          ),
       ).to.be.revertedWithCustomError(
         ver,
         RouterErrors.AccessDenied,
@@ -2489,9 +2625,12 @@ describe("MADRouter1155", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
-          750
+          750,
         );
-      await r1155.setFees(ethers.utils.parseEther("2.5"), ethers.utils.parseEther("0.5"));
+      await r1155.setFees(
+        ethers.utils.parseEther("2.5"),
+        ethers.utils.parseEther("0.5"),
+      );
 
       // const colID = await f1155.callStatic.getColID(minAddr);
       const min = await ethers.getContractAt(
@@ -2501,14 +2640,23 @@ describe("MADRouter1155", () => {
       await r1155
         .connect(acc02)
         .setMintState(minAddr, true, 0);
-      await min.connect(acc01).publicMint(1, { value: price });
-      await expect(r1155.connect(acc02).burn(minAddr, [1], [acc01.address], [1])
+      await min
+        .connect(acc01)
+        .publicMint(1, { value: price });
+      await expect(
+        r1155
+          .connect(acc02)
+          .burn(minAddr, [1], [acc01.address], [1]),
       ).to.be.revertedWithCustomError(
         min,
-        MinimalErrors.WrongPrice
+        MinimalErrors.WrongPrice,
       );
 
-      const tx = await r1155.connect(acc02).burn(minAddr, [1], [acc01.address], [1], {value: ethers.utils.parseEther("0.5")});
+      const tx = await r1155
+        .connect(acc02)
+        .burn(minAddr, [1], [acc01.address], [1], {
+          value: ethers.utils.parseEther("0.5"),
+        });
       const verArt = await artifacts.readArtifact(
         "FactoryVerifier",
       );
@@ -2555,7 +2703,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -2565,19 +2713,27 @@ describe("MADRouter1155", () => {
         .connect(acc02)
         .setMintState(basicAddr, true, 0);
 
-      await r1155.setFees(ethers.utils.parseEther("2.5"), ethers.utils.parseEther("0.5"));
+      await r1155.setFees(
+        ethers.utils.parseEther("2.5"),
+        ethers.utils.parseEther("0.5"),
+      );
 
       await basic.connect(acc01).mint(1, 1, { value: price });
-      
-      await expect(r1155.connect(acc02).burn(basicAddr, [1], [acc01.address], [1])
+
+      await expect(
+        r1155
+          .connect(acc02)
+          .burn(basicAddr, [1], [acc01.address], [1]),
       ).to.be.revertedWithCustomError(
         basic,
-        BasicErrors.WrongPrice
+        BasicErrors.WrongPrice,
       );
-        
+
       const tx = await r1155
         .connect(acc02)
-        .burn(basicAddr, [1], [acc01.address], [1], {value: ethers.utils.parseEther("0.5")});
+        .burn(basicAddr, [1], [acc01.address], [1], {
+          value: ethers.utils.parseEther("0.5"),
+        });
 
       expect(tx).to.be.ok;
       expect(
@@ -2592,7 +2748,9 @@ describe("MADRouter1155", () => {
         ethers.provider,
       );
       await expect(
-        r1155.burn(basicAddr, [1], [acc01.address], [1], {value: ethers.utils.parseEther("0.5")}),
+        r1155.burn(basicAddr, [1], [acc01.address], [1], {
+          value: ethers.utils.parseEther("0.5"),
+        }),
       ).to.be.revertedWithCustomError(
         ver,
         RouterErrors.AccessDenied,
@@ -2618,7 +2776,10 @@ describe("MADRouter1155", () => {
       const wlAddr = await f1155.callStatic.getDeployedAddr(
         "WhiteSalt",
       );
-      await r1155.setFees(ethers.utils.parseEther("2.5"), ethers.utils.parseEther("0.5"));
+      await r1155.setFees(
+        ethers.utils.parseEther("2.5"),
+        ethers.utils.parseEther("0.5"),
+      );
 
       await f1155
         .connect(acc02)
@@ -2631,7 +2792,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const wl = await ethers.getContractAt(
         "ERC1155Whitelist",
@@ -2640,22 +2801,38 @@ describe("MADRouter1155", () => {
       await r1155
         .connect(acc02)
         .freeSettings(wl.address, 1, 10, root);
-      
-      await expect(r1155.connect(acc02).creatorMint(wlAddr, 1, [1], 1, {value:ethers.utils.parseEther("0.25")})
+
+      await expect(
+        r1155
+          .connect(acc02)
+          .creatorMint(wlAddr, 1, [1], 1, {
+            value: ethers.utils.parseEther("0.25"),
+          }),
       ).to.be.revertedWithCustomError(
         wl,
-        WhitelistErrors.WrongPrice
-      )
-
-      await r1155.connect(acc02).creatorMint(wlAddr, 1, [1], 1, {value:ethers.utils.parseEther("2.5")});
-
-      await expect(r1155.connect(acc02).burn(wlAddr, [1], [acc02.address], [1])
-      ).to.be.revertedWithCustomError(
-        wl,
-        WhitelistErrors.WrongPrice
+        WhitelistErrors.WrongPrice,
       );
 
-      const tx = await r1155.connect(acc02).burn(wlAddr, [1], [acc02.address], [1], {value:ethers.utils.parseEther("0.5")});
+      await r1155
+        .connect(acc02)
+        .creatorMint(wlAddr, 1, [1], 1, {
+          value: ethers.utils.parseEther("2.5"),
+        });
+
+      await expect(
+        r1155
+          .connect(acc02)
+          .burn(wlAddr, [1], [acc02.address], [1]),
+      ).to.be.revertedWithCustomError(
+        wl,
+        WhitelistErrors.WrongPrice,
+      );
+
+      const tx = await r1155
+        .connect(acc02)
+        .burn(wlAddr, [1], [acc02.address], [1], {
+          value: ethers.utils.parseEther("0.5"),
+        });
       const verArt = await artifacts.readArtifact(
         "FactoryVerifier",
       );
@@ -2669,7 +2846,9 @@ describe("MADRouter1155", () => {
         await wl.callStatic.balanceOf(acc02.address, 1),
       ).to.eq(0);
       await expect(
-        r1155.burn(wlAddr, [1], [acc02.address], [1], {value: ethers.utils.parseEther("0.5")}),
+        r1155.burn(wlAddr, [1], [acc02.address], [1], {
+          value: ethers.utils.parseEther("0.5"),
+        }),
       ).to.be.revertedWithCustomError(
         ver,
         RouterErrors.AccessDenied,
@@ -2706,7 +2885,7 @@ describe("MADRouter1155", () => {
           ethers.constants.Zero,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const lazy = await ethers.getContractAt(
         "ERC1155Lazy",
@@ -2733,7 +2912,7 @@ describe("MADRouter1155", () => {
       const voucherType = [
         { name: "voucherId", type: "bytes32" },
         { name: "users", type: "address[]" },
-        { name: "balances", type: "uint256[]"},
+        { name: "balances", type: "uint256[]" },
         { name: "amount", type: "uint256" },
         { name: "price", type: "uint256" },
       ];
@@ -2767,7 +2946,7 @@ describe("MADRouter1155", () => {
         version: SignTypedDataVersion.V4,
       });
       const sigSplit = ethers.utils.splitSignature(signature);
-      
+
       await lazy
         .connect(acc02)
         .lazyMint(
@@ -2778,18 +2957,33 @@ describe("MADRouter1155", () => {
           { value: price.mul(ethers.BigNumber.from(2)) },
         );
 
-      await r1155.setFees(ethers.utils.parseEther("2.5"), ethers.utils.parseEther("0.5"));
-      await expect (r1155
-        .connect(acc02)
-        .burn(lazyAddr, [1, 2], [Voucher.users[0], Voucher.users[1]], [1, 1])
+      await r1155.setFees(
+        ethers.utils.parseEther("2.5"),
+        ethers.utils.parseEther("0.5"),
+      );
+      await expect(
+        r1155
+          .connect(acc02)
+          .burn(
+            lazyAddr,
+            [1, 2],
+            [Voucher.users[0], Voucher.users[1]],
+            [1, 1],
+          ),
       ).to.be.revertedWithCustomError(
         lazy,
-        LazyErrors.WrongPrice
+        LazyErrors.WrongPrice,
       );
 
       const tx = await r1155
         .connect(acc02)
-        .burn(lazyAddr, [1, 2], [Voucher.users[0], Voucher.users[1]], [1, 1], {value:ethers.utils.parseEther("0.5")});
+        .burn(
+          lazyAddr,
+          [1, 2],
+          [Voucher.users[0], Voucher.users[1]],
+          [1, 1],
+          { value: ethers.utils.parseEther("0.5") },
+        );
       const verArt = await artifacts.readArtifact(
         "FactoryVerifier",
       );
@@ -2803,7 +2997,9 @@ describe("MADRouter1155", () => {
       expect(await lazy.balanceOf(owner.address, 1)).to.eq(0);
       expect(await lazy.balanceOf(acc02.address, 2)).to.eq(0);
       await expect(
-        r1155.burn(lazyAddr, [1], [acc02.address], [1], {value:ethers.utils.parseEther("0.5")}),
+        r1155.burn(lazyAddr, [1], [acc02.address], [1], {
+          value: ethers.utils.parseEther("0.5"),
+        }),
       ).to.be.revertedWithCustomError(
         ver,
         RouterErrors.AccessDenied,
@@ -2839,7 +3035,7 @@ describe("MADRouter1155", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
-          750
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC1155Minimal",
@@ -2848,14 +3044,21 @@ describe("MADRouter1155", () => {
       await r1155
         .connect(acc02)
         .setMintState(minAddr, true, 0);
-      await min.connect(acc01).publicMint(1, { value: price });
+      await min
+        .connect(acc01)
+        .publicMint(1, { value: price });
 
-      await r1155.setFees(ethers.utils.parseEther("2.5"), ethers.utils.parseEther("0.5"));
+      await r1155.setFees(
+        ethers.utils.parseEther("2.5"),
+        ethers.utils.parseEther("0.5"),
+      );
 
       await expect(
         r1155
           .connect(acc02)
-          .batchBurn(minAddr, acc01.address, [1], [1], {value:ethers.utils.parseEther("0.5")}),
+          .batchBurn(minAddr, acc01.address, [1], [1], {
+            value: ethers.utils.parseEther("0.5"),
+          }),
       ).to.be.revertedWith(RouterErrors.InvalidType);
     });
     it("Should batch burn token for 1155Basic collection type", async () => {
@@ -2885,7 +3088,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const pmul = await ethers.BigNumber.from(4);
       const basic = await ethers.getContractAt(
@@ -2899,19 +3102,34 @@ describe("MADRouter1155", () => {
         .connect(acc01)
         .mint(4, 1, { value: price.mul(pmul) });
 
-      await r1155.setFees(ethers.utils.parseEther("2.5"), ethers.utils.parseEther("0.5"));
+      await r1155.setFees(
+        ethers.utils.parseEther("2.5"),
+        ethers.utils.parseEther("0.5"),
+      );
 
-      await expect(r1155
-        .connect(acc02)
-        .batchBurn(basicAddr, acc01.address, [1, 2, 3, 4], [1, 1, 1, 1])
+      await expect(
+        r1155
+          .connect(acc02)
+          .batchBurn(
+            basicAddr,
+            acc01.address,
+            [1, 2, 3, 4],
+            [1, 1, 1, 1],
+          ),
       ).to.be.revertedWithCustomError(
         basic,
-        BasicErrors.WrongPrice
+        BasicErrors.WrongPrice,
       );
 
       const tx = await r1155
         .connect(acc02)
-        .batchBurn(basicAddr, acc01.address, [1, 2, 3, 4], [1, 1, 1, 1], {value: ethers.utils.parseEther("0.5")});
+        .batchBurn(
+          basicAddr,
+          acc01.address,
+          [1, 2, 3, 4],
+          [1, 1, 1, 1],
+          { value: ethers.utils.parseEther("0.5") },
+        );
 
       expect(tx).to.be.ok;
       expect(
@@ -2935,7 +3153,9 @@ describe("MADRouter1155", () => {
         ethers.provider,
       );
       await expect(
-        r1155.batchBurn(basicAddr, acc01.address, [1], [1], {value: ethers.utils.parseEther("0.5")}),
+        r1155.batchBurn(basicAddr, acc01.address, [1], [1], {
+          value: ethers.utils.parseEther("0.5"),
+        }),
       ).to.be.revertedWithCustomError(
         ver,
         RouterErrors.AccessDenied,
@@ -2972,7 +3192,7 @@ describe("MADRouter1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const wl = await ethers.getContractAt(
         "ERC1155Whitelist",
@@ -2982,26 +3202,41 @@ describe("MADRouter1155", () => {
         .connect(acc02)
         .freeSettings(wl.address, 1, 10, root);
 
-      await r1155.setFees(ethers.utils.parseEther("2.5"), ethers.utils.parseEther("0.5"));
-
-      await expect (r1155.connect(acc02).creatorMint(wlAddr, 2, [1, 1], 2, {value:ethers.utils.parseEther("0.25")})
-      ).to.be.revertedWithCustomError(
-        wl,
-        WhitelistErrors.WrongPrice
+      await r1155.setFees(
+        ethers.utils.parseEther("2.5"),
+        ethers.utils.parseEther("0.5"),
       );
 
-      await expect (r1155
+      await expect(
+        r1155
+          .connect(acc02)
+          .creatorMint(wlAddr, 2, [1, 1], 2, {
+            value: ethers.utils.parseEther("0.25"),
+          }),
+      ).to.be.revertedWithCustomError(
+        wl,
+        WhitelistErrors.WrongPrice,
+      );
+
+      await expect(
+        r1155
+          .connect(acc02)
+          .batchBurn(wlAddr, acc02.address, [1, 2], [1, 1]),
+      ).to.be.revertedWithCustomError(
+        wl,
+        WhitelistErrors.WrongPrice,
+      );
+
+      await r1155
         .connect(acc02)
-        .batchBurn(wlAddr, acc02.address, [1, 2], [1, 1])
-      ).to.be.revertedWithCustomError(
-        wl,
-        WhitelistErrors.WrongPrice
-      );
-
-      await r1155.connect(acc02).creatorMint(wlAddr, 2, [1, 1], 2, {value:ethers.utils.parseEther("2.5")});
+        .creatorMint(wlAddr, 2, [1, 1], 2, {
+          value: ethers.utils.parseEther("2.5"),
+        });
       const tx = await r1155
         .connect(acc02)
-        .batchBurn(wlAddr, acc02.address, [1, 2], [1, 1], {value:ethers.utils.parseEther("0.5")});
+        .batchBurn(wlAddr, acc02.address, [1, 2], [1, 1], {
+          value: ethers.utils.parseEther("0.5"),
+        });
       const verArt = await artifacts.readArtifact(
         "FactoryVerifier",
       );
@@ -3018,7 +3253,9 @@ describe("MADRouter1155", () => {
         await wl.callStatic.balanceOf(acc02.address, 2),
       ).to.eq(0);
       await expect(
-        r1155.batchBurn(wlAddr, acc02.address, [1], [1], {value: ethers.utils.parseEther("0.5")}),
+        r1155.batchBurn(wlAddr, acc02.address, [1], [1], {
+          value: ethers.utils.parseEther("0.5"),
+        }),
       ).to.be.revertedWithCustomError(
         ver,
         RouterErrors.AccessDenied,
@@ -3054,7 +3291,7 @@ describe("MADRouter1155", () => {
           ethers.constants.Zero,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const lazy = await ethers.getContractAt(
         "ERC1155Lazy",
@@ -3081,7 +3318,7 @@ describe("MADRouter1155", () => {
       const voucherType = [
         { name: "voucherId", type: "bytes32" },
         { name: "users", type: "address[]" },
-        { name: "balances", type: "uint256[]"},
+        { name: "balances", type: "uint256[]" },
         { name: "amount", type: "uint256" },
         { name: "price", type: "uint256" },
       ];
@@ -3125,18 +3362,33 @@ describe("MADRouter1155", () => {
           { value: price.mul(ethers.BigNumber.from(3)) },
         );
 
-      await r1155.setFees(ethers.utils.parseEther("2.5"), ethers.utils.parseEther("0.5"));
-      await expect(r1155
-        .connect(acc02)
-        .batchBurn(lazyAddr, owner.address, [3, 2, 1], [1, 1, 1])
+      await r1155.setFees(
+        ethers.utils.parseEther("2.5"),
+        ethers.utils.parseEther("0.5"),
+      );
+      await expect(
+        r1155
+          .connect(acc02)
+          .batchBurn(
+            lazyAddr,
+            owner.address,
+            [3, 2, 1],
+            [1, 1, 1],
+          ),
       ).to.be.revertedWithCustomError(
         lazy,
-        LazyErrors.WrongPrice
+        LazyErrors.WrongPrice,
       );
 
       const tx = await r1155
         .connect(acc02)
-        .batchBurn(lazyAddr, owner.address, [3, 2, 1], [1, 1, 1], {value: ethers.utils.parseEther("0.5")});
+        .batchBurn(
+          lazyAddr,
+          owner.address,
+          [3, 2, 1],
+          [1, 1, 1],
+          { value: ethers.utils.parseEther("0.5") },
+        );
       const verArt = await artifacts.readArtifact(
         "FactoryVerifier",
       );
@@ -3151,7 +3403,9 @@ describe("MADRouter1155", () => {
       expect(await lazy.balanceOf(owner.address, 2)).to.eq(0);
       expect(await lazy.balanceOf(owner.address, 3)).to.eq(0);
       await expect(
-        r1155.batchBurn(lazyAddr, owner.address, [1], [1], {value: ethers.utils.parseEther("0.5")}),
+        r1155.batchBurn(lazyAddr, owner.address, [1], [1], {
+          value: ethers.utils.parseEther("0.5"),
+        }),
       ).to.be.revertedWithCustomError(
         ver,
         RouterErrors.AccessDenied,
@@ -3184,7 +3438,7 @@ describe("MADRouter1155", () => {
           100,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const basicAddr =
         await f1155.callStatic.getDeployedAddr("BasicSalt");
@@ -3194,7 +3448,11 @@ describe("MADRouter1155", () => {
       );
 
       await expect(
-        r1155.connect(acc02).creatorMint(basic.address, 2, [1, 1], 2, {value: ethers.utils.parseEther("0.25")}),
+        r1155
+          .connect(acc02)
+          .creatorMint(basic.address, 2, [1, 1], 2, {
+            value: ethers.utils.parseEther("0.25"),
+          }),
       ).to.be.revertedWith(RouterErrors.InvalidType);
     });
     it("Should mint to creator", async () => {
@@ -3222,7 +3480,7 @@ describe("MADRouter1155", () => {
           100,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const wlAddr = await f1155.callStatic.getDeployedAddr(
         "WhiteSalt",
@@ -3242,19 +3500,27 @@ describe("MADRouter1155", () => {
         .connect(acc02)
         .setMintState(wlAddr, true, 2);
 
-      await r1155.setFees(ethers.utils.parseEther("2.5"), ethers.utils.parseEther("0.5"));
+      await r1155.setFees(
+        ethers.utils.parseEther("2.5"),
+        ethers.utils.parseEther("0.5"),
+      );
 
-      await expect(r1155
-        .connect(acc02)
-        .creatorMint(wlAddr, 2, [1, 1], 2, {value: ethers.utils.parseEther("0.25")})
+      await expect(
+        r1155
+          .connect(acc02)
+          .creatorMint(wlAddr, 2, [1, 1], 2, {
+            value: ethers.utils.parseEther("0.25"),
+          }),
       ).to.be.revertedWithCustomError(
         wl,
-        WhitelistErrors.WrongPrice
+        WhitelistErrors.WrongPrice,
       );
 
       const tx = await r1155
         .connect(acc02)
-        .creatorMint(wlAddr, 2, [1, 1], 2, {value: ethers.utils.parseEther("2.5")});
+        .creatorMint(wlAddr, 2, [1, 1], 2, {
+          value: ethers.utils.parseEther("2.5"),
+        });
 
       expect(tx).to.be.ok;
       expect(await wl.callStatic.freeClaimState()).to.be.true;
@@ -3286,7 +3552,7 @@ describe("MADRouter1155", () => {
           100,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const wlAddr = await f1155.callStatic.getDeployedAddr(
         "WhiteSalt",
@@ -3306,18 +3572,34 @@ describe("MADRouter1155", () => {
         .connect(acc02)
         .setMintState(wlAddr, true, 2);
 
-      await r1155.setFees(ethers.utils.parseEther("2.5"), ethers.utils.parseEther("0.5"));
-      await expect(r1155
-        .connect(acc02)
-        .creatorBatchMint(wlAddr, [7, 4, 6, 5, 73, 74], [1, 1, 1, 1, 1, 1], 6, {value: ethers.utils.parseEther("0.25")})
+      await r1155.setFees(
+        ethers.utils.parseEther("2.5"),
+        ethers.utils.parseEther("0.5"),
+      );
+      await expect(
+        r1155
+          .connect(acc02)
+          .creatorBatchMint(
+            wlAddr,
+            [7, 4, 6, 5, 73, 74],
+            [1, 1, 1, 1, 1, 1],
+            6,
+            { value: ethers.utils.parseEther("0.25") },
+          ),
       ).to.be.revertedWithCustomError(
         wl,
-        WhitelistErrors.WrongPrice
+        WhitelistErrors.WrongPrice,
       );
 
       const tx = await r1155
         .connect(acc02)
-        .creatorBatchMint(wlAddr, [7, 4, 6, 5, 73, 74], [1, 1, 1, 1, 1, 1], 6, {value: ethers.utils.parseEther("2.5")});
+        .creatorBatchMint(
+          wlAddr,
+          [7, 4, 6, 5, 73, 74],
+          [1, 1, 1, 1, 1, 1],
+          6,
+          { value: ethers.utils.parseEther("2.5") },
+        );
 
       expect(tx).to.be.ok;
       expect(await wl.callStatic.freeClaimState()).to.be.true;
@@ -3349,7 +3631,7 @@ describe("MADRouter1155", () => {
           100,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const wlAddr = await f1155.callStatic.getDeployedAddr(
         "WhiteSalt",
@@ -3369,19 +3651,27 @@ describe("MADRouter1155", () => {
         .connect(acc02)
         .setMintState(wlAddr, true, 2);
 
-      await r1155.setFees(ethers.utils.parseEther("2.5"), ethers.utils.parseEther("0.5"));
+      await r1155.setFees(
+        ethers.utils.parseEther("2.5"),
+        ethers.utils.parseEther("0.5"),
+      );
 
-      await expect(r1155
-        .connect(acc02)
-        .gift(wlAddr, addrs, [1, 1], 2, {value: ethers.utils.parseEther("0.25")})
+      await expect(
+        r1155
+          .connect(acc02)
+          .gift(wlAddr, addrs, [1, 1], 2, {
+            value: ethers.utils.parseEther("0.25"),
+          }),
       ).to.be.revertedWithCustomError(
         wl,
-        WhitelistErrors.WrongPrice
+        WhitelistErrors.WrongPrice,
       );
-      
+
       const tx = await r1155
         .connect(acc02)
-        .gift(wlAddr, addrs, [1, 1], 2, {value: ethers.utils.parseEther("2.5")});
+        .gift(wlAddr, addrs, [1, 1], 2, {
+          value: ethers.utils.parseEther("2.5"),
+        });
 
       expect(tx).to.be.ok;
       expect(

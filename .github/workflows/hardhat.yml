@@ -10,10 +10,10 @@ jobs:
 
       - name: Install deps
         run: yarn install
-      
+
       - name: Compile
         run: yarn install
-      
+
       - name: Run tests
         continue-on-error: false
         run: yarn test

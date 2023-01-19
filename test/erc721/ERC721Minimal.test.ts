@@ -149,7 +149,7 @@ describe("ERC721Minimal", () => {
         MinimalErrors.Unauthorized,
       );
     });
-  
+
     it("Should mint, update storage and emit events", async () => {
       const tx: ContractTransaction = await minimal
         .connect(owner)
@@ -179,7 +179,9 @@ describe("ERC721Minimal", () => {
     });
 
     it("Should revert if already minted", async () => {
-      await minimal.connect(owner).safeMint(acc01.address, owner.address);
+      await minimal
+        .connect(owner)
+        .safeMint(acc01.address, owner.address);
       const tx = minimal
         .connect(owner)
         .safeMint(acc02.address, owner.address);
@@ -201,7 +203,9 @@ describe("ERC721Minimal", () => {
     });
 
     it("Should revert if not the owner", async () => {
-      await minimal.connect(owner).safeMint(acc02.address, owner.address);
+      await minimal
+        .connect(owner)
+        .safeMint(acc02.address, owner.address);
       const tx = minimal.connect(acc01).burn(acc01.address);
 
       await expect(tx).to.be.revertedWith(
@@ -210,7 +214,9 @@ describe("ERC721Minimal", () => {
     });
 
     it("Should burn, update storage and emit events", async () => {
-      await minimal.connect(owner).safeMint(acc02.address, owner.address);
+      await minimal
+        .connect(owner)
+        .safeMint(acc02.address, owner.address);
       const tx: ContractTransaction = await minimal
         .connect(owner)
         .burn(owner.address);
@@ -243,12 +249,14 @@ describe("ERC721Minimal", () => {
     });
 
     it("Should revert if already burned", async () => {
-      await minimal.connect(owner).safeMint(acc02.address, owner.address);
+      await minimal
+        .connect(owner)
+        .safeMint(acc02.address, owner.address);
       await minimal.connect(owner).burn(owner.address);
 
-      await expect(minimal.burn(owner.address)).to.be.revertedWith(
-        MinimalErrors.NotMinted,
-      );
+      await expect(
+        minimal.burn(owner.address),
+      ).to.be.revertedWith(MinimalErrors.NotMinted);
     });
   });
 
@@ -456,7 +464,9 @@ describe("ERC721Minimal", () => {
     });
 
     it("Should retrieve tokenURI", async () => {
-      await minimal.connect(owner).safeMint(acc01.address, owner.address);
+      await minimal
+        .connect(owner)
+        .safeMint(acc01.address, owner.address);
       const tx = await minimal.callStatic.tokenURI(1);
       const uri: string = "ipfs://cid/id.json";
 

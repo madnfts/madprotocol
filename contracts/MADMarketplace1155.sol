@@ -68,7 +68,7 @@ contract MADMarketplace1155 is
 
     address public recipient;
     FactoryVerifier public MADFactory1155;
-    
+
     ERC20 public erc20;
 
     ////////////////////////////////////////////////////////////////
@@ -174,7 +174,8 @@ contract MADMarketplace1155 is
 
         uint256 lastBidPrice = order.lastBidPrice;
         uint256 bidValue = address(erc20) != address(0)
-            ? erc20.allowance(msg.sender, address(this)) : msg.value;
+            ? erc20.allowance(msg.sender, address(this))
+            : msg.value;
 
         _bidChecks(
             order.orderType,
@@ -186,7 +187,12 @@ contract MADMarketplace1155 is
         );
 
         if (address(erc20) != address(0)) {
-            SafeTransferLib.safeTransferFrom(erc20, msg.sender, address(this), bidValue);
+            SafeTransferLib.safeTransferFrom(
+                erc20,
+                msg.sender,
+                address(this),
+                bidValue
+            );
         }
 
         // 1s blocktime
@@ -251,10 +257,19 @@ contract MADMarketplace1155 is
 
         uint256 currentPrice = getCurrentPrice(_order);
         if (address(erc20) != address(0)) {
-            if (erc20.allowance(msg.sender, address(this)) < currentPrice) revert WrongPrice();
-            SafeTransferLib.safeTransferFrom(erc20, msg.sender, address(this), currentPrice);
+            if (
+                erc20.allowance(msg.sender, address(this)) <
+                currentPrice
+            ) revert WrongPrice();
+            SafeTransferLib.safeTransferFrom(
+                erc20,
+                msg.sender,
+                address(this),
+                currentPrice
+            );
         } else {
-            if (msg.value != currentPrice) revert WrongPrice();
+            if (msg.value != currentPrice)
+                revert WrongPrice();
         }
 
         order.isSold = true;
@@ -271,7 +286,13 @@ contract MADMarketplace1155 is
                 order.seller
             )
         ) {
-            _intPath(order, currentPrice, _order, msg.sender, key);
+            _intPath(
+                order,
+                currentPrice,
+                _order,
+                msg.sender,
+                key
+            );
         }
         // path for external tokens
         else {
@@ -422,23 +443,21 @@ contract MADMarketplace1155 is
         emit FactoryUpdated(_factory);
     }
 
-    function setFees(
-        uint256 _feeVal2,
-        uint256 _feeVal3) 
+    function setFees(uint256 _feeVal2, uint256 _feeVal3)
         external
-        onlyOwner 
+        onlyOwner
     {
-        require(_feeVal2 <= 1.5e3 && _feeVal3 <= 5.0e2, "Invalid Fees");
+        require(
+            _feeVal2 <= 1.5e3 && _feeVal3 <= 5.0e2,
+            "Invalid Fees"
+        );
 
         assembly {
             sstore(feeVal2.slot, _feeVal2)
             sstore(feeVal3.slot, _feeVal3)
         }
 
-        emit FeesUpdated(
-            _feeVal2,
-            _feeVal3
-        );
+        emit FeesUpdated(_feeVal2, _feeVal3);
     }
 
     /// @notice Marketplace config setter.
@@ -454,13 +473,17 @@ contract MADMarketplace1155 is
         uint256 _minBidValue,
         uint256 _maxOrderDuration
     ) public onlyOwner {
-
         // minOrderDuration = _minOrderDuration;
         // minAuctionIncrement = _minAuctionIncrement;
         // minBidValue = _minBidValue;
         // maxOrderDuration = _maxOrderDuration;
-        require((_minAuctionIncrement <= 1200 && _minOrderDuration <= 600 && _minBidValue > 0) 
-            || _maxOrderDuration >= _minOrderDuration, "Invalid Settings");
+        require(
+            (_minAuctionIncrement <= 1200 &&
+                _minOrderDuration <= 600 &&
+                _minBidValue > 0) ||
+                _maxOrderDuration >= _minOrderDuration,
+            "Invalid Settings"
+        );
 
         assembly {
             sstore(minOrderDuration.slot, _minOrderDuration)
@@ -498,7 +521,10 @@ contract MADMarketplace1155 is
         public
         onlyOwner
     {
-        require(_paymentTokenAddress != address(0), "Invalid token address");
+        require(
+            _paymentTokenAddress != address(0),
+            "Invalid token address"
+        );
         erc20 = ERC20(_paymentTokenAddress);
 
         emit PaymentTokenUpdated(_paymentTokenAddress);
@@ -510,7 +536,10 @@ contract MADMarketplace1155 is
         public
         onlyOwner
     {
-        require(_recipient != address(0), "Invalid recipient");
+        require(
+            _recipient != address(0),
+            "Invalid recipient"
+        );
 
         // recipient = _recipient;
         assembly {
@@ -544,7 +573,11 @@ contract MADMarketplace1155 is
         );
     }
 
-    function withdrawERC20(ERC20 _token) external onlyOwner whenPaused {
+    function withdrawERC20(ERC20 _token)
+        external
+        onlyOwner
+        whenPaused
+    {
         SafeTransferLib.safeTransfer(
             _token,
             msg.sender,
@@ -780,9 +813,9 @@ contract MADMarketplace1155 is
         address _to
     ) internal {
         uint256 feePercent = feeVal3; // _feeResolver(
-            // key,
-            // _order.tokenId,
-            // _order.amount
+        // key,
+        // _order.tokenId,
+        // _order.amount
         // );
         // load royalty info query to mem
         (address _receiver, uint256 _amount) = _order
@@ -1042,7 +1075,7 @@ contract MADMarketplace1155 is
         address _seller,
         uint256 _lastBidPrice,
         uint256 _startPrice,
-        uint256 _bidValue        
+        uint256 _bidValue
     ) private view {
         assembly {
             // EAOnly()

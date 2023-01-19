@@ -91,7 +91,7 @@ contract ERC721Lazy is
     ////////////////////////////////////////////////////////////////
     //                        LAZY MINT                           //
     ////////////////////////////////////////////////////////////////
-    
+
     /// @notice This method enables offchain ledgering of tokens to establish onchain provenance as
     /// long as a trusted signer can be retrieved as the validator of such contract state update.
     /// @dev Neither `totalSupply` nor `price` accountings for any of the possible mint
@@ -106,13 +106,18 @@ contract ERC721Lazy is
         address _signer = _verify(voucher, v, r, s);
         uint256 value = _getPriceValue(msg.sender);
 
-        _lazyCheck(_signer, voucher, value);        
-        
+        _lazyCheck(_signer, voucher, value);
+
         // Only attempt to transfer if the sender is the _erc20Owner (not envoked through proxy)
         if (address(erc20) != address(0)) {
-            SafeTransferLib.safeTransferFrom(erc20, msg.sender, address(this), value);
+            SafeTransferLib.safeTransferFrom(
+                erc20,
+                msg.sender,
+                address(this),
+                value
+            );
         }
-        
+
         usedVouchers[voucher.voucherId] = true;
         uint256 len = voucher.users.length;
         uint256 i;
@@ -148,9 +153,13 @@ contract ERC721Lazy is
     }
 
     /// @dev Allows erc20 payments only if erc20 exists
-    function burn(uint256[] memory ids, address erc20Owner) external payable onlyOwner {
+    function burn(uint256[] memory ids, address erc20Owner)
+        external
+        payable
+        onlyOwner
+    {
         _paymentCheck(erc20Owner, 1);
-        
+
         uint256 i;
         uint256 len = ids.length;
         // for (uint256 i = 1; i < ids.length; i++) {
@@ -236,7 +245,7 @@ contract ERC721Lazy is
         return liveSupply.current();
     }
 
-    function _incrementCounter() private returns(uint256){
+    function _incrementCounter() private returns (uint256) {
         _nextId();
         mintCount += 1;
         return mintCount;
@@ -399,7 +408,7 @@ contract ERC721Lazy is
         return liveSupply.current();
     }
 
-    function getMintCount() public view returns(uint256) {
+    function getMintCount() public view returns (uint256) {
         return mintCount;
     }
 
@@ -423,27 +432,39 @@ contract ERC721Lazy is
     /// @dev If router deploy we check msg.value if !erc20 BUT checks erc20 approval and transfers are via the router
     /// @param _erc20Owner Non router deploy =msg.sender; Router deploy =payer.address (msg.sender = router.address)
     /// @param _type Passed to _feeCheck to determin the fee 0=mint; 1=burn; ELSE _feeCheck is ignored
-    function _paymentCheck(address _erc20Owner, uint8 _type) internal 
+    function _paymentCheck(address _erc20Owner, uint8 _type)
+        internal
     {
         uint256 value = (address(erc20) != address(0))
             ? erc20.allowance(_erc20Owner, address(this))
-            : msg.value; 
-        
-        // Check fees are paid 
+            : msg.value;
+
+        // Check fees are paid
         // ERC20 fees for router calls are checked and transfered via in the router
-        if (address(msg.sender) == address(_erc20Owner) || (address(erc20) == address(0))) {
+        if (
+            address(msg.sender) == address(_erc20Owner) ||
+            (address(erc20) == address(0))
+        ) {
             if (_type == 0) {
                 _feeCheck(0x40d097c3, value);
             } else if (_type == 1) {
                 _feeCheck(0x44df8e70, value);
-            }   
+            }
             if (address(erc20) != address(0)) {
-                SafeTransferLib.safeTransferFrom(erc20, _erc20Owner, address(this), value);
+                SafeTransferLib.safeTransferFrom(
+                    erc20,
+                    _erc20Owner,
+                    address(this),
+                    value
+                );
             }
         }
     }
-    
-    function _feeCheck(bytes4 _method, uint256 _value) internal view {
+
+    function _feeCheck(bytes4 _method, uint256 _value)
+        internal
+        view
+    {
         address _owner = owner;
         uint32 size;
         assembly {
@@ -462,10 +483,15 @@ contract ERC721Lazy is
     }
 
     /// @dev Checks msg.value if !erc20 OR checks erc20 approval and returns the value
-    function _getPriceValue(address _erc20Owner) internal view returns(uint256 value) {
-        return (address(erc20) != address(0)) 
-            ? erc20.allowance(_erc20Owner, address(this))
-            : msg.value;   
+    function _getPriceValue(address _erc20Owner)
+        internal
+        view
+        returns (uint256 value)
+    {
+        return
+            (address(erc20) != address(0))
+                ? erc20.allowance(_erc20Owner, address(this))
+                : msg.value;
     }
 
     ////////////////////////////////////////////////////////////////

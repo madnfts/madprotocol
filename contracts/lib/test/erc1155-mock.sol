@@ -21,14 +21,19 @@ contract MockERC1155 is
         returns (string memory)
     {}
 
-    function mint(address to, uint256 id, uint256 total) public onlyOwner {
+    function mint(
+        address to,
+        uint256 id,
+        uint256 total
+    ) public onlyOwner {
         _mint(to, id, total, "");
     }
 
-    function batchMint(address to, uint256[] memory ids, uint256[] memory balances)
-        public
-        onlyOwner
-    {
+    function batchMint(
+        address to,
+        uint256[] memory ids,
+        uint256[] memory balances
+    ) public onlyOwner {
         _batchMint(to, ids, balances, "");
     }
 

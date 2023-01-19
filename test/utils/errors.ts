@@ -39,7 +39,7 @@ export enum WhitelistErrors {
   NotMintedYet = "NotMintedYet",
   WrongPrice = "WrongPrice",
   NotMinted = "NOT_MINTED",
-  WrongFrom = "WRONG_FROM",  
+  WrongFrom = "WRONG_FROM",
   InvalidAmount = "INVALID_AMOUNT",
 }
 

@@ -57,8 +57,12 @@ contract ERC1155Basic is
         _;
     }
 
-    modifier priceCheckERC20(uint256 _price, uint256 amount, address erc20Owner) {
-        uint256 value = (address(erc20) != address(0)) 
+    modifier priceCheckERC20(
+        uint256 _price,
+        uint256 amount,
+        address erc20Owner
+    ) {
+        uint256 value = (address(erc20) != address(0))
             ? erc20.allowance(erc20Owner, address(this))
             : msg.value;
         if (_price * amount != value) revert WrongPrice();
@@ -110,11 +114,16 @@ contract ERC1155Basic is
     }
 
     /// @dev Allows erc20 payments only if erc20 exists
-    function mintTo(address to, uint256 amount, uint256[] memory balance, address erc20Owner)
+    function mintTo(
+        address to,
+        uint256 amount,
+        uint256[] memory balance,
+        address erc20Owner
+    )
         external
         payable
         onlyOwner
-        hasReachedMax(_sumAmounts(balance) * amount) 
+        hasReachedMax(_sumAmounts(balance) * amount)
     {
         _paymentCheck(erc20Owner, 0);
         uint256 i;
@@ -137,7 +146,12 @@ contract ERC1155Basic is
     }
 
     /// @dev Allows erc20 payments only if erc20 exists
-    function mintBatchTo(address to, uint256[] memory ids, uint256[] memory amounts, address erc20Owner)
+    function mintBatchTo(
+        address to,
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        address erc20Owner
+    )
         external
         payable
         onlyOwner
@@ -164,15 +178,20 @@ contract ERC1155Basic is
 
     /// @dev Burns an arbitrary length array of ids of different owners.
     /// @dev Allows erc20 payments only if erc20 exists
-    function burn(address[] memory from, uint256[] memory ids, uint256[] memory balances, address erc20Owner) 
-        external 
-        payable 
-        onlyOwner 
-    {
+    function burn(
+        address[] memory from,
+        uint256[] memory ids,
+        uint256[] memory balances,
+        address erc20Owner
+    ) external payable onlyOwner {
         _paymentCheck(erc20Owner, 1);
         uint256 i;
         uint256 len = ids.length;
-        require(from.length == ids.length && ids.length == balances.length, "LENGTH_MISMATCH");
+        require(
+            from.length == ids.length &&
+                ids.length == balances.length,
+            "LENGTH_MISMATCH"
+        );
         for (i; i < len; ) {
             liveSupply.decrement(balances[i]);
             _burn(from[i], ids[i], balances[i]);
@@ -190,12 +209,16 @@ contract ERC1155Basic is
     }
 
     /// @dev Allows erc20 payments only if erc20 exists
-    function burnBatch(address from, uint256[] memory ids, uint256[] memory amounts, address erc20Owner)
-        external
-        payable
-        onlyOwner
-    {
-        require(ids.length == amounts.length, "LENGTH_MISMATCH");
+    function burnBatch(
+        address from,
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        address erc20Owner
+    ) external payable onlyOwner {
+        require(
+            ids.length == amounts.length,
+            "LENGTH_MISMATCH"
+        );
         _paymentCheck(erc20Owner, 1);
         uint256 i;
         uint256 len = ids.length;
@@ -286,7 +309,12 @@ contract ERC1155Basic is
         _paymentCheck(msg.sender, 2);
         uint256 i;
         for (i; i < amount; ) {
-            _mint(msg.sender, _incrementCounter(1), balance, "");
+            _mint(
+                msg.sender,
+                _incrementCounter(1),
+                balance,
+                ""
+            );
             unchecked {
                 ++i;
             }
@@ -302,20 +330,26 @@ contract ERC1155Basic is
     }
 
     /// @dev Enables public minting of an arbitrary length array of specific ids.
-    function mintBatch(uint256[] memory ids, uint256[] memory amounts)
-        external
-        payable
-        nonReentrant
-        publicMintAccess
-    {
-        require(ids.length == amounts.length, "MISMATCH_LENGTH");
-        uint256 value = (address(erc20) != address(0)) 
+    function mintBatch(
+        uint256[] memory ids,
+        uint256[] memory amounts
+    ) external payable nonReentrant publicMintAccess {
+        require(
+            ids.length == amounts.length,
+            "MISMATCH_LENGTH"
+        );
+        uint256 value = (address(erc20) != address(0))
             ? erc20.allowance(msg.sender, address(this))
             : msg.value;
         uint256 len = ids.length;
         _mintBatchCheck(len, value);
         if (address(erc20) != address(0)) {
-            SafeTransferLib.safeTransferFrom(erc20, msg.sender, address(this), value);
+            SafeTransferLib.safeTransferFrom(
+                erc20,
+                msg.sender,
+                address(this),
+                value
+            );
         }
         uint256 i;
         for (i; i < len; ) {
@@ -338,24 +372,37 @@ contract ERC1155Basic is
     //                          HELPER FX                         //
     ////////////////////////////////////////////////////////////////
 
-    function _nextId(uint256 amount) private returns (uint256) {
+    function _nextId(uint256 amount)
+        private
+        returns (uint256)
+    {
         liveSupply.increment(amount);
         return liveSupply.current();
     }
 
-    function _incrementCounter(uint256 amount) private returns(uint256) {
+    function _incrementCounter(uint256 amount)
+        private
+        returns (uint256)
+    {
         _nextId(amount);
         mintCount += amount;
         return mintCount;
     }
 
-    function _mintBatchCheck(uint256 _amount, uint256 _value) private view {
+    function _mintBatchCheck(uint256 _amount, uint256 _value)
+        private
+        view
+    {
         if (price * _amount != _value) revert WrongPrice();
         if (mintCount + _amount > maxSupply)
             revert MaxSupplyReached();
     }
 
-    function _sumAmounts(uint256[] memory amounts) private pure returns (uint256 _result) {
+    function _sumAmounts(uint256[] memory amounts)
+        private
+        pure
+        returns (uint256 _result)
+    {
         uint256 len = amounts.length;
         uint256 i;
         for (i; i < len; ) {
@@ -402,7 +449,7 @@ contract ERC1155Basic is
         return liveSupply.current();
     }
 
-    function getMintCount() public view returns(uint256) {
+    function getMintCount() public view returns (uint256) {
         return mintCount;
     }
 
@@ -415,34 +462,46 @@ contract ERC1155Basic is
     /// @dev If router deploy we check msg.value if !erc20 BUT checks erc20 approval and transfers are via the router
     /// @param _erc20Owner Non router deploy =msg.sender; Router deploy =payer.address (msg.sender = router.address)
     /// @param _type Passed to _feeCheck to determin the fee 0=mint; 1=burn; ELSE _feeCheck is ignored
-    function _paymentCheck(address _erc20Owner, uint8 _type) internal 
+    function _paymentCheck(address _erc20Owner, uint8 _type)
+        internal
     {
         uint256 value = (address(erc20) != address(0))
             ? erc20.allowance(_erc20Owner, address(this))
-            : msg.value; 
-        
-        // Check fees are paid 
+            : msg.value;
+
+        // Check fees are paid
         // ERC20 fees for router calls are checked and transfered via in the router
-        if (address(msg.sender) == address(_erc20Owner) || (address(erc20) == address(0))) {
+        if (
+            address(msg.sender) == address(_erc20Owner) ||
+            (address(erc20) == address(0))
+        ) {
             if (_type == 0) {
                 _feeCheck(0x40d097c3, value);
             } else if (_type == 1) {
                 _feeCheck(0x44df8e70, value);
-            }   
+            }
             if (address(erc20) != address(0)) {
-                SafeTransferLib.safeTransferFrom(erc20, _erc20Owner, address(this), value);
+                SafeTransferLib.safeTransferFrom(
+                    erc20,
+                    _erc20Owner,
+                    address(this),
+                    value
+                );
             }
         }
     }
 
-    function _feeCheck(bytes4 _method, uint256 _value) internal view {
+    function _feeCheck(bytes4 _method, uint256 _value)
+        internal
+        view
+    {
         address _owner = owner;
         uint32 size;
         assembly {
             size := extcodesize(_owner)
         }
         if (size == 0) {
-            return; 
+            return;
         }
         uint256 _fee = FeeOracle(owner).feeLookup(_method);
         assembly {

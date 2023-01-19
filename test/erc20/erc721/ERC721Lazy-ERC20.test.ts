@@ -110,7 +110,9 @@ describe("ERC721Lazy - ERC20", () => {
       // deployment settings check
       expect(await lazy.callStatic.name()).to.eq("721Lazy");
       expect(await lazy.callStatic.symbol()).to.eq("LAZY");
-      expect(await lazy.callStatic.erc20()).to.eq(erc20.address);
+      expect(await lazy.callStatic.erc20()).to.eq(
+        erc20.address,
+      );
 
       await expect(await lazy.deployTransaction)
         .to.emit(lazy, "RoyaltyFeeSet")
@@ -180,8 +182,10 @@ describe("ERC721Lazy - ERC20", () => {
       );
       const sup = await lazy.callStatic.totalSupply();
 
-      const erc20ApproveTx = await erc20.connect(owner).approve(lazy.address, price.mul(amount));
-      expect(erc20ApproveTx).to.be.ok
+      const erc20ApproveTx = await erc20
+        .connect(owner)
+        .approve(lazy.address, price.mul(amount));
+      expect(erc20ApproveTx).to.be.ok;
       const tx = await lazy.lazyMint(
         voucher,
         sigSplit.v,
@@ -228,8 +232,10 @@ describe("ERC721Lazy - ERC20", () => {
         .withArgs(dead, mad.address, 27);
     });
     it("Should revert if voucher has already been used", async () => {
-      const erc20ApproveTx = await erc20.connect(owner).approve(lazy.address, price.mul(amount));
-      expect(erc20ApproveTx).to.be.ok
+      const erc20ApproveTx = await erc20
+        .connect(owner)
+        .approve(lazy.address, price.mul(amount));
+      expect(erc20ApproveTx).to.be.ok;
       await lazy.lazyMint(
         voucher,
         sigSplit.v,
@@ -249,8 +255,10 @@ describe("ERC721Lazy - ERC20", () => {
       );
     });
     it("Should revert if signature is invalid", async () => {
-      const erc20ApproveTx = await erc20.connect(owner).approve(lazy.address, price.mul(amount));
-      expect(erc20ApproveTx).to.be.ok
+      const erc20ApproveTx = await erc20
+        .connect(owner)
+        .approve(lazy.address, price.mul(amount));
+      expect(erc20ApproveTx).to.be.ok;
       const wSigSplit = ethers.utils.splitSignature(wrongSig);
       const tx = lazy.lazyMint(
         voucher,
@@ -265,8 +273,10 @@ describe("ERC721Lazy - ERC20", () => {
       );
     });
     it("Should revert if price is wrong", async () => {
-      const erc20ApproveTx = await erc20.connect(owner).approve(lazy.address, price);
-      expect(erc20ApproveTx).to.be.ok
+      const erc20ApproveTx = await erc20
+        .connect(owner)
+        .approve(lazy.address, price);
+      expect(erc20ApproveTx).to.be.ok;
       const tx = lazy.lazyMint(
         voucher,
         sigSplit.v,
@@ -297,8 +307,10 @@ describe("ERC721Lazy - ERC20", () => {
       );
     });
     it("Should withdraw ERC20 and update balances", async () => {
-      const erc20ApproveTx = await erc20.connect(owner).approve(lazy.address, price.mul(amount));
-      expect(erc20ApproveTx).to.be.ok
+      const erc20ApproveTx = await erc20
+        .connect(owner)
+        .approve(lazy.address, price.mul(amount));
+      expect(erc20ApproveTx).to.be.ok;
       await lazy.lazyMint(
         voucher,
         sigSplit.v,
@@ -309,7 +321,7 @@ describe("ERC721Lazy - ERC20", () => {
         mad.address,
         amb.address,
         owner.address,
-        lazy.address
+        lazy.address,
       ];
       const shares = [
         ethers.BigNumber.from(1000),
@@ -324,7 +336,7 @@ describe("ERC721Lazy - ERC20", () => {
       ];
 
       await expect(() =>
-        lazy.withdrawERC20(erc20.address)
+        lazy.withdrawERC20(erc20.address),
       ).to.changeTokenBalances(erc20, addrs, vals);
 
       await expect(
@@ -340,8 +352,10 @@ describe("ERC721Lazy - ERC20", () => {
       ).to.be.revertedWith(LazyErrors.Unauthorized);
     });
     it("Should revert if id is already burnt/hasn't been minted", async () => {
-      const erc20ApproveTx = await erc20.connect(owner).approve(lazy.address, price.mul(amount));
-      expect(erc20ApproveTx).to.be.ok
+      const erc20ApproveTx = await erc20
+        .connect(owner)
+        .approve(lazy.address, price.mul(amount));
+      expect(erc20ApproveTx).to.be.ok;
       await lazy.lazyMint(
         voucher,
         sigSplit.v,
@@ -367,8 +381,10 @@ describe("ERC721Lazy - ERC20", () => {
       );
     });
     it("Should spend ERC20 to mint, burn then mint again, update storage and emit event", async () => {
-      const erc20ApproveTx = await erc20.connect(owner).approve(lazy.address, price.mul(amount));
-      expect(erc20ApproveTx).to.be.ok
+      const erc20ApproveTx = await erc20
+        .connect(owner)
+        .approve(lazy.address, price.mul(amount));
+      expect(erc20ApproveTx).to.be.ok;
       await lazy.lazyMint(
         voucher,
         sigSplit.v,
@@ -379,8 +395,10 @@ describe("ERC721Lazy - ERC20", () => {
       const ids = [1, 13, 20, 30];
       const tx = await lazy.burn(ids, owner.address);
 
-      const erc20ApproveTx2 = await erc20.connect(owner).approve(lazy.address, price.mul(amount));
-      expect(erc20ApproveTx2).to.be.ok
+      const erc20ApproveTx2 = await erc20
+        .connect(owner)
+        .approve(lazy.address, price.mul(amount));
+      expect(erc20ApproveTx2).to.be.ok;
       await lazy.lazyMint(
         voucher2,
         sigSplit2.v,
@@ -402,7 +420,8 @@ describe("ERC721Lazy - ERC20", () => {
       const approved2 = await lazy.callStatic.getApproved(13);
       const approved3 = await lazy.callStatic.getApproved(20);
       const approved4 = await lazy.callStatic.getApproved(30);
-      const mintCounter = await lazy.callStatic.getMintCount();
+      const mintCounter =
+        await lazy.callStatic.getMintCount();
 
       expect(tx).to.be.ok;
       expect(bal1).to.eq(19);
@@ -434,8 +453,10 @@ describe("ERC721Lazy - ERC20", () => {
     });
 
     it("Should retrive baseURI and total supply", async () => {
-      const erc20ApproveTx = await erc20.connect(owner).approve(lazy.address, price.mul(amount));
-      expect(erc20ApproveTx).to.be.ok
+      const erc20ApproveTx = await erc20
+        .connect(owner)
+        .approve(lazy.address, price.mul(amount));
+      expect(erc20ApproveTx).to.be.ok;
       const res = "0x70616b6d616e";
       await lazy.lazyMint(
         voucher,
@@ -457,10 +478,12 @@ describe("ERC721Lazy - ERC20", () => {
       expect(sup).to.eq(30);
       expect(sup2).to.eq(28);
     });
-    
+
     it("Should retrive tokenURI and revert if not yet minted", async () => {
-      const erc20ApproveTx = await erc20.connect(owner).approve(lazy.address, price.mul(amount));
-      expect(erc20ApproveTx).to.be.ok
+      const erc20ApproveTx = await erc20
+        .connect(owner)
+        .approve(lazy.address, price.mul(amount));
+      expect(erc20ApproveTx).to.be.ok;
       await lazy.lazyMint(
         voucher,
         sigSplit.v,

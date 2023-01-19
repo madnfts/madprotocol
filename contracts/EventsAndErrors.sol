@@ -146,7 +146,9 @@ interface MarketplaceEventsAndErrors721 {
 
     event FactoryUpdated(FactoryVerifier indexed newFactory);
     event RecipientUpdated(address indexed newRecipient);
-    event PaymentTokenUpdated(address indexed newPaymentToken);
+    event PaymentTokenUpdated(
+        address indexed newPaymentToken
+    );
 
     event AuctionSettingsUpdated(
         uint256 indexed newMinDuration,
@@ -183,10 +185,7 @@ interface MarketplaceEventsAndErrors721 {
         uint256 price
     );
 
-    event FeesUpdated (
-        uint256 feeVal2,
-        uint256 feeVal3
-    );
+    event FeesUpdated(uint256 feeVal2, uint256 feeVal3);
 
     ////////////////////////////////////////////////////////////////
     //                           ERRORS                           //
@@ -225,7 +224,9 @@ interface MarketplaceEventsAndErrors1155 {
 
     event FactoryUpdated(FactoryVerifier indexed newFactory);
     event RecipientUpdated(address indexed newRecipient);
-    event PaymentTokenUpdated(address indexed newPaymentToken);
+    event PaymentTokenUpdated(
+        address indexed newPaymentToken
+    );
 
     event AuctionSettingsUpdated(
         uint256 indexed newMinDuration,
@@ -266,10 +267,7 @@ interface MarketplaceEventsAndErrors1155 {
         uint256 price
     );
 
-    event FeesUpdated (
-        uint256 feeVal2,
-        uint256 feeVal3
-    );
+    event FeesUpdated(uint256 feeVal2, uint256 feeVal3);
 
     ////////////////////////////////////////////////////////////////
     //                           ERRORS                           //
@@ -335,15 +333,12 @@ interface RouterEvents {
         string indexed _baseURI
     );
 
-    event FeesUpdated(
-        uint256 burnFees,
-        uint256 mintFees
-    );
-    
+    event FeesUpdated(uint256 burnFees, uint256 mintFees);
+
     event PaymentTokenUpdated(
         address indexed newPaymentToken
     );
-    
+
     /// @dev 0xf7760f25
     error WrongPrice();
 }

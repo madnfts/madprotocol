@@ -1,6 +1,6 @@
 import {
   SignTypedDataVersion,
-  signTypedData
+  signTypedData,
 } from "@metamask/eth-sig-util";
 import "@nomicfoundation/hardhat-chai-matchers";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
@@ -15,9 +15,18 @@ import {
   MADRouter721,
   MockERC20,
 } from "../../../src/types";
-import { BasicErrors, LazyErrors, MinimalErrors, RouterErrors, WhitelistErrors } from "./../../utils/errors";
+import {
+  BasicErrors,
+  LazyErrors,
+  MinimalErrors,
+  RouterErrors,
+  WhitelistErrors,
+} from "./../../utils/errors";
 import { getSignerAddrs } from "./../../utils/fixtures";
-import { dead, madFixture721E } from "./../../utils/madFixtures";
+import {
+  dead,
+  madFixture721E,
+} from "./../../utils/madFixtures";
 
 describe("MADRouter721 - ERC20", () => {
   type WalletWithAddress = Wallet & SignerWithAddress;
@@ -40,7 +49,8 @@ describe("MADRouter721 - ERC20", () => {
   let r721: MADRouter721;
   let erc20: MockERC20;
 
-  const erc20Balance: BigNumber = ethers.utils.parseEther("500");
+  const erc20Balance: BigNumber =
+    ethers.utils.parseEther("500");
   const price: BigNumber = ethers.utils.parseEther("1");
 
   before("Set signers and reset network", async () => {
@@ -70,8 +80,12 @@ describe("MADRouter721 - ERC20", () => {
       // check each global var
       expect(await r721.callStatic.name()).to.eq("router");
       expect(await r721.MADFactory721()).to.eq(f721.address);
-      expect(await f721.callStatic.erc20()).to.eq(erc20.address);
-      expect(await m721.callStatic.erc20()).to.eq(erc20.address);
+      expect(await f721.callStatic.erc20()).to.eq(
+        erc20.address,
+      );
+      expect(await m721.callStatic.erc20()).to.eq(
+        erc20.address,
+      );
     });
   });
   describe("Set baseURI", async () => {
@@ -103,7 +117,7 @@ describe("MADRouter721 - ERC20", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
-          750
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -145,7 +159,7 @@ describe("MADRouter721 - ERC20", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const colID = await f721.callStatic.getColID(basicAddr);
       const basic = await ethers.getContractAt(
@@ -206,7 +220,7 @@ describe("MADRouter721 - ERC20", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const colID = await f721.callStatic.getColID(wlAddr);
       const wl = await ethers.getContractAt(
@@ -265,7 +279,7 @@ describe("MADRouter721 - ERC20", () => {
           ethers.constants.Zero,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const colID = await f721.callStatic.getColID(lazyAddr);
       const lazy = await ethers.getContractAt(
@@ -331,7 +345,7 @@ describe("MADRouter721 - ERC20", () => {
           ethers.constants.Zero,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const lazy = await ethers.getContractAt(
         "ERC721Lazy",
@@ -376,7 +390,7 @@ describe("MADRouter721 - ERC20", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const wl = await ethers.getContractAt(
         "ERC721Whitelist",
@@ -430,7 +444,7 @@ describe("MADRouter721 - ERC20", () => {
           ethers.constants.Zero,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const lazy = await ethers.getContractAt(
         "ERC721Lazy",
@@ -475,7 +489,7 @@ describe("MADRouter721 - ERC20", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const wl = await ethers.getContractAt(
         "ERC721Whitelist",
@@ -522,7 +536,7 @@ describe("MADRouter721 - ERC20", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const tx = r721.minimalSafeMint(wlAddr, acc01.address);
       const verArt = await artifacts.readArtifact(
@@ -567,13 +581,18 @@ describe("MADRouter721 - ERC20", () => {
           1,
           "cid/id.json",
           splAddr,
-          750
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
         minAddr,
       );
-      await erc20.connect(acc02).approve(r721.address, ethers.utils.parseEther("0.25"))
+      await erc20
+        .connect(acc02)
+        .approve(
+          r721.address,
+          ethers.utils.parseEther("0.25"),
+        );
       const tx = await r721
         .connect(acc02)
         .minimalSafeMint(minAddr, acc01.address);
@@ -591,7 +610,12 @@ describe("MADRouter721 - ERC20", () => {
         ethers.provider,
       );
 
-      await erc20.connect(mad).approve(r721.address, ethers.utils.parseEther("0.25"))
+      await erc20
+        .connect(mad)
+        .approve(
+          r721.address,
+          ethers.utils.parseEther("0.25"),
+        );
       await expect(
         r721
           .connect(mad)
@@ -600,7 +624,12 @@ describe("MADRouter721 - ERC20", () => {
         ver,
         RouterErrors.AccessDenied,
       );
-      await erc20.connect(acc02).approve(r721.address, ethers.utils.parseEther("0.25"))
+      await erc20
+        .connect(acc02)
+        .approve(
+          r721.address,
+          ethers.utils.parseEther("0.25"),
+        );
       await expect(
         r721
           .connect(acc02)
@@ -640,14 +669,19 @@ describe("MADRouter721 - ERC20", () => {
           1,
           "cid/id.json",
           splAddr,
-          750
+          750,
         );
       const basic = await ethers.getContractAt(
         "ERC721Basic",
         minAddr,
       );
 
-      await erc20.connect(acc02).approve(r721.address, ethers.utils.parseEther("0.25"))
+      await erc20
+        .connect(acc02)
+        .approve(
+          r721.address,
+          ethers.utils.parseEther("0.25"),
+        );
       const tx = await r721
         .connect(acc02)
         .basicMintTo(minAddr, acc01.address, 1);
@@ -703,7 +737,7 @@ describe("MADRouter721 - ERC20", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
-          750
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -713,7 +747,7 @@ describe("MADRouter721 - ERC20", () => {
         .connect(acc02)
         .setMintState(minAddr, true, 0);
 
-      await erc20.connect(acc01).approve(min.address, price)
+      await erc20.connect(acc01).approve(min.address, price);
       await min.connect(acc01).publicMint();
       const tx = await r721.connect(acc02).burn(minAddr, []);
       const verArt = await artifacts.readArtifact(
@@ -763,7 +797,7 @@ describe("MADRouter721 - ERC20", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const basic = await ethers.getContractAt(
         "ERC721Basic",
@@ -773,8 +807,8 @@ describe("MADRouter721 - ERC20", () => {
       await r721
         .connect(acc02)
         .setMintState(basicAddr, true, 0);
-      
-      await erc20.connect(acc01).approve(basicAddr, price)
+
+      await erc20.connect(acc01).approve(basicAddr, price);
       await basic.connect(acc01).mint(1);
       const tx = await r721
         .connect(acc02)
@@ -830,7 +864,7 @@ describe("MADRouter721 - ERC20", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const wl = await ethers.getContractAt(
         "ERC721Whitelist",
@@ -839,8 +873,13 @@ describe("MADRouter721 - ERC20", () => {
       await r721
         .connect(acc02)
         .freeSettings(wl.address, 1, 10, root);
-      
-      await erc20.connect(acc02).approve(r721.address, ethers.utils.parseEther("0.25"))
+
+      await erc20
+        .connect(acc02)
+        .approve(
+          r721.address,
+          ethers.utils.parseEther("0.25"),
+        );
       await r721.connect(acc02).creatorMint(wlAddr, 1);
       const tx = await r721.connect(acc02).burn(wlAddr, [1]);
       const verArt = await artifacts.readArtifact(
@@ -892,7 +931,7 @@ describe("MADRouter721 - ERC20", () => {
           ethers.constants.Zero,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const lazy = await ethers.getContractAt(
         "ERC721Lazy",
@@ -952,9 +991,14 @@ describe("MADRouter721 - ERC20", () => {
         data: parsedData,
         version: SignTypedDataVersion.V4,
       });
-    
+
       const sigSplit = ethers.utils.splitSignature(signature);
-      await erc20.connect(acc02).approve(lazyAddr, price.mul(ethers.BigNumber.from(2)))
+      await erc20
+        .connect(acc02)
+        .approve(
+          lazyAddr,
+          price.mul(ethers.BigNumber.from(2)),
+        );
       await lazy
         .connect(acc02)
         .lazyMint(
@@ -1023,7 +1067,7 @@ describe("MADRouter721 - ERC20", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
-          750
+          750,
         );
       const tx = r721
         .connect(acc02)
@@ -1067,7 +1111,7 @@ describe("MADRouter721 - ERC20", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
-          750
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -1084,7 +1128,7 @@ describe("MADRouter721 - ERC20", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const basic = await ethers.getContractAt(
         "ERC721Basic",
@@ -1101,7 +1145,7 @@ describe("MADRouter721 - ERC20", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
-          750
+          750,
         );
       const wl = await ethers.getContractAt(
         "ERC721Whitelist",
@@ -1182,7 +1226,7 @@ describe("MADRouter721 - ERC20", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
-          750
+          750,
         );
       const wlAddr = await f721.callStatic.getDeployedAddr(
         "WhiteSalt",
@@ -1239,7 +1283,7 @@ describe("MADRouter721 - ERC20", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
-          750
+          750,
         );
       const wlAddr = await f721.callStatic.getDeployedAddr(
         "WhiteSalt",
@@ -1298,7 +1342,7 @@ describe("MADRouter721 - ERC20", () => {
           100,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const basicAddr = await f721.callStatic.getDeployedAddr(
         "BasicSalt",
@@ -1337,7 +1381,7 @@ describe("MADRouter721 - ERC20", () => {
           100,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const wlAddr = await f721.callStatic.getDeployedAddr(
         "WhiteSalt",
@@ -1354,8 +1398,13 @@ describe("MADRouter721 - ERC20", () => {
         .connect(acc02)
         .freeSettings(wlAddr, 1, 10, root);
       await r721.connect(acc02).setMintState(wlAddr, true, 2);
-      
-      await erc20.connect(acc02).approve(r721.address, ethers.utils.parseEther("0.25"))
+
+      await erc20
+        .connect(acc02)
+        .approve(
+          r721.address,
+          ethers.utils.parseEther("0.25"),
+        );
       const tx = await r721
         .connect(acc02)
         .creatorMint(wlAddr, 2);
@@ -1390,12 +1439,17 @@ describe("MADRouter721 - ERC20", () => {
           100,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const basicAddr = await f721.callStatic.getDeployedAddr(
         "BasicSalt",
       );
-      await erc20.connect(acc02).approve(r721.address, ethers.utils.parseEther("0.25"))
+      await erc20
+        .connect(acc02)
+        .approve(
+          r721.address,
+          ethers.utils.parseEther("0.25"),
+        );
       const addrs = [owner.address, mad.address];
       await expect(
         r721.connect(acc02).gift(basicAddr, addrs),
@@ -1426,7 +1480,7 @@ describe("MADRouter721 - ERC20", () => {
           100,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const wlAddr = await f721.callStatic.getDeployedAddr(
         "WhiteSalt",
@@ -1444,7 +1498,12 @@ describe("MADRouter721 - ERC20", () => {
         .freeSettings(wlAddr, 1, 10, root);
       await r721.connect(acc02).setMintState(wlAddr, true, 2);
 
-      await erc20.connect(acc02).approve(r721.address, ethers.utils.parseEther("0.25"))
+      await erc20
+        .connect(acc02)
+        .approve(
+          r721.address,
+          ethers.utils.parseEther("0.25"),
+        );
       const tx = await r721
         .connect(acc02)
         .gift(wlAddr, addrs);
@@ -1486,23 +1545,21 @@ describe("MADRouter721 - ERC20", () => {
           1,
           "ipfs://cid/id.json",
           splAddr,
-          750
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
         minAddr,
       );
-      
+
       await r721
         .connect(acc02)
         .setMintState(min.address, true, 0);
 
-      await erc20.connect(acc01).approve(min.address, price)
+      await erc20.connect(acc01).approve(min.address, price);
       await min.connect(acc01).publicMint();
-      
-      const bal1 = await erc20.balanceOf(
-        acc02.address,
-      );
+
+      const bal1 = await erc20.balanceOf(acc02.address);
       const tx1 = await r721
         .connect(acc02)
         .withdraw(min.address, erc20.address);
@@ -1535,20 +1592,22 @@ describe("MADRouter721 - ERC20", () => {
           1000,
           "ipfs://cid/",
           madSpl,
-          750
+          750,
         );
       const basic = await ethers.getContractAt(
         "ERC721Basic",
         basicAddr,
       );
-      
+
       await r721
         .connect(mad)
         .setMintState(basic.address, true, 0);
-      
-      await erc20.connect(acc01).approve(basic.address, price)
+
+      await erc20
+        .connect(acc01)
+        .approve(basic.address, price);
       await basic.connect(acc01).mint(1);
-      
+
       const bal2 = await erc20.balanceOf(mad.address);
       const tx2 = await r721
         .connect(mad)
@@ -1575,7 +1634,7 @@ describe("MADRouter721 - ERC20", () => {
           1000,
           "ipfs://cid/",
           ambSpl,
-          750
+          750,
         );
       const wl = await ethers.getContractAt(
         "ERC721Whitelist",
@@ -1585,8 +1644,8 @@ describe("MADRouter721 - ERC20", () => {
       await r721
         .connect(amb)
         .setMintState(wl.address, true, 0);
-      
-      await erc20.connect(acc01).approve(wl.address, price)
+
+      await erc20.connect(acc01).approve(wl.address, price);
       await wl.connect(acc01).mint(1);
       const bal3 = await erc20.balanceOf(amb.address);
       const tx3 = await r721
@@ -1620,7 +1679,7 @@ describe("MADRouter721 - ERC20", () => {
           ethers.constants.Zero,
           "ipfs://cid/",
           userSpl,
-          750
+          750,
         );
       const lazy = await ethers.getContractAt(
         "ERC721Lazy",
@@ -1650,7 +1709,7 @@ describe("MADRouter721 - ERC20", () => {
       const voucherType = [
         { name: "voucherId", type: "bytes32" },
         { name: "users", type: "address[]" },
-        { name: "balances", type: "uint256[]" }, 
+        { name: "balances", type: "uint256[]" },
         { name: "amount", type: "uint256" },
         { name: "price", type: "uint256" },
       ];
@@ -1684,15 +1743,15 @@ describe("MADRouter721 - ERC20", () => {
         version: SignTypedDataVersion.V4,
       });
       const sigSplit = ethers.utils.splitSignature(signature);
-            
-      await erc20.connect(acc01).approve(lazyAddr, price)
+
+      await erc20.connect(acc01).approve(lazyAddr, price);
       await lazy
         .connect(acc01)
         .lazyMint(
           Voucher,
           sigSplit.v,
           sigSplit.r,
-          sigSplit.s
+          sigSplit.s,
         );
 
       const bal4 = await erc20.balanceOf(newUser);
@@ -1892,24 +1951,38 @@ describe("MADRouter721 - ERC20", () => {
           1,
           "cid/id.json",
           splAddr,
-          750
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
         minAddr,
       );
-      await r721.setFees(ethers.utils.parseEther("2.5"), ethers.utils.parseEther("0.5"));
-
-      await erc20.connect(acc02).approve(r721.address, ethers.utils.parseEther("1.5"))
-      await expect(r721
-        .connect(acc02)
-        .minimalSafeMint(minAddr, acc01.address)
-      ).to.be.revertedWithCustomError(
-        min, 
-        MinimalErrors.WrongPrice
+      await r721.setFees(
+        ethers.utils.parseEther("2.5"),
+        ethers.utils.parseEther("0.5"),
       );
 
-      await erc20.connect(acc02).approve(r721.address, ethers.utils.parseEther("2.5"))
+      await erc20
+        .connect(acc02)
+        .approve(
+          r721.address,
+          ethers.utils.parseEther("1.5"),
+        );
+      await expect(
+        r721
+          .connect(acc02)
+          .minimalSafeMint(minAddr, acc01.address),
+      ).to.be.revertedWithCustomError(
+        min,
+        MinimalErrors.WrongPrice,
+      );
+
+      await erc20
+        .connect(acc02)
+        .approve(
+          r721.address,
+          ethers.utils.parseEther("2.5"),
+        );
       const tx = await r721
         .connect(acc02)
         .minimalSafeMint(minAddr, acc01.address);
@@ -1926,7 +1999,12 @@ describe("MADRouter721 - ERC20", () => {
         verArt.abi,
         ethers.provider,
       );
-      await erc20.connect(mad).approve(r721.address, ethers.utils.parseEther("2.5"))
+      await erc20
+        .connect(mad)
+        .approve(
+          r721.address,
+          ethers.utils.parseEther("2.5"),
+        );
       await expect(
         r721
           .connect(mad)
@@ -1935,7 +2013,12 @@ describe("MADRouter721 - ERC20", () => {
         ver,
         RouterErrors.AccessDenied,
       );
-      await erc20.connect(acc02).approve(r721.address, ethers.utils.parseEther("2.5"))
+      await erc20
+        .connect(acc02)
+        .approve(
+          r721.address,
+          ethers.utils.parseEther("2.5"),
+        );
       await expect(
         r721
           .connect(acc02)
@@ -1975,31 +2058,45 @@ describe("MADRouter721 - ERC20", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
-      await r721.setFees(ethers.utils.parseEther("2.5"), ethers.utils.parseEther("0.5"));
-      
+      await r721.setFees(
+        ethers.utils.parseEther("2.5"),
+        ethers.utils.parseEther("0.5"),
+      );
+
       const basic = await ethers.getContractAt(
         "ERC721Basic",
         basicAddr,
       );
-      await erc20.connect(acc02).approve(r721.address, ethers.utils.parseEther("2.5"))
+      await erc20
+        .connect(acc02)
+        .approve(
+          r721.address,
+          ethers.utils.parseEther("2.5"),
+        );
       await r721
         .connect(acc02)
         .setMintState(basicAddr, true, 0);
-      
-      await erc20.connect(acc01).approve(basic.address, price)
+
+      await erc20
+        .connect(acc01)
+        .approve(basic.address, price);
       await basic.connect(acc01).mint(1);
 
-      await expect(r721
-        .connect(acc02)
-        .burn(basicAddr, [1])
+      await expect(
+        r721.connect(acc02).burn(basicAddr, [1]),
       ).to.be.revertedWithCustomError(
         basic,
-        BasicErrors.WrongPrice
+        BasicErrors.WrongPrice,
       );
-      
-      await erc20.connect(acc02).approve(r721.address, ethers.utils.parseEther("0.5"))
+
+      await erc20
+        .connect(acc02)
+        .approve(
+          r721.address,
+          ethers.utils.parseEther("0.5"),
+        );
       const tx = await r721
         .connect(acc02)
         .burn(basicAddr, [1]);
@@ -2016,7 +2113,12 @@ describe("MADRouter721 - ERC20", () => {
         verArt.abi,
         ethers.provider,
       );
-      await erc20.connect(acc02).approve(r721.address, ethers.utils.parseEther("0.2"))
+      await erc20
+        .connect(acc02)
+        .approve(
+          r721.address,
+          ethers.utils.parseEther("0.2"),
+        );
       await expect(
         r721.burn(basicAddr, [1]),
       ).to.be.revertedWithCustomError(
@@ -2055,7 +2157,7 @@ describe("MADRouter721 - ERC20", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const wl = await ethers.getContractAt(
         "ERC721Whitelist",
@@ -2064,7 +2166,12 @@ describe("MADRouter721 - ERC20", () => {
       await r721
         .connect(acc02)
         .freeSettings(wl.address, 1, 10, root);
-      await erc20.connect(acc02).approve(r721.address, ethers.utils.parseEther("0.25"))
+      await erc20
+        .connect(acc02)
+        .approve(
+          r721.address,
+          ethers.utils.parseEther("0.25"),
+        );
       await r721.connect(acc02).creatorMint(wlAddr, 1);
       const tx = await r721.connect(acc02).burn(wlAddr, [1]);
       const verArt = await artifacts.readArtifact(
@@ -2075,7 +2182,10 @@ describe("MADRouter721 - ERC20", () => {
         verArt.abi,
         ethers.provider,
       );
-      await r721.setFees(ethers.utils.parseEther("2.5"), ethers.utils.parseEther("0.5"));
+      await r721.setFees(
+        ethers.utils.parseEther("2.5"),
+        ethers.utils.parseEther("0.5"),
+      );
       expect(tx).to.be.ok;
       expect(
         await wl.callStatic.balanceOf(acc02.address),
@@ -2117,7 +2227,7 @@ describe("MADRouter721 - ERC20", () => {
           ethers.constants.Zero,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const lazy = await ethers.getContractAt(
         "ERC721Lazy",
@@ -2177,10 +2287,18 @@ describe("MADRouter721 - ERC20", () => {
         data: parsedData,
         version: SignTypedDataVersion.V4,
       });
-    
+
       const sigSplit = ethers.utils.splitSignature(signature);
-      await r721.setFees(ethers.utils.parseEther("2.5"), ethers.utils.parseEther("0.5"));
-      await erc20.connect(acc02).approve(lazyAddr, price.mul(ethers.BigNumber.from(2)))
+      await r721.setFees(
+        ethers.utils.parseEther("2.5"),
+        ethers.utils.parseEther("0.5"),
+      );
+      await erc20
+        .connect(acc02)
+        .approve(
+          lazyAddr,
+          price.mul(ethers.BigNumber.from(2)),
+        );
       await lazy
         .connect(acc02)
         .lazyMint(
@@ -2190,15 +2308,24 @@ describe("MADRouter721 - ERC20", () => {
           sigSplit.s,
         );
 
-      await erc20.connect(acc02).approve(r721.address, ethers.utils.parseEther("0.2"))
-      await expect(r721
+      await erc20
         .connect(acc02)
-        .burn(lazyAddr, [1, 2])
+        .approve(
+          r721.address,
+          ethers.utils.parseEther("0.2"),
+        );
+      await expect(
+        r721.connect(acc02).burn(lazyAddr, [1, 2]),
       ).to.be.revertedWithCustomError(
         lazy,
-        LazyErrors.WrongPrice
+        LazyErrors.WrongPrice,
       );
-      await erc20.connect(acc02).approve(r721.address, ethers.utils.parseEther("0.5"))
+      await erc20
+        .connect(acc02)
+        .approve(
+          r721.address,
+          ethers.utils.parseEther("0.5"),
+        );
       const tx = await r721
         .connect(acc02)
         .burn(lazyAddr, [1, 2]);
@@ -2214,7 +2341,12 @@ describe("MADRouter721 - ERC20", () => {
       expect(tx).to.be.ok;
       expect(await lazy.balanceOf(acc02.address)).to.eq(0);
       expect(await lazy.balanceOf(owner.address)).to.eq(0);
-      await erc20.connect(acc02).approve(r721.address, ethers.utils.parseEther("0.5"))
+      await erc20
+        .connect(acc02)
+        .approve(
+          r721.address,
+          ethers.utils.parseEther("0.5"),
+        );
       await expect(
         r721.burn(lazyAddr, [1]),
       ).to.be.revertedWithCustomError(
@@ -2249,7 +2381,7 @@ describe("MADRouter721 - ERC20", () => {
           100,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const wlAddr = await f721.callStatic.getDeployedAddr(
         "WhiteSalt",
@@ -2258,26 +2390,38 @@ describe("MADRouter721 - ERC20", () => {
         "ERC721Whitelist",
         wlAddr,
       );
-      
+
       const root = ethers.utils.keccak256(
         ethers.utils.toUtf8Bytes("root"),
       );
-      await r721.setFees(ethers.utils.parseEther("2.5"), ethers.utils.parseEther("0.5"));
+      await r721.setFees(
+        ethers.utils.parseEther("2.5"),
+        ethers.utils.parseEther("0.5"),
+      );
       await r721
         .connect(acc02)
         .freeSettings(wlAddr, 1, 10, root);
       await r721.connect(acc02).setMintState(wlAddr, true, 2);
-      
-      await erc20.connect(acc02).approve(r721.address, ethers.utils.parseEther("2.59"))
-      await expect(r721
+
+      await erc20
         .connect(acc02)
-        .creatorMint(wlAddr, 2)
+        .approve(
+          r721.address,
+          ethers.utils.parseEther("2.59"),
+        );
+      await expect(
+        r721.connect(acc02).creatorMint(wlAddr, 2),
       ).to.be.revertedWithCustomError(
         wl,
-        WhitelistErrors.WrongPrice
+        WhitelistErrors.WrongPrice,
       );
 
-      await erc20.connect(acc02).approve(r721.address, ethers.utils.parseEther("2.5"))
+      await erc20
+        .connect(acc02)
+        .approve(
+          r721.address,
+          ethers.utils.parseEther("2.5"),
+        );
       const tx = await r721
         .connect(acc02)
         .creatorMint(wlAddr, 2);
@@ -2312,7 +2456,7 @@ describe("MADRouter721 - ERC20", () => {
           100,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const wlAddr = await f721.callStatic.getDeployedAddr(
         "WhiteSalt",
@@ -2324,23 +2468,35 @@ describe("MADRouter721 - ERC20", () => {
       const root = ethers.utils.keccak256(
         ethers.utils.toUtf8Bytes("root"),
       );
-      await r721.setFees(ethers.utils.parseEther("2.5"), ethers.utils.parseEther("0.5"));
+      await r721.setFees(
+        ethers.utils.parseEther("2.5"),
+        ethers.utils.parseEther("0.5"),
+      );
       const addrs = [owner.address, mad.address];
       await r721
         .connect(acc02)
         .freeSettings(wlAddr, 1, 10, root);
       await r721.connect(acc02).setMintState(wlAddr, true, 2);
 
-      await erc20.connect(acc02).approve(r721.address, ethers.utils.parseEther("0.25"))
-      await expect(r721
+      await erc20
         .connect(acc02)
-        .gift(wlAddr, addrs)
+        .approve(
+          r721.address,
+          ethers.utils.parseEther("0.25"),
+        );
+      await expect(
+        r721.connect(acc02).gift(wlAddr, addrs),
       ).to.be.revertedWithCustomError(
         wl,
-        WhitelistErrors.WrongPrice
+        WhitelistErrors.WrongPrice,
       );
 
-      await erc20.connect(acc02).approve(r721.address, ethers.utils.parseEther("2.5"))
+      await erc20
+        .connect(acc02)
+        .approve(
+          r721.address,
+          ethers.utils.parseEther("2.5"),
+        );
       const tx = await r721
         .connect(acc02)
         .gift(wlAddr, addrs);

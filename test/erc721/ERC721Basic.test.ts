@@ -281,7 +281,9 @@ describe("ERC721Basic", () => {
   describe("Burn", async () => {
     it("Should revert if not owner", async () => {
       const ids = [1];
-      const tx = basic.connect(acc02).burn(ids, acc02.address);
+      const tx = basic
+        .connect(acc02)
+        .burn(ids, acc02.address);
 
       await expect(tx).to.be.revertedWith(
         BasicErrors.Unauthorized,
@@ -295,7 +297,9 @@ describe("ERC721Basic", () => {
       await basic
         .connect(acc02)
         .mint(4, { value: price.mul(amount) });
-      const tx = basic.connect(owner).burn(ids, owner.address);
+      const tx = basic
+        .connect(owner)
+        .burn(ids, owner.address);
 
       await expect(tx).to.be.revertedWith(
         BasicErrors.NotMinted,
@@ -340,7 +344,8 @@ describe("ERC721Basic", () => {
       const approved2 = await basic.callStatic.getApproved(2);
       const approved3 = await basic.callStatic.getApproved(3);
       const approved4 = await basic.callStatic.getApproved(4);
-      const mintCounter = await basic.callStatic.getMintCount();
+      const mintCounter =
+        await basic.callStatic.getMintCount();
 
       expect(tx).to.be.ok;
       expect(bal1).to.eq(2);

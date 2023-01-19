@@ -10,6 +10,7 @@ import { NetworkUserConfig } from "hardhat/types";
 import { resolve } from "path";
 import "solidity-coverage";
 import yargs from "yargs";
+
 import "./tasks/accounts";
 
 // Set script args
@@ -20,14 +21,19 @@ const parser = yargs
   })
   .help(false)
   .version(false);
-  
-// Load and validate .env configs  
+
+// Load and validate .env configs
 dotenvConfig({ path: resolve(__dirname, "./.env") });
-const { INFURA_API_KEY, MNEMONIC, ETHERSCAN_API_KEY, PK } = process.env;
-const DEFAULT_MNEMONIC = "candy maple cake sugar pudding cream honey rich smooth crumble sweet treat";
-(async() => {
+const { INFURA_API_KEY, MNEMONIC, ETHERSCAN_API_KEY, PK } =
+  process.env;
+const DEFAULT_MNEMONIC =
+  "candy maple cake sugar pudding cream honey rich smooth crumble sweet treat";
+(async () => {
   const argv = await parser.argv;
-  if (["goerli", "mainnet"].includes(argv.network) && INFURA_API_KEY === undefined) {
+  if (
+    ["goerli", "mainnet"].includes(argv.network) &&
+    INFURA_API_KEY === undefined
+  ) {
     throw new Error(
       `Could not find Infura key in env, unable to connect to network ${argv.network}`,
     );
@@ -38,43 +44,53 @@ const DEFAULT_MNEMONIC = "candy maple cake sugar pudding cream honey rich smooth
 const chains: Array<NetworkUserConfig> = [
   {
     chainId: 1666600000, // harmony
-    url: 'https://api.s0.t.hmny.io',
-    accounts: PK ? [PK] : {
-      mnemonic: MNEMONIC || DEFAULT_MNEMONIC,
-    }
+    url: "https://api.s0.t.hmny.io",
+    accounts: PK
+      ? [PK]
+      : {
+          mnemonic: MNEMONIC || DEFAULT_MNEMONIC,
+        },
   },
-  { 
+  {
     chainId: 1666900000, // harmonyDevnet
-    url: 'https://api.s0.ps.hmny.io',
-    accounts: PK ? [PK] : {
-      mnemonic: MNEMONIC || DEFAULT_MNEMONIC,
-    }
+    url: "https://api.s0.ps.hmny.io",
+    accounts: PK
+      ? [PK]
+      : {
+          mnemonic: MNEMONIC || DEFAULT_MNEMONIC,
+        },
   },
-  { 
+  {
     chainId: 344106930, // skaleDevnet
-    url: 'https://staging-v3.skalenodes.com/v1/staging-utter-unripe-menkar',
-    accounts: PK ? [PK] : {
-      mnemonic: MNEMONIC || DEFAULT_MNEMONIC,
-    }
+    url: "https://staging-v3.skalenodes.com/v1/staging-utter-unripe-menkar",
+    accounts: PK
+      ? [PK]
+      : {
+          mnemonic: MNEMONIC || DEFAULT_MNEMONIC,
+        },
   },
-  { 
+  {
     chainId: 5, // goerli
     url: "https://goerli.infura.io/v3/" + INFURA_API_KEY,
-    accounts: PK ? [PK] : {
-      mnemonic: MNEMONIC || DEFAULT_MNEMONIC,
-    }
+    accounts: PK
+      ? [PK]
+      : {
+          mnemonic: MNEMONIC || DEFAULT_MNEMONIC,
+        },
   },
-  { 
+  {
     chainId: 1337, // ganache
-    url: 'http://localhost:7545',
-    accounts: PK ? [PK] : {
-      mnemonic: MNEMONIC || DEFAULT_MNEMONIC,
-    }
-  }
+    url: "http://localhost:7545",
+    accounts: PK
+      ? [PK]
+      : {
+          mnemonic: MNEMONIC || DEFAULT_MNEMONIC,
+        },
+  },
 ];
 
 function getChainConfig(id: number) {
-  return chains.find(a => a.chainId === id)
+  return chains.find(a => a.chainId === id);
 }
 
 const config: HardhatUserConfig = {
@@ -82,14 +98,15 @@ const config: HardhatUserConfig = {
   etherscan: {
     apiKey: {
       mainnet: ETHERSCAN_API_KEY || "",
-      goerli: ETHERSCAN_API_KEY || ""
+      goerli: ETHERSCAN_API_KEY || "",
     },
     customChains: [
       {
         network: "harmonyDevnet",
         chainId: 1666900000,
         urls: {
-          apiURL: "https://ctrver.b.hmny.io/verify?network=devnet",
+          apiURL:
+            "https://ctrver.b.hmny.io/verify?network=devnet",
           browserURL: "https://api.s0.ps.hmny.io",
         },
       },
@@ -113,7 +130,7 @@ const config: HardhatUserConfig = {
     harmonyDevnet: getChainConfig(1666900000),
     skaleDevnet: getChainConfig(344106930),
     goerli: getChainConfig(5),
-    ganache: getChainConfig(1337)
+    ganache: getChainConfig(1337),
   },
   paths: {
     artifacts: "./artifacts",
@@ -140,7 +157,7 @@ const config: HardhatUserConfig = {
   dodoc: {
     runOnCompile: !!(
       process.env.GEN_DOCS && process.env.GEN_DOCS != "false"
-    )
+    ),
   },
 };
 

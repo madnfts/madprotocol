@@ -175,7 +175,9 @@ describe("ERC1155Minimal", () => {
     });
 
     it("Should revert if already minted", async () => {
-      await minimal.connect(owner).safeMint(acc01.address, 1, owner.address);
+      await minimal
+        .connect(owner)
+        .safeMint(acc01.address, 1, owner.address);
       const tx = minimal
         .connect(owner)
         .safeMint(acc02.address, 1, owner.address);
@@ -189,7 +191,9 @@ describe("ERC1155Minimal", () => {
 
   describe("Burning", async () => {
     it("Should revert if has not been minted", async () => {
-      const tx = minimal.connect(owner).burn(owner.address, 1, owner.address);
+      const tx = minimal
+        .connect(owner)
+        .burn(owner.address, 1, owner.address);
 
       await expect(tx).to.be.revertedWith(
         MinimalErrors.InvalidAmount,
@@ -197,8 +201,12 @@ describe("ERC1155Minimal", () => {
     });
 
     it("Should revert if not the owner", async () => {
-      await minimal.connect(owner).safeMint(acc02.address, 1, owner.address);
-      const tx = minimal.connect(acc01).burn(acc02.address, 1, acc01.address);
+      await minimal
+        .connect(owner)
+        .safeMint(acc02.address, 1, owner.address);
+      const tx = minimal
+        .connect(acc01)
+        .burn(acc02.address, 1, acc01.address);
 
       await expect(tx).to.be.revertedWith(
         MinimalErrors.Unauthorized,
@@ -206,7 +214,9 @@ describe("ERC1155Minimal", () => {
     });
 
     it("Should burn, update storage and emit events", async () => {
-      await minimal.connect(owner).safeMint(acc02.address, 1, owner.address);
+      await minimal
+        .connect(owner)
+        .safeMint(acc02.address, 1, owner.address);
       const tx: ContractTransaction = await minimal
         .connect(owner)
         .burn(acc02.address, 1, owner.address);
@@ -241,12 +251,16 @@ describe("ERC1155Minimal", () => {
     });
 
     it("Should revert if already burned", async () => {
-      await minimal.connect(owner).safeMint(acc02.address, 1, owner.address);
-      await minimal.connect(owner).burn(acc02.address, 1, owner.address);
+      await minimal
+        .connect(owner)
+        .safeMint(acc02.address, 1, owner.address);
+      await minimal
+        .connect(owner)
+        .burn(acc02.address, 1, owner.address);
 
-      await expect(minimal.burn(acc02.address, 1, owner.address)).to.be.revertedWith(
-        MinimalErrors.InvalidAmount,
-      );
+      await expect(
+        minimal.burn(acc02.address, 1, owner.address),
+      ).to.be.revertedWith(MinimalErrors.InvalidAmount);
     });
   });
   describe("Public Minting", async () => {
@@ -294,7 +308,9 @@ describe("ERC1155Minimal", () => {
         .publicMint(1, { value: price });
 
       await expect(
-        minimal.connect(acc01).publicMint(1, { value: price }),
+        minimal
+          .connect(acc01)
+          .publicMint(1, { value: price }),
       ).to.be.revertedWithCustomError(
         minimal,
         MinimalErrors.AlreadyMinted,
@@ -455,7 +471,9 @@ describe("ERC1155Minimal", () => {
     });
 
     it("Should retrieve tokenURI", async () => {
-      await minimal.connect(owner).safeMint(acc01.address, 1, owner.address);
+      await minimal
+        .connect(owner)
+        .safeMint(acc01.address, 1, owner.address);
       const tx = await minimal.uri(1);
       const uri: string = "ipfs://cid/id.json";
 

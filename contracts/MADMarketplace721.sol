@@ -68,7 +68,7 @@ contract MADMarketplace721 is
 
     address public recipient;
     FactoryVerifier public MADFactory721;
-    
+
     ERC20 public erc20;
 
     ////////////////////////////////////////////////////////////////
@@ -87,7 +87,7 @@ contract MADMarketplace721 is
             setPaymentToken(_paymentTokenAddress);
         }
         updateSettings(
-            300, // 5 min 
+            300, // 5 min
             _minOrderDuration,
             20, // 5% (1/20th)
             31536000 // 24 months
@@ -154,7 +154,8 @@ contract MADMarketplace721 is
 
         uint256 lastBidPrice = order.lastBidPrice;
         uint256 bidValue = address(erc20) != address(0)
-            ? erc20.allowance(msg.sender, address(this)) : msg.value;
+            ? erc20.allowance(msg.sender, address(this))
+            : msg.value;
 
         _bidChecks(
             order.orderType,
@@ -166,7 +167,12 @@ contract MADMarketplace721 is
         );
 
         if (address(erc20) != address(0)) {
-            SafeTransferLib.safeTransferFrom(erc20, msg.sender, address(this), bidValue);
+            SafeTransferLib.safeTransferFrom(
+                erc20,
+                msg.sender,
+                address(this),
+                bidValue
+            );
         }
 
         // 1s blocktime
@@ -231,10 +237,19 @@ contract MADMarketplace721 is
 
         uint256 currentPrice = getCurrentPrice(_order);
         if (address(erc20) != address(0)) {
-            if (erc20.allowance(msg.sender, address(this)) < currentPrice) revert WrongPrice();
-            SafeTransferLib.safeTransferFrom(erc20, msg.sender, address(this), currentPrice);
+            if (
+                erc20.allowance(msg.sender, address(this)) <
+                currentPrice
+            ) revert WrongPrice();
+            SafeTransferLib.safeTransferFrom(
+                erc20,
+                msg.sender,
+                address(this),
+                currentPrice
+            );
         } else {
-            if (msg.value != currentPrice) revert WrongPrice();
+            if (msg.value != currentPrice)
+                revert WrongPrice();
         }
 
         order.isSold = true;
@@ -252,7 +267,13 @@ contract MADMarketplace721 is
             ) ==
             true
         ) {
-            _intPath(order, currentPrice, _order, msg.sender, key);
+            _intPath(
+                order,
+                currentPrice,
+                _order,
+                msg.sender,
+                key
+            );
         }
         // path for external tokens
         else {
@@ -269,7 +290,7 @@ contract MADMarketplace721 is
                     order,
                     currentPrice,
                     _order,
-                    msg.sender// ,
+                    msg.sender // ,
                     //key
                 );
             }
@@ -279,7 +300,7 @@ contract MADMarketplace721 is
                     order,
                     currentPrice,
                     _order,
-                    msg.sender// ,
+                    msg.sender // ,
                     // key
                 );
             }
@@ -337,7 +358,7 @@ contract MADMarketplace721 is
                     order,
                     order.lastBidPrice,
                     _order,
-                    order.lastBidder// ,
+                    order.lastBidder // ,
                     // key
                 );
             }
@@ -347,7 +368,7 @@ contract MADMarketplace721 is
                     order,
                     order.lastBidPrice,
                     _order,
-                    order.lastBidder// ,
+                    order.lastBidder // ,
                     // key
                 );
             }
@@ -376,7 +397,7 @@ contract MADMarketplace721 is
             address(this),
             msg.sender,
             tokenId
-        );    
+        );
     }
 
     receive() external payable {}
@@ -398,23 +419,21 @@ contract MADMarketplace721 is
         emit FactoryUpdated(_factory);
     }
 
-    function setFees(
-        uint256 _feeVal2,
-        uint256 _feeVal3) 
+    function setFees(uint256 _feeVal2, uint256 _feeVal3)
         external
-        onlyOwner 
+        onlyOwner
     {
         // max fees, 15% for royalties, 5% for fees
-        require(_feeVal2 <= 1.5e3 && _feeVal3 <= 5.0e2, "Invalid Fees");
+        require(
+            _feeVal2 <= 1.5e3 && _feeVal3 <= 5.0e2,
+            "Invalid Fees"
+        );
         assembly {
             sstore(feeVal2.slot, _feeVal2)
             sstore(feeVal3.slot, _feeVal3)
         }
 
-        emit FeesUpdated(
-            _feeVal2,
-            _feeVal3
-        );
+        emit FeesUpdated(_feeVal2, _feeVal3);
     }
 
     /// @notice Marketplace config setter.
@@ -433,8 +452,13 @@ contract MADMarketplace721 is
         // minAuctionIncrement = _minAuctionIncrement;
         // minBidValue = _minBidValue;
         // maxOrderDuration = _maxOrderDuration;
-        require((_minAuctionIncrement <= 1200 && _minOrderDuration <= 600 && _minBidValue > 0) 
-            || _maxOrderDuration >= _minOrderDuration, "Invalid Settings");
+        require(
+            (_minAuctionIncrement <= 1200 &&
+                _minOrderDuration <= 600 &&
+                _minBidValue > 0) ||
+                _maxOrderDuration >= _minOrderDuration,
+            "Invalid Settings"
+        );
 
         assembly {
             sstore(minOrderDuration.slot, _minOrderDuration)
@@ -482,8 +506,11 @@ contract MADMarketplace721 is
         public
         onlyOwner
     {
-        require(_recipient != address(0), "Invalid recipient");
-        
+        require(
+            _recipient != address(0),
+            "Invalid recipient"
+        );
+
         // recipient = _recipient;
         assembly {
             sstore(recipient.slot, _recipient)
@@ -515,7 +542,11 @@ contract MADMarketplace721 is
         );
     }
 
-    function withdrawERC20(ERC20 _token) external onlyOwner whenPaused {
+    function withdrawERC20(ERC20 _token)
+        external
+        onlyOwner
+        whenPaused
+    {
         SafeTransferLib.safeTransfer(
             _token,
             msg.sender,

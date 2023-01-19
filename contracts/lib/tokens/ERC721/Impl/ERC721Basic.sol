@@ -59,7 +59,7 @@ contract ERC721Basic is
     }
 
     modifier priceCheckERC20(uint256 _price, uint256 amount) {
-        uint256 value = (address(erc20) != address(0)) 
+        uint256 value = (address(erc20) != address(0))
             ? erc20.allowance(msg.sender, address(this))
             : msg.value;
         if (_price * amount != value) revert WrongPrice();
@@ -115,13 +115,12 @@ contract ERC721Basic is
         emit PublicMintStateSet(_publicMintState);
     }
 
-    /// @dev Creator mint 
-    function mintTo(address to, uint256 amount, address erc20Owner)
-        external
-        payable
-        onlyOwner
-        hasReachedMax(amount)
-    {
+    /// @dev Creator mint
+    function mintTo(
+        address to,
+        uint256 amount,
+        address erc20Owner
+    ) external payable onlyOwner hasReachedMax(amount) {
         _paymentCheck(erc20Owner, 0);
         uint256 i;
         // for (uint256 i = 0; i < amount; i++) {
@@ -143,7 +142,11 @@ contract ERC721Basic is
     }
 
     /// @dev Owner burn method
-    function burn(uint256[] memory ids, address erc20Owner) external payable onlyOwner {
+    function burn(uint256[] memory ids, address erc20Owner)
+        external
+        payable
+        onlyOwner
+    {
         _paymentCheck(erc20Owner, 1);
 
         uint256 i;
@@ -264,7 +267,7 @@ contract ERC721Basic is
         return liveSupply.current();
     }
 
-    function _incrementCounter() private returns(uint256){
+    function _incrementCounter() private returns (uint256) {
         _nextId();
         mintCount += 1;
         return mintCount;
@@ -304,7 +307,7 @@ contract ERC721Basic is
         return liveSupply.current();
     }
 
-    function getMintCount() public view returns(uint256) {
+    function getMintCount() public view returns (uint256) {
         return mintCount;
     }
 
@@ -317,27 +320,39 @@ contract ERC721Basic is
     /// @dev If router deploy we check msg.value if !erc20 BUT checks erc20 approval and transfers are via the router
     /// @param _erc20Owner Non router deploy =msg.sender; Router deploy =payer.address (msg.sender = router.address)
     /// @param _type Passed to _feeCheck to determin the fee 0=mint; 1=burn; ELSE _feeCheck is ignored
-    function _paymentCheck(address _erc20Owner, uint8 _type) internal 
+    function _paymentCheck(address _erc20Owner, uint8 _type)
+        internal
     {
         uint256 value = (address(erc20) != address(0))
             ? erc20.allowance(_erc20Owner, address(this))
-            : msg.value; 
-        
-        // Check fees are paid 
+            : msg.value;
+
+        // Check fees are paid
         // ERC20 fees for router calls are checked and transfered via in the router
-        if (address(msg.sender) == address(_erc20Owner) || (address(erc20) == address(0))) {
+        if (
+            address(msg.sender) == address(_erc20Owner) ||
+            (address(erc20) == address(0))
+        ) {
             if (_type == 0) {
                 _feeCheck(0x40d097c3, value);
             } else if (_type == 1) {
                 _feeCheck(0x44df8e70, value);
-            }   
+            }
             if (address(erc20) != address(0)) {
-                SafeTransferLib.safeTransferFrom(erc20, _erc20Owner, address(this), value);
+                SafeTransferLib.safeTransferFrom(
+                    erc20,
+                    _erc20Owner,
+                    address(this),
+                    value
+                );
             }
         }
     }
 
-    function _feeCheck(bytes4 _method, uint256 _value) internal view {
+    function _feeCheck(bytes4 _method, uint256 _value)
+        internal
+        view
+    {
         address _owner = owner;
         uint32 size;
         assembly {

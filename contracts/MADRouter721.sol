@@ -43,7 +43,7 @@ contract MADRouter721 is
     ////////////////////////////////////////////////////////////////
 
     FactoryVerifier public MADFactory721;
-    
+
     bytes4 internal constant MINSAFEMINT = 0x40d097c3;
     bytes4 internal constant MINBURN = 0x44df8e70;
 
@@ -53,12 +53,14 @@ contract MADRouter721 is
     /// @dev ERC20 payment token address
     ERC20 public erc20;
 
-    
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    constructor(FactoryVerifier _factory, address _paymentTokenAddress) {
+    constructor(
+        FactoryVerifier _factory,
+        address _paymentTokenAddress
+    ) {
         MADFactory721 = _factory;
         if (_paymentTokenAddress != address(0)) {
             setPaymentToken(_paymentTokenAddress);
@@ -158,7 +160,10 @@ contract MADRouter721 is
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType != 0) revert("INVALID_TYPE");
         _paymentCheck(0x40d097c3);
-        ERC721Minimal(_token).safeMint{value: msg.value}(_to, msg.sender);
+        ERC721Minimal(_token).safeMint{ value: msg.value }(
+            _to,
+            msg.sender
+        );
     }
 
     function basicMintTo(
@@ -169,7 +174,11 @@ contract MADRouter721 is
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType != 1) revert("INVALID_TYPE");
         _paymentCheck(0x40d097c3);
-        ERC721Basic(_token).mintTo{value: msg.value}(_to, _amount,  msg.sender);
+        ERC721Basic(_token).mintTo{ value: msg.value }(
+            _to,
+            _amount,
+            msg.sender
+        );
     }
 
     /// @notice Global token burn controller/single pusher for all token types.
@@ -186,14 +195,24 @@ contract MADRouter721 is
         (, uint8 _tokenType) = _tokenRender(_token);
         _paymentCheck(0x44df8e70);
         _tokenType < 1
-            ? ERC721Minimal(_token).burn{value: msg.value}(msg.sender)
-        : _tokenType == 1
-            ? ERC721Basic(_token).burn{value: msg.value}(_ids, msg.sender)
-        : _tokenType == 2
-            ? ERC721Whitelist(_token).burn{value: msg.value}(_ids, msg.sender)
-        : _tokenType > 2
-            ? ERC721Lazy(_token).burn{value: msg.value}(_ids, msg.sender)
-        : revert("INVALID_TYPE");
+            ? ERC721Minimal(_token).burn{ value: msg.value }(
+                msg.sender
+            )
+            : _tokenType == 1
+            ? ERC721Basic(_token).burn{ value: msg.value }(
+                _ids,
+                msg.sender
+            )
+            : _tokenType == 2
+            ? ERC721Whitelist(_token).burn{
+                value: msg.value
+            }(_ids, msg.sender)
+            : _tokenType > 2
+            ? ERC721Lazy(_token).burn{ value: msg.value }(
+                _ids,
+                msg.sender
+            )
+            : revert("INVALID_TYPE");
     }
 
     /// @notice Global MintState setter/controller with switch
@@ -242,7 +261,9 @@ contract MADRouter721 is
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType == 2) {
             _paymentCheck(0x40d097c3);
-            ERC721Whitelist(_token).mintToCreator{value: msg.value}(_amount, msg.sender);
+            ERC721Whitelist(_token).mintToCreator{
+                value: msg.value
+            }(_amount, msg.sender);
         } else revert("INVALID_TYPE");
     }
 
@@ -255,7 +276,9 @@ contract MADRouter721 is
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType == 2) {
             _paymentCheck(0x40d097c3);
-            ERC721Whitelist(_token).giftTokens{value: msg.value}(_addresses, msg.sender);
+            ERC721Whitelist(_token).giftTokens{
+                value: msg.value
+            }(_addresses, msg.sender);
         } else revert("INVALID_TYPE");
     }
 
@@ -346,12 +369,16 @@ contract MADRouter721 is
 
     function feeLookup(bytes4 sigHash)
         external
-        override(FeeOracle)
         view
-        returns (uint256 fee) {
-
+        override(FeeOracle)
+        returns (uint256 fee)
+    {
         assembly {
-            for {} 1 {} {
+            for {
+
+            } 1 {
+
+            } {
                 if eq(MINSAFEMINT, sigHash) {
                     fee := sload(feeMint.slot)
                     break
@@ -366,11 +393,14 @@ contract MADRouter721 is
         }
     }
 
-    function setFees(
-        uint256 _feeMint,
-        uint256 _feeBurn
-    ) external onlyOwner {
-        require (_feeMint < 50 ether && _feeBurn < 50 ether, "Invalid Fees");
+    function setFees(uint256 _feeMint, uint256 _feeBurn)
+        external
+        onlyOwner
+    {
+        require(
+            _feeMint < 50 ether && _feeBurn < 50 ether,
+            "Invalid Fees"
+        );
         assembly {
             sstore(feeBurn.slot, _feeBurn)
             sstore(feeMint.slot, _feeMint)
@@ -441,7 +471,10 @@ contract MADRouter721 is
     /// @dev Checks for msg.value payments are performed in each 721 impl
     function _paymentCheck(bytes4 _method) internal {
         if (address(erc20) != address(0)) {
-            uint256 value = erc20.allowance(msg.sender, address(this));
+            uint256 value = erc20.allowance(
+                msg.sender,
+                address(this)
+            );
             uint256 _fee = FeeOracle(this).feeLookup(_method);
             assembly {
                 if iszero(eq(value, _fee)) {
@@ -449,7 +482,12 @@ contract MADRouter721 is
                     revert(0x1c, 0x04)
                 }
             }
-            SafeTransferLib.safeTransferFrom(erc20, msg.sender, address(this), value);
+            SafeTransferLib.safeTransferFrom(
+                erc20,
+                msg.sender,
+                address(this),
+                value
+            );
         }
     }
 

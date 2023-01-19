@@ -1,9 +1,10 @@
 import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-etherscan";
-import { ethers } from "hardhat";
-import { resolve } from "path";
 import { config } from "dotenv";
 import { BigNumber } from "ethers";
+import { ethers } from "hardhat";
+import { resolve } from "path";
+
 import { MockERC20 } from "../src/types";
 
 config({ path: resolve(__dirname, "./.env") });
@@ -13,11 +14,11 @@ const hre = require("hardhat");
 
 const main = async () => {
   const [deployer] = await ethers.getSigners();
-  console.log(`Deploying contracts with ${deployer.address}`)
+  console.log(`Deploying contracts with ${deployer.address}`);
 
   // Deploying with / withour ERC20 support
-  let erc20Address = ethers.constants.AddressZero
-  if (ERC20_TOKEN == 'local') {
+  let erc20Address = ethers.constants.AddressZero;
+  if (ERC20_TOKEN == "local") {
     const ERC20 = await ethers.getContractFactory(
       "MockERC20",
     );
@@ -26,7 +27,7 @@ const main = async () => {
     )) as MockERC20;
     console.log(`MockERC20 address: ${erc20.address}`);
   } else if (ERC20_TOKEN) {
-    erc20Address = ERC20_TOKEN
+    erc20Address = ERC20_TOKEN;
     console.log(`ERC20 address: ${erc20Address}`);
   }
 
@@ -44,27 +45,44 @@ const main = async () => {
 
   /// deploy the libraries and link them
 
-  const ERC1155BasicDeployer = await ethers.getContractFactory('ERC1155BasicDeployer'); 
-  const ERC1155LazyDeployer = await ethers.getContractFactory('ERC1155LazyDeployer')
-  const ERC1155MinimalDeployer = await ethers.getContractFactory('ERC1155MinimalDeployer')
-  const ERC1155WhitelistDeployer = await ethers.getContractFactory('ERC1155WhitelistDeployer')
-  const SplitterDeployer = await ethers.getContractFactory('SplitterDeployer')
+  const ERC1155BasicDeployer =
+    await ethers.getContractFactory("ERC1155BasicDeployer");
+  const ERC1155LazyDeployer = await ethers.getContractFactory(
+    "ERC1155LazyDeployer",
+  );
+  const ERC1155MinimalDeployer =
+    await ethers.getContractFactory("ERC1155MinimalDeployer");
+  const ERC1155WhitelistDeployer =
+    await ethers.getContractFactory(
+      "ERC1155WhitelistDeployer",
+    );
+  const SplitterDeployer = await ethers.getContractFactory(
+    "SplitterDeployer",
+  );
 
-  const ERC721BasicDeployer = await ethers.getContractFactory('ERC721BasicDeployer'); 
-  const ERC721LazyDeployer = await ethers.getContractFactory('ERC721LazyDeployer')
-  const ERC721MinimalDeployer = await ethers.getContractFactory('ERC721MinimalDeployer')
-  const ERC721WhitelistDeployer = await ethers.getContractFactory('ERC721WhitelistDeployer')
+  const ERC721BasicDeployer = await ethers.getContractFactory(
+    "ERC721BasicDeployer",
+  );
+  const ERC721LazyDeployer = await ethers.getContractFactory(
+    "ERC721LazyDeployer",
+  );
+  const ERC721MinimalDeployer =
+    await ethers.getContractFactory("ERC721MinimalDeployer");
+  const ERC721WhitelistDeployer =
+    await ethers.getContractFactory(
+      "ERC721WhitelistDeployer",
+    );
 
-  const bd1155 = await ERC1155BasicDeployer.deploy()
-  const ld1155 = await ERC1155LazyDeployer.deploy()
-  const md1155 = await ERC1155MinimalDeployer.deploy()
-  const wd1155 = await ERC1155WhitelistDeployer.deploy()
-  const sd = await SplitterDeployer.deploy()
+  const bd1155 = await ERC1155BasicDeployer.deploy();
+  const ld1155 = await ERC1155LazyDeployer.deploy();
+  const md1155 = await ERC1155MinimalDeployer.deploy();
+  const wd1155 = await ERC1155WhitelistDeployer.deploy();
+  const sd = await SplitterDeployer.deploy();
 
-  const bd721 = await ERC721BasicDeployer.deploy()
-  const ld721 = await ERC721LazyDeployer.deploy()
-  const md721 = await ERC721MinimalDeployer.deploy()
-  const wd721 = await ERC721WhitelistDeployer.deploy()
+  const bd721 = await ERC721BasicDeployer.deploy();
+  const ld721 = await ERC721LazyDeployer.deploy();
+  const md721 = await ERC721MinimalDeployer.deploy();
+  const wd721 = await ERC721WhitelistDeployer.deploy();
 
   const MADFactory721 = await ethers.getContractFactory(
     "MADFactory721",
@@ -74,22 +92,25 @@ const main = async () => {
         ERC721LazyDeployer: ld721.address,
         ERC721MinimalDeployer: md721.address,
         ERC721WhitelistDeployer: wd721.address,
-        SplitterDeployer: sd.address
-      }
-    }
+        SplitterDeployer: sd.address,
+      },
+    },
   );
   const f721 = await MADFactory721.deploy(
     m721.address, // marketplace addr
     ethers.constants.AddressZero, // router addr
     deployer.address, // lazy signer addr
-    erc20Address
+    erc20Address,
   );
   console.log(`ERC721 Factory address: ${f721.address}`);
 
   const MADRouter721 = await ethers.getContractFactory(
     "MADRouter721",
   );
-  const r721 = await MADRouter721.deploy(f721.address, erc20Address);
+  const r721 = await MADRouter721.deploy(
+    f721.address,
+    erc20Address,
+  );
   console.log(`ERC721 Router address: ${r721.address}`);
 
   await m721.connect(deployer).setFactory(f721.address);
@@ -119,22 +140,25 @@ const main = async () => {
         ERC1155LazyDeployer: ld1155.address,
         ERC1155MinimalDeployer: md1155.address,
         ERC1155WhitelistDeployer: wd1155.address,
-        SplitterDeployer: sd.address
-      }
-    }
+        SplitterDeployer: sd.address,
+      },
+    },
   );
   const f1155 = await MADFactory1155.deploy(
     m1155.address, // marketplace addr
     ethers.constants.AddressZero, // router addr
     deployer.address, // lazy signer addr
-    erc20Address // ERC20 payment token addr
+    erc20Address, // ERC20 payment token addr
   );
   console.log(`ERC1155 Factory address: ${f1155.address}`);
 
   const MADRouter1155 = await ethers.getContractFactory(
     "MADRouter1155",
   );
-  const r1155 = await MADRouter1155.deploy(f1155.address, erc20Address);
+  const r1155 = await MADRouter1155.deploy(
+    f1155.address,
+    erc20Address,
+  );
   console.log(`ERC1155 Router address: ${r1155.address}`);
 
   await m1155.connect(deployer).setFactory(f1155.address);
@@ -149,4 +173,3 @@ main()
     console.log(error);
     process.exit(1);
   });
-

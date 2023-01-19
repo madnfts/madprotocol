@@ -190,16 +190,14 @@ describe("ERC721Whitelist", () => {
         .to.emit(wl, "FreeConfigSet")
         .withArgs(1, 10, merkleRoot);
 
-      await expect(wl
-        .connect(acc02)
-        .whitelistConfig(price, 100, merkleRoot)).to.be.revertedWith(
-          WhitelistErrors.Unauthorized,
-        );
-      await expect(wl
-        .connect(acc01)
-        .freeConfig(1, 10, merkleRoot)).to.be.revertedWith(
-          WhitelistErrors.Unauthorized,
-        );
+      await expect(
+        wl
+          .connect(acc02)
+          .whitelistConfig(price, 100, merkleRoot),
+      ).to.be.revertedWith(WhitelistErrors.Unauthorized);
+      await expect(
+        wl.connect(acc01).freeConfig(1, 10, merkleRoot),
+      ).to.be.revertedWith(WhitelistErrors.Unauthorized);
     });
 
     it("Should set baseURI and emit event", async () => {
@@ -273,7 +271,7 @@ describe("ERC721Whitelist", () => {
       // 1000(totalsupply) - 100(whitelist) - 10(freeclaim)
       await wl
         .connect(acc01)
-        .mint(890,{ value: price.mul(amount) });
+        .mint(890, { value: price.mul(amount) });
       const tx = wl.connect(acc02).mint(1, { value: price });
 
       await expect(tx).to.be.revertedWithCustomError(
@@ -330,7 +328,7 @@ describe("ERC721Whitelist", () => {
       await wl.setWhitelistMintState(true);
       const tx = wl.whitelistMint(
         ethers.constants.NegativeOne,
-        proof
+        proof,
       );
       const tx2 = wl.whitelistMint(256, proof);
 
@@ -631,13 +629,22 @@ describe("ERC721Whitelist", () => {
     });
     it("Should mint, burn then mint again, update storage and emit event", async () => {
       await wl.setPublicMintState(true);
-      await wl.giftTokens([acc02.address, acc01.address], owner.address);
-      await wl.giftTokens([acc02.address, acc01.address], owner.address);
+      await wl.giftTokens(
+        [acc02.address, acc01.address],
+        owner.address,
+      );
+      await wl.giftTokens(
+        [acc02.address, acc01.address],
+        owner.address,
+      );
 
       const ids = [1, 2, 3, 4];
       const tx = await wl.burn(ids, owner.address);
 
-      await wl.giftTokens([acc02.address, acc01.address], owner.address);
+      await wl.giftTokens(
+        [acc02.address, acc01.address],
+        owner.address,
+      );
 
       const dead = ethers.constants.AddressZero;
       const bal1 = await wl.callStatic.balanceOf(

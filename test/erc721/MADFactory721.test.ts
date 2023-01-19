@@ -24,7 +24,7 @@ import {
   Collection,
   SplitterConfig,
   dead,
-  madFixture721A
+  madFixture721A,
 } from "./../utils/madFixtures";
 
 describe("MADFactory721", () => {
@@ -163,9 +163,7 @@ describe("MADFactory721", () => {
       await expect(tx).to.emit(f721, "SplitterCreated");
       expect(creator.toString()).to.eq(acc02.address);
       expect(shares).to.eq("100"); // no longer have owner as part of the royalties
-      expect(payees).to.eq(
-        [acc02.address].toString(),
-      );
+      expect(payees).to.eq([acc02.address].toString());
       expect(splitter).to.eq(addr);
       expect(ethers.BigNumber.from(creatorShares)).to.eq(100);
       expect(storage.splitter).to.eq(addr);
@@ -231,10 +229,7 @@ describe("MADFactory721", () => {
       expect(creator.toString()).to.eq(acc02.address);
       expect(shares).to.eq("20,80");
       expect(payees).to.eq(
-        [
-          amb.address,
-          acc02.address,
-        ].toString(),
+        [amb.address, acc02.address].toString(),
       );
       expect(splitter).to.eq(addr);
       expect(ethers.BigNumber.from(ambShares)).to.eq(20);
@@ -263,7 +258,7 @@ describe("MADFactory721", () => {
           10,
         );
       const rc: ContractReceipt = await tx.wait();
-      
+
       const indexed = rc.logs[2].data;
       const data = rc.logs[3].data;
 
@@ -359,7 +354,7 @@ describe("MADFactory721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750
+          750,
         );
       const colID = await f721.callStatic.getColID(minAddr);
       const storage = await f721.callStatic.userTokens(
@@ -380,7 +375,7 @@ describe("MADFactory721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750
+          750,
         );
 
       const fail2 = f721
@@ -394,7 +389,7 @@ describe("MADFactory721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750
+          750,
         );
 
       expect(tx).to.be.ok;
@@ -414,7 +409,15 @@ describe("MADFactory721", () => {
       );
       await expect(tx)
         .to.emit(f721, "ERC721MinimalCreated")
-        .withArgs(splAddr, minAddr, '721Minimal', 'MIN', 750, 1, price);
+        .withArgs(
+          splAddr,
+          minAddr,
+          "721Minimal",
+          "MIN",
+          750,
+          1,
+          price,
+        );
       await expect(fail1).to.be.revertedWithCustomError(
         m721,
         FactoryErrors.AccessDenied,
@@ -453,7 +456,7 @@ describe("MADFactory721", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const colID = await f721.callStatic.getColID(basicAddr);
       const storage = await f721.callStatic.userTokens(
@@ -474,7 +477,7 @@ describe("MADFactory721", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
 
       const fail2 = f721
@@ -488,7 +491,7 @@ describe("MADFactory721", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
 
       expect(tx).to.be.ok;
@@ -508,7 +511,15 @@ describe("MADFactory721", () => {
       );
       await expect(tx)
         .to.emit(f721, "ERC721BasicCreated")
-        .withArgs(splAddr, basicAddr, '721Basic', 'BASIC', 750, 1000, price);
+        .withArgs(
+          splAddr,
+          basicAddr,
+          "721Basic",
+          "BASIC",
+          750,
+          1000,
+          price,
+        );
       await expect(fail1).to.be.revertedWithCustomError(
         f721,
         FactoryErrors.AccessDenied,
@@ -546,7 +557,7 @@ describe("MADFactory721", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const colID = await f721.callStatic.getColID(wlAddr);
       const storage = await f721.callStatic.userTokens(
@@ -567,7 +578,7 @@ describe("MADFactory721", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
 
       const fail2 = f721
@@ -581,7 +592,7 @@ describe("MADFactory721", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
 
       expect(tx).to.be.ok;
@@ -601,7 +612,15 @@ describe("MADFactory721", () => {
       );
       await expect(tx)
         .to.emit(f721, "ERC721WhitelistCreated")
-        .withArgs(splAddr, wlAddr, '721Whitelist', 'WL', 750, 1000, price);
+        .withArgs(
+          splAddr,
+          wlAddr,
+          "721Whitelist",
+          "WL",
+          750,
+          1000,
+          price,
+        );
       await expect(fail1).to.be.revertedWithCustomError(
         f721,
         FactoryErrors.AccessDenied,
@@ -636,7 +655,7 @@ describe("MADFactory721", () => {
           ethers.constants.Zero,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const lazyAddr = await f721.callStatic.getDeployedAddr(
         "LazySalt",
@@ -661,7 +680,7 @@ describe("MADFactory721", () => {
           0,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
 
       const fail2 = f721
@@ -675,7 +694,7 @@ describe("MADFactory721", () => {
           0,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
 
       expect(tx).to.be.ok;
@@ -695,7 +714,15 @@ describe("MADFactory721", () => {
       );
       await expect(tx)
         .to.emit(f721, "ERC721LazyCreated")
-        .withArgs(splAddr, lazyAddr, '721Lazy', 'LAZY', 750, ethers.constants.Zero, ethers.constants.Zero);
+        .withArgs(
+          splAddr,
+          lazyAddr,
+          "721Lazy",
+          "LAZY",
+          750,
+          ethers.constants.Zero,
+          ethers.constants.Zero,
+        );
       await expect(fail1).to.be.revertedWithCustomError(
         f721,
         FactoryErrors.AccessDenied,
@@ -812,7 +839,7 @@ describe("MADFactory721", () => {
           1,
           "",
           dead,
-          75
+          75,
         ),
       ).to.be.revertedWith(FactoryErrors.Paused);
       await expect(
@@ -849,7 +876,7 @@ describe("MADFactory721", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       await f721
         .connect(acc02)
@@ -862,7 +889,7 @@ describe("MADFactory721", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       await f721
         .connect(acc02)
@@ -875,7 +902,7 @@ describe("MADFactory721", () => {
           1,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
 
       expect(await f721.getIDsLength(acc02.address)).to.eq(3);
@@ -918,7 +945,7 @@ describe("MADFactory721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750
+          750,
         );
       const colID = await f721.callStatic.getColID(minAddr);
       const min = await ethers.getContractAt(
@@ -974,7 +1001,7 @@ describe("MADFactory721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -984,14 +1011,18 @@ describe("MADFactory721", () => {
         .connect(acc02)
         .setMintState(minAddr, true, 0);
       await min.connect(acc02).publicMint({ value: price });
-      const tx_ = await min.connect(acc02).approve(m721.address, 1);
-      const blockTimestamp = (await m721.provider.getBlock(tx_.blockNumber || 0)).timestamp;
+      const tx_ = await min
+        .connect(acc02)
+        .approve(m721.address, 1);
+      const blockTimestamp = (
+        await m721.provider.getBlock(tx_.blockNumber || 0)
+      ).timestamp;
       const daTx = await m721
         .connect(acc02)
         .fixedPrice(minAddr, 1, price, blockTimestamp + 400);
       const daRc: ContractReceipt = await daTx.wait();
       const daBn = daRc.blockNumber;
-      
+
       await setNextBlockTimestamp(blockTimestamp + 296);
       await mine(daBn + 1);
       const orderID = await m721.callStatic.orderIdBySeller(
@@ -1049,7 +1080,7 @@ describe("MADFactory721", () => {
           1,
           "cid/id.json",
           splAddr,
-          750
+          750,
         );
       const colID = await f721.callStatic.getColID(minAddr);
 

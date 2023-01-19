@@ -46,7 +46,8 @@ abstract contract ERC1155B {
                             ERC1155B STORAGE
     //////////////////////////////////////////////////////////////*/
 
-    mapping(uint256 => mapping(address => uint256)) public ownerOf;
+    mapping(uint256 => mapping(address => uint256))
+        public ownerOf;
 
     function balanceOf(address owner, uint256 id)
         public
@@ -103,7 +104,10 @@ abstract contract ERC1155B {
         require(ownerOf[id][from] > 0, "WRONG_FROM"); // Can only transfer from the owner.
 
         // Can only transfer 1 with ERC1155B.
-        require(ownerOf[id][from] >= amount, "INVALID_AMOUNT");
+        require(
+            ownerOf[id][from] >= amount,
+            "INVALID_AMOUNT"
+        );
 
         // ownerOf[id] = to;
         ownerOf[id][to] += amount;
@@ -161,7 +165,10 @@ abstract contract ERC1155B {
                 require(ownerOf[id][from] > 0, "WRONG_FROM");
 
                 // Can only transfer 1 with ERC1155B.
-                require(ownerOf[id][from] >= amount, "INVALID_AMOUNT");
+                require(
+                    ownerOf[id][from] >= amount,
+                    "INVALID_AMOUNT"
+                );
 
                 ownerOf[id][to] += amount;
                 ownerOf[id][from] -= amount;
@@ -264,7 +271,6 @@ abstract contract ERC1155B {
     ) internal virtual {
         uint256 idsLength = ids.length; // Saves MLOADs.
 
-
         uint256 id; // Storing outside the loop saves ~7 gas per iteration.
 
         // Unchecked because the only math done is incrementing
@@ -303,10 +309,11 @@ abstract contract ERC1155B {
         } else require(to != address(0), "INVALID_RECIPIENT");
     }
 
-    function _batchBurn(address from, uint256[] memory ids, uint256[] memory amounts)
-        internal
-        virtual
-    {
+    function _batchBurn(
+        address from,
+        uint256[] memory ids,
+        uint256[] memory amounts
+    ) internal virtual {
         // Burning unminted tokens makes no sense.
         require(from != address(0), "INVALID_FROM");
 
@@ -320,7 +327,10 @@ abstract contract ERC1155B {
             for (uint256 i = 0; i < idsLength; ++i) {
                 id = ids[i];
 
-                require(ownerOf[id][from] >= amounts[i], "WRONG_FROM");
+                require(
+                    ownerOf[id][from] >= amounts[i],
+                    "WRONG_FROM"
+                );
 
                 ownerOf[id][from] -= amounts[i];
             }
@@ -335,8 +345,15 @@ abstract contract ERC1155B {
         );
     }
 
-    function _burn(address from, uint256 id, uint256 amount) internal virtual {
-        require(ownerOf[id][from] >= amount, "INVALID_AMOUNT");
+    function _burn(
+        address from,
+        uint256 id,
+        uint256 amount
+    ) internal virtual {
+        require(
+            ownerOf[id][from] >= amount,
+            "INVALID_AMOUNT"
+        );
 
         ownerOf[id][from] -= amount;
 

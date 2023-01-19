@@ -312,7 +312,7 @@ describe("ERC1155Lazy", () => {
         7,
       );
       const sup = await lazy.callStatic.totalSupply();
-      
+
       const tx = await lazy.lazyMintBatch(
         userBatch,
         ubSigSplit.v,
@@ -505,7 +505,9 @@ describe("ERC1155Lazy", () => {
   describe("Burn", async () => {
     it("Should revert if not owner", async () => {
       await expect(
-        lazy.connect(acc01).burn([acc01.address], [1], [1], owner.address),
+        lazy
+          .connect(acc01)
+          .burn([acc01.address], [1], [1], owner.address),
       ).to.be.revertedWith(LazyErrors.Unauthorized);
     });
     it("Should revert if id is already burnt/hasn't been minted", async () => {
@@ -517,7 +519,14 @@ describe("ERC1155Lazy", () => {
         { value: price.mul(amount) },
       );
       const ids = [1, 33, 7];
-      const tx = lazy.connect(owner).burn([owner.address, owner.address, owner.address], ids, [1, 1, 1], owner.address);
+      const tx = lazy
+        .connect(owner)
+        .burn(
+          [owner.address, owner.address, owner.address],
+          ids,
+          [1, 1, 1],
+          owner.address,
+        );
 
       await expect(tx).to.be.revertedWith(
         LazyErrors.InvalidAmount,
@@ -544,7 +553,17 @@ describe("ERC1155Lazy", () => {
       );
 
       const ids = [1, 13, 20, 30];
-      const tx = await lazy.burn([voucher.users[0], voucher.users[1], voucher.users[1], voucher.users[2]], ids, [1, 1, 1, 1], owner.address);
+      const tx = await lazy.burn(
+        [
+          voucher.users[0],
+          voucher.users[1],
+          voucher.users[1],
+          voucher.users[2],
+        ],
+        ids,
+        [1, 1, 1, 1],
+        owner.address,
+      );
 
       await lazy.lazyMint(
         voucher2,
@@ -555,7 +574,8 @@ describe("ERC1155Lazy", () => {
       );
 
       const dead = ethers.constants.AddressZero;
-      const mintCounter = await lazy.callStatic.getMintCount();
+      const mintCounter =
+        await lazy.callStatic.getMintCount();
       const bal1 = await lazy.callStatic.balanceOf(
         owner.address,
         1,
@@ -599,7 +619,12 @@ describe("ERC1155Lazy", () => {
       );
       const tx = lazy
         .connect(acc02)
-        .burnBatch(owner.address, ids, [1, 1, 1], acc02.address);
+        .burnBatch(
+          owner.address,
+          ids,
+          [1, 1, 1],
+          acc02.address,
+        );
 
       await expect(tx).to.be.revertedWith(
         LazyErrors.Unauthorized,
@@ -616,7 +641,12 @@ describe("ERC1155Lazy", () => {
       );
       const tx = lazy
         .connect(owner)
-        .burnBatch(acc02.address, ids, [1, 1, 1], owner.address);
+        .burnBatch(
+          acc02.address,
+          ids,
+          [1, 1, 1],
+          owner.address,
+        );
 
       await expect(tx).to.be.revertedWith(
         LazyErrors.WrongFrom,
@@ -634,7 +664,12 @@ describe("ERC1155Lazy", () => {
         { value: price.mul(amount) },
       );
       const ids = [1, 2, 3, 4];
-      const tx = await lazy.burnBatch(owner.address, ids, [1, 1, 1, 1], owner.address);
+      const tx = await lazy.burnBatch(
+        owner.address,
+        ids,
+        [1, 1, 1, 1],
+        owner.address,
+      );
       const bal1 = await lazy.callStatic.balanceOf(
         owner.address,
         1,
@@ -683,10 +718,30 @@ describe("ERC1155Lazy", () => {
       const ids2 = [6, 7, 8, 9, 10];
       const ids3 = [11, 12, 13, 14, 15];
       const ids4 = [16, 17, 18, 19, 20];
-      const tx1 = await lazy.burnBatch(owner.address, ids1, [1, 1, 1, 1, 1], owner.address);
-      const tx2 = await lazy.burnBatch(owner.address, ids2, [1, 1, 1, 1, 1], owner.address);
-      const tx3 = await lazy.burnBatch(amb.address, ids3, [1, 1, 1, 1, 1], owner.address);
-      const tx4 = await lazy.burnBatch(amb.address, ids4, [1, 1 ,1 ,1 ,1], owner.address);
+      const tx1 = await lazy.burnBatch(
+        owner.address,
+        ids1,
+        [1, 1, 1, 1, 1],
+        owner.address,
+      );
+      const tx2 = await lazy.burnBatch(
+        owner.address,
+        ids2,
+        [1, 1, 1, 1, 1],
+        owner.address,
+      );
+      const tx3 = await lazy.burnBatch(
+        amb.address,
+        ids3,
+        [1, 1, 1, 1, 1],
+        owner.address,
+      );
+      const tx4 = await lazy.burnBatch(
+        amb.address,
+        ids4,
+        [1, 1, 1, 1, 1],
+        owner.address,
+      );
 
       expect(tx1).to.be.ok;
       expect(tx2).to.be.ok;
@@ -758,7 +813,12 @@ describe("ERC1155Lazy", () => {
       );
       const base = await lazy.callStatic.getURI();
       const sup = await lazy.callStatic.totalSupply();
-      await lazy.burn([voucher.users[0], voucher.users[0]], [1, 2], [1, 1], owner.address);
+      await lazy.burn(
+        [voucher.users[0], voucher.users[0]],
+        [1, 2],
+        [1, 1],
+        owner.address,
+      );
       await lazy.setURI(res);
       const base2 = await lazy.callStatic.getURI();
 

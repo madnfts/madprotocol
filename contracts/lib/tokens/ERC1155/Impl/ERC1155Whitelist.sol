@@ -109,21 +109,28 @@ contract ERC1155Whitelist is
     }
 
     modifier priceCheck(uint256 _price, uint256 amount) {
-        uint256 value = (address(erc20) != address(0)) 
+        uint256 value = (address(erc20) != address(0))
             ? erc20.allowance(msg.sender, address(this))
             : msg.value;
         if (_price * amount != value) revert WrongPrice();
         _;
     }
 
-    modifier balanceMatchesTotal(uint256 amount, uint256[] memory balances, uint256 balanceTotal) {
+    modifier balanceMatchesTotal(
+        uint256 amount,
+        uint256[] memory balances,
+        uint256 balanceTotal
+    ) {
         uint256 i;
         uint256 total = balanceTotal;
-        for (i; i < balances.length;) {
+        for (i; i < balances.length; ) {
             total = total - balances[i++];
         }
 
-        require(total == 0 && amount == balances.length, "INVALID_AMOUNT");
+        require(
+            total == 0 && amount == balances.length,
+            "INVALID_AMOUNT"
+        );
         _;
     }
 
@@ -171,10 +178,11 @@ contract ERC1155Whitelist is
     //                         OWNER FX                           //
     ////////////////////////////////////////////////////////////////
 
-    function whitelistConfig(uint256 _price, uint256 _supply, bytes32 _root) 
-        external 
-        onlyOwner 
-    {
+    function whitelistConfig(
+        uint256 _price,
+        uint256 _supply,
+        bytes32 _root
+    ) external onlyOwner {
         whitelistPrice = _price;
         maxWhitelistSupply = _supply;
         whitelistMerkleRoot = _root;
@@ -182,10 +190,11 @@ contract ERC1155Whitelist is
         emit WhitelistConfigSet(_price, _supply, _root);
     }
 
-    function freeConfig(uint256 _freeAmount, uint256 _maxFree, bytes32 _claimListMerkleRoot) 
-        external 
-        onlyOwner 
-    {
+    function freeConfig(
+        uint256 _freeAmount,
+        uint256 _maxFree,
+        bytes32 _claimListMerkleRoot
+    ) external onlyOwner {
         freeAmount = _freeAmount;
         maxFree = _maxFree;
         claimListMerkleRoot = _claimListMerkleRoot;
@@ -231,15 +240,19 @@ contract ERC1155Whitelist is
     }
 
     /// @dev Burns an arbitrary length array of ids of different owners.
-    function burn(address[] memory owners, uint256[] memory ids, uint256[] memory amounts, address erc20Owner) 
-        external 
-        payable 
-        onlyOwner 
-    {
+    function burn(
+        address[] memory owners,
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        address erc20Owner
+    ) external payable onlyOwner {
         _paymentCheck(erc20Owner, 1);
         uint256 i;
         uint256 len = ids.length;
-        require(len == owners.length && len == amounts.length, "INVALID_AMOUNT");
+        require(
+            len == owners.length && len == amounts.length,
+            "INVALID_AMOUNT"
+        );
         for (i; i < len; ) {
             liveSupply.decrement();
             _burn(owners[i], ids[i], amounts[i]);
@@ -257,11 +270,12 @@ contract ERC1155Whitelist is
     }
 
     /// @dev Burns an arbitrary length array of ids of different owners.
-    function burnBatch(address from, uint256[] memory ids, uint256[] memory amounts, address erc20Owner)
-        external
-        payable
-        onlyOwner
-    {
+    function burnBatch(
+        address from,
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        address erc20Owner
+    ) external payable onlyOwner {
         _paymentCheck(erc20Owner, 1);
         uint256 i;
         uint256 len = ids.length;
@@ -284,7 +298,12 @@ contract ERC1155Whitelist is
     }
 
     /// @dev Mint amount to creator
-    function mintToCreator(uint256 amount, uint256[] memory balances, uint256 balanceTotal, address erc20Owner)
+    function mintToCreator(
+        uint256 amount,
+        uint256[] memory balances,
+        uint256 balanceTotal,
+        address erc20Owner
+    )
         external
         payable
         nonReentrant
@@ -296,7 +315,12 @@ contract ERC1155Whitelist is
         uint256 i;
         freeSupply += balanceTotal;
         for (i; i < amount; ) {
-            _mint(tx.origin, _incrementCounter(balances[i]), balances[i], "");
+            _mint(
+                tx.origin,
+                _incrementCounter(balances[i]),
+                balances[i],
+                ""
+            );
             unchecked {
                 ++i;
             }
@@ -312,16 +336,20 @@ contract ERC1155Whitelist is
 
     /// @dev Batch mint amount to creator
     function mintBatchToCreator(
-        uint256[] memory ids, 
-        uint256[] memory balances, 
-        uint256 balanceTotal, 
+        uint256[] memory ids,
+        uint256[] memory balances,
+        uint256 balanceTotal,
         address erc20Owner
     )
         external
         payable
         nonReentrant
         onlyOwner
-        balanceMatchesTotal(ids.length, balances, balanceTotal)
+        balanceMatchesTotal(
+            ids.length,
+            balances,
+            balanceTotal
+        )
     {
         _canBatchToCreator(balanceTotal);
         _paymentCheck(erc20Owner, 0);
@@ -348,9 +376,9 @@ contract ERC1155Whitelist is
 
     /// @dev Mints one token per address
     function giftTokens(
-        address[] calldata addresses, 
-        uint256[] memory balances, 
-        uint256 balanceTotal, 
+        address[] calldata addresses,
+        uint256[] memory balances,
+        uint256 balanceTotal,
         address erc20Owner
     )
         external
@@ -358,18 +386,27 @@ contract ERC1155Whitelist is
         nonReentrant
         onlyOwner
         canMintFree(balanceTotal)
-        balanceMatchesTotal(addresses.length, balances, balanceTotal)
+        balanceMatchesTotal(
+            addresses.length,
+            balances,
+            balanceTotal
+        )
     {
         _paymentCheck(erc20Owner, 0);
 
         uint256 amountGifted = balanceTotal;
         uint256 len = addresses.length;
-        
+
         freeSupply += amountGifted;
 
         uint256 i;
         for (i; i < len; ) {
-            _mint(addresses[i], _incrementCounter(balances[i]), balances[i], "");
+            _mint(
+                addresses[i],
+                _incrementCounter(balances[i]),
+                balances[i],
+                ""
+            );
             unchecked {
                 ++i;
             }
@@ -444,7 +481,11 @@ contract ERC1155Whitelist is
     ////////////////////////////////////////////////////////////////
 
     /// @dev Public minting function
-    function mint(uint256 amount, uint256[] memory balances, uint256 balanceTotal)
+    function mint(
+        uint256 amount,
+        uint256[] memory balances,
+        uint256 balanceTotal
+    )
         external
         payable
         nonReentrant
@@ -454,7 +495,12 @@ contract ERC1155Whitelist is
 
         uint256 i;
         for (i; i < amount; ) {
-            _mint(msg.sender, _incrementCounter(balances[i]), balances[i], "");
+            _mint(
+                msg.sender,
+                _incrementCounter(balances[i]),
+                balances[i],
+                ""
+            );
             unchecked {
                 ++i;
             }
@@ -471,12 +517,10 @@ contract ERC1155Whitelist is
     }
 
     /// @dev Public batch minting function
-    function mintBatch(uint256[] memory ids, uint256[] memory balances)
-        external
-        payable
-        nonReentrant
-        publicMintAccess
-    {
+    function mintBatch(
+        uint256[] memory ids,
+        uint256[] memory balances
+    ) external payable nonReentrant publicMintAccess {
         uint256 len = ids.length;
         require(len == balances.length, "INVALID_AMOUNT");
 
@@ -495,14 +539,22 @@ contract ERC1155Whitelist is
             }
         }
 
-        uint256 value = address(erc20) != address(0) ? erc20.allowance(msg.sender, address(this)) : msg.value;
+        uint256 value = address(erc20) != address(0)
+            ? erc20.allowance(msg.sender, address(this))
+            : msg.value;
         _canBatchMint(liveSupply.current() - total, value);
-        if (address(erc20) != address(0)) SafeTransferLib.safeTransferFrom(erc20, msg.sender, address(this), value);
+        if (address(erc20) != address(0))
+            SafeTransferLib.safeTransferFrom(
+                erc20,
+                msg.sender,
+                address(this),
+                value
+            );
 
         _batchMint(msg.sender, ids, balances, "");
         // Transfer event emitted by parent ERC1155 contract
     }
-    
+
     /// @dev Public whitelist minting function
     function whitelistMint(
         uint8 amount,
@@ -516,12 +568,21 @@ contract ERC1155Whitelist is
         whitelistMintAccess
         merkleVerify(merkleProof, whitelistMerkleRoot)
     {
-        _publicWhitelistMintCheck(amount, balances, balanceTotal);
+        _publicWhitelistMintCheck(
+            amount,
+            balances,
+            balanceTotal
+        );
         uint256 i;
         uint256 total = 0;
         for (i; i < amount; ) {
             total += balances[i];
-            _mint(msg.sender, _incrementCounter(balances[i]), balances[i], "");
+            _mint(
+                msg.sender,
+                _incrementCounter(balances[i]),
+                balances[i],
+                ""
+            );
             unchecked {
                 ++i;
             }
@@ -572,8 +633,11 @@ contract ERC1155Whitelist is
 
         uint256 value = address(erc20) != address(0)
             ? erc20.allowance(msg.sender, address(this))
-            : msg.value ;
-        _canWhitelistBatch(liveSupply.current() - total, value);
+            : msg.value;
+        _canWhitelistBatch(
+            liveSupply.current() - total,
+            value
+        );
         _paymentCheck(msg.sender, 2);
 
         whitelistMinted += liveSupply.current() - total;
@@ -583,15 +647,22 @@ contract ERC1155Whitelist is
     }
 
     /// @dev Public claim minting function
-    function claimFree(uint256[] memory balances, uint256 balanceTotal, bytes32[] calldata merkleProof)
+    function claimFree(
+        uint256[] memory balances,
+        uint256 balanceTotal,
+        bytes32[] calldata merkleProof
+    )
         external
         freeClaimAccess
         merkleVerify(merkleProof, claimListMerkleRoot)
         canMintFree(freeAmount)
-        balanceMatchesTotal(balances.length, balances, balanceTotal)
+        balanceMatchesTotal(
+            balances.length,
+            balances,
+            balanceTotal
+        )
     {
-        if (claimed[msg.sender])
-            revert AlreadyClaimed();
+        if (claimed[msg.sender]) revert AlreadyClaimed();
         unchecked {
             claimed[msg.sender] = true;
             freeSupply += freeAmount;
@@ -618,12 +689,18 @@ contract ERC1155Whitelist is
     //                          HELPER FX                         //
     ////////////////////////////////////////////////////////////////
 
-    function _nextId(uint256 amount) private returns (uint256) {
+    function _nextId(uint256 amount)
+        private
+        returns (uint256)
+    {
         liveSupply.increment(amount);
         return liveSupply.current();
     }
 
-    function _incrementCounter(uint256 amount) private returns(uint256) {
+    function _incrementCounter(uint256 amount)
+        private
+        returns (uint256)
+    {
         _nextId(amount);
         mintCount += amount;
         return mintCount;
@@ -639,7 +716,10 @@ contract ERC1155Whitelist is
             revert MaxMintReached();
     }
 
-    function _canBatchMint(uint256 amount, uint256 value) private view {
+    function _canBatchMint(uint256 amount, uint256 value)
+        private
+        view
+    {
         if (
             totalSupply() + amount >
             maxSupply - maxWhitelistSupply - maxFree
@@ -648,7 +728,10 @@ contract ERC1155Whitelist is
             revert WrongPrice();
     }
 
-    function _canWhitelistBatch(uint256 amount, uint256 value) private view {
+    function _canWhitelistBatch(uint256 amount, uint256 value)
+        private
+        view
+    {
         if (whitelistPrice * amount != value)
             revert WrongPrice();
         if (whitelistMinted + amount > maxWhitelistSupply)
@@ -694,7 +777,7 @@ contract ERC1155Whitelist is
         return liveSupply.current();
     }
 
-    function getMintCount() public view returns(uint256) {
+    function getMintCount() public view returns (uint256) {
         return mintCount;
     }
 
@@ -702,14 +785,17 @@ contract ERC1155Whitelist is
     //                     INTERNAL FUNCTIONS                     //
     ////////////////////////////////////////////////////////////////
 
-    function _feeCheck(bytes4 _method, uint256 _value) internal view {
+    function _feeCheck(bytes4 _method, uint256 _value)
+        internal
+        view
+    {
         address _owner = owner;
         uint32 size;
         assembly {
             size := extcodesize(_owner)
         }
         if (size == 0) {
-            return; 
+            return;
         }
         uint256 _fee = FeeOracle(owner).feeLookup(_method);
         assembly {
@@ -721,8 +807,12 @@ contract ERC1155Whitelist is
     }
 
     /// @dev Checks puiblic mint access and invokes _paymentCheck
-    function _publicMintCheck(uint256 amount, uint256[] memory balances, uint256 balanceTotal) 
-        internal 
+    function _publicMintCheck(
+        uint256 amount,
+        uint256[] memory balances,
+        uint256 balanceTotal
+    )
+        internal
         publicMintAccess
         hasReachedMax(balanceTotal)
         balanceMatchesTotal(amount, balances, balanceTotal)
@@ -738,30 +828,39 @@ contract ERC1155Whitelist is
     )
         private
         whitelistMax(amount)
-        priceCheck(whitelistPrice, balanceTotal) 
+        priceCheck(whitelistPrice, balanceTotal)
     {}
-    
+
     /// @dev Checks if mint / burn fees are paid
     /// @dev If non router deploy we check msg.value if !erc20 OR checks erc20 approval and transfers
     /// @dev If router deploy we check msg.value if !erc20 BUT checks erc20 approval and transfers are via the router
     /// @param _erc20Owner Non router deploy =msg.sender; Router deploy =payer.address (msg.sender = router.address)
     /// @param _type Passed to _feeCheck to determin the fee 0=mint; 1=burn; ELSE _feeCheck is ignored
-    function _paymentCheck(address _erc20Owner, uint8 _type) internal 
+    function _paymentCheck(address _erc20Owner, uint8 _type)
+        internal
     {
         uint256 value = (address(erc20) != address(0))
             ? erc20.allowance(_erc20Owner, address(this))
-            : msg.value; 
-        
-        // Check fees are paid 
+            : msg.value;
+
+        // Check fees are paid
         // ERC20 fees for router calls are checked and transfered via in the router
-        if (address(msg.sender) == address(_erc20Owner) || (address(erc20) == address(0))) {
+        if (
+            address(msg.sender) == address(_erc20Owner) ||
+            (address(erc20) == address(0))
+        ) {
             if (_type == 0) {
                 _feeCheck(0x40d097c3, value);
             } else if (_type == 1) {
                 _feeCheck(0x44df8e70, value);
-            }   
+            }
             if (address(erc20) != address(0)) {
-                SafeTransferLib.safeTransferFrom(erc20, _erc20Owner, address(this), value);
+                SafeTransferLib.safeTransferFrom(
+                    erc20,
+                    _erc20Owner,
+                    address(this),
+                    value
+                );
             }
         }
     }

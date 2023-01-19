@@ -6,11 +6,7 @@ import {
 } from "@nomicfoundation/hardhat-network-helpers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
-import {
-  BigNumber,
-  ContractReceipt,
-  Wallet,
-} from "ethers";
+import { BigNumber, ContractReceipt, Wallet } from "ethers";
 import {
   ethers,
   network, // tracer
@@ -51,13 +47,14 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
   let erc20: MockERC20;
 
   const price: BigNumber = ethers.utils.parseEther("1");
-  const erc20Balance: BigNumber = ethers.utils.parseEther("500");
+  const erc20Balance: BigNumber =
+    ethers.utils.parseEther("500");
 
   before("Set signers and reset network", async () => {
     [owner, amb, mad, acc01, acc02] =
       await // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (ethers as any).getSigners();
-    
+
     await network.provider.send("hardhat_reset");
   });
   beforeEach("Load deployment fixtures", async () => {
@@ -81,7 +78,9 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
       expect(await m721.minAuctionIncrement()).to.eq(300);
       expect(await m721.minBidValue()).to.eq(20);
       expect(await m721.MADFactory721()).to.eq(f721.address);
-      expect(await f721.callStatic.erc20()).to.eq(erc20.address);
+      expect(await f721.callStatic.erc20()).to.eq(
+        erc20.address,
+      );
     });
   });
   describe("Owner Functions", async () => {
@@ -128,27 +127,41 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
           1,
           "cid/id.json",
           splAddr,
-          750
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
         minAddr,
       );
-      
+
       // Mint and pay mint fees with ERC20, then approve nft for marketplace listing
-      const erc20MintTx = await erc20.connect(acc02).approve(r721.address, ethers.utils.parseEther("0.25"))
-      expect(erc20MintTx).to.be.ok
+      const erc20MintTx = await erc20
+        .connect(acc02)
+        .approve(
+          r721.address,
+          ethers.utils.parseEther("0.25"),
+        );
+      expect(erc20MintTx).to.be.ok;
       const result = await r721
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      expect(result).to.be.ok
-      const tx = await min.connect(acc02).approve(m721.address, 1);
-      const blockTimestamp = (await m721.provider.getBlock(tx.blockNumber || 0)).timestamp;
+      expect(result).to.be.ok;
+      const tx = await min
+        .connect(acc02)
+        .approve(m721.address, 1);
+      const blockTimestamp = (
+        await m721.provider.getBlock(tx.blockNumber || 0)
+      ).timestamp;
 
       // List for fixed price
       const fpTx = await m721
         .connect(acc02)
-        .fixedPrice(min.address, 1, price, blockTimestamp + 301);
+        .fixedPrice(
+          min.address,
+          1,
+          price,
+          blockTimestamp + 301,
+        );
       const fpRc: ContractReceipt = await fpTx.wait();
       const fpBn = fpRc.blockNumber;
       const fpOrderId = getOrderId721(
@@ -157,7 +170,7 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
         1,
         acc02.address,
       );
-      
+
       // Attempt to buy without acc01 approving erc20
       await expect(
         m721.connect(acc01).buy(fpOrderId),
@@ -170,21 +183,39 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
       // acc02 = seller
       // acc01 = buyer
 
-      const ownerERC20Bal = await erc20.balanceOf(await m721.callStatic.recipient())
+      const ownerERC20Bal = await erc20.balanceOf(
+        await m721.callStatic.recipient(),
+      );
 
       // Mint and list token
       await m721.updateSettings(300, 10, 20, 31536000);
-      await f721.connect(acc02).splitterCheck(
-        "MADSplitter1", amb.address, dead, 20, 0,
-      );
+      await f721
+        .connect(acc02)
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
       const minAddr = await f721.callStatic.getDeployedAddr(
         "MinSalt",
       );
-      await f721.connect(acc02).createCollection(
-          0, "MinSalt", "721Minimal", "MIN", price, 1, "cid/id.json", splAddr, 1000
+      await f721
+        .connect(acc02)
+        .createCollection(
+          0,
+          "MinSalt",
+          "721Minimal",
+          "MIN",
+          price,
+          1,
+          "cid/id.json",
+          splAddr,
+          1000,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -196,23 +227,37 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
       );
 
       // Mint the token with erc20
-      const erc20MintTx = await erc20.connect(acc02).approve(r721.address, ethers.utils.parseEther("0.25"))
-      expect(erc20MintTx).to.be.ok
+      const erc20MintTx = await erc20
+        .connect(acc02)
+        .approve(
+          r721.address,
+          ethers.utils.parseEther("0.25"),
+        );
+      expect(erc20MintTx).to.be.ok;
       await r721
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
 
       // acc02 = erc20Balance - 0.25
-      expect(
-        await erc20.balanceOf(acc02.address)
-      ).to.equal(erc20Balance.sub(ethers.utils.parseEther("0.25")))
-      
+      expect(await erc20.balanceOf(acc02.address)).to.equal(
+        erc20Balance.sub(ethers.utils.parseEther("0.25")),
+      );
+
       // Create marketplace order
-      const tx = await min.connect(acc02).approve(m721.address, 1);
-      const blockTimestamp = (await m721.provider.getBlock(tx.blockNumber || 0)).timestamp;
+      const tx = await min
+        .connect(acc02)
+        .approve(m721.address, 1);
+      const blockTimestamp = (
+        await m721.provider.getBlock(tx.blockNumber || 0)
+      ).timestamp;
       const fpTx = await m721
         .connect(acc02)
-        .fixedPrice(min.address, 1, price, blockTimestamp + 301);
+        .fixedPrice(
+          min.address,
+          1,
+          price,
+          blockTimestamp + 301,
+        );
       const fpRc: ContractReceipt = await fpTx.wait();
       const fpBn = fpRc.blockNumber;
       const fpOrderId = getOrderId721(
@@ -222,83 +267,139 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
         acc02.address,
       );
       await mine(10);
-      
+
       // Set ERC20 balances and approve for maretplace purchase
-      const erc20Tx = await erc20.connect(acc01).approve(m721.address, price)
-      expect(erc20Tx).to.be.ok
-      const result = await erc20.callStatic.allowance(acc01.address, m721.address)
-      expect(result).to.equal(price)
-      
+      const erc20Tx = await erc20
+        .connect(acc01)
+        .approve(m721.address, price);
+      expect(erc20Tx).to.be.ok;
+      const result = await erc20.callStatic.allowance(
+        acc01.address,
+        m721.address,
+      );
+      expect(result).to.equal(price);
+
       // Buy the token
       const buyTx = await m721.connect(acc01).buy(fpOrderId);
-      
+
       // Test ERC20 buy response
-      await expect(buyTx).to.be.ok.and.to.emit(m721, "Claim")
-        .withArgs(minAddr, 1, fpOrderId, acc02.address, acc01.address, price);
-      
+      await expect(buyTx)
+        .to.be.ok.and.to.emit(m721, "Claim")
+        .withArgs(
+          minAddr,
+          1,
+          fpOrderId,
+          acc02.address,
+          acc01.address,
+          price,
+        );
+
       // Validate buyer and seller ERC20 balances
       // acc02 = erc20Balance - 0.25 + (1 - 10%.royalties - 10%.fee)
-      expect(
-        await erc20.balanceOf(acc02.address)
-      ).to.equal(erc20Balance.sub(ethers.utils.parseEther("0.25")).add(ethers.utils.parseEther("0.8")))
+      expect(await erc20.balanceOf(acc02.address)).to.equal(
+        erc20Balance
+          .sub(ethers.utils.parseEther("0.25"))
+          .add(ethers.utils.parseEther("0.8")),
+      );
 
-      expect(
-        await erc20.balanceOf(acc01.address)
-      ).to.equal(erc20Balance.sub(ethers.utils.parseEther("1")))
+      expect(await erc20.balanceOf(acc01.address)).to.equal(
+        erc20Balance.sub(ethers.utils.parseEther("1")),
+      );
 
       // Validate buyer ERC20 balances after royalties paid out
       // acc02 = erc20Balance - 0.25 + (1 - 10%.royalties - 10%.fee) + 10%.royalties
-      const splitTxCreator = await splitter["release(address,address)"](erc20.address, acc02.address)
-      expect(splitTxCreator).to.be.ok
-      expect(
-        await erc20.balanceOf(acc02.address)
-      ).to.equal(erc20Balance.sub(ethers.utils.parseEther("0.25")).add(ethers.utils.parseEther("0.8")).add(ethers.utils.parseEther("0.08")))
-      
+      const splitTxCreator = await splitter[
+        "release(address,address)"
+      ](erc20.address, acc02.address);
+      expect(splitTxCreator).to.be.ok;
+      expect(await erc20.balanceOf(acc02.address)).to.equal(
+        erc20Balance
+          .sub(ethers.utils.parseEther("0.25"))
+          .add(ethers.utils.parseEther("0.8"))
+          .add(ethers.utils.parseEther("0.08")),
+      );
+
       // Validate ERC2O amb payout balances
-      const splitTxAmb = await splitter["release(address,address)"](erc20.address, amb.address)
-      expect(splitTxAmb).to.be.ok
-      expect(
-        await erc20.balanceOf(amb.address)
-      ).to.equal(ethers.utils.parseEther("0.02"))
+      const splitTxAmb = await splitter[
+        "release(address,address)"
+      ](erc20.address, amb.address);
+      expect(splitTxAmb).to.be.ok;
+      expect(await erc20.balanceOf(amb.address)).to.equal(
+        ethers.utils.parseEther("0.02"),
+      );
 
       // Validate ERC2O MAD fee payout balances
       expect(
-        await erc20.balanceOf(await m721.callStatic.recipient())
-      ).to.equal(ownerERC20Bal.add(ethers.utils.parseEther("0.1")))
+        await erc20.balanceOf(
+          await m721.callStatic.recipient(),
+        ),
+      ).to.equal(
+        ownerERC20Bal.add(ethers.utils.parseEther("0.1")),
+      );
     });
     it("Should revert bid if bidder has insufficient ERC20 balance", async () => {
       // acc02 = seller
       // acc01 = buyer
       await m721.updateSettings(300, 10, 20, 31536000);
-      await f721.connect(acc02).splitterCheck(
-        "MADSplitter1", amb.address, dead, 20, 0,
-      );
+      await f721
+        .connect(acc02)
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
       const minAddr = await f721.callStatic.getDeployedAddr(
         "MinSalt",
       );
-      await f721.connect(acc02).createCollection(
-        0, "MinSalt", "721Minimal", "MIN", price, 1, "cid/id.json", splAddr, 750
-      );
+      await f721
+        .connect(acc02)
+        .createCollection(
+          0,
+          "MinSalt",
+          "721Minimal",
+          "MIN",
+          price,
+          1,
+          "cid/id.json",
+          splAddr,
+          750,
+        );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
         minAddr,
       );
-      
+
       // Mint the token with erc20
-      const erc20MintTx = await erc20.connect(acc02).approve(r721.address, ethers.utils.parseEther("0.25"))
-      expect(erc20MintTx).to.be.ok
+      const erc20MintTx = await erc20
+        .connect(acc02)
+        .approve(
+          r721.address,
+          ethers.utils.parseEther("0.25"),
+        );
+      expect(erc20MintTx).to.be.ok;
       await r721
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-      const tx = await min.connect(acc02).approve(m721.address, 1);
-      const blockTimestamp = (await m721.provider.getBlock(tx.blockNumber || 0)).timestamp;
+      const tx = await min
+        .connect(acc02)
+        .approve(m721.address, 1);
+      const blockTimestamp = (
+        await m721.provider.getBlock(tx.blockNumber || 0)
+      ).timestamp;
 
       const fpTx = await m721
         .connect(acc02)
-        .englishAuction(min.address, 1, price, blockTimestamp + 301);
+        .englishAuction(
+          min.address,
+          1,
+          price,
+          blockTimestamp + 301,
+        );
       const fpRc: ContractReceipt = await fpTx.wait();
       const fpBn = fpRc.blockNumber;
       const fpOrderId = getOrderId721(
@@ -319,21 +420,39 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
       // acc02 = seller
       // acc01 = buyer
 
-      const ownerERC20Bal = await erc20.balanceOf(await m721.callStatic.recipient())
+      const ownerERC20Bal = await erc20.balanceOf(
+        await m721.callStatic.recipient(),
+      );
 
       // Mint token
       await m721.updateSettings(300, 10, 20, 31536000);
-      await f721.connect(acc02).splitterCheck(
-        "MADSplitter1", amb.address, dead, 20, 0,
-      );
+      await f721
+        .connect(acc02)
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
       const minAddr = await f721.callStatic.getDeployedAddr(
         "MinSalt",
       );
-      await f721.connect(acc02).createCollection(
-          0, "MinSalt", "721Minimal", "MIN", price, 1, "cid/id.json", splAddr, 1000
+      await f721
+        .connect(acc02)
+        .createCollection(
+          0,
+          "MinSalt",
+          "721Minimal",
+          "MIN",
+          price,
+          1,
+          "cid/id.json",
+          splAddr,
+          1000,
         );
       const min = await ethers.getContractAt(
         "ERC721Minimal",
@@ -345,74 +464,119 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
       );
 
       // Mint the token with erc20
-      await erc20.connect(acc02).approve(r721.address, ethers.utils.parseEther("0.25"))
+      await erc20
+        .connect(acc02)
+        .approve(
+          r721.address,
+          ethers.utils.parseEther("0.25"),
+        );
       await r721
         .connect(acc02)
         .minimalSafeMint(min.address, acc02.address);
-     
+
       // acc02 = erc20Balance - 0.25
-      expect(
-        await erc20.balanceOf(acc02.address)
-      ).to.equal(erc20Balance.sub(ethers.utils.parseEther("0.25")))
-      
+      expect(await erc20.balanceOf(acc02.address)).to.equal(
+        erc20Balance.sub(ethers.utils.parseEther("0.25")),
+      );
+
       // List token
-      const tx = await min.connect(acc02).approve(m721.address, 1);
-      const blockTimestamp = (await m721.provider.getBlock(tx.blockNumber || 0)).timestamp;
+      const tx = await min
+        .connect(acc02)
+        .approve(m721.address, 1);
+      const blockTimestamp = (
+        await m721.provider.getBlock(tx.blockNumber || 0)
+      ).timestamp;
       const fpTx = await m721
         .connect(acc02)
-        .englishAuction(min.address, 1, ethers.utils.parseEther("0.1"), blockTimestamp + 301);
+        .englishAuction(
+          min.address,
+          1,
+          ethers.utils.parseEther("0.1"),
+          blockTimestamp + 301,
+        );
       const fpRc: ContractReceipt = await fpTx.wait();
       const fpBn = fpRc.blockNumber;
       const fpOrderId = getOrderId721(
-        fpBn, min.address, 1, acc02.address,
+        fpBn,
+        min.address,
+        1,
+        acc02.address,
       );
-      
+
       // Bid for the token
-      await erc20.connect(acc01).approve(m721.address, ethers.utils.parseEther("0.1"))
+      await erc20
+        .connect(acc01)
+        .approve(
+          m721.address,
+          ethers.utils.parseEther("0.1"),
+        );
       const bidTx = await m721.connect(acc01).bid(fpOrderId);
-      expect(bidTx).to.be.ok
+      expect(bidTx).to.be.ok;
       await mine(300);
-      
+
       // Bid for the token and wait for auction to close, then claim
-      await erc20.connect(acc01).approve(m721.address, price)
+      await erc20.connect(acc01).approve(m721.address, price);
       const bidTx2 = await m721.connect(acc01).bid(fpOrderId);
-      expect(bidTx2).to.be.ok
-      
-      // wait for auction to close and claim 
+      expect(bidTx2).to.be.ok;
+
+      // wait for auction to close and claim
       await mine(600);
-      const claimTx = await m721.connect(acc01).claim(fpOrderId);
+      const claimTx = await m721
+        .connect(acc01)
+        .claim(fpOrderId);
 
       // Test ERC20 buy response
-      await expect(claimTx).to.be.ok.and.to.emit(m721, "Claim")
-        .withArgs(minAddr, 1, fpOrderId, acc02.address, acc01.address, price);
-      
+      await expect(claimTx)
+        .to.be.ok.and.to.emit(m721, "Claim")
+        .withArgs(
+          minAddr,
+          1,
+          fpOrderId,
+          acc02.address,
+          acc01.address,
+          price,
+        );
+
       // Validate buyer and seller ERC20 balances
       // acc02 = erc20Balance - 0.25 + (1 - 10%.royalties - 10%.fee)
-      expect(
-        await erc20.balanceOf(acc02.address)
-      ).to.equal(erc20Balance.sub(ethers.utils.parseEther("0.25")).add(ethers.utils.parseEther("0.8")))
-      expect(
-        await erc20.balanceOf(acc01.address)
-      ).to.equal(erc20Balance.sub(ethers.utils.parseEther("1")))
+      expect(await erc20.balanceOf(acc02.address)).to.equal(
+        erc20Balance
+          .sub(ethers.utils.parseEther("0.25"))
+          .add(ethers.utils.parseEther("0.8")),
+      );
+      expect(await erc20.balanceOf(acc01.address)).to.equal(
+        erc20Balance.sub(ethers.utils.parseEther("1")),
+      );
 
       // acc02 = erc20Balance - 0.25 + (1 - 10%.royalties - 10%.fee) + 10%.royalties
-      const splitTxCreator = await splitter["release(address,address)"](erc20.address, acc02.address)
-      expect(splitTxCreator).to.be.ok
-      expect(
-        await erc20.balanceOf(acc02.address)
-      ).to.equal(erc20Balance.sub(ethers.utils.parseEther("0.25")).add(ethers.utils.parseEther("0.8")).add(ethers.utils.parseEther("0.08")))
+      const splitTxCreator = await splitter[
+        "release(address,address)"
+      ](erc20.address, acc02.address);
+      expect(splitTxCreator).to.be.ok;
+      expect(await erc20.balanceOf(acc02.address)).to.equal(
+        erc20Balance
+          .sub(ethers.utils.parseEther("0.25"))
+          .add(ethers.utils.parseEther("0.8"))
+          .add(ethers.utils.parseEther("0.08")),
+      );
 
       // Validate ERC2O amb payout balances
-      const splitTxAmb = await splitter["release(address,address)"](erc20.address, amb.address)
-      expect(splitTxAmb).to.be.ok
-      expect(
-        await erc20.balanceOf(amb.address)
-      ).to.equal(ethers.utils.parseEther("0.02"))
+      const splitTxAmb = await splitter[
+        "release(address,address)"
+      ](erc20.address, amb.address);
+      expect(splitTxAmb).to.be.ok;
+      expect(await erc20.balanceOf(amb.address)).to.equal(
+        ethers.utils.parseEther("0.02"),
+      );
 
       // Validate ERC2O MAD fee payout balances
       expect(
-        await erc20.balanceOf(await m721.callStatic.recipient())
-      ).to.equal(ownerERC20Bal.add(ethers.utils.parseEther("0.1")))
+        await erc20.balanceOf(
+          await m721.callStatic.recipient(),
+        ),
+      ).to.equal(
+        ownerERC20Bal.add(ethers.utils.parseEther("0.1")),
+      );
     });
   });
 });

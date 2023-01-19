@@ -158,9 +158,7 @@ describe("MADFactory1155", () => {
       await expect(tx).to.emit(f1155, "SplitterCreated");
       expect(creator.toString()).to.eq(acc02.address);
       expect(shares).to.eq("100");
-      expect(payees).to.eq(
-        [acc02.address].toString(),
-      );
+      expect(payees).to.eq([acc02.address].toString());
       expect(splitter).to.eq(addr);
       expect(ethers.BigNumber.from(creatorShares)).to.eq(100);
       expect(storage.splitter).to.eq(addr);
@@ -228,10 +226,7 @@ describe("MADFactory1155", () => {
       expect(creator.toString()).to.eq(acc02.address);
       expect(shares).to.eq("20,80");
       expect(payees).to.eq(
-        [
-          amb.address,
-          acc02.address,
-        ].toString(),
+        [amb.address, acc02.address].toString(),
       );
       expect(splitter).to.eq(addr);
       expect(ethers.BigNumber.from(ambShares)).to.eq(20);
@@ -279,7 +274,7 @@ describe("MADFactory1155", () => {
           1,
           "cid/id.json",
           splAddr,
-          750
+          750,
         );
       const colID = await f1155.callStatic.getColID(minAddr);
       const storage = await f1155.callStatic.userTokens(
@@ -300,7 +295,7 @@ describe("MADFactory1155", () => {
           1,
           "cid/id.json",
           splAddr,
-          750
+          750,
         );
 
       const fail2 = f1155
@@ -314,7 +309,7 @@ describe("MADFactory1155", () => {
           1,
           "cid/id.json",
           splAddr,
-          750
+          750,
         );
 
       expect(tx).to.be.ok;
@@ -334,7 +329,15 @@ describe("MADFactory1155", () => {
       );
       await expect(tx)
         .to.emit(f1155, "ERC1155MinimalCreated")
-        .withArgs(splAddr, minAddr, '1155Min', "MIN", 750, 1, price);
+        .withArgs(
+          splAddr,
+          minAddr,
+          "1155Min",
+          "MIN",
+          750,
+          1,
+          price,
+        );
       await expect(fail1).to.be.revertedWithCustomError(
         f1155,
         FactoryErrors.AccessDenied,
@@ -372,7 +375,7 @@ describe("MADFactory1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const colID = await f1155.callStatic.getColID(
         basicAddr,
@@ -395,7 +398,7 @@ describe("MADFactory1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
 
       const fail2 = f1155
@@ -409,7 +412,7 @@ describe("MADFactory1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
 
       expect(tx).to.be.ok;
@@ -429,7 +432,15 @@ describe("MADFactory1155", () => {
       );
       await expect(tx)
         .to.emit(f1155, "ERC1155BasicCreated")
-        .withArgs(splAddr, basicAddr, "1155Basic", "BASIC", 750, 1000, price);
+        .withArgs(
+          splAddr,
+          basicAddr,
+          "1155Basic",
+          "BASIC",
+          750,
+          1000,
+          price,
+        );
       await expect(fail1).to.be.revertedWithCustomError(
         f1155,
         FactoryErrors.AccessDenied,
@@ -467,7 +478,7 @@ describe("MADFactory1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const colID = await f1155.callStatic.getColID(wlAddr);
       const storage = await f1155.callStatic.userTokens(
@@ -488,7 +499,7 @@ describe("MADFactory1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
 
       const fail2 = f1155
@@ -502,7 +513,7 @@ describe("MADFactory1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
 
       expect(tx).to.be.ok;
@@ -522,7 +533,15 @@ describe("MADFactory1155", () => {
       );
       await expect(tx)
         .to.emit(f1155, "ERC1155WhitelistCreated")
-        .withArgs(splAddr, wlAddr, "1155Whitelist", "WL", 750, 1000, price);
+        .withArgs(
+          splAddr,
+          wlAddr,
+          "1155Whitelist",
+          "WL",
+          750,
+          1000,
+          price,
+        );
       await expect(fail1).to.be.revertedWithCustomError(
         f1155,
         FactoryErrors.AccessDenied,
@@ -557,7 +576,7 @@ describe("MADFactory1155", () => {
           ethers.constants.Zero,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       const lazyAddr = await f1155.callStatic.getDeployedAddr(
         "LazySalt",
@@ -582,7 +601,7 @@ describe("MADFactory1155", () => {
           0,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
 
       const fail2 = f1155
@@ -596,7 +615,7 @@ describe("MADFactory1155", () => {
           0,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
 
       expect(tx).to.be.ok;
@@ -616,7 +635,15 @@ describe("MADFactory1155", () => {
       );
       await expect(tx)
         .to.emit(f1155, "ERC1155LazyCreated")
-        .withArgs(splAddr, lazyAddr, "1155Lazy", "LAZY", 750, 0, 0);
+        .withArgs(
+          splAddr,
+          lazyAddr,
+          "1155Lazy",
+          "LAZY",
+          750,
+          0,
+          0,
+        );
       await expect(fail1).to.be.revertedWithCustomError(
         f1155,
         FactoryErrors.AccessDenied,
@@ -696,7 +723,17 @@ describe("MADFactory1155", () => {
         f1155.splitterCheck("", dead, dead, 0, 0),
       ).to.be.revertedWith(FactoryErrors.Paused);
       await expect(
-        f1155.createCollection(1, "", "", "", 0, 1, "", dead, 750),
+        f1155.createCollection(
+          1,
+          "",
+          "",
+          "",
+          0,
+          1,
+          "",
+          dead,
+          750,
+        ),
       ).to.be.revertedWith(FactoryErrors.Paused);
       await expect(
         f1155.connect(acc02).unpause(),
@@ -732,7 +769,7 @@ describe("MADFactory1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       await f1155
         .connect(acc02)
@@ -745,7 +782,7 @@ describe("MADFactory1155", () => {
           1000,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
       await f1155
         .connect(acc02)
@@ -758,7 +795,7 @@ describe("MADFactory1155", () => {
           1,
           "ipfs://cid/",
           splAddr,
-          750
+          750,
         );
 
       expect(await f1155.getIDsLength(acc02.address)).to.eq(
@@ -803,7 +840,7 @@ describe("MADFactory1155", () => {
           1,
           "cid/id.json",
           splAddr,
-          750
+          750,
         );
       const colID = await f1155.callStatic.getColID(minAddr);
       const min = await ethers.getContractAt(
@@ -859,7 +896,7 @@ describe("MADFactory1155", () => {
           1,
           "cid/id.json",
           splAddr,
-          750
+          750,
         );
       const min = await ethers.getContractAt(
         "ERC1155Minimal",
@@ -868,8 +905,14 @@ describe("MADFactory1155", () => {
       await r1155
         .connect(acc02)
         .setMintState(minAddr, true, 0);
-      await min.connect(acc02).publicMint(1, { value: price });
-      const blockTimestamp = (await m1155.provider.getBlock(await m1155.provider.getBlockNumber())).timestamp;
+      await min
+        .connect(acc02)
+        .publicMint(1, { value: price });
+      const blockTimestamp = (
+        await m1155.provider.getBlock(
+          await m1155.provider.getBlockNumber(),
+        )
+      ).timestamp;
 
       // const blocknum = await m1155.provider.getBlockNumber();
       await min
@@ -877,12 +920,18 @@ describe("MADFactory1155", () => {
         .setApprovalForAll(m1155.address, true);
       const daTx = await m1155
         .connect(acc02)
-        .fixedPrice(minAddr, 1, 1, price, blockTimestamp + 400);
+        .fixedPrice(
+          minAddr,
+          1,
+          1,
+          price,
+          blockTimestamp + 400,
+        );
 
       const daRc: ContractReceipt = await daTx.wait();
       const daBn = daRc.blockNumber;
-      
-      await setNextBlockTimestamp(blockTimestamp + 296)
+
+      await setNextBlockTimestamp(blockTimestamp + 296);
       await mine(daBn + 1);
       const orderID = await m1155.callStatic.orderIdBySeller(
         acc02.address,
@@ -941,7 +990,7 @@ describe("MADFactory1155", () => {
           1,
           "cid/id.json",
           splAddr,
-          750
+          750,
         );
       const colID = await f1155.callStatic.getColID(minAddr);
 

@@ -193,7 +193,9 @@ describe("ERC1155Basic", () => {
 
     it("Should revert if price is wrong", async () => {
       await basic.setPublicMintState(true);
-      const tx = basic.connect(acc02).mint(1, 1, { value: 0 });
+      const tx = basic
+        .connect(acc02)
+        .mint(1, 1, { value: 0 });
 
       await expect(tx).to.be.revertedWithCustomError(
         basic,
@@ -302,7 +304,9 @@ describe("ERC1155Basic", () => {
       const amounts = [one, one, one];
       const tx = await basic
         .connect(acc02)
-        .mintBatch(ids, [1, 1, 1], { value: price.mul(amount) });
+        .mintBatch(ids, [1, 1, 1], {
+          value: price.mul(amount),
+        });
       // const ownerOfNull = await basic.callStatic.ownerOf(1);
       // const ownerOfA = await basic.callStatic.ownerOf(123);
       // const ownerOfB = await basic.callStatic.ownerOf(14);
@@ -355,13 +359,19 @@ describe("ERC1155Basic", () => {
       const amounts = [one, one, one];
       const tx1 = await basic
         .connect(acc02)
-        .mintBatch(ids1, [1, 1, 1], { value: price.mul(amount) });
+        .mintBatch(ids1, [1, 1, 1], {
+          value: price.mul(amount),
+        });
       const tx2 = await basic
         .connect(owner)
-        .mintBatch(ids2, [1, 1, 1], { value: price.mul(amount) });
+        .mintBatch(ids2, [1, 1, 1], {
+          value: price.mul(amount),
+        });
       const tx3 = await basic
         .connect(amb)
-        .mintBatch(ids3, [1, 1, 1], { value: price.mul(amount) });
+        .mintBatch(ids3, [1, 1, 1], {
+          value: price.mul(amount),
+        });
       // const ownerOfNull = await basic.callStatic.ownerOf(0);
       // const ownerOfA = await basic.callStatic.ownerOf(
       //   ids1[0],
@@ -433,7 +443,9 @@ describe("ERC1155Basic", () => {
   describe("Burn", async () => {
     it("Should revert if not owner", async () => {
       const ids = [1];
-      const tx = basic.connect(acc02).burn([acc01.address], ids, [1], acc02.address);
+      const tx = basic
+        .connect(acc02)
+        .burn([acc01.address], ids, [1], acc02.address);
 
       await expect(tx).to.be.revertedWith(
         BasicErrors.Unauthorized,
@@ -447,7 +459,14 @@ describe("ERC1155Basic", () => {
       await basic
         .connect(acc02)
         .mint(4, 1, { value: price.mul(amount) });
-      const tx = basic.connect(owner).burn([acc02.address, acc02.address, acc02.address], ids, [1, 1, 1], owner.address);
+      const tx = basic
+        .connect(owner)
+        .burn(
+          [acc02.address, acc02.address, acc02.address],
+          ids,
+          [1, 1, 1],
+          owner.address,
+        );
 
       await expect(tx).to.be.revertedWith(
         BasicErrors.InvalidAmount,
@@ -481,7 +500,12 @@ describe("ERC1155Basic", () => {
         .mint(2, 1, { value: price.mul(amount) }); // mintCount = 4
 
       // this will not effect mintCount as we are not decrementing the counter, only the liveSupply is decrementing
-      const tx = await basic.burn([acc02.address, acc02.address], [1, 2], [1, 1], owner.address);
+      const tx = await basic.burn(
+        [acc02.address, acc02.address],
+        [1, 2],
+        [1, 1],
+        owner.address,
+      );
       const dead = ethers.constants.AddressZero;
       await basic
         .connect(acc02)
@@ -490,9 +514,10 @@ describe("ERC1155Basic", () => {
       const bal1 = await basic.callStatic.balanceOf(
         acc01.address,
         4,
-      );  
-      const mintCounter = await basic.callStatic.getMintCount()
-        
+      );
+      const mintCounter =
+        await basic.callStatic.getMintCount();
+
       expect(tx).to.be.ok;
       expect(bal1).to.eq(1);
       expect(mintCounter).to.eq(6);
@@ -503,13 +528,18 @@ describe("ERC1155Basic", () => {
         .to.emit(basic, "TransferSingle")
         .withArgs(owner.address, acc02.address, dead, 2, 1);
 
-      const tx2 = await basic.burn([acc01.address, acc01.address], [3, 4], [1, 1], owner.address);
-      
+      const tx2 = await basic.burn(
+        [acc01.address, acc01.address],
+        [3, 4],
+        [1, 1],
+        owner.address,
+      );
+
       const bal2 = await basic.callStatic.balanceOf(
         acc02.address,
         3,
       );
-  
+
       expect(tx2).to.be.ok;
       expect(bal2).to.eq(0);
 
@@ -529,7 +559,12 @@ describe("ERC1155Basic", () => {
       await basic.mint(3, 1, { value: price.mul(amount) });
       const tx = basic
         .connect(acc02)
-        .burnBatch(owner.address, ids, [1, 1, 1], acc02.address);
+        .burnBatch(
+          owner.address,
+          ids,
+          [1, 1, 1],
+          acc02.address,
+        );
 
       await expect(tx).to.be.revertedWith(
         BasicErrors.Unauthorized,
@@ -544,7 +579,12 @@ describe("ERC1155Basic", () => {
         .mint(4, 1, { value: price.mul(amount) });
       const tx = basic
         .connect(owner)
-        .burnBatch(acc02.address, ids, [1, 1, 1], owner.address);
+        .burnBatch(
+          acc02.address,
+          ids,
+          [1, 1, 1],
+          owner.address,
+        );
 
       await expect(tx).to.be.revertedWith(
         BasicErrors.WrongFrom,
@@ -564,8 +604,18 @@ describe("ERC1155Basic", () => {
         .mint(2, 1, { value: price.mul(amount) });
       const ids1 = [1, 2];
       const ids2 = [3, 4];
-      const tx1 = await basic.burnBatch(acc02.address, ids1, [1, 1], acc02.address);
-      const tx2 = await basic.burnBatch(acc01.address, ids2, [1, 1], acc01.address);
+      const tx1 = await basic.burnBatch(
+        acc02.address,
+        ids1,
+        [1, 1],
+        acc02.address,
+      );
+      const tx2 = await basic.burnBatch(
+        acc01.address,
+        ids2,
+        [1, 1],
+        acc01.address,
+      );
       const bal1 = await basic.callStatic.balanceOf(
         acc02.address,
         1,
@@ -622,10 +672,30 @@ describe("ERC1155Basic", () => {
       const ids2 = [6, 7, 8, 9, 10];
       const ids3 = [11, 12, 13, 14, 15];
       const ids4 = [16, 17, 18, 19, 20];
-      const tx1 = await basic.burnBatch(acc02.address, ids1, [1, 1, 1, 1, 1], owner.address);
-      const tx2 = await basic.burnBatch(acc02.address, ids2, [1, 1, 1, 1, 1], owner.address);
-      const tx3 = await basic.burnBatch(acc02.address, ids3, [1, 1, 1, 1, 1], owner.address);
-      const tx4 = await basic.burnBatch(acc02.address, ids4, [1, 1, 1, 1, 1], owner.address);
+      const tx1 = await basic.burnBatch(
+        acc02.address,
+        ids1,
+        [1, 1, 1, 1, 1],
+        owner.address,
+      );
+      const tx2 = await basic.burnBatch(
+        acc02.address,
+        ids2,
+        [1, 1, 1, 1, 1],
+        owner.address,
+      );
+      const tx3 = await basic.burnBatch(
+        acc02.address,
+        ids3,
+        [1, 1, 1, 1, 1],
+        owner.address,
+      );
+      const tx4 = await basic.burnBatch(
+        acc02.address,
+        ids4,
+        [1, 1, 1, 1, 1],
+        owner.address,
+      );
 
       expect(tx1).to.be.ok;
       expect(tx2).to.be.ok;

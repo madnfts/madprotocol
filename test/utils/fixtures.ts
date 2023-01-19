@@ -19,13 +19,14 @@ import {
   ERC1155Lazy,
   ERC1155Minimal,
   ERC1155Whitelist,
+  MockERC20,
   MockERC2981,
   SplitterImpl,
-  MockERC20,
 } from "../../src/types";
 import {
   BasicFixture721,
   BasicFixture1155,
+  ERC20Fixture,
   LazyFixture721,
   LazyFixture1155,
   MinimalFixture721,
@@ -34,40 +35,47 @@ import {
   SplitterFixture,
   WhitelistFixture721,
   WhitelistFixture1155,
-  ERC20Fixture,
 } from "./interfaces";
 
 // types
 type SplitterAndMinimal721 = SplitterFixture &
   MinimalFixture721;
 type SplitterAndMinimal721ERC20 = SplitterFixture &
-  MinimalFixture721 & ERC20Fixture;
+  MinimalFixture721 &
+  ERC20Fixture;
 type SplitterAndBasic721 = SplitterFixture & BasicFixture721;
-type SplitterAndBasic721ERC20 = SplitterFixture & 
-  BasicFixture721 & ERC20Fixture;
+type SplitterAndBasic721ERC20 = SplitterFixture &
+  BasicFixture721 &
+  ERC20Fixture;
 type SplitterAndWhitelist721 = SplitterFixture &
   WhitelistFixture721;
 type SplitterAndWhitelist721ERC20 = SplitterFixture &
-  WhitelistFixture721 & ERC20Fixture;
+  WhitelistFixture721 &
+  ERC20Fixture;
 type SplitterAndLazy721 = SplitterFixture & LazyFixture721;
-type SplitterAndLazy721ERC20 = SplitterFixture & 
-  LazyFixture721 & ERC20Fixture;
+type SplitterAndLazy721ERC20 = SplitterFixture &
+  LazyFixture721 &
+  ERC20Fixture;
 
 type SplitterAndMinimal1155 = SplitterFixture &
   MinimalFixture1155;
 type SplitterAndMinimal1155ERC20 = SplitterFixture &
-  MinimalFixture1155 & ERC20Fixture;
+  MinimalFixture1155 &
+  ERC20Fixture;
 type SplitterAndBasic1155 = SplitterFixture &
   BasicFixture1155;
 type SplitterAndBasic1155ERC20 = SplitterFixture &
-  BasicFixture1155 & ERC20Fixture;
+  BasicFixture1155 &
+  ERC20Fixture;
 type SplitterAndWhitelist1155 = SplitterFixture &
   WhitelistFixture1155;
 type SplitterAndWhitelist1155ERC20 = SplitterFixture &
-  WhitelistFixture1155 & ERC20Fixture;
+  WhitelistFixture1155 &
+  ERC20Fixture;
 type SplitterAndLazy1155 = SplitterFixture & LazyFixture1155;
-type SplitterAndLazy1155ERC20 = SplitterFixture & 
-  LazyFixture1155 & ERC20Fixture;
+type SplitterAndLazy1155ERC20 = SplitterFixture &
+  LazyFixture1155 &
+  ERC20Fixture;
 
 // exported consts
 export const signer = ethers.provider.getSigner();
@@ -161,15 +169,13 @@ export async function minimalFixture721(): Promise<SplitterAndMinimal721> {
     splitter.address,
     750,
     owner.address,
-    ethers.constants.AddressZero
+    ethers.constants.AddressZero,
   )) as ERC721Minimal;
   return { minimal, splitter };
 }
 
 export async function minimalFixture721ERC20(): Promise<SplitterAndMinimal721ERC20> {
-  const ERC20 = await ethers.getContractFactory(
-    "MockERC20",
-  );
+  const ERC20 = await ethers.getContractFactory("MockERC20");
   const erc20 = (await ERC20.deploy(
     BigNumber.from(2).pow(255),
   )) as MockERC20;
@@ -198,7 +204,7 @@ export async function minimalFixture721ERC20(): Promise<SplitterAndMinimal721ERC
     splitter.address,
     750,
     owner.address,
-    erc20.address
+    erc20.address,
   )) as ERC721Minimal;
   return { minimal, splitter, erc20 };
 }
@@ -229,15 +235,13 @@ export async function basicFixture721(): Promise<SplitterAndBasic721> {
     splitter.address,
     750,
     owner.address,
-    ethers.constants.AddressZero
+    ethers.constants.AddressZero,
   )) as ERC721Basic;
   return { basic, splitter };
 }
 
 export async function basicFixture721ERC20(): Promise<SplitterAndBasic721ERC20> {
-  const ERC20 = await ethers.getContractFactory(
-    "MockERC20",
-  );
+  const ERC20 = await ethers.getContractFactory("MockERC20");
   const erc20 = (await ERC20.deploy(
     BigNumber.from(2).pow(255),
   )) as MockERC20;
@@ -267,7 +271,7 @@ export async function basicFixture721ERC20(): Promise<SplitterAndBasic721ERC20> 
     splitter.address,
     750,
     owner.address,
-    erc20.address
+    erc20.address,
   )) as ERC721Basic;
   return { basic, splitter, erc20 };
 }
@@ -318,7 +322,7 @@ export async function whitelistFixture721(): Promise<SplitterAndWhitelist721> {
     splitter.address,
     750,
     owner.address,
-    ethers.constants.AddressZero
+    ethers.constants.AddressZero,
   )) as ERC721Whitelist;
 
   // asynchronous contract calls
@@ -340,9 +344,7 @@ export async function whitelistFixture721(): Promise<SplitterAndWhitelist721> {
 }
 
 export async function whitelistFixture721ERC20(): Promise<SplitterAndWhitelist721ERC20> {
-  const ERC20 = await ethers.getContractFactory(
-    "MockERC20",
-  );
+  const ERC20 = await ethers.getContractFactory("MockERC20");
   const erc20 = (await ERC20.deploy(
     BigNumber.from(2).pow(255),
   )) as MockERC20;
@@ -392,7 +394,7 @@ export async function whitelistFixture721ERC20(): Promise<SplitterAndWhitelist72
     splitter.address,
     750,
     owner.address,
-    erc20.address
+    erc20.address,
   )) as ERC721Whitelist;
 
   // asynchronous contract calls
@@ -410,7 +412,7 @@ export async function whitelistFixture721ERC20(): Promise<SplitterAndWhitelist72
     proof,
     wrongProof,
     merkleRoot,
-    erc20
+    erc20,
   };
 }
 
@@ -454,7 +456,7 @@ export async function lazyFixture721(): Promise<SplitterAndLazy721> {
     750,
     owner.address,
     signerAddr,
-    ethers.constants.AddressZero
+    ethers.constants.AddressZero,
   )) as ERC721Lazy;
 
   const net = await lazy.provider.getNetwork();
@@ -587,9 +589,7 @@ export async function lazyFixture721(): Promise<SplitterAndLazy721> {
 }
 
 export async function lazyFixture721ERC20(): Promise<SplitterAndLazy721ERC20> {
-  const ERC20 = await ethers.getContractFactory(
-    "MockERC20",
-  );
+  const ERC20 = await ethers.getContractFactory("MockERC20");
   const erc20 = (await ERC20.deploy(
     BigNumber.from(2).pow(255),
   )) as MockERC20;
@@ -633,7 +633,7 @@ export async function lazyFixture721ERC20(): Promise<SplitterAndLazy721ERC20> {
     750,
     owner.address,
     signerAddr,
-    erc20.address
+    erc20.address,
   )) as ERC721Lazy;
 
   const net = await lazy.provider.getNetwork();
@@ -789,15 +789,13 @@ export async function minimalFixture1155(): Promise<SplitterAndMinimal1155> {
     splitter.address,
     750,
     owner.address,
-    ethers.constants.AddressZero
+    ethers.constants.AddressZero,
   )) as ERC1155Minimal;
   return { minimal, splitter };
 }
 
 export async function minimalFixture1155ERC20(): Promise<SplitterAndMinimal1155ERC20> {
-  const ERC20 = await ethers.getContractFactory(
-    "MockERC20",
-  );
+  const ERC20 = await ethers.getContractFactory("MockERC20");
   const erc20 = (await ERC20.deploy(
     BigNumber.from(2).pow(255),
   )) as MockERC20;
@@ -824,7 +822,7 @@ export async function minimalFixture1155ERC20(): Promise<SplitterAndMinimal1155E
     splitter.address,
     750,
     owner.address,
-    erc20.address
+    erc20.address,
   )) as ERC1155Minimal;
   return { minimal, splitter, erc20 };
 }
@@ -853,15 +851,13 @@ export async function basicFixture1155(): Promise<SplitterAndBasic1155> {
     splitter.address,
     750,
     owner.address,
-    ethers.constants.AddressZero
+    ethers.constants.AddressZero,
   )) as ERC1155Basic;
   return { basic, splitter };
 }
 
 export async function basicFixture1155ERC20(): Promise<SplitterAndBasic1155ERC20> {
-  const ERC20 = await ethers.getContractFactory(
-    "MockERC20",
-  );
+  const ERC20 = await ethers.getContractFactory("MockERC20");
   const erc20 = (await ERC20.deploy(
     BigNumber.from(2).pow(255),
   )) as MockERC20;
@@ -889,7 +885,7 @@ export async function basicFixture1155ERC20(): Promise<SplitterAndBasic1155ERC20
     splitter.address,
     750,
     owner.address,
-    erc20.address
+    erc20.address,
   )) as ERC1155Basic;
   return { basic, splitter, erc20 };
 }
@@ -937,7 +933,7 @@ export async function whitelistFixture1155(): Promise<SplitterAndWhitelist1155> 
     splitter.address,
     750,
     owner.address,
-    ethers.constants.AddressZero
+    ethers.constants.AddressZero,
   )) as ERC1155Whitelist;
 
   // asynchronous contract calls
@@ -959,9 +955,7 @@ export async function whitelistFixture1155(): Promise<SplitterAndWhitelist1155> 
 }
 
 export async function whitelistFixture1155ERC20(): Promise<SplitterAndWhitelist1155ERC20> {
-  const ERC20 = await ethers.getContractFactory(
-    "MockERC20",
-  );
+  const ERC20 = await ethers.getContractFactory("MockERC20");
   const erc20 = (await ERC20.deploy(
     BigNumber.from(2).pow(255),
   )) as MockERC20;
@@ -1008,7 +1002,7 @@ export async function whitelistFixture1155ERC20(): Promise<SplitterAndWhitelist1
     splitter.address,
     750,
     owner.address,
-    erc20.address
+    erc20.address,
   )) as ERC1155Whitelist;
 
   // asynchronous contract calls
@@ -1026,7 +1020,7 @@ export async function whitelistFixture1155ERC20(): Promise<SplitterAndWhitelist1
     proof,
     wrongProof,
     merkleRoot,
-    erc20
+    erc20,
   };
 }
 
@@ -1071,7 +1065,7 @@ export async function lazyFixture1155(): Promise<SplitterAndLazy1155> {
     750,
     owner.address,
     signerAddr,
-    ethers.constants.AddressZero
+    ethers.constants.AddressZero,
   )) as ERC1155Lazy;
 
   const net = await lazy.provider.getNetwork();
@@ -1243,9 +1237,7 @@ export async function lazyFixture1155(): Promise<SplitterAndLazy1155> {
 }
 
 export async function lazyFixture1155ERC20(): Promise<SplitterAndLazy1155ERC20> {
-  const ERC20 = await ethers.getContractFactory(
-    "MockERC20",
-  );
+  const ERC20 = await ethers.getContractFactory("MockERC20");
   const erc20 = (await ERC20.deploy(
     BigNumber.from(2).pow(255),
   )) as MockERC20;
@@ -1290,7 +1282,7 @@ export async function lazyFixture1155ERC20(): Promise<SplitterAndLazy1155ERC20> 
     750,
     owner.address,
     signerAddr,
-    erc20.address
+    erc20.address,
   )) as ERC1155Lazy;
 
   const net = await lazy.provider.getNetwork();
@@ -1458,6 +1450,6 @@ export async function lazyFixture1155ERC20(): Promise<SplitterAndLazy1155ERC20> 
     voucher,
     voucher2,
     userBatch,
-    erc20
+    erc20,
   };
 }

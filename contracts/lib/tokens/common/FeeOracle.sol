@@ -4,7 +4,7 @@ pragma solidity 0.8.16;
 
 interface FeeOracle {
     function feeLookup(bytes4 sigHash)
-    external
-    view
-    returns (uint256 fee);
+        external
+        view
+        returns (uint256 fee);
 }

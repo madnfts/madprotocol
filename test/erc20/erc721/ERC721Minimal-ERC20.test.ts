@@ -62,7 +62,8 @@ describe("ERC721Minimal - ERC20", () => {
   const fundAmount: BigNumber =
     ethers.utils.parseEther("10000");
   const price: BigNumber = ethers.utils.parseEther("1");
-  const erc20Balance: BigNumber = ethers.utils.parseEther("500");
+  const erc20Balance: BigNumber =
+    ethers.utils.parseEther("500");
 
   before("Set signers and reset network", async () => {
     [owner, amb, mad, acc01, acc02] =
@@ -149,7 +150,7 @@ describe("ERC721Minimal - ERC20", () => {
         MinimalErrors.Unauthorized,
       );
     });
-  
+
     it("Should mint, update storage and emit events", async () => {
       const tx: ContractTransaction = await minimal
         .connect(owner)
@@ -179,7 +180,9 @@ describe("ERC721Minimal - ERC20", () => {
     });
 
     it("Should revert if already minted", async () => {
-      await minimal.connect(owner).safeMint(acc01.address, acc01.address);
+      await minimal
+        .connect(owner)
+        .safeMint(acc01.address, acc01.address);
       const tx = minimal
         .connect(owner)
         .safeMint(acc02.address, acc02.address);
@@ -201,7 +204,9 @@ describe("ERC721Minimal - ERC20", () => {
     });
 
     it("Should revert if not the owner", async () => {
-      await minimal.connect(owner).safeMint(acc02.address, acc02.address);
+      await minimal
+        .connect(owner)
+        .safeMint(acc02.address, acc02.address);
       const tx = minimal.connect(acc01).burn(owner.address);
 
       await expect(tx).to.be.revertedWith(
@@ -210,7 +215,9 @@ describe("ERC721Minimal - ERC20", () => {
     });
 
     it("Should burn, update storage and emit events", async () => {
-      await minimal.connect(owner).safeMint(acc02.address, acc02.address);
+      await minimal
+        .connect(owner)
+        .safeMint(acc02.address, acc02.address);
       const tx: ContractTransaction = await minimal
         .connect(owner)
         .burn(owner.address);
@@ -243,12 +250,14 @@ describe("ERC721Minimal - ERC20", () => {
     });
 
     it("Should revert if already burned", async () => {
-      await minimal.connect(owner).safeMint(acc02.address, acc02.address);
+      await minimal
+        .connect(owner)
+        .safeMint(acc02.address, acc02.address);
       await minimal.connect(owner).burn(owner.address);
 
-      await expect(minimal.burn(owner.address)).to.be.revertedWith(
-        MinimalErrors.NotMinted,
-      );
+      await expect(
+        minimal.burn(owner.address),
+      ).to.be.revertedWith(MinimalErrors.NotMinted);
     });
   });
 
@@ -279,14 +288,17 @@ describe("ERC721Minimal - ERC20", () => {
 
     it("Should revert if ERC20 price is wrong", async () => {
       await minimal.connect(owner).setPublicMintState(true);
-      
-      const erc20MintTx = await erc20.connect(acc02).approve(minimal.address, ethers.utils.parseEther("0.25"))
-      expect(erc20MintTx).to.be.ok
+
+      const erc20MintTx = await erc20
+        .connect(acc02)
+        .approve(
+          minimal.address,
+          ethers.utils.parseEther("0.25"),
+        );
+      expect(erc20MintTx).to.be.ok;
 
       await expect(
-        minimal
-          .connect(acc02)
-          .publicMint(),
+        minimal.connect(acc02).publicMint(),
       ).to.be.revertedWithCustomError(
         minimal,
         MinimalErrors.WrongPrice,
@@ -295,17 +307,19 @@ describe("ERC721Minimal - ERC20", () => {
 
     it("Should mint with ERC20, then revert if already minted", async () => {
       await minimal.connect(owner).setPublicMintState(true);
-      
-      const erc20MintTx = await erc20.connect(acc02).approve(minimal.address, price)
-      expect(erc20MintTx).to.be.ok
 
-      await minimal
+      const erc20MintTx = await erc20
         .connect(acc02)
-        .publicMint();
+        .approve(minimal.address, price);
+      expect(erc20MintTx).to.be.ok;
 
-      const erc20MintTx2 = await erc20.connect(acc01).approve(minimal.address, price)
-      expect(erc20MintTx2).to.be.ok
-      
+      await minimal.connect(acc02).publicMint();
+
+      const erc20MintTx2 = await erc20
+        .connect(acc01)
+        .approve(minimal.address, price);
+      expect(erc20MintTx2).to.be.ok;
+
       await expect(
         minimal.connect(acc01).publicMint(),
       ).to.be.revertedWithCustomError(
@@ -317,8 +331,10 @@ describe("ERC721Minimal - ERC20", () => {
     it("Should mint with ERC20, update storage and emit events", async () => {
       await minimal.connect(owner).setPublicMintState(true);
 
-      const erc20MintTx = await erc20.connect(acc02).approve(minimal.address, price)
-      expect(erc20MintTx).to.be.ok
+      const erc20MintTx = await erc20
+        .connect(acc02)
+        .approve(minimal.address, price);
+      expect(erc20MintTx).to.be.ok;
 
       const tx: ContractTransaction = await minimal
         .connect(acc02)
@@ -336,7 +352,9 @@ describe("ERC721Minimal - ERC20", () => {
         acc02.address,
       );
       const ownerOf = await minimal.callStatic.ownerOf(1);
-      const cBal = await erc20.connect(minimal.address).balanceOf(minimal.address)
+      const cBal = await erc20
+        .connect(minimal.address)
+        .balanceOf(minimal.address);
 
       expect(tx).to.be.ok;
       await expect(tx).to.emit(minimal, "Transfer");
@@ -353,12 +371,12 @@ describe("ERC721Minimal - ERC20", () => {
     it("Should revert if not the owner", async () => {
       await minimal.connect(owner).setPublicMintState(true);
 
-      const erc20MintTx = await erc20.connect(acc02).approve(minimal.address, price)
-      expect(erc20MintTx).to.be.ok
-
-      await minimal
+      const erc20MintTx = await erc20
         .connect(acc02)
-        .publicMint();
+        .approve(minimal.address, price);
+      expect(erc20MintTx).to.be.ok;
+
+      await minimal.connect(acc02).publicMint();
 
       await expect(
         minimal.connect(acc01).withdraw(),
@@ -368,12 +386,12 @@ describe("ERC721Minimal - ERC20", () => {
     it("Should update ERC20 balances of contract and owner", async () => {
       await minimal.connect(owner).setPublicMintState(true);
 
-      const erc20MintTx = await erc20.connect(acc02).approve(minimal.address, price)
-      expect(erc20MintTx).to.be.ok
-      
-      await minimal
+      const erc20MintTx = await erc20
         .connect(acc02)
-        .publicMint();
+        .approve(minimal.address, price);
+      expect(erc20MintTx).to.be.ok;
+
+      await minimal.connect(acc02).publicMint();
 
       const addrs = [
         mad.address,
@@ -466,7 +484,7 @@ describe("ERC721Minimal - ERC20", () => {
         MinimalErrors.InvalidId,
       );
     });
-    
+
     it("Should revert if token was not minted", async () => {
       await expect(
         minimal.tokenURI(1),
@@ -477,9 +495,13 @@ describe("ERC721Minimal - ERC20", () => {
     });
 
     it("Should retrieve tokenURI", async () => {
-      const erc20MintTx = await erc20.connect(acc01).approve(minimal.address, price)
-      expect(erc20MintTx).to.be.ok
-      await minimal.connect(owner).safeMint(acc01.address, acc01.address);
+      const erc20MintTx = await erc20
+        .connect(acc01)
+        .approve(minimal.address, price);
+      expect(erc20MintTx).to.be.ok;
+      await minimal
+        .connect(owner)
+        .safeMint(acc01.address, acc01.address);
       const tx = await minimal.callStatic.tokenURI(1);
       const uri: string = "ipfs://cid/id.json";
 

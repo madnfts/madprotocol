@@ -32,6 +32,7 @@ export interface ERC721BasicInterface extends utils.Interface {
   functions: {
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
+    "baseURILock()": FunctionFragment;
     "burn(uint256[],address)": FunctionFragment;
     "erc20()": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
@@ -52,6 +53,7 @@ export interface ERC721BasicInterface extends utils.Interface {
     "safeTransferFrom(address,address,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
     "setBaseURI(string)": FunctionFragment;
+    "setBaseURILock()": FunctionFragment;
     "setOwner(address)": FunctionFragment;
     "setPublicMintState(bool)": FunctionFragment;
     "splitter()": FunctionFragment;
@@ -68,6 +70,7 @@ export interface ERC721BasicInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "approve"
       | "balanceOf"
+      | "baseURILock"
       | "burn"
       | "erc20"
       | "getApproved"
@@ -88,6 +91,7 @@ export interface ERC721BasicInterface extends utils.Interface {
       | "safeTransferFrom(address,address,uint256,bytes)"
       | "setApprovalForAll"
       | "setBaseURI"
+      | "setBaseURILock"
       | "setOwner"
       | "setPublicMintState"
       | "splitter"
@@ -107,6 +111,10 @@ export interface ERC721BasicInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "balanceOf",
     values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "baseURILock",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "burn",
@@ -192,6 +200,10 @@ export interface ERC721BasicInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "setBaseURILock",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "setOwner",
     values: [PromiseOrValue<string>]
   ): string;
@@ -229,6 +241,10 @@ export interface ERC721BasicInterface extends utils.Interface {
 
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "baseURILock",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "erc20", data: BytesLike): Result;
   decodeFunctionResult(
@@ -276,6 +292,10 @@ export interface ERC721BasicInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setBaseURI", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setBaseURILock",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "setOwner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setPublicMintState",
@@ -305,6 +325,7 @@ export interface ERC721BasicInterface extends utils.Interface {
   events: {
     "Approval(address,address,uint256)": EventFragment;
     "ApprovalForAll(address,address,bool)": EventFragment;
+    "BaseURILocked(string)": EventFragment;
     "BaseURISet(string)": EventFragment;
     "OwnerUpdated(address,address)": EventFragment;
     "PublicMintStateSet(bool)": EventFragment;
@@ -315,6 +336,7 @@ export interface ERC721BasicInterface extends utils.Interface {
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BaseURILocked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BaseURISet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnerUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PublicMintStateSet"): EventFragment;
@@ -346,6 +368,13 @@ export type ApprovalForAllEvent = TypedEvent<
 >;
 
 export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
+
+export interface BaseURILockedEventObject {
+  baseURI: string;
+}
+export type BaseURILockedEvent = TypedEvent<[string], BaseURILockedEventObject>;
+
+export type BaseURILockedEventFilter = TypedEventFilter<BaseURILockedEvent>;
 
 export interface BaseURISetEventObject {
   newBaseURI: string;
@@ -447,6 +476,8 @@ export interface ERC721Basic extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    baseURILock(overrides?: CallOverrides): Promise<[boolean]>;
+
     burn(
       ids: PromiseOrValue<BigNumberish>[],
       erc20Owner: PromiseOrValue<string>,
@@ -539,6 +570,10 @@ export interface ERC721Basic extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    setBaseURILock(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     setOwner(
       newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -592,6 +627,8 @@ export interface ERC721Basic extends BaseContract {
     owner: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  baseURILock(overrides?: CallOverrides): Promise<boolean>;
 
   burn(
     ids: PromiseOrValue<BigNumberish>[],
@@ -685,6 +722,10 @@ export interface ERC721Basic extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  setBaseURILock(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   setOwner(
     newOwner: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -738,6 +779,8 @@ export interface ERC721Basic extends BaseContract {
       owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    baseURILock(overrides?: CallOverrides): Promise<boolean>;
 
     burn(
       ids: PromiseOrValue<BigNumberish>[],
@@ -831,6 +874,8 @@ export interface ERC721Basic extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setBaseURILock(overrides?: CallOverrides): Promise<void>;
+
     setOwner(
       newOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -895,6 +940,13 @@ export interface ERC721Basic extends BaseContract {
       approved?: null
     ): ApprovalForAllEventFilter;
 
+    "BaseURILocked(string)"(
+      baseURI?: PromiseOrValue<string> | null
+    ): BaseURILockedEventFilter;
+    BaseURILocked(
+      baseURI?: PromiseOrValue<string> | null
+    ): BaseURILockedEventFilter;
+
     "BaseURISet(string)"(
       newBaseURI?: PromiseOrValue<string> | null
     ): BaseURISetEventFilter;
@@ -955,6 +1007,8 @@ export interface ERC721Basic extends BaseContract {
       owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    baseURILock(overrides?: CallOverrides): Promise<BigNumber>;
 
     burn(
       ids: PromiseOrValue<BigNumberish>[],
@@ -1046,6 +1100,10 @@ export interface ERC721Basic extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    setBaseURILock(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     setOwner(
       newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1100,6 +1158,8 @@ export interface ERC721Basic extends BaseContract {
       owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    baseURILock(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     burn(
       ids: PromiseOrValue<BigNumberish>[],
@@ -1188,6 +1248,10 @@ export interface ERC721Basic extends BaseContract {
 
     setBaseURI(
       _baseURI: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setBaseURILock(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

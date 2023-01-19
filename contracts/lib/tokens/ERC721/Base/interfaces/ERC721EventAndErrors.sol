@@ -33,6 +33,7 @@ interface ERC721BasicEventsAndErrors {
     ////////////////////////////////////////////////////////////////
 
     event BaseURISet(string indexed newBaseURI);
+    event BaseURILocked(string indexed baseURI);
     event RoyaltyRecipientSet(address indexed newRecipient);
     event RoyaltyFeeSet(uint256 indexed newRoyaltyFee);
     event PublicMintStateSet(bool indexed newPublicState);
@@ -51,6 +52,8 @@ interface ERC721BasicEventsAndErrors {
     error WrongPrice();
     /// @dev 0xdfb035c9
     error LoopOverflow();
+    /// @dev ?
+    error UriLocked();
 }
 
 interface ERC721WhitelistEventsAndErrors {
@@ -59,6 +62,7 @@ interface ERC721WhitelistEventsAndErrors {
     ////////////////////////////////////////////////////////////////
 
     event BaseURISet(string indexed newBaseURI);
+    event BaseURILocked(string indexed baseURI);
     event RoyaltyRecipientSet(address indexed newRecipient);
     event RoyaltyFeeSet(uint256 indexed newRoyaltyFee);
     event PublicMintStateSet(bool indexed newPublicState);
@@ -103,6 +107,8 @@ interface ERC721WhitelistEventsAndErrors {
     error AddressDenied();
     /// @dev 0xdfb035c9
     error LoopOverflow();
+    /// @dev ?
+    error UriLocked();
 }
 
 interface ERC721LazyEventsAndErrors {
@@ -112,6 +118,7 @@ interface ERC721LazyEventsAndErrors {
 
     event SignerUpdated(address indexed newSigner);
     event BaseURISet(string indexed newBaseURI);
+    event BaseURILocked(string indexed baseURI);
     event RoyaltyRecipientSet(address indexed newRecipient);
     event RoyaltyFeeSet(uint256 indexed newRoyaltyFee);
 
@@ -127,4 +134,6 @@ interface ERC721LazyEventsAndErrors {
     error WrongPrice();
     /// @dev 0xbad086ea
     error NotMintedYet();
+    /// @dev ?
+    error UriLocked();
 }

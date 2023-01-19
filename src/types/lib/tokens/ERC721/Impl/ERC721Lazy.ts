@@ -59,6 +59,7 @@ export interface ERC721LazyInterface extends utils.Interface {
     "_verifyVoucher((bytes32,address[],uint256[],uint256,uint256),uint8,bytes32,bytes32)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
+    "baseURILock()": FunctionFragment;
     "burn(uint256[],address)": FunctionFragment;
     "erc20()": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
@@ -75,6 +76,7 @@ export interface ERC721LazyInterface extends utils.Interface {
     "safeTransferFrom(address,address,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
     "setBaseURI(string)": FunctionFragment;
+    "setBaseURILock()": FunctionFragment;
     "setOwner(address)": FunctionFragment;
     "setSigner(address)": FunctionFragment;
     "signer()": FunctionFragment;
@@ -96,6 +98,7 @@ export interface ERC721LazyInterface extends utils.Interface {
       | "_verifyVoucher"
       | "approve"
       | "balanceOf"
+      | "baseURILock"
       | "burn"
       | "erc20"
       | "getApproved"
@@ -112,6 +115,7 @@ export interface ERC721LazyInterface extends utils.Interface {
       | "safeTransferFrom(address,address,uint256,bytes)"
       | "setApprovalForAll"
       | "setBaseURI"
+      | "setBaseURILock"
       | "setOwner"
       | "setSigner"
       | "signer"
@@ -155,6 +159,10 @@ export interface ERC721LazyInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "balanceOf",
     values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "baseURILock",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "burn",
@@ -231,6 +239,10 @@ export interface ERC721LazyInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "setBaseURILock",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "setOwner",
     values: [PromiseOrValue<string>]
   ): string;
@@ -282,6 +294,10 @@ export interface ERC721LazyInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "baseURILock",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "erc20", data: BytesLike): Result;
   decodeFunctionResult(
@@ -322,6 +338,10 @@ export interface ERC721LazyInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setBaseURI", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setBaseURILock",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "setOwner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setSigner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "signer", data: BytesLike): Result;
@@ -353,6 +373,7 @@ export interface ERC721LazyInterface extends utils.Interface {
   events: {
     "Approval(address,address,uint256)": EventFragment;
     "ApprovalForAll(address,address,bool)": EventFragment;
+    "BaseURILocked(string)": EventFragment;
     "BaseURISet(string)": EventFragment;
     "OwnerUpdated(address,address)": EventFragment;
     "RoyaltyFeeSet(uint256)": EventFragment;
@@ -363,6 +384,7 @@ export interface ERC721LazyInterface extends utils.Interface {
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BaseURILocked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BaseURISet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnerUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoyaltyFeeSet"): EventFragment;
@@ -394,6 +416,13 @@ export type ApprovalForAllEvent = TypedEvent<
 >;
 
 export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
+
+export interface BaseURILockedEventObject {
+  baseURI: string;
+}
+export type BaseURILockedEvent = TypedEvent<[string], BaseURILockedEventObject>;
+
+export type BaseURILockedEventFilter = TypedEventFilter<BaseURILockedEvent>;
 
 export interface BaseURISetEventObject {
   newBaseURI: string;
@@ -509,6 +538,8 @@ export interface ERC721Lazy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    baseURILock(overrides?: CallOverrides): Promise<[boolean]>;
+
     burn(
       ids: PromiseOrValue<BigNumberish>[],
       erc20Owner: PromiseOrValue<string>,
@@ -591,6 +622,10 @@ export interface ERC721Lazy extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    setBaseURILock(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     setOwner(
       newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -669,6 +704,8 @@ export interface ERC721Lazy extends BaseContract {
     owner: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  baseURILock(overrides?: CallOverrides): Promise<boolean>;
 
   burn(
     ids: PromiseOrValue<BigNumberish>[],
@@ -752,6 +789,10 @@ export interface ERC721Lazy extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  setBaseURILock(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   setOwner(
     newOwner: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -828,6 +869,8 @@ export interface ERC721Lazy extends BaseContract {
       owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    baseURILock(overrides?: CallOverrides): Promise<boolean>;
 
     burn(
       ids: PromiseOrValue<BigNumberish>[],
@@ -911,6 +954,8 @@ export interface ERC721Lazy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setBaseURILock(overrides?: CallOverrides): Promise<void>;
+
     setOwner(
       newOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -981,6 +1026,13 @@ export interface ERC721Lazy extends BaseContract {
       operator?: PromiseOrValue<string> | null,
       approved?: null
     ): ApprovalForAllEventFilter;
+
+    "BaseURILocked(string)"(
+      baseURI?: PromiseOrValue<string> | null
+    ): BaseURILockedEventFilter;
+    BaseURILocked(
+      baseURI?: PromiseOrValue<string> | null
+    ): BaseURILockedEventFilter;
 
     "BaseURISet(string)"(
       newBaseURI?: PromiseOrValue<string> | null
@@ -1061,6 +1113,8 @@ export interface ERC721Lazy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    baseURILock(overrides?: CallOverrides): Promise<BigNumber>;
+
     burn(
       ids: PromiseOrValue<BigNumberish>[],
       erc20Owner: PromiseOrValue<string>,
@@ -1138,6 +1192,10 @@ export interface ERC721Lazy extends BaseContract {
 
     setBaseURI(
       _baseURI: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setBaseURILock(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1221,6 +1279,8 @@ export interface ERC721Lazy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    baseURILock(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     burn(
       ids: PromiseOrValue<BigNumberish>[],
       erc20Owner: PromiseOrValue<string>,
@@ -1298,6 +1358,10 @@ export interface ERC721Lazy extends BaseContract {
 
     setBaseURI(
       _baseURI: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setBaseURILock(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -6,7 +6,6 @@ import { ERC721WhitelistEventsAndErrors } from "../Base/interfaces/ERC721EventAn
 import { ERC721, ERC721TokenReceiver } from "../Base/ERC721.sol";
 import { ERC2981 } from "../../common/ERC2981.sol";
 import { ERC20 } from "../../ERC20.sol";
-
 import { ReentrancyGuard } from "../../../security/ReentrancyGuard.sol";
 import { SplitterImpl } from "../../../splitter/SplitterImpl.sol";
 import { MerkleProof } from "../../../utils/MerkleProof.sol";
@@ -31,39 +30,66 @@ contract ERC721Whitelist is
     //                           STORAGE                          //
     ////////////////////////////////////////////////////////////////
 
+    /// @notice Splitter address relationship.
+    SplitterImpl public splitter;
+
+    /// @notice ERC20 payment token address.
+    ERC20 public erc20;
+
+    /// @notice Live supply counter, excludes burned tokens.
     Counters.Counter private liveSupply;
 
+    /// @notice Mint counter, includes burnt count.
+    uint256 private mintCount;
+
+    /// @notice Token base URI string.
     string private baseURI;
-    uint256 public publicPrice;
+
+    /// @notice Lock the URI default := false.
+    bool public baseURILock; 
+    
+    /// @notice Capped max supply.
     uint256 public maxSupply;
 
     /// @dev default := false.
     bool public publicMintState;
-    SplitterImpl public splitter;
 
-    // merkle
+    /// @notice Public mint price.
+    uint256 public publicPrice;
+
+    /// @notice Public whitelist mint price.
     uint256 public whitelistPrice;
+
+    /// @notice Whitelist max supply.
     uint256 public maxWhitelistSupply;
+    
+    /// @notice Whitelist merkel.
     bytes32 public whitelistMerkleRoot;
+
     /// @dev default := false.
     bool public whitelistMintState;
+
     /// @dev Current whitelist supply.
     uint256 public whitelistMinted;
 
+    /// @notice Claim max supply.
     uint256 public maxFree;
+
+    /// @notice Claim available supply.
     uint256 public freeSupply;
+
+    /// @notice Claim merkel.
     bytes32 public claimListMerkleRoot;
-    /// @dev default := false.
+    
+    /// @notice True to enable free claiming default := false.
     bool public freeClaimState;
 
-    /// @dev Default amount to be claimed as free in a collection.
+    /// @notice Default amount to be claimed as free in a collection.
     uint256 public freeAmount;
+
     /// @dev Stores the amount of whitelist minted tokens of an address.
     /// @dev For fetching purposes and max free claim control.
     mapping(address => bool) public claimed;
-
-    uint256 private mintCount;
-    ERC20 public erc20;
 
     ////////////////////////////////////////////////////////////////
     //                          MODIFIERS                         //
@@ -194,9 +220,18 @@ contract ERC721Whitelist is
         external
         onlyOwner
     {
+        if (baseURILock == true) revert UriLocked();
         baseURI = _baseURI;
 
         emit BaseURISet(_baseURI);
+    }
+
+    function setBaseURILock()
+        external
+        onlyOwner
+    {
+        baseURILock = true;
+        emit BaseURILocked(baseURI);
     }
 
     function setPublicMintState(bool _publicMintState)
@@ -226,7 +261,6 @@ contract ERC721Whitelist is
         emit FreeClaimStateSet(_freeClaimState);
     }
 
-    /// @dev Owner burn function
     function burn(uint256[] memory ids, address erc20Owner)
         external
         payable
@@ -253,7 +287,6 @@ contract ERC721Whitelist is
         // Transfer event emited by parent ERC721 contract
     }
 
-    /// @dev Mint to creator method
     function mintToCreator(uint256 amount, address erc20Owner)
         external
         payable

@@ -116,6 +116,23 @@ function balanceOf(address owner) external view returns (uint256)
 |---|---|---|
 | _0 | uint256 | undefined |
 
+### baseURILock
+
+```solidity
+function baseURILock() external view returns (bool)
+```
+
+Lock the URI default := false.
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
+
 ### burn
 
 ```solidity
@@ -124,7 +141,7 @@ function burn(uint256[] ids, address erc20Owner) external payable
 
 
 
-*Allows erc20 payments only if erc20 exists*
+
 
 #### Parameters
 
@@ -139,7 +156,7 @@ function burn(uint256[] ids, address erc20Owner) external payable
 function erc20() external view returns (contract ERC20)
 ```
 
-
+ERC20 payment token address.
 
 
 
@@ -413,15 +430,26 @@ function setApprovalForAll(address operator, bool approved) external nonpayable
 function setBaseURI(string _baseURI) external nonpayable
 ```
 
-Changes the `baseURI` value in storage.
 
-*Can only be accessed by the collection creator.*
+
+
 
 #### Parameters
 
 | Name | Type | Description |
 |---|---|---|
 | _baseURI | string | undefined |
+
+### setBaseURILock
+
+```solidity
+function setBaseURILock() external nonpayable
+```
+
+
+
+
+
 
 ### setOwner
 
@@ -447,7 +475,7 @@ function setSigner(address _signer) external nonpayable
 
 
 
-*Can only be updated by the Router&#39;s owner.*
+
 
 #### Parameters
 
@@ -461,9 +489,9 @@ function setSigner(address _signer) external nonpayable
 function signer() external view returns (address)
 ```
 
+The signer address used for lazy minting voucher validation.
 
 
-*The signer address used for lazy minting voucher validation.*
 
 
 #### Returns
@@ -478,7 +506,7 @@ function signer() external view returns (address)
 function splitter() external view returns (contract SplitterImpl)
 ```
 
-
+Splitter address relationship.
 
 
 
@@ -591,7 +619,7 @@ function transferFrom(address from, address to, uint256 id) external nonpayable
 function usedVouchers(bytes32) external view returns (bool)
 ```
 
-
+Mapping for used vouchers.
 
 
 
@@ -673,6 +701,22 @@ event ApprovalForAll(address indexed owner, address indexed operator, bool appro
 | owner `indexed` | address | undefined |
 | operator `indexed` | address | undefined |
 | approved  | bool | undefined |
+
+### BaseURILocked
+
+```solidity
+event BaseURILocked(string indexed baseURI)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| baseURI `indexed` | string | undefined |
 
 ### BaseURISet
 
@@ -797,6 +841,17 @@ error NotMintedYet()
 
 
 *0xbad086ea*
+
+
+### UriLocked
+
+```solidity
+error UriLocked()
+```
+
+
+
+*?*
 
 
 ### UsedVoucher

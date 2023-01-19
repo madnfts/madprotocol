@@ -30,18 +30,32 @@ contract ERC721Basic is
     //                           STORAGE                          //
     ////////////////////////////////////////////////////////////////
 
-    Counters.Counter private liveSupply;
-
-    string private baseURI;
-    uint256 public price;
-    // capped max supply
-    uint256 public maxSupply;
-
-    bool public publicMintState; // default := false
+    /// @notice Splitter address relationship.
     SplitterImpl public splitter;
 
-    uint256 private mintCount;
+    /// @notice ERC20 payment token address.
     ERC20 public erc20;
+
+    /// @notice Live supply counter, excludes burned tokens.
+    Counters.Counter private liveSupply;
+
+    /// @notice Mint counter, includes burnt count.
+    uint256 private mintCount;
+
+    /// @notice Token base URI string.
+    string private baseURI;
+
+    /// @notice Lock the URI default := false.
+    bool public baseURILock; 
+
+    /// @notice Public mint price.
+    uint256 public price;
+    
+    /// @notice Capped max supply.
+    uint256 public maxSupply;
+    
+    /// @notice Public mint state default := false.
+    bool public publicMintState;
 
     ////////////////////////////////////////////////////////////////
     //                          MODIFIERS                         //
@@ -101,9 +115,17 @@ contract ERC721Basic is
         external
         onlyOwner
     {
+        if (baseURILock == true) revert UriLocked();
         baseURI = _baseURI;
-
         emit BaseURISet(_baseURI);
+    }
+
+    function setBaseURILock()
+        external
+        onlyOwner
+    {
+        baseURILock = true;
+        emit BaseURILocked(baseURI);
     }
 
     function setPublicMintState(bool _publicMintState)
@@ -114,8 +136,11 @@ contract ERC721Basic is
 
         emit PublicMintStateSet(_publicMintState);
     }
+    
+    ////////////////////////////////////////////////////////////////
+    //                       OWNER MINTING                        //
+    ////////////////////////////////////////////////////////////////
 
-    /// @dev Creator mint
     function mintTo(
         address to,
         uint256 amount,
@@ -141,7 +166,6 @@ contract ERC721Basic is
         // Transfer event emited by parent ERC721 contract
     }
 
-    /// @dev Owner burn method
     function burn(uint256[] memory ids, address erc20Owner)
         external
         payable
@@ -226,10 +250,9 @@ contract ERC721Basic is
     }
 
     ////////////////////////////////////////////////////////////////
-    //                           USER FX                          //
+    //                          PUBLIC FX                         //
     ////////////////////////////////////////////////////////////////
 
-    /// @dev Public munt
     function mint(uint256 amount)
         external
         payable
@@ -256,21 +279,6 @@ contract ERC721Basic is
             }
         }
         // Transfer event emited by parent ERC721 contract
-    }
-
-    ////////////////////////////////////////////////////////////////
-    //                          HELPER FX                         //
-    ////////////////////////////////////////////////////////////////
-
-    function _nextId() private returns (uint256) {
-        liveSupply.increment();
-        return liveSupply.current();
-    }
-
-    function _incrementCounter() private returns (uint256) {
-        _nextId();
-        mintCount += 1;
-        return mintCount;
     }
 
     ////////////////////////////////////////////////////////////////
@@ -369,6 +377,17 @@ contract ERC721Basic is
                 revert(0x1c, 0x04)
             }
         }
+    }
+
+    function _nextId() private returns (uint256) {
+        liveSupply.increment();
+        return liveSupply.current();
+    }
+
+    function _incrementCounter() private returns (uint256) {
+        _nextId();
+        mintCount += 1;
+        return mintCount;
     }
 
     ////////////////////////////////////////////////////////////////

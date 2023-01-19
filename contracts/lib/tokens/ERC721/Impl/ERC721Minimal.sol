@@ -7,7 +7,6 @@ import { ERC721, ERC721TokenReceiver } from "../Base/ERC721.sol";
 import { ERC2981 } from "../../common/ERC2981.sol";
 import { ERC20 } from "../../ERC20.sol";
 import { SplitterImpl } from "../../../splitter/SplitterImpl.sol";
-
 import { ReentrancyGuard } from "../../../security/ReentrancyGuard.sol";
 import { Owned } from "../../../auth/Owned.sol";
 import { SafeTransferLib } from "../../../utils/SafeTransferLib.sol";

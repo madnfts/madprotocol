@@ -116,6 +116,128 @@ describe("MADRouter721", () => {
         RouterErrors.InvalidType,
       );
     });
+    it("Should revert for locked base URI", async () => {
+      await f721
+        .connect(acc02)
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
+      const splAddr = await f721.callStatic.getDeployedAddr(
+        "MADSplitter1",
+      );
+
+      // Basic
+      const basicAddr = await f721.callStatic.getDeployedAddr(
+        "BasicSalt",
+      );
+      await f721
+        .connect(acc02)
+        .createCollection(
+          1,
+          "BasicSalt",
+          "721Basic",
+          "BASIC",
+          price,
+          1,
+          "ipfs://cid/id.json",
+          splAddr,
+          750,
+        );
+      const basic = await ethers.getContractAt(
+        "ERC721Basic",
+        basicAddr,
+      );
+      const tx1 = r721
+        .connect(acc02)
+        .setBase(basic.address, "null");
+      const tx2 = r721
+        .connect(acc02)
+        .setBaseLock(basic.address);
+      expect(await tx1).to.be.ok
+      expect(await tx2).to.be.ok
+      await expect(r721
+        .connect(acc02)
+        .setBase(basic.address, "null")).to.be.revertedWithCustomError(
+          basic,
+          RouterErrors.UriLocked,
+      );
+
+      // WL
+      const wlAddr = await f721.callStatic.getDeployedAddr(
+        "WlSalt",
+      );
+      await f721
+        .connect(acc02)
+        .createCollection(
+          2,
+          "WlSalt",
+          "721Whitelist",
+          "WL",
+          price,
+          1,
+          "ipfs://cid/id.json",
+          splAddr,
+          750,
+        );
+      const wl = await ethers.getContractAt(
+        "ERC721Whitelist",
+        wlAddr,
+      );
+      const wltx1 = r721
+        .connect(acc02)
+        .setBase(wl.address, "null");
+      const wltx2 = r721
+        .connect(acc02)
+        .setBaseLock(wl.address);
+      expect(await wltx1).to.be.ok
+      expect(await wltx2).to.be.ok
+      await expect(r721
+        .connect(acc02)
+        .setBase(wl.address, "null")).to.be.revertedWithCustomError(
+          wl,
+          RouterErrors.UriLocked,
+      );
+
+      // lazy
+      const lazyAddr = await f721.callStatic.getDeployedAddr(
+        "LazySalt",
+      );
+      await f721
+        .connect(acc02)
+        .createCollection(
+          2,
+          "LazySalt",
+          "721Lazy",
+          "LAZY",
+          price,
+          1,
+          "ipfs://cid/id.json",
+          splAddr,
+          750,
+        );
+      const lazy = await ethers.getContractAt(
+        "ERC721Lazy",
+        lazyAddr,
+      );
+      const lazytx1 = r721
+        .connect(acc02)
+        .setBase(lazy.address, "null");
+      const lazytx2 = r721
+        .connect(acc02)
+        .setBaseLock(lazy.address);
+      expect(await lazytx1).to.be.ok
+      expect(await lazytx2).to.be.ok
+      await expect(r721
+        .connect(acc02)
+        .setBase(lazy.address, "null")).to.be.revertedWithCustomError(
+          lazy,
+          RouterErrors.UriLocked,
+      );
+    });
     it("Should set baseURI for 721Basic collection type", async () => {
       // await f721.addAmbassador(amb.address);
       await f721

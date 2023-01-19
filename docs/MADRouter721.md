@@ -284,6 +284,22 @@ Collection baseURI setter.
 | _token | address | 721 token address. |
 | _baseURI | string | New base URI string. |
 
+### setBaseLock
+
+```solidity
+function setBaseLock(address _token) external nonpayable
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| _token | address | undefined |
+
 ### setFees
 
 ```solidity

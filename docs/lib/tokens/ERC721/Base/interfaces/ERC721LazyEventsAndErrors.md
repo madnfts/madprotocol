@@ -11,6 +11,22 @@
 
 ## Events
 
+### BaseURILocked
+
+```solidity
+event BaseURILocked(string indexed baseURI)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| baseURI `indexed` | string | undefined |
+
 ### BaseURISet
 
 ```solidity
@@ -99,6 +115,17 @@ error NotMintedYet()
 
 
 *0xbad086ea*
+
+
+### UriLocked
+
+```solidity
+error UriLocked()
+```
+
+
+
+*?*
 
 
 ### UsedVoucher

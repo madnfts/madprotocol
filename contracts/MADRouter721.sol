@@ -122,6 +122,26 @@ contract MADRouter721 is
         }
     }
 
+    function setBaseLock(address _token)
+        external
+        nonReentrant
+        whenNotPaused
+    {
+        (, uint8 _tokenType) = _tokenRender(
+            _token
+        );
+
+        if (_tokenType == 1) {
+            ERC721Basic(_token).setBaseURILock();
+        } else if (_tokenType == 2) {
+            ERC721Whitelist(_token).setBaseURILock();
+        } else if (_tokenType > 2) {
+            ERC721Lazy(_token).setBaseURILock();
+        } else {
+            revert("INVALID_TYPE");
+        }
+    }
+
     /// @notice Global MintState setter/controller  
     /// @dev Switch cases/control flow handling conditioned by both `_stateType` and `_tokenType`. 
     ///      Events logged by each tokens' `setState` functions.

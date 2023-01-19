@@ -49,6 +49,23 @@ function balanceOf(address owner) external view returns (uint256)
 |---|---|---|
 | _0 | uint256 | undefined |
 
+### baseURILock
+
+```solidity
+function baseURILock() external view returns (bool)
+```
+
+Lock the URI default := false.
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
+
 ### burn
 
 ```solidity
@@ -57,7 +74,7 @@ function burn(uint256[] ids, address erc20Owner) external payable
 
 
 
-*Owner burn function*
+
 
 #### Parameters
 
@@ -88,7 +105,7 @@ function claimFree(bytes32[] merkleProof) external nonpayable
 function claimListMerkleRoot() external view returns (bytes32)
 ```
 
-
+Claim merkel.
 
 
 
@@ -127,7 +144,7 @@ function claimed(address) external view returns (bool)
 function erc20() external view returns (contract ERC20)
 ```
 
-
+ERC20 payment token address.
 
 
 
@@ -144,9 +161,9 @@ function erc20() external view returns (contract ERC20)
 function freeAmount() external view returns (uint256)
 ```
 
+Default amount to be claimed as free in a collection.
 
 
-*Default amount to be claimed as free in a collection.*
 
 
 #### Returns
@@ -161,9 +178,9 @@ function freeAmount() external view returns (uint256)
 function freeClaimState() external view returns (bool)
 ```
 
+True to enable free claiming default := false.
 
 
-*default := false.*
 
 
 #### Returns
@@ -196,7 +213,7 @@ function freeConfig(uint256 _freeAmount, uint256 _maxFree, bytes32 _claimListMer
 function freeSupply() external view returns (uint256)
 ```
 
-
+Claim available supply.
 
 
 
@@ -309,7 +326,7 @@ function isApprovedForAll(address, address) external view returns (bool)
 function maxFree() external view returns (uint256)
 ```
 
-
+Claim max supply.
 
 
 
@@ -326,7 +343,7 @@ function maxFree() external view returns (uint256)
 function maxSupply() external view returns (uint256)
 ```
 
-
+Capped max supply.
 
 
 
@@ -343,7 +360,7 @@ function maxSupply() external view returns (uint256)
 function maxWhitelistSupply() external view returns (uint256)
 ```
 
-
+Whitelist max supply.
 
 
 
@@ -378,7 +395,7 @@ function mintToCreator(uint256 amount, address erc20Owner) external payable
 
 
 
-*Mint to creator method*
+
 
 #### Parameters
 
@@ -491,7 +508,7 @@ function publicMintState() external view returns (bool)
 function publicPrice() external view returns (uint256)
 ```
 
-
+Public mint price.
 
 
 
@@ -596,6 +613,17 @@ function setBaseURI(string _baseURI) external nonpayable
 |---|---|---|
 | _baseURI | string | undefined |
 
+### setBaseURILock
+
+```solidity
+function setBaseURILock() external nonpayable
+```
+
+
+
+
+
+
 ### setFreeClaimState
 
 ```solidity
@@ -666,7 +694,7 @@ function setWhitelistMintState(bool _whitelistMintState) external nonpayable
 function splitter() external view returns (contract SplitterImpl)
 ```
 
-
+Splitter address relationship.
 
 
 
@@ -797,7 +825,7 @@ function whitelistConfig(uint256 _price, uint256 _supply, bytes32 _root) externa
 function whitelistMerkleRoot() external view returns (bytes32)
 ```
 
-
+Whitelist merkel.
 
 
 
@@ -865,7 +893,7 @@ function whitelistMinted() external view returns (uint256)
 function whitelistPrice() external view returns (uint256)
 ```
 
-
+Public whitelist mint price.
 
 
 
@@ -942,6 +970,22 @@ event ApprovalForAll(address indexed owner, address indexed operator, bool appro
 | owner `indexed` | address | undefined |
 | operator `indexed` | address | undefined |
 | approved  | bool | undefined |
+
+### BaseURILocked
+
+```solidity
+event BaseURILocked(string indexed baseURI)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| baseURI `indexed` | string | undefined |
 
 ### BaseURISet
 
@@ -1211,6 +1255,17 @@ error PublicMintClosed()
 
 
 *0x2d0a3f8e*
+
+
+### UriLocked
+
+```solidity
+error UriLocked()
+```
+
+
+
+*?*
 
 
 ### WhitelistMintClosed

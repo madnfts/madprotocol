@@ -32,6 +32,7 @@ export interface ERC721WhitelistInterface extends utils.Interface {
   functions: {
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
+    "baseURILock()": FunctionFragment;
     "burn(uint256[],address)": FunctionFragment;
     "claimFree(bytes32[])": FunctionFragment;
     "claimListMerkleRoot()": FunctionFragment;
@@ -62,6 +63,7 @@ export interface ERC721WhitelistInterface extends utils.Interface {
     "safeTransferFrom(address,address,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
     "setBaseURI(string)": FunctionFragment;
+    "setBaseURILock()": FunctionFragment;
     "setFreeClaimState(bool)": FunctionFragment;
     "setOwner(address)": FunctionFragment;
     "setPublicMintState(bool)": FunctionFragment;
@@ -86,6 +88,7 @@ export interface ERC721WhitelistInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "approve"
       | "balanceOf"
+      | "baseURILock"
       | "burn"
       | "claimFree"
       | "claimListMerkleRoot"
@@ -116,6 +119,7 @@ export interface ERC721WhitelistInterface extends utils.Interface {
       | "safeTransferFrom(address,address,uint256,bytes)"
       | "setApprovalForAll"
       | "setBaseURI"
+      | "setBaseURILock"
       | "setFreeClaimState"
       | "setOwner"
       | "setPublicMintState"
@@ -143,6 +147,10 @@ export interface ERC721WhitelistInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "balanceOf",
     values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "baseURILock",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "burn",
@@ -268,6 +276,10 @@ export interface ERC721WhitelistInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "setBaseURILock",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "setFreeClaimState",
     values: [PromiseOrValue<boolean>]
   ): string;
@@ -341,6 +353,10 @@ export interface ERC721WhitelistInterface extends utils.Interface {
 
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "baseURILock",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "claimFree", data: BytesLike): Result;
   decodeFunctionResult(
@@ -414,6 +430,10 @@ export interface ERC721WhitelistInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "setBaseURI", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "setBaseURILock",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setFreeClaimState",
     data: BytesLike
   ): Result;
@@ -474,6 +494,7 @@ export interface ERC721WhitelistInterface extends utils.Interface {
   events: {
     "Approval(address,address,uint256)": EventFragment;
     "ApprovalForAll(address,address,bool)": EventFragment;
+    "BaseURILocked(string)": EventFragment;
     "BaseURISet(string)": EventFragment;
     "FreeClaimStateSet(bool)": EventFragment;
     "FreeConfigSet(uint256,uint256,bytes32)": EventFragment;
@@ -488,6 +509,7 @@ export interface ERC721WhitelistInterface extends utils.Interface {
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BaseURILocked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BaseURISet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FreeClaimStateSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FreeConfigSet"): EventFragment;
@@ -523,6 +545,13 @@ export type ApprovalForAllEvent = TypedEvent<
 >;
 
 export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
+
+export interface BaseURILockedEventObject {
+  baseURI: string;
+}
+export type BaseURILockedEvent = TypedEvent<[string], BaseURILockedEventObject>;
+
+export type BaseURILockedEventFilter = TypedEventFilter<BaseURILockedEvent>;
 
 export interface BaseURISetEventObject {
   newBaseURI: string;
@@ -671,6 +700,8 @@ export interface ERC721Whitelist extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    baseURILock(overrides?: CallOverrides): Promise<[boolean]>;
+
     burn(
       ids: PromiseOrValue<BigNumberish>[],
       erc20Owner: PromiseOrValue<string>,
@@ -797,6 +828,10 @@ export interface ERC721Whitelist extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    setBaseURILock(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     setFreeClaimState(
       _freeClaimState: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -881,6 +916,8 @@ export interface ERC721Whitelist extends BaseContract {
     owner: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  baseURILock(overrides?: CallOverrides): Promise<boolean>;
 
   burn(
     ids: PromiseOrValue<BigNumberish>[],
@@ -1008,6 +1045,10 @@ export interface ERC721Whitelist extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  setBaseURILock(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   setFreeClaimState(
     _freeClaimState: PromiseOrValue<boolean>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1092,6 +1133,8 @@ export interface ERC721Whitelist extends BaseContract {
       owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    baseURILock(overrides?: CallOverrides): Promise<boolean>;
 
     burn(
       ids: PromiseOrValue<BigNumberish>[],
@@ -1219,6 +1262,8 @@ export interface ERC721Whitelist extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setBaseURILock(overrides?: CallOverrides): Promise<void>;
+
     setFreeClaimState(
       _freeClaimState: PromiseOrValue<boolean>,
       overrides?: CallOverrides
@@ -1313,6 +1358,13 @@ export interface ERC721Whitelist extends BaseContract {
       operator?: PromiseOrValue<string> | null,
       approved?: null
     ): ApprovalForAllEventFilter;
+
+    "BaseURILocked(string)"(
+      baseURI?: PromiseOrValue<string> | null
+    ): BaseURILockedEventFilter;
+    BaseURILocked(
+      baseURI?: PromiseOrValue<string> | null
+    ): BaseURILockedEventFilter;
 
     "BaseURISet(string)"(
       newBaseURI?: PromiseOrValue<string> | null
@@ -1410,6 +1462,8 @@ export interface ERC721Whitelist extends BaseContract {
       owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    baseURILock(overrides?: CallOverrides): Promise<BigNumber>;
 
     burn(
       ids: PromiseOrValue<BigNumberish>[],
@@ -1535,6 +1589,10 @@ export interface ERC721Whitelist extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    setBaseURILock(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     setFreeClaimState(
       _freeClaimState: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1620,6 +1678,8 @@ export interface ERC721Whitelist extends BaseContract {
       owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    baseURILock(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     burn(
       ids: PromiseOrValue<BigNumberish>[],
@@ -1746,6 +1806,10 @@ export interface ERC721Whitelist extends BaseContract {
 
     setBaseURI(
       _baseURI: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setBaseURILock(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

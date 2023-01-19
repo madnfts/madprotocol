@@ -11,6 +11,22 @@
 
 ## Events
 
+### BaseURILocked
+
+```solidity
+event BaseURILocked(string indexed baseURI)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| baseURI `indexed` | string | undefined |
+
 ### BaseURISet
 
 ```solidity
@@ -121,6 +137,17 @@ error PublicMintClosed()
 
 
 *0x2d0a3f8e*
+
+
+### UriLocked
+
+```solidity
+error UriLocked()
+```
+
+
+
+*?*
 
 
 ### WrongPrice

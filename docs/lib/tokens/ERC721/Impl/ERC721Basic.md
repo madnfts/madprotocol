@@ -49,6 +49,23 @@ function balanceOf(address owner) external view returns (uint256)
 |---|---|---|
 | _0 | uint256 | undefined |
 
+### baseURILock
+
+```solidity
+function baseURILock() external view returns (bool)
+```
+
+Lock the URI default := false.
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
+
 ### burn
 
 ```solidity
@@ -57,7 +74,7 @@ function burn(uint256[] ids, address erc20Owner) external payable
 
 
 
-*Owner burn method*
+
 
 #### Parameters
 
@@ -72,7 +89,7 @@ function burn(uint256[] ids, address erc20Owner) external payable
 function erc20() external view returns (contract ERC20)
 ```
 
-
+ERC20 payment token address.
 
 
 
@@ -168,7 +185,7 @@ function isApprovedForAll(address, address) external view returns (bool)
 function maxSupply() external view returns (uint256)
 ```
 
-
+Capped max supply.
 
 
 
@@ -187,7 +204,7 @@ function mint(uint256 amount) external payable
 
 
 
-*Public munt*
+
 
 #### Parameters
 
@@ -203,7 +220,7 @@ function mintTo(address to, uint256 amount, address erc20Owner) external payable
 
 
 
-*Creator mint*
+
 
 #### Parameters
 
@@ -300,7 +317,7 @@ function ownerOf(uint256 id) external view returns (address owner)
 function price() external view returns (uint256)
 ```
 
-
+Public mint price.
 
 
 
@@ -317,7 +334,7 @@ function price() external view returns (uint256)
 function publicMintState() external view returns (bool)
 ```
 
-
+Public mint state default := false.
 
 
 
@@ -422,6 +439,17 @@ function setBaseURI(string _baseURI) external nonpayable
 |---|---|---|
 | _baseURI | string | undefined |
 
+### setBaseURILock
+
+```solidity
+function setBaseURILock() external nonpayable
+```
+
+
+
+
+
+
 ### setOwner
 
 ```solidity
@@ -460,7 +488,7 @@ function setPublicMintState(bool _publicMintState) external nonpayable
 function splitter() external view returns (contract SplitterImpl)
 ```
 
-
+Splitter address relationship.
 
 
 
@@ -634,6 +662,22 @@ event ApprovalForAll(address indexed owner, address indexed operator, bool appro
 | operator `indexed` | address | undefined |
 | approved  | bool | undefined |
 
+### BaseURILocked
+
+```solidity
+event BaseURILocked(string indexed baseURI)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| baseURI `indexed` | string | undefined |
+
 ### BaseURISet
 
 ```solidity
@@ -779,6 +823,17 @@ error PublicMintClosed()
 
 
 *0x2d0a3f8e*
+
+
+### UriLocked
+
+```solidity
+error UriLocked()
+```
+
+
+
+*?*
 
 
 ### WrongPrice

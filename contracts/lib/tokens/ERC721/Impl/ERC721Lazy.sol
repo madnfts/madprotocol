@@ -44,20 +44,30 @@ contract ERC721Lazy is
         keccak256(
             "Voucher(bytes32 voucherId,address[] users,uint256[] balances,uint256 amount,uint256 price)"
         );
-
-    /// @dev The signer address used for lazy minting voucher validation.
-    address public signer;
-
-    Counters.Counter private liveSupply;
-
-    string private baseURI;
-
+    
+    /// @notice Splitter address relationship.
     SplitterImpl public splitter;
 
-    mapping(bytes32 => bool) public usedVouchers;
-
-    uint256 private mintCount;
+    /// @notice ERC20 payment token address.
     ERC20 public erc20;
+
+    /// @notice Live supply counter, excludes burned tokens.
+    Counters.Counter private liveSupply;
+
+    /// @notice Mint counter, includes burnt count.
+    uint256 private mintCount;
+
+    /// @notice Token base URI string.
+    string private baseURI;
+
+    /// @notice Lock the URI default := false.
+    bool public baseURILock; 
+
+    /// @notice The signer address used for lazy minting voucher validation.
+    address public signer;
+
+    /// @notice Mapping for used vouchers.
+    mapping(bytes32 => bool) public usedVouchers;
 
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
@@ -89,70 +99,32 @@ contract ERC721Lazy is
     }
 
     ////////////////////////////////////////////////////////////////
-    //                        LAZY MINT                           //
-    ////////////////////////////////////////////////////////////////
-
-    /// @notice This method enables offchain ledgering of tokens to establish onchain provenance as
-    /// long as a trusted signer can be retrieved as the validator of such contract state update.
-    /// @dev Neither `totalSupply` nor `price` accountings for any of the possible mint
-    /// types(e.g., public, free/gifted, toCreator) need to be recorded by the contract;
-    /// since its condition checking control flow takes place in offchain databases.
-    function lazyMint(
-        Types.Voucher calldata voucher,
-        uint8 v,
-        bytes32 r,
-        bytes32 s
-    ) external payable nonReentrant {
-        address _signer = _verify(voucher, v, r, s);
-        uint256 value = _getPriceValue(msg.sender);
-
-        _lazyCheck(_signer, voucher, value);
-
-        // Only attempt to transfer if the sender is the _erc20Owner (not envoked through proxy)
-        if (address(erc20) != address(0)) {
-            SafeTransferLib.safeTransferFrom(
-                erc20,
-                msg.sender,
-                address(this),
-                value
-            );
-        }
-
-        usedVouchers[voucher.voucherId] = true;
-        uint256 len = voucher.users.length;
-        uint256 i;
-        for (i; i < len; ) {
-            _userMint(voucher.amount, voucher.users[i]);
-            // can't overflow due to have been previously validated by signer
-            unchecked {
-                ++i;
-            }
-        }
-    }
-
-    ////////////////////////////////////////////////////////////////
     //                         OWNER FX                           //
     ////////////////////////////////////////////////////////////////
 
-    /// @dev Can only be updated by the Router's owner.
     function setSigner(address _signer) public onlyOwner {
         signer = _signer;
-
         emit SignerUpdated(_signer);
     }
 
-    /// @notice Changes the `baseURI` value in storage.
-    /// @dev Can only be accessed by the collection creator.
     function setBaseURI(string memory _baseURI)
         external
         onlyOwner
     {
+        if (baseURILock == true) revert UriLocked();
         baseURI = _baseURI;
 
         emit BaseURISet(_baseURI);
     }
 
-    /// @dev Allows erc20 payments only if erc20 exists
+    function setBaseURILock()
+        external
+        onlyOwner
+    {
+        baseURILock = true;
+        emit BaseURILocked(baseURI);
+    }
+
     function burn(uint256[] memory ids, address erc20Owner)
         external
         payable
@@ -237,6 +209,48 @@ contract ERC721Lazy is
     }
 
     ////////////////////////////////////////////////////////////////
+    //                     PUBLIC LAZY MINT                       //
+    ////////////////////////////////////////////////////////////////
+
+    /// @notice This method enables offchain ledgering of tokens to establish onchain provenance as
+    /// long as a trusted signer can be retrieved as the validator of such contract state update.
+    /// @dev Neither `totalSupply` nor `price` accountings for any of the possible mint
+    /// types(e.g., public, free/gifted, toCreator) need to be recorded by the contract;
+    /// since its condition checking control flow takes place in offchain databases.
+    function lazyMint(
+        Types.Voucher calldata voucher,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) external payable nonReentrant {
+        address _signer = _verify(voucher, v, r, s);
+        uint256 value = _getPriceValue(msg.sender);
+
+        _lazyCheck(_signer, voucher, value);
+
+        // Only attempt to transfer if the sender is the _erc20Owner (not envoked through proxy)
+        if (address(erc20) != address(0)) {
+            SafeTransferLib.safeTransferFrom(
+                erc20,
+                msg.sender,
+                address(this),
+                value
+            );
+        }
+
+        usedVouchers[voucher.voucherId] = true;
+        uint256 len = voucher.users.length;
+        uint256 i;
+        for (i; i < len; ) {
+            _userMint(voucher.amount, voucher.users[i]);
+            // can't overflow due to have been previously validated by signer
+            unchecked {
+                ++i;
+            }
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////
     //                          HELPER FX                         //
     ////////////////////////////////////////////////////////////////
 
@@ -251,7 +265,6 @@ contract ERC721Lazy is
         return mintCount;
     }
 
-    /// @dev Checks for signer validity and if total balance provided in the message matches to voucher's record.
     function _lazyCheck(
         address _signer,
         Types.Voucher calldata voucher,
@@ -348,19 +361,6 @@ contract ERC721Lazy is
         }
     }
 
-    function computeDS() internal view returns (bytes32) {
-        return
-            keccak256(
-                abi.encode(
-                    _DOMAIN_TYPEHASH,
-                    keccak256(bytes(name)),
-                    keccak256("1"),
-                    block.chainid,
-                    address(this)
-                )
-            );
-    }
-
     function _userMint(uint256 _amount, address _key)
         internal
     {
@@ -372,6 +372,19 @@ contract ERC721Lazy is
                 ++j;
             }
         }
+    }
+
+    function computeDS() internal view returns (bytes32) {
+        return
+            keccak256(
+                abi.encode(
+                    _DOMAIN_TYPEHASH,
+                    keccak256(bytes(name)),
+                    keccak256("1"),
+                    block.chainid,
+                    address(this)
+                )
+            );
     }
 
     ////////////////////////////////////////////////////////////////
@@ -482,7 +495,6 @@ contract ERC721Lazy is
         }
     }
 
-    /// @dev Checks msg.value if !erc20 OR checks erc20 approval and returns the value
     function _getPriceValue(address _erc20Owner)
         internal
         view

@@ -22,17 +22,26 @@ export interface ERC721BasicEventsAndErrorsInterface extends utils.Interface {
   functions: {};
 
   events: {
+    "BaseURILocked(string)": EventFragment;
     "BaseURISet(string)": EventFragment;
     "PublicMintStateSet(bool)": EventFragment;
     "RoyaltyFeeSet(uint256)": EventFragment;
     "RoyaltyRecipientSet(address)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "BaseURILocked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BaseURISet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PublicMintStateSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoyaltyFeeSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoyaltyRecipientSet"): EventFragment;
 }
+
+export interface BaseURILockedEventObject {
+  baseURI: string;
+}
+export type BaseURILockedEvent = TypedEvent<[string], BaseURILockedEventObject>;
+
+export type BaseURILockedEventFilter = TypedEventFilter<BaseURILockedEvent>;
 
 export interface BaseURISetEventObject {
   newBaseURI: string;
@@ -104,6 +113,13 @@ export interface ERC721BasicEventsAndErrors extends BaseContract {
   callStatic: {};
 
   filters: {
+    "BaseURILocked(string)"(
+      baseURI?: PromiseOrValue<string> | null
+    ): BaseURILockedEventFilter;
+    BaseURILocked(
+      baseURI?: PromiseOrValue<string> | null
+    ): BaseURILockedEventFilter;
+
     "BaseURISet(string)"(
       newBaseURI?: PromiseOrValue<string> | null
     ): BaseURISetEventFilter;

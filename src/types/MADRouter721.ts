@@ -46,6 +46,7 @@ export interface MADRouter721Interface extends utils.Interface {
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
     "setBase(address,string)": FunctionFragment;
+    "setBaseLock(address)": FunctionFragment;
     "setFees(uint256,uint256)": FunctionFragment;
     "setMintState(address,bool,uint8)": FunctionFragment;
     "setOwner(address)": FunctionFragment;
@@ -74,6 +75,7 @@ export interface MADRouter721Interface extends utils.Interface {
       | "pause"
       | "paused"
       | "setBase"
+      | "setBaseLock"
       | "setFees"
       | "setMintState"
       | "setOwner"
@@ -135,6 +137,10 @@ export interface MADRouter721Interface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "setBase",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setBaseLock",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "setFees",
@@ -206,6 +212,10 @@ export interface MADRouter721Interface extends utils.Interface {
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setBase", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setBaseLock",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "setFees", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setMintState",
@@ -449,6 +459,11 @@ export interface MADRouter721 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    setBaseLock(
+      _token: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     setFees(
       _feeMint: PromiseOrValue<BigNumberish>,
       _feeBurn: PromiseOrValue<BigNumberish>,
@@ -565,6 +580,11 @@ export interface MADRouter721 extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  setBaseLock(
+    _token: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   setFees(
     _feeMint: PromiseOrValue<BigNumberish>,
     _feeBurn: PromiseOrValue<BigNumberish>,
@@ -676,6 +696,11 @@ export interface MADRouter721 extends BaseContract {
     setBase(
       _token: PromiseOrValue<string>,
       _baseURI: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setBaseLock(
+      _token: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -877,6 +902,11 @@ export interface MADRouter721 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    setBaseLock(
+      _token: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     setFees(
       _feeMint: PromiseOrValue<BigNumberish>,
       _feeBurn: PromiseOrValue<BigNumberish>,
@@ -991,6 +1021,11 @@ export interface MADRouter721 extends BaseContract {
     setBase(
       _token: PromiseOrValue<string>,
       _baseURI: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setBaseLock(
+      _token: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

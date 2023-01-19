@@ -1,12 +1,14 @@
 # Counters
 
-_Modified from OpenZeppelin Contracts (https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/Counters.sol)_
+*Modified from OpenZeppelin Contracts (https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/Counters.sol)*
 
 > Counters
 
 Provides counters that can only be incremented, decrementedor reset.
 
-_Include with `using Counters for Counters.Counter;`_
+*Include with `using Counters for Counters.Counter;`*
+
+
 
 ## Errors
 
@@ -16,4 +18,9 @@ _Include with `using Counters for Counters.Counter;`_
 error DecOverflow()
 ```
 
-_0xce3a3d37_
+
+
+*0xce3a3d37*
+
+
+

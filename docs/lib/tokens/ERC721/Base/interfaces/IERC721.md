@@ -1,6 +1,12 @@
 # IERC721
 
+
+
 > Required interface of an ERC721 compliant contract.
+
+
+
+
 
 ## Methods
 
@@ -12,14 +18,14 @@ function approve(address to, uint256 tokenId) external nonpayable
 
 Gives permission to `to` to transfer `tokenId` token to another account. The approval is cleared when the token is transferred. Only a single account can be approved at a time, so approving the zero address clears previous approvals.
 
-_Emits an {Approval} event._
+*Emits an {Approval} event.*
 
 #### Parameters
 
-| Name    | Type    | Description |
-| ------- | ------- | ----------- |
-| to      | address | undefined   |
-| tokenId | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| to | address | undefined |
+| tokenId | uint256 | undefined |
 
 ### balanceOf
 
@@ -27,17 +33,21 @@ _Emits an {Approval} event._
 function balanceOf(address owner) external view returns (uint256 balance)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name  | Type    | Description |
-| ----- | ------- | ----------- |
-| owner | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| owner | address | undefined |
 
 #### Returns
 
-| Name    | Type    | Description                                            |
-| ------- | ------- | ------------------------------------------------------ |
-| balance | uint256 | Returns the number of tokens in `owner`&#39;s account. |
+| Name | Type | Description |
+|---|---|---|
+| balance | uint256 | Returns the number of tokens in ``owner``&#39;s account. |
 
 ### getApproved
 
@@ -47,17 +57,19 @@ function getApproved(uint256 tokenId) external view returns (address operator)
 
 Returns the account approved for `tokenId` token.
 
+
+
 #### Parameters
 
-| Name    | Type    | Description |
-| ------- | ------- | ----------- |
-| tokenId | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| tokenId | uint256 | undefined |
 
 #### Returns
 
-| Name     | Type    | Description |
-| -------- | ------- | ----------- |
-| operator | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| operator | address | undefined |
 
 ### isApprovedForAll
 
@@ -67,18 +79,20 @@ function isApprovedForAll(address owner, address operator) external view returns
 
 Returns if the `operator` is allowed to manage all of the assets of `owner`.
 
+
+
 #### Parameters
 
-| Name     | Type    | Description |
-| -------- | ------- | ----------- |
-| owner    | address | undefined   |
-| operator | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| owner | address | undefined |
+| operator | address | undefined |
 
 #### Returns
 
 | Name | Type | Description |
-| ---- | ---- | ----------- |
-| \_0  | bool | undefined   |
+|---|---|---|
+| _0 | bool | undefined |
 
 ### ownerOf
 
@@ -86,18 +100,20 @@ Returns if the `operator` is allowed to manage all of the assets of `owner`.
 function ownerOf(uint256 tokenId) external view returns (address owner)
 ```
 
-_Requirements: `tokenId` must exist._
+
+
+*Requirements: `tokenId` must exist.*
 
 #### Parameters
 
-| Name    | Type    | Description |
-| ------- | ------- | ----------- |
-| tokenId | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| tokenId | uint256 | undefined |
 
 #### Returns
 
-| Name  | Type    | Description                               |
-| ----- | ------- | ----------------------------------------- |
+| Name | Type | Description |
+|---|---|---|
 | owner | address | Returns the owner of the `tokenId` token. |
 
 ### royaltyInfo
@@ -108,19 +124,21 @@ function royaltyInfo(uint256 tokenId, uint256 salePrice) external view returns (
 
 Queries EIP2981 royalty info for marketplace royalty payment enforcement.
 
+
+
 #### Parameters
 
-| Name      | Type    | Description |
-| --------- | ------- | ----------- |
-| tokenId   | uint256 | undefined   |
-| salePrice | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| tokenId | uint256 | undefined |
+| salePrice | uint256 | undefined |
 
 #### Returns
 
-| Name          | Type    | Description |
-| ------------- | ------- | ----------- |
-| receiver      | address | undefined   |
-| royaltyAmount | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| receiver | address | undefined |
+| royaltyAmount | uint256 | undefined |
 
 ### safeTransferFrom
 
@@ -130,15 +148,15 @@ function safeTransferFrom(address from, address to, uint256 tokenId) external no
 
 Safely transfers `tokenId` token from `from` to `to`, checking first that contract recipients are aware of the ERC721 protocol to prevent tokens from being forever locked.
 
-_Emits a {Transfer} event._
+*Emits a {Transfer} event.*
 
 #### Parameters
 
-| Name    | Type    | Description |
-| ------- | ------- | ----------- |
-| from    | address | undefined   |
-| to      | address | undefined   |
-| tokenId | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| from | address | undefined |
+| to | address | undefined |
+| tokenId | uint256 | undefined |
 
 ### safeTransferFrom
 
@@ -148,16 +166,16 @@ function safeTransferFrom(address from, address to, uint256 tokenId, bytes data)
 
 Safely transfers `tokenId` token from `from` to `to`.
 
-_Emits a {Transfer} event._
+*Emits a {Transfer} event.*
 
 #### Parameters
 
-| Name    | Type    | Description |
-| ------- | ------- | ----------- |
-| from    | address | undefined   |
-| to      | address | undefined   |
-| tokenId | uint256 | undefined   |
-| data    | bytes   | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| from | address | undefined |
+| to | address | undefined |
+| tokenId | uint256 | undefined |
+| data | bytes | undefined |
 
 ### setApprovalForAll
 
@@ -167,14 +185,14 @@ function setApprovalForAll(address operator, bool _approved) external nonpayable
 
 Approve or remove `operator` as an operator for the caller.
 
-_Operators can call {transferFrom} or {safeTransferFrom} for any token owned by the caller.Emits an {ApprovalForAll} event._
+*Operators can call {transferFrom} or {safeTransferFrom} for any token owned by the caller.Emits an {ApprovalForAll} event.*
 
 #### Parameters
 
-| Name       | Type    | Description |
-| ---------- | ------- | ----------- |
-| operator   | address | undefined   |
-| \_approved | bool    | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| operator | address | undefined |
+| _approved | bool | undefined |
 
 ### supportsInterface
 
@@ -182,17 +200,21 @@ _Operators can call {transferFrom} or {safeTransferFrom} for any token owned by 
 function supportsInterface(bytes4 interfaceId) external view returns (bool)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name        | Type   | Description |
-| ----------- | ------ | ----------- |
-| interfaceId | bytes4 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| interfaceId | bytes4 | undefined |
 
 #### Returns
 
 | Name | Type | Description |
-| ---- | ---- | ----------- |
-| \_0  | bool | undefined   |
+|---|---|---|
+| _0 | bool | undefined |
 
 ### transferFrom
 
@@ -202,15 +224,17 @@ function transferFrom(address from, address to, uint256 tokenId) external nonpay
 
 Transfers `tokenId` token from `from` to `to`.
 
-_Usage of this method is discouraged, use {safeTransferFrom} whenever possible.Emits a {Transfer} event._
+*Usage of this method is discouraged, use {safeTransferFrom} whenever possible.Emits a {Transfer} event.*
 
 #### Parameters
 
-| Name    | Type    | Description |
-| ------- | ------- | ----------- |
-| from    | address | undefined   |
-| to      | address | undefined   |
-| tokenId | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| from | address | undefined |
+| to | address | undefined |
+| tokenId | uint256 | undefined |
+
+
 
 ## Events
 
@@ -220,15 +244,17 @@ _Usage of this method is discouraged, use {safeTransferFrom} whenever possible.E
 event Approval(address indexed owner, address indexed approved, uint256 indexed tokenId)
 ```
 
-_Emitted when `owner` enables `approved` to manage the `tokenId` token._
+
+
+*Emitted when `owner` enables `approved` to manage the `tokenId` token.*
 
 #### Parameters
 
-| Name               | Type    | Description |
-| ------------------ | ------- | ----------- |
-| owner `indexed`    | address | undefined   |
-| approved `indexed` | address | undefined   |
-| tokenId `indexed`  | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| owner `indexed` | address | undefined |
+| approved `indexed` | address | undefined |
+| tokenId `indexed` | uint256 | undefined |
 
 ### ApprovalForAll
 
@@ -236,15 +262,17 @@ _Emitted when `owner` enables `approved` to manage the `tokenId` token._
 event ApprovalForAll(address indexed owner, address indexed operator, bool approved)
 ```
 
-_Emitted when `owner` enables or disables (`approved`) `operator` to manage all of its assets._
+
+
+*Emitted when `owner` enables or disables (`approved`) `operator` to manage all of its assets.*
 
 #### Parameters
 
-| Name               | Type    | Description |
-| ------------------ | ------- | ----------- |
-| owner `indexed`    | address | undefined   |
-| operator `indexed` | address | undefined   |
-| approved           | bool    | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| owner `indexed` | address | undefined |
+| operator `indexed` | address | undefined |
+| approved  | bool | undefined |
 
 ### Transfer
 
@@ -252,12 +280,17 @@ _Emitted when `owner` enables or disables (`approved`) `operator` to manage all 
 event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)
 ```
 
-_Emitted when `tokenId` token is transferred from `from` to `to`._
+
+
+*Emitted when `tokenId` token is transferred from `from` to `to`.*
 
 #### Parameters
 
-| Name              | Type    | Description |
-| ----------------- | ------- | ----------- |
-| from `indexed`    | address | undefined   |
-| to `indexed`      | address | undefined   |
-| tokenId `indexed` | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| from `indexed` | address | undefined |
+| to `indexed` | address | undefined |
+| tokenId `indexed` | uint256 | undefined |
+
+
+

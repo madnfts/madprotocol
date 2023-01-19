@@ -1,5 +1,14 @@
 # SplitterEventsAndErrors
 
+
+
+
+
+
+
+
+
+
 ## Events
 
 ### ERC20PaymentReleased
@@ -8,13 +17,17 @@
 event ERC20PaymentReleased(address indexed token, address to, uint256 amount)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name            | Type    | Description |
-| --------------- | ------- | ----------- |
-| token `indexed` | address | undefined   |
-| to              | address | undefined   |
-| amount          | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| token `indexed` | address | undefined |
+| to  | address | undefined |
+| amount  | uint256 | undefined |
 
 ### PayeeAdded
 
@@ -22,12 +35,16 @@ event ERC20PaymentReleased(address indexed token, address to, uint256 amount)
 event PayeeAdded(address account, uint256 shares)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name    | Type    | Description |
-| ------- | ------- | ----------- |
-| account | address | undefined   |
-| shares  | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| account  | address | undefined |
+| shares  | uint256 | undefined |
 
 ### PaymentReceived
 
@@ -35,12 +52,16 @@ event PayeeAdded(address account, uint256 shares)
 event PaymentReceived(address from, uint256 amount)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name   | Type    | Description |
-| ------ | ------- | ----------- |
-| from   | address | undefined   |
-| amount | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| from  | address | undefined |
+| amount  | uint256 | undefined |
 
 ### PaymentReleased
 
@@ -48,12 +69,18 @@ event PaymentReceived(address from, uint256 amount)
 event PaymentReleased(address to, uint256 amount)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name   | Type    | Description |
-| ------ | ------- | ----------- |
-| to     | address | undefined   |
-| amount | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| to  | address | undefined |
+| amount  | uint256 | undefined |
+
+
 
 ## Errors
 
@@ -63,7 +90,10 @@ event PaymentReleased(address to, uint256 amount)
 error AlreadyPayee()
 ```
 
-_0x42b50ca2_
+
+
+*0x42b50ca2*
+
 
 ### DeadAddress
 
@@ -71,7 +101,10 @@ _0x42b50ca2_
 error DeadAddress()
 ```
 
-_0x84ff3e1b_
+
+
+*0x84ff3e1b*
+
 
 ### DeniedAccount
 
@@ -79,7 +112,10 @@ _0x84ff3e1b_
 error DeniedAccount()
 ```
 
-_0xb8e10e7e_
+
+
+*0xb8e10e7e*
+
 
 ### InvalidShare
 
@@ -87,7 +123,10 @@ _0xb8e10e7e_
 error InvalidShare()
 ```
 
-_0x100d5f74_
+
+
+*0x100d5f74*
+
 
 ### LengthMismatch
 
@@ -95,7 +134,10 @@ _0x100d5f74_
 error LengthMismatch()
 ```
 
-_0xff633a38_
+
+
+*0xff633a38*
+
 
 ### NoPayees
 
@@ -103,7 +145,10 @@ _0xff633a38_
 error NoPayees()
 ```
 
-_0x7b21919d_
+
+
+*0x7b21919d*
+
 
 ### NoShares
 
@@ -111,4 +156,9 @@ _0x7b21919d_
 error NoShares()
 ```
 
-_0xb317087b_
+
+
+*0xb317087b*
+
+
+

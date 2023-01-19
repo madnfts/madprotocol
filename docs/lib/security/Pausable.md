@@ -1,6 +1,12 @@
 # Pausable
 
-_Contract module which allows children to implement an emergency stop mechanism that can be triggered by an authorized account. This module is used through inheritance. It will make available the modifiers `whenNotPaused` and `whenPaused`, which can be applied to the functions of your contract. Note that they will not be pausable by simply including this module, only once the modifiers are put in place._
+
+
+
+
+
+
+*Contract module which allows children to implement an emergency stop mechanism that can be triggered by an authorized account. This module is used through inheritance. It will make available the modifiers `whenNotPaused` and `whenPaused`, which can be applied to the functions of your contract. Note that they will not be pausable by simply including this module, only once the modifiers are put in place.*
 
 ## Methods
 
@@ -10,11 +16,18 @@ _Contract module which allows children to implement an emergency stop mechanism 
 function paused() external view returns (bool)
 ```
 
+
+
+
+
+
 #### Returns
 
 | Name | Type | Description |
-| ---- | ---- | ----------- |
-| \_0  | bool | undefined   |
+|---|---|---|
+| _0 | bool | undefined |
+
+
 
 ## Events
 
@@ -24,11 +37,15 @@ function paused() external view returns (bool)
 event Paused(address account)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name    | Type    | Description |
-| ------- | ------- | ----------- |
-| account | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| account  | address | undefined |
 
 ### Unpaused
 
@@ -36,8 +53,15 @@ event Paused(address account)
 event Unpaused(address account)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name    | Type    | Description |
-| ------- | ------- | ----------- |
-| account | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| account  | address | undefined |
+
+
+

@@ -1,5 +1,14 @@
 # ERC721LazyEventsAndErrors
 
+
+
+
+
+
+
+
+
+
 ## Events
 
 ### BaseURISet
@@ -8,11 +17,15 @@
 event BaseURISet(string indexed newBaseURI)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                 | Type   | Description |
-| -------------------- | ------ | ----------- |
-| newBaseURI `indexed` | string | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newBaseURI `indexed` | string | undefined |
 
 ### RoyaltyFeeSet
 
@@ -20,11 +33,15 @@ event BaseURISet(string indexed newBaseURI)
 event RoyaltyFeeSet(uint256 indexed newRoyaltyFee)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                    | Type    | Description |
-| ----------------------- | ------- | ----------- |
-| newRoyaltyFee `indexed` | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newRoyaltyFee `indexed` | uint256 | undefined |
 
 ### RoyaltyRecipientSet
 
@@ -32,11 +49,15 @@ event RoyaltyFeeSet(uint256 indexed newRoyaltyFee)
 event RoyaltyRecipientSet(address indexed newRecipient)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                   | Type    | Description |
-| ---------------------- | ------- | ----------- |
-| newRecipient `indexed` | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newRecipient `indexed` | address | undefined |
 
 ### SignerUpdated
 
@@ -44,11 +65,17 @@ event RoyaltyRecipientSet(address indexed newRecipient)
 event SignerUpdated(address indexed newSigner)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                | Type    | Description |
-| ------------------- | ------- | ----------- |
-| newSigner `indexed` | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newSigner `indexed` | address | undefined |
+
+
 
 ## Errors
 
@@ -58,7 +85,10 @@ event SignerUpdated(address indexed newSigner)
 error InvalidSigner()
 ```
 
-_0x815e1d64_
+
+
+*0x815e1d64*
+
 
 ### NotMintedYet
 
@@ -66,7 +96,10 @@ _0x815e1d64_
 error NotMintedYet()
 ```
 
-_0xbad086ea_
+
+
+*0xbad086ea*
+
 
 ### UsedVoucher
 
@@ -74,7 +107,10 @@ _0xbad086ea_
 error UsedVoucher()
 ```
 
-_0xe647f413_
+
+
+*0xe647f413*
+
 
 ### WrongPrice
 
@@ -82,4 +118,9 @@ _0xe647f413_
 error WrongPrice()
 ```
 
-_0xf7760f25_
+
+
+*0xf7760f25*
+
+
+

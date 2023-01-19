@@ -1,5 +1,13 @@
 # IERC165
 
+
+
+
+
+
+
+
+
 ## Methods
 
 ### supportsInterface
@@ -8,14 +16,22 @@
 function supportsInterface(bytes4 interfaceId) external view returns (bool)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name        | Type   | Description |
-| ----------- | ------ | ----------- |
-| interfaceId | bytes4 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| interfaceId | bytes4 | undefined |
 
 #### Returns
 
 | Name | Type | Description |
-| ---- | ---- | ----------- |
-| \_0  | bool | undefined   |
+|---|---|---|
+| _0 | bool | undefined |
+
+
+
+

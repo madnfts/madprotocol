@@ -1,4 +1,4 @@
-# IERC1155Metadata
+# FeeOracle
 
 
 
@@ -10,10 +10,10 @@
 
 ## Methods
 
-### uri
+### feeLookup
 
 ```solidity
-function uri(uint256 _id) external view returns (string)
+function feeLookup(bytes4 sigHash) external view returns (uint256 fee)
 ```
 
 
@@ -24,13 +24,13 @@ function uri(uint256 _id) external view returns (string)
 
 | Name | Type | Description |
 |---|---|---|
-| _id | uint256 | undefined |
+| sigHash | bytes4 | undefined |
 
 #### Returns
 
 | Name | Type | Description |
 |---|---|---|
-| _0 | string | undefined |
+| fee | uint256 | undefined |
 
 
 

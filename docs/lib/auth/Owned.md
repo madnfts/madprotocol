@@ -1,8 +1,12 @@
 # Owned
 
-_Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/auth/Owned.sol)_
+*Modified from Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/auth/Owned.sol)*
+
+
 
 Simple single owner authorization mixin.
+
+
 
 ## Methods
 
@@ -12,11 +16,16 @@ Simple single owner authorization mixin.
 function owner() external view returns (address)
 ```
 
+
+
+
+
+
 #### Returns
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | undefined |
 
 ### setOwner
 
@@ -24,11 +33,17 @@ function owner() external view returns (address)
 function setOwner(address newOwner) external nonpayable
 ```
 
+
+
+
+
 #### Parameters
 
-| Name     | Type    | Description |
-| -------- | ------- | ----------- |
-| newOwner | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newOwner | address | undefined |
+
+
 
 ## Events
 
@@ -38,9 +53,16 @@ function setOwner(address newOwner) external nonpayable
 event OwnerUpdated(address indexed user, address indexed newOwner)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name               | Type    | Description |
-| ------------------ | ------- | ----------- |
-| user `indexed`     | address | undefined   |
-| newOwner `indexed` | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| user `indexed` | address | undefined |
+| newOwner `indexed` | address | undefined |
+
+
+

@@ -1,20 +1,34 @@
 # MarketplaceEventsAndErrors721
 
+
+
+
+
+
+
+
+
+
 ## Events
 
 ### AuctionSettingsUpdated
 
 ```solidity
-event AuctionSettingsUpdated(uint256 indexed newMinDuration, uint256 indexed newIncrement, uint256 indexed newMinBidValue)
+event AuctionSettingsUpdated(uint256 indexed newMinDuration, uint256 indexed newIncrement, uint256 newMinBidValue, uint256 indexed newMaxDuration)
 ```
+
+
+
+
 
 #### Parameters
 
-| Name                     | Type    | Description |
-| ------------------------ | ------- | ----------- |
-| newMinDuration `indexed` | uint256 | undefined   |
-| newIncrement `indexed`   | uint256 | undefined   |
-| newMinBidValue `indexed` | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newMinDuration `indexed` | uint256 | undefined |
+| newIncrement `indexed` | uint256 | undefined |
+| newMinBidValue  | uint256 | undefined |
+| newMaxDuration `indexed` | uint256 | undefined |
 
 ### Bid
 
@@ -22,15 +36,19 @@ event AuctionSettingsUpdated(uint256 indexed newMinDuration, uint256 indexed new
 event Bid(contract IERC721 indexed token, uint256 id, bytes32 indexed hash, address bidder, uint256 bidPrice)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name            | Type             | Description |
-| --------------- | ---------------- | ----------- |
-| token `indexed` | contract IERC721 | undefined   |
-| id              | uint256          | undefined   |
-| hash `indexed`  | bytes32          | undefined   |
-| bidder          | address          | undefined   |
-| bidPrice        | uint256          | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| token `indexed` | contract IERC721 | undefined |
+| id  | uint256 | undefined |
+| hash `indexed` | bytes32 | undefined |
+| bidder  | address | undefined |
+| bidPrice  | uint256 | undefined |
 
 ### CancelOrder
 
@@ -38,14 +56,18 @@ event Bid(contract IERC721 indexed token, uint256 id, bytes32 indexed hash, addr
 event CancelOrder(contract IERC721 indexed token, uint256 id, bytes32 indexed hash, address seller)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name            | Type             | Description |
-| --------------- | ---------------- | ----------- |
-| token `indexed` | contract IERC721 | undefined   |
-| id              | uint256          | undefined   |
-| hash `indexed`  | bytes32          | undefined   |
-| seller          | address          | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| token `indexed` | contract IERC721 | undefined |
+| id  | uint256 | undefined |
+| hash `indexed` | bytes32 | undefined |
+| seller  | address | undefined |
 
 ### Claim
 
@@ -53,16 +75,20 @@ event CancelOrder(contract IERC721 indexed token, uint256 id, bytes32 indexed ha
 event Claim(contract IERC721 indexed token, uint256 id, bytes32 indexed hash, address seller, address taker, uint256 price)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name            | Type             | Description |
-| --------------- | ---------------- | ----------- |
-| token `indexed` | contract IERC721 | undefined   |
-| id              | uint256          | undefined   |
-| hash `indexed`  | bytes32          | undefined   |
-| seller          | address          | undefined   |
-| taker           | address          | undefined   |
-| price           | uint256          | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| token `indexed` | contract IERC721 | undefined |
+| id  | uint256 | undefined |
+| hash `indexed` | bytes32 | undefined |
+| seller  | address | undefined |
+| taker  | address | undefined |
+| price  | uint256 | undefined |
 
 ### FactoryUpdated
 
@@ -70,11 +96,32 @@ event Claim(contract IERC721 indexed token, uint256 id, bytes32 indexed hash, ad
 event FactoryUpdated(contract FactoryVerifier indexed newFactory)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                 | Type                     | Description |
-| -------------------- | ------------------------ | ----------- |
-| newFactory `indexed` | contract FactoryVerifier | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newFactory `indexed` | contract FactoryVerifier | undefined |
+
+### FeesUpdated
+
+```solidity
+event FeesUpdated(uint256 feeVal2, uint256 feeVal3)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| feeVal2  | uint256 | undefined |
+| feeVal3  | uint256 | undefined |
 
 ### MakeOrder
 
@@ -82,14 +129,34 @@ event FactoryUpdated(contract FactoryVerifier indexed newFactory)
 event MakeOrder(contract IERC721 indexed token, uint256 id, bytes32 indexed hash, address seller)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name            | Type             | Description |
-| --------------- | ---------------- | ----------- |
-| token `indexed` | contract IERC721 | undefined   |
-| id              | uint256          | undefined   |
-| hash `indexed`  | bytes32          | undefined   |
-| seller          | address          | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| token `indexed` | contract IERC721 | undefined |
+| id  | uint256 | undefined |
+| hash `indexed` | bytes32 | undefined |
+| seller  | address | undefined |
+
+### PaymentTokenUpdated
+
+```solidity
+event PaymentTokenUpdated(address indexed newPaymentToken)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| newPaymentToken `indexed` | address | undefined |
 
 ### RecipientUpdated
 
@@ -97,11 +164,17 @@ event MakeOrder(contract IERC721 indexed token, uint256 id, bytes32 indexed hash
 event RecipientUpdated(address indexed newRecipient)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                   | Type    | Description |
-| ---------------------- | ------- | ----------- |
-| newRecipient `indexed` | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newRecipient `indexed` | address | undefined |
+
+
 
 ## Errors
 
@@ -111,7 +184,10 @@ event RecipientUpdated(address indexed newRecipient)
 error AccessDenied()
 ```
 
-_0x4ca88867_
+
+
+*0x4ca88867*
+
 
 ### BidExists
 
@@ -119,7 +195,10 @@ _0x4ca88867_
 error BidExists()
 ```
 
-_0x3e0827ab_
+
+
+*0x3e0827ab*
+
 
 ### CanceledOrder
 
@@ -127,7 +206,10 @@ _0x3e0827ab_
 error CanceledOrder()
 ```
 
-_0xdf9428da_
+
+
+*0xdf9428da*
+
 
 ### EAOnly
 
@@ -135,7 +217,10 @@ _0xdf9428da_
 error EAOnly()
 ```
 
-_0xffc96cb0_
+
+
+*0xffc96cb0*
+
 
 ### ExceedsMaxEP
 
@@ -143,7 +228,10 @@ _0xffc96cb0_
 error ExceedsMaxEP()
 ```
 
-_0x70f8f33a_
+
+
+*0x70f8f33a*
+
 
 ### InvalidBidder
 
@@ -151,7 +239,10 @@ _0x70f8f33a_
 error InvalidBidder()
 ```
 
-_0x0863b103_
+
+
+*0x0863b103*
+
 
 ### NeedMoreTime
 
@@ -159,7 +250,10 @@ _0x0863b103_
 error NeedMoreTime()
 ```
 
-_0x921dbfec_
+
+
+*0x921dbfec*
+
 
 ### NotBuyable
 
@@ -167,7 +261,10 @@ _0x921dbfec_
 error NotBuyable()
 ```
 
-_0x07ae5744_
+
+
+*0x07ae5744*
+
 
 ### SoldToken
 
@@ -175,7 +272,10 @@ _0x07ae5744_
 error SoldToken()
 ```
 
-_0xf88b07a3_
+
+
+*0xf88b07a3*
+
 
 ### Timeout
 
@@ -183,7 +283,10 @@ _0xf88b07a3_
 error Timeout()
 ```
 
-_0x2af0c7f8_
+
+
+*0x2af0c7f8*
+
 
 ### TransferFailed
 
@@ -191,7 +294,10 @@ _0x2af0c7f8_
 error TransferFailed()
 ```
 
-_0x90b8ec18_
+
+
+*0x90b8ec18*
+
 
 ### WrongPrice
 
@@ -199,4 +305,9 @@ _0x90b8ec18_
 error WrongPrice()
 ```
 
-_0xf7760f25_
+
+
+*0xf7760f25*
+
+
+

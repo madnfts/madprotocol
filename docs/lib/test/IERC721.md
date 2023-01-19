@@ -1,5 +1,13 @@
 # IERC721
 
+
+
+
+
+
+
+
+
 ## Methods
 
 ### approve
@@ -8,12 +16,16 @@
 function approve(address _approved, uint256 _tokenId) external payable
 ```
 
+
+
+
+
 #### Parameters
 
-| Name       | Type    | Description |
-| ---------- | ------- | ----------- |
-| \_approved | address | undefined   |
-| \_tokenId  | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _approved | address | undefined |
+| _tokenId | uint256 | undefined |
 
 ### balanceOf
 
@@ -21,17 +33,21 @@ function approve(address _approved, uint256 _tokenId) external payable
 function balanceOf(address _owner) external view returns (uint256)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name    | Type    | Description |
-| ------- | ------- | ----------- |
-| \_owner | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _owner | address | undefined |
 
 #### Returns
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
 
 ### getApproved
 
@@ -39,17 +55,21 @@ function balanceOf(address _owner) external view returns (uint256)
 function getApproved(uint256 _tokenId) external view returns (address)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name      | Type    | Description |
-| --------- | ------- | ----------- |
-| \_tokenId | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _tokenId | uint256 | undefined |
 
 #### Returns
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | undefined |
 
 ### isApprovedForAll
 
@@ -57,18 +77,22 @@ function getApproved(uint256 _tokenId) external view returns (address)
 function isApprovedForAll(address _owner, address _operator) external view returns (bool)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name       | Type    | Description |
-| ---------- | ------- | ----------- |
-| \_owner    | address | undefined   |
-| \_operator | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _owner | address | undefined |
+| _operator | address | undefined |
 
 #### Returns
 
 | Name | Type | Description |
-| ---- | ---- | ----------- |
-| \_0  | bool | undefined   |
+|---|---|---|
+| _0 | bool | undefined |
 
 ### ownerOf
 
@@ -76,17 +100,21 @@ function isApprovedForAll(address _owner, address _operator) external view retur
 function ownerOf(uint256 _tokenId) external view returns (address)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name      | Type    | Description |
-| --------- | ------- | ----------- |
-| \_tokenId | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _tokenId | uint256 | undefined |
 
 #### Returns
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | undefined |
 
 ### safeTransferFrom
 
@@ -94,13 +122,17 @@ function ownerOf(uint256 _tokenId) external view returns (address)
 function safeTransferFrom(address _from, address _to, uint256 _tokenId) external payable
 ```
 
+
+
+
+
 #### Parameters
 
-| Name      | Type    | Description |
-| --------- | ------- | ----------- |
-| \_from    | address | undefined   |
-| \_to      | address | undefined   |
-| \_tokenId | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _from | address | undefined |
+| _to | address | undefined |
+| _tokenId | uint256 | undefined |
 
 ### safeTransferFrom
 
@@ -108,14 +140,18 @@ function safeTransferFrom(address _from, address _to, uint256 _tokenId) external
 function safeTransferFrom(address _from, address _to, uint256 _tokenId, bytes data) external payable
 ```
 
+
+
+
+
 #### Parameters
 
-| Name      | Type    | Description |
-| --------- | ------- | ----------- |
-| \_from    | address | undefined   |
-| \_to      | address | undefined   |
-| \_tokenId | uint256 | undefined   |
-| data      | bytes   | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _from | address | undefined |
+| _to | address | undefined |
+| _tokenId | uint256 | undefined |
+| data | bytes | undefined |
 
 ### setApprovalForAll
 
@@ -123,12 +159,16 @@ function safeTransferFrom(address _from, address _to, uint256 _tokenId, bytes da
 function setApprovalForAll(address _operator, bool _approved) external nonpayable
 ```
 
+
+
+
+
 #### Parameters
 
-| Name       | Type    | Description |
-| ---------- | ------- | ----------- |
-| \_operator | address | undefined   |
-| \_approved | bool    | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _operator | address | undefined |
+| _approved | bool | undefined |
 
 ### transferFrom
 
@@ -136,13 +176,19 @@ function setApprovalForAll(address _operator, bool _approved) external nonpayabl
 function transferFrom(address _from, address _to, uint256 _tokenId) external payable
 ```
 
+
+
+
+
 #### Parameters
 
-| Name      | Type    | Description |
-| --------- | ------- | ----------- |
-| \_from    | address | undefined   |
-| \_to      | address | undefined   |
-| \_tokenId | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _from | address | undefined |
+| _to | address | undefined |
+| _tokenId | uint256 | undefined |
+
+
 
 ## Events
 
@@ -152,13 +198,17 @@ function transferFrom(address _from, address _to, uint256 _tokenId) external pay
 event Approval(address indexed _owner, address indexed _approved, uint256 indexed _tokenId)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                 | Type    | Description |
-| -------------------- | ------- | ----------- |
-| \_owner `indexed`    | address | undefined   |
-| \_approved `indexed` | address | undefined   |
-| \_tokenId `indexed`  | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _owner `indexed` | address | undefined |
+| _approved `indexed` | address | undefined |
+| _tokenId `indexed` | uint256 | undefined |
 
 ### ApprovalForAll
 
@@ -166,13 +216,17 @@ event Approval(address indexed _owner, address indexed _approved, uint256 indexe
 event ApprovalForAll(address indexed _owner, address indexed _operator, bool _approved)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                 | Type    | Description |
-| -------------------- | ------- | ----------- |
-| \_owner `indexed`    | address | undefined   |
-| \_operator `indexed` | address | undefined   |
-| \_approved           | bool    | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _owner `indexed` | address | undefined |
+| _operator `indexed` | address | undefined |
+| _approved  | bool | undefined |
 
 ### Transfer
 
@@ -180,10 +234,17 @@ event ApprovalForAll(address indexed _owner, address indexed _operator, bool _ap
 event Transfer(address indexed _from, address indexed _to, uint256 indexed _tokenId)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                | Type    | Description |
-| ------------------- | ------- | ----------- |
-| \_from `indexed`    | address | undefined   |
-| \_to `indexed`      | address | undefined   |
-| \_tokenId `indexed` | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _from `indexed` | address | undefined |
+| _to `indexed` | address | undefined |
+| _tokenId `indexed` | uint256 | undefined |
+
+
+

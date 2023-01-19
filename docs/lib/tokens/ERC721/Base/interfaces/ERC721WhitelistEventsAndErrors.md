@@ -1,5 +1,14 @@
 # ERC721WhitelistEventsAndErrors
 
+
+
+
+
+
+
+
+
+
 ## Events
 
 ### BaseURISet
@@ -8,11 +17,15 @@
 event BaseURISet(string indexed newBaseURI)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                 | Type   | Description |
-| -------------------- | ------ | ----------- |
-| newBaseURI `indexed` | string | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newBaseURI `indexed` | string | undefined |
 
 ### FreeClaimStateSet
 
@@ -20,11 +33,15 @@ event BaseURISet(string indexed newBaseURI)
 event FreeClaimStateSet(bool indexed freeClaimState)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                     | Type | Description |
-| ------------------------ | ---- | ----------- |
-| freeClaimState `indexed` | bool | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| freeClaimState `indexed` | bool | undefined |
 
 ### FreeConfigSet
 
@@ -32,13 +49,17 @@ event FreeClaimStateSet(bool indexed freeClaimState)
 event FreeConfigSet(uint256 newFreeAmount, uint256 indexed newMaxFree, bytes32 indexed newMerkleRoot)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                    | Type    | Description |
-| ----------------------- | ------- | ----------- |
-| newFreeAmount           | uint256 | undefined   |
-| newMaxFree `indexed`    | uint256 | undefined   |
-| newMerkleRoot `indexed` | bytes32 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newFreeAmount  | uint256 | undefined |
+| newMaxFree `indexed` | uint256 | undefined |
+| newMerkleRoot `indexed` | bytes32 | undefined |
 
 ### PublicMintStateSet
 
@@ -46,11 +67,15 @@ event FreeConfigSet(uint256 newFreeAmount, uint256 indexed newMaxFree, bytes32 i
 event PublicMintStateSet(bool indexed newPublicState)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                     | Type | Description |
-| ------------------------ | ---- | ----------- |
-| newPublicState `indexed` | bool | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newPublicState `indexed` | bool | undefined |
 
 ### RoyaltyFeeSet
 
@@ -58,11 +83,15 @@ event PublicMintStateSet(bool indexed newPublicState)
 event RoyaltyFeeSet(uint256 indexed newRoyaltyFee)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                    | Type    | Description |
-| ----------------------- | ------- | ----------- |
-| newRoyaltyFee `indexed` | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newRoyaltyFee `indexed` | uint256 | undefined |
 
 ### RoyaltyRecipientSet
 
@@ -70,11 +99,15 @@ event RoyaltyFeeSet(uint256 indexed newRoyaltyFee)
 event RoyaltyRecipientSet(address indexed newRecipient)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                   | Type    | Description |
-| ---------------------- | ------- | ----------- |
-| newRecipient `indexed` | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newRecipient `indexed` | address | undefined |
 
 ### WhitelistConfigSet
 
@@ -82,13 +115,17 @@ event RoyaltyRecipientSet(address indexed newRecipient)
 event WhitelistConfigSet(uint256 indexed newWhitelistPrice, uint256 indexed newMaxWhitelistSupply, bytes32 indexed newMerkleRoot)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                            | Type    | Description |
-| ------------------------------- | ------- | ----------- |
-| newWhitelistPrice `indexed`     | uint256 | undefined   |
-| newMaxWhitelistSupply `indexed` | uint256 | undefined   |
-| newMerkleRoot `indexed`         | bytes32 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newWhitelistPrice `indexed` | uint256 | undefined |
+| newMaxWhitelistSupply `indexed` | uint256 | undefined |
+| newMerkleRoot `indexed` | bytes32 | undefined |
 
 ### WhitelistMintStateSet
 
@@ -96,11 +133,17 @@ event WhitelistConfigSet(uint256 indexed newWhitelistPrice, uint256 indexed newM
 event WhitelistMintStateSet(bool indexed newWhitelistState)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name                        | Type | Description |
-| --------------------------- | ---- | ----------- |
-| newWhitelistState `indexed` | bool | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| newWhitelistState `indexed` | bool | undefined |
+
+
 
 ## Errors
 
@@ -110,7 +153,10 @@ event WhitelistMintStateSet(bool indexed newWhitelistState)
 error AddressDenied()
 ```
 
-_0x3b8474be_
+
+
+*0x3b8474be*
+
 
 ### AlreadyClaimed
 
@@ -118,7 +164,10 @@ _0x3b8474be_
 error AlreadyClaimed()
 ```
 
-_0x646cf558_
+
+
+*0x646cf558*
+
 
 ### FreeClaimClosed
 
@@ -126,7 +175,10 @@ _0x646cf558_
 error FreeClaimClosed()
 ```
 
-_0xf44170cb_
+
+
+*0xf44170cb*
+
 
 ### LoopOverflow
 
@@ -134,7 +186,10 @@ _0xf44170cb_
 error LoopOverflow()
 ```
 
-_0xdfb035c9_
+
+
+*0xdfb035c9*
+
 
 ### MaxFreeReached
 
@@ -142,7 +197,10 @@ _0xdfb035c9_
 error MaxFreeReached()
 ```
 
-_0xf90c1bdb_
+
+
+*0xf90c1bdb*
+
 
 ### MaxMintReached
 
@@ -150,7 +208,10 @@ _0xf90c1bdb_
 error MaxMintReached()
 ```
 
-_0xfc3fc71f_
+
+
+*0xfc3fc71f*
+
 
 ### MaxWhitelistReached
 
@@ -158,7 +219,10 @@ _0xfc3fc71f_
 error MaxWhitelistReached()
 ```
 
-_0xa554e6e1_
+
+
+*0xa554e6e1*
+
 
 ### NotMintedYet
 
@@ -166,7 +230,10 @@ _0xa554e6e1_
 error NotMintedYet()
 ```
 
-_0xbad086ea_
+
+
+*0xbad086ea*
+
 
 ### PublicMintClosed
 
@@ -174,7 +241,10 @@ _0xbad086ea_
 error PublicMintClosed()
 ```
 
-_0x2d0a3f8e_
+
+
+*0x2d0a3f8e*
+
 
 ### WhitelistMintClosed
 
@@ -182,7 +252,10 @@ _0x2d0a3f8e_
 error WhitelistMintClosed()
 ```
 
-_0x700a6c1f_
+
+
+*0x700a6c1f*
+
 
 ### WrongPrice
 
@@ -190,4 +263,9 @@ _0x700a6c1f_
 error WrongPrice()
 ```
 
-_0xf7760f25_
+
+
+*0xf7760f25*
+
+
+

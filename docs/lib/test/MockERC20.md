@@ -1,5 +1,13 @@
 # MockERC20
 
+
+
+
+
+
+
+
+
 ## Methods
 
 ### DOMAIN_SEPARATOR
@@ -8,11 +16,16 @@
 function DOMAIN_SEPARATOR() external view returns (bytes32)
 ```
 
+
+
+
+
+
 #### Returns
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | bytes32 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | bytes32 | undefined |
 
 ### allowance
 
@@ -20,18 +33,22 @@ function DOMAIN_SEPARATOR() external view returns (bytes32)
 function allowance(address, address) external view returns (uint256)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | address | undefined   |
-| \_1  | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | undefined |
+| _1 | address | undefined |
 
 #### Returns
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
 
 ### approve
 
@@ -39,18 +56,22 @@ function allowance(address, address) external view returns (uint256)
 function approve(address spender, uint256 amount) external nonpayable returns (bool)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name    | Type    | Description |
-| ------- | ------- | ----------- |
-| spender | address | undefined   |
-| amount  | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| spender | address | undefined |
+| amount | uint256 | undefined |
 
 #### Returns
 
 | Name | Type | Description |
-| ---- | ---- | ----------- |
-| \_0  | bool | undefined   |
+|---|---|---|
+| _0 | bool | undefined |
 
 ### balanceOf
 
@@ -58,17 +79,21 @@ function approve(address spender, uint256 amount) external nonpayable returns (b
 function balanceOf(address) external view returns (uint256)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | undefined |
 
 #### Returns
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
 
 ### burn
 
@@ -76,12 +101,16 @@ function balanceOf(address) external view returns (uint256)
 function burn(address from, uint256 value) external nonpayable
 ```
 
+
+
+
+
 #### Parameters
 
-| Name  | Type    | Description |
-| ----- | ------- | ----------- |
-| from  | address | undefined   |
-| value | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| from | address | undefined |
+| value | uint256 | undefined |
 
 ### decimals
 
@@ -89,11 +118,16 @@ function burn(address from, uint256 value) external nonpayable
 function decimals() external view returns (uint8)
 ```
 
+
+
+
+
+
 #### Returns
 
-| Name | Type  | Description |
-| ---- | ----- | ----------- |
-| \_0  | uint8 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint8 | undefined |
 
 ### mint
 
@@ -101,12 +135,16 @@ function decimals() external view returns (uint8)
 function mint(address to, uint256 value) external nonpayable
 ```
 
+
+
+
+
 #### Parameters
 
-| Name  | Type    | Description |
-| ----- | ------- | ----------- |
-| to    | address | undefined   |
-| value | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| to | address | undefined |
+| value | uint256 | undefined |
 
 ### name
 
@@ -114,11 +152,16 @@ function mint(address to, uint256 value) external nonpayable
 function name() external view returns (string)
 ```
 
+
+
+
+
+
 #### Returns
 
-| Name | Type   | Description |
-| ---- | ------ | ----------- |
-| \_0  | string | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | string | undefined |
 
 ### nonces
 
@@ -126,17 +169,21 @@ function name() external view returns (string)
 function nonces(address) external view returns (uint256)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | address | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | undefined |
 
 #### Returns
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
 
 ### permit
 
@@ -144,17 +191,21 @@ function nonces(address) external view returns (uint256)
 function permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external nonpayable
 ```
 
+
+
+
+
 #### Parameters
 
-| Name     | Type    | Description |
-| -------- | ------- | ----------- |
-| owner    | address | undefined   |
-| spender  | address | undefined   |
-| value    | uint256 | undefined   |
-| deadline | uint256 | undefined   |
-| v        | uint8   | undefined   |
-| r        | bytes32 | undefined   |
-| s        | bytes32 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| owner | address | undefined |
+| spender | address | undefined |
+| value | uint256 | undefined |
+| deadline | uint256 | undefined |
+| v | uint8 | undefined |
+| r | bytes32 | undefined |
+| s | bytes32 | undefined |
 
 ### symbol
 
@@ -162,11 +213,16 @@ function permit(address owner, address spender, uint256 value, uint256 deadline,
 function symbol() external view returns (string)
 ```
 
+
+
+
+
+
 #### Returns
 
-| Name | Type   | Description |
-| ---- | ------ | ----------- |
-| \_0  | string | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | string | undefined |
 
 ### totalSupply
 
@@ -174,11 +230,16 @@ function symbol() external view returns (string)
 function totalSupply() external view returns (uint256)
 ```
 
+
+
+
+
+
 #### Returns
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| \_0  | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
 
 ### transfer
 
@@ -186,18 +247,22 @@ function totalSupply() external view returns (uint256)
 function transfer(address to, uint256 amount) external nonpayable returns (bool)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name   | Type    | Description |
-| ------ | ------- | ----------- |
-| to     | address | undefined   |
-| amount | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| to | address | undefined |
+| amount | uint256 | undefined |
 
 #### Returns
 
 | Name | Type | Description |
-| ---- | ---- | ----------- |
-| \_0  | bool | undefined   |
+|---|---|---|
+| _0 | bool | undefined |
 
 ### transferFrom
 
@@ -205,19 +270,25 @@ function transfer(address to, uint256 amount) external nonpayable returns (bool)
 function transferFrom(address from, address to, uint256 amount) external nonpayable returns (bool)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name   | Type    | Description |
-| ------ | ------- | ----------- |
-| from   | address | undefined   |
-| to     | address | undefined   |
-| amount | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| from | address | undefined |
+| to | address | undefined |
+| amount | uint256 | undefined |
 
 #### Returns
 
 | Name | Type | Description |
-| ---- | ---- | ----------- |
-| \_0  | bool | undefined   |
+|---|---|---|
+| _0 | bool | undefined |
+
+
 
 ## Events
 
@@ -227,13 +298,17 @@ function transferFrom(address from, address to, uint256 amount) external nonpaya
 event Approval(address indexed owner, address indexed spender, uint256 amount)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name              | Type    | Description |
-| ----------------- | ------- | ----------- |
-| owner `indexed`   | address | undefined   |
-| spender `indexed` | address | undefined   |
-| amount            | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| owner `indexed` | address | undefined |
+| spender `indexed` | address | undefined |
+| amount  | uint256 | undefined |
 
 ### Transfer
 
@@ -241,10 +316,17 @@ event Approval(address indexed owner, address indexed spender, uint256 amount)
 event Transfer(address indexed from, address indexed to, uint256 amount)
 ```
 
+
+
+
+
 #### Parameters
 
-| Name           | Type    | Description |
-| -------------- | ------- | ----------- |
-| from `indexed` | address | undefined   |
-| to `indexed`   | address | undefined   |
-| amount         | uint256 | undefined   |
+| Name | Type | Description |
+|---|---|---|
+| from `indexed` | address | undefined |
+| to `indexed` | address | undefined |
+| amount  | uint256 | undefined |
+
+
+

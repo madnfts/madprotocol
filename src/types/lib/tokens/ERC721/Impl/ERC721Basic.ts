@@ -35,6 +35,7 @@ export interface ERC721BasicInterface extends utils.Interface {
     "baseURILock()": FunctionFragment;
     "burn(uint256[],address)": FunctionFragment;
     "erc20()": FunctionFragment;
+    "feeCount()": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "getBaseURI()": FunctionFragment;
     "getMintCount()": FunctionFragment;
@@ -73,6 +74,7 @@ export interface ERC721BasicInterface extends utils.Interface {
       | "baseURILock"
       | "burn"
       | "erc20"
+      | "feeCount"
       | "getApproved"
       | "getBaseURI"
       | "getMintCount"
@@ -121,6 +123,7 @@ export interface ERC721BasicInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "erc20", values?: undefined): string;
+  encodeFunctionData(functionFragment: "feeCount", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getApproved",
     values: [PromiseOrValue<BigNumberish>]
@@ -250,6 +253,7 @@ export interface ERC721BasicInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "erc20", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "feeCount", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getApproved",
     data: BytesLike
@@ -489,6 +493,8 @@ export interface ERC721Basic extends BaseContract {
 
     erc20(overrides?: CallOverrides): Promise<[string]>;
 
+    feeCount(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     getApproved(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -643,6 +649,8 @@ export interface ERC721Basic extends BaseContract {
 
   erc20(overrides?: CallOverrides): Promise<string>;
 
+  feeCount(overrides?: CallOverrides): Promise<BigNumber>;
+
   getApproved(
     arg0: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -796,6 +804,8 @@ export interface ERC721Basic extends BaseContract {
     ): Promise<void>;
 
     erc20(overrides?: CallOverrides): Promise<string>;
+
+    feeCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     getApproved(
       arg0: PromiseOrValue<BigNumberish>,
@@ -1029,6 +1039,8 @@ export interface ERC721Basic extends BaseContract {
 
     erc20(overrides?: CallOverrides): Promise<BigNumber>;
 
+    feeCount(overrides?: CallOverrides): Promise<BigNumber>;
+
     getApproved(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1181,6 +1193,8 @@ export interface ERC721Basic extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     erc20(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    feeCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getApproved(
       arg0: PromiseOrValue<BigNumberish>,

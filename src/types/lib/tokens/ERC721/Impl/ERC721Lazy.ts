@@ -62,6 +62,7 @@ export interface ERC721LazyInterface extends utils.Interface {
     "baseURILock()": FunctionFragment;
     "burn(uint256[],address)": FunctionFragment;
     "erc20()": FunctionFragment;
+    "feeCount()": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "getBaseURI()": FunctionFragment;
     "getMintCount()": FunctionFragment;
@@ -87,8 +88,8 @@ export interface ERC721LazyInterface extends utils.Interface {
     "totalSupply()": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
     "usedVouchers(bytes32)": FunctionFragment;
-    "withdraw()": FunctionFragment;
-    "withdrawERC20(address)": FunctionFragment;
+    "withdraw(address)": FunctionFragment;
+    "withdrawERC20(address,address)": FunctionFragment;
   };
 
   getFunction(
@@ -101,6 +102,7 @@ export interface ERC721LazyInterface extends utils.Interface {
       | "baseURILock"
       | "burn"
       | "erc20"
+      | "feeCount"
       | "getApproved"
       | "getBaseURI"
       | "getMintCount"
@@ -169,6 +171,7 @@ export interface ERC721LazyInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "erc20", values?: undefined): string;
+  encodeFunctionData(functionFragment: "feeCount", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getApproved",
     values: [PromiseOrValue<BigNumberish>]
@@ -277,10 +280,13 @@ export interface ERC721LazyInterface extends utils.Interface {
     functionFragment: "usedVouchers",
     values: [PromiseOrValue<BytesLike>]
   ): string;
-  encodeFunctionData(functionFragment: "withdraw", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "withdraw",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "withdrawERC20",
-    values: [PromiseOrValue<string>]
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
 
   decodeFunctionResult(
@@ -300,6 +306,7 @@ export interface ERC721LazyInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "erc20", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "feeCount", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getApproved",
     data: BytesLike
@@ -548,6 +555,8 @@ export interface ERC721Lazy extends BaseContract {
 
     erc20(overrides?: CallOverrides): Promise<[string]>;
 
+    feeCount(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     getApproved(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -667,11 +676,13 @@ export interface ERC721Lazy extends BaseContract {
     ): Promise<[boolean]>;
 
     withdraw(
+      recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     withdrawERC20(
       _token: PromiseOrValue<string>,
+      recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
@@ -714,6 +725,8 @@ export interface ERC721Lazy extends BaseContract {
   ): Promise<ContractTransaction>;
 
   erc20(overrides?: CallOverrides): Promise<string>;
+
+  feeCount(overrides?: CallOverrides): Promise<BigNumber>;
 
   getApproved(
     arg0: PromiseOrValue<BigNumberish>,
@@ -832,11 +845,13 @@ export interface ERC721Lazy extends BaseContract {
   ): Promise<boolean>;
 
   withdraw(
+    recipient: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   withdrawERC20(
     _token: PromiseOrValue<string>,
+    recipient: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -879,6 +894,8 @@ export interface ERC721Lazy extends BaseContract {
     ): Promise<void>;
 
     erc20(overrides?: CallOverrides): Promise<string>;
+
+    feeCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     getApproved(
       arg0: PromiseOrValue<BigNumberish>,
@@ -996,10 +1013,14 @@ export interface ERC721Lazy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    withdraw(overrides?: CallOverrides): Promise<void>;
+    withdraw(
+      recipient: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     withdrawERC20(
       _token: PromiseOrValue<string>,
+      recipient: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -1123,6 +1144,8 @@ export interface ERC721Lazy extends BaseContract {
 
     erc20(overrides?: CallOverrides): Promise<BigNumber>;
 
+    feeCount(overrides?: CallOverrides): Promise<BigNumber>;
+
     getApproved(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1240,11 +1263,13 @@ export interface ERC721Lazy extends BaseContract {
     ): Promise<BigNumber>;
 
     withdraw(
+      recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     withdrawERC20(
       _token: PromiseOrValue<string>,
+      recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
@@ -1288,6 +1313,8 @@ export interface ERC721Lazy extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     erc20(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    feeCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getApproved(
       arg0: PromiseOrValue<BigNumberish>,
@@ -1406,11 +1433,13 @@ export interface ERC721Lazy extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     withdraw(
+      recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     withdrawERC20(
       _token: PromiseOrValue<string>,
+      recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };

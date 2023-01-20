@@ -6,7 +6,6 @@ import { ERC721BasicEventsAndErrors } from "../Base/interfaces/ERC721EventAndErr
 import { ERC721, ERC721TokenReceiver } from "../Base/ERC721.sol";
 import { ERC2981 } from "../../common/ERC2981.sol";
 import { ERC20 } from "../../ERC20.sol";
-
 import { Owned } from "../../../auth/Owned.sol";
 import { ReentrancyGuard } from "../../../security/ReentrancyGuard.sol";
 import { SplitterImpl } from "../../../splitter/SplitterImpl.sol";
@@ -43,7 +42,7 @@ contract ERC721Basic is
     uint256 private mintCount;
 
     /// @notice Fee counter.
-    uint256 private feeCount;
+    uint256 public feeCount;
 
     /// @notice Token base URI string.
     string private baseURI;
@@ -69,27 +68,27 @@ contract ERC721Basic is
         _;
     }
 
-    modifier hasReachedMax(uint256 amount) {
-        if (mintCount + amount > maxSupply)
-            revert MaxSupplyReached();
-        _;
-    }
-
-    modifier priceCheckERC20(uint256 _price, uint256 amount) {
+    modifier publicMintPriceCheck(uint256 _price, uint256 _amount) {
         address _owner = owner;
-        uint32 size;
+        uint32 _size;
         uint256 _fee = 0; 
         assembly {
-            size := extcodesize(_owner)
+            _size := extcodesize(_owner)
         }
-        if (size > 0) {
+        if (_size > 0) {
             _fee = FeeOracle(owner).feeLookup(0x40d097c3);
             feeCount += _fee;
         }
         uint256 value = (address(erc20) != address(0))
             ? erc20.allowance(msg.sender, address(this))
             : msg.value;
-        if ((_price * amount) + _fee != value) revert WrongPrice();
+        if ((_price * _amount) + _fee != value) revert WrongPrice();
+        _;
+    }
+
+    modifier hasReachedMax(uint256 amount) {
+        if (mintCount + amount > maxSupply)
+            revert MaxSupplyReached();
         _;
     }
 
@@ -295,7 +294,7 @@ contract ERC721Basic is
         nonReentrant
         publicMintAccess
         hasReachedMax(amount)
-        priceCheckERC20(price, amount)
+        publicMintPriceCheck(price, amount)
     {
         _paymentCheck(msg.sender, 2);
         uint256 i;
@@ -360,8 +359,8 @@ contract ERC721Basic is
     ////////////////////////////////////////////////////////////////
 
     /// @dev Checks if mint / burn fees are paid
-    /// @dev If non router deploy we check msg.value if !erc20 OR checks erc20 approval and transfers
-    /// @dev If router deploy we check msg.value if !erc20 BUT checks erc20 approval and transfers are via the router
+    /// @dev If not router deployed we check msg.value if !erc20 OR checks erc20 approval and transfers
+    /// @dev If router deployed we check msg.value if !erc20 BUT checks erc20 approval and transfers are via the router
     /// @param _erc20Owner Non router deploy =msg.sender; Router deploy =payer.address (msg.sender = router.address)
     /// @param _type Passed to _feeCheck to determin the fee 0=mint; 1=burn; ELSE _feeCheck is ignored
     function _paymentCheck(address _erc20Owner, uint8 _type)

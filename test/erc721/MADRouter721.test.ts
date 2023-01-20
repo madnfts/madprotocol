@@ -1085,7 +1085,7 @@ describe("MADRouter721", () => {
           sigSplit.v,
           sigSplit.r,
           sigSplit.s,
-          { value: price.mul(ethers.BigNumber.from(2)) },
+          { value: price.mul(ethers.BigNumber.from(2)).add(ethers.utils.parseEther("0.25")) },
         );
       const tx = await r721
         .connect(acc02)
@@ -1840,7 +1840,7 @@ describe("MADRouter721", () => {
           sigSplit.v,
           sigSplit.r,
           sigSplit.s,
-          { value: price },
+          { value: price.add(ethers.utils.parseEther("0.25")) },
         );
 
       const bal3 = await ethers.provider.getBalance(newUser);
@@ -1969,7 +1969,7 @@ describe("MADRouter721", () => {
         ethers.utils.parseEther("0.5"),
       );
       
-      // Deploy Basic contracts and set public mint = true
+      // Deploy BASIC contracts and set public mint = true
       const basicAddr = await f721.callStatic.getDeployedAddr(
         "salt",
       );
@@ -2052,6 +2052,140 @@ describe("MADRouter721", () => {
       expect(endBalRecipient).to.eq(startBalRecipient.add(ethers.utils.parseEther("2.5")))
       // acc01.address = buyer = - price - fee - txFees
       expect(endBalAcc01).to.eq(startBalAcc01.sub(txMintGas).sub(ethers.utils.parseEther("3.5")))
+
+      // LAZY prepare the token
+      const lazyAddr = await f721.callStatic.getDeployedAddr(
+        "LazySalt",
+      );
+      await f721
+        .connect(mad)
+        .createCollection(
+          3,
+          "LazySalt",
+          "721Lazy",
+          "LAZY",
+          ethers.constants.Zero,
+          ethers.constants.Zero,
+          "ipfs://cid/",
+          madSpl,
+          750,
+        );
+      const lazy = await ethers.getContractAt(
+        "ERC721Lazy",
+        lazyAddr,
+      );
+      const net = await lazy.provider.getNetwork();
+      const chainId = net.chainId;
+      const bnPrice = ethers.utils.parseEther("1");
+      const usrs = [acc01.address];
+      const vId = ethers.utils.keccak256(
+        ethers.utils.toUtf8Bytes("voucher"),
+      );
+      const signer = ethers.Wallet.createRandom();
+      const signerAddr = await signer.getAddress();
+      await r721.setSigner(lazyAddr, signerAddr);
+      const pk = Buffer.from(
+        signer.privateKey.slice(2),
+        "hex",
+      );
+      const domain = [
+        { name: "name", type: "string" },
+        { name: "version", type: "string" },
+        { name: "chainId", type: "uint256" },
+        { name: "verifyingContract", type: "address" },
+      ];
+      const voucherType = [
+        { name: "voucherId", type: "bytes32" },
+        { name: "users", type: "address[]" },
+        { name: "balances", type: "uint256[]" },
+        { name: "amount", type: "uint256" },
+        { name: "price", type: "uint256" },
+      ];
+      const domainData = {
+        name: "721Lazy",
+        version: "1",
+        chainId: chainId,
+        verifyingContract: lazy.address,
+      };
+      const Voucher = {
+        voucherId: vId,
+        users: usrs,
+        balances: [1],
+        amount: 1,
+        price: bnPrice.toString(),
+      };
+      const data = JSON.stringify({
+        types: {
+          EIP712Domain: domain,
+          Voucher: voucherType,
+        },
+        primaryType: "Voucher",
+        domain: domainData,
+        message: Voucher,
+      });
+      const parsedData = JSON.parse(data);
+      const signature = signTypedData({
+        privateKey: pk,
+        data: parsedData,
+        version: SignTypedDataVersion.V4,
+      });
+      const sigSplit = ethers.utils.splitSignature(signature);
+
+      // Record start balances
+      const startBalMadLazy = await ethers.provider.getBalance(
+        mad.address,
+      );
+      const startBalAmbLazy = await ethers.provider.getBalance(
+        amb.address,
+      );
+      const startBalRecipientLazy = await ethers.provider.getBalance(
+        recipient,
+      );
+      const startBalAcc01Lazy = await ethers.provider.getBalance(
+        acc01.address,
+      );
+      
+      // Mint a lazy public token - fee 2.5 + price 1 
+      const txMintLazy = await lazy
+        .connect(acc01)
+        .lazyMint(
+          Voucher,
+          sigSplit.v,
+          sigSplit.r,
+          sigSplit.s,
+          { value: price.add(ethers.utils.parseEther("2.5")) },
+        );
+      const receiptMintLazy = await txMintLazy.wait()
+      const txMintGasLazy = receiptMintLazy.gasUsed.mul(receiptMintLazy.effectiveGasPrice)
+      const txWithdrawLazy = await r721
+        .connect(mad)
+        .withdraw(lazy.address, dead);
+      const receiptLazy = await txWithdrawLazy.wait()
+      const txWithdrawGasLazy = receiptLazy.gasUsed.mul(receiptLazy.effectiveGasPrice)
+          
+      // Record end balances
+      const endBalMadLazy = await ethers.provider.getBalance(
+        mad.address,
+      );
+      const endBalAmbLazy = await ethers.provider.getBalance(
+        amb.address,
+      );
+      const endBalRecipientLazy = await ethers.provider.getBalance(
+        recipient,
+      );
+      const endBalAcc01Lazy = await ethers.provider.getBalance(
+        acc01.address,
+      );
+      
+      // mad.address = creator = - txWithdrawGas + 80% of price (remaining 20% goes to ambassador)
+      expect(endBalMadLazy).to.eq(startBalMadLazy.sub(txWithdrawGasLazy).add(ethers.utils.parseEther("0.8")))
+      // amb.address = ambassador = + 20% of price (remaining 80% goes to creator)
+      expect(endBalAmbLazy).to.eq(startBalAmbLazy.add(ethers.utils.parseEther("0.2")))
+      // owner.address = MAD receiver = + 100% mint fees
+      expect(endBalRecipientLazy).to.eq(startBalRecipientLazy.add(ethers.utils.parseEther("2.5")))
+      // acc01.address = buyer = - price - fee - txFees
+      expect(endBalAcc01Lazy).to.eq(startBalAcc01Lazy.sub(txMintGasLazy).sub(ethers.utils.parseEther("3.5")))
+
     });
   });
   describe("Only Owner", async () => {
@@ -2457,7 +2591,7 @@ describe("MADRouter721", () => {
           sigSplit.v,
           sigSplit.r,
           sigSplit.s,
-          { value: price.mul(ethers.BigNumber.from(2)) },
+          { value: price.mul(ethers.BigNumber.from(2)).add(ethers.utils.parseEther("2.5")) },
         );
       await expect(
         r721.connect(acc02).burn(lazyAddr, [1, 2]),

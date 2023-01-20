@@ -336,11 +336,11 @@ describe("ERC721Lazy - ERC20", () => {
       ];
 
       await expect(() =>
-        lazy.withdrawERC20(erc20.address),
+        lazy.withdrawERC20(erc20.address, ethers.constants.AddressZero),
       ).to.changeTokenBalances(erc20, addrs, vals);
 
       await expect(
-        lazy.connect(acc02).withdrawERC20(erc20.address),
+        lazy.connect(acc02).withdrawERC20(erc20.address, ethers.constants.AddressZero),
       ).to.be.revertedWith(LazyErrors.Unauthorized);
     });
   });

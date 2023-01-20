@@ -57,6 +57,9 @@ contract ERC721Lazy is
     /// @notice Mint counter, includes burnt count.
     uint256 private mintCount;
 
+    /// @notice Fee counter.
+    uint256 public feeCount;
+
     /// @notice Token base URI string.
     string private baseURI;
 
@@ -153,11 +156,21 @@ contract ERC721Lazy is
         // Transfer event emited by parent ERC721 contract
     }
 
-    function withdraw() external onlyOwner {
+    function withdraw(address recipient) external onlyOwner {
         uint256 len = splitter.payeesLength();
         address[] memory addrs = new address[](len);
         uint256[] memory values = new uint256[](len);
-        uint256 _val = address(this).balance;
+        uint256 _val;
+        if (feeCount > 0 && recipient != address(0)) {
+            _val = address(this).balance - feeCount;
+            SafeTransferLib.safeTransferETH(
+                payable(recipient),
+                feeCount
+            );
+            feeCount = 0;
+        } else {
+            _val = address(this).balance;
+        }
         uint256 i;
         for (i; i < len; ) {
             address addr = splitter._payees(i);
@@ -180,12 +193,25 @@ contract ERC721Lazy is
         }
     }
 
-    function withdrawERC20(ERC20 _token) external onlyOwner {
+    function withdrawERC20(ERC20 _token, address recipient) external onlyOwner {
         uint256 len = splitter.payeesLength();
         address[] memory addrs = new address[](len);
         uint256[] memory values = new uint256[](len);
+        // Transfer mint fees 
+        uint256 _val;
+        if (feeCount > 0 && recipient != address(0)) {
+            _val = _token.balanceOf(address(this)) - feeCount;
+            SafeTransferLib.safeTransfer(
+                _token,
+                recipient,
+                feeCount
+            );
+            feeCount = 0;
+        } else {
+            _val = _token.balanceOf(address(this));
+        }
+        // Transfer splitter funds to shareholders
         uint256 i;
-        uint256 _val = _token.balanceOf(address(this));
         for (i; i < len; ) {
             address addr = splitter._payees(i);
             uint256 share = splitter._shares(addr);
@@ -225,10 +251,9 @@ contract ERC721Lazy is
     ) external payable nonReentrant {
         address _signer = _verify(voucher, v, r, s);
         uint256 value = _getPriceValue(msg.sender);
-
+        
         _lazyCheck(_signer, voucher, value);
 
-        // Only attempt to transfer if the sender is the _erc20Owner (not envoked through proxy)
         if (address(erc20) != address(0)) {
             SafeTransferLib.safeTransferFrom(
                 erc20,
@@ -269,16 +294,31 @@ contract ERC721Lazy is
         address _signer,
         Types.Voucher calldata voucher,
         uint256 value
-    ) private view {
+    ) private {
         if (_signer != signer) revert InvalidSigner();
         if (usedVouchers[voucher.voucherId])
             revert UsedVoucher();
+
+        address _owner = owner;
+        uint32 _size;
+        uint256 _fee = 0; 
+        assembly {
+            _size := extcodesize(_owner)
+        }
+        if (_size > 0) {
+            _fee = FeeOracle(owner).feeLookup(0x40d097c3);
+        }
         if (
-            value !=
-            (voucher.price *
-                voucher.amount *
-                voucher.users.length)
+            _fee > value || 
+            (value - _fee !=
+                (voucher.price *
+                    voucher.amount *
+                    voucher.users.length))
         ) revert WrongPrice();
+
+        if (_size > 0) {
+            feeCount += _fee;
+        }
     }
 
     function _verifyVoucher(

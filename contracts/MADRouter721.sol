@@ -418,9 +418,9 @@ contract MADRouter721 is
         if (_tokenType > 2) {
             address(_erc20) != address(0) &&
                 _erc20.balanceOf(_token) != 0
-                ? ERC721Lazy(_token).withdrawERC20(_erc20)
+                ? ERC721Lazy(_token).withdrawERC20(_erc20, recipient)
                 : _token.balance != 0
-                ? ERC721Lazy(_token).withdraw()
+                ? ERC721Lazy(_token).withdraw(recipient)
                 : revert("NO_FUNDS");
 
             emit TokenFundsWithdrawn(

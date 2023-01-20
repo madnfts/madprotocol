@@ -28,6 +28,7 @@ export interface RouterEventsInterface extends utils.Interface {
     "FreeClaimState(bytes32,uint8,bool)": EventFragment;
     "PaymentTokenUpdated(address)": EventFragment;
     "PublicMintState(bytes32,uint8,bool)": EventFragment;
+    "RecipientUpdated(address)": EventFragment;
     "TokenFundsWithdrawn(bytes32,uint8,address)": EventFragment;
     "WhitelistMintState(bytes32,uint8,bool)": EventFragment;
   };
@@ -37,6 +38,7 @@ export interface RouterEventsInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "FreeClaimState"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PaymentTokenUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PublicMintState"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RecipientUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TokenFundsWithdrawn"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "WhitelistMintState"): EventFragment;
 }
@@ -94,6 +96,17 @@ export type PublicMintStateEvent = TypedEvent<
 >;
 
 export type PublicMintStateEventFilter = TypedEventFilter<PublicMintStateEvent>;
+
+export interface RecipientUpdatedEventObject {
+  newRecipient: string;
+}
+export type RecipientUpdatedEvent = TypedEvent<
+  [string],
+  RecipientUpdatedEventObject
+>;
+
+export type RecipientUpdatedEventFilter =
+  TypedEventFilter<RecipientUpdatedEvent>;
 
 export interface TokenFundsWithdrawnEventObject {
   _id: string;
@@ -195,6 +208,13 @@ export interface RouterEvents extends BaseContract {
       _type?: PromiseOrValue<BigNumberish> | null,
       _state?: PromiseOrValue<boolean> | null
     ): PublicMintStateEventFilter;
+
+    "RecipientUpdated(address)"(
+      newRecipient?: PromiseOrValue<string> | null
+    ): RecipientUpdatedEventFilter;
+    RecipientUpdated(
+      newRecipient?: PromiseOrValue<string> | null
+    ): RecipientUpdatedEventFilter;
 
     "TokenFundsWithdrawn(bytes32,uint8,address)"(
       _id?: PromiseOrValue<BytesLike> | null,

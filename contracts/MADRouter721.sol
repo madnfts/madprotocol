@@ -46,6 +46,9 @@ contract MADRouter721 is
     /// @notice Burn fee store.
     uint256 public feeBurn = 0;
 
+    /// @dev The recipient address used for public mint fees.
+    address public recipient;
+
     /// @notice Contract name.
     /// @dev Function Sighash := 0x06fdde03
     function name()
@@ -68,14 +71,17 @@ contract MADRouter721 is
     /// @notice Constructor requires a valid factory address and an optional erc20 payment token address.
     /// @param _factory 721 factory address.
     /// @param _paymentTokenAddress erc20 token address | address(0).
+    /// @param _recipient 721 factory address.
     constructor(
         FactoryVerifier _factory,
-        address _paymentTokenAddress
+        address _paymentTokenAddress,
+        address _recipient
     ) {
         MADFactory721 = _factory;
         if (_paymentTokenAddress != address(0)) {
             setPaymentToken(_paymentTokenAddress);
         }
+        setRecipient(_recipient);
     }
 
     ////////////////////////////////////////////////////////////////
@@ -380,9 +386,9 @@ contract MADRouter721 is
         if (_tokenType == 1) {
             address(_erc20) != address(0) &&
                 _erc20.balanceOf(_token) != 0
-                ? ERC721Basic(_token).withdrawERC20(_erc20)
+                ? ERC721Basic(_token).withdrawERC20(_erc20, recipient)
                 : _token.balance != 0
-                ? ERC721Basic(_token).withdraw()
+                ? ERC721Basic(_token).withdraw(recipient)
                 : revert("NO_FUNDS");
 
             emit TokenFundsWithdrawn(
@@ -555,6 +561,18 @@ contract MADRouter721 is
     ////////////////////////////////////////////////////////////////
     //                         OWNER FX                           //
     ////////////////////////////////////////////////////////////////
+
+    /// @dev Setter for public mint fee _recipient.
+    /// @dev Function Sighash := ?
+    function setRecipient(address _recipient) public onlyOwner {
+        require(_recipient != address(0), "Invalid address");
+
+        assembly {
+            sstore(recipient.slot, _recipient)
+        }
+
+        emit RecipientUpdated(_recipient);
+    }
 
     /// @notice Set the Routers owner address.
     /// @dev Function Signature := 0x13af4035

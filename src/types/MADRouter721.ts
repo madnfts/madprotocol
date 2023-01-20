@@ -45,12 +45,14 @@ export interface MADRouter721Interface extends utils.Interface {
     "owner()": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
+    "recipient()": FunctionFragment;
     "setBase(address,string)": FunctionFragment;
     "setBaseLock(address)": FunctionFragment;
     "setFees(uint256,uint256)": FunctionFragment;
     "setMintState(address,bool,uint8)": FunctionFragment;
     "setOwner(address)": FunctionFragment;
     "setPaymentToken(address)": FunctionFragment;
+    "setRecipient(address)": FunctionFragment;
     "setSigner(address,address)": FunctionFragment;
     "unpause()": FunctionFragment;
     "whitelistSettings(address,uint256,uint256,bytes32)": FunctionFragment;
@@ -74,12 +76,14 @@ export interface MADRouter721Interface extends utils.Interface {
       | "owner"
       | "pause"
       | "paused"
+      | "recipient"
       | "setBase"
       | "setBaseLock"
       | "setFees"
       | "setMintState"
       | "setOwner"
       | "setPaymentToken"
+      | "setRecipient"
       | "setSigner"
       | "unpause"
       | "whitelistSettings"
@@ -134,6 +138,7 @@ export interface MADRouter721Interface extends utils.Interface {
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
+  encodeFunctionData(functionFragment: "recipient", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "setBase",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
@@ -160,6 +165,10 @@ export interface MADRouter721Interface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setPaymentToken",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setRecipient",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -211,6 +220,7 @@ export interface MADRouter721Interface extends utils.Interface {
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "recipient", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setBase", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setBaseLock",
@@ -224,6 +234,10 @@ export interface MADRouter721Interface extends utils.Interface {
   decodeFunctionResult(functionFragment: "setOwner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setPaymentToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setRecipient",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setSigner", data: BytesLike): Result;
@@ -242,6 +256,7 @@ export interface MADRouter721Interface extends utils.Interface {
     "Paused(address)": EventFragment;
     "PaymentTokenUpdated(address)": EventFragment;
     "PublicMintState(bytes32,uint8,bool)": EventFragment;
+    "RecipientUpdated(address)": EventFragment;
     "TokenFundsWithdrawn(bytes32,uint8,address)": EventFragment;
     "Unpaused(address)": EventFragment;
     "WhitelistMintState(bytes32,uint8,bool)": EventFragment;
@@ -254,6 +269,7 @@ export interface MADRouter721Interface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PaymentTokenUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PublicMintState"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RecipientUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TokenFundsWithdrawn"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "WhitelistMintState"): EventFragment;
@@ -330,6 +346,17 @@ export type PublicMintStateEvent = TypedEvent<
 >;
 
 export type PublicMintStateEventFilter = TypedEventFilter<PublicMintStateEvent>;
+
+export interface RecipientUpdatedEventObject {
+  newRecipient: string;
+}
+export type RecipientUpdatedEvent = TypedEvent<
+  [string],
+  RecipientUpdatedEventObject
+>;
+
+export type RecipientUpdatedEventFilter =
+  TypedEventFilter<RecipientUpdatedEvent>;
 
 export interface TokenFundsWithdrawnEventObject {
   _id: string;
@@ -453,6 +480,8 @@ export interface MADRouter721 extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<[boolean]>;
 
+    recipient(overrides?: CallOverrides): Promise<[string]>;
+
     setBase(
       _token: PromiseOrValue<string>,
       _baseURI: PromiseOrValue<string>,
@@ -484,6 +513,11 @@ export interface MADRouter721 extends BaseContract {
 
     setPaymentToken(
       _paymentTokenAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setRecipient(
+      _recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -574,6 +608,8 @@ export interface MADRouter721 extends BaseContract {
 
   paused(overrides?: CallOverrides): Promise<boolean>;
 
+  recipient(overrides?: CallOverrides): Promise<string>;
+
   setBase(
     _token: PromiseOrValue<string>,
     _baseURI: PromiseOrValue<string>,
@@ -605,6 +641,11 @@ export interface MADRouter721 extends BaseContract {
 
   setPaymentToken(
     _paymentTokenAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setRecipient(
+    _recipient: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -693,6 +734,8 @@ export interface MADRouter721 extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<boolean>;
 
+    recipient(overrides?: CallOverrides): Promise<string>;
+
     setBase(
       _token: PromiseOrValue<string>,
       _baseURI: PromiseOrValue<string>,
@@ -724,6 +767,11 @@ export interface MADRouter721 extends BaseContract {
 
     setPaymentToken(
       _paymentTokenAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setRecipient(
+      _recipient: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -806,6 +854,13 @@ export interface MADRouter721 extends BaseContract {
       _type?: PromiseOrValue<BigNumberish> | null,
       _state?: PromiseOrValue<boolean> | null
     ): PublicMintStateEventFilter;
+
+    "RecipientUpdated(address)"(
+      newRecipient?: PromiseOrValue<string> | null
+    ): RecipientUpdatedEventFilter;
+    RecipientUpdated(
+      newRecipient?: PromiseOrValue<string> | null
+    ): RecipientUpdatedEventFilter;
 
     "TokenFundsWithdrawn(bytes32,uint8,address)"(
       _id?: PromiseOrValue<BytesLike> | null,
@@ -896,6 +951,8 @@ export interface MADRouter721 extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<BigNumber>;
 
+    recipient(overrides?: CallOverrides): Promise<BigNumber>;
+
     setBase(
       _token: PromiseOrValue<string>,
       _baseURI: PromiseOrValue<string>,
@@ -927,6 +984,11 @@ export interface MADRouter721 extends BaseContract {
 
     setPaymentToken(
       _paymentTokenAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setRecipient(
+      _recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1018,6 +1080,8 @@ export interface MADRouter721 extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    recipient(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     setBase(
       _token: PromiseOrValue<string>,
       _baseURI: PromiseOrValue<string>,
@@ -1049,6 +1113,11 @@ export interface MADRouter721 extends BaseContract {
 
     setPaymentToken(
       _paymentTokenAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setRecipient(
+      _recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

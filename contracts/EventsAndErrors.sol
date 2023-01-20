@@ -339,6 +339,8 @@ interface RouterEvents {
         address indexed newPaymentToken
     );
 
+    event RecipientUpdated(address indexed newRecipient);
+
     /// @dev 0xf7760f25
     error WrongPrice();
 }

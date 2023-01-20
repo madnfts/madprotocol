@@ -121,6 +121,19 @@ const _abi = [
     inputs: [
       {
         indexed: true,
+        internalType: "address",
+        name: "newRecipient",
+        type: "address",
+      },
+    ],
+    name: "RecipientUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
         internalType: "bytes32",
         name: "_id",
         type: "bytes32",

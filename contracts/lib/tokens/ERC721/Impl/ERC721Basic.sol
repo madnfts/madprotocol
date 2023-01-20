@@ -42,6 +42,9 @@ contract ERC721Basic is
     /// @notice Mint counter, includes burnt count.
     uint256 private mintCount;
 
+    /// @notice Fee counter.
+    uint256 private feeCount;
+
     /// @notice Token base URI string.
     string private baseURI;
 
@@ -73,10 +76,20 @@ contract ERC721Basic is
     }
 
     modifier priceCheckERC20(uint256 _price, uint256 amount) {
+        address _owner = owner;
+        uint32 size;
+        uint256 _fee = 0; 
+        assembly {
+            size := extcodesize(_owner)
+        }
+        if (size > 0) {
+            _fee = FeeOracle(owner).feeLookup(0x40d097c3);
+            feeCount += _fee;
+        }
         uint256 value = (address(erc20) != address(0))
             ? erc20.allowance(msg.sender, address(this))
             : msg.value;
-        if (_price * amount != value) revert WrongPrice();
+        if ((_price * amount) + _fee != value) revert WrongPrice();
         _;
     }
 
@@ -194,11 +207,21 @@ contract ERC721Basic is
         // Transfer event emited by parent ERC721 contract
     }
 
-    function withdraw() external onlyOwner {
+    function withdraw(address recipient) external onlyOwner {
         uint256 len = splitter.payeesLength();
         address[] memory addrs = new address[](len);
         uint256[] memory values = new uint256[](len);
-        uint256 _val = address(this).balance;
+        uint256 _val;
+        if (feeCount > 0 && recipient != address(0)) {
+            _val = address(this).balance - feeCount;
+            SafeTransferLib.safeTransferETH(
+                payable(recipient),
+                feeCount
+            );
+            feeCount = 0;
+        } else {
+            _val = address(this).balance;
+        }
         uint256 i;
         for (i; i < len; ) {
             address addr = splitter._payees(i);
@@ -221,12 +244,25 @@ contract ERC721Basic is
         }
     }
 
-    function withdrawERC20(ERC20 _token) external onlyOwner {
+    function withdrawERC20(ERC20 _token, address recipient) external onlyOwner {
         uint256 len = splitter.payeesLength();
         address[] memory addrs = new address[](len);
         uint256[] memory values = new uint256[](len);
+        // Transfer mint fees 
+        uint256 _val;
+        if (feeCount > 0 && recipient != address(0)) {
+            _val = _token.balanceOf(address(this)) - feeCount;
+            SafeTransferLib.safeTransfer(
+                _token,
+                recipient,
+                feeCount
+            );
+            feeCount = 0;
+        } else {
+            _val = _token.balanceOf(address(this));
+        }
+        // Transfer splitter funds to shareholders
         uint256 i;
-        uint256 _val = _token.balanceOf(address(this));
         for (i; i < len; ) {
             address addr = splitter._payees(i);
             uint256 share = splitter._shares(addr);

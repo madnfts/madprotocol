@@ -42,6 +42,9 @@ contract ERC721Whitelist is
     /// @notice Mint counter, includes burnt count.
     uint256 private mintCount;
 
+    /// @notice Fee counter.
+    uint256 public feeCount;
+
     /// @notice Token base URI string.
     string private baseURI;
 
@@ -100,6 +103,14 @@ contract ERC721Whitelist is
         _;
     }
 
+    modifier publicMintPriceCheck(uint256 _price, uint256 _amount) {        
+        uint256 _fee = _getFeeValue(0x40d097c3);
+        feeCount += _fee;
+        uint256 value = _getPriceValue(msg.sender);
+        if ((_price * _amount) + _fee != value) revert WrongPrice();
+        _;
+    }
+
     modifier whitelistMintAccess() {
         if (!whitelistMintState) revert WhitelistMintClosed();
         _;
@@ -131,14 +142,6 @@ contract ERC721Whitelist is
             revert MaxWhitelistReached();
         if (mintCount + amount > maxSupply)
             revert MaxMintReached();
-        _;
-    }
-
-    modifier priceCheckERC20(uint256 _price, uint256 amount) {
-        uint256 value = address(erc20) != address(0)
-            ? erc20.allowance(msg.sender, address(this))
-            : msg.value;
-        if (_price * amount != value) revert WrongPrice();
         _;
     }
 
@@ -345,11 +348,21 @@ contract ERC721Whitelist is
         // Transfer event emitted in parent ERC721 contract
     }
 
-    function withdraw() external onlyOwner {
+    function withdraw(address recipient) external onlyOwner {
         uint256 len = splitter.payeesLength();
         address[] memory addrs = new address[](len);
         uint256[] memory values = new uint256[](len);
-        uint256 _val = address(this).balance;
+        uint256 _val;
+        if (feeCount > 0 && recipient != address(0)) {
+            _val = address(this).balance - feeCount;
+            SafeTransferLib.safeTransferETH(
+                payable(recipient),
+                feeCount
+            );
+            feeCount = 0;
+        } else {
+            _val = address(this).balance;
+        }
         uint256 i;
         for (i; i < len; ) {
             address addr = splitter._payees(i);
@@ -372,12 +385,25 @@ contract ERC721Whitelist is
         }
     }
 
-    function withdrawERC20(ERC20 _token) external onlyOwner {
+    function withdrawERC20(ERC20 _token, address recipient) external onlyOwner {
         uint256 len = splitter.payeesLength();
         address[] memory addrs = new address[](len);
         uint256[] memory values = new uint256[](len);
+        // Transfer mint fees 
+        uint256 _val;
+        if (feeCount > 0 && recipient != address(0)) {
+            _val = _token.balanceOf(address(this)) - feeCount;
+            SafeTransferLib.safeTransfer(
+                _token,
+                recipient,
+                feeCount
+            );
+            feeCount = 0;
+        } else {
+            _val = _token.balanceOf(address(this));
+        }
+        // Transfer splitter funds to shareholders
         uint256 i;
-        uint256 _val = _token.balanceOf(address(this));
         for (i; i < len; ) {
             address addr = splitter._payees(i);
             uint256 share = splitter._shares(addr);
@@ -411,7 +437,7 @@ contract ERC721Whitelist is
         nonReentrant
         publicMintAccess
         hasReachedMax(amount)
-        priceCheckERC20(publicPrice, amount)
+        publicMintPriceCheck(publicPrice, amount)
     {
         _paymentCheck(msg.sender, 2);
 
@@ -442,7 +468,7 @@ contract ERC721Whitelist is
         payable
         nonReentrant
         whitelistMintAccess
-        priceCheckERC20(whitelistPrice, amount)
+        publicMintPriceCheck(whitelistPrice, amount)
         merkleVerify(merkleProof, whitelistMerkleRoot)
         whitelistMax(amount)
     {
@@ -502,13 +528,8 @@ contract ERC721Whitelist is
     //                          HELPER FX                         //
     ////////////////////////////////////////////////////////////////
 
-    function _nextId() private returns (uint256) {
-        liveSupply.increment();
-        return liveSupply.current();
-    }
-
     function _incrementCounter() private returns (uint256) {
-        _nextId();
+        liveSupply.increment();
         mintCount += 1;
         return mintCount;
     }
@@ -563,9 +584,7 @@ contract ERC721Whitelist is
     function _paymentCheck(address _erc20Owner, uint8 _type)
         internal
     {
-        uint256 value = (address(erc20) != address(0))
-            ? erc20.allowance(_erc20Owner, address(this))
-            : msg.value;
+        uint256 value = _getPriceValue(_erc20Owner);
 
         // Check fees are paid
         // ERC20 fees for router calls are checked and transfered via in the router
@@ -593,21 +612,37 @@ contract ERC721Whitelist is
         internal
         view
     {
-        address _owner = owner;
-        uint32 size;
-        assembly {
-            size := extcodesize(_owner)
-        }
-        if (size == 0) {
-            return;
-        }
-        uint256 _fee = FeeOracle(owner).feeLookup(_method);
+        uint256 _fee = _getFeeValue(_method);
         assembly {
             if iszero(eq(_value, _fee)) {
                 mstore(0x00, 0xf7760f25)
                 revert(0x1c, 0x04)
             }
         }
+    }
+
+    function _getPriceValue(address _erc20Owner)
+        internal
+        view
+        returns (uint256 value)
+    {
+        value = 
+            (address(erc20) != address(0))
+                ? erc20.allowance(_erc20Owner, address(this))
+                : msg.value;
+    }
+
+    function _getFeeValue(bytes4 _method)
+        internal
+        view
+        returns (uint256 value)
+    {
+        address _owner = owner;
+        uint32 _size;
+        assembly {
+            _size := extcodesize(_owner)
+        }
+        value = _size == 0 ? 0 : FeeOracle(owner).feeLookup(_method);
     }
 
     ////////////////////////////////////////////////////////////////

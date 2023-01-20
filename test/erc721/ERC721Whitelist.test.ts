@@ -10,6 +10,7 @@ import {
   MockERC20,
   SplitterImpl,
 } from "../../src/types";
+import { dead } from "../utils/madFixtures";
 import { WhitelistErrors } from "./../utils/errors";
 import {
   getSignerAddrs, // erc20Fixture,
@@ -759,7 +760,7 @@ describe("ERC721Whitelist", () => {
       await wl.connect(acc02).mint(1, { value: price });
 
       await expect(
-        wl.connect(acc01).withdraw(),
+        wl.connect(acc01).withdraw(ethers.constants.AddressZero),
       ).to.be.revertedWith(WhitelistErrors.Unauthorized);
     });
 
@@ -785,7 +786,7 @@ describe("ERC721Whitelist", () => {
       ];
 
       await expect(() =>
-        wl.withdraw(),
+        wl.withdraw(dead),
       ).to.changeEtherBalances(addrs, vals);
 
       expect(
@@ -819,7 +820,7 @@ describe("ERC721Whitelist", () => {
 
       await erc20.mint(wl.address, price);
 
-      const tx = await wl.withdrawERC20(erc20.address);
+      const tx = await wl.withdrawERC20(erc20.address, dead);
       expect(tx).to.be.ok;
       expect(
         await erc20.callStatic.balanceOf(payees[0]),

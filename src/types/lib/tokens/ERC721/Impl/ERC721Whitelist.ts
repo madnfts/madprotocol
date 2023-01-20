@@ -38,6 +38,7 @@ export interface ERC721WhitelistInterface extends utils.Interface {
     "claimListMerkleRoot()": FunctionFragment;
     "claimed(address)": FunctionFragment;
     "erc20()": FunctionFragment;
+    "feeCount()": FunctionFragment;
     "freeAmount()": FunctionFragment;
     "freeClaimState()": FunctionFragment;
     "freeConfig(uint256,uint256,bytes32)": FunctionFragment;
@@ -80,8 +81,8 @@ export interface ERC721WhitelistInterface extends utils.Interface {
     "whitelistMintState()": FunctionFragment;
     "whitelistMinted()": FunctionFragment;
     "whitelistPrice()": FunctionFragment;
-    "withdraw()": FunctionFragment;
-    "withdrawERC20(address)": FunctionFragment;
+    "withdraw(address)": FunctionFragment;
+    "withdrawERC20(address,address)": FunctionFragment;
   };
 
   getFunction(
@@ -94,6 +95,7 @@ export interface ERC721WhitelistInterface extends utils.Interface {
       | "claimListMerkleRoot"
       | "claimed"
       | "erc20"
+      | "feeCount"
       | "freeAmount"
       | "freeClaimState"
       | "freeConfig"
@@ -169,6 +171,7 @@ export interface ERC721WhitelistInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "erc20", values?: undefined): string;
+  encodeFunctionData(functionFragment: "feeCount", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "freeAmount",
     values?: undefined
@@ -345,10 +348,13 @@ export interface ERC721WhitelistInterface extends utils.Interface {
     functionFragment: "whitelistPrice",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "withdraw", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "withdraw",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "withdrawERC20",
-    values: [PromiseOrValue<string>]
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
 
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
@@ -365,6 +371,7 @@ export interface ERC721WhitelistInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "claimed", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "erc20", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "feeCount", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "freeAmount", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "freeClaimState",
@@ -722,6 +729,8 @@ export interface ERC721Whitelist extends BaseContract {
 
     erc20(overrides?: CallOverrides): Promise<[string]>;
 
+    feeCount(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     freeAmount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     freeClaimState(overrides?: CallOverrides): Promise<[boolean]>;
@@ -897,11 +906,13 @@ export interface ERC721Whitelist extends BaseContract {
     whitelistPrice(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     withdraw(
+      recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     withdrawERC20(
       _token: PromiseOrValue<string>,
+      recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
@@ -938,6 +949,8 @@ export interface ERC721Whitelist extends BaseContract {
   ): Promise<boolean>;
 
   erc20(overrides?: CallOverrides): Promise<string>;
+
+  feeCount(overrides?: CallOverrides): Promise<BigNumber>;
 
   freeAmount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1114,11 +1127,13 @@ export interface ERC721Whitelist extends BaseContract {
   whitelistPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
   withdraw(
+    recipient: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   withdrawERC20(
     _token: PromiseOrValue<string>,
+    recipient: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1155,6 +1170,8 @@ export interface ERC721Whitelist extends BaseContract {
     ): Promise<boolean>;
 
     erc20(overrides?: CallOverrides): Promise<string>;
+
+    feeCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     freeAmount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1328,10 +1345,14 @@ export interface ERC721Whitelist extends BaseContract {
 
     whitelistPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
-    withdraw(overrides?: CallOverrides): Promise<void>;
+    withdraw(
+      recipient: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     withdrawERC20(
       _token: PromiseOrValue<string>,
+      recipient: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -1484,6 +1505,8 @@ export interface ERC721Whitelist extends BaseContract {
     ): Promise<BigNumber>;
 
     erc20(overrides?: CallOverrides): Promise<BigNumber>;
+
+    feeCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     freeAmount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1658,11 +1681,13 @@ export interface ERC721Whitelist extends BaseContract {
     whitelistPrice(overrides?: CallOverrides): Promise<BigNumber>;
 
     withdraw(
+      recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     withdrawERC20(
       _token: PromiseOrValue<string>,
+      recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
@@ -1702,6 +1727,8 @@ export interface ERC721Whitelist extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     erc20(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    feeCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     freeAmount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1882,11 +1909,13 @@ export interface ERC721Whitelist extends BaseContract {
     whitelistPrice(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     withdraw(
+      recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     withdrawERC20(
       _token: PromiseOrValue<string>,
+      recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };

@@ -1645,7 +1645,7 @@ describe("MADRouter721 - ERC20", () => {
         .connect(amb)
         .setMintState(wl.address, true, 0);
 
-      await erc20.connect(acc01).approve(wl.address, price);
+      await erc20.connect(acc01).approve(wl.address, price.add(ethers.utils.parseEther("0.25")));
       await wl.connect(acc01).mint(1);
       const bal3 = await erc20.balanceOf(amb.address);
       const tx3 = await r721
@@ -2051,6 +2051,59 @@ describe("MADRouter721 - ERC20", () => {
       expect(endBalRecipientLazy).to.eq(startBalRecipientLazy.add(ethers.utils.parseEther("2.5")))
       // acc01.address = buyer = - price - fee - txFees
       expect(endBalAcc01Lazy).to.eq(startBalAcc01Lazy.sub(ethers.utils.parseEther("3.5")))
+
+      // Whitelist
+      const wlAddr = await f721.callStatic.getDeployedAddr(
+        "WhiteSalt",
+      );
+      await f721
+        .connect(mad)
+        .createCollection(
+          2,
+          "WhiteSalt",
+          "721Whitelist",
+          "WHITE",
+          price,
+          1000,
+          "ipfs://cid/",
+          madSpl,
+          750,
+        );
+      const wl = await ethers.getContractAt(
+        "ERC721Whitelist",
+        wlAddr,
+      );
+      await r721
+        .connect(mad)
+        .setMintState(wl.address, true, 0);
+
+      // Record start balances
+      const startBalMadWl = await erc20.balanceOf(mad.address);
+      const startBalAmbWl = await erc20.balanceOf(amb.address);
+      const startBalRecipientWl = await erc20.balanceOf(recipient);
+      const startBalAcc01Wl = await erc20.balanceOf(acc01.address);
+      
+      // Mint a lazy public token - fee 2.5 + price 1 
+      await erc20.connect(acc01).approve(wl.address, price.add(ethers.utils.parseEther("2.5")))
+      await wl.connect(acc01).mint(1);
+      await r721
+        .connect(mad)
+        .withdraw(wl.address, erc20.address);
+
+      // Record end balances
+      const endBalMadWl = await erc20.balanceOf(mad.address);
+      const endBalAmbWl = await erc20.balanceOf(amb.address);
+      const endBalRecipientWl = await erc20.balanceOf(recipient);
+      const endBalAcc01Wl = await erc20.balanceOf(acc01.address);
+      
+      // mad.address = creator = - txWithdrawGas + 80% of price (remaining 20% goes to ambassador)
+      expect(endBalMadWl).to.eq(startBalMadWl.add(ethers.utils.parseEther("0.8")))
+      // amb.address = ambassador = + 20% of price (remaining 80% goes to creator)
+      expect(endBalAmbWl).to.eq(startBalAmbWl.add(ethers.utils.parseEther("0.2")))
+      // owner.address = MAD receiver = + 100% mint fees
+      expect(endBalRecipientWl).to.eq(startBalRecipientWl.add(ethers.utils.parseEther("2.5")))
+      // acc01.address = buyer = - price - fee - txFees
+      expect(endBalAcc01Wl).to.eq(startBalAcc01Wl.sub(ethers.utils.parseEther("3.5")))
     });
   });
   describe("Only Owner", async () => {

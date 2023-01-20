@@ -279,13 +279,8 @@ contract ERC721Lazy is
     //                          HELPER FX                         //
     ////////////////////////////////////////////////////////////////
 
-    function _nextId() private returns (uint256) {
-        liveSupply.increment();
-        return liveSupply.current();
-    }
-
     function _incrementCounter() private returns (uint256) {
-        _nextId();
+        liveSupply.increment();
         mintCount += 1;
         return mintCount;
     }
@@ -296,18 +291,8 @@ contract ERC721Lazy is
         uint256 value
     ) private {
         if (_signer != signer) revert InvalidSigner();
-        if (usedVouchers[voucher.voucherId])
-            revert UsedVoucher();
-
-        address _owner = owner;
-        uint32 _size;
-        uint256 _fee = 0; 
-        assembly {
-            _size := extcodesize(_owner)
-        }
-        if (_size > 0) {
-            _fee = FeeOracle(owner).feeLookup(0x40d097c3);
-        }
+        if (usedVouchers[voucher.voucherId]) revert UsedVoucher();
+        uint256 _fee = _getFeeValue(0x40d097c3);
         if (
             _fee > value || 
             (value - _fee !=
@@ -315,10 +300,7 @@ contract ERC721Lazy is
                     voucher.amount *
                     voucher.users.length))
         ) revert WrongPrice();
-
-        if (_size > 0) {
-            feeCount += _fee;
-        }
+        feeCount += _fee;
     }
 
     function _verifyVoucher(
@@ -488,9 +470,7 @@ contract ERC721Lazy is
     function _paymentCheck(address _erc20Owner, uint8 _type)
         internal
     {
-        uint256 value = (address(erc20) != address(0))
-            ? erc20.allowance(_erc20Owner, address(this))
-            : msg.value;
+        uint256 value = _getPriceValue(_erc20Owner);
 
         // Check fees are paid
         // ERC20 fees for router calls are checked and transfered via in the router
@@ -518,15 +498,7 @@ contract ERC721Lazy is
         internal
         view
     {
-        address _owner = owner;
-        uint32 size;
-        assembly {
-            size := extcodesize(_owner)
-        }
-        if (size == 0) {
-            return;
-        }
-        uint256 _fee = FeeOracle(owner).feeLookup(_method);
+        uint256 _fee = _getFeeValue(_method);
         assembly {
             if iszero(eq(_value, _fee)) {
                 mstore(0x00, 0xf7760f25)
@@ -540,10 +512,23 @@ contract ERC721Lazy is
         view
         returns (uint256 value)
     {
-        return
+        value = 
             (address(erc20) != address(0))
                 ? erc20.allowance(_erc20Owner, address(this))
                 : msg.value;
+    }
+
+    function _getFeeValue(bytes4 _method)
+        internal
+        view
+        returns (uint256 value)
+    {
+        address _owner = owner;
+        uint32 _size;
+        assembly {
+            _size := extcodesize(_owner)
+        }
+        value = _size == 0 ? 0 : FeeOracle(owner).feeLookup(_method);
     }
 
     ////////////////////////////////////////////////////////////////

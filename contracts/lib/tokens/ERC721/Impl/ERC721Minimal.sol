@@ -186,16 +186,15 @@ contract ERC721Minimal is
     ////////////////////////////////////////////////////////////////
 
     function publicMint() external payable nonReentrant {
+        if (!publicMintState) revert PublicMintOff();
         uint256 value = _getPriceValue(msg.sender);
         uint256 fee = _getFeeValue(0x40d097c3);
-        feeCount += fee;
-        if (!publicMintState) revert PublicMintOff();
         if (value != price + fee) revert WrongPrice();
         if (minted) revert AlreadyMinted();
 
         _paymentCheck(msg.sender, 2);
         minted = true;
-
+        feeCount += fee;
         _safeMint(msg.sender, 1);
     }
 

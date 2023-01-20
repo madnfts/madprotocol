@@ -48,10 +48,12 @@ export interface MADRouter1155Interface extends utils.Interface {
     "owner()": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
+    "recipient()": FunctionFragment;
     "setFees(uint256,uint256)": FunctionFragment;
     "setMintState(address,bool,uint8)": FunctionFragment;
     "setOwner(address)": FunctionFragment;
     "setPaymentToken(address)": FunctionFragment;
+    "setRecipient(address)": FunctionFragment;
     "setSigner(address,address)": FunctionFragment;
     "setURI(address,string)": FunctionFragment;
     "setURILock(address)": FunctionFragment;
@@ -80,10 +82,12 @@ export interface MADRouter1155Interface extends utils.Interface {
       | "owner"
       | "pause"
       | "paused"
+      | "recipient"
       | "setFees"
       | "setMintState"
       | "setOwner"
       | "setPaymentToken"
+      | "setRecipient"
       | "setSigner"
       | "setURI"
       | "setURILock"
@@ -187,6 +191,7 @@ export interface MADRouter1155Interface extends utils.Interface {
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
+  encodeFunctionData(functionFragment: "recipient", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "setFees",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
@@ -205,6 +210,10 @@ export interface MADRouter1155Interface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setPaymentToken",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setRecipient",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -273,6 +282,7 @@ export interface MADRouter1155Interface extends utils.Interface {
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "recipient", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setFees", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setMintState",
@@ -281,6 +291,10 @@ export interface MADRouter1155Interface extends utils.Interface {
   decodeFunctionResult(functionFragment: "setOwner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setPaymentToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setRecipient",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setSigner", data: BytesLike): Result;
@@ -557,6 +571,8 @@ export interface MADRouter1155 extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<[boolean]>;
 
+    recipient(overrides?: CallOverrides): Promise<[string]>;
+
     setFees(
       _feeMint: PromiseOrValue<BigNumberish>,
       _feeBurn: PromiseOrValue<BigNumberish>,
@@ -577,6 +593,11 @@ export interface MADRouter1155 extends BaseContract {
 
     setPaymentToken(
       _paymentTokenAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setRecipient(
+      _recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -710,6 +731,8 @@ export interface MADRouter1155 extends BaseContract {
 
   paused(overrides?: CallOverrides): Promise<boolean>;
 
+  recipient(overrides?: CallOverrides): Promise<string>;
+
   setFees(
     _feeMint: PromiseOrValue<BigNumberish>,
     _feeBurn: PromiseOrValue<BigNumberish>,
@@ -730,6 +753,11 @@ export interface MADRouter1155 extends BaseContract {
 
   setPaymentToken(
     _paymentTokenAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setRecipient(
+    _recipient: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -861,6 +889,8 @@ export interface MADRouter1155 extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<boolean>;
 
+    recipient(overrides?: CallOverrides): Promise<string>;
+
     setFees(
       _feeMint: PromiseOrValue<BigNumberish>,
       _feeBurn: PromiseOrValue<BigNumberish>,
@@ -881,6 +911,11 @@ export interface MADRouter1155 extends BaseContract {
 
     setPaymentToken(
       _paymentTokenAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setRecipient(
+      _recipient: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1103,6 +1138,8 @@ export interface MADRouter1155 extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<BigNumber>;
 
+    recipient(overrides?: CallOverrides): Promise<BigNumber>;
+
     setFees(
       _feeMint: PromiseOrValue<BigNumberish>,
       _feeBurn: PromiseOrValue<BigNumberish>,
@@ -1123,6 +1160,11 @@ export interface MADRouter1155 extends BaseContract {
 
     setPaymentToken(
       _paymentTokenAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setRecipient(
+      _recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1257,6 +1299,8 @@ export interface MADRouter1155 extends BaseContract {
 
     paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    recipient(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     setFees(
       _feeMint: PromiseOrValue<BigNumberish>,
       _feeBurn: PromiseOrValue<BigNumberish>,
@@ -1277,6 +1321,11 @@ export interface MADRouter1155 extends BaseContract {
 
     setPaymentToken(
       _paymentTokenAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setRecipient(
+      _recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -45,6 +45,9 @@ contract MADRouter1155 is
 
     /// @notice Burn fee store.
     uint256 public feeBurn = 0;
+
+    /// @dev The recipient address used for public mint fees.
+    address public recipient;
     
     /// @notice Contract name.
     /// @dev Function Sighash := 0x06fdde03
@@ -68,19 +71,34 @@ contract MADRouter1155 is
     /// @notice Constructor requires a valid factory address and an optional erc20 payment token address.
     /// @param _factory 1155 factory address.
     /// @param _paymentTokenAddress erc20 token address | address(0).
+    /// @param _recipient 721 factory address.
     constructor(
         FactoryVerifier _factory,
-        address _paymentTokenAddress
+        address _paymentTokenAddress,
+        address _recipient
     ) {
         MADFactory1155 = _factory;
         if (_paymentTokenAddress != address(0)) {
             setPaymentToken(_paymentTokenAddress);
         }
+        setRecipient(_recipient);
     }
 
     ////////////////////////////////////////////////////////////////
     //                       CREATOR SETTINGS                     //
     ////////////////////////////////////////////////////////////////
+
+    /// @dev Setter for public mint fee _recipient.
+    /// @dev Function Sighash := ?
+    function setRecipient(address _recipient) public onlyOwner {
+        require(_recipient != address(0), "Invalid address");
+
+        assembly {
+            sstore(recipient.slot, _recipient)
+        }
+
+        emit RecipientUpdated(_recipient);
+    }
 
     /// @notice Enables the contract's owner to change payment token address.
     /// @dev Function Signature := 0x6a326ab1
@@ -465,9 +483,9 @@ contract MADRouter1155 is
         if (_tokenType < 1) {
             address(_erc20) != address(0) &&
                 _erc20.balanceOf(_token) != 0
-                ? ERC1155Minimal(_token).withdrawERC20(_erc20)
+                ? ERC1155Minimal(_token).withdrawERC20(_erc20, recipient)
                 : _token.balance != 0
-                ? ERC1155Minimal(_token).withdraw()
+                ? ERC1155Minimal(_token).withdraw(recipient)
                 : revert("NO_FUNDS");
 
             emit TokenFundsWithdrawn(

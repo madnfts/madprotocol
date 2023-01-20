@@ -34,6 +34,7 @@ export interface ERC1155MinimalInterface extends utils.Interface {
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
     "burn(address,uint256,address)": FunctionFragment;
     "erc20()": FunctionFragment;
+    "feeCount()": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "onERC1155Received(address,address,uint256,uint256,bytes)": FunctionFragment;
@@ -52,8 +53,8 @@ export interface ERC1155MinimalInterface extends utils.Interface {
     "splitter()": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "uri(uint256)": FunctionFragment;
-    "withdraw()": FunctionFragment;
-    "withdrawERC20(address)": FunctionFragment;
+    "withdraw(address)": FunctionFragment;
+    "withdrawERC20(address,address)": FunctionFragment;
   };
 
   getFunction(
@@ -62,6 +63,7 @@ export interface ERC1155MinimalInterface extends utils.Interface {
       | "balanceOfBatch"
       | "burn"
       | "erc20"
+      | "feeCount"
       | "isApprovedForAll"
       | "onERC1155BatchReceived"
       | "onERC1155Received"
@@ -101,6 +103,7 @@ export interface ERC1155MinimalInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(functionFragment: "erc20", values?: undefined): string;
+  encodeFunctionData(functionFragment: "feeCount", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "isApprovedForAll",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
@@ -192,10 +195,13 @@ export interface ERC1155MinimalInterface extends utils.Interface {
     functionFragment: "uri",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(functionFragment: "withdraw", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "withdraw",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "withdrawERC20",
-    values: [PromiseOrValue<string>]
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
 
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
@@ -205,6 +211,7 @@ export interface ERC1155MinimalInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "erc20", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "feeCount", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isApprovedForAll",
     data: BytesLike
@@ -419,6 +426,8 @@ export interface ERC1155Minimal extends BaseContract {
 
     erc20(overrides?: CallOverrides): Promise<[string]>;
 
+    feeCount(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     isApprovedForAll(
       arg0: PromiseOrValue<string>,
       arg1: PromiseOrValue<string>,
@@ -522,11 +531,13 @@ export interface ERC1155Minimal extends BaseContract {
     ): Promise<[string]>;
 
     withdraw(
+      recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     withdrawERC20(
       _token: PromiseOrValue<string>,
+      recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
@@ -551,6 +562,8 @@ export interface ERC1155Minimal extends BaseContract {
   ): Promise<ContractTransaction>;
 
   erc20(overrides?: CallOverrides): Promise<string>;
+
+  feeCount(overrides?: CallOverrides): Promise<BigNumber>;
 
   isApprovedForAll(
     arg0: PromiseOrValue<string>,
@@ -655,11 +668,13 @@ export interface ERC1155Minimal extends BaseContract {
   ): Promise<string>;
 
   withdraw(
+    recipient: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   withdrawERC20(
     _token: PromiseOrValue<string>,
+    recipient: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -684,6 +699,8 @@ export interface ERC1155Minimal extends BaseContract {
     ): Promise<void>;
 
     erc20(overrides?: CallOverrides): Promise<string>;
+
+    feeCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     isApprovedForAll(
       arg0: PromiseOrValue<string>,
@@ -787,10 +804,14 @@ export interface ERC1155Minimal extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    withdraw(overrides?: CallOverrides): Promise<void>;
+    withdraw(
+      recipient: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     withdrawERC20(
       _token: PromiseOrValue<string>,
+      recipient: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -896,6 +917,8 @@ export interface ERC1155Minimal extends BaseContract {
 
     erc20(overrides?: CallOverrides): Promise<BigNumber>;
 
+    feeCount(overrides?: CallOverrides): Promise<BigNumber>;
+
     isApprovedForAll(
       arg0: PromiseOrValue<string>,
       arg1: PromiseOrValue<string>,
@@ -997,11 +1020,13 @@ export interface ERC1155Minimal extends BaseContract {
     ): Promise<BigNumber>;
 
     withdraw(
+      recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     withdrawERC20(
       _token: PromiseOrValue<string>,
+      recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
@@ -1027,6 +1052,8 @@ export interface ERC1155Minimal extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     erc20(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    feeCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     isApprovedForAll(
       arg0: PromiseOrValue<string>,
@@ -1129,11 +1156,13 @@ export interface ERC1155Minimal extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     withdraw(
+      recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     withdrawERC20(
       _token: PromiseOrValue<string>,
+      recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };

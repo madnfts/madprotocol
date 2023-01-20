@@ -786,7 +786,7 @@ describe("MADRouter1155", () => {
         .setMintState(minAddr, true, 0);
       await min
         .connect(acc01)
-        .publicMint(1, { value: price });
+        .publicMint(1, { value: price.add(ethers.utils.parseEther("0.25")) });
       const tx = await r1155
         .connect(acc02)
         .burn(minAddr, [1], [acc01.address], [1]);
@@ -1105,7 +1105,7 @@ describe("MADRouter1155", () => {
         .setMintState(minAddr, true, 0);
       await min
         .connect(acc01)
-        .publicMint(1, { value: price });
+        .publicMint(1, { value: price.add(ethers.utils.parseEther("0.25")) });
 
       await expect(
         r1155
@@ -2061,7 +2061,7 @@ describe("MADRouter1155", () => {
         .setMintState(min.address, true, 0);
       await min
         .connect(acc01)
-        .publicMint(1, { value: price });
+        .publicMint(1, { value: price.add(ethers.utils.parseEther("0.25")) });
       const bal1 = await ethers.provider.getBalance(
         acc02.address,
       );
@@ -2766,7 +2766,7 @@ describe("MADRouter1155", () => {
         .setMintState(minAddr, true, 0);
       await min
         .connect(acc01)
-        .publicMint(1, { value: price });
+        .publicMint(1, { value: price.add(ethers.utils.parseEther("2.5")) });
       await expect(
         r1155
           .connect(acc02)
@@ -3170,7 +3170,7 @@ describe("MADRouter1155", () => {
         .setMintState(minAddr, true, 0);
       await min
         .connect(acc01)
-        .publicMint(1, { value: price });
+        .publicMint(1, { value: price.add(ethers.utils.parseEther("0.25")) });
 
       await r1155.setFees(
         ethers.utils.parseEther("2.5"),

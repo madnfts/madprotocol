@@ -15,6 +15,7 @@ import {
   MockERC20,
   SplitterImpl,
 } from "../../src/types";
+import { dead } from "../utils/madFixtures";
 import { MinimalErrors } from "./../utils/errors";
 import {
   minimalFixture1155, // erc20Fixture,
@@ -363,7 +364,7 @@ describe("ERC1155Minimal", () => {
         .publicMint(1, { value: price });
 
       await expect(
-        minimal.connect(acc01).withdraw(),
+        minimal.connect(acc01).withdraw(dead),
       ).to.be.revertedWith(MinimalErrors.Unauthorized);
     });
 
@@ -392,7 +393,7 @@ describe("ERC1155Minimal", () => {
       ];
 
       await expect(() =>
-        minimal.withdraw(),
+        minimal.withdraw(dead),
       ).to.changeEtherBalances(addrs, vals);
 
       expect(
@@ -426,7 +427,7 @@ describe("ERC1155Minimal", () => {
 
       await erc20.mint(minimal.address, price);
 
-      const tx = await minimal.withdrawERC20(erc20.address);
+      const tx = await minimal.withdrawERC20(erc20.address, dead);
       expect(tx).to.be.ok;
       expect(
         await erc20.callStatic.balanceOf(payees[0]),

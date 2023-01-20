@@ -747,7 +747,7 @@ describe("MADRouter721 - ERC20", () => {
         .connect(acc02)
         .setMintState(minAddr, true, 0);
 
-      await erc20.connect(acc01).approve(min.address, price);
+      await erc20.connect(acc01).approve(min.address, price.add(ethers.utils.parseEther("0.25")));
       await min.connect(acc01).publicMint();
       const tx = await r721.connect(acc02).burn(minAddr, []);
       const verArt = await artifacts.readArtifact(
@@ -1556,7 +1556,7 @@ describe("MADRouter721 - ERC20", () => {
         .connect(acc02)
         .setMintState(min.address, true, 0);
 
-      await erc20.connect(acc01).approve(min.address, price);
+      await erc20.connect(acc01).approve(min.address, price.add(ethers.utils.parseEther("0.25")));
       await min.connect(acc01).publicMint();
 
       const bal1 = await erc20.balanceOf(acc02.address);
@@ -1868,16 +1868,7 @@ describe("MADRouter721 - ERC20", () => {
         
       const recipient = r721.callStatic.recipient()
       
-      // Set mint and burn fees
-      await r721.setFees(
-        ethers.utils.parseEther("2.5"),
-        ethers.utils.parseEther("0.5"),
-      );
-      
-      // Deploy contracts and set public mint = true
-      const basicAddr = await f721.callStatic.getDeployedAddr(
-        "salt",
-      );
+      // Set up a splitter
       await f721
         .connect(mad)
         .splitterCheck(
@@ -1889,6 +1880,70 @@ describe("MADRouter721 - ERC20", () => {
         );
       const madSpl = await f721.callStatic.getDeployedAddr(
         "MADSplitter2",
+      );
+
+      // Set mint and burn fees
+      await r721.setFees(
+        ethers.utils.parseEther("2.5"),
+        ethers.utils.parseEther("0.5"),
+      );
+
+      // Deploy MINIMAL contracts and set public mint = true
+      const minAddr = await f721.callStatic.getDeployedAddr(
+        "MinSalt",
+      );
+      await f721
+        .connect(mad)
+        .createCollection(
+          0,
+          "MinSalt",
+          "721Minimal",
+          "MIN",
+          price,
+          1,
+          "ipfs://cid/id.json",
+          madSpl,
+          750,
+        );
+      const min = await ethers.getContractAt(
+        "ERC721Minimal",
+        minAddr,
+      );
+      await r721
+        .connect(mad)
+        .setMintState(min.address, true, 0);
+      
+      // Record start balances
+      const startBalMadMin = await erc20.balanceOf(mad.address);
+      const startBalAmbMin = await erc20.balanceOf(amb.address);
+      const startBalRecipientMin = await erc20.balanceOf(recipient);
+      const startBalAcc01Min = await erc20.balanceOf(acc01.address);
+
+      // Mint a public token - fee 2.5 + price 1 
+      await erc20.connect(acc01).approve(min.address, price.add(ethers.utils.parseEther("2.5")));
+      await min.connect(acc01).publicMint();
+      await r721
+        .connect(mad)
+        .withdraw(min.address, erc20.address);
+      
+      // Record end balances
+      const endBalMadMin = await erc20.balanceOf(mad.address);
+      const endBalAmbMin = await erc20.balanceOf(amb.address);
+      const endBalRecipientMin = await erc20.balanceOf(recipient);
+      const endBalAcc01Min = await erc20.balanceOf(acc01.address);
+      
+      // mad.address = creator = - txWithdrawGas + 80% of price (remaining 20% goes to ambassador)
+      expect(endBalMadMin).to.eq(startBalMadMin.add(ethers.utils.parseEther("0.8")))
+      // amb.address = ambassador = + 20% of price (remaining 80% goes to creator)
+      expect(endBalAmbMin).to.eq(startBalAmbMin.add(ethers.utils.parseEther("0.2")))
+      // owner.address = MAD receiver = + 100% mint fees
+      expect(endBalRecipientMin).to.eq(startBalRecipientMin.add(ethers.utils.parseEther("2.5")))
+      // acc01.address = buyer = - price - fee - txFees
+      expect(endBalAcc01Min).to.eq(startBalAcc01Min.sub(ethers.utils.parseEther("3.5")))
+      
+      // Deploy BASIC contracts and set public mint = true
+      const basicAddr = await f721.callStatic.getDeployedAddr(
+        "salt",
       );
       await f721
         .connect(mad)

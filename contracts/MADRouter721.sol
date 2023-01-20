@@ -371,9 +371,9 @@ contract MADRouter721 is
         if (_tokenType < 1) {
             address(_erc20) != address(0) &&
                 _erc20.balanceOf(_token) != 0
-                ? ERC721Minimal(_token).withdrawERC20(_erc20)
+                ? ERC721Minimal(_token).withdrawERC20(_erc20, recipient)
                 : _token.balance != 0
-                ? ERC721Minimal(_token).withdraw()
+                ? ERC721Minimal(_token).withdraw(recipient)
                 : revert("NO_FUNDS");
 
             emit TokenFundsWithdrawn(

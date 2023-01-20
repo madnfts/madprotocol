@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 pragma solidity 0.8.16;
-
+import "hardhat/console.sol";
 import { ERC721MinimalEventsAndErrors } from "../Base/interfaces/ERC721EventAndErrors.sol";
 import { ERC721, ERC721TokenReceiver } from "../Base/ERC721.sol";
 import { ERC2981 } from "../../common/ERC2981.sol";
@@ -24,20 +24,31 @@ contract ERC721Minimal is
     //                           STORAGE                          //
     ////////////////////////////////////////////////////////////////
 
+    /// @notice Splitter address relationship.
     SplitterImpl public splitter;
-    uint256 public price;
-    string private _tokenURI;
-    /// @dev  default := false
-    bool private minted;
-    /// @dev  default := false
-    bool public publicMintState;
+
+    /// @notice ERC20 payment token address.
     ERC20 public erc20;
+
+    /// @notice Public mint price.
+    uint256 public price;
+
+    /// @notice Token base URI string.
+    string private _tokenURI;
+    
+    /// @dev Is this minted, default := false
+    bool private minted;
+    
+    /// @notice Public mint state default := false.
+    bool public publicMintState;
+
+    /// @notice Fee counter.
+    uint256 public feeCount;
 
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    /// @dev The fee of royalties denominator is 10000 in BPS.
     constructor(
         string memory _name,
         string memory _symbol,
@@ -63,9 +74,6 @@ contract ERC721Minimal is
     //                          OWNER FX                          //
     ////////////////////////////////////////////////////////////////
 
-    /// @dev Can't be reminted if already minted, due to boolean.
-    /// @dev msg.sender = router
-    /// @dev erc20Owner = paying user
     function safeMint(address to, address erc20Owner)
         external
         payable
@@ -77,9 +85,6 @@ contract ERC721Minimal is
         _safeMint(to, 1);
     }
 
-    /// @dev Can't be reburnt since `minted` is not updated to false.
-    /// @dev ERC20 payment for burning compatible with MADRouter.
-    /// @dev Allows erc20 payments only if erc20 exists
     function burn(address erc20Owner)
         external
         payable
@@ -98,11 +103,21 @@ contract ERC721Minimal is
         emit PublicMintStateSet(_publicMintState);
     }
 
-    function withdraw() external onlyOwner {
+    function withdraw(address recipient) external onlyOwner {
         uint256 len = splitter.payeesLength();
         address[] memory addrs = new address[](len);
         uint256[] memory values = new uint256[](len);
-        uint256 _val = address(this).balance;
+        uint256 _val;
+        if (feeCount > 0 && recipient != address(0)) {
+            _val = address(this).balance - feeCount;
+            SafeTransferLib.safeTransferETH(
+                payable(recipient),
+                feeCount
+            );
+            feeCount = 0;
+        } else {
+            _val = address(this).balance;
+        }
         uint256 i;
         for (i; i < len; ) {
             address addr = splitter._payees(i);
@@ -125,12 +140,25 @@ contract ERC721Minimal is
         }
     }
 
-    function withdrawERC20(ERC20 _token) external onlyOwner {
+    function withdrawERC20(ERC20 _token, address recipient) external onlyOwner {
         uint256 len = splitter.payeesLength();
         address[] memory addrs = new address[](len);
         uint256[] memory values = new uint256[](len);
+        // Transfer mint fees 
+        uint256 _val;
+        if (feeCount > 0 && recipient != address(0)) {
+            _val = _token.balanceOf(address(this)) - feeCount;
+            SafeTransferLib.safeTransfer(
+                _token,
+                recipient,
+                feeCount
+            );
+            feeCount = 0;
+        } else {
+            _val = _token.balanceOf(address(this));
+        }
+        // Transfer splitter funds to shareholders
         uint256 i;
-        uint256 _val = _token.balanceOf(address(this));
         for (i; i < len; ) {
             address addr = splitter._payees(i);
             uint256 share = splitter._shares(addr);
@@ -158,12 +186,11 @@ contract ERC721Minimal is
     ////////////////////////////////////////////////////////////////
 
     function publicMint() external payable nonReentrant {
-        uint256 value = (address(erc20) != address(0))
-            ? erc20.allowance(msg.sender, address(this))
-            : msg.value;
-
+        uint256 value = _getPriceValue(msg.sender);
+        uint256 fee = _getFeeValue(0x40d097c3);
+        feeCount += fee;
         if (!publicMintState) revert PublicMintOff();
-        if (value != price) revert WrongPrice();
+        if (value != price + fee) revert WrongPrice();
         if (minted) revert AlreadyMinted();
 
         _paymentCheck(msg.sender, 2);
@@ -200,9 +227,7 @@ contract ERC721Minimal is
     function _paymentCheck(address _erc20Owner, uint8 _type)
         internal
     {
-        uint256 value = (address(erc20) != address(0))
-            ? erc20.allowance(_erc20Owner, address(this))
-            : msg.value;
+        uint256 value = _getPriceValue(_erc20Owner);
 
         // Check fees are paid
         // ERC20 fees for router calls are checked and transfered via in the router
@@ -230,21 +255,37 @@ contract ERC721Minimal is
         internal
         view
     {
-        address _owner = owner;
-        uint32 size;
-        assembly {
-            size := extcodesize(_owner)
-        }
-        if (size == 0) {
-            return;
-        }
-        uint256 _fee = FeeOracle(owner).feeLookup(_method);
+        uint256 _fee = _getFeeValue(_method);
         assembly {
             if iszero(eq(_value, _fee)) {
                 mstore(0x00, 0xf7760f25)
                 revert(0x1c, 0x04)
             }
         }
+    }
+
+    function _getPriceValue(address _erc20Owner)
+        internal
+        view
+        returns (uint256 value)
+    {
+        value = 
+            (address(erc20) != address(0))
+                ? erc20.allowance(_erc20Owner, address(this))
+                : msg.value;
+    }
+
+    function _getFeeValue(bytes4 _method)
+        internal
+        view
+        returns (uint256 value)
+    {
+        address _owner = owner;
+        uint32 _size;
+        assembly {
+            _size := extcodesize(_owner)
+        }
+        value = _size == 0 ? 0 : FeeOracle(owner).feeLookup(_method);
     }
 
     ////////////////////////////////////////////////////////////////

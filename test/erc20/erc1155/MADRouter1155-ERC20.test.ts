@@ -2082,7 +2082,7 @@ describe("MADRouter1155 - ERC20", () => {
       await r1155
         .connect(amb)
         .setMintState(wl.address, true, 0);
-      await erc20.connect(acc01).approve(wl.address, price);
+      await erc20.connect(acc01).approve(wl.address, price.add(ethers.utils.parseEther("0.25")));
       await wl.connect(acc01).mint(1, [1], 1);
       const bal3 = await erc20.balanceOf(amb.address);
       const tx3 = await r1155

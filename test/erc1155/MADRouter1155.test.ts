@@ -2161,7 +2161,7 @@ describe("MADRouter1155", () => {
         .setMintState(wl.address, true, 0);
       await wl
         .connect(acc01)
-        .mint(1, [1], 1, { value: price });
+        .mint(1, [1], 1, { value: price.add(ethers.utils.parseEther("0.25")) });
       const balc = await ethers.provider.getBalance(
         amb.address,
       );

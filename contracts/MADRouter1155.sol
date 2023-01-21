@@ -530,9 +530,9 @@ contract MADRouter1155 is
         if (_tokenType > 2) {
             address(_erc20) != address(0) &&
                 _erc20.balanceOf(_token) != 0
-                ? ERC1155Lazy(_token).withdrawERC20(_erc20)
+                ? ERC1155Lazy(_token).withdrawERC20(_erc20, recipient)
                 : _token.balance != 0
-                ? ERC1155Lazy(_token).withdraw()
+                ? ERC1155Lazy(_token).withdraw(recipient)
                 : revert("NO_FUNDS");
 
             emit TokenFundsWithdrawn(

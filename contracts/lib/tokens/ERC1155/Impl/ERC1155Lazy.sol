@@ -51,21 +51,32 @@ contract ERC1155Lazy is
             "UserBatch(bytes32 voucherId,uint256[] ids,uint256[] balances,uint256 price,address user)"
         );
 
-    /// @dev The signer address used for lazy minting voucher validation.
-    address private signer;
+    /// @notice Splitter address relationship.
+    SplitterImpl public splitter;
 
+    /// @notice ERC20 payment token address.
+    ERC20 public erc20;
+
+    /// @notice Live supply counter, excludes burned tokens.
     Counters.Counter private liveSupply;
+
+    /// @notice Mint counter, includes burnt count.
+    uint256 private mintCount;
+
+    /// @notice Fee counter.
+    uint256 public feeCount;
+
+    /// @notice Token base URI string.
+    string private _uri;
 
     /// @notice Lock the URI default := false.
     bool public URILock;
 
-    string private _uri;
+    /// @notice The signer address used for lazy minting voucher validation.
+    address public signer;
 
-    SplitterImpl public splitter;
-
+    /// @notice Mapping for used vouchers.
     mapping(bytes32 => bool) public usedVouchers;
-    uint256 private mintCount;
-    ERC20 public erc20;
 
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
@@ -103,7 +114,6 @@ contract ERC1155Lazy is
     /// @dev Neither `totalSupply` nor `price` accountings for any of the possible mint
     /// types(e.g., public, free/gifted, toCreator) need to be recorded by the contract;
     /// since its condition checking control flow takes place in offchain databases.
-    /// @dev Allows erc20 payments only if erc20 exists
     function lazyMint(
         Types.Voucher calldata voucher,
         uint8 v,
@@ -141,7 +151,6 @@ contract ERC1155Lazy is
     }
 
     /// @notice `_batchMint` version of `lazyMint`.
-    /// @dev Allows erc20 payments only if erc20 exists
     function lazyMintBatch(
         Types.UserBatch calldata userBatch,
         uint8 v,
@@ -189,15 +198,12 @@ contract ERC1155Lazy is
     //                         OWNER FX                           //
     ////////////////////////////////////////////////////////////////
 
-    /// @dev Can only be updated by the Router's owner.
     function setSigner(address _signer) public onlyOwner {
         signer = _signer;
 
         emit SignerUpdated(_signer);
     }
 
-    /// @notice Changes the `_uri` value in storage.
-    /// @dev Can only be accessed by the collection creator.
     function setURI(string memory __uri) external onlyOwner {
         if (URILock == true) revert UriLocked();
         _uri = __uri;
@@ -213,8 +219,6 @@ contract ERC1155Lazy is
         emit BaseURILocked(_uri);
     }
 
-    /// @dev Burns an arbitrary length array of ids of different owners.
-    /// @dev Allows erc20 payments only if erc20 exists
     function burn(
         address[] memory from,
         uint256[] memory ids,
@@ -247,8 +251,6 @@ contract ERC1155Lazy is
         // Transfer events emited by parent ERC1155 contract
     }
 
-    /// @dev Burns an arbitrary length array of ids owned by a single account.
-    /// @dev Allows erc20 payments only if erc20 exists
     function burnBatch(
         address from,
         uint256[] memory ids,
@@ -277,11 +279,21 @@ contract ERC1155Lazy is
         // Transfer event emited by parent ERC1155 contract
     }
 
-    function withdraw() external onlyOwner {
+    function withdraw(address recipient) external onlyOwner {
         uint256 len = splitter.payeesLength();
         address[] memory addrs = new address[](len);
         uint256[] memory values = new uint256[](len);
-        uint256 _val = address(this).balance;
+        uint256 _val;
+        if (feeCount > 0 && recipient != address(0)) {
+            _val = address(this).balance - feeCount;
+            SafeTransferLib.safeTransferETH(
+                payable(recipient),
+                feeCount
+            );
+            feeCount = 0;
+        } else {
+            _val = address(this).balance;
+        }
         uint256 i;
         for (i; i < len; ) {
             address addr = splitter._payees(i);
@@ -304,12 +316,25 @@ contract ERC1155Lazy is
         }
     }
 
-    function withdrawERC20(ERC20 _token) external onlyOwner {
+    function withdrawERC20(ERC20 _token, address recipient) external onlyOwner {
         uint256 len = splitter.payeesLength();
         address[] memory addrs = new address[](len);
         uint256[] memory values = new uint256[](len);
+        // Transfer mint fees 
+        uint256 _val;
+        if (feeCount > 0 && recipient != address(0)) {
+            _val = _token.balanceOf(address(this)) - feeCount;
+            SafeTransferLib.safeTransfer(
+                _token,
+                recipient,
+                feeCount
+            );
+            feeCount = 0;
+        } else {
+            _val = _token.balanceOf(address(this));
+        }
+        // Transfer splitter funds to shareholders
         uint256 i;
-        uint256 _val = _token.balanceOf(address(this));
         for (i; i < len; ) {
             address addr = splitter._payees(i);
             uint256 share = splitter._shares(addr);
@@ -336,52 +361,47 @@ contract ERC1155Lazy is
     //                          HELPER FX                         //
     ////////////////////////////////////////////////////////////////
 
-    function _nextId(uint256 amount)
-        private
-        returns (uint256)
-    {
-        liveSupply.increment(amount);
-        return liveSupply.current();
-    }
-
     function _incrementCounter(uint256 amount)
         private
         returns (uint256)
     {
-        _nextId(amount);
+        liveSupply.increment(amount);
         mintCount += amount;
         return mintCount;
     }
 
-    /// @dev Checks for signer validity and if total balance provided in the message matches to voucher's record.
     function _voucherCheck(
         address _signer,
         Types.Voucher calldata voucher,
         uint256 _value
-    ) private view {
+    ) private {
         if (_signer != signer) revert InvalidSigner();
         if (usedVouchers[voucher.voucherId])
             revert UsedVoucher();
+        uint256 _fee = _getFeeValue(0x40d097c3);
         if (
-            _value !=
-            (voucher.price *
-                voucher.amount *
-                voucher.users.length)
+            _fee > _value || 
+            (_value - _fee !=
+                (voucher.price *
+                    voucher.amount *
+                    voucher.users.length))
         ) revert WrongPrice();
+        feeCount += _fee;
     }
 
-    /// @dev Checks for signer validity and if total balance provided in the message matches to voucher's record.
     function _batchCheck(
         address _signer,
         Types.UserBatch calldata userBatch,
         uint256 _value
-    ) private view {
+    ) private {
         if (_signer != signer) revert InvalidSigner();
         if (usedVouchers[userBatch.voucherId])
             revert UsedVoucher();
+        uint256 _fee = _getFeeValue(0x40d097c3);
         if (
-            _value != (userBatch.price * userBatch.ids.length)
+            _value != _fee + (userBatch.price * userBatch.ids.length)
         ) revert WrongPrice();
+        feeCount += _fee;
     }
 
     function _verifyVoucher(
@@ -549,27 +569,6 @@ contract ERC1155Lazy is
     //                     INTERNAL FUNCTIONS                     //
     ////////////////////////////////////////////////////////////////
 
-    function _feeCheck(bytes4 _method, uint256 _value)
-        internal
-        view
-    {
-        address _owner = owner;
-        uint32 size;
-        assembly {
-            size := extcodesize(_owner)
-        }
-        if (size == 0) {
-            return;
-        }
-        uint256 _fee = FeeOracle(owner).feeLookup(_method);
-        assembly {
-            if iszero(eq(_value, _fee)) {
-                mstore(0x00, 0xf7760f25)
-                revert(0x1c, 0x04)
-            }
-        }
-    }
-
     /// @dev Checks if mint / burn fees are paid
     /// @dev If non router deploy we check msg.value if !erc20 OR checks erc20 approval and transfers
     /// @dev If router deploy we check msg.value if !erc20 BUT checks erc20 approval and transfers are via the router
@@ -578,9 +577,7 @@ contract ERC1155Lazy is
     function _paymentCheck(address _erc20Owner, uint8 _type)
         internal
     {
-        uint256 value = (address(erc20) != address(0))
-            ? erc20.allowance(_erc20Owner, address(this))
-            : msg.value;
+        uint256 value = _getPriceValue(_erc20Owner);
 
         // Check fees are paid
         // ERC20 fees for router calls are checked and transfered via in the router
@@ -604,16 +601,41 @@ contract ERC1155Lazy is
         }
     }
 
-    /// @dev Checks msg.value if !erc20 OR checks erc20 approval and returns the value
+    function _feeCheck(bytes4 _method, uint256 _value)
+        internal
+        view
+    {
+        uint256 _fee = _getFeeValue(_method);
+        assembly {
+            if iszero(eq(_value, _fee)) {
+                mstore(0x00, 0xf7760f25)
+                revert(0x1c, 0x04)
+            }
+        }
+    }
+
     function _getPriceValue(address _erc20Owner)
         internal
         view
         returns (uint256 value)
     {
-        return
+        value = 
             (address(erc20) != address(0))
                 ? erc20.allowance(_erc20Owner, address(this))
                 : msg.value;
+    }
+
+    function _getFeeValue(bytes4 _method)
+        internal
+        view
+        returns (uint256 value)
+    {
+        address _owner = owner;
+        uint32 _size;
+        assembly {
+            _size := extcodesize(_owner)
+        }
+        value = _size == 0 ? 0 : FeeOracle(owner).feeLookup(_method);
     }
 
     ////////////////////////////////////////////////////////////////

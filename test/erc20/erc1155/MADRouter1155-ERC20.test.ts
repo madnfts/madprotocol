@@ -942,7 +942,7 @@ describe("MADRouter1155 - ERC20", () => {
         .connect(acc02)
         .approve(
           lazyAddr,
-          price.mul(ethers.BigNumber.from(2)),
+          price.mul(ethers.BigNumber.from(2)).add(ethers.utils.parseEther("0.25")),
         );
       await lazy
         .connect(acc02)
@@ -1278,7 +1278,7 @@ describe("MADRouter1155 - ERC20", () => {
         .connect(acc02)
         .approve(
           lazyAddr,
-          price.mul(ethers.BigNumber.from(3)),
+          price.mul(ethers.BigNumber.from(3)).add(ethers.utils.parseEther("0.25")),
         );
       await lazy
         .connect(acc02)
@@ -2180,7 +2180,7 @@ describe("MADRouter1155 - ERC20", () => {
         version: SignTypedDataVersion.V4,
       });
       const sigSplit = ethers.utils.splitSignature(signature);
-      await erc20.connect(acc01).approve(lazy.address, price);
+      await erc20.connect(acc01).approve(lazy.address, price.add(ethers.utils.parseEther("0.25")));
       await lazy
         .connect(acc01)
         .lazyMint(
@@ -3048,7 +3048,7 @@ describe("MADRouter1155 - ERC20", () => {
         .connect(acc02)
         .approve(
           lazy.address,
-          price.mul(ethers.BigNumber.from(2)),
+          price.mul(ethers.BigNumber.from(2)).add(ethers.utils.parseEther("0.25")),
         );
       await lazy
         .connect(acc02)
@@ -3485,7 +3485,7 @@ describe("MADRouter1155 - ERC20", () => {
         .connect(acc02)
         .approve(
           lazy.address,
-          price.mul(ethers.BigNumber.from(3)),
+          price.mul(ethers.BigNumber.from(3)).add(ethers.utils.parseEther("0.25")),
         );
       await lazy
         .connect(acc02)

@@ -1035,7 +1035,7 @@ describe("MADRouter1155", () => {
           sigSplit.v,
           sigSplit.r,
           sigSplit.s,
-          { value: price.mul(ethers.BigNumber.from(2)) },
+          { value: price.mul(ethers.BigNumber.from(2)).add(ethers.utils.parseEther("0.25")) },
         );
       const tx = await r1155
         .connect(acc02)
@@ -1358,7 +1358,7 @@ describe("MADRouter1155", () => {
           sigSplit.v,
           sigSplit.r,
           sigSplit.s,
-          { value: price.mul(ethers.BigNumber.from(3)) },
+          { value: price.mul(ethers.BigNumber.from(3)).add(ethers.utils.parseEther("0.25")) },
         );
       const tx = await r1155
         .connect(acc02)
@@ -2275,7 +2275,7 @@ describe("MADRouter1155", () => {
           sigSplit.v,
           sigSplit.r,
           sigSplit.s,
-          { value: price },
+          { value: price.add(ethers.utils.parseEther("0.25")) },
         );
 
       const bal3 = await ethers.provider.getBalance(newUser);
@@ -3078,7 +3078,7 @@ describe("MADRouter1155", () => {
           sigSplit.v,
           sigSplit.r,
           sigSplit.s,
-          { value: price.mul(ethers.BigNumber.from(2)) },
+          { value: price.mul(ethers.BigNumber.from(2)).add(ethers.utils.parseEther("0.25")) },
         );
 
       await r1155.setFees(
@@ -3483,7 +3483,7 @@ describe("MADRouter1155", () => {
           sigSplit.v,
           sigSplit.r,
           sigSplit.s,
-          { value: price.mul(ethers.BigNumber.from(3)) },
+          { value: price.mul(ethers.BigNumber.from(3)).add(ethers.utils.parseEther("0.25")) },
         );
 
       await r1155.setFees(

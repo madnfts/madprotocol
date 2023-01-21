@@ -31,7 +31,7 @@ import {
   getInterfaceID,
 } from "./../../utils/interfaces";
 
-describe("ERC1155Lazy", () => {
+describe("ERC1155Lazy - ERC20", () => {
   /* 
   For the sake of solely testing the nft functionalities, we consider 
   the user as the contract's owner, and the marketplace just as the 
@@ -506,11 +506,11 @@ describe("ERC1155Lazy", () => {
       ];
 
       await expect(() =>
-        lazy.withdrawERC20(erc20.address),
+        lazy.withdrawERC20(erc20.address, ethers.constants.AddressZero),
       ).to.changeTokenBalances(erc20, addrs, vals);
 
       await expect(
-        lazy.connect(acc01).withdrawERC20(erc20.address),
+        lazy.connect(acc01).withdrawERC20(erc20.address, ethers.constants.AddressZero),
       ).to.be.revertedWith(LazyErrors.Unauthorized);
 
       expect(await erc20.balanceOf(lazy.address)).to.eq(
@@ -698,9 +698,6 @@ describe("ERC1155Lazy", () => {
         vSigSplit.s,
       );
       const ids = [1, 2, 3, 4];
-      await erc20
-        .connect(owner)
-        .approve(lazy.address, price.mul(amount));
       const tx = await lazy.burnBatch(
         owner.address,
         ids,

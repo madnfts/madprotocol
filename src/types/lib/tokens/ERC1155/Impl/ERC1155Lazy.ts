@@ -83,6 +83,7 @@ export interface ERC1155LazyInterface extends utils.Interface {
     "burn(address[],uint256[],uint256[],address)": FunctionFragment;
     "burnBatch(address,uint256[],uint256[],address)": FunctionFragment;
     "erc20()": FunctionFragment;
+    "feeCount()": FunctionFragment;
     "getMintCount()": FunctionFragment;
     "getURI()": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
@@ -100,13 +101,14 @@ export interface ERC1155LazyInterface extends utils.Interface {
     "setSigner(address)": FunctionFragment;
     "setURI(string)": FunctionFragment;
     "setURILock()": FunctionFragment;
+    "signer()": FunctionFragment;
     "splitter()": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "totalSupply()": FunctionFragment;
     "uri(uint256)": FunctionFragment;
     "usedVouchers(bytes32)": FunctionFragment;
-    "withdraw()": FunctionFragment;
-    "withdrawERC20(address)": FunctionFragment;
+    "withdraw(address)": FunctionFragment;
+    "withdrawERC20(address,address)": FunctionFragment;
   };
 
   getFunction(
@@ -118,6 +120,7 @@ export interface ERC1155LazyInterface extends utils.Interface {
       | "burn"
       | "burnBatch"
       | "erc20"
+      | "feeCount"
       | "getMintCount"
       | "getURI"
       | "isApprovedForAll"
@@ -135,6 +138,7 @@ export interface ERC1155LazyInterface extends utils.Interface {
       | "setSigner"
       | "setURI"
       | "setURILock"
+      | "signer"
       | "splitter"
       | "supportsInterface"
       | "totalSupply"
@@ -176,6 +180,7 @@ export interface ERC1155LazyInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(functionFragment: "erc20", values?: undefined): string;
+  encodeFunctionData(functionFragment: "feeCount", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getMintCount",
     values?: undefined
@@ -272,6 +277,7 @@ export interface ERC1155LazyInterface extends utils.Interface {
     functionFragment: "setURILock",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "signer", values?: undefined): string;
   encodeFunctionData(functionFragment: "splitter", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
@@ -289,10 +295,13 @@ export interface ERC1155LazyInterface extends utils.Interface {
     functionFragment: "usedVouchers",
     values: [PromiseOrValue<BytesLike>]
   ): string;
-  encodeFunctionData(functionFragment: "withdraw", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "withdraw",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "withdrawERC20",
-    values: [PromiseOrValue<string>]
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
 
   decodeFunctionResult(
@@ -308,6 +317,7 @@ export interface ERC1155LazyInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "burnBatch", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "erc20", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "feeCount", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getMintCount",
     data: BytesLike
@@ -352,6 +362,7 @@ export interface ERC1155LazyInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "setSigner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setURI", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setURILock", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "signer", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "splitter", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
@@ -559,6 +570,8 @@ export interface ERC1155Lazy extends BaseContract {
 
     erc20(overrides?: CallOverrides): Promise<[string]>;
 
+    feeCount(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     getMintCount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getURI(overrides?: CallOverrides): Promise<[string]>;
@@ -662,6 +675,8 @@ export interface ERC1155Lazy extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    signer(overrides?: CallOverrides): Promise<[string]>;
+
     splitter(overrides?: CallOverrides): Promise<[string]>;
 
     supportsInterface(
@@ -682,11 +697,13 @@ export interface ERC1155Lazy extends BaseContract {
     ): Promise<[boolean]>;
 
     withdraw(
+      recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     withdrawERC20(
       _token: PromiseOrValue<string>,
+      recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
@@ -724,6 +741,8 @@ export interface ERC1155Lazy extends BaseContract {
   ): Promise<ContractTransaction>;
 
   erc20(overrides?: CallOverrides): Promise<string>;
+
+  feeCount(overrides?: CallOverrides): Promise<BigNumber>;
 
   getMintCount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -848,11 +867,13 @@ export interface ERC1155Lazy extends BaseContract {
   ): Promise<boolean>;
 
   withdraw(
+    recipient: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   withdrawERC20(
     _token: PromiseOrValue<string>,
+    recipient: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -890,6 +911,8 @@ export interface ERC1155Lazy extends BaseContract {
     ): Promise<void>;
 
     erc20(overrides?: CallOverrides): Promise<string>;
+
+    feeCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     getMintCount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -992,6 +1015,8 @@ export interface ERC1155Lazy extends BaseContract {
 
     setURILock(overrides?: CallOverrides): Promise<void>;
 
+    signer(overrides?: CallOverrides): Promise<string>;
+
     splitter(overrides?: CallOverrides): Promise<string>;
 
     supportsInterface(
@@ -1011,10 +1036,14 @@ export interface ERC1155Lazy extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    withdraw(overrides?: CallOverrides): Promise<void>;
+    withdraw(
+      recipient: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     withdrawERC20(
       _token: PromiseOrValue<string>,
+      recipient: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -1147,6 +1176,8 @@ export interface ERC1155Lazy extends BaseContract {
 
     erc20(overrides?: CallOverrides): Promise<BigNumber>;
 
+    feeCount(overrides?: CallOverrides): Promise<BigNumber>;
+
     getMintCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     getURI(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1248,6 +1279,8 @@ export interface ERC1155Lazy extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    signer(overrides?: CallOverrides): Promise<BigNumber>;
+
     splitter(overrides?: CallOverrides): Promise<BigNumber>;
 
     supportsInterface(
@@ -1268,11 +1301,13 @@ export interface ERC1155Lazy extends BaseContract {
     ): Promise<BigNumber>;
 
     withdraw(
+      recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     withdrawERC20(
       _token: PromiseOrValue<string>,
+      recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
@@ -1311,6 +1346,8 @@ export interface ERC1155Lazy extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     erc20(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    feeCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getMintCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1413,6 +1450,8 @@ export interface ERC1155Lazy extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    signer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     splitter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     supportsInterface(
@@ -1433,11 +1472,13 @@ export interface ERC1155Lazy extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     withdraw(
+      recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     withdrawERC20(
       _token: PromiseOrValue<string>,
+      recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };

@@ -16,6 +16,7 @@ import {
   MockERC20,
   SplitterImpl,
 } from "../../src/types";
+import { dead } from "../utils/madFixtures";
 import { LazyErrors } from "./../utils/errors";
 import {
   lazyFixture1155, // erc20Fixture,
@@ -446,7 +447,7 @@ describe("ERC1155Lazy", () => {
         { value: price.mul(amount) }, // amount := 30
       );
       await erc20.mint(lazy.address, price);
-      const tx = await lazy.withdrawERC20(erc20.address);
+      const tx = await lazy.withdrawERC20(erc20.address, dead);
       const addrs = [
         mad.address,
         amb.address,
@@ -472,7 +473,7 @@ describe("ERC1155Lazy", () => {
       ];
 
       await expect(() =>
-        lazy.withdraw(),
+        lazy.withdraw(dead),
       ).to.changeEtherBalances(addrs, vals);
 
       expect(tx).to.be.ok;
@@ -487,10 +488,10 @@ describe("ERC1155Lazy", () => {
       ).to.eq(vals2[2]);
 
       await expect(
-        lazy.connect(acc01).withdraw(),
+        lazy.connect(acc01).withdraw(dead),
       ).to.be.revertedWith(LazyErrors.Unauthorized);
       await expect(
-        lazy.connect(acc02).withdrawERC20(erc20.address),
+        lazy.connect(acc02).withdrawERC20(erc20.address, dead),
       ).to.be.revertedWith(LazyErrors.Unauthorized);
 
       expect(await erc20.balanceOf(lazy.address)).to.eq(

@@ -3554,7 +3554,7 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .setMintState(basic.address, true, 0);
-      await basic.connect(acc02).mint(1, 1, { value: price });
+      await basic.connect(acc02).mint(1, 1, { value: price.add(ethers.utils.parseEther("0.25")) });
       await basic
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
@@ -3845,7 +3845,7 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .setMintState(basic.address, true, 0);
-      await basic.connect(acc02).mint(1, 1, { value: price });
+      await basic.connect(acc02).mint(1, 1, { value: price.add(ethers.utils.parseEther("0.25")) });
       await basic
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
@@ -4231,7 +4231,7 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .setMintState(basic.address, true, 0);
-      await basic.connect(acc02).mint(1, 1, { value: price });
+      await basic.connect(acc02).mint(1, 1, { value: price.add(ethers.utils.parseEther("0.25")) });
       await basic
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);

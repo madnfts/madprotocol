@@ -749,7 +749,7 @@ describe("MADRouter1155 - ERC20", () => {
 
       await erc20
         .connect(acc01)
-        .approve(basic.address, price);
+        .approve(basic.address, price.add(ethers.utils.parseEther("0.25")));
       await basic.connect(acc01).mint(1, 1);
       const tx = await r1155
         .connect(acc02)
@@ -1068,7 +1068,7 @@ describe("MADRouter1155 - ERC20", () => {
 
       await erc20
         .connect(acc01)
-        .approve(basicAddr, price.mul(pmul));
+        .approve(basicAddr, price.mul(pmul).add(ethers.utils.parseEther("0.25")));
       await basic.connect(acc01).mint(4, 1);
       const tx = await r1155
         .connect(acc02)
@@ -2044,7 +2044,7 @@ describe("MADRouter1155 - ERC20", () => {
         .setMintState(basic.address, true, 0);
       await erc20
         .connect(acc01)
-        .approve(basic.address, price);
+        .approve(basic.address, price.add(ethers.utils.parseEther("0.25")));
       await basic.connect(acc01).mint(1, 1);
       const bal2 = await erc20.balanceOf(mad.address);
       const tx2 = await r1155
@@ -2791,7 +2791,7 @@ describe("MADRouter1155 - ERC20", () => {
 
       await erc20
         .connect(acc01)
-        .approve(basic.address, price);
+        .approve(basic.address, price.add(ethers.utils.parseEther("2.5")));
       await basic.connect(acc01).mint(1, 1);
 
       await erc20
@@ -3214,7 +3214,7 @@ describe("MADRouter1155 - ERC20", () => {
         .setMintState(basicAddr, true, 0);
       await erc20
         .connect(acc01)
-        .approve(basic.address, price.mul(pmul));
+        .approve(basic.address, price.mul(pmul).add(ethers.utils.parseEther("0.25")));
       await basic.connect(acc01).mint(4, 1);
 
       await r1155.setFees(

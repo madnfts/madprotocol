@@ -845,7 +845,7 @@ describe("MADRouter1155", () => {
       await r1155
         .connect(acc02)
         .setMintState(basicAddr, true, 0);
-      await basic.connect(acc01).mint(1, 1, { value: price });
+      await basic.connect(acc01).mint(1, 1, { value: price.add(ethers.utils.parseEther("0.25")) });
       const tx = await r1155
         .connect(acc02)
         .burn(basicAddr, [1], [acc01.address], [1]);
@@ -1152,7 +1152,7 @@ describe("MADRouter1155", () => {
         .setMintState(basicAddr, true, 0);
       await basic
         .connect(acc01)
-        .mint(4, 1, { value: price.mul(pmul) });
+        .mint(4, 1, { value: price.mul(pmul).add(ethers.utils.parseEther("0.25")) });
       const tx = await r1155
         .connect(acc02)
         .batchBurn(
@@ -2113,7 +2113,7 @@ describe("MADRouter1155", () => {
       await r1155
         .connect(mad)
         .setMintState(basic.address, true, 0);
-      await basic.connect(acc01).mint(1, 1, { value: price });
+      await basic.connect(acc01).mint(1, 1, { value: price.add(ethers.utils.parseEther("0.25")) });
       const bala = await ethers.provider.getBalance(
         mad.address,
       );
@@ -2842,7 +2842,7 @@ describe("MADRouter1155", () => {
         ethers.utils.parseEther("0.5"),
       );
 
-      await basic.connect(acc01).mint(1, 1, { value: price });
+      await basic.connect(acc01).mint(1, 1, { value: price.add(ethers.utils.parseEther("2.5")) });
 
       await expect(
         r1155
@@ -3224,7 +3224,7 @@ describe("MADRouter1155", () => {
         .setMintState(basicAddr, true, 0);
       await basic
         .connect(acc01)
-        .mint(4, 1, { value: price.mul(pmul) });
+        .mint(4, 1, { value: price.mul(pmul).add(ethers.utils.parseEther("0.25")) });
 
       await r1155.setFees(
         ethers.utils.parseEther("2.5"),

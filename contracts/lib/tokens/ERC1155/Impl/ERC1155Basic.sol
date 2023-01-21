@@ -6,7 +6,6 @@ import { ERC1155BasicEventsAndErrors } from "../Base/interfaces/ERC1155EventAndE
 import { ERC1155B as ERC1155, ERC1155TokenReceiver } from "../Base/ERC1155B.sol";
 import { ERC2981 } from "../../common/ERC2981.sol";
 import { ERC20 } from "../../ERC20.sol";
-
 import { Owned } from "../../../auth/Owned.sol";
 import { ReentrancyGuard } from "../../../security/ReentrancyGuard.sol";
 import { SplitterImpl } from "../../../splitter/SplitterImpl.sol";
@@ -30,19 +29,35 @@ contract ERC1155Basic is
     //                           STORAGE                          //
     ////////////////////////////////////////////////////////////////
 
+    /// @notice Splitter address relationship.
+    SplitterImpl public splitter;
+
+    /// @notice ERC20 payment token address.
+    ERC20 public erc20;
+
+    /// @notice Live supply counter, excludes burned tokens.
     Counters.Counter private liveSupply;
+
+    /// @notice Mint counter, includes burnt count.
+    uint256 private mintCount;
+
+    /// @notice Fee counter.
+    uint256 public feeCount;
 
     /// @notice Lock the URI default := false.
     bool public URILock;
+
+    /// @notice Token base URI string.
     string private _uri;
+
+    /// @notice Public mint price.
     uint256 public price;
-    /// @dev Capped max supply.
+    
+    /// @notice Capped max supply.
     uint256 public maxSupply;
-    /// @dev default := false.
+    
+    /// @notice Public mint state default := false.
     bool public publicMintState;
-    SplitterImpl public splitter;
-    uint256 private mintCount;
-    ERC20 public erc20;
 
     ////////////////////////////////////////////////////////////////
     //                          MODIFIERS                         //
@@ -53,21 +68,17 @@ contract ERC1155Basic is
         _;
     }
 
-    modifier hasReachedMax(uint256 amount) {
-        if (mintCount + amount > maxSupply)
-            revert MaxSupplyReached();
+    modifier publicMintPriceCheck(uint256 _price, uint256 _amount) {        
+        uint256 _fee = _getFeeValue(0x40d097c3);
+        feeCount += _fee;
+        uint256 value = _getPriceValue(msg.sender);
+        if ((_price * _amount) + _fee != value) revert WrongPrice();
         _;
     }
 
-    modifier priceCheckERC20(
-        uint256 _price,
-        uint256 amount,
-        address erc20Owner
-    ) {
-        uint256 value = (address(erc20) != address(0))
-            ? erc20.allowance(erc20Owner, address(this))
-            : msg.value;
-        if (_price * amount != value) revert WrongPrice();
+    modifier hasReachedMax(uint256 amount) {
+        if (mintCount + amount > maxSupply)
+            revert MaxSupplyReached();
         _;
     }
 
@@ -123,8 +134,11 @@ contract ERC1155Basic is
 
         emit PublicMintStateSet(_publicMintState);
     }
+    
+    ////////////////////////////////////////////////////////////////
+    //                       OWNER MINTING                        //
+    ////////////////////////////////////////////////////////////////
 
-    /// @dev Allows erc20 payments only if erc20 exists
     function mintTo(
         address to,
         uint256 amount,
@@ -156,7 +170,6 @@ contract ERC1155Basic is
         // Transfer event emited by parent ERC1155 contract
     }
 
-    /// @dev Allows erc20 payments only if erc20 exists
     function mintBatchTo(
         address to,
         uint256[] memory ids,
@@ -187,8 +200,6 @@ contract ERC1155Basic is
         // Transfer event emited by parent ERC1155 contract
     }
 
-    /// @dev Burns an arbitrary length array of ids of different owners.
-    /// @dev Allows erc20 payments only if erc20 exists
     function burn(
         address[] memory from,
         uint256[] memory ids,
@@ -219,7 +230,6 @@ contract ERC1155Basic is
         // Transfer events emited by parent ERC1155 contract
     }
 
-    /// @dev Allows erc20 payments only if erc20 exists
     function burnBatch(
         address from,
         uint256[] memory ids,
@@ -249,11 +259,21 @@ contract ERC1155Basic is
         // Transfer event emited by parent ERC1155 contract
     }
 
-    function withdraw() external onlyOwner {
+    function withdraw(address recipient) external onlyOwner {
         uint256 len = splitter.payeesLength();
         address[] memory addrs = new address[](len);
         uint256[] memory values = new uint256[](len);
-        uint256 _val = address(this).balance;
+        uint256 _val;
+        if (feeCount > 0 && recipient != address(0)) {
+            _val = address(this).balance - feeCount;
+            SafeTransferLib.safeTransferETH(
+                payable(recipient),
+                feeCount
+            );
+            feeCount = 0;
+        } else {
+            _val = address(this).balance;
+        }
         uint256 i;
         for (i; i < len; ) {
             address addr = splitter._payees(i);
@@ -276,12 +296,25 @@ contract ERC1155Basic is
         }
     }
 
-    function withdrawERC20(ERC20 _token) external onlyOwner {
+    function withdrawERC20(ERC20 _token, address recipient) external onlyOwner {
         uint256 len = splitter.payeesLength();
         address[] memory addrs = new address[](len);
         uint256[] memory values = new uint256[](len);
+        // Transfer mint fees 
+        uint256 _val;
+        if (feeCount > 0 && recipient != address(0)) {
+            _val = _token.balanceOf(address(this)) - feeCount;
+            SafeTransferLib.safeTransfer(
+                _token,
+                recipient,
+                feeCount
+            );
+            feeCount = 0;
+        } else {
+            _val = _token.balanceOf(address(this));
+        }
+        // Transfer splitter funds to shareholders
         uint256 i;
-        uint256 _val = _token.balanceOf(address(this));
         for (i; i < len; ) {
             address addr = splitter._payees(i);
             uint256 share = splitter._shares(addr);
@@ -305,17 +338,16 @@ contract ERC1155Basic is
     }
 
     ////////////////////////////////////////////////////////////////
-    //                           USER FX                          //
+    //                          PUBLIC FX                         //
     ////////////////////////////////////////////////////////////////
 
-    /// @dev Allows erc20 payments only if erc20 exists
     function mint(uint256 amount, uint256 balance)
         external
         payable
         nonReentrant
         publicMintAccess
         hasReachedMax(amount * balance)
-        priceCheckERC20(price, amount, msg.sender)
+        publicMintPriceCheck(price, amount)
     {
         _paymentCheck(msg.sender, 2);
         uint256 i;
@@ -340,20 +372,23 @@ contract ERC1155Basic is
         // Transfer events emited by parent ERC1155 contract
     }
 
-    /// @dev Enables public minting of an arbitrary length array of specific ids.
     function mintBatch(
         uint256[] memory ids,
         uint256[] memory amounts
-    ) external payable nonReentrant publicMintAccess {
+    ) 
+        external 
+        payable 
+        nonReentrant 
+        publicMintAccess 
+        hasReachedMax(_sumAmounts(amounts))
+        publicMintPriceCheck(price, ids.length)
+    {
         require(
             ids.length == amounts.length,
             "MISMATCH_LENGTH"
         );
-        uint256 value = (address(erc20) != address(0))
-            ? erc20.allowance(msg.sender, address(this))
-            : msg.value;
+        uint256 value = _getPriceValue(msg.sender);
         uint256 len = ids.length;
-        _mintBatchCheck(len, value);
         if (address(erc20) != address(0)) {
             SafeTransferLib.safeTransferFrom(
                 erc20,
@@ -383,30 +418,13 @@ contract ERC1155Basic is
     //                          HELPER FX                         //
     ////////////////////////////////////////////////////////////////
 
-    function _nextId(uint256 amount)
-        private
-        returns (uint256)
-    {
-        liveSupply.increment(amount);
-        return liveSupply.current();
-    }
-
     function _incrementCounter(uint256 amount)
         private
         returns (uint256)
     {
-        _nextId(amount);
+        liveSupply.increment(amount);
         mintCount += amount;
         return mintCount;
-    }
-
-    function _mintBatchCheck(uint256 _amount, uint256 _value)
-        private
-        view
-    {
-        if (price * _amount != _value) revert WrongPrice();
-        if (mintCount + _amount > maxSupply)
-            revert MaxSupplyReached();
     }
 
     function _sumAmounts(uint256[] memory amounts)
@@ -476,9 +494,7 @@ contract ERC1155Basic is
     function _paymentCheck(address _erc20Owner, uint8 _type)
         internal
     {
-        uint256 value = (address(erc20) != address(0))
-            ? erc20.allowance(_erc20Owner, address(this))
-            : msg.value;
+        uint256 value = _getPriceValue(_erc20Owner);
 
         // Check fees are paid
         // ERC20 fees for router calls are checked and transfered via in the router
@@ -506,21 +522,37 @@ contract ERC1155Basic is
         internal
         view
     {
-        address _owner = owner;
-        uint32 size;
-        assembly {
-            size := extcodesize(_owner)
-        }
-        if (size == 0) {
-            return;
-        }
-        uint256 _fee = FeeOracle(owner).feeLookup(_method);
+        uint256 _fee = _getFeeValue(_method);
         assembly {
             if iszero(eq(_value, _fee)) {
                 mstore(0x00, 0xf7760f25)
                 revert(0x1c, 0x04)
             }
         }
+    }
+
+    function _getPriceValue(address _erc20Owner)
+        internal
+        view
+        returns (uint256 value)
+    {
+        value = 
+            (address(erc20) != address(0))
+                ? erc20.allowance(_erc20Owner, address(this))
+                : msg.value;
+    }
+
+    function _getFeeValue(bytes4 _method)
+        internal
+        view
+        returns (uint256 value)
+    {
+        address _owner = owner;
+        uint32 _size;
+        assembly {
+            _size := extcodesize(_owner)
+        }
+        value = _size == 0 ? 0 : FeeOracle(owner).feeLookup(_method);
     }
 
     ////////////////////////////////////////////////////////////////

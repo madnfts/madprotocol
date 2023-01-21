@@ -21,6 +21,7 @@ import {
   ERC2981Interface,
   getInterfaceID,
 } from "../utils/interfaces";
+import { dead } from "../utils/madFixtures";
 
 describe("ERC1155Basic", () => {
   /* 
@@ -764,7 +765,7 @@ describe("ERC1155Basic", () => {
       ];
 
       await expect(() =>
-        basic.withdraw(),
+        basic.withdraw(dead),
       ).to.changeEtherBalances(addrs, vals);
 
       expect(
@@ -772,7 +773,7 @@ describe("ERC1155Basic", () => {
       ).to.eq(ethers.constants.Zero);
 
       await expect(
-        basic.connect(acc01).withdraw(),
+        basic.connect(acc01).withdraw(dead),
       ).to.be.revertedWith(BasicErrors.Unauthorized);
     });
     it("Should withdraw contract's ERC20s", async () => {
@@ -801,7 +802,7 @@ describe("ERC1155Basic", () => {
 
       await erc20.mint(basic.address, price);
 
-      const tx = await basic.withdrawERC20(erc20.address);
+      const tx = await basic.withdrawERC20(erc20.address, dead);
       expect(tx).to.be.ok;
       expect(
         await erc20.callStatic.balanceOf(payees[0]),

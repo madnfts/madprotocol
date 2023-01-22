@@ -16,16 +16,17 @@ const main = async () => {
   const [deployer] = await ethers.getSigners();
   console.log(`Deploying contracts with ${deployer.address}`);
 
-  // Deploying with / withour ERC20 support
+  // Deploying with / without ERC20 support
   let erc20Address = ethers.constants.AddressZero;
-  if (ERC20_TOKEN == "local") {
+  if (ERC20_TOKEN == "mock") {
     const ERC20 = await ethers.getContractFactory(
       "MockERC20",
     );
     const erc20 = (await ERC20.deploy(
       BigNumber.from(2).pow(255),
     )) as MockERC20;
-    console.log(`MockERC20 address: ${erc20.address}`);
+    erc20Address = erc20.address;
+    console.log(`MockERC20 address: ${erc20Address}`);
   } else if (ERC20_TOKEN) {
     erc20Address = ERC20_TOKEN;
     console.log(`ERC20 address: ${erc20Address}`);
@@ -110,6 +111,7 @@ const main = async () => {
   const r721 = await MADRouter721.deploy(
     f721.address,
     erc20Address,
+    deployer.address, // public mint fee address
   );
   console.log(`ERC721 Router address: ${r721.address}`);
 
@@ -158,6 +160,7 @@ const main = async () => {
   const r1155 = await MADRouter1155.deploy(
     f1155.address,
     erc20Address,
+    deployer.address, // public mint fee address
   );
   console.log(`ERC1155 Router address: ${r1155.address}`);
 

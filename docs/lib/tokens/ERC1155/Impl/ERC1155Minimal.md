@@ -64,7 +64,7 @@ function burn(address to, uint256 amount, address erc20Owner) external payable
 
 
 
-*Can&#39;t be reburnt since `minted` is not updated to false.*
+
 
 #### Parameters
 
@@ -80,7 +80,7 @@ function burn(address to, uint256 amount, address erc20Owner) external payable
 function erc20() external view returns (contract ERC20)
 ```
 
-
+ERC20 payment token address.
 
 
 
@@ -90,6 +90,23 @@ function erc20() external view returns (contract ERC20)
 | Name | Type | Description |
 |---|---|---|
 | _0 | contract ERC20 | undefined |
+
+### feeCount
+
+```solidity
+function feeCount() external view returns (uint256)
+```
+
+Fee counter.
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
 
 ### isApprovedForAll
 
@@ -212,7 +229,7 @@ function ownerOf(uint256, address) external view returns (uint256)
 function price() external view returns (uint256)
 ```
 
-
+Public mint price.
 
 
 
@@ -231,7 +248,7 @@ function publicMint(uint256 balance) external payable
 
 
 
-*Allows public minting*
+
 
 #### Parameters
 
@@ -245,9 +262,9 @@ function publicMint(uint256 balance) external payable
 function publicMintState() external view returns (bool)
 ```
 
+Public mint state default := false.
 
 
-*default := false*
 
 
 #### Returns
@@ -308,7 +325,7 @@ function safeMint(address to, uint256 amount, address erc20Owner) external payab
 
 
 
-*Can&#39;t be reminted if already minted, due to boolean, amount cant be &gt; 1.msg.sender = routererc20Owner = paying user*
+
 
 #### Parameters
 
@@ -393,7 +410,7 @@ function setPublicMintState(bool _publicMintState) external nonpayable
 function splitter() external view returns (contract SplitterImpl)
 ```
 
-
+Splitter address relationship.
 
 
 
@@ -451,18 +468,23 @@ function uri(uint256 id) external view returns (string)
 ### withdraw
 
 ```solidity
-function withdraw() external nonpayable
+function withdraw(address recipient) external nonpayable
 ```
 
 
 
 
 
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| recipient | address | undefined |
 
 ### withdrawERC20
 
 ```solidity
-function withdrawERC20(contract ERC20 _token) external nonpayable
+function withdrawERC20(contract ERC20 _token, address recipient) external nonpayable
 ```
 
 
@@ -474,6 +496,7 @@ function withdrawERC20(contract ERC20 _token) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | _token | contract ERC20 | undefined |
+| recipient | address | undefined |
 
 
 

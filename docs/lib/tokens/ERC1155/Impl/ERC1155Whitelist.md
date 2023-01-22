@@ -10,6 +10,23 @@
 
 ## Methods
 
+### URILock
+
+```solidity
+function URILock() external view returns (bool)
+```
+
+Lock the URI default := false.
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
+
 ### balanceOf
 
 ```solidity
@@ -118,7 +135,7 @@ function claimFree(uint256[] balances, uint256 balanceTotal, bytes32[] merklePro
 function claimListMerkleRoot() external view returns (bytes32)
 ```
 
-
+Claim merkel.
 
 
 
@@ -157,7 +174,7 @@ function claimed(address) external view returns (bool)
 function erc20() external view returns (contract ERC20)
 ```
 
-
+ERC20 payment token address.
 
 
 
@@ -168,15 +185,32 @@ function erc20() external view returns (contract ERC20)
 |---|---|---|
 | _0 | contract ERC20 | undefined |
 
+### feeCount
+
+```solidity
+function feeCount() external view returns (uint256)
+```
+
+Fee counter.
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
+
 ### freeAmount
 
 ```solidity
 function freeAmount() external view returns (uint256)
 ```
 
+Default amount to be claimed as free in a collection.
 
 
-*Default amount to be claimed as free in a collection.*
 
 
 #### Returns
@@ -191,9 +225,9 @@ function freeAmount() external view returns (uint256)
 function freeClaimState() external view returns (bool)
 ```
 
+True to enable free claiming default := false.
 
 
-*default := false*
 
 
 #### Returns
@@ -226,7 +260,7 @@ function freeConfig(uint256 _freeAmount, uint256 _maxFree, bytes32 _claimListMer
 function freeSupply() external view returns (uint256)
 ```
 
-
+Claim available supply.
 
 
 
@@ -319,7 +353,7 @@ function isApprovedForAll(address, address) external view returns (bool)
 function maxFree() external view returns (uint256)
 ```
 
-
+Claim max supply.
 
 
 
@@ -336,7 +370,7 @@ function maxFree() external view returns (uint256)
 function maxSupply() external view returns (uint256)
 ```
 
-
+Capped max supply.
 
 
 
@@ -353,7 +387,7 @@ function maxSupply() external view returns (uint256)
 function maxWhitelistSupply() external view returns (uint256)
 ```
 
-
+Whitelist max supply.
 
 
 
@@ -552,7 +586,7 @@ function publicMintState() external view returns (bool)
 function publicPrice() external view returns (uint256)
 ```
 
-
+Public mint price.
 
 
 
@@ -708,6 +742,17 @@ function setURI(string __uri) external nonpayable
 |---|---|---|
 | __uri | string | undefined |
 
+### setURILock
+
+```solidity
+function setURILock() external nonpayable
+```
+
+
+
+
+
+
 ### setWhitelistMintState
 
 ```solidity
@@ -730,7 +775,7 @@ function setWhitelistMintState(bool _whitelistMintState) external nonpayable
 function splitter() external view returns (contract SplitterImpl)
 ```
 
-
+Splitter address relationship.
 
 
 
@@ -826,7 +871,7 @@ function whitelistConfig(uint256 _price, uint256 _supply, bytes32 _root) externa
 function whitelistMerkleRoot() external view returns (bytes32)
 ```
 
-
+Whitelist merkel.
 
 
 
@@ -914,7 +959,7 @@ function whitelistMinted() external view returns (uint256)
 function whitelistPrice() external view returns (uint256)
 ```
 
-
+Public whitelist mint price.
 
 
 
@@ -928,18 +973,23 @@ function whitelistPrice() external view returns (uint256)
 ### withdraw
 
 ```solidity
-function withdraw() external nonpayable
+function withdraw(address recipient) external nonpayable
 ```
 
 
 
 
 
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| recipient | address | undefined |
 
 ### withdrawERC20
 
 ```solidity
-function withdrawERC20(contract ERC20 _token) external nonpayable
+function withdrawERC20(contract ERC20 _token, address recipient) external nonpayable
 ```
 
 
@@ -951,6 +1001,7 @@ function withdrawERC20(contract ERC20 _token) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | _token | contract ERC20 | undefined |
+| recipient | address | undefined |
 
 
 
@@ -973,6 +1024,22 @@ event ApprovalForAll(address indexed owner, address indexed operator, bool appro
 | owner `indexed` | address | undefined |
 | operator `indexed` | address | undefined |
 | approved  | bool | undefined |
+
+### BaseURILocked
+
+```solidity
+event BaseURILocked(string indexed baseURI)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| baseURI `indexed` | string | undefined |
 
 ### BaseURISet
 
@@ -1281,6 +1348,17 @@ error PublicMintClosed()
 
 
 *0x2d0a3f8e*
+
+
+### UriLocked
+
+```solidity
+error UriLocked()
+```
+
+
+
+*?*
 
 
 ### WhitelistMintClosed

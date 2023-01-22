@@ -97,6 +97,22 @@ event PublicMintState(bytes32 indexed _id, uint8 indexed _type, bool indexed _st
 | _type `indexed` | uint8 | undefined |
 | _state `indexed` | bool | undefined |
 
+### RecipientUpdated
+
+```solidity
+event RecipientUpdated(address indexed newRecipient)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| newRecipient `indexed` | address | undefined |
+
 ### TokenFundsWithdrawn
 
 ```solidity

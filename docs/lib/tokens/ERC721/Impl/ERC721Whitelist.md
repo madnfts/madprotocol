@@ -155,6 +155,23 @@ ERC20 payment token address.
 |---|---|---|
 | _0 | contract ERC20 | undefined |
 
+### feeCount
+
+```solidity
+function feeCount() external view returns (uint256)
+```
+
+Fee counter.
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
+
 ### freeAmount
 
 ```solidity
@@ -907,18 +924,23 @@ Public whitelist mint price.
 ### withdraw
 
 ```solidity
-function withdraw() external nonpayable
+function withdraw(address recipient) external nonpayable
 ```
 
 
 
 
 
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| recipient | address | undefined |
 
 ### withdrawERC20
 
 ```solidity
-function withdrawERC20(contract ERC20 _token) external nonpayable
+function withdrawERC20(contract ERC20 _token, address recipient) external nonpayable
 ```
 
 
@@ -930,6 +952,7 @@ function withdrawERC20(contract ERC20 _token) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | _token | contract ERC20 | undefined |
+| recipient | address | undefined |
 
 
 

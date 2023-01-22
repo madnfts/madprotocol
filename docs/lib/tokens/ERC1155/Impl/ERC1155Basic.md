@@ -10,6 +10,23 @@
 
 ## Methods
 
+### URILock
+
+```solidity
+function URILock() external view returns (bool)
+```
+
+Lock the URI default := false.
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
+
 ### balanceOf
 
 ```solidity
@@ -64,7 +81,7 @@ function burn(address[] from, uint256[] ids, uint256[] balances, address erc20Ow
 
 
 
-*Burns an arbitrary length array of ids of different owners.Allows erc20 payments only if erc20 exists*
+
 
 #### Parameters
 
@@ -83,7 +100,7 @@ function burnBatch(address from, uint256[] ids, uint256[] amounts, address erc20
 
 
 
-*Allows erc20 payments only if erc20 exists*
+
 
 #### Parameters
 
@@ -100,7 +117,7 @@ function burnBatch(address from, uint256[] ids, uint256[] amounts, address erc20
 function erc20() external view returns (contract ERC20)
 ```
 
-
+ERC20 payment token address.
 
 
 
@@ -110,6 +127,23 @@ function erc20() external view returns (contract ERC20)
 | Name | Type | Description |
 |---|---|---|
 | _0 | contract ERC20 | undefined |
+
+### feeCount
+
+```solidity
+function feeCount() external view returns (uint256)
+```
+
+Fee counter.
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
 
 ### getMintCount
 
@@ -174,9 +208,9 @@ function isApprovedForAll(address, address) external view returns (bool)
 function maxSupply() external view returns (uint256)
 ```
 
+Capped max supply.
 
 
-*Capped max supply.*
 
 
 #### Returns
@@ -193,7 +227,7 @@ function mint(uint256 amount, uint256 balance) external payable
 
 
 
-*Allows erc20 payments only if erc20 exists*
+
 
 #### Parameters
 
@@ -210,7 +244,7 @@ function mintBatch(uint256[] ids, uint256[] amounts) external payable
 
 
 
-*Enables public minting of an arbitrary length array of specific ids.*
+
 
 #### Parameters
 
@@ -227,7 +261,7 @@ function mintBatchTo(address to, uint256[] ids, uint256[] amounts, address erc20
 
 
 
-*Allows erc20 payments only if erc20 exists*
+
 
 #### Parameters
 
@@ -246,7 +280,7 @@ function mintTo(address to, uint256 amount, uint256[] balance, address erc20Owne
 
 
 
-*Allows erc20 payments only if erc20 exists*
+
 
 #### Parameters
 
@@ -355,7 +389,7 @@ function ownerOf(uint256, address) external view returns (uint256)
 function price() external view returns (uint256)
 ```
 
-
+Public mint price.
 
 
 
@@ -372,9 +406,9 @@ function price() external view returns (uint256)
 function publicMintState() external view returns (bool)
 ```
 
+Public mint state default := false.
 
 
-*default := false.*
 
 
 #### Returns
@@ -512,13 +546,24 @@ function setURI(string __uri) external nonpayable
 |---|---|---|
 | __uri | string | undefined |
 
+### setURILock
+
+```solidity
+function setURILock() external nonpayable
+```
+
+
+
+
+
+
 ### splitter
 
 ```solidity
 function splitter() external view returns (contract SplitterImpl)
 ```
 
-
+Splitter address relationship.
 
 
 
@@ -593,18 +638,23 @@ function uri(uint256 id) external view returns (string)
 ### withdraw
 
 ```solidity
-function withdraw() external nonpayable
+function withdraw(address recipient) external nonpayable
 ```
 
 
 
 
 
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| recipient | address | undefined |
 
 ### withdrawERC20
 
 ```solidity
-function withdrawERC20(contract ERC20 _token) external nonpayable
+function withdrawERC20(contract ERC20 _token, address recipient) external nonpayable
 ```
 
 
@@ -616,6 +666,7 @@ function withdrawERC20(contract ERC20 _token) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | _token | contract ERC20 | undefined |
+| recipient | address | undefined |
 
 
 
@@ -638,6 +689,22 @@ event ApprovalForAll(address indexed owner, address indexed operator, bool appro
 | owner `indexed` | address | undefined |
 | operator `indexed` | address | undefined |
 | approved  | bool | undefined |
+
+### BaseURILocked
+
+```solidity
+event BaseURILocked(string indexed baseURI)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| baseURI `indexed` | string | undefined |
 
 ### BaseURISet
 
@@ -823,6 +890,17 @@ error PublicMintClosed()
 
 
 *0x2d0a3f8e*
+
+
+### UriLocked
+
+```solidity
+error UriLocked()
+```
+
+
+
+*?*
 
 
 ### WrongPrice

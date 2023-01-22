@@ -27,6 +27,23 @@ function DOMAIN_SEPARATOR() external view returns (bytes32)
 |---|---|---|
 | _0 | bytes32 | undefined |
 
+### URILock
+
+```solidity
+function URILock() external view returns (bool)
+```
+
+Lock the URI default := false.
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | bool | undefined |
+
 ### balanceOf
 
 ```solidity
@@ -81,7 +98,7 @@ function burn(address[] from, uint256[] ids, uint256[] balances, address erc20Ow
 
 
 
-*Burns an arbitrary length array of ids of different owners.Allows erc20 payments only if erc20 exists*
+
 
 #### Parameters
 
@@ -100,7 +117,7 @@ function burnBatch(address from, uint256[] ids, uint256[] balances, address erc2
 
 
 
-*Burns an arbitrary length array of ids owned by a single account.Allows erc20 payments only if erc20 exists*
+
 
 #### Parameters
 
@@ -117,7 +134,7 @@ function burnBatch(address from, uint256[] ids, uint256[] balances, address erc2
 function erc20() external view returns (contract ERC20)
 ```
 
-
+ERC20 payment token address.
 
 
 
@@ -127,6 +144,23 @@ function erc20() external view returns (contract ERC20)
 | Name | Type | Description |
 |---|---|---|
 | _0 | contract ERC20 | undefined |
+
+### feeCount
+
+```solidity
+function feeCount() external view returns (uint256)
+```
+
+Fee counter.
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
 
 ### getMintCount
 
@@ -420,7 +454,7 @@ function setSigner(address _signer) external nonpayable
 
 
 
-*Can only be updated by the Router&#39;s owner.*
+
 
 #### Parameters
 
@@ -434,9 +468,9 @@ function setSigner(address _signer) external nonpayable
 function setURI(string __uri) external nonpayable
 ```
 
-Changes the `_uri` value in storage.
 
-*Can only be accessed by the collection creator.*
+
+
 
 #### Parameters
 
@@ -444,13 +478,41 @@ Changes the `_uri` value in storage.
 |---|---|---|
 | __uri | string | undefined |
 
+### setURILock
+
+```solidity
+function setURILock() external nonpayable
+```
+
+
+
+
+
+
+### signer
+
+```solidity
+function signer() external view returns (address)
+```
+
+The signer address used for lazy minting voucher validation.
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | undefined |
+
 ### splitter
 
 ```solidity
 function splitter() external view returns (contract SplitterImpl)
 ```
 
-
+Splitter address relationship.
 
 
 
@@ -528,7 +590,7 @@ function uri(uint256 id) external view returns (string)
 function usedVouchers(bytes32) external view returns (bool)
 ```
 
-
+Mapping for used vouchers.
 
 
 
@@ -547,18 +609,23 @@ function usedVouchers(bytes32) external view returns (bool)
 ### withdraw
 
 ```solidity
-function withdraw() external nonpayable
+function withdraw(address recipient) external nonpayable
 ```
 
 
 
 
 
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| recipient | address | undefined |
 
 ### withdrawERC20
 
 ```solidity
-function withdrawERC20(contract ERC20 _token) external nonpayable
+function withdrawERC20(contract ERC20 _token, address recipient) external nonpayable
 ```
 
 
@@ -570,6 +637,7 @@ function withdrawERC20(contract ERC20 _token) external nonpayable
 | Name | Type | Description |
 |---|---|---|
 | _token | contract ERC20 | undefined |
+| recipient | address | undefined |
 
 
 
@@ -592,6 +660,22 @@ event ApprovalForAll(address indexed owner, address indexed operator, bool appro
 | owner `indexed` | address | undefined |
 | operator `indexed` | address | undefined |
 | approved  | bool | undefined |
+
+### BaseURILocked
+
+```solidity
+event BaseURILocked(string indexed baseURI)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| baseURI `indexed` | string | undefined |
 
 ### BaseURISet
 
@@ -755,6 +839,17 @@ error NotMintedYet()
 
 
 *0xbad086ea*
+
+
+### UriLocked
+
+```solidity
+error UriLocked()
+```
+
+
+
+*?*
 
 
 ### UsedVoucher

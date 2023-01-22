@@ -332,6 +332,23 @@ function paused() external view returns (bool)
 |---|---|---|
 | _0 | bool | undefined |
 
+### recipient
+
+```solidity
+function recipient() external view returns (address)
+```
+
+
+
+*The recipient address used for public mint fees.*
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | address | undefined |
+
 ### setFees
 
 ```solidity
@@ -399,6 +416,22 @@ Enables the contract&#39;s owner to change payment token address.
 |---|---|---|
 | _paymentTokenAddress | address | erc20 token address | address(0). |
 
+### setRecipient
+
+```solidity
+function setRecipient(address _recipient) external nonpayable
+```
+
+
+
+*Setter for public mint fee _recipient.Function Sighash := ?*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| _recipient | address | undefined |
+
 ### setSigner
 
 ```solidity
@@ -432,6 +465,22 @@ Collection baseURI setter.
 |---|---|---|
 | _token | address | 1155 token address. |
 | _uri | string | New URI string. |
+
+### setURILock
+
+```solidity
+function setURILock(address _token) external nonpayable
+```
+
+Collection baseURI locker preventing URI updates when set.      Cannot be unset!
+
+*Only available for Basic, Whitelist and Lazy token types. Events logged       by each tokens&#39; setBaseURILock functions.      Function Sighash := ?*
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| _token | address | 721 token address. |
 
 ### unpause
 
@@ -602,6 +651,22 @@ event PublicMintState(bytes32 indexed _id, uint8 indexed _type, bool indexed _st
 | _id `indexed` | bytes32 | undefined |
 | _type `indexed` | uint8 | undefined |
 | _state `indexed` | bool | undefined |
+
+### RecipientUpdated
+
+```solidity
+event RecipientUpdated(address indexed newRecipient)
+```
+
+
+
+
+
+#### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| newRecipient `indexed` | address | undefined |
 
 ### TokenFundsWithdrawn
 

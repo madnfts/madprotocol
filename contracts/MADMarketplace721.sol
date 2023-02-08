@@ -84,7 +84,7 @@ contract MADMarketplace721 is
         setFactory(_factory);
         setRecipient(_recipient);
         if (_paymentTokenAddress != address(0)) {
-            setPaymentToken(_paymentTokenAddress);
+            _setPaymentToken(_paymentTokenAddress);
         }
         updateSettings(
             300, // 5 min
@@ -492,9 +492,8 @@ contract MADMarketplace721 is
 
     /// @notice Enables the contract's owner to change payment token address.
     /// @dev Function Signature := ?
-    function setPaymentToken(address _paymentTokenAddress)
-        public
-        onlyOwner
+    function _setPaymentToken(address _paymentTokenAddress)
+        private
     {
         erc20 = ERC20(_paymentTokenAddress);
         emit PaymentTokenUpdated(_paymentTokenAddress);

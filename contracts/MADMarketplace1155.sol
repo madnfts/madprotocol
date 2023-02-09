@@ -22,7 +22,7 @@ contract MADMarketplace1155 is
 
     /// @dev Function Signature := 0x06fdde03
     function name()
-        public
+        external
         pure
         override(MAD)
         returns (string memory)
@@ -84,7 +84,7 @@ contract MADMarketplace1155 is
         setFactory(_factory);
         setRecipient(_recipient);
         if (_paymentTokenAddress != address(0)) {
-            setPaymentToken(_paymentTokenAddress);
+            _setPaymentToken(_paymentTokenAddress);
         }
         updateSettings(
             300, // 5 min
@@ -106,7 +106,7 @@ contract MADMarketplace1155 is
         uint256 _amount,
         uint256 _price,
         uint256 _endTime
-    ) public whenNotPaused {
+    ) external whenNotPaused {
         _makeOrder(
             0,
             _token,
@@ -127,7 +127,7 @@ contract MADMarketplace1155 is
         uint256 _startPrice,
         uint256 _endPrice,
         uint256 _endTime
-    ) public whenNotPaused {
+    ) external whenNotPaused {
         _exceedsMaxEP(_startPrice, _endPrice);
         _makeOrder(
             1,
@@ -148,7 +148,7 @@ contract MADMarketplace1155 is
         uint256 _amount,
         uint256 _startPrice,
         uint256 _endTime
-    ) public whenNotPaused {
+    ) external whenNotPaused {
         _makeOrder(
             2,
             _token,
@@ -517,9 +517,8 @@ contract MADMarketplace1155 is
 
     /// @notice Enables the contract's owner to change payment token address.
     /// @dev Function Signature := ?
-    function setPaymentToken(address _paymentTokenAddress)
-        public
-        onlyOwner
+    function _setPaymentToken(address _paymentTokenAddress)
+        private
     {
         require(
             _paymentTokenAddress != address(0),

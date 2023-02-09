@@ -43,7 +43,7 @@ contract MADFactory721 is MAD,
 
     /// @dev Function SigHash: 0x06fdde03
     function name()
-        public
+        external
         pure
         override(MAD)
         returns (string memory)
@@ -99,17 +99,17 @@ contract MADFactory721 is MAD,
         setMarket(_marketplace);
         setSigner(_signer);
         if (_paymentTokenAddress != address(0)) {
-            setPaymentToken(_paymentTokenAddress);
+            _setPaymentToken(_paymentTokenAddress);
         }
+
         router = _router;
         emit RouterUpdated(_router);
     }
 
     /// @notice Enables the contract's owner to change payment token address.
     /// @dev Function Signature := ?
-    function setPaymentToken(address _paymentTokenAddress)
-        public
-        onlyOwner
+    function _setPaymentToken(address _paymentTokenAddress)
+        private
     {
         erc20 = ERC20(_paymentTokenAddress);
         emit PaymentTokenUpdated(_paymentTokenAddress);
@@ -347,6 +347,7 @@ contract MADFactory721 is MAD,
         isThisOg
         whenNotPaused
     {
+        require(_tokenType > 2 || _price > 0, 'Invalid price');
         _limiter(_tokenType, _splitter);
         _royaltyLocker(_royalty);
 
@@ -527,7 +528,7 @@ contract MADFactory721 is MAD,
 
     /// @dev `MADRouter` instance setter.
     /// @dev Function Sighash := 0xc0d78655
-    function setRouter(address _router) public onlyOwner {
+    function setRouter(address _router) external onlyOwner {
         require(_router != address(0), "Invalid address");
 
         assembly {
@@ -721,7 +722,7 @@ contract MADFactory721 is MAD,
 
     /// @inheritdoc FactoryVerifier
     function creatorCheck(bytes32 _colID) 
-    public
+    external
     override(FactoryVerifier)
     view
     returns(address creator, bool check) 
@@ -818,7 +819,7 @@ contract MADFactory721 is MAD,
     }
 
     function getDeployedAddr(string memory _salt)
-        public
+        external
         view
         returns (
             address

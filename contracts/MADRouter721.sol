@@ -52,7 +52,7 @@ contract MADRouter721 is
     /// @notice Contract name.
     /// @dev Function Sighash := 0x06fdde03
     function name()
-        public
+        external
         pure
         override(MAD)
         returns (string memory)
@@ -79,7 +79,7 @@ contract MADRouter721 is
     ) {
         MADFactory721 = _factory;
         if (_paymentTokenAddress != address(0)) {
-            setPaymentToken(_paymentTokenAddress);
+            _setPaymentToken(_paymentTokenAddress);
         }
         setRecipient(_recipient);
     }
@@ -91,9 +91,8 @@ contract MADRouter721 is
     /// @notice Enables the contract's owner to change payment token address.
     /// @dev Function Signature := 0x6a326ab1
     /// @param _paymentTokenAddress erc20 token address | address(0).
-    function setPaymentToken(address _paymentTokenAddress)
-        public
-        onlyOwner
+    function _setPaymentToken(address _paymentTokenAddress)
+        private
     {
         erc20 = ERC20(_paymentTokenAddress);
         emit PaymentTokenUpdated(_paymentTokenAddress);

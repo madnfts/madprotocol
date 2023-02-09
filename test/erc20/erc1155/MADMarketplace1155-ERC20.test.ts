@@ -83,19 +83,19 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
       );
     });
   });
-  describe("Owner Functions", async () => {
-    it("Should update ERC20 payment token address", async () => {
-      const tx = await m1155.setPaymentToken(erc20.address);
+  // describe("Owner Functions", async () => {
+  //   it("Should update ERC20 payment token address", async () => {
+  //     const tx = await m1155.setPaymentToken(erc20.address);
 
-      expect(tx).to.be.ok;
-      expect(await m1155.callStatic.erc20()).to.eq(
-        erc20.address,
-      );
-      await expect(
-        m1155.connect(acc02).setPaymentToken(erc20.address),
-      ).to.be.revertedWith(MarketplaceErrors.Unauthorized);
-    });
-  });
+  //     expect(tx).to.be.ok;
+  //     expect(await m1155.callStatic.erc20()).to.eq(
+  //       erc20.address,
+  //     );
+  //     await expect(
+  //       m1155.connect(acc02).setPaymentToken(erc20.address),
+  //     ).to.be.revertedWith(MarketplaceErrors.Unauthorized);
+  //   });
+  // });
   describe("Buying", async () => {
     it("Should revert buy if buyer has insufficient ERC20 balance", async () => {
       // acc02 = seller

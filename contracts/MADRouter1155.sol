@@ -52,7 +52,7 @@ contract MADRouter1155 is
     /// @notice Contract name.
     /// @dev Function Sighash := 0x06fdde03
     function name()
-        public
+        external
         pure
         override(MAD)
         returns (string memory)

@@ -44,7 +44,7 @@ contract MADFactory1155 is MAD,
 
     /// @dev Function SigHash: 0x06fdde03
     function name()
-        public
+        external
         pure
         override(MAD)
         returns (string memory)
@@ -515,7 +515,7 @@ contract MADFactory1155 is MAD,
 
     /// @dev `MADRouter` instance setter.
     /// @dev Function Sighash := 0xc0d78655
-    function setRouter(address _router) public onlyOwner {
+    function setRouter(address _router) external onlyOwner {
         require(_router != address(0), "Invalid address");
         // router = _router;
         assembly {
@@ -708,7 +708,7 @@ contract MADFactory1155 is MAD,
 
     /// @inheritdoc FactoryVerifier
     function creatorCheck(bytes32 _colID) 
-    public
+    external
     override(FactoryVerifier)
     view
     returns(address creator, bool check) 
@@ -805,7 +805,7 @@ contract MADFactory1155 is MAD,
     }
 
     function getDeployedAddr(string memory _salt)
-        public
+        external
         view
         returns (
             address

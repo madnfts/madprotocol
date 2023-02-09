@@ -22,7 +22,7 @@ contract MADMarketplace1155 is
 
     /// @dev Function Signature := 0x06fdde03
     function name()
-        public
+        external
         pure
         override(MAD)
         returns (string memory)
@@ -106,7 +106,7 @@ contract MADMarketplace1155 is
         uint256 _amount,
         uint256 _price,
         uint256 _endTime
-    ) public whenNotPaused {
+    ) external whenNotPaused {
         _makeOrder(
             0,
             _token,
@@ -127,7 +127,7 @@ contract MADMarketplace1155 is
         uint256 _startPrice,
         uint256 _endPrice,
         uint256 _endTime
-    ) public whenNotPaused {
+    ) external whenNotPaused {
         _exceedsMaxEP(_startPrice, _endPrice);
         _makeOrder(
             1,
@@ -148,7 +148,7 @@ contract MADMarketplace1155 is
         uint256 _amount,
         uint256 _startPrice,
         uint256 _endTime
-    ) public whenNotPaused {
+    ) external whenNotPaused {
         _makeOrder(
             2,
             _token,

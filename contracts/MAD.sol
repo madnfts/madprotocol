@@ -26,7 +26,7 @@ pragma solidity 0.8.16;
 
 abstract contract MAD {
     function name()
-        public
+        external
         pure
         virtual
         returns (string memory);

@@ -81,7 +81,7 @@
     "compile": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat compile",
     "typechain": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat typechain",
     "coverage": "yarn typechain && hardhat coverage --solcoverjs ./.solcover.js --temp artifacts --testfiles \"test/**/*.ts\"",
-    "test:erc20": "hardhat test ./test/erc20/**",
+    "test:erc20": "hardhat test ./test/erc20/**/*",
     "test": "hardhat test",
     "prettier": "prettier --config ./.prettierrc.yaml --write \"**/*.{js,json,md,sol,ts,yaml,yml}\"",
     "prettier:check": "prettier --check --config ./.prettierrc.yaml \"**/*.{js,json,md,sol,ts,yaml,yml}\"",    

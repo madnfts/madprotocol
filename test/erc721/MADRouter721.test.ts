@@ -2486,6 +2486,24 @@ describe("MADRouter721", () => {
       );
     });
   });
+  describe("Set Fee Set Max Tests", async () => {
+    it("Should allow setting fees below and at the limit (2.5 eth and 0.5 eth for our fixtures)", async () => {
+      await expect(r721.setFees(
+        ethers.utils.parseEther("2.4"),
+        ethers.utils.parseEther("0.4"),
+      )).to.be.ok;
+
+      await expect(r721.setFees(
+        ethers.utils.parseEther("2.5"),
+        ethers.utils.parseEther("0.5"),
+      )).to.be.ok;
+
+      await expect(r721.setFees(
+        ethers.utils.parseEther("2.6"),
+        ethers.utils.parseEther("0.6"),
+      )).to.be.reverted;
+    })
+  }),
   describe("Burn-setBaseFee", async () => {
     it("Should burn tokens for 721Basic collection type", async () => {
       // await f721.addAmbassador(amb.address);

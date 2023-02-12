@@ -45,6 +45,8 @@ export interface MADRouter1155Interface extends utils.Interface {
     "feeMint()": FunctionFragment;
     "freeSettings(address,uint256,uint256,bytes32)": FunctionFragment;
     "gift(address,address[],uint256[],uint256)": FunctionFragment;
+    "maxFeeBurn()": FunctionFragment;
+    "maxFeeMint()": FunctionFragment;
     "minimalSafeMint(address,address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "owner()": FunctionFragment;
@@ -78,6 +80,8 @@ export interface MADRouter1155Interface extends utils.Interface {
       | "feeMint"
       | "freeSettings"
       | "gift"
+      | "maxFeeBurn"
+      | "maxFeeMint"
       | "minimalSafeMint"
       | "name"
       | "owner"
@@ -180,6 +184,14 @@ export interface MADRouter1155Interface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "maxFeeBurn",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "maxFeeMint",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "minimalSafeMint",
     values: [
       PromiseOrValue<string>,
@@ -270,6 +282,8 @@ export interface MADRouter1155Interface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "gift", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "maxFeeBurn", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "maxFeeMint", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "minimalSafeMint",
     data: BytesLike
@@ -546,6 +560,10 @@ export interface MADRouter1155 extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    maxFeeBurn(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    maxFeeMint(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     minimalSafeMint(
       _token: PromiseOrValue<string>,
       _to: PromiseOrValue<string>,
@@ -701,6 +719,10 @@ export interface MADRouter1155 extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  maxFeeBurn(overrides?: CallOverrides): Promise<BigNumber>;
+
+  maxFeeMint(overrides?: CallOverrides): Promise<BigNumber>;
+
   minimalSafeMint(
     _token: PromiseOrValue<string>,
     _to: PromiseOrValue<string>,
@@ -855,6 +877,10 @@ export interface MADRouter1155 extends BaseContract {
       totalBalance: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    maxFeeBurn(overrides?: CallOverrides): Promise<BigNumber>;
+
+    maxFeeMint(overrides?: CallOverrides): Promise<BigNumber>;
 
     minimalSafeMint(
       _token: PromiseOrValue<string>,
@@ -1098,6 +1124,10 @@ export interface MADRouter1155 extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    maxFeeBurn(overrides?: CallOverrides): Promise<BigNumber>;
+
+    maxFeeMint(overrides?: CallOverrides): Promise<BigNumber>;
+
     minimalSafeMint(
       _token: PromiseOrValue<string>,
       _to: PromiseOrValue<string>,
@@ -1253,6 +1283,10 @@ export interface MADRouter1155 extends BaseContract {
       totalBalance: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    maxFeeBurn(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    maxFeeMint(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     minimalSafeMint(
       _token: PromiseOrValue<string>,

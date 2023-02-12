@@ -446,7 +446,8 @@ contract MADMarketplace1155 is
     function setFees(uint256 _feeVal2, uint256 _feeVal3)
         external
         onlyOwner
-    {
+    {        
+        // max fees, 15% for royalties, 5% for fees
         require(
             _feeVal2 <= 1.5e3 && _feeVal3 <= 5.0e2,
             "Invalid Fees"

@@ -157,7 +157,9 @@ export async function madFixture721A(): Promise<MADFixture721> {
   const r721 = (await Router.deploy(
     f721.address,
     dead,
-    owner[0]
+    owner[0],
+    ethers.utils.parseEther("2.5"),
+    ethers.utils.parseEther("0.5"),
   )) as MADRouter721;
 
   await f721.setRouter(r721.address);
@@ -231,7 +233,9 @@ export async function madFixture721B(): Promise<MADFixture721> {
   const r721 = (await Router.deploy(
     f721.address,
     dead,
-    owner[0]
+    owner[0],
+    ethers.utils.parseEther("2.5"),
+    ethers.utils.parseEther("0.5"),
   )) as MADRouter721;
 
   await f721.setRouter(r721.address);
@@ -305,7 +309,9 @@ export async function madFixture721C(): Promise<MADFixture721> {
   const r721 = (await Router.deploy(
     f721.address,
     dead,
-    owner[0]
+    owner[0],
+    ethers.utils.parseEther("2.5"),
+    ethers.utils.parseEther("0.5"),
   )) as MADRouter721;
 
   await f721.setRouter(r721.address);
@@ -385,7 +391,9 @@ export async function madFixture721D(): Promise<MADFixture721ERC20> {
   const r721 = (await Router.deploy(
     f721.address,
     erc20.address,
-    owner[0]
+    owner[0],
+    ethers.utils.parseEther("2.5"),
+    ethers.utils.parseEther("0.5"),
   )) as MADRouter721;
 
   await f721.setRouter(r721.address);
@@ -465,7 +473,9 @@ export async function madFixture721E(): Promise<MADFixture721ERC20> {
   const r721 = (await Router.deploy(
     f721.address,
     erc20.address,
-    owner[0]
+    owner[0],
+    ethers.utils.parseEther("2.5"),
+    ethers.utils.parseEther("0.5"),
   )) as MADRouter721;
 
   await f721.setRouter(r721.address);
@@ -539,7 +549,9 @@ export async function madFixture1155A(): Promise<MADFixture1155> {
   const r1155 = (await Router.deploy(
     f1155.address,
     dead,
-    owner[0]
+    owner[0],
+    ethers.utils.parseEther("2.5"),
+    ethers.utils.parseEther("0.5"),
   )) as MADRouter1155;
 
   await f1155.setRouter(r1155.address);
@@ -613,7 +625,9 @@ export async function madFixture1155B(): Promise<MADFixture1155> {
   const r1155 = (await Router.deploy(
     f1155.address,
     dead,
-    owner[0]
+    owner[0],
+    ethers.utils.parseEther("2.5"),
+    ethers.utils.parseEther("0.5"),
   )) as MADRouter1155;
 
   await f1155.setRouter(r1155.address);
@@ -687,7 +701,9 @@ export async function madFixture1155C(): Promise<MADFixture1155> {
   const r1155 = (await Router.deploy(
     f1155.address,
     dead,
-    owner[0]
+    owner[0],
+    ethers.utils.parseEther("2.5"),
+    ethers.utils.parseEther("0.5"),
   )) as MADRouter1155;
 
   await f1155.setRouter(r1155.address);
@@ -767,7 +783,9 @@ export async function madFixture1155D(): Promise<MADFixture1155ERC20> {
   const r1155 = (await Router.deploy(
     f1155.address,
     erc20.address,
-    owner[0]
+    owner[0],
+    ethers.utils.parseEther("2.5"),
+    ethers.utils.parseEther("0.5"),
   )) as MADRouter1155;
 
   await f1155.setRouter(r1155.address);
@@ -847,7 +865,9 @@ export async function madFixture1155E(): Promise<MADFixture1155ERC20> {
   const r1155 = (await Router.deploy(
     f1155.address,
     erc20.address,
-    owner[0]
+    owner[0],
+    ethers.utils.parseEther("2.5"),
+    ethers.utils.parseEther("0.5"),
   )) as MADRouter1155;
 
   await f1155.setRouter(r1155.address);

@@ -46,6 +46,12 @@ contract MADRouter721 is
     /// @notice Burn fee store.
     uint256 public feeBurn = 0;
 
+    /// @notice max fee that can be set for mint, configured on constructor
+    uint256 public maxFeeMint;
+    
+    /// @notice max fee that can be set for burn, configured on constructor
+    uint256 public maxFeeBurn;
+
     /// @dev The recipient address used for public mint fees.
     address public recipient;
 
@@ -72,11 +78,18 @@ contract MADRouter721 is
     /// @param _factory 721 factory address.
     /// @param _paymentTokenAddress erc20 token address | address(0).
     /// @param _recipient 721 factory address.
+    /// @param _maxFeeMint max fee contract owner can set for minting
+    /// @param _maxFeeBurnt max fee contract owner can set for burning
     constructor(
         FactoryVerifier _factory,
         address _paymentTokenAddress,
-        address _recipient
+        address _recipient,
+        uint256 _maxFeeMint,
+        uint256 _maxFeeBurnt
     ) {
+        require(_maxFeeMint > 0 && _maxFeeBurnt > 0, "Invalid max fee settings");
+        maxFeeMint = _maxFeeMint;
+        maxFeeBurn = _maxFeeBurnt;
         MADFactory721 = _factory;
         if (_paymentTokenAddress != address(0)) {
             _setPaymentToken(_paymentTokenAddress);
@@ -610,6 +623,7 @@ contract MADRouter721 is
         external
         onlyOwner
     {
+        require(_feeMint <= maxFeeMint && _feeBurn <= maxFeeBurn, "Invalid fee settings, beyond max");
         assembly {
             sstore(feeBurn.slot, _feeBurn)
             sstore(feeMint.slot, _feeMint)

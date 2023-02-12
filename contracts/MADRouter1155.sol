@@ -726,10 +726,12 @@ contract MADRouter1155 is
         external
         onlyOwner
     {
-        require(
-            _feeMint < 50 ether && _feeBurn < 50 ether,
-            "Invalid Fees"
-        );
+        require(_feeMint <= maxFeeMint && _feeBurn <= maxFeeBurn, "Invalid fee settings, beyond max");
+
+        // require(
+        //     _feeMint < 50 ether && _feeBurn < 50 ether,
+        //     "Invalid Fees"
+        // );
         assembly {
             sstore(feeBurn.slot, _feeBurn)
             sstore(feeMint.slot, _feeMint)

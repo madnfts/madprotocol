@@ -146,7 +146,7 @@ contract MADMarketplace721 is
     /// @dev By default, auction will be extended in 5 minutes if last bid is placed 5 minutes prior to auction's end.
     /// @dev 5 minutes eq to 300 mined blocks since block mining time is expected to take 1s in the harmony blockchain.
     function bid(bytes32 _order)
-        external
+        public
         payable
         whenNotPaused
     {

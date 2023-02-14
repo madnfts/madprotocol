@@ -347,7 +347,8 @@ contract MADFactory721 is MAD,
         isThisOg
         whenNotPaused
     {
-        require(_tokenType > 2 || _price > 0, 'Invalid price');
+        // removed as price can be set to 0
+        // require(_tokenType > 2 || _price > 0, 'Invalid price');
         _limiter(_tokenType, _splitter);
         _royaltyLocker(_royalty);
 

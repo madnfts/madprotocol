@@ -188,6 +188,40 @@ ERC721Whitelist gift tokens function handler.
 | _token | address | 721 token address. |
 | _addresses | address[] | Array of addresses to gift too. |
 
+### maxFeeBurn
+
+```solidity
+function maxFeeBurn() external view returns (uint256)
+```
+
+max fee that can be set for burn, configured on constructor
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
+
+### maxFeeMint
+
+```solidity
+function maxFeeMint() external view returns (uint256)
+```
+
+max fee that can be set for mint, configured on constructor
+
+
+
+
+#### Returns
+
+| Name | Type | Description |
+|---|---|---|
+| _0 | uint256 | undefined |
+
 ### minimalSafeMint
 
 ```solidity
@@ -367,22 +401,6 @@ Set the Routers owner address.
 | Name | Type | Description |
 |---|---|---|
 | newOwner | address | New owners address. |
-
-### setPaymentToken
-
-```solidity
-function setPaymentToken(address _paymentTokenAddress) external nonpayable
-```
-
-Enables the contract&#39;s owner to change payment token address.
-
-*Function Signature := 0x6a326ab1*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| _paymentTokenAddress | address | erc20 token address | address(0). |
 
 ### setRecipient
 

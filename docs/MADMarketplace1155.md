@@ -637,22 +637,6 @@ function setOwner(address newOwner) external nonpayable
 |---|---|---|
 | newOwner | address | undefined |
 
-### setPaymentToken
-
-```solidity
-function setPaymentToken(address _paymentTokenAddress) external nonpayable
-```
-
-Enables the contract&#39;s owner to change payment token address.
-
-*Function Signature := ?*
-
-#### Parameters
-
-| Name | Type | Description |
-|---|---|---|
-| _paymentTokenAddress | address | undefined |
-
 ### setRecipient
 
 ```solidity

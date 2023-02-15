@@ -61,6 +61,15 @@ const chains: Array<NetworkUserConfig> = [
         },
   },
   {
+    chainId: 1564830818, // skale
+    url: "https://mainnet.skalenodes.com/v1/honorable-steel-rasalhague",
+    accounts: PK
+      ? [PK]
+      : {
+          mnemonic: MNEMONIC || DEFAULT_MNEMONIC,
+        },
+  },
+  {
     chainId: 344106930, // skaleDevnet
     url: "https://staging-v3.skalenodes.com/v1/staging-utter-unripe-menkar",
     accounts: PK
@@ -128,6 +137,7 @@ const config: HardhatUserConfig = {
   networks: {
     harmony: getChainConfig(1666600000),
     harmonyDevnet: getChainConfig(1666900000),
+    skale: getChainConfig(1564830818),
     skaleDevnet: getChainConfig(344106930),
     goerli: getChainConfig(5),
     ganache: getChainConfig(1337),

@@ -74,6 +74,7 @@
   "scripts": {
     "deploy:harmony": "hardhat run scripts/deploy.ts --network harmony",
     "deploy:harmonyDevnet": "hardhat run scripts/deploy.ts --network harmonyDevnet",
+    "deploy:skale": "hardhat run scripts/deploy.ts --network skale",
     "deploy:skaleDevnet": "hardhat run scripts/deploy.ts --network skaleDevnet",
     "deploy:goerli": "hardhat run scripts/deploy.ts --network goerli",
     "deploy:ganache": "hardhat run scripts/deploy.ts --network ganache",

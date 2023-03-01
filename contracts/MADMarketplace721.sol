@@ -10,6 +10,7 @@ import { Owned } from "./lib/auth/Owned.sol";
 import { ERC721Holder } from "./lib/tokens/ERC721/Base/utils/ERC721Holder.sol";
 import { SafeTransferLib } from "./lib/utils/SafeTransferLib.sol";
 import { ERC20 } from "./lib/tokens/ERC20.sol";
+import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 
 contract MADMarketplace721 is
     MAD,
@@ -37,6 +38,8 @@ contract MADMarketplace721 is
     ////////////////////////////////////////////////////////////////
     //                           STORAGE                          //
     ////////////////////////////////////////////////////////////////
+    ISwapRouter public immutable swapRouter;
+    uint24 public constant feeTier = 3000;
 
     // uint256 constant NAME_SLOT =
     // 0x8b30951df380b6b10da747e1167dd8e40bf8604c88c75b245dc172767f3b7320;
@@ -53,6 +56,9 @@ contract MADMarketplace721 is
 
     /// @dev seller => orderID
     mapping(address => bytes32[]) public orderIdBySeller;
+
+    /// @dev when user is outbid on an erc20, deposit here and let the user withdraw it
+    mapping(address => uint256) public userOutbid;
 
     /// @dev orderID => order details
     mapping(bytes32 => Types.Order721) public orderInfo;
@@ -79,12 +85,26 @@ contract MADMarketplace721 is
         address _recipient,
         uint256 _minOrderDuration,
         FactoryVerifier _factory,
-        address _paymentTokenAddress
+        address _paymentTokenAddress,
+        address _swapRouter
     ) {
         setFactory(_factory);
         setRecipient(_recipient);
+        swapRouter = ISwapRouter(_swapRouter);
         if (_paymentTokenAddress != address(0)) {
+            // swap router should not be 0 IF we accept ERC20 tokens
+            require(
+                address(swapRouter) != address(0),
+                "invalid swap router configuration"
+            );
             _setPaymentToken(_paymentTokenAddress);
+            
+            // Approve the router to spend the ERC20 payment token.
+            SafeTransferLib.safeApprove(
+                ERC20(_paymentTokenAddress),
+                address(_swapRouter),
+                2**256 - 1
+            );
         }
         updateSettings(
             300, // 5 min
@@ -197,16 +217,31 @@ contract MADMarketplace721 is
 
         if (lastBidPrice != 0) {
             if (address(erc20) != address(0)) {
-                SafeTransferLib.safeTransfer(
-                    erc20,
+                // SafeTransferLib.safeTransfer(
+                //     erc20,
+                //     order.lastBidder,
+                //     lastBidPrice
+                // );
+                // pull from user vs push
+                emit UserOutbid(
                     order.lastBidder,
+                    address(erc20),
                     lastBidPrice
                 );
+                userOutbid[order.lastBidder] += lastBidPrice;
             } else {
-                SafeTransferLib.safeTransferETH(
+                // SafeTransferLib.safeTransferETH(
+                //     order.lastBidder,
+                //     lastBidPrice
+                // );
+                // pull from user vs push
+
+                emit UserOutbid(
                     order.lastBidder,
+                    address(0),
                     lastBidPrice
                 );
+                userOutbid[order.lastBidder] += lastBidPrice;
             }
         }
 
@@ -240,7 +275,9 @@ contract MADMarketplace721 is
             if (
                 erc20.allowance(msg.sender, address(this)) <
                 currentPrice
-            ) revert WrongPrice();
+            ) {
+                revert WrongPrice();
+            }
             SafeTransferLib.safeTransferFrom(
                 erc20,
                 msg.sender,
@@ -541,6 +578,7 @@ contract MADMarketplace721 is
         );
     }
 
+    /// @dev withdraw all ERC20 token value from contract
     function withdrawERC20(ERC20 _token)
         external
         onlyOwner
@@ -551,6 +589,128 @@ contract MADMarketplace721 is
             msg.sender,
             address(this).balance
         );
+    }
+
+    /// @dev transfer outbid values back to users in array
+    /// up to the caller to set user; system limits to 20 users
+    /// call this whenever we want (can be daily). Basically force the user
+    /// to accept their returned outbid tokens
+    function autoTransferFunds(address[] memory users)
+        external
+        whenNotPaused
+        onlyOwner
+    {
+        require(users.length < 20, "invalid user length");
+        bool isNative = address(erc20) == address(0);
+        if (isNative) {
+            for (uint256 i = 0; i < users.length; ++i) {
+                if (userOutbid[users[i]] > 0) {
+                    userOutbid[users[i]] = 0;
+                    SafeTransferLib.safeTransferETH(
+                        msg.sender,
+                        userOutbid[users[i]]
+                    );
+                }
+            }
+        } else {
+            for (uint256 i = 0; i < users.length; ++i) {
+                _withdrawOutbid(users[i], erc20, 0, 0);
+            }
+        }
+    }
+
+    /// @dev when outbid (eth) the user must withdraw. we can flush the pending pool 
+    /// using the auto-transfer-funds function
+    function withdrawOutbidEth() external whenNotPaused {
+        require(
+            userOutbid[msg.sender] > 0,
+            "nothing to withdraw"
+        );
+        require(address(erc20) == address(0), "cannot withdraw eth");
+
+        uint256 amountOut = userOutbid[msg.sender];
+        userOutbid[msg.sender] = 0;
+
+        SafeTransferLib.safeTransferETH(
+            msg.sender,
+            amountOut
+        );
+        emit WithdrawOutbid(msg.sender, address(0), amountOut); // amount withdrawn
+    }
+
+    function withdrawOutbid(
+        ERC20 _token,
+        uint256 minOut,
+        uint160 priceLimit
+    ) external whenNotPaused {
+        _withdrawOutbid(
+            msg.sender,
+            _token,
+            minOut,
+            priceLimit
+        );
+    }
+
+    function _withdrawOutbid(
+        address _sender,
+        ERC20 _token,
+        uint256 minOut,
+        uint160 priceLimit
+    ) private whenNotPaused {
+        require(
+            address(erc20) != address(0) &&
+                address(_token) != address(0),
+            "not erc20"
+        );
+        require(
+            userOutbid[_sender] > 0,
+            "nothing to withdraw"
+        );
+
+        uint256 amountIn = userOutbid[_sender];
+        userOutbid[_sender] = 0;
+
+        if (_token == erc20) {
+            SafeTransferLib.safeTransfer(
+                _token,
+                _sender,
+                amountIn
+            );
+            emit WithdrawOutbid(_sender, address(_token), amountIn); // amount withdrawn
+            return;
+        }
+
+        // Note: To use this example, you should explicitly set slippage limits, omitting for simplicity
+        // uint256 minOut = /* Calculate min output */ 0;
+        // uint160 priceLimit = /* Calculate price limit */ 0;
+        // Create the params that will be used to execute the swap
+
+        ISwapRouter.ExactInputSingleParams
+            memory params = ISwapRouter
+                .ExactInputSingleParams({
+                    tokenIn: address(erc20),
+                    tokenOut: address(_token),
+                    fee: feeTier,
+                    recipient: _sender,
+                    deadline: block.timestamp,
+                    amountIn: amountIn,
+                    amountOutMinimum: minOut,
+                    sqrtPriceLimitX96: priceLimit
+                });
+        // The call to `exactInputSingle` executes the swap.
+        uint256 amountOut = swapRouter.exactInputSingle(
+            params
+        );
+        emit WithdrawOutbid(_sender, address(_token), amountOut); // amount withdrawn
+    }
+
+    /// @dev retrieve how much balance 
+    function getOutbidBalance()
+        external
+        view
+        returns (uint256 balance)
+    {
+        balance = userOutbid[msg.sender];
     }
 
     /// @notice Delete order function only callabe by contract's owner, when contract is paused, as security measure.

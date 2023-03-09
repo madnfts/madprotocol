@@ -70,6 +70,7 @@ export interface MADMarketplace721Interface extends utils.Interface {
     "setRecipient(address)": FunctionFragment;
     "swapRouter()": FunctionFragment;
     "tokenOrderLength(address,uint256)": FunctionFragment;
+    "totalOutbid()": FunctionFragment;
     "unpause()": FunctionFragment;
     "updateSettings(uint256,uint256,uint256,uint256)": FunctionFragment;
     "userOutbid(address)": FunctionFragment;
@@ -119,6 +120,7 @@ export interface MADMarketplace721Interface extends utils.Interface {
       | "setRecipient"
       | "swapRouter"
       | "tokenOrderLength"
+      | "totalOutbid"
       | "unpause"
       | "updateSettings"
       | "userOutbid"
@@ -283,6 +285,10 @@ export interface MADMarketplace721Interface extends utils.Interface {
     functionFragment: "tokenOrderLength",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "totalOutbid",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "updateSettings",
@@ -408,6 +414,10 @@ export interface MADMarketplace721Interface extends utils.Interface {
   decodeFunctionResult(functionFragment: "swapRouter", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "tokenOrderLength",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "totalOutbid",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
@@ -842,6 +852,8 @@ export interface MADMarketplace721 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    totalOutbid(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     unpause(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -1069,6 +1081,8 @@ export interface MADMarketplace721 extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  totalOutbid(overrides?: CallOverrides): Promise<BigNumber>;
+
   unpause(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -1293,6 +1307,8 @@ export interface MADMarketplace721 extends BaseContract {
       _id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    totalOutbid(overrides?: CallOverrides): Promise<BigNumber>;
 
     unpause(overrides?: CallOverrides): Promise<void>;
 
@@ -1627,6 +1643,8 @@ export interface MADMarketplace721 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    totalOutbid(overrides?: CallOverrides): Promise<BigNumber>;
+
     unpause(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -1830,6 +1848,8 @@ export interface MADMarketplace721 extends BaseContract {
       _id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    totalOutbid(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     unpause(
       overrides?: Overrides & { from?: PromiseOrValue<string> }

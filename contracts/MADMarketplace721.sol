@@ -76,6 +76,7 @@ contract MADMarketplace721 is
     FactoryVerifier public MADFactory721;
 
     ERC20 public erc20;
+    uint256 public totalOutbid;
 
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
@@ -228,6 +229,7 @@ contract MADMarketplace721 is
                     address(erc20),
                     lastBidPrice
                 );
+                totalOutbid += lastBidPrice;
                 userOutbid[order.lastBidder] += lastBidPrice;
             } else {
                 // SafeTransferLib.safeTransferETH(
@@ -241,6 +243,7 @@ contract MADMarketplace721 is
                     address(0),
                     lastBidPrice
                 );
+                totalOutbid += lastBidPrice;
                 userOutbid[order.lastBidder] += lastBidPrice;
             }
         }
@@ -572,9 +575,12 @@ contract MADMarketplace721 is
 
     /// @dev Function Signature := 0x3ccfd60b
     function withdraw() external onlyOwner whenPaused {
+        require(address(this).balance - totalOutbid > 0, "No balance to withdraw");
+
         SafeTransferLib.safeTransferETH(
             msg.sender,
-            address(this).balance
+            // withdraw all except amount users have pending in contract (outbid)
+            address(this).balance - totalOutbid
         );
     }
 
@@ -583,11 +589,14 @@ contract MADMarketplace721 is
         external
         onlyOwner
         whenPaused
-    {
+    {        
+        require(_token.balanceOf(address(this)) - totalOutbid > 0, "No balance to withdraw");
+
         SafeTransferLib.safeTransfer(
             _token,
             msg.sender,
-            address(this).balance
+            // withdraw all except amount users have pending in contract (outbid)
+           _token.balanceOf(address(this)) - totalOutbid
         );
     }
 
@@ -597,23 +606,26 @@ contract MADMarketplace721 is
     /// to accept their returned outbid tokens
     function autoTransferFunds(address[] memory users)
         external
-        whenNotPaused
         onlyOwner
     {
-        require(users.length < 20, "invalid user length");
-        bool isNative = address(erc20) == address(0);
-        if (isNative) {
+        require(users.length < 20 && users.length > 0, "invalid user length");
+        if (address(erc20) == address(0)) {
             for (uint256 i = 0; i < users.length; ++i) {
                 if (userOutbid[users[i]] > 0) {
+                    uint256 outbid = 0;
                     userOutbid[users[i]] = 0;
+                    totalOutbid = totalOutbid - outbid;
                     SafeTransferLib.safeTransferETH(
                         msg.sender,
-                        userOutbid[users[i]]
+                        outbid
                     );
+                }
+                else {
+                    revert("nothing to withdraw");
                 }
             }
         } else {
-            for (uint256 i = 0; i < users.length; ++i) {
+            for (uint256 i = 0; i < users.length; i++) {
                 _withdrawOutbid(users[i], erc20, 0, 0);
             }
         }
@@ -621,7 +633,7 @@ contract MADMarketplace721 is
 
     /// @dev when outbid (eth) the user must withdraw. we can flush the pending pool 
     /// using the auto-transfer-funds function
-    function withdrawOutbidEth() external whenNotPaused {
+    function withdrawOutbidEth() external {
         require(
             userOutbid[msg.sender] > 0,
             "nothing to withdraw"
@@ -630,6 +642,7 @@ contract MADMarketplace721 is
 
         uint256 amountOut = userOutbid[msg.sender];
         userOutbid[msg.sender] = 0;
+        totalOutbid -= amountOut;
 
         SafeTransferLib.safeTransferETH(
             msg.sender,
@@ -642,7 +655,7 @@ contract MADMarketplace721 is
         ERC20 _token,
         uint256 minOut,
         uint160 priceLimit
-    ) external whenNotPaused {
+    ) external {
         _withdrawOutbid(
             msg.sender,
             _token,
@@ -656,7 +669,7 @@ contract MADMarketplace721 is
         ERC20 _token,
         uint256 minOut,
         uint160 priceLimit
-    ) private whenNotPaused {
+    ) private {
         require(
             address(erc20) != address(0) &&
                 address(_token) != address(0),
@@ -669,6 +682,7 @@ contract MADMarketplace721 is
 
         uint256 amountIn = userOutbid[_sender];
         userOutbid[_sender] = 0;
+        totalOutbid -= amountIn;
 
         if (_token == erc20) {
             SafeTransferLib.safeTransfer(

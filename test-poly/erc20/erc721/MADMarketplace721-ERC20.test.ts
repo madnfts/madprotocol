@@ -41,6 +41,7 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
   // extra EOAs
   let acc01: WalletWithAddress;
   let acc02: WalletWithAddress;
+  let acc03: WalletWithAddress;
 
   let f721: MADFactory721;
   let m721: MADMarketplace721;
@@ -52,7 +53,7 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
     ethers.utils.parseEther("500");
 
   before("Set signers", async () => {
-    [owner, amb, acc01, acc02] =
+    [owner, amb, acc01, acc02, acc03] =
       await // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (ethers as any).getSigners();
 
@@ -81,6 +82,12 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
     await tx.wait();
 
     tx = await acc02.sendTransaction({
+      to: erc20.address,
+      value: erc20Balance,
+    });
+    await tx.wait();
+
+    tx = await acc03.sendTransaction({
       to: erc20.address,
       value: erc20Balance,
     });
@@ -482,5 +489,279 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
       erc20Balance.sub(ethers.utils.parseEther("1"))
       .sub(ethers.utils.parseEther("0.1")),
     );
+  });
+  it("Test full end-to-end purchase and then withdraw; pause then clear the contract of the tokens (outbid and sold out)", async () => {
+    // acc02 = seller
+    // acc01 = buyer
+    const ownerERC20Bal = await erc20.balanceOf(
+      await m721.callStatic.recipient(),
+    );
+
+    // Mint token
+    await m721.updateSettings(300, 10, 20, 31536000);
+    await f721
+      .connect(acc02)
+      .splitterCheck(
+        "MADSplitter1",
+        amb.address,
+        dead,
+        20,
+        0,
+      );
+    const splAddr = await f721.callStatic.getDeployedAddr(
+      "MADSplitter1",
+    );
+    const minAddr = await f721.callStatic.getDeployedAddr(
+      "MinSalt",
+    );
+    await f721
+      .connect(acc02)
+      .createCollection(
+        0,
+        "MinSalt",
+        "721Minimal",
+        "MIN",
+        price,
+        1,
+        "cid/id.json",
+        splAddr,
+        1000,
+      );
+    const min = await ethers.getContractAt(
+      "ERC721Minimal",
+      minAddr,
+    );
+    const splitter = await ethers.getContractAt(
+      "SplitterImpl",
+      splAddr,
+    );
+
+    // Mint the token with erc20
+    await erc20
+      .connect(acc02)
+      .approve(r721.address, ethers.utils.parseEther("0.25"));
+    await r721
+      .connect(acc02)
+      .minimalSafeMint(min.address, acc02.address);
+
+    // acc02 = erc20Balance - 0.25
+    expect(await erc20.balanceOf(acc02.address)).to.equal(
+      erc20Balance.sub(ethers.utils.parseEther("0.25")),
+    );
+
+    // List token
+    const tx = await min
+      .connect(acc02)
+      .approve(m721.address, 1);
+    const blockTimestamp = (
+      await m721.provider.getBlock(tx.blockNumber || 0)
+    ).timestamp;
+    const fpTx = await m721
+      .connect(acc02)
+      .englishAuction(
+        min.address,
+        1,
+        ethers.utils.parseEther("0.1"),
+        blockTimestamp + 301,
+      );
+    const fpRc: ContractReceipt = await fpTx.wait();
+    const fpBn = fpRc.blockNumber;
+    const fpOrderId = getOrderId721(
+      fpBn,
+      min.address,
+      1,
+      acc02.address,
+    );
+
+    // Bid for the token
+    await erc20
+      .connect(acc01)
+      .approve(m721.address, ethers.utils.parseEther("0.1"));
+    const bidTx = await m721.connect(acc01).bid(fpOrderId);
+    expect(bidTx).to.be.ok; // bid 1
+    await mine(300);
+
+    // Bid for the token and wait for auction to close, then claim
+    await erc20.connect(acc01).approve(m721.address, price);
+    const bidTx2 = await m721.connect(acc01).bid(fpOrderId); // bid again?
+    expect(bidTx2).to.be.ok;
+
+    await mine(300);
+
+    await erc20.connect(acc03).approve(m721.address, price.mul(2));
+    const bidTx3 = await m721.connect(acc03).bid(fpOrderId); // bid again?
+    expect(bidTx3).to.be.ok;
+
+    // users bid
+    // pause
+    // user withdraw
+    // with one bid stuck because the contract is paused
+
+    console.log(await m721.connect(acc01).getOutbidBalance());
+    console.log(await m721.connect(acc03).getOutbidBalance());
+    console.log(await erc20.balanceOf(m721.address));
+    
+    await mine(600);
+    await m721.pause();
+
+    console.log(await m721.totalOutbid());
+
+    expect(await m721.totalOutbid()).to.be.equal(ethers.utils.parseEther("1.1"));
+    expect(await erc20.balanceOf(m721.address)).to.be.equal(ethers.utils.parseEther("3.1"));
+
+    // withdraw after pause
+    console.log(await m721.owner())
+    console.log(owner.address);
+    console.log((await erc20.balanceOf(m721.address)).sub(await m721.totalOutbid()).toString());
+    await m721.connect(owner).withdrawERC20(erc20.address);
+
+    // withdraw outbids
+    await m721.connect(acc01).withdrawOutbid(erc20.address, 0, 0);
+    await m721.connect(acc03).withdrawOutbid(erc20.address, 0, 0);
+
+    expect(await m721.totalOutbid()).to.be.equal(ethers.utils.parseEther("0"));
+    expect(await erc20.balanceOf(m721.address)).to.be.equal(ethers.utils.parseEther("0"));
+
+    await expect(m721.connect(owner).withdrawERC20(erc20.address)).to.be.reverted;
+  });
+
+  it("Test full end-to-end purchase and then withdraw; pause then clear the contract of the tokens (outbid and sold out and auto-withdraw)", async () => {
+    // acc02 = seller
+    // acc01 = buyer
+    const ownerERC20Bal = await erc20.balanceOf(
+      await m721.callStatic.recipient(),
+    );
+
+    // Mint token
+    await m721.updateSettings(300, 10, 20, 31536000);
+    await f721
+      .connect(acc02)
+      .splitterCheck(
+        "MADSplitter1",
+        amb.address,
+        dead,
+        20,
+        0,
+      );
+    const splAddr = await f721.callStatic.getDeployedAddr(
+      "MADSplitter1",
+    );
+    const minAddr = await f721.callStatic.getDeployedAddr(
+      "MinSalt",
+    );
+    await f721
+      .connect(acc02)
+      .createCollection(
+        0,
+        "MinSalt",
+        "721Minimal",
+        "MIN",
+        price,
+        1,
+        "cid/id.json",
+        splAddr,
+        1000,
+      );
+    const min = await ethers.getContractAt(
+      "ERC721Minimal",
+      minAddr,
+    );
+    const splitter = await ethers.getContractAt(
+      "SplitterImpl",
+      splAddr,
+    );
+
+    // Mint the token with erc20
+    await erc20
+      .connect(acc02)
+      .approve(r721.address, ethers.utils.parseEther("0.25"));
+    await r721
+      .connect(acc02)
+      .minimalSafeMint(min.address, acc02.address);
+
+    // acc02 = erc20Balance - 0.25
+    expect(await erc20.balanceOf(acc02.address)).to.equal(
+      erc20Balance.sub(ethers.utils.parseEther("0.25")),
+    );
+
+    // List token
+    const tx = await min
+      .connect(acc02)
+      .approve(m721.address, 1);
+    const blockTimestamp = (
+      await m721.provider.getBlock(tx.blockNumber || 0)
+    ).timestamp;
+    const fpTx = await m721
+      .connect(acc02)
+      .englishAuction(
+        min.address,
+        1,
+        ethers.utils.parseEther("0.1"),
+        blockTimestamp + 301,
+      );
+    const fpRc: ContractReceipt = await fpTx.wait();
+    const fpBn = fpRc.blockNumber;
+    const fpOrderId = getOrderId721(
+      fpBn,
+      min.address,
+      1,
+      acc02.address,
+    );
+
+    // Bid for the token
+    await erc20
+      .connect(acc01)
+      .approve(m721.address, ethers.utils.parseEther("0.1"));
+    const bidTx = await m721.connect(acc01).bid(fpOrderId);
+    expect(bidTx).to.be.ok; // bid 1
+    await mine(300);
+
+    // Bid for the token and wait for auction to close, then claim
+    await erc20.connect(acc01).approve(m721.address, price);
+    const bidTx2 = await m721.connect(acc01).bid(fpOrderId); // bid again?
+    expect(bidTx2).to.be.ok;
+
+    await mine(300);
+
+    await erc20.connect(acc03).approve(m721.address, price.mul(2));
+    const bidTx3 = await m721.connect(acc03).bid(fpOrderId); // bid again?
+    expect(bidTx3).to.be.ok;
+
+    // users bid
+    // pause
+    // user withdraw
+    // with one bid stuck because the contract is paused
+
+    console.log(await m721.connect(acc01).getOutbidBalance());
+    console.log(await m721.connect(acc03).getOutbidBalance());
+    console.log(await erc20.balanceOf(m721.address));
+    
+    await mine(600);
+    await m721.pause();
+
+    console.log(await m721.totalOutbid());
+
+    expect(await m721.totalOutbid()).to.be.equal(ethers.utils.parseEther("1.1"));
+    expect(await erc20.balanceOf(m721.address)).to.be.equal(ethers.utils.parseEther("3.1"));
+
+    // withdraw after pause
+    console.log(await m721.owner())
+    console.log((await erc20.balanceOf(m721.address)).sub(await m721.totalOutbid()).toString());
+    await m721.connect(owner).withdrawERC20(erc20.address);
+
+    // withdraw outbids
+    await m721.connect(acc03).withdrawOutbid(erc20.address, 0, 0);
+    await expect(m721.connect(owner).autoTransferFunds([owner.address])).to.be.reverted;
+    await expect(m721.connect(owner).autoTransferFunds([acc01.address])).to.be.ok;
+    await expect(m721.connect(owner).autoTransferFunds([acc01.address])).to.be.reverted;
+
+    console.log(await m721.totalOutbid());
+    console.log(await m721.connect(acc01).getOutbidBalance());
+    console.log(await m721.connect(acc03).getOutbidBalance());
+
+    expect(await m721.totalOutbid()).to.be.equal(ethers.utils.parseEther("0"));
+    expect(await erc20.balanceOf(m721.address)).to.be.equal(ethers.utils.parseEther("0"));
+    await expect(m721.connect(acc01).withdrawOutbid(erc20.address, 0, 0)).to.be.reverted;
+    await expect(m721.connect(owner).withdrawERC20(erc20.address)).to.be.reverted;
   });
 });

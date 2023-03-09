@@ -24,7 +24,7 @@ const parser = yargs
 
 // Load and validate .env configs
 dotenvConfig({ path: resolve(__dirname, "./.env") });
-const { INFURA_API_KEY, MNEMONIC, ETHERSCAN_API_KEY, PK } =
+const { INFURA_API_KEY, MNEMONIC, ETHERSCAN_API_KEY, PK, ALCHEMY_KEY } =
   process.env;
 const DEFAULT_MNEMONIC =
   "candy maple cake sugar pudding cream honey rich smooth crumble sweet treat";
@@ -141,6 +141,12 @@ const config: HardhatUserConfig = {
     skaleDevnet: getChainConfig(344106930),
     goerli: getChainConfig(5),
     ganache: getChainConfig(1337),
+    hardhat: {
+      forking: {
+        url: `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`,
+        blockNumber: 39835000
+      }
+    }
   },
   paths: {
     artifacts: "./artifacts",

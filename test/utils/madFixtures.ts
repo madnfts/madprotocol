@@ -145,6 +145,7 @@ export async function madFixture721A(): Promise<MADFixture721> {
     300,
     dead,
     dead,
+    dead,
   )) as MADMarketplace721;
 
   const f721 = (await Factory.deploy(
@@ -221,6 +222,7 @@ export async function madFixture721B(): Promise<MADFixture721> {
     300,
     dead,
     dead,
+    dead,
   )) as MADMarketplace721;
 
   const f721 = (await Factory.deploy(
@@ -295,6 +297,7 @@ export async function madFixture721C(): Promise<MADFixture721> {
   const m721 = (await Marketplace.deploy(
     owner[0],
     300,
+    dead,
     dead,
     dead,
   )) as MADMarketplace721;
@@ -379,6 +382,7 @@ export async function madFixture721D(): Promise<MADFixture721ERC20> {
     300,
     dead,
     erc20.address,
+    "0xE592427A0AEce92De3Edee1F18E0157C05861564",
   )) as MADMarketplace721;
 
   const f721 = (await Factory.deploy(
@@ -461,6 +465,7 @@ export async function madFixture721E(): Promise<MADFixture721ERC20> {
     300,
     dead,
     erc20.address,
+    "0xE592427A0AEce92De3Edee1F18E0157C05861564",
   )) as MADMarketplace721;
 
   const f721 = (await Factory.deploy(
@@ -535,6 +540,7 @@ export async function madFixture1155A(): Promise<MADFixture1155> {
   const m1155 = (await Marketplace.deploy(
     owner[0],
     300,
+    dead,
     dead,
     dead,
   )) as MADMarketplace1155;
@@ -613,6 +619,7 @@ export async function madFixture1155B(): Promise<MADFixture1155> {
     300,
     dead,
     dead,
+    dead,
   )) as MADMarketplace1155;
 
   const f1155 = (await Factory.deploy(
@@ -687,6 +694,7 @@ export async function madFixture1155C(): Promise<MADFixture1155> {
   const m1155 = (await Marketplace.deploy(
     owner[0],
     300,
+    dead,
     dead,
     dead,
   )) as MADMarketplace1155;
@@ -771,6 +779,7 @@ export async function madFixture1155D(): Promise<MADFixture1155ERC20> {
     300,
     dead,
     erc20.address,
+    "0xE592427A0AEce92De3Edee1F18E0157C05861564"
   )) as MADMarketplace1155;
 
   const f1155 = (await Factory.deploy(
@@ -853,6 +862,7 @@ export async function madFixture1155E(): Promise<MADFixture1155ERC20> {
     300,
     dead,
     erc20.address,
+    "0xE592427A0AEce92De3Edee1F18E0157C05861564"
   )) as MADMarketplace1155;
 
   const f1155 = (await Factory.deploy(

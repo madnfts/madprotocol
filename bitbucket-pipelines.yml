@@ -17,8 +17,15 @@ pipelines:
               - yarn compile
               - yarn test
         - step:
-            name: Code linting
+            name: Code linting TS
             script:              
-              - yarn lint
+              - yarn lint:ts
+            caches:
+              - node
+
+        - step:
+            name: Code linting SOL
+            script:              
+              - yarn lint:sol
             caches:
               - node

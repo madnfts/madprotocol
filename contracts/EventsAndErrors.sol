@@ -184,6 +184,16 @@ interface MarketplaceEventsAndErrors721 {
         address taker,
         uint256 price
     );
+    event UserOutbid(
+        address indexed user,
+        address erc20,
+        uint256 amount
+    );
+    event WithdrawOutbid(
+        address indexed user,
+        address erc20,
+        uint256 amount
+    );
 
     event FeesUpdated(uint256 feeVal2, uint256 feeVal3);
 
@@ -265,6 +275,16 @@ interface MarketplaceEventsAndErrors1155 {
         address seller,
         address taker,
         uint256 price
+    );
+    event UserOutbid(
+        address indexed user,
+        address erc20,
+        uint256 amount
+    );
+    event WithdrawOutbid(
+        address indexed user,
+        address erc20,
+        uint256 amount
     );
 
     event FeesUpdated(uint256 feeVal2, uint256 feeVal3);

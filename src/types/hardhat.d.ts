@@ -13,6 +13,14 @@ import { ethers } from "ethers";
 declare module "hardhat/types/runtime" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
     getContractFactory(
+      name: "IUniswapV3SwapCallback",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IUniswapV3SwapCallback__factory>;
+    getContractFactory(
+      name: "ISwapRouter",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ISwapRouter__factory>;
+    getContractFactory(
       name: "FactoryEventsAndErrors1155",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.FactoryEventsAndErrors1155__factory>;
@@ -237,6 +245,16 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MADRouter721__factory>;
 
+    getContractAt(
+      name: "IUniswapV3SwapCallback",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IUniswapV3SwapCallback>;
+    getContractAt(
+      name: "ISwapRouter",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ISwapRouter>;
     getContractAt(
       name: "FactoryEventsAndErrors1155",
       address: string,

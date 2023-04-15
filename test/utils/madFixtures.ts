@@ -779,7 +779,7 @@ export async function madFixture1155D(): Promise<MADFixture1155ERC20> {
     300,
     dead,
     erc20.address,
-    "0xE592427A0AEce92De3Edee1F18E0157C05861564"
+    "0xE592427A0AEce92De3Edee1F18E0157C05861564",
   )) as MADMarketplace1155;
 
   const f1155 = (await Factory.deploy(
@@ -862,7 +862,7 @@ export async function madFixture1155E(): Promise<MADFixture1155ERC20> {
     300,
     dead,
     erc20.address,
-    "0xE592427A0AEce92De3Edee1F18E0157C05861564"
+    "0xE592427A0AEce92De3Edee1F18E0157C05861564",
   )) as MADMarketplace1155;
 
   const f1155 = (await Factory.deploy(

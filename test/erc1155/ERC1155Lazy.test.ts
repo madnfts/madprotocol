@@ -447,7 +447,10 @@ describe("ERC1155Lazy", () => {
         { value: price.mul(amount) }, // amount := 30
       );
       await erc20.mint(lazy.address, price);
-      const tx = await lazy.withdrawERC20(erc20.address, dead);
+      const tx = await lazy.withdrawERC20(
+        erc20.address,
+        dead,
+      );
       const addrs = [
         mad.address,
         amb.address,
@@ -491,7 +494,9 @@ describe("ERC1155Lazy", () => {
         lazy.connect(acc01).withdraw(dead),
       ).to.be.revertedWith(LazyErrors.Unauthorized);
       await expect(
-        lazy.connect(acc02).withdrawERC20(erc20.address, dead),
+        lazy
+          .connect(acc02)
+          .withdrawERC20(erc20.address, dead),
       ).to.be.revertedWith(LazyErrors.Unauthorized);
 
       expect(await erc20.balanceOf(lazy.address)).to.eq(

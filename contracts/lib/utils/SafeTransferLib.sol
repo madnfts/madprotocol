@@ -12,9 +12,10 @@ library SafeTransferLib {
                              ETH OPERATIONS
     //////////////////////////////////////////////////////////////*/
 
-    function safeTransferETH(address to, uint256 amount)
-        internal
-    {
+    function safeTransferETH(
+        address to,
+        uint256 amount
+    ) internal {
         bool success;
 
         assembly {

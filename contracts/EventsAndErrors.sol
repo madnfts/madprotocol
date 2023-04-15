@@ -139,7 +139,7 @@ interface FactoryEventsAndErrors1155 {
     error InvalidRoyalty();
 }
 
-interface MarketplaceEventsAndErrors721 {
+interface MarketplaceEventsAndErrorsBase {
     ////////////////////////////////////////////////////////////////
     //                           EVENTS                           //
     ////////////////////////////////////////////////////////////////
@@ -157,33 +157,34 @@ interface MarketplaceEventsAndErrors721 {
         uint256 indexed newMaxDuration
     );
 
-    event MakeOrder(
-        IERC721 indexed token,
-        uint256 id,
-        bytes32 indexed hash,
-        address seller
-    );
-    event CancelOrder(
-        IERC721 indexed token,
-        uint256 id,
-        bytes32 indexed hash,
-        address seller
-    );
-    event Bid(
-        IERC721 indexed token,
-        uint256 id,
-        bytes32 indexed hash,
-        address bidder,
-        uint256 bidPrice
-    );
-    event Claim(
-        IERC721 indexed token,
-        uint256 id,
-        bytes32 indexed hash,
-        address seller,
-        address taker,
-        uint256 price
-    );
+    // event MakeOrder(
+    //     IERC721 indexed token,
+    //     uint256 id,
+    //     bytes32 indexed hash,
+    //     address seller
+    // );
+    // event CancelOrder(
+    //     IERC721 indexed token,
+    //     uint256 id,
+    //     bytes32 indexed hash,
+    //     address seller
+    // );
+    // event Bid(
+    //     IERC721 indexed token,
+    //     uint256 id,
+    //     bytes32 indexed hash,
+    //     address bidder,
+    //     uint256 bidPrice
+    // );
+    // event Claim(
+    //     IERC721 indexed token,
+    //     uint256 id,
+    //     bytes32 indexed hash,
+    //     address seller,
+    //     address taker,
+    //     uint256 price
+    // );
+
     event UserOutbid(
         address indexed user,
         address erc20,
@@ -227,23 +228,48 @@ interface MarketplaceEventsAndErrors721 {
     error EAOnly();
 }
 
-interface MarketplaceEventsAndErrors1155 {
+interface MarketplaceEventsAndErrors721 is
+    MarketplaceEventsAndErrorsBase
+{
     ////////////////////////////////////////////////////////////////
     //                           EVENTS                           //
     ////////////////////////////////////////////////////////////////
 
-    event FactoryUpdated(FactoryVerifier indexed newFactory);
-    event RecipientUpdated(address indexed newRecipient);
-    event PaymentTokenUpdated(
-        address indexed newPaymentToken
+    event MakeOrder(
+        IERC721 indexed token,
+        uint256 id,
+        bytes32 indexed hash,
+        address seller
     );
+    event CancelOrder(
+        IERC721 indexed token,
+        uint256 id,
+        bytes32 indexed hash,
+        address seller
+    );
+    event Bid(
+        IERC721 indexed token,
+        uint256 id,
+        bytes32 indexed hash,
+        address bidder,
+        uint256 bidPrice
+    );
+    event Claim(
+        IERC721 indexed token,
+        uint256 id,
+        bytes32 indexed hash,
+        address seller,
+        address taker,
+        uint256 price
+    );
+}
 
-    event AuctionSettingsUpdated(
-        uint256 indexed newMinDuration,
-        uint256 indexed newIncrement,
-        uint256 newMinBidValue,
-        uint256 indexed newMaxDuration
-    );
+interface MarketplaceEventsAndErrors1155 is
+    MarketplaceEventsAndErrorsBase
+{
+    ////////////////////////////////////////////////////////////////
+    //                           EVENTS                           //
+    ////////////////////////////////////////////////////////////////
 
     event MakeOrder(
         IERC1155 indexed token,
@@ -276,47 +302,6 @@ interface MarketplaceEventsAndErrors1155 {
         address taker,
         uint256 price
     );
-    event UserOutbid(
-        address indexed user,
-        address erc20,
-        uint256 amount
-    );
-    event WithdrawOutbid(
-        address indexed user,
-        address erc20,
-        uint256 amount
-    );
-
-    event FeesUpdated(uint256 feeVal2, uint256 feeVal3);
-
-    ////////////////////////////////////////////////////////////////
-    //                           ERRORS                           //
-    ////////////////////////////////////////////////////////////////
-
-    /// @dev 0xf7760f25
-    error WrongPrice();
-    /// @dev 0x90b8ec18
-    error TransferFailed();
-    /// @dev 0x0863b103
-    error InvalidBidder();
-    /// @dev 0xdf9428da
-    error CanceledOrder();
-    /// @dev 0x70f8f33a
-    error ExceedsMaxEP();
-    /// @dev 0x4ca88867
-    error AccessDenied();
-    /// @dev 0x921dbfec
-    error NeedMoreTime();
-    /// @dev 0x07ae5744
-    error NotBuyable();
-    /// @dev 0x3e0827ab
-    error BidExists();
-    /// @dev 0xf88b07a3
-    error SoldToken();
-    /// @dev 0x2af0c7f8
-    error Timeout();
-    /// @dev 0xffc96cb0
-    error EAOnly();
 }
 
 interface RouterEvents {

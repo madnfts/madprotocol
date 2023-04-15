@@ -8,5 +8,6 @@ export { MADFactory1155__factory } from "./MADFactory1155__factory";
 export { MADFactory721__factory } from "./MADFactory721__factory";
 export { MADMarketplace1155__factory } from "./MADMarketplace1155__factory";
 export { MADMarketplace721__factory } from "./MADMarketplace721__factory";
+export { MADMarketplaceBase__factory } from "./MADMarketplaceBase__factory";
 export { MADRouter1155__factory } from "./MADRouter1155__factory";
 export { MADRouter721__factory } from "./MADRouter721__factory";

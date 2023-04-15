@@ -747,7 +747,12 @@ describe("MADRouter721 - ERC20", () => {
         .connect(acc02)
         .setMintState(minAddr, true, 0);
 
-      await erc20.connect(acc01).approve(min.address, price.add(ethers.utils.parseEther("0.25")));
+      await erc20
+        .connect(acc01)
+        .approve(
+          min.address,
+          price.add(ethers.utils.parseEther("0.25")),
+        );
       await min.connect(acc01).publicMint();
       const tx = await r721.connect(acc02).burn(minAddr, []);
       const verArt = await artifacts.readArtifact(
@@ -808,7 +813,12 @@ describe("MADRouter721 - ERC20", () => {
         .connect(acc02)
         .setMintState(basicAddr, true, 0);
 
-      await erc20.connect(acc01).approve(basicAddr, price.add(ethers.utils.parseEther("0.25")));
+      await erc20
+        .connect(acc01)
+        .approve(
+          basicAddr,
+          price.add(ethers.utils.parseEther("0.25")),
+        );
       await basic.connect(acc01).mint(1);
       const tx = await r721
         .connect(acc02)
@@ -997,7 +1007,9 @@ describe("MADRouter721 - ERC20", () => {
         .connect(acc02)
         .approve(
           lazyAddr,
-          price.mul(ethers.BigNumber.from(2)).add(ethers.utils.parseEther("0.25")),
+          price
+            .mul(ethers.BigNumber.from(2))
+            .add(ethers.utils.parseEther("0.25")),
         );
       await lazy
         .connect(acc02)
@@ -1556,7 +1568,12 @@ describe("MADRouter721 - ERC20", () => {
         .connect(acc02)
         .setMintState(min.address, true, 0);
 
-      await erc20.connect(acc01).approve(min.address, price.add(ethers.utils.parseEther("0.25")));
+      await erc20
+        .connect(acc01)
+        .approve(
+          min.address,
+          price.add(ethers.utils.parseEther("0.25")),
+        );
       await min.connect(acc01).publicMint();
 
       const bal1 = await erc20.balanceOf(acc02.address);
@@ -1605,7 +1622,10 @@ describe("MADRouter721 - ERC20", () => {
 
       await erc20
         .connect(acc01)
-        .approve(basic.address, price.add(ethers.utils.parseEther("0.25")));
+        .approve(
+          basic.address,
+          price.add(ethers.utils.parseEther("0.25")),
+        );
       await basic.connect(acc01).mint(1);
 
       const bal2 = await erc20.balanceOf(mad.address);
@@ -1645,7 +1665,12 @@ describe("MADRouter721 - ERC20", () => {
         .connect(amb)
         .setMintState(wl.address, true, 0);
 
-      await erc20.connect(acc01).approve(wl.address, price.add(ethers.utils.parseEther("0.25")));
+      await erc20
+        .connect(acc01)
+        .approve(
+          wl.address,
+          price.add(ethers.utils.parseEther("0.25")),
+        );
       await wl.connect(acc01).mint(1);
       const bal3 = await erc20.balanceOf(amb.address);
       const tx3 = await r721
@@ -1744,7 +1769,12 @@ describe("MADRouter721 - ERC20", () => {
       });
       const sigSplit = ethers.utils.splitSignature(signature);
 
-      await erc20.connect(acc01).approve(lazyAddr, price.add(ethers.utils.parseEther("0.25")));
+      await erc20
+        .connect(acc01)
+        .approve(
+          lazyAddr,
+          price.add(ethers.utils.parseEther("0.25")),
+        );
       await lazy
         .connect(acc01)
         .lazyMint(
@@ -1772,7 +1802,7 @@ describe("MADRouter721 - ERC20", () => {
       expect(tx2).to.be.ok;
       expect(bal1).to.be.lt(newBal1);
       // we no longer take 10% of platform fees
-      
+
       expect(price.mul(8000).div(10_000)).to.be.eq(
         newBal2.sub(bal2),
       );
@@ -1864,10 +1894,10 @@ describe("MADRouter721 - ERC20", () => {
       // mad.address is creator - 10% royalties
       // amb.address is ambassador - 20%
       // recipient is fee receiver - 10%
-      // acc01 is minter 
-        
-      const recipient = r721.callStatic.recipient()
-      
+      // acc01 is minter
+
+      const recipient = r721.callStatic.recipient();
+
       // Set up a splitter
       await f721
         .connect(mad)
@@ -1912,35 +1942,62 @@ describe("MADRouter721 - ERC20", () => {
       await r721
         .connect(mad)
         .setMintState(min.address, true, 0);
-      
-      // Record start balances
-      const startBalMadMin = await erc20.balanceOf(mad.address);
-      const startBalAmbMin = await erc20.balanceOf(amb.address);
-      const startBalRecipientMin = await erc20.balanceOf(recipient);
-      const startBalAcc01Min = await erc20.balanceOf(acc01.address);
 
-      // Mint a public token - fee 2.5 + price 1 
-      await erc20.connect(acc01).approve(min.address, price.add(ethers.utils.parseEther("2.5")));
+      // Record start balances
+      const startBalMadMin = await erc20.balanceOf(
+        mad.address,
+      );
+      const startBalAmbMin = await erc20.balanceOf(
+        amb.address,
+      );
+      const startBalRecipientMin = await erc20.balanceOf(
+        recipient,
+      );
+      const startBalAcc01Min = await erc20.balanceOf(
+        acc01.address,
+      );
+
+      // Mint a public token - fee 2.5 + price 1
+      await erc20
+        .connect(acc01)
+        .approve(
+          min.address,
+          price.add(ethers.utils.parseEther("2.5")),
+        );
       await min.connect(acc01).publicMint();
       await r721
         .connect(mad)
         .withdraw(min.address, erc20.address);
-      
+
       // Record end balances
       const endBalMadMin = await erc20.balanceOf(mad.address);
       const endBalAmbMin = await erc20.balanceOf(amb.address);
-      const endBalRecipientMin = await erc20.balanceOf(recipient);
-      const endBalAcc01Min = await erc20.balanceOf(acc01.address);
-      
+      const endBalRecipientMin = await erc20.balanceOf(
+        recipient,
+      );
+      const endBalAcc01Min = await erc20.balanceOf(
+        acc01.address,
+      );
+
       // mad.address = creator = - txWithdrawGas + 80% of price (remaining 20% goes to ambassador)
-      expect(endBalMadMin).to.eq(startBalMadMin.add(ethers.utils.parseEther("0.8")))
+      expect(endBalMadMin).to.eq(
+        startBalMadMin.add(ethers.utils.parseEther("0.8")),
+      );
       // amb.address = ambassador = + 20% of price (remaining 80% goes to creator)
-      expect(endBalAmbMin).to.eq(startBalAmbMin.add(ethers.utils.parseEther("0.2")))
+      expect(endBalAmbMin).to.eq(
+        startBalAmbMin.add(ethers.utils.parseEther("0.2")),
+      );
       // owner.address = MAD receiver = + 100% mint fees
-      expect(endBalRecipientMin).to.eq(startBalRecipientMin.add(ethers.utils.parseEther("2.5")))
+      expect(endBalRecipientMin).to.eq(
+        startBalRecipientMin.add(
+          ethers.utils.parseEther("2.5"),
+        ),
+      );
       // acc01.address = buyer = - price - fee - txFees
-      expect(endBalAcc01Min).to.eq(startBalAcc01Min.sub(ethers.utils.parseEther("3.5")))
-      
+      expect(endBalAcc01Min).to.eq(
+        startBalAcc01Min.sub(ethers.utils.parseEther("3.5")),
+      );
+
       // Deploy BASIC contracts and set public mint = true
       const basicAddr = await f721.callStatic.getDeployedAddr(
         "salt",
@@ -1969,11 +2026,20 @@ describe("MADRouter721 - ERC20", () => {
       // Record ERC20 start balances
       const startBalMad = await erc20.balanceOf(mad.address);
       const startBalAmb = await erc20.balanceOf(amb.address);
-      const startBalRecipient = await erc20.balanceOf(recipient);
-      const startBalAcc01 = await erc20.balanceOf(acc01.address);
-      
-      // Mint a public token with ERC20 - fee 2.5 + price 1 
-      await erc20.connect(acc01).approve(basic.address, price.add(ethers.utils.parseEther("2.5")));
+      const startBalRecipient = await erc20.balanceOf(
+        recipient,
+      );
+      const startBalAcc01 = await erc20.balanceOf(
+        acc01.address,
+      );
+
+      // Mint a public token with ERC20 - fee 2.5 + price 1
+      await erc20
+        .connect(acc01)
+        .approve(
+          basic.address,
+          price.add(ethers.utils.parseEther("2.5")),
+        );
       await basic.connect(acc01).mint(1);
       await r721
         .connect(mad)
@@ -1982,17 +2048,29 @@ describe("MADRouter721 - ERC20", () => {
       // Record end balances
       const endBalMad = await erc20.balanceOf(mad.address);
       const endBalAmb = await erc20.balanceOf(amb.address);
-      const endBalRecipient = await erc20.balanceOf(recipient);
-      const endBalAcc01 = await erc20.balanceOf(acc01.address);
-      
+      const endBalRecipient = await erc20.balanceOf(
+        recipient,
+      );
+      const endBalAcc01 = await erc20.balanceOf(
+        acc01.address,
+      );
+
       // mad.address = creator = - txWithdrawGas + 80% of price (remaining 20% goes to ambassador)
-      expect(endBalMad).to.eq(startBalMad.add(ethers.utils.parseEther("0.8")))
+      expect(endBalMad).to.eq(
+        startBalMad.add(ethers.utils.parseEther("0.8")),
+      );
       // amb.address = ambassador = + 20% of price (remaining 80% goes to creator)
-      expect(endBalAmb).to.eq(startBalAmb.add(ethers.utils.parseEther("0.2")))
+      expect(endBalAmb).to.eq(
+        startBalAmb.add(ethers.utils.parseEther("0.2")),
+      );
       // owner.address = MAD receiver = + 100% mint fees
-      expect(endBalRecipient).to.eq(startBalRecipient.add(ethers.utils.parseEther("2.5")))
+      expect(endBalRecipient).to.eq(
+        startBalRecipient.add(ethers.utils.parseEther("2.5")),
+      );
       // acc01.address = buyer = - price - fee - txFees
-      expect(endBalAcc01).to.eq(startBalAcc01.sub(ethers.utils.parseEther("3.5")))
+      expect(endBalAcc01).to.eq(
+        startBalAcc01.sub(ethers.utils.parseEther("3.5")),
+      );
 
       // LAZY prepare the token
       const lazyAddr = await f721.callStatic.getDeployedAddr(
@@ -2073,39 +2151,70 @@ describe("MADRouter721 - ERC20", () => {
       const sigSplit = ethers.utils.splitSignature(signature);
 
       // Record start balances
-      const startBalMadLazy = await erc20.balanceOf(mad.address);
-      const startBalAmbLazy = await erc20.balanceOf(amb.address);
-      const startBalRecipientLazy = await erc20.balanceOf(recipient);
-      const startBalAcc01Lazy = await erc20.balanceOf(acc01.address);
-      
-      // Mint a lazy public token - fee 2.5 + price 1 
-      await erc20.connect(acc01).approve(lazy.address, bnPrice.add(ethers.utils.parseEther("2.5")))
+      const startBalMadLazy = await erc20.balanceOf(
+        mad.address,
+      );
+      const startBalAmbLazy = await erc20.balanceOf(
+        amb.address,
+      );
+      const startBalRecipientLazy = await erc20.balanceOf(
+        recipient,
+      );
+      const startBalAcc01Lazy = await erc20.balanceOf(
+        acc01.address,
+      );
+
+      // Mint a lazy public token - fee 2.5 + price 1
+      await erc20
+        .connect(acc01)
+        .approve(
+          lazy.address,
+          bnPrice.add(ethers.utils.parseEther("2.5")),
+        );
       await lazy
         .connect(acc01)
         .lazyMint(
           Voucher,
           sigSplit.v,
           sigSplit.r,
-          sigSplit.s
+          sigSplit.s,
         );
       await r721
         .connect(mad)
         .withdraw(lazy.address, erc20.address);
-          
+
       // Record end balances
-      const endBalMadLazy = await erc20.balanceOf(mad.address);
-      const endBalAmbLazy = await erc20.balanceOf(amb.address);
-      const endBalRecipientLazy = await erc20.balanceOf(recipient);
-      const endBalAcc01Lazy = await erc20.balanceOf(acc01.address);
-      
+      const endBalMadLazy = await erc20.balanceOf(
+        mad.address,
+      );
+      const endBalAmbLazy = await erc20.balanceOf(
+        amb.address,
+      );
+      const endBalRecipientLazy = await erc20.balanceOf(
+        recipient,
+      );
+      const endBalAcc01Lazy = await erc20.balanceOf(
+        acc01.address,
+      );
+
       // mad.address = creator = - txWithdrawGas + 80% of price (remaining 20% goes to ambassador)
-      expect(endBalMadLazy).to.eq(startBalMadLazy.add(ethers.utils.parseEther("0.8")))
+      expect(endBalMadLazy).to.eq(
+        startBalMadLazy.add(ethers.utils.parseEther("0.8")),
+      );
       // amb.address = ambassador = + 20% of price (remaining 80% goes to creator)
-      expect(endBalAmbLazy).to.eq(startBalAmbLazy.add(ethers.utils.parseEther("0.2")))
+      expect(endBalAmbLazy).to.eq(
+        startBalAmbLazy.add(ethers.utils.parseEther("0.2")),
+      );
       // owner.address = MAD receiver = + 100% mint fees
-      expect(endBalRecipientLazy).to.eq(startBalRecipientLazy.add(ethers.utils.parseEther("2.5")))
+      expect(endBalRecipientLazy).to.eq(
+        startBalRecipientLazy.add(
+          ethers.utils.parseEther("2.5"),
+        ),
+      );
       // acc01.address = buyer = - price - fee - txFees
-      expect(endBalAcc01Lazy).to.eq(startBalAcc01Lazy.sub(ethers.utils.parseEther("3.5")))
+      expect(endBalAcc01Lazy).to.eq(
+        startBalAcc01Lazy.sub(ethers.utils.parseEther("3.5")),
+      );
 
       // Whitelist
       const wlAddr = await f721.callStatic.getDeployedAddr(
@@ -2133,13 +2242,26 @@ describe("MADRouter721 - ERC20", () => {
         .setMintState(wl.address, true, 0);
 
       // Record start balances
-      const startBalMadWl = await erc20.balanceOf(mad.address);
-      const startBalAmbWl = await erc20.balanceOf(amb.address);
-      const startBalRecipientWl = await erc20.balanceOf(recipient);
-      const startBalAcc01Wl = await erc20.balanceOf(acc01.address);
-      
-      // Mint a lazy public token - fee 2.5 + price 1 
-      await erc20.connect(acc01).approve(wl.address, price.add(ethers.utils.parseEther("2.5")))
+      const startBalMadWl = await erc20.balanceOf(
+        mad.address,
+      );
+      const startBalAmbWl = await erc20.balanceOf(
+        amb.address,
+      );
+      const startBalRecipientWl = await erc20.balanceOf(
+        recipient,
+      );
+      const startBalAcc01Wl = await erc20.balanceOf(
+        acc01.address,
+      );
+
+      // Mint a lazy public token - fee 2.5 + price 1
+      await erc20
+        .connect(acc01)
+        .approve(
+          wl.address,
+          price.add(ethers.utils.parseEther("2.5")),
+        );
       await wl.connect(acc01).mint(1);
       await r721
         .connect(mad)
@@ -2148,17 +2270,31 @@ describe("MADRouter721 - ERC20", () => {
       // Record end balances
       const endBalMadWl = await erc20.balanceOf(mad.address);
       const endBalAmbWl = await erc20.balanceOf(amb.address);
-      const endBalRecipientWl = await erc20.balanceOf(recipient);
-      const endBalAcc01Wl = await erc20.balanceOf(acc01.address);
-      
+      const endBalRecipientWl = await erc20.balanceOf(
+        recipient,
+      );
+      const endBalAcc01Wl = await erc20.balanceOf(
+        acc01.address,
+      );
+
       // mad.address = creator = - txWithdrawGas + 80% of price (remaining 20% goes to ambassador)
-      expect(endBalMadWl).to.eq(startBalMadWl.add(ethers.utils.parseEther("0.8")))
+      expect(endBalMadWl).to.eq(
+        startBalMadWl.add(ethers.utils.parseEther("0.8")),
+      );
       // amb.address = ambassador = + 20% of price (remaining 80% goes to creator)
-      expect(endBalAmbWl).to.eq(startBalAmbWl.add(ethers.utils.parseEther("0.2")))
+      expect(endBalAmbWl).to.eq(
+        startBalAmbWl.add(ethers.utils.parseEther("0.2")),
+      );
       // owner.address = MAD receiver = + 100% mint fees
-      expect(endBalRecipientWl).to.eq(startBalRecipientWl.add(ethers.utils.parseEther("2.5")))
+      expect(endBalRecipientWl).to.eq(
+        startBalRecipientWl.add(
+          ethers.utils.parseEther("2.5"),
+        ),
+      );
       // acc01.address = buyer = - price - fee - txFees
-      expect(endBalAcc01Wl).to.eq(startBalAcc01Wl.sub(ethers.utils.parseEther("3.5")))
+      expect(endBalAcc01Wl).to.eq(
+        startBalAcc01Wl.sub(ethers.utils.parseEther("3.5")),
+      );
     });
   });
   describe("Only Owner", async () => {
@@ -2382,7 +2518,10 @@ describe("MADRouter721 - ERC20", () => {
 
       await erc20
         .connect(acc01)
-        .approve(basic.address, price.add(ethers.utils.parseEther("2.5")));
+        .approve(
+          basic.address,
+          price.add(ethers.utils.parseEther("2.5")),
+        );
       await basic.connect(acc01).mint(1);
 
       await expect(
@@ -2598,7 +2737,9 @@ describe("MADRouter721 - ERC20", () => {
         .connect(acc02)
         .approve(
           lazyAddr,
-          price.mul(ethers.BigNumber.from(2)).add(ethers.utils.parseEther("2.5")),
+          price
+            .mul(ethers.BigNumber.from(2))
+            .add(ethers.utils.parseEther("2.5")),
         );
       await lazy
         .connect(acc02)

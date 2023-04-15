@@ -98,6 +98,7 @@ library Types {
         uint8 orderType;      /// shr(160,sload(add(order.slot, 9)))
         bool isSold;          /// shr(168,sload(add(order.slot, 9)))
     }
+
 }
 
 /* 

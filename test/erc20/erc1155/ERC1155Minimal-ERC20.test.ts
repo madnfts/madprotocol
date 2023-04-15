@@ -381,7 +381,12 @@ describe("ERC1155Minimal - ERC20", () => {
       await minimal.connect(acc02).publicMint(1);
 
       await expect(
-        minimal.connect(acc01).withdrawERC20(erc20.address, ethers.constants.AddressZero),
+        minimal
+          .connect(acc01)
+          .withdrawERC20(
+            erc20.address,
+            ethers.constants.AddressZero,
+          ),
       ).to.be.revertedWith(MinimalErrors.Unauthorized);
     });
 
@@ -411,7 +416,10 @@ describe("ERC1155Minimal - ERC20", () => {
       ];
 
       await expect(() =>
-        minimal.withdrawERC20(erc20.address, ethers.constants.AddressZero),
+        minimal.withdrawERC20(
+          erc20.address,
+          ethers.constants.AddressZero,
+        ),
       ).to.changeTokenBalances(erc20, addrs, vals);
 
       expect(
@@ -445,7 +453,10 @@ describe("ERC1155Minimal - ERC20", () => {
 
       await erc20.mint(minimal.address, price);
 
-      const tx = await minimal.withdrawERC20(erc20.address, ethers.constants.AddressZero);
+      const tx = await minimal.withdrawERC20(
+        erc20.address,
+        ethers.constants.AddressZero,
+      );
       expect(tx).to.be.ok;
       expect(
         await erc20.callStatic.balanceOf(payees[0]),

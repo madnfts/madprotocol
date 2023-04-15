@@ -41,11 +41,9 @@ abstract contract Owned {
                              OWNERSHIP LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function setOwner(address newOwner)
-        public
-        virtual
-        onlyOwner
-    {
+    function setOwner(
+        address newOwner
+    ) public virtual onlyOwner {
         owner = newOwner;
 
         emit OwnerUpdated(msg.sender, newOwner);

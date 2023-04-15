@@ -22,6 +22,8 @@ export type { MarketplaceEventsAndErrors1155 } from "./contracts/EventsAndErrors
 export { MarketplaceEventsAndErrors1155__factory } from "./factories/contracts/EventsAndErrors.sol/MarketplaceEventsAndErrors1155__factory";
 export type { MarketplaceEventsAndErrors721 } from "./contracts/EventsAndErrors.sol/MarketplaceEventsAndErrors721";
 export { MarketplaceEventsAndErrors721__factory } from "./factories/contracts/EventsAndErrors.sol/MarketplaceEventsAndErrors721__factory";
+export type { MarketplaceEventsAndErrorsBase } from "./contracts/EventsAndErrors.sol/MarketplaceEventsAndErrorsBase";
+export { MarketplaceEventsAndErrorsBase__factory } from "./factories/contracts/EventsAndErrors.sol/MarketplaceEventsAndErrorsBase__factory";
 export type { RouterEvents } from "./contracts/EventsAndErrors.sol/RouterEvents";
 export { RouterEvents__factory } from "./factories/contracts/EventsAndErrors.sol/RouterEvents__factory";
 export type { FactoryVerifier } from "./contracts/lib/auth/FactoryVerifier";
@@ -116,6 +118,8 @@ export type { MADMarketplace1155 } from "./contracts/MADMarketplace1155";
 export { MADMarketplace1155__factory } from "./factories/contracts/MADMarketplace1155__factory";
 export type { MADMarketplace721 } from "./contracts/MADMarketplace721";
 export { MADMarketplace721__factory } from "./factories/contracts/MADMarketplace721__factory";
+export type { MADMarketplaceBase } from "./contracts/MADMarketplaceBase";
+export { MADMarketplaceBase__factory } from "./factories/contracts/MADMarketplaceBase__factory";
 export type { MADRouter1155 } from "./contracts/MADRouter1155";
 export { MADRouter1155__factory } from "./factories/contracts/MADRouter1155__factory";
 export type { MADRouter721 } from "./contracts/MADRouter721";

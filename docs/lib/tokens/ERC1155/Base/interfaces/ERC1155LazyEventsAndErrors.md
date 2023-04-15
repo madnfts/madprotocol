@@ -1,14 +1,5 @@
 # ERC1155LazyEventsAndErrors
 
-
-
-
-
-
-
-
-
-
 ## Events
 
 ### BaseURILocked
@@ -17,15 +8,11 @@
 event BaseURILocked(string indexed baseURI)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| baseURI `indexed` | string | undefined |
+| Name              | Type   | Description |
+| ----------------- | ------ | ----------- |
+| baseURI `indexed` | string | undefined   |
 
 ### BaseURISet
 
@@ -33,15 +20,11 @@ event BaseURILocked(string indexed baseURI)
 event BaseURISet(string indexed newBaseURI)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newBaseURI `indexed` | string | undefined |
+| Name                 | Type   | Description |
+| -------------------- | ------ | ----------- |
+| newBaseURI `indexed` | string | undefined   |
 
 ### RoyaltyFeeSet
 
@@ -49,15 +32,11 @@ event BaseURISet(string indexed newBaseURI)
 event RoyaltyFeeSet(uint256 indexed newRoyaltyFee)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newRoyaltyFee `indexed` | uint256 | undefined |
+| Name                    | Type    | Description |
+| ----------------------- | ------- | ----------- |
+| newRoyaltyFee `indexed` | uint256 | undefined   |
 
 ### RoyaltyRecipientSet
 
@@ -65,15 +44,11 @@ event RoyaltyFeeSet(uint256 indexed newRoyaltyFee)
 event RoyaltyRecipientSet(address indexed newRecipient)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newRecipient `indexed` | address | undefined |
+| Name                   | Type    | Description |
+| ---------------------- | ------- | ----------- |
+| newRecipient `indexed` | address | undefined   |
 
 ### SignerUpdated
 
@@ -81,17 +56,11 @@ event RoyaltyRecipientSet(address indexed newRecipient)
 event SignerUpdated(address indexed newSigner)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newSigner `indexed` | address | undefined |
-
-
+| Name                | Type    | Description |
+| ------------------- | ------- | ----------- |
+| newSigner `indexed` | address | undefined   |
 
 ## Errors
 
@@ -101,10 +70,7 @@ event SignerUpdated(address indexed newSigner)
 error InvalidSigner()
 ```
 
-
-
-*0x815e1d64*
-
+_0x815e1d64_
 
 ### NotMintedYet
 
@@ -112,10 +78,7 @@ error InvalidSigner()
 error NotMintedYet()
 ```
 
-
-
-*0xbad086ea*
-
+_0xbad086ea_
 
 ### UriLocked
 
@@ -123,10 +86,7 @@ error NotMintedYet()
 error UriLocked()
 ```
 
-
-
-*?*
-
+_?_
 
 ### UsedVoucher
 
@@ -134,10 +94,7 @@ error UriLocked()
 error UsedVoucher()
 ```
 
-
-
-*0xe647f413*
-
+_0xe647f413_
 
 ### WrongPrice
 
@@ -145,9 +102,4 @@ error UsedVoucher()
 error WrongPrice()
 ```
 
-
-
-*0xf7760f25*
-
-
-
+_0xf7760f25_

@@ -555,7 +555,9 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
       );
 
       expect(await erc20.balanceOf(acc01.address)).to.equal(
-        erc20Balance.sub(ethers.utils.parseEther("1")).sub(ethers.utils.parseEther("0.1")),
+        erc20Balance
+          .sub(ethers.utils.parseEther("1"))
+          .sub(ethers.utils.parseEther("0.1")),
       );
 
       // Validate buyer ERC20 balances after royalties paid out

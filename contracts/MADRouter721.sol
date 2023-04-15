@@ -48,7 +48,7 @@ contract MADRouter721 is
 
     /// @notice max fee that can be set for mint, configured on constructor
     uint256 public maxFeeMint;
-    
+
     /// @notice max fee that can be set for burn, configured on constructor
     uint256 public maxFeeBurn;
 
@@ -87,7 +87,10 @@ contract MADRouter721 is
         uint256 _maxFeeMint,
         uint256 _maxFeeBurnt
     ) {
-        require(_maxFeeMint > 0 && _maxFeeBurnt > 0, "Invalid max fee settings");
+        require(
+            _maxFeeMint > 0 && _maxFeeBurnt > 0,
+            "Invalid max fee settings"
+        );
         maxFeeMint = _maxFeeMint;
         maxFeeBurn = _maxFeeBurnt;
         MADFactory721 = _factory;
@@ -104,24 +107,23 @@ contract MADRouter721 is
     /// @notice Enables the contract's owner to change payment token address.
     /// @dev Function Signature := 0x6a326ab1
     /// @param _paymentTokenAddress erc20 token address | address(0).
-    function _setPaymentToken(address _paymentTokenAddress)
-        private
-    {
+    function _setPaymentToken(
+        address _paymentTokenAddress
+    ) private {
         erc20 = ERC20(_paymentTokenAddress);
         emit PaymentTokenUpdated(_paymentTokenAddress);
     }
 
     /// @notice Collection baseURI setter.
-    /// @dev Only available for Basic, Whitelist and Lazy token types. Events logged 
+    /// @dev Only available for Basic, Whitelist and Lazy token types. Events logged
     ///      by each tokens' BaseURISet functions.
     ///      Function Sighash := 0x4328bd00
     /// @param _token 721 token address.
     /// @param _baseURI New base URI string.
-    function setBase(address _token, string memory _baseURI)
-        external
-        nonReentrant
-        whenNotPaused
-    {
+    function setBase(
+        address _token,
+        string memory _baseURI
+    ) external nonReentrant whenNotPaused {
         (bytes32 _colID, uint8 _tokenType) = _tokenRender(
             _token
         );
@@ -142,18 +144,14 @@ contract MADRouter721 is
 
     /// @notice Collection baseURI locker preventing URI updates when set.
     ///      Cannot be unset!
-    /// @dev Only available for Basic, Whitelist and Lazy token types. Events logged 
+    /// @dev Only available for Basic, Whitelist and Lazy token types. Events logged
     ///      by each tokens' setBaseURILock functions.
     ///      Function Sighash := ?
     /// @param _token 721 token address.
-    function setBaseLock(address _token)
-        external
-        nonReentrant
-        whenNotPaused
-    {
-        (, uint8 _tokenType) = _tokenRender(
-            _token
-        );
+    function setBaseLock(
+        address _token
+    ) external nonReentrant whenNotPaused {
+        (, uint8 _tokenType) = _tokenRender(_token);
 
         if (_tokenType == 1) {
             ERC721Basic(_token).setBaseURILock();
@@ -166,8 +164,8 @@ contract MADRouter721 is
         }
     }
 
-    /// @notice Global MintState setter/controller  
-    /// @dev Switch cases/control flow handling conditioned by both `_stateType` and `_tokenType`. 
+    /// @notice Global MintState setter/controller
+    /// @dev Switch cases/control flow handling conditioned by both `_stateType` and `_tokenType`.
     ///      Events logged by each tokens' `setState` functions.
     ///      Function Sighash := 0xab9acd57
     /// @param _token 721 token address.
@@ -256,12 +254,10 @@ contract MADRouter721 is
     /// @dev Function Sighash := 0x42a42752
     /// @param _token 721 token address.
     /// @param _to Receiver token address.
-    function minimalSafeMint(address _token, address _to)
-        external
-        payable
-        nonReentrant
-        whenNotPaused
-    {
+    function minimalSafeMint(
+        address _token,
+        address _to
+    ) external payable nonReentrant whenNotPaused {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType != 0) revert("INVALID_TYPE");
         _paymentCheck(0x40d097c3);
@@ -295,12 +291,10 @@ contract MADRouter721 is
     /// @dev Function Sighash := 0x182ee485
     /// @param _token 721 token address.
     /// @param _amount Num tokens to mint and send.
-    function creatorMint(address _token, uint256 _amount)
-        external
-        payable
-        nonReentrant
-        whenNotPaused
-    {
+    function creatorMint(
+        address _token,
+        uint256 _amount
+    ) external payable nonReentrant whenNotPaused {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType == 2) {
             _paymentCheck(0x40d097c3);
@@ -332,12 +326,10 @@ contract MADRouter721 is
     /// @param _token 721 token address.
     /// @param _ids The token IDs of each token to be burnt;
     ///        should be left empty for the `ERC721Minimal` type.
-    function burn(address _token, uint256[] memory _ids)
-        external
-        payable
-        nonReentrant
-        whenNotPaused
-    {
+    function burn(
+        address _token,
+        uint256[] memory _ids
+    ) external payable nonReentrant whenNotPaused {
         (, uint8 _tokenType) = _tokenRender(_token);
         _paymentCheck(0x44df8e70);
         _tokenType < 1
@@ -371,11 +363,10 @@ contract MADRouter721 is
     ///      Function Sighash := 0xf940e385
     /// @param _token 721 token address.
     /// @param _erc20 ERC20 token address.
-    function withdraw(address _token, ERC20 _erc20)
-        external
-        nonReentrant
-        whenNotPaused
-    {
+    function withdraw(
+        address _token,
+        ERC20 _erc20
+    ) external nonReentrant whenNotPaused {
         (bytes32 _colID, uint8 _tokenType) = _tokenRender(
             _token
         );
@@ -383,7 +374,10 @@ contract MADRouter721 is
         if (_tokenType < 1) {
             address(_erc20) != address(0) &&
                 _erc20.balanceOf(_token) != 0
-                ? ERC721Minimal(_token).withdrawERC20(_erc20, recipient)
+                ? ERC721Minimal(_token).withdrawERC20(
+                    _erc20,
+                    recipient
+                )
                 : _token.balance != 0
                 ? ERC721Minimal(_token).withdraw(recipient)
                 : revert("NO_FUNDS");
@@ -398,7 +392,10 @@ contract MADRouter721 is
         if (_tokenType == 1) {
             address(_erc20) != address(0) &&
                 _erc20.balanceOf(_token) != 0
-                ? ERC721Basic(_token).withdrawERC20(_erc20, recipient)
+                ? ERC721Basic(_token).withdrawERC20(
+                    _erc20,
+                    recipient
+                )
                 : _token.balance != 0
                 ? ERC721Basic(_token).withdraw(recipient)
                 : revert("NO_FUNDS");
@@ -413,7 +410,10 @@ contract MADRouter721 is
         if (_tokenType == 2) {
             address(_erc20) != address(0) &&
                 _erc20.balanceOf(_token) != 0
-                ? ERC721Whitelist(_token).withdrawERC20(_erc20, recipient)
+                ? ERC721Whitelist(_token).withdrawERC20(
+                    _erc20,
+                    recipient
+                )
                 : _token.balance != 0
                 ? ERC721Whitelist(_token).withdraw(recipient)
                 : revert("NO_FUNDS");
@@ -428,7 +428,10 @@ contract MADRouter721 is
         if (_tokenType > 2) {
             address(_erc20) != address(0) &&
                 _erc20.balanceOf(_token) != 0
-                ? ERC721Lazy(_token).withdrawERC20(_erc20, recipient)
+                ? ERC721Lazy(_token).withdrawERC20(
+                    _erc20,
+                    recipient
+                )
                 : _token.balance != 0
                 ? ERC721Lazy(_token).withdraw(recipient)
                 : revert("NO_FUNDS");
@@ -448,7 +451,9 @@ contract MADRouter721 is
     /// @notice Mint and burn fee lookup.
     /// @dev Function Sighash := 0xedc9e7a4
     /// @param sigHash MINSAFEMINT | MINBURN
-    function feeLookup(bytes4 sigHash)
+    function feeLookup(
+        bytes4 sigHash
+    )
         external
         view
         override(FeeOracle)
@@ -479,11 +484,9 @@ contract MADRouter721 is
     ///      for valid token and approved user.
     ///      Function Sighash := 0xdbf62b2e
     /// @param _token 721 token address.
-    function _tokenRender(address _token)
-        private
-        view
-        returns (bytes32 colID, uint8 tokenType)
-    {
+    function _tokenRender(
+        address _token
+    ) private view returns (bytes32 colID, uint8 tokenType) {
         colID = MADFactory721.getColID(_token);
         MADFactory721.creatorCheck(colID);
         tokenType = MADFactory721.typeChecker(colID);
@@ -574,7 +577,9 @@ contract MADRouter721 is
 
     /// @dev Setter for public mint fee _recipient.
     /// @dev Function Sighash := ?
-    function setRecipient(address _recipient) public onlyOwner {
+    function setRecipient(
+        address _recipient
+    ) public onlyOwner {
         require(_recipient != address(0), "Invalid address");
 
         assembly {
@@ -587,11 +592,9 @@ contract MADRouter721 is
     /// @notice Set the Routers owner address.
     /// @dev Function Signature := 0x13af4035
     /// @param newOwner New owners address.
-    function setOwner(address newOwner)
-        public
-        override
-        onlyOwner
-    {
+    function setOwner(
+        address newOwner
+    ) public override onlyOwner {
         require(newOwner != address(0), "Invalid address");
         // owner = newOwner;
         assembly {
@@ -606,10 +609,10 @@ contract MADRouter721 is
     ///      Function Sighash := 0x17f9fad1
     /// @param _token 721 token address.
     /// @param _signer New signers address.
-    function setSigner(address _token, address _signer)
-        external
-        onlyOwner
-    {
+    function setSigner(
+        address _token,
+        address _signer
+    ) external onlyOwner {
         require(_signer != address(0), "Invalid address");
         ERC721Lazy(_token).setSigner(_signer);
     }
@@ -619,11 +622,14 @@ contract MADRouter721 is
     ///      Function Sighash := 0x0b78f9c0
     /// @param _feeMint New mint fee.
     /// @param _feeBurn New burn fee.
-    function setFees(uint256 _feeMint, uint256 _feeBurn)
-        external
-        onlyOwner
-    {
-        require(_feeMint <= maxFeeMint && _feeBurn <= maxFeeBurn, "Invalid fee settings, beyond max");
+    function setFees(
+        uint256 _feeMint,
+        uint256 _feeBurn
+    ) external onlyOwner {
+        require(
+            _feeMint <= maxFeeMint && _feeBurn <= maxFeeBurn,
+            "Invalid fee settings, beyond max"
+        );
         assembly {
             sstore(feeBurn.slot, _feeBurn)
             sstore(feeMint.slot, _feeMint)

@@ -15,7 +15,6 @@ import {
 } from "ethers";
 import { artifacts, ethers, network } from "hardhat";
 
-
 import {
   MADFactory1155,
   MADMarketplace1155,
@@ -3190,19 +3189,29 @@ describe("MADMarketplace1155", () => {
       expect(orderInfo.lastBidder).to.eq(acc01.address);
       expect(orderInfo.lastBidPrice).to.eq(bidVal2);
 
-      const bal = await m1155.connect(acc01).getOutbidBalance();
+      const bal = await m1155
+        .connect(acc01)
+        .getOutbidBalance();
       expect(bal).to.gt(0);
 
       const currBal = await acc01.getBalance();
 
-      
       let tx = await m1155.connect(acc01).withdrawOutbidEth();
       const tx_r = await tx.wait();
       let bal2 = await acc01.getBalance();
 
-      expect(await m1155.connect(acc01).getOutbidBalance()).to.eq(0);
-      expect(bal2).eq(bal.add(currBal).sub(tx_r.cumulativeGasUsed.mul(tx_r.effectiveGasPrice)));
-
+      expect(
+        await m1155.connect(acc01).getOutbidBalance(),
+      ).to.eq(0);
+      expect(bal2).eq(
+        bal
+          .add(currBal)
+          .sub(
+            tx_r.cumulativeGasUsed.mul(
+              tx_r.effectiveGasPrice,
+            ),
+          ),
+      );
     });
   });
   describe("Buying", async () => {
@@ -3674,7 +3683,11 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .setMintState(basic.address, true, 0);
-      await basic.connect(acc02).mint(1, 1, { value: price.add(ethers.utils.parseEther("0.25")) });
+      await basic
+        .connect(acc02)
+        .mint(1, 1, {
+          value: price.add(ethers.utils.parseEther("0.25")),
+        });
       await basic
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
@@ -3965,7 +3978,11 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .setMintState(basic.address, true, 0);
-      await basic.connect(acc02).mint(1, 1, { value: price.add(ethers.utils.parseEther("0.25")) });
+      await basic
+        .connect(acc02)
+        .mint(1, 1, {
+          value: price.add(ethers.utils.parseEther("0.25")),
+        });
       await basic
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
@@ -4039,11 +4056,9 @@ describe("MADMarketplace1155", () => {
       );
 
       await extToken.connect(acc02).setPublicMintState(true);
-      await extToken
-        .connect(acc02)
-        .mint(2, 1, {
-          value: price.mul(ethers.constants.Two),
-        });
+      await extToken.connect(acc02).mint(2, 1, {
+        value: price.mul(ethers.constants.Two),
+      });
       const tx_ = await extToken
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
@@ -4351,7 +4366,11 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .setMintState(basic.address, true, 0);
-      await basic.connect(acc02).mint(1, 1, { value: price.add(ethers.utils.parseEther("0.25")) });
+      await basic
+        .connect(acc02)
+        .mint(1, 1, {
+          value: price.add(ethers.utils.parseEther("0.25")),
+        });
       await basic
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
@@ -4427,11 +4446,9 @@ describe("MADMarketplace1155", () => {
       );
 
       await extToken.connect(acc02).setPublicMintState(true);
-      await extToken
-        .connect(acc02)
-        .mint(2, 1, {
-          value: price.mul(ethers.constants.Two),
-        });
+      await extToken.connect(acc02).mint(2, 1, {
+        value: price.mul(ethers.constants.Two),
+      });
       const tx_ = await extToken
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
@@ -4828,11 +4845,9 @@ describe("MADMarketplace1155", () => {
       );
 
       await extToken.connect(acc02).setPublicMintState(true);
-      await extToken
-        .connect(acc02)
-        .mint(2, 1, {
-          value: price.mul(ethers.constants.Two),
-        });
+      await extToken.connect(acc02).mint(2, 1, {
+        value: price.mul(ethers.constants.Two),
+      });
       const tx_ = await extToken
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);

@@ -49,8 +49,8 @@ contract ERC721Whitelist is
     string private baseURI;
 
     /// @notice Lock the URI default := false.
-    bool public baseURILock; 
-    
+    bool public baseURILock;
+
     /// @notice Capped max supply.
     uint256 public maxSupply;
 
@@ -65,7 +65,7 @@ contract ERC721Whitelist is
 
     /// @notice Whitelist max supply.
     uint256 public maxWhitelistSupply;
-    
+
     /// @notice Whitelist merkel.
     bytes32 public whitelistMerkleRoot;
 
@@ -83,7 +83,7 @@ contract ERC721Whitelist is
 
     /// @notice Claim merkel.
     bytes32 public claimListMerkleRoot;
-    
+
     /// @notice True to enable free claiming default := false.
     bool public freeClaimState;
 
@@ -103,11 +103,15 @@ contract ERC721Whitelist is
         _;
     }
 
-    modifier publicMintPriceCheck(uint256 _price, uint256 _amount) {        
+    modifier publicMintPriceCheck(
+        uint256 _price,
+        uint256 _amount
+    ) {
         uint256 _fee = _getFeeValue(0x40d097c3);
         feeCount += _fee;
         uint256 value = _getPriceValue(msg.sender);
-        if ((_price * _amount) + _fee != value) revert WrongPrice();
+        if ((_price * _amount) + _fee != value)
+            revert WrongPrice();
         _;
     }
 
@@ -219,56 +223,48 @@ contract ERC721Whitelist is
         );
     }
 
-    function setBaseURI(string memory _baseURI)
-        external
-        onlyOwner
-    {
+    function setBaseURI(
+        string memory _baseURI
+    ) external onlyOwner {
         if (baseURILock == true) revert UriLocked();
         baseURI = _baseURI;
 
         emit BaseURISet(_baseURI);
     }
 
-    function setBaseURILock()
-        external
-        onlyOwner
-    {
+    function setBaseURILock() external onlyOwner {
         baseURILock = true;
         emit BaseURILocked(baseURI);
     }
 
-    function setPublicMintState(bool _publicMintState)
-        external
-        onlyOwner
-    {
+    function setPublicMintState(
+        bool _publicMintState
+    ) external onlyOwner {
         publicMintState = _publicMintState;
 
         emit PublicMintStateSet(_publicMintState);
     }
 
-    function setWhitelistMintState(bool _whitelistMintState)
-        external
-        onlyOwner
-    {
+    function setWhitelistMintState(
+        bool _whitelistMintState
+    ) external onlyOwner {
         whitelistMintState = _whitelistMintState;
 
         emit WhitelistMintStateSet(_whitelistMintState);
     }
 
-    function setFreeClaimState(bool _freeClaimState)
-        external
-        onlyOwner
-    {
+    function setFreeClaimState(
+        bool _freeClaimState
+    ) external onlyOwner {
         freeClaimState = _freeClaimState;
 
         emit FreeClaimStateSet(_freeClaimState);
     }
 
-    function burn(uint256[] memory ids, address erc20Owner)
-        external
-        payable
-        onlyOwner
-    {
+    function burn(
+        uint256[] memory ids,
+        address erc20Owner
+    ) external payable onlyOwner {
         _paymentCheck(erc20Owner, 1);
         uint256 i;
         uint256 len = ids.length;
@@ -290,7 +286,10 @@ contract ERC721Whitelist is
         // Transfer event emited by parent ERC721 contract
     }
 
-    function mintToCreator(uint256 amount, address erc20Owner)
+    function mintToCreator(
+        uint256 amount,
+        address erc20Owner
+    )
         external
         payable
         nonReentrant
@@ -385,11 +384,14 @@ contract ERC721Whitelist is
         }
     }
 
-    function withdrawERC20(ERC20 _token, address recipient) external onlyOwner {
+    function withdrawERC20(
+        ERC20 _token,
+        address recipient
+    ) external onlyOwner {
         uint256 len = splitter.payeesLength();
         address[] memory addrs = new address[](len);
         uint256[] memory values = new uint256[](len);
-        // Transfer mint fees 
+        // Transfer mint fees
         uint256 _val;
         if (feeCount > 0 && recipient != address(0)) {
             _val = _token.balanceOf(address(this)) - feeCount;
@@ -431,7 +433,9 @@ contract ERC721Whitelist is
     ////////////////////////////////////////////////////////////////
 
     /// @dev Public minting
-    function mint(uint256 amount)
+    function mint(
+        uint256 amount
+    )
         external
         payable
         nonReentrant
@@ -494,7 +498,9 @@ contract ERC721Whitelist is
         // Transfer event emitted in parent ERC721 contract
     }
 
-    function claimFree(bytes32[] calldata merkleProof)
+    function claimFree(
+        bytes32[] calldata merkleProof
+    )
         external
         freeClaimAccess
         merkleVerify(merkleProof, claimListMerkleRoot)
@@ -546,13 +552,9 @@ contract ERC721Whitelist is
         return baseURI;
     }
 
-    function tokenURI(uint256 id)
-        public
-        view
-        virtual
-        override
-        returns (string memory)
-    {
+    function tokenURI(
+        uint256 id
+    ) public view virtual override returns (string memory) {
         if (id > mintCount) revert NotMintedYet();
         return
             string(
@@ -581,9 +583,10 @@ contract ERC721Whitelist is
     /// @dev If router deploy we check msg.value if !erc20 BUT checks erc20 approval and transfers are via the router
     /// @param _erc20Owner Non router deploy =msg.sender; Router deploy =payer.address (msg.sender = router.address)
     /// @param _type Passed to _feeCheck to determin the fee 0=mint; 1=burn; ELSE _feeCheck is ignored
-    function _paymentCheck(address _erc20Owner, uint8 _type)
-        internal
-    {
+    function _paymentCheck(
+        address _erc20Owner,
+        uint8 _type
+    ) internal {
         uint256 value = _getPriceValue(_erc20Owner);
 
         // Check fees are paid
@@ -608,10 +611,10 @@ contract ERC721Whitelist is
         }
     }
 
-    function _feeCheck(bytes4 _method, uint256 _value)
-        internal
-        view
-    {
+    function _feeCheck(
+        bytes4 _method,
+        uint256 _value
+    ) internal view {
         uint256 _fee = _getFeeValue(_method);
         assembly {
             if iszero(eq(_value, _fee)) {
@@ -621,35 +624,34 @@ contract ERC721Whitelist is
         }
     }
 
-    function _getPriceValue(address _erc20Owner)
-        internal
-        view
-        returns (uint256 value)
-    {
-        value = 
-            (address(erc20) != address(0))
-                ? erc20.allowance(_erc20Owner, address(this))
-                : msg.value;
+    function _getPriceValue(
+        address _erc20Owner
+    ) internal view returns (uint256 value) {
+        value = (address(erc20) != address(0))
+            ? erc20.allowance(_erc20Owner, address(this))
+            : msg.value;
     }
 
-    function _getFeeValue(bytes4 _method)
-        internal
-        view
-        returns (uint256 value)
-    {
+    function _getFeeValue(
+        bytes4 _method
+    ) internal view returns (uint256 value) {
         address _owner = owner;
         uint32 _size;
         assembly {
             _size := extcodesize(_owner)
         }
-        value = _size == 0 ? 0 : FeeOracle(owner).feeLookup(_method);
+        value = _size == 0
+            ? 0
+            : FeeOracle(owner).feeLookup(_method);
     }
 
     ////////////////////////////////////////////////////////////////
     //                     REQUIRED OVERRIDES                     //
     ////////////////////////////////////////////////////////////////
 
-    function supportsInterface(bytes4 interfaceId)
+    function supportsInterface(
+        bytes4 interfaceId
+    )
         public
         pure
         virtual

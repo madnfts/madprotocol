@@ -44,7 +44,7 @@ contract ERC721Lazy is
         keccak256(
             "Voucher(bytes32 voucherId,address[] users,uint256[] balances,uint256 amount,uint256 price)"
         );
-    
+
     /// @notice Splitter address relationship.
     SplitterImpl public splitter;
 
@@ -64,7 +64,7 @@ contract ERC721Lazy is
     string private baseURI;
 
     /// @notice Lock the URI default := false.
-    bool public baseURILock; 
+    bool public baseURILock;
 
     /// @notice The signer address used for lazy minting voucher validation.
     address public signer;
@@ -110,29 +110,24 @@ contract ERC721Lazy is
         emit SignerUpdated(_signer);
     }
 
-    function setBaseURI(string memory _baseURI)
-        external
-        onlyOwner
-    {
+    function setBaseURI(
+        string memory _baseURI
+    ) external onlyOwner {
         if (baseURILock == true) revert UriLocked();
         baseURI = _baseURI;
 
         emit BaseURISet(_baseURI);
     }
 
-    function setBaseURILock()
-        external
-        onlyOwner
-    {
+    function setBaseURILock() external onlyOwner {
         baseURILock = true;
         emit BaseURILocked(baseURI);
     }
 
-    function burn(uint256[] memory ids, address erc20Owner)
-        external
-        payable
-        onlyOwner
-    {
+    function burn(
+        uint256[] memory ids,
+        address erc20Owner
+    ) external payable onlyOwner {
         _paymentCheck(erc20Owner, 1);
 
         uint256 i;
@@ -193,11 +188,14 @@ contract ERC721Lazy is
         }
     }
 
-    function withdrawERC20(ERC20 _token, address recipient) external onlyOwner {
+    function withdrawERC20(
+        ERC20 _token,
+        address recipient
+    ) external onlyOwner {
         uint256 len = splitter.payeesLength();
         address[] memory addrs = new address[](len);
         uint256[] memory values = new uint256[](len);
-        // Transfer mint fees 
+        // Transfer mint fees
         uint256 _val;
         if (feeCount > 0 && recipient != address(0)) {
             _val = _token.balanceOf(address(this)) - feeCount;
@@ -251,7 +249,7 @@ contract ERC721Lazy is
     ) external payable nonReentrant {
         address _signer = _verify(voucher, v, r, s);
         uint256 value = _getPriceValue(msg.sender);
-        
+
         _lazyCheck(_signer, voucher, value);
 
         if (address(erc20) != address(0)) {
@@ -291,10 +289,11 @@ contract ERC721Lazy is
         uint256 value
     ) private {
         if (_signer != signer) revert InvalidSigner();
-        if (usedVouchers[voucher.voucherId]) revert UsedVoucher();
+        if (usedVouchers[voucher.voucherId])
+            revert UsedVoucher();
         uint256 _fee = _getFeeValue(0x40d097c3);
         if (
-            _fee > value || 
+            _fee > value ||
             (value - _fee !=
                 (voucher.price *
                     voucher.amount *
@@ -383,9 +382,10 @@ contract ERC721Lazy is
         }
     }
 
-    function _userMint(uint256 _amount, address _key)
-        internal
-    {
+    function _userMint(
+        uint256 _amount,
+        address _key
+    ) internal {
         uint256 j;
         while (j < _amount) {
             _mint(_key, _incrementCounter());
@@ -421,13 +421,9 @@ contract ERC721Lazy is
         return baseURI;
     }
 
-    function tokenURI(uint256 id)
-        public
-        view
-        virtual
-        override
-        returns (string memory)
-    {
+    function tokenURI(
+        uint256 id
+    ) public view virtual override returns (string memory) {
         if (id > mintCount) revert NotMintedYet();
         return
             string(
@@ -467,9 +463,10 @@ contract ERC721Lazy is
     /// @dev If router deploy we check msg.value if !erc20 BUT checks erc20 approval and transfers are via the router
     /// @param _erc20Owner Non router deploy =msg.sender; Router deploy =payer.address (msg.sender = router.address)
     /// @param _type Passed to _feeCheck to determin the fee 0=mint; 1=burn; ELSE _feeCheck is ignored
-    function _paymentCheck(address _erc20Owner, uint8 _type)
-        internal
-    {
+    function _paymentCheck(
+        address _erc20Owner,
+        uint8 _type
+    ) internal {
         uint256 value = _getPriceValue(_erc20Owner);
 
         // Check fees are paid
@@ -494,10 +491,10 @@ contract ERC721Lazy is
         }
     }
 
-    function _feeCheck(bytes4 _method, uint256 _value)
-        internal
-        view
-    {
+    function _feeCheck(
+        bytes4 _method,
+        uint256 _value
+    ) internal view {
         uint256 _fee = _getFeeValue(_method);
         assembly {
             if iszero(eq(_value, _fee)) {
@@ -507,35 +504,34 @@ contract ERC721Lazy is
         }
     }
 
-    function _getPriceValue(address _erc20Owner)
-        internal
-        view
-        returns (uint256 value)
-    {
-        value = 
-            (address(erc20) != address(0))
-                ? erc20.allowance(_erc20Owner, address(this))
-                : msg.value;
+    function _getPriceValue(
+        address _erc20Owner
+    ) internal view returns (uint256 value) {
+        value = (address(erc20) != address(0))
+            ? erc20.allowance(_erc20Owner, address(this))
+            : msg.value;
     }
 
-    function _getFeeValue(bytes4 _method)
-        internal
-        view
-        returns (uint256 value)
-    {
+    function _getFeeValue(
+        bytes4 _method
+    ) internal view returns (uint256 value) {
         address _owner = owner;
         uint32 _size;
         assembly {
             _size := extcodesize(_owner)
         }
-        value = _size == 0 ? 0 : FeeOracle(owner).feeLookup(_method);
+        value = _size == 0
+            ? 0
+            : FeeOracle(owner).feeLookup(_method);
     }
 
     ////////////////////////////////////////////////////////////////
     //                     REQUIRED OVERRIDES                     //
     ////////////////////////////////////////////////////////////////
 
-    function supportsInterface(bytes4 interfaceId)
+    function supportsInterface(
+        bytes4 interfaceId
+    )
         public
         pure
         virtual

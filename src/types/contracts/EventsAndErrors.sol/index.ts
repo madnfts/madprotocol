@@ -5,4 +5,5 @@ export type { FactoryEventsAndErrors1155 } from "./FactoryEventsAndErrors1155";
 export type { FactoryEventsAndErrors721 } from "./FactoryEventsAndErrors721";
 export type { MarketplaceEventsAndErrors1155 } from "./MarketplaceEventsAndErrors1155";
 export type { MarketplaceEventsAndErrors721 } from "./MarketplaceEventsAndErrors721";
+export type { MarketplaceEventsAndErrorsBase } from "./MarketplaceEventsAndErrorsBase";
 export type { RouterEvents } from "./RouterEvents";

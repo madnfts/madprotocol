@@ -62,15 +62,18 @@ export type Collection = {
   splitter: string;
 };
 
-const wmatic_addr = '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270';
+const wmatic_addr =
+  "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270";
 
 // exported consts
 export const dead = ethers.constants.AddressZero;
 
-async function getWMatic() : Promise<MockERC20> {
-  
-  const wrapped: MockERC20 = (await ethers.getContractAt('contracts/lib/test/erc20-mock.sol:ERC20', wmatic_addr)) as MockERC20
-  
+async function getWMatic(): Promise<MockERC20> {
+  const wrapped: MockERC20 = (await ethers.getContractAt(
+    "contracts/lib/test/erc20-mock.sol:ERC20",
+    wmatic_addr,
+  )) as MockERC20;
+
   return wrapped;
 }
 
@@ -500,7 +503,7 @@ export async function madFixture721E(): Promise<MADFixture721ERC20> {
 }
 
 export async function madFixture721F(): Promise<MADFixture721ERC20> {
-  const erc20:MockERC20 = await getWMatic();
+  const erc20: MockERC20 = await getWMatic();
 
   const SplitterDeployer = await ethers.getContractFactory(
     "SplitterDeployer",
@@ -867,7 +870,7 @@ export async function madFixture1155D(): Promise<MADFixture1155ERC20> {
     300,
     dead,
     erc20.address,
-    "0xE592427A0AEce92De3Edee1F18E0157C05861564"
+    "0xE592427A0AEce92De3Edee1F18E0157C05861564",
   )) as MADMarketplace1155;
 
   const f1155 = (await Factory.deploy(
@@ -950,7 +953,7 @@ export async function madFixture1155E(): Promise<MADFixture1155ERC20> {
     300,
     dead,
     erc20.address,
-    "0xE592427A0AEce92De3Edee1F18E0157C05861564"
+    "0xE592427A0AEce92De3Edee1F18E0157C05861564",
   )) as MADMarketplace1155;
 
   const f1155 = (await Factory.deploy(
@@ -973,7 +976,6 @@ export async function madFixture1155E(): Promise<MADFixture1155ERC20> {
 
   return { f1155, m1155, r1155, erc20 };
 }
-
 
 export async function madFixture1155F(): Promise<MADFixture1155ERC20> {
   const erc20 = await getWMatic();
@@ -1030,7 +1032,7 @@ export async function madFixture1155F(): Promise<MADFixture1155ERC20> {
     300,
     dead,
     erc20.address,
-    "0xE592427A0AEce92De3Edee1F18E0157C05861564"
+    "0xE592427A0AEce92De3Edee1F18E0157C05861564",
   )) as MADMarketplace1155;
 
   const f1155 = (await Factory.deploy(

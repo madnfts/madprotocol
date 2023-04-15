@@ -802,7 +802,10 @@ describe("ERC1155Basic", () => {
 
       await erc20.mint(basic.address, price);
 
-      const tx = await basic.withdrawERC20(erc20.address, dead);
+      const tx = await basic.withdrawERC20(
+        erc20.address,
+        dead,
+      );
       expect(tx).to.be.ok;
       expect(
         await erc20.callStatic.balanceOf(payees[0]),

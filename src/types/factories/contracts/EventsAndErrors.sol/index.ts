@@ -5,4 +5,5 @@ export { FactoryEventsAndErrors1155__factory } from "./FactoryEventsAndErrors115
 export { FactoryEventsAndErrors721__factory } from "./FactoryEventsAndErrors721__factory";
 export { MarketplaceEventsAndErrors1155__factory } from "./MarketplaceEventsAndErrors1155__factory";
 export { MarketplaceEventsAndErrors721__factory } from "./MarketplaceEventsAndErrors721__factory";
+export { MarketplaceEventsAndErrorsBase__factory } from "./MarketplaceEventsAndErrorsBase__factory";
 export { RouterEvents__factory } from "./RouterEvents__factory";

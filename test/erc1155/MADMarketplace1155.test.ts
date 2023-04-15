@@ -15,7 +15,6 @@ import {
 } from "ethers";
 import { artifacts, ethers, network } from "hardhat";
 
-
 import {
   MADFactory1155,
   MADMarketplace1155,
@@ -77,9 +76,7 @@ describe("MADMarketplace1155", () => {
       expect(await m1155.minOrderDuration()).to.eq(300);
       expect(await m1155.minAuctionIncrement()).to.eq(300);
       expect(await m1155.minBidValue()).to.eq(20);
-      expect(await m1155.MADFactory1155()).to.eq(
-        f1155.address,
-      );
+      expect(await m1155.MADFactory()).to.eq(f1155.address);
     });
   });
   describe("Owner Functions", async () => {
@@ -3550,7 +3547,11 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .setMintState(basic.address, true, 0);
-      await basic.connect(acc02).mint(1, 1, { value: price.add(ethers.utils.parseEther("0.25")) });
+      await basic
+        .connect(acc02)
+        .mint(1, 1, {
+          value: price.add(ethers.utils.parseEther("0.25")),
+        });
       await basic
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
@@ -3841,7 +3842,11 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .setMintState(basic.address, true, 0);
-      await basic.connect(acc02).mint(1, 1, { value: price.add(ethers.utils.parseEther("0.25")) });
+      await basic
+        .connect(acc02)
+        .mint(1, 1, {
+          value: price.add(ethers.utils.parseEther("0.25")),
+        });
       await basic
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
@@ -3915,11 +3920,9 @@ describe("MADMarketplace1155", () => {
       );
 
       await extToken.connect(acc02).setPublicMintState(true);
-      await extToken
-        .connect(acc02)
-        .mint(2, 1, {
-          value: price.mul(ethers.constants.Two),
-        });
+      await extToken.connect(acc02).mint(2, 1, {
+        value: price.mul(ethers.constants.Two),
+      });
       const tx_ = await extToken
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
@@ -4227,7 +4230,11 @@ describe("MADMarketplace1155", () => {
       await r1155
         .connect(acc02)
         .setMintState(basic.address, true, 0);
-      await basic.connect(acc02).mint(1, 1, { value: price.add(ethers.utils.parseEther("0.25")) });
+      await basic
+        .connect(acc02)
+        .mint(1, 1, {
+          value: price.add(ethers.utils.parseEther("0.25")),
+        });
       await basic
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
@@ -4303,11 +4310,9 @@ describe("MADMarketplace1155", () => {
       );
 
       await extToken.connect(acc02).setPublicMintState(true);
-      await extToken
-        .connect(acc02)
-        .mint(2, 1, {
-          value: price.mul(ethers.constants.Two),
-        });
+      await extToken.connect(acc02).mint(2, 1, {
+        value: price.mul(ethers.constants.Two),
+      });
       const tx_ = await extToken
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
@@ -4704,11 +4709,9 @@ describe("MADMarketplace1155", () => {
       );
 
       await extToken.connect(acc02).setPublicMintState(true);
-      await extToken
-        .connect(acc02)
-        .mint(2, 1, {
-          value: price.mul(ethers.constants.Two),
-        });
+      await extToken.connect(acc02).mint(2, 1, {
+        value: price.mul(ethers.constants.Two),
+      });
       const tx_ = await extToken
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);

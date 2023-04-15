@@ -3,14 +3,16 @@
 pragma solidity 0.8.16;
 
 interface IERC165 {
-    function supportsInterface(bytes4 interfaceId)
-        external
-        view
-        returns (bool);
+    function supportsInterface(
+        bytes4 interfaceId
+    ) external view returns (bool);
 }
 
 interface IERC2981 {
-    function royaltyInfo(uint256 _tokenId, uint256 _salePrice)
+    function royaltyInfo(
+        uint256 _tokenId,
+        uint256 _salePrice
+    )
         external
         view
         returns (address receiver, uint256 royaltyAmount);
@@ -27,10 +29,9 @@ interface IERC721Metadata {
         view
         returns (string memory _symbol);
 
-    function tokenURI(uint256 _tokenId)
-        external
-        view
-        returns (string memory);
+    function tokenURI(
+        uint256 _tokenId
+    ) external view returns (string memory);
 }
 
 interface IERC721 {
@@ -50,15 +51,13 @@ interface IERC721 {
         bool _approved
     );
 
-    function balanceOf(address _owner)
-        external
-        view
-        returns (uint256);
+    function balanceOf(
+        address _owner
+    ) external view returns (uint256);
 
-    function ownerOf(uint256 _tokenId)
-        external
-        view
-        returns (address);
+    function ownerOf(
+        uint256 _tokenId
+    ) external view returns (address);
 
     function safeTransferFrom(
         address _from,
@@ -79,19 +78,19 @@ interface IERC721 {
         uint256 _tokenId
     ) external payable;
 
-    function approve(address _approved, uint256 _tokenId)
-        external
-        payable;
+    function approve(
+        address _approved,
+        uint256 _tokenId
+    ) external payable;
 
     function setApprovalForAll(
         address _operator,
         bool _approved
     ) external;
 
-    function getApproved(uint256 _tokenId)
-        external
-        view
-        returns (address);
+    function getApproved(
+        uint256 _tokenId
+    ) external view returns (address);
 
     function isApprovedForAll(
         address _owner,
@@ -137,10 +136,10 @@ interface IERC1155 {
         bytes calldata _data
     ) external;
 
-    function balanceOf(address _owner, uint256 _id)
-        external
-        view
-        returns (uint256);
+    function balanceOf(
+        address _owner,
+        uint256 _id
+    ) external view returns (uint256);
 
     function balanceOfBatch(
         address[] calldata _owners,
@@ -159,8 +158,7 @@ interface IERC1155 {
 }
 
 interface IERC1155Metadata {
-    function uri(uint256 _id)
-        external
-        view
-        returns (string memory);
+    function uri(
+        uint256 _id
+    ) external view returns (string memory);
 }

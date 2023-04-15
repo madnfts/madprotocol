@@ -51,11 +51,10 @@ contract MADRouter1155 is
 
     /// @notice max fee that can be set for mint, configured on constructor
     uint256 public maxFeeMint;
-    
+
     /// @notice max fee that can be set for burn, configured on constructor
     uint256 public maxFeeBurn;
 
-    
     /// @notice Contract name.
     /// @dev Function Sighash := 0x06fdde03
     function name()
@@ -88,7 +87,10 @@ contract MADRouter1155 is
         uint256 _maxFeeMint,
         uint256 _maxFeeBurnt
     ) {
-        require(_maxFeeMint > 0 && _maxFeeBurnt > 0, "Invalid max fee settings");
+        require(
+            _maxFeeMint > 0 && _maxFeeBurnt > 0,
+            "Invalid max fee settings"
+        );
         maxFeeMint = _maxFeeMint;
         maxFeeBurn = _maxFeeBurnt;
         MADFactory1155 = _factory;
@@ -104,7 +106,9 @@ contract MADRouter1155 is
 
     /// @dev Setter for public mint fee _recipient.
     /// @dev Function Sighash := ?
-    function setRecipient(address _recipient) public onlyOwner {
+    function setRecipient(
+        address _recipient
+    ) public onlyOwner {
         require(_recipient != address(0), "Invalid address");
 
         assembly {
@@ -117,24 +121,23 @@ contract MADRouter1155 is
     /// @notice Enables the contract's owner to change payment token address.
     /// @dev Function Signature := 0x6a326ab1
     /// @param _paymentTokenAddress erc20 token address | address(0).
-    function _setPaymentToken(address _paymentTokenAddress)
-        private
-    {
+    function _setPaymentToken(
+        address _paymentTokenAddress
+    ) private {
         erc20 = ERC20(_paymentTokenAddress);
         emit PaymentTokenUpdated(_paymentTokenAddress);
     }
 
     /// @notice Collection baseURI setter.
-    /// @dev Only available for Basic, Whitelist and Lazy token types. Events logged 
+    /// @dev Only available for Basic, Whitelist and Lazy token types. Events logged
     ///      by each tokens' BaseURISet functions.
     ///      Function Sighash := 0x4328bd00
     /// @param _token 1155 token address.
     /// @param _uri New URI string.
-    function setURI(address _token, string memory _uri)
-        external
-        nonReentrant
-        whenNotPaused
-    {
+    function setURI(
+        address _token,
+        string memory _uri
+    ) external nonReentrant whenNotPaused {
         (bytes32 _colID, uint8 _tokenType) = _tokenRender(
             _token
         );
@@ -153,22 +156,16 @@ contract MADRouter1155 is
         }
     }
 
-
-
     /// @notice Collection baseURI locker preventing URI updates when set.
     ///      Cannot be unset!
-    /// @dev Only available for Basic, Whitelist and Lazy token types. Events logged 
+    /// @dev Only available for Basic, Whitelist and Lazy token types. Events logged
     ///      by each tokens' setBaseURILock functions.
     ///      Function Sighash := ?
     /// @param _token 721 token address.
-    function setURILock(address _token)
-        external
-        nonReentrant
-        whenNotPaused
-    {
-        (, uint8 _tokenType) = _tokenRender(
-            _token
-        );
+    function setURILock(
+        address _token
+    ) external nonReentrant whenNotPaused {
+        (, uint8 _tokenType) = _tokenRender(_token);
 
         if (_tokenType == 1) {
             ERC1155Basic(_token).setURILock();
@@ -180,9 +177,9 @@ contract MADRouter1155 is
             revert("INVALID_TYPE");
         }
     }
-    
-    /// @notice Global MintState setter/controller  
-    /// @dev Switch cases/control flow handling conditioned by both `_stateType` and `_tokenType`. 
+
+    /// @notice Global MintState setter/controller
+    /// @dev Switch cases/control flow handling conditioned by both `_stateType` and `_tokenType`.
     ///      Events logged by each tokens' `setState` functions.
     ///      Function Sighash := 0xab9acd57
     /// @param _token 1155 token address.
@@ -330,7 +327,7 @@ contract MADRouter1155 is
             _balances,
             msg.sender
         );
-    }    
+    }
 
     /// @notice ERC1155Whitelist mint to creator function handler.
     /// @dev Function Sighash := 0x182ee485
@@ -484,11 +481,10 @@ contract MADRouter1155 is
     ///      Function Sighash := 0xf940e385
     /// @param _token 1155 token address.
     /// @param _erc20 ERC20 token address.
-    function withdraw(address _token, ERC20 _erc20)
-        external
-        nonReentrant
-        whenNotPaused
-    {
+    function withdraw(
+        address _token,
+        ERC20 _erc20
+    ) external nonReentrant whenNotPaused {
         (bytes32 _colID, uint8 _tokenType) = _tokenRender(
             _token
         );
@@ -496,7 +492,10 @@ contract MADRouter1155 is
         if (_tokenType < 1) {
             address(_erc20) != address(0) &&
                 _erc20.balanceOf(_token) != 0
-                ? ERC1155Minimal(_token).withdrawERC20(_erc20, recipient)
+                ? ERC1155Minimal(_token).withdrawERC20(
+                    _erc20,
+                    recipient
+                )
                 : _token.balance != 0
                 ? ERC1155Minimal(_token).withdraw(recipient)
                 : revert("NO_FUNDS");
@@ -511,7 +510,10 @@ contract MADRouter1155 is
         if (_tokenType == 1) {
             address(_erc20) != address(0) &&
                 _erc20.balanceOf(_token) != 0
-                ? ERC1155Basic(_token).withdrawERC20(_erc20, recipient)
+                ? ERC1155Basic(_token).withdrawERC20(
+                    _erc20,
+                    recipient
+                )
                 : _token.balance != 0
                 ? ERC1155Basic(_token).withdraw(recipient)
                 : revert("NO_FUNDS");
@@ -526,7 +528,10 @@ contract MADRouter1155 is
         if (_tokenType == 2) {
             address(_erc20) != address(0) &&
                 _erc20.balanceOf(_token) != 0
-                ? ERC1155Whitelist(_token).withdrawERC20(_erc20, recipient)
+                ? ERC1155Whitelist(_token).withdrawERC20(
+                    _erc20,
+                    recipient
+                )
                 : _token.balance != 0
                 ? ERC1155Whitelist(_token).withdraw(recipient)
                 : revert("NO_FUNDS");
@@ -541,7 +546,10 @@ contract MADRouter1155 is
         if (_tokenType > 2) {
             address(_erc20) != address(0) &&
                 _erc20.balanceOf(_token) != 0
-                ? ERC1155Lazy(_token).withdrawERC20(_erc20, recipient)
+                ? ERC1155Lazy(_token).withdrawERC20(
+                    _erc20,
+                    recipient
+                )
                 : _token.balance != 0
                 ? ERC1155Lazy(_token).withdraw(recipient)
                 : revert("NO_FUNDS");
@@ -561,7 +569,9 @@ contract MADRouter1155 is
     /// @notice Mint and burn fee lookup.
     /// @dev Function Sighash := 0xedc9e7a4
     /// @param sigHash MINSAFEMINT | MINBURN
-    function feeLookup(bytes4 sigHash)
+    function feeLookup(
+        bytes4 sigHash
+    )
         external
         view
         override(FeeOracle)
@@ -592,11 +602,9 @@ contract MADRouter1155 is
     ///      for valid token and approved user.
     ///      Function Sighash := 0xdbf62b2e
     /// @param _token 1155 token address.
-    function _tokenRender(address _token)
-        private
-        view
-        returns (bytes32 colID, uint8 tokenType)
-    {
+    function _tokenRender(
+        address _token
+    ) private view returns (bytes32 colID, uint8 tokenType) {
         colID = MADFactory1155.getColID(_token);
         MADFactory1155.creatorCheck(colID);
         tokenType = MADFactory1155.typeChecker(colID);
@@ -690,11 +698,9 @@ contract MADRouter1155 is
     /// @notice Set the Routers owner address.
     /// @dev Function Signature := 0x13af4035
     /// @param newOwner New owners address.
-    function setOwner(address newOwner)
-        public
-        override
-        onlyOwner
-    {
+    function setOwner(
+        address newOwner
+    ) public override onlyOwner {
         require(newOwner != address(0), "Invalid address");
         // owner = newOwner;
         assembly {
@@ -709,10 +715,10 @@ contract MADRouter1155 is
     ///      Function Sighash := 0x17f9fad1
     /// @param _token 1155 token address.
     /// @param _signer New signers address.
-    function setSigner(address _token, address _signer)
-        external
-        onlyOwner
-    {
+    function setSigner(
+        address _token,
+        address _signer
+    ) external onlyOwner {
         require(_signer != address(0), "Invalid address");
         ERC1155Lazy(_token).setSigner(_signer);
     }
@@ -722,11 +728,14 @@ contract MADRouter1155 is
     ///      Function Sighash := 0x0b78f9c0
     /// @param _feeMint New mint fee.
     /// @param _feeBurn New burn fee.
-    function setFees(uint256 _feeMint, uint256 _feeBurn)
-        external
-        onlyOwner
-    {
-        require(_feeMint <= maxFeeMint && _feeBurn <= maxFeeBurn, "Invalid fee settings, beyond max");
+    function setFees(
+        uint256 _feeMint,
+        uint256 _feeBurn
+    ) external onlyOwner {
+        require(
+            _feeMint <= maxFeeMint && _feeBurn <= maxFeeBurn,
+            "Invalid fee settings, beyond max"
+        );
 
         // require(
         //     _feeMint < 50 ether && _feeBurn < 50 ether,

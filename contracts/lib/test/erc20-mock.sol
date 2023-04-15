@@ -74,11 +74,10 @@ abstract contract ERC20 {
                                ERC20 LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function approve(address spender, uint256 amount)
-        public
-        virtual
-        returns (bool)
-    {
+    function approve(
+        address spender,
+        uint256 amount
+    ) public virtual returns (bool) {
         allowance[msg.sender][spender] = amount;
 
         emit Approval(msg.sender, spender, amount);
@@ -86,11 +85,10 @@ abstract contract ERC20 {
         return true;
     }
 
-    function transfer(address to, uint256 amount)
-        public
-        virtual
-        returns (bool)
-    {
+    function transfer(
+        address to,
+        uint256 amount
+    ) public virtual returns (bool) {
         balanceOf[msg.sender] -= amount;
 
         // Cannot overflow because the sum of all user
@@ -220,10 +218,10 @@ abstract contract ERC20 {
                         INTERNAL MINT/BURN LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function _mint(address to, uint256 amount)
-        internal
-        virtual
-    {
+    function _mint(
+        address to,
+        uint256 amount
+    ) internal virtual {
         totalSupply += amount;
 
         // Cannot overflow because the sum of all user
@@ -235,10 +233,10 @@ abstract contract ERC20 {
         emit Transfer(address(0), to, amount);
     }
 
-    function _burn(address from, uint256 amount)
-        internal
-        virtual
-    {
+    function _burn(
+        address from,
+        uint256 amount
+    ) internal virtual {
         balanceOf[from] -= amount;
 
         // Cannot underflow because a user's balance
@@ -251,11 +249,10 @@ abstract contract ERC20 {
     }
 }
 
-
 contract MockERC20 is ERC20 {
-    constructor(uint256 amountToMint)
-        ERC20("Mock", "MOCK", 18)
-    {
+    constructor(
+        uint256 amountToMint
+    ) ERC20("Mock", "MOCK", 18) {
         mint(msg.sender, amountToMint);
     }
 
@@ -263,10 +260,10 @@ contract MockERC20 is ERC20 {
         _mint(to, value);
     }
 
-    function burn(address from, uint256 value)
-        public
-        virtual
-    {
+    function burn(
+        address from,
+        uint256 value
+    ) public virtual {
         _burn(from, value);
     }
 }

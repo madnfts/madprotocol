@@ -94,7 +94,7 @@ describe("MADMarketplace721", () => {
       expect(await m721.minOrderDuration()).to.eq(300);
       expect(await m721.minAuctionIncrement()).to.eq(300);
       expect(await m721.minBidValue()).to.eq(20);
-      expect(await m721.MADFactory721()).to.eq(f721.address);
+      expect(await m721.MADFactory()).to.eq(f721.address);
     });
   });
   describe("Owner Functions", async () => {
@@ -3348,7 +3348,11 @@ describe("MADMarketplace721", () => {
       await r721
         .connect(acc02)
         .setMintState(basic.address, true, 0);
-      await basic.connect(acc02).mint(1, { value: price.add(ethers.utils.parseEther("0.25")) });
+      await basic
+        .connect(acc02)
+        .mint(1, {
+          value: price.add(ethers.utils.parseEther("0.25")),
+        });
       await basic.connect(acc02).approve(m721.address, 1);
       const daTx = await m721
         .connect(acc02)
@@ -3624,7 +3628,11 @@ describe("MADMarketplace721", () => {
       await r721
         .connect(acc02)
         .setMintState(basic.address, true, 0);
-      await basic.connect(acc02).mint(1, { value: price.add(ethers.utils.parseEther("0.25")) });
+      await basic
+        .connect(acc02)
+        .mint(1, {
+          value: price.add(ethers.utils.parseEther("0.25")),
+        });
       await basic.connect(acc02).approve(m721.address, 1);
       const daTx = await m721
         .connect(acc02)
@@ -4006,7 +4014,11 @@ describe("MADMarketplace721", () => {
       await r721
         .connect(acc02)
         .setMintState(basic.address, true, 0);
-      await basic.connect(acc02).mint(1, { value: price.add(ethers.utils.parseEther("0.25")) });
+      await basic
+        .connect(acc02)
+        .mint(1, {
+          value: price.add(ethers.utils.parseEther("0.25")),
+        });
       await basic.connect(acc02).approve(m721.address, 1);
       const daTx = await m721
         .connect(acc02)
@@ -5671,11 +5683,9 @@ describe("MADMarketplace721", () => {
         .connect(acc02)
         .freeSettings(wlAddr, 1, 10, root);
 
-      await r721
-        .connect(acc02)
-        .creatorMint(wlAddr, 3, {
-          value: ethers.utils.parseEther("0.25"),
-        });
+      await r721.connect(acc02).creatorMint(wlAddr, 3, {
+        value: ethers.utils.parseEther("0.25"),
+      });
       await whitelist.connect(acc02).approve(m721.address, 1);
       await whitelist.connect(acc02).approve(m721.address, 2);
       const tx_ = await whitelist

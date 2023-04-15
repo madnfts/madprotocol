@@ -94,7 +94,7 @@ describe("MADMarketplace721", () => {
       expect(await m721.minOrderDuration()).to.eq(300);
       expect(await m721.minAuctionIncrement()).to.eq(300);
       expect(await m721.minBidValue()).to.eq(20);
-      expect(await m721.MADFactory721()).to.eq(f721.address);
+      expect(await m721.MADFactory()).to.eq(f721.address);
     });
   });
   describe("Owner Functions", async () => {

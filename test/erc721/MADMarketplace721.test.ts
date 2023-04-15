@@ -3348,11 +3348,9 @@ describe("MADMarketplace721", () => {
       await r721
         .connect(acc02)
         .setMintState(basic.address, true, 0);
-      await basic
-        .connect(acc02)
-        .mint(1, {
-          value: price.add(ethers.utils.parseEther("0.25")),
-        });
+      await basic.connect(acc02).mint(1, {
+        value: price.add(ethers.utils.parseEther("0.25")),
+      });
       await basic.connect(acc02).approve(m721.address, 1);
       const daTx = await m721
         .connect(acc02)
@@ -3628,11 +3626,9 @@ describe("MADMarketplace721", () => {
       await r721
         .connect(acc02)
         .setMintState(basic.address, true, 0);
-      await basic
-        .connect(acc02)
-        .mint(1, {
-          value: price.add(ethers.utils.parseEther("0.25")),
-        });
+      await basic.connect(acc02).mint(1, {
+        value: price.add(ethers.utils.parseEther("0.25")),
+      });
       await basic.connect(acc02).approve(m721.address, 1);
       const daTx = await m721
         .connect(acc02)
@@ -4014,11 +4010,9 @@ describe("MADMarketplace721", () => {
       await r721
         .connect(acc02)
         .setMintState(basic.address, true, 0);
-      await basic
-        .connect(acc02)
-        .mint(1, {
-          value: price.add(ethers.utils.parseEther("0.25")),
-        });
+      await basic.connect(acc02).mint(1, {
+        value: price.add(ethers.utils.parseEther("0.25")),
+      });
       await basic.connect(acc02).approve(m721.address, 1);
       const daTx = await m721
         .connect(acc02)

@@ -837,11 +837,9 @@ describe("MADRouter721", () => {
       await r721
         .connect(acc02)
         .setMintState(minAddr, true, 0);
-      await min
-        .connect(acc01)
-        .publicMint({
-          value: price.add(ethers.utils.parseEther("0.25")),
-        });
+      await min.connect(acc01).publicMint({
+        value: price.add(ethers.utils.parseEther("0.25")),
+      });
 
       const tx = await r721.connect(acc02).burn(minAddr, []);
       const verArt = await artifacts.readArtifact(
@@ -901,11 +899,9 @@ describe("MADRouter721", () => {
         .connect(acc02)
         .setMintState(basicAddr, true, 0);
 
-      await basic
-        .connect(acc01)
-        .mint(1, {
-          value: price.add(ethers.utils.parseEther("0.25")),
-        });
+      await basic.connect(acc01).mint(1, {
+        value: price.add(ethers.utils.parseEther("0.25")),
+      });
       const tx = await r721
         .connect(acc02)
         .burn(basicAddr, [1]);
@@ -1637,11 +1633,9 @@ describe("MADRouter721", () => {
       await r721
         .connect(acc02)
         .setMintState(min.address, true, 0);
-      await min
-        .connect(acc01)
-        .publicMint({
-          value: price.add(ethers.utils.parseEther("0.25")),
-        });
+      await min.connect(acc01).publicMint({
+        value: price.add(ethers.utils.parseEther("0.25")),
+      });
       const bal1 = await ethers.provider.getBalance(
         acc02.address,
       );
@@ -1694,11 +1688,9 @@ describe("MADRouter721", () => {
       await r721
         .connect(mad)
         .setMintState(basic.address, true, 0);
-      await basic
-        .connect(acc01)
-        .mint(1, {
-          value: price.add(ethers.utils.parseEther("0.25")),
-        });
+      await basic.connect(acc01).mint(1, {
+        value: price.add(ethers.utils.parseEther("0.25")),
+      });
       const bala = await ethers.provider.getBalance(
         mad.address,
       );
@@ -1744,11 +1736,9 @@ describe("MADRouter721", () => {
       await r721
         .connect(amb)
         .setMintState(wl.address, true, 0);
-      await wl
-        .connect(acc01)
-        .mint(1, {
-          value: price.add(ethers.utils.parseEther("0.25")),
-        });
+      await wl.connect(acc01).mint(1, {
+        value: price.add(ethers.utils.parseEther("0.25")),
+      });
       const balc = await ethers.provider.getBalance(
         amb.address,
       );
@@ -2046,11 +2036,9 @@ describe("MADRouter721", () => {
         await ethers.provider.getBalance(acc01.address);
 
       // Mint a public token - fee 2.5 + price 1
-      const txMintMin = await min
-        .connect(acc01)
-        .publicMint({
-          value: price.add(ethers.utils.parseEther("2.5")),
-        });
+      const txMintMin = await min.connect(acc01).publicMint({
+        value: price.add(ethers.utils.parseEther("2.5")),
+      });
       const receiptMintMin = await txMintMin.wait();
       const txMintGasMin = receiptMintMin.gasUsed.mul(
         receiptMintMin.effectiveGasPrice,
@@ -2138,11 +2126,9 @@ describe("MADRouter721", () => {
       );
 
       // Mint a public token - fee 2.5 + price 1
-      const txMint = await basic
-        .connect(acc01)
-        .mint(1, {
-          value: price.add(ethers.utils.parseEther("2.5")),
-        });
+      const txMint = await basic.connect(acc01).mint(1, {
+        value: price.add(ethers.utils.parseEther("2.5")),
+      });
       const receiptMint = await txMint.wait();
       const txMintGas = receiptMint.gasUsed.mul(
         receiptMint.effectiveGasPrice,
@@ -2374,11 +2360,9 @@ describe("MADRouter721", () => {
         await ethers.provider.getBalance(acc01.address);
 
       // Mint a lazy public token - fee 2.5 + price 1
-      const txMintWl = await wl
-        .connect(acc01)
-        .mint(1, {
-          value: price.add(ethers.utils.parseEther("2.5")),
-        });
+      const txMintWl = await wl.connect(acc01).mint(1, {
+        value: price.add(ethers.utils.parseEther("2.5")),
+      });
       const receiptMintWl = await txMintWl.wait();
       const txMintGasWl = receiptMintWl.gasUsed.mul(
         receiptMintWl.effectiveGasPrice,
@@ -2646,11 +2630,9 @@ describe("MADRouter721", () => {
         await r721
           .connect(acc02)
           .setMintState(basicAddr, true, 0);
-        await basic
-          .connect(acc01)
-          .mint(1, {
-            value: price.add(ethers.utils.parseEther("2.5")),
-          });
+        await basic.connect(acc01).mint(1, {
+          value: price.add(ethers.utils.parseEther("2.5")),
+        });
 
         await expect(
           r721.connect(acc02).burn(basicAddr, [1]),

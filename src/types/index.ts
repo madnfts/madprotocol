@@ -14,10 +14,14 @@ export type { IUniswapV3SwapCallback } from "./@uniswap/v3-core/contracts/interf
 export { IUniswapV3SwapCallback__factory } from "./factories/@uniswap/v3-core/contracts/interfaces/callback/IUniswapV3SwapCallback__factory";
 export type { ISwapRouter } from "./@uniswap/v3-periphery/contracts/interfaces/ISwapRouter";
 export { ISwapRouter__factory } from "./factories/@uniswap/v3-periphery/contracts/interfaces/ISwapRouter__factory";
+export type { EventsAndErrorsBase } from "./contracts/EventsAndErrors.sol/EventsAndErrorsBase";
+export { EventsAndErrorsBase__factory } from "./factories/contracts/EventsAndErrors.sol/EventsAndErrorsBase__factory";
 export type { FactoryEventsAndErrors1155 } from "./contracts/EventsAndErrors.sol/FactoryEventsAndErrors1155";
 export { FactoryEventsAndErrors1155__factory } from "./factories/contracts/EventsAndErrors.sol/FactoryEventsAndErrors1155__factory";
 export type { FactoryEventsAndErrors721 } from "./contracts/EventsAndErrors.sol/FactoryEventsAndErrors721";
 export { FactoryEventsAndErrors721__factory } from "./factories/contracts/EventsAndErrors.sol/FactoryEventsAndErrors721__factory";
+export type { FactoryEventsAndErrorsBase } from "./contracts/EventsAndErrors.sol/FactoryEventsAndErrorsBase";
+export { FactoryEventsAndErrorsBase__factory } from "./factories/contracts/EventsAndErrors.sol/FactoryEventsAndErrorsBase__factory";
 export type { MarketplaceEventsAndErrors1155 } from "./contracts/EventsAndErrors.sol/MarketplaceEventsAndErrors1155";
 export { MarketplaceEventsAndErrors1155__factory } from "./factories/contracts/EventsAndErrors.sol/MarketplaceEventsAndErrors1155__factory";
 export type { MarketplaceEventsAndErrors721 } from "./contracts/EventsAndErrors.sol/MarketplaceEventsAndErrors721";

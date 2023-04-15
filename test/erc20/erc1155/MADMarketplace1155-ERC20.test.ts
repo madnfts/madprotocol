@@ -78,9 +78,7 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
       expect(await m1155.minOrderDuration()).to.eq(300);
       expect(await m1155.minAuctionIncrement()).to.eq(300);
       expect(await m1155.minBidValue()).to.eq(20);
-      expect(await m1155.MADFactory).to.eq(
-        f1155.address,
-      );
+      expect(await m1155.MADFactory()).to.eq(f1155.address);
     });
   });
   // describe("Owner Functions", async () => {

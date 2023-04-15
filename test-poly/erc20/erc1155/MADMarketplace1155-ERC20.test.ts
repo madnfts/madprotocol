@@ -102,9 +102,7 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
       expect(await m1155.minOrderDuration()).to.eq(300);
       expect(await m1155.minAuctionIncrement()).to.eq(300);
       expect(await m1155.minBidValue()).to.eq(20);
-      expect(await m1155.MADFactory()).to.eq(
-        f1155.address,
-      );
+      expect(await m1155.MADFactory()).to.eq(f1155.address);
     });
   });
   // describe("Owner Functions", async () => {
@@ -982,23 +980,22 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
     await m1155
       .connect(acc03)
       .withdrawOutbid(erc20.address, 0, 0);
+
     await expect(
-      m1155.connect(owner).autoTransferFunds([owner.address]),
-    ).to.be.reverted;
-    await expect(
-      m1155.connect(owner).autoTransferFunds([acc01.address]),
+      m1155
+        .connect(acc01)
+        .withdrawOutbid(erc20.address, 0, 0),
     ).to.be.ok;
+
     await expect(
-      m1155.connect(owner).autoTransferFunds([acc01.address]),
+      m1155
+        .connect(acc01)
+        .withdrawOutbid(erc20.address, 0, 0),
     ).to.be.reverted;
 
-    console.log(await m1155.totalOutbid());
-    console.log(
-      await m1155.connect(acc01).getOutbidBalance(),
-    );
-    console.log(
-      await m1155.connect(acc03).getOutbidBalance(),
-    );
+    await expect(
+      m1155.connect(owner).withdrawERC20(erc20.address),
+    ).to.be.reverted;
 
     expect(await m1155.totalOutbid()).to.be.equal(
       ethers.utils.parseEther("0"),
@@ -1006,13 +1003,16 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
     expect(await erc20.balanceOf(m1155.address)).to.be.equal(
       ethers.utils.parseEther("0"),
     );
-    await expect(
-      m1155
-        .connect(acc01)
-        .withdrawOutbid(erc20.address, 0, 0),
-    ).to.be.reverted;
-    await expect(
-      m1155.connect(owner).withdrawERC20(erc20.address),
-    ).to.be.reverted;
+
+    console.log(await m1155.totalOutbid());
+    console.log(
+      await m1155.connect(owner).getOutbidBalance(),
+    );
+    console.log(
+      await m1155.connect(acc01).getOutbidBalance(),
+    );
+    console.log(
+      await m1155.connect(acc03).getOutbidBalance(),
+    );
   });
 });

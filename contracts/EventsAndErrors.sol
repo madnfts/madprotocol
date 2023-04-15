@@ -5,7 +5,14 @@ pragma solidity 0.8.16;
 import { FactoryVerifier } from "./lib/auth/FactoryVerifier.sol";
 import { IERC721, IERC1155 } from "./Types.sol";
 
-interface FactoryEventsAndErrors721 {
+interface EventsAndErrorsBase {
+    event PaymentTokenUpdated(
+        address indexed newPaymentToken
+    );
+    event RecipientUpdated(address indexed newRecipient);
+}
+
+interface FactoryEventsAndErrorsBase is EventsAndErrorsBase {
     ////////////////////////////////////////////////////////////////
     //                           EVENTS                           //
     ////////////////////////////////////////////////////////////////
@@ -21,6 +28,23 @@ interface FactoryEventsAndErrors721 {
         address splitter,
         uint256 flag
     );
+
+    ////////////////////////////////////////////////////////////////
+    //                           ERRORS                           //
+    ////////////////////////////////////////////////////////////////
+
+    /// @dev 0x00adecf0
+    error SplitterFail();
+    /// @dev 0xe0e54ced
+    error InvalidRoyalty();
+}
+
+interface FactoryEventsAndErrors721 is
+    FactoryEventsAndErrorsBase
+{
+    ////////////////////////////////////////////////////////////////
+    //                           EVENTS                           //
+    ////////////////////////////////////////////////////////////////
 
     event ERC721MinimalCreated(
         address indexed newSplitter,
@@ -58,36 +82,14 @@ interface FactoryEventsAndErrors721 {
         uint256 maxSupply,
         uint256 mintPrice
     );
-    event PaymentTokenUpdated(
-        address indexed newPaymentToken
-    );
-
-    ////////////////////////////////////////////////////////////////
-    //                           ERRORS                           //
-    ////////////////////////////////////////////////////////////////
-
-    /// @dev 0x00adecf0
-    error SplitterFail();
-    /// @dev 0xe0e54ced
-    error InvalidRoyalty();
 }
 
-interface FactoryEventsAndErrors1155 {
+interface FactoryEventsAndErrors1155 is
+    FactoryEventsAndErrorsBase
+{
     ////////////////////////////////////////////////////////////////
     //                           EVENTS                           //
     ////////////////////////////////////////////////////////////////
-
-    event MarketplaceUpdated(address indexed newMarket);
-    event RouterUpdated(address indexed newRouter);
-    event SignerUpdated(address indexed newSigner);
-
-    event SplitterCreated(
-        address indexed creator,
-        uint256[] shares,
-        address[] payees,
-        address splitter,
-        uint256 flag
-    );
 
     event ERC1155MinimalCreated(
         address indexed newSplitter,
@@ -125,30 +127,16 @@ interface FactoryEventsAndErrors1155 {
         uint256 maxSupply,
         uint256 mintPrice
     );
-    event PaymentTokenUpdated(
-        address indexed newPaymentToken
-    );
-
-    ////////////////////////////////////////////////////////////////
-    //                           ERRORS                           //
-    ////////////////////////////////////////////////////////////////
-
-    /// @dev 0x00adecf0
-    error SplitterFail();
-    /// @dev 0xe0e54ced
-    error InvalidRoyalty();
 }
 
-interface MarketplaceEventsAndErrorsBase {
+interface MarketplaceEventsAndErrorsBase is
+    EventsAndErrorsBase
+{
     ////////////////////////////////////////////////////////////////
     //                           EVENTS                           //
     ////////////////////////////////////////////////////////////////
 
     event FactoryUpdated(FactoryVerifier indexed newFactory);
-    event RecipientUpdated(address indexed newRecipient);
-    event PaymentTokenUpdated(
-        address indexed newPaymentToken
-    );
 
     event AuctionSettingsUpdated(
         uint256 indexed newMinDuration,
@@ -156,34 +144,6 @@ interface MarketplaceEventsAndErrorsBase {
         uint256 newMinBidValue,
         uint256 indexed newMaxDuration
     );
-
-    // event MakeOrder(
-    //     IERC721 indexed token,
-    //     uint256 id,
-    //     bytes32 indexed hash,
-    //     address seller
-    // );
-    // event CancelOrder(
-    //     IERC721 indexed token,
-    //     uint256 id,
-    //     bytes32 indexed hash,
-    //     address seller
-    // );
-    // event Bid(
-    //     IERC721 indexed token,
-    //     uint256 id,
-    //     bytes32 indexed hash,
-    //     address bidder,
-    //     uint256 bidPrice
-    // );
-    // event Claim(
-    //     IERC721 indexed token,
-    //     uint256 id,
-    //     bytes32 indexed hash,
-    //     address seller,
-    //     address taker,
-    //     uint256 price
-    // );
 
     event UserOutbid(
         address indexed user,
@@ -304,7 +264,7 @@ interface MarketplaceEventsAndErrors1155 is
     );
 }
 
-interface RouterEvents {
+interface RouterEvents is EventsAndErrorsBase {
     ////////////////////////////////////////////////////////////////
     //                           EVENTS                           //
     ////////////////////////////////////////////////////////////////
@@ -339,12 +299,6 @@ interface RouterEvents {
     );
 
     event FeesUpdated(uint256 burnFees, uint256 mintFees);
-
-    event PaymentTokenUpdated(
-        address indexed newPaymentToken
-    );
-
-    event RecipientUpdated(address indexed newRecipient);
 
     /// @dev 0xf7760f25
     error WrongPrice();

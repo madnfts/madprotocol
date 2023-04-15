@@ -787,19 +787,18 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
     await m721
       .connect(acc03)
       .withdrawOutbid(erc20.address, 0, 0);
+
     await expect(
-      m721.connect(owner).autoTransferFunds([owner.address]),
-    ).to.be.reverted;
-    await expect(
-      m721.connect(owner).autoTransferFunds([acc01.address]),
+      m721.connect(acc01).withdrawOutbid(erc20.address, 0, 0),
     ).to.be.ok;
+
     await expect(
-      m721.connect(owner).autoTransferFunds([acc01.address]),
+      m721.connect(acc01).withdrawOutbid(erc20.address, 0, 0),
     ).to.be.reverted;
 
-    console.log(await m721.totalOutbid());
-    console.log(await m721.connect(acc01).getOutbidBalance());
-    console.log(await m721.connect(acc03).getOutbidBalance());
+    await expect(
+      m721.connect(owner).withdrawERC20(erc20.address),
+    ).to.be.reverted;
 
     expect(await m721.totalOutbid()).to.be.equal(
       ethers.utils.parseEther("0"),
@@ -807,11 +806,10 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
     expect(await erc20.balanceOf(m721.address)).to.be.equal(
       ethers.utils.parseEther("0"),
     );
-    await expect(
-      m721.connect(acc01).withdrawOutbid(erc20.address, 0, 0),
-    ).to.be.reverted;
-    await expect(
-      m721.connect(owner).withdrawERC20(erc20.address),
-    ).to.be.reverted;
+
+    console.log(await m721.totalOutbid());
+    console.log(await m721.connect(owner).getOutbidBalance());
+    console.log(await m721.connect(acc01).getOutbidBalance());
+    console.log(await m721.connect(acc03).getOutbidBalance());
   });
 });

@@ -94,7 +94,7 @@ describe("MADMarketplace721", () => {
       expect(await m721.minOrderDuration()).to.eq(300);
       expect(await m721.minAuctionIncrement()).to.eq(300);
       expect(await m721.minBidValue()).to.eq(20);
-      expect(await m721.MADFactory721()).to.eq(f721.address);
+      expect(await m721.MADFactory()).to.eq(f721.address);
     });
   });
   describe("Owner Functions", async () => {
@@ -2886,6 +2886,138 @@ describe("MADMarketplace721", () => {
       expect(orderInfo.lastBidder).to.eq(acc01.address);
       expect(orderInfo.lastBidPrice).to.eq(bidVal2);
     });
+    it("Should bid, update storage and emit events; check user is returned their bid amount (which must be withdrawn)", async () => {
+      await m721.updateSettings(300, 10, 20, 31536000);
+      // await f721.addAmbassador(amb.address);
+      await f721
+        .connect(acc02)
+        .splitterCheck(
+          "MADSplitter1",
+          amb.address,
+          dead,
+          20,
+          0,
+        );
+      const splAddr = await f721.callStatic.getDeployedAddr(
+        "MADSplitter1",
+      );
+      const minAddr = await f721.callStatic.getDeployedAddr(
+        "MinSalt",
+      );
+      await f721
+        .connect(acc02)
+        .createCollection(
+          0,
+          "MinSalt",
+          "721Minimal",
+          "MIN",
+          price,
+          1,
+          "cid/id.json",
+          splAddr,
+          750,
+        );
+      const min = await ethers.getContractAt(
+        "ERC721Minimal",
+        minAddr,
+      );
+      await r721
+        .connect(acc02)
+        .minimalSafeMint(min.address, acc02.address, {
+          value: ethers.utils.parseEther("0.25"),
+        });
+      const tx = await min
+        .connect(acc02)
+        .approve(m721.address, 1);
+      const blockTimestamp = (
+        await m721.provider.getBlock(tx.blockNumber || 0)
+      ).timestamp;
+
+      const eaTx = await m721
+        .connect(acc02)
+        .englishAuction(
+          min.address,
+          1,
+          price,
+          blockTimestamp + 301,
+        );
+      const eaRc: ContractReceipt = await eaTx.wait();
+      const eaBn = eaRc.blockNumber;
+
+      await mine(13);
+
+      const eaOrderId = getOrderId721(
+        eaBn,
+        min.address,
+        1,
+        acc02.address,
+      );
+
+      const bidVal1 = await price.mul(ethers.constants.Two);
+      const bidVal2 = await bidVal1.mul(ethers.constants.Two);
+
+      const tx1 = await m721
+        .connect(mad)
+        .bid(eaOrderId, { value: bidVal1 });
+
+      await mineUpTo(200);
+
+      const tx2 = await m721
+        .connect(acc01)
+        .bid(eaOrderId, { value: bidVal2 });
+
+      await expect(tx1)
+        .to.be.ok.and.to.emit(m721, "Bid")
+        .withArgs(
+          minAddr,
+          1,
+          eaOrderId,
+          mad.address,
+          bidVal1,
+        );
+      await expect(tx2)
+        .to.be.ok.and.to.emit(m721, "Bid")
+        .withArgs(
+          minAddr,
+          1,
+          eaOrderId,
+          acc01.address,
+          bidVal2,
+        );
+
+      const orderInfo: OrderDetails721 =
+        await m721.callStatic.orderInfo(eaOrderId);
+
+      expect(orderInfo.endTime).to.eq(
+        blockTimestamp + 301 + 300,
+      ); // two successful bids but second is not 5 minutes before end
+      expect(orderInfo.lastBidder).to.eq(acc01.address);
+      expect(orderInfo.lastBidPrice).to.eq(bidVal2);
+
+      const bal = await m721
+        .connect(acc01)
+        .getOutbidBalance();
+      expect(bal).to.gt(0);
+
+      const currBal = await acc01.getBalance();
+
+      let tx_ = await m721.connect(acc01).withdrawOutbidEth();
+      const tx_r = await tx_.wait();
+      let bal2 = await acc01.getBalance();
+
+      expect(
+        await m721.connect(acc01).getOutbidBalance(),
+      ).to.eq(0);
+      expect(bal2).eq(
+        bal
+          .add(currBal)
+          .sub(
+            tx_r.cumulativeGasUsed.mul(
+              tx_r.effectiveGasPrice,
+            ),
+          ),
+      );
+    });
   });
   describe("Buying", async () => {
     it("Should revert if price is wrong", async () => {
@@ -3348,7 +3480,9 @@ describe("MADMarketplace721", () => {
       await r721
         .connect(acc02)
         .setMintState(basic.address, true, 0);
-      await basic.connect(acc02).mint(1, { value: price.add(ethers.utils.parseEther("0.25")) });
+      await basic.connect(acc02).mint(1, {
+        value: price.add(ethers.utils.parseEther("0.25")),
+      });
       await basic.connect(acc02).approve(m721.address, 1);
       const daTx = await m721
         .connect(acc02)
@@ -3624,7 +3758,9 @@ describe("MADMarketplace721", () => {
       await r721
         .connect(acc02)
         .setMintState(basic.address, true, 0);
-      await basic.connect(acc02).mint(1, { value: price.add(ethers.utils.parseEther("0.25")) });
+      await basic.connect(acc02).mint(1, {
+        value: price.add(ethers.utils.parseEther("0.25")),
+      });
       await basic.connect(acc02).approve(m721.address, 1);
       const daTx = await m721
         .connect(acc02)
@@ -4006,7 +4142,9 @@ describe("MADMarketplace721", () => {
       await r721
         .connect(acc02)
         .setMintState(basic.address, true, 0);
-      await basic.connect(acc02).mint(1, { value: price.add(ethers.utils.parseEther("0.25")) });
+      await basic.connect(acc02).mint(1, {
+        value: price.add(ethers.utils.parseEther("0.25")),
+      });
       await basic.connect(acc02).approve(m721.address, 1);
       const daTx = await m721
         .connect(acc02)
@@ -5671,11 +5809,9 @@ describe("MADMarketplace721", () => {
         .connect(acc02)
         .freeSettings(wlAddr, 1, 10, root);
 
-      await r721
-        .connect(acc02)
-        .creatorMint(wlAddr, 3, {
-          value: ethers.utils.parseEther("0.25"),
-        });
+      await r721.connect(acc02).creatorMint(wlAddr, 3, {
+        value: ethers.utils.parseEther("0.25"),
+      });
       await whitelist.connect(acc02).approve(m721.address, 1);
       await whitelist.connect(acc02).approve(m721.address, 2);
       const tx_ = await whitelist

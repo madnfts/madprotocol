@@ -35,10 +35,10 @@ contract ERC721Minimal is
 
     /// @notice Token base URI string.
     string private _tokenURI;
-    
+
     /// @dev Is this minted, default := false
     bool private minted;
-    
+
     /// @notice Public mint state default := false.
     bool public publicMintState;
 
@@ -74,30 +74,26 @@ contract ERC721Minimal is
     //                          OWNER FX                          //
     ////////////////////////////////////////////////////////////////
 
-    function safeMint(address to, address erc20Owner)
-        external
-        payable
-        onlyOwner
-    {
+    function safeMint(
+        address to,
+        address erc20Owner
+    ) external payable onlyOwner {
         if (minted) revert AlreadyMinted();
         _paymentCheck(erc20Owner, 0);
         minted = true;
         _safeMint(to, 1);
     }
 
-    function burn(address erc20Owner)
-        external
-        payable
-        onlyOwner
-    {
+    function burn(
+        address erc20Owner
+    ) external payable onlyOwner {
         _paymentCheck(erc20Owner, 1);
         _burn(1);
     }
 
-    function setPublicMintState(bool _publicMintState)
-        external
-        onlyOwner
-    {
+    function setPublicMintState(
+        bool _publicMintState
+    ) external onlyOwner {
         publicMintState = _publicMintState;
 
         emit PublicMintStateSet(_publicMintState);
@@ -140,11 +136,14 @@ contract ERC721Minimal is
         }
     }
 
-    function withdrawERC20(ERC20 _token, address recipient) external onlyOwner {
+    function withdrawERC20(
+        ERC20 _token,
+        address recipient
+    ) external onlyOwner {
         uint256 len = splitter.payeesLength();
         address[] memory addrs = new address[](len);
         uint256[] memory values = new uint256[](len);
-        // Transfer mint fees 
+        // Transfer mint fees
         uint256 _val;
         if (feeCount > 0 && recipient != address(0)) {
             _val = _token.balanceOf(address(this)) - feeCount;
@@ -202,7 +201,9 @@ contract ERC721Minimal is
     //                           VIEW FX                          //
     ////////////////////////////////////////////////////////////////
 
-    function tokenURI(uint256 id)
+    function tokenURI(
+        uint256 id
+    )
         public
         view
         virtual
@@ -223,9 +224,10 @@ contract ERC721Minimal is
     /// @dev If router deploy we check msg.value if !erc20 BUT checks erc20 approval and transfers are via the router
     /// @param _erc20Owner Non router deploy =msg.sender; Router deploy =payer.address (msg.sender = router.address)
     /// @param _type Passed to _feeCheck to determin the fee 0=mint; 1=burn; ELSE _feeCheck is ignored
-    function _paymentCheck(address _erc20Owner, uint8 _type)
-        internal
-    {
+    function _paymentCheck(
+        address _erc20Owner,
+        uint8 _type
+    ) internal {
         uint256 value = _getPriceValue(_erc20Owner);
 
         // Check fees are paid
@@ -250,10 +252,10 @@ contract ERC721Minimal is
         }
     }
 
-    function _feeCheck(bytes4 _method, uint256 _value)
-        internal
-        view
-    {
+    function _feeCheck(
+        bytes4 _method,
+        uint256 _value
+    ) internal view {
         uint256 _fee = _getFeeValue(_method);
         assembly {
             if iszero(eq(_value, _fee)) {
@@ -263,35 +265,34 @@ contract ERC721Minimal is
         }
     }
 
-    function _getPriceValue(address _erc20Owner)
-        internal
-        view
-        returns (uint256 value)
-    {
-        value = 
-            (address(erc20) != address(0))
-                ? erc20.allowance(_erc20Owner, address(this))
-                : msg.value;
+    function _getPriceValue(
+        address _erc20Owner
+    ) internal view returns (uint256 value) {
+        value = (address(erc20) != address(0))
+            ? erc20.allowance(_erc20Owner, address(this))
+            : msg.value;
     }
 
-    function _getFeeValue(bytes4 _method)
-        internal
-        view
-        returns (uint256 value)
-    {
+    function _getFeeValue(
+        bytes4 _method
+    ) internal view returns (uint256 value) {
         address _owner = owner;
         uint32 _size;
         assembly {
             _size := extcodesize(_owner)
         }
-        value = _size == 0 ? 0 : FeeOracle(owner).feeLookup(_method);
+        value = _size == 0
+            ? 0
+            : FeeOracle(owner).feeLookup(_method);
     }
 
     ////////////////////////////////////////////////////////////////
     //                      REQUIRED OVERRIDES                    //
     ////////////////////////////////////////////////////////////////
 
-    function supportsInterface(bytes4 interfaceId)
+    function supportsInterface(
+        bytes4 interfaceId
+    )
         public
         pure
         virtual

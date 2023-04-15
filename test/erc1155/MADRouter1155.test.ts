@@ -137,9 +137,8 @@ describe("MADRouter1155", () => {
       );
 
       // Basic
-      const basicAddr = await f1155.callStatic.getDeployedAddr(
-        "BasicSalt",
-      );
+      const basicAddr =
+        await f1155.callStatic.getDeployedAddr("BasicSalt");
       await f1155
         .connect(acc02)
         .createCollection(
@@ -163,13 +162,13 @@ describe("MADRouter1155", () => {
       const tx2 = r1155
         .connect(acc02)
         .setURILock(basic.address);
-      expect(await tx1).to.be.ok
-      expect(await tx2).to.be.ok
-      await expect(r1155
-        .connect(acc02)
-        .setURI(basic.address, "null")).to.be.revertedWithCustomError(
-          basic,
-          RouterErrors.UriLocked,
+      expect(await tx1).to.be.ok;
+      expect(await tx2).to.be.ok;
+      await expect(
+        r1155.connect(acc02).setURI(basic.address, "null"),
+      ).to.be.revertedWithCustomError(
+        basic,
+        RouterErrors.UriLocked,
       );
 
       // Lazy
@@ -199,13 +198,13 @@ describe("MADRouter1155", () => {
       const lazytx2 = r1155
         .connect(acc02)
         .setURILock(lazy.address);
-      expect(await lazytx1).to.be.ok
-      expect(await lazytx2).to.be.ok
-      await expect(r1155
-        .connect(acc02)
-        .setURI(lazy.address, "null")).to.be.revertedWithCustomError(
-          lazy,
-          RouterErrors.UriLocked,
+      expect(await lazytx1).to.be.ok;
+      expect(await lazytx2).to.be.ok;
+      await expect(
+        r1155.connect(acc02).setURI(lazy.address, "null"),
+      ).to.be.revertedWithCustomError(
+        lazy,
+        RouterErrors.UriLocked,
       );
 
       // Whitlist
@@ -235,13 +234,13 @@ describe("MADRouter1155", () => {
       const wltx2 = r1155
         .connect(acc02)
         .setURILock(wl.address);
-      expect(await wltx1).to.be.ok
-      expect(await wltx2).to.be.ok
-      await expect(r1155
-        .connect(acc02)
-        .setURI(wl.address, "null")).to.be.revertedWithCustomError(
-          wl,
-          RouterErrors.UriLocked,
+      expect(await wltx1).to.be.ok;
+      expect(await wltx2).to.be.ok;
+      await expect(
+        r1155.connect(acc02).setURI(wl.address, "null"),
+      ).to.be.revertedWithCustomError(
+        wl,
+        RouterErrors.UriLocked,
       );
     });
 
@@ -784,9 +783,9 @@ describe("MADRouter1155", () => {
       await r1155
         .connect(acc02)
         .setMintState(minAddr, true, 0);
-      await min
-        .connect(acc01)
-        .publicMint(1, { value: price.add(ethers.utils.parseEther("0.25")) });
+      await min.connect(acc01).publicMint(1, {
+        value: price.add(ethers.utils.parseEther("0.25")),
+      });
       const tx = await r1155
         .connect(acc02)
         .burn(minAddr, [1], [acc01.address], [1]);
@@ -845,7 +844,9 @@ describe("MADRouter1155", () => {
       await r1155
         .connect(acc02)
         .setMintState(basicAddr, true, 0);
-      await basic.connect(acc01).mint(1, 1, { value: price.add(ethers.utils.parseEther("0.25")) });
+      await basic.connect(acc01).mint(1, 1, {
+        value: price.add(ethers.utils.parseEther("0.25")),
+      });
       const tx = await r1155
         .connect(acc02)
         .burn(basicAddr, [1], [acc01.address], [1]);
@@ -1035,7 +1036,11 @@ describe("MADRouter1155", () => {
           sigSplit.v,
           sigSplit.r,
           sigSplit.s,
-          { value: price.mul(ethers.BigNumber.from(2)).add(ethers.utils.parseEther("0.25")) },
+          {
+            value: price
+              .mul(ethers.BigNumber.from(2))
+              .add(ethers.utils.parseEther("0.25")),
+          },
         );
       const tx = await r1155
         .connect(acc02)
@@ -1103,9 +1108,9 @@ describe("MADRouter1155", () => {
       await r1155
         .connect(acc02)
         .setMintState(minAddr, true, 0);
-      await min
-        .connect(acc01)
-        .publicMint(1, { value: price.add(ethers.utils.parseEther("0.25")) });
+      await min.connect(acc01).publicMint(1, {
+        value: price.add(ethers.utils.parseEther("0.25")),
+      });
 
       await expect(
         r1155
@@ -1150,9 +1155,11 @@ describe("MADRouter1155", () => {
       await r1155
         .connect(acc02)
         .setMintState(basicAddr, true, 0);
-      await basic
-        .connect(acc01)
-        .mint(4, 1, { value: price.mul(pmul).add(ethers.utils.parseEther("0.25")) });
+      await basic.connect(acc01).mint(4, 1, {
+        value: price
+          .mul(pmul)
+          .add(ethers.utils.parseEther("0.25")),
+      });
       const tx = await r1155
         .connect(acc02)
         .batchBurn(
@@ -1358,7 +1365,11 @@ describe("MADRouter1155", () => {
           sigSplit.v,
           sigSplit.r,
           sigSplit.s,
-          { value: price.mul(ethers.BigNumber.from(3)).add(ethers.utils.parseEther("0.25")) },
+          {
+            value: price
+              .mul(ethers.BigNumber.from(3))
+              .add(ethers.utils.parseEther("0.25")),
+          },
         );
       const tx = await r1155
         .connect(acc02)
@@ -2059,9 +2070,9 @@ describe("MADRouter1155", () => {
       await r1155
         .connect(acc02)
         .setMintState(min.address, true, 0);
-      await min
-        .connect(acc01)
-        .publicMint(1, { value: price.add(ethers.utils.parseEther("0.25")) });
+      await min.connect(acc01).publicMint(1, {
+        value: price.add(ethers.utils.parseEther("0.25")),
+      });
       const bal1 = await ethers.provider.getBalance(
         acc02.address,
       );
@@ -2113,7 +2124,9 @@ describe("MADRouter1155", () => {
       await r1155
         .connect(mad)
         .setMintState(basic.address, true, 0);
-      await basic.connect(acc01).mint(1, 1, { value: price.add(ethers.utils.parseEther("0.25")) });
+      await basic.connect(acc01).mint(1, 1, {
+        value: price.add(ethers.utils.parseEther("0.25")),
+      });
       const bala = await ethers.provider.getBalance(
         mad.address,
       );
@@ -2159,9 +2172,9 @@ describe("MADRouter1155", () => {
       await r1155
         .connect(amb)
         .setMintState(wl.address, true, 0);
-      await wl
-        .connect(acc01)
-        .mint(1, [1], 1, { value: price.add(ethers.utils.parseEther("0.25")) });
+      await wl.connect(acc01).mint(1, [1], 1, {
+        value: price.add(ethers.utils.parseEther("0.25")),
+      });
       const balc = await ethers.provider.getBalance(
         amb.address,
       );
@@ -2275,7 +2288,9 @@ describe("MADRouter1155", () => {
           sigSplit.v,
           sigSplit.r,
           sigSplit.s,
-          { value: price.add(ethers.utils.parseEther("0.25")) },
+          {
+            value: price.add(ethers.utils.parseEther("0.25")),
+          },
         );
 
       const bal3 = await ethers.provider.getBalance(newUser);
@@ -2722,432 +2737,451 @@ describe("MADRouter1155", () => {
   });
   describe("Set Fee Set Max Tests", async () => {
     it("Should allow setting fees below and at the limit (2.5 eth and 0.5 eth for our fixtures)", async () => {
-      await expect(r1155.setFees(
-        ethers.utils.parseEther("2.4"),
-        ethers.utils.parseEther("0.4"),
-      )).to.be.ok;
+      await expect(
+        r1155.setFees(
+          ethers.utils.parseEther("2.4"),
+          ethers.utils.parseEther("0.4"),
+        ),
+      ).to.be.ok;
 
-      await expect(r1155.setFees(
-        ethers.utils.parseEther("2.5"),
-        ethers.utils.parseEther("0.5"),
-      )).to.be.ok;
+      await expect(
+        r1155.setFees(
+          ethers.utils.parseEther("2.5"),
+          ethers.utils.parseEther("0.5"),
+        ),
+      ).to.be.ok;
 
-      await expect(r1155.setFees(
-        ethers.utils.parseEther("2.6"),
-        ethers.utils.parseEther("0.6"),
-      )).to.be.reverted;
-    })
+      await expect(
+        r1155.setFees(
+          ethers.utils.parseEther("2.6"),
+          ethers.utils.parseEther("0.6"),
+        ),
+      ).to.be.reverted;
+    });
   }),
-  describe("Burn-setfees", async () => {
-    it("Should burn token for 1155Minimal collection type", async () => {
-      // await f1155.addAmbassador(amb.address);
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      const minAddr = await f1155.callStatic.getDeployedAddr(
-        "MinSalt",
-      );
-      await f1155
-        .connect(acc02)
-        .createCollection(
-          0,
-          "MinSalt",
-          "1155Min",
-          "MIN",
-          price,
-          1,
-          "ipfs://cid/id.json",
-          splAddr,
-          750,
-        );
-      await r1155.setFees(
-        ethers.utils.parseEther("2.5"),
-        ethers.utils.parseEther("0.5"),
-      );
-
-      // const colID = await f1155.callStatic.getColID(minAddr);
-      const min = await ethers.getContractAt(
-        "ERC1155Minimal",
-        minAddr,
-      );
-      await r1155
-        .connect(acc02)
-        .setMintState(minAddr, true, 0);
-      await min
-        .connect(acc01)
-        .publicMint(1, { value: price.add(ethers.utils.parseEther("2.5")) });
-      await expect(
-        r1155
+    describe("Burn-setfees", async () => {
+      it("Should burn token for 1155Minimal collection type", async () => {
+        // await f1155.addAmbassador(amb.address);
+        await f1155
           .connect(acc02)
-          .burn(minAddr, [1], [acc01.address], [1]),
-      ).to.be.revertedWithCustomError(
-        min,
-        MinimalErrors.WrongPrice,
-      );
+          .splitterCheck(
+            "MADSplitter1",
+            amb.address,
+            dead,
+            20,
+            0,
+          );
+        const splAddr =
+          await f1155.callStatic.getDeployedAddr(
+            "MADSplitter1",
+          );
+        const minAddr =
+          await f1155.callStatic.getDeployedAddr("MinSalt");
+        await f1155
+          .connect(acc02)
+          .createCollection(
+            0,
+            "MinSalt",
+            "1155Min",
+            "MIN",
+            price,
+            1,
+            "ipfs://cid/id.json",
+            splAddr,
+            750,
+          );
+        await r1155.setFees(
+          ethers.utils.parseEther("2.5"),
+          ethers.utils.parseEther("0.5"),
+        );
 
-      const tx = await r1155
-        .connect(acc02)
-        .burn(minAddr, [1], [acc01.address], [1], {
-          value: ethers.utils.parseEther("0.5"),
+        // const colID = await f1155.callStatic.getColID(minAddr);
+        const min = await ethers.getContractAt(
+          "ERC1155Minimal",
+          minAddr,
+        );
+        await r1155
+          .connect(acc02)
+          .setMintState(minAddr, true, 0);
+        await min.connect(acc01).publicMint(1, {
+          value: price.add(ethers.utils.parseEther("2.5")),
         });
-      const verArt = await artifacts.readArtifact(
-        "FactoryVerifier",
-      );
-      const ver = new ethers.Contract(
-        f1155.address,
-        verArt.abi,
-        ethers.provider,
-      );
-      expect(tx).to.be.ok;
-      expect(
-        await min.callStatic.balanceOf(acc01.address, 1),
-      ).to.eq(0);
-      await expect(
-        r1155.burn(minAddr, [], [], []),
-      ).to.be.revertedWithCustomError(
-        ver,
-        RouterErrors.AccessDenied,
-      );
-    });
-    it("Should burn tokens for 1155Basic collection type", async () => {
-      // await f1155.addAmbassador(amb.address);
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
+        await expect(
+          r1155
+            .connect(acc02)
+            .burn(minAddr, [1], [acc01.address], [1]),
+        ).to.be.revertedWithCustomError(
+          min,
+          MinimalErrors.WrongPrice,
         );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155
-        .connect(acc02)
-        .createCollection(
-          1,
-          "BasicSalt",
-          "1155Basic",
-          "BASIC",
-          price,
-          1000,
-          "ipfs://cid/",
-          splAddr,
-          750,
-        );
-      const basic = await ethers.getContractAt(
-        "ERC1155Basic",
-        basicAddr,
-      );
-      await r1155
-        .connect(acc02)
-        .setMintState(basicAddr, true, 0);
 
-      await r1155.setFees(
-        ethers.utils.parseEther("2.5"),
-        ethers.utils.parseEther("0.5"),
-      );
-
-      await basic.connect(acc01).mint(1, 1, { value: price.add(ethers.utils.parseEther("2.5")) });
-
-      await expect(
-        r1155
+        const tx = await r1155
           .connect(acc02)
-          .burn(basicAddr, [1], [acc01.address], [1]),
-      ).to.be.revertedWithCustomError(
-        basic,
-        BasicErrors.WrongPrice,
-      );
+          .burn(minAddr, [1], [acc01.address], [1], {
+            value: ethers.utils.parseEther("0.5"),
+          });
+        const verArt = await artifacts.readArtifact(
+          "FactoryVerifier",
+        );
+        const ver = new ethers.Contract(
+          f1155.address,
+          verArt.abi,
+          ethers.provider,
+        );
+        expect(tx).to.be.ok;
+        expect(
+          await min.callStatic.balanceOf(acc01.address, 1),
+        ).to.eq(0);
+        await expect(
+          r1155.burn(minAddr, [], [], []),
+        ).to.be.revertedWithCustomError(
+          ver,
+          RouterErrors.AccessDenied,
+        );
+      });
+      it("Should burn tokens for 1155Basic collection type", async () => {
+        // await f1155.addAmbassador(amb.address);
+        await f1155
+          .connect(acc02)
+          .splitterCheck(
+            "MADSplitter1",
+            amb.address,
+            dead,
+            20,
+            0,
+          );
+        const splAddr =
+          await f1155.callStatic.getDeployedAddr(
+            "MADSplitter1",
+          );
+        const basicAddr =
+          await f1155.callStatic.getDeployedAddr("BasicSalt");
+        await f1155
+          .connect(acc02)
+          .createCollection(
+            1,
+            "BasicSalt",
+            "1155Basic",
+            "BASIC",
+            price,
+            1000,
+            "ipfs://cid/",
+            splAddr,
+            750,
+          );
+        const basic = await ethers.getContractAt(
+          "ERC1155Basic",
+          basicAddr,
+        );
+        await r1155
+          .connect(acc02)
+          .setMintState(basicAddr, true, 0);
 
-      const tx = await r1155
-        .connect(acc02)
-        .burn(basicAddr, [1], [acc01.address], [1], {
-          value: ethers.utils.parseEther("0.5"),
+        await r1155.setFees(
+          ethers.utils.parseEther("2.5"),
+          ethers.utils.parseEther("0.5"),
+        );
+
+        await basic.connect(acc01).mint(1, 1, {
+          value: price.add(ethers.utils.parseEther("2.5")),
         });
 
-      expect(tx).to.be.ok;
-      expect(
-        await basic.callStatic.balanceOf(acc01.address, 1),
-      ).to.eq(0);
-      const verArt = await artifacts.readArtifact(
-        "FactoryVerifier",
-      );
-      const ver = new ethers.Contract(
-        f1155.address,
-        verArt.abi,
-        ethers.provider,
-      );
-      await expect(
-        r1155.burn(basicAddr, [1], [acc01.address], [1], {
-          value: ethers.utils.parseEther("0.5"),
-        }),
-      ).to.be.revertedWithCustomError(
-        ver,
-        RouterErrors.AccessDenied,
-      );
-    });
-    it("Should burn tokens for 1155Whitelist collection type", async () => {
-      const root = ethers.utils.keccak256(
-        ethers.utils.toUtf8Bytes("fakeRoot"),
-      );
-      // await f1155.addAmbassador(amb.address);
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
+        await expect(
+          r1155
+            .connect(acc02)
+            .burn(basicAddr, [1], [acc01.address], [1]),
+        ).to.be.revertedWithCustomError(
+          basic,
+          BasicErrors.WrongPrice,
         );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      const wlAddr = await f1155.callStatic.getDeployedAddr(
-        "WhiteSalt",
-      );
-      await r1155.setFees(
-        ethers.utils.parseEther("2.5"),
-        ethers.utils.parseEther("0.5"),
-      );
 
-      await f1155
-        .connect(acc02)
-        .createCollection(
-          2,
+        const tx = await r1155
+          .connect(acc02)
+          .burn(basicAddr, [1], [acc01.address], [1], {
+            value: ethers.utils.parseEther("0.5"),
+          });
+
+        expect(tx).to.be.ok;
+        expect(
+          await basic.callStatic.balanceOf(acc01.address, 1),
+        ).to.eq(0);
+        const verArt = await artifacts.readArtifact(
+          "FactoryVerifier",
+        );
+        const ver = new ethers.Contract(
+          f1155.address,
+          verArt.abi,
+          ethers.provider,
+        );
+        await expect(
+          r1155.burn(basicAddr, [1], [acc01.address], [1], {
+            value: ethers.utils.parseEther("0.5"),
+          }),
+        ).to.be.revertedWithCustomError(
+          ver,
+          RouterErrors.AccessDenied,
+        );
+      });
+      it("Should burn tokens for 1155Whitelist collection type", async () => {
+        const root = ethers.utils.keccak256(
+          ethers.utils.toUtf8Bytes("fakeRoot"),
+        );
+        // await f1155.addAmbassador(amb.address);
+        await f1155
+          .connect(acc02)
+          .splitterCheck(
+            "MADSplitter1",
+            amb.address,
+            dead,
+            20,
+            0,
+          );
+        const splAddr =
+          await f1155.callStatic.getDeployedAddr(
+            "MADSplitter1",
+          );
+        const wlAddr = await f1155.callStatic.getDeployedAddr(
           "WhiteSalt",
-          "1155Whitelist",
-          "WL",
-          price,
-          1000,
-          "ipfs://cid/",
-          splAddr,
-          750,
         );
-      const wl = await ethers.getContractAt(
-        "ERC1155Whitelist",
-        wlAddr,
-      );
-      await r1155
-        .connect(acc02)
-        .freeSettings(wl.address, 1, 10, root);
+        await r1155.setFees(
+          ethers.utils.parseEther("2.5"),
+          ethers.utils.parseEther("0.5"),
+        );
 
-      await expect(
-        r1155
+        await f1155
+          .connect(acc02)
+          .createCollection(
+            2,
+            "WhiteSalt",
+            "1155Whitelist",
+            "WL",
+            price,
+            1000,
+            "ipfs://cid/",
+            splAddr,
+            750,
+          );
+        const wl = await ethers.getContractAt(
+          "ERC1155Whitelist",
+          wlAddr,
+        );
+        await r1155
+          .connect(acc02)
+          .freeSettings(wl.address, 1, 10, root);
+
+        await expect(
+          r1155
+            .connect(acc02)
+            .creatorMint(wlAddr, 1, [1], 1, {
+              value: ethers.utils.parseEther("0.25"),
+            }),
+        ).to.be.revertedWithCustomError(
+          wl,
+          WhitelistErrors.WrongPrice,
+        );
+
+        await r1155
           .connect(acc02)
           .creatorMint(wlAddr, 1, [1], 1, {
-            value: ethers.utils.parseEther("0.25"),
-          }),
-      ).to.be.revertedWithCustomError(
-        wl,
-        WhitelistErrors.WrongPrice,
-      );
+            value: ethers.utils.parseEther("2.5"),
+          });
 
-      await r1155
-        .connect(acc02)
-        .creatorMint(wlAddr, 1, [1], 1, {
-          value: ethers.utils.parseEther("2.5"),
-        });
+        await expect(
+          r1155
+            .connect(acc02)
+            .burn(wlAddr, [1], [acc02.address], [1]),
+        ).to.be.revertedWithCustomError(
+          wl,
+          WhitelistErrors.WrongPrice,
+        );
 
-      await expect(
-        r1155
+        const tx = await r1155
           .connect(acc02)
-          .burn(wlAddr, [1], [acc02.address], [1]),
-      ).to.be.revertedWithCustomError(
-        wl,
-        WhitelistErrors.WrongPrice,
-      );
+          .burn(wlAddr, [1], [acc02.address], [1], {
+            value: ethers.utils.parseEther("0.5"),
+          });
+        const verArt = await artifacts.readArtifact(
+          "FactoryVerifier",
+        );
+        const ver = new ethers.Contract(
+          f1155.address,
+          verArt.abi,
+          ethers.provider,
+        );
+        expect(tx).to.be.ok;
+        expect(
+          await wl.callStatic.balanceOf(acc02.address, 1),
+        ).to.eq(0);
+        await expect(
+          r1155.burn(wlAddr, [1], [acc02.address], [1], {
+            value: ethers.utils.parseEther("0.5"),
+          }),
+        ).to.be.revertedWithCustomError(
+          ver,
+          RouterErrors.AccessDenied,
+        );
+      });
 
-      const tx = await r1155
-        .connect(acc02)
-        .burn(wlAddr, [1], [acc02.address], [1], {
-          value: ethers.utils.parseEther("0.5"),
+      it("Should burn tokens for 1155Lazy collection type", async () => {
+        const signer = ethers.Wallet.createRandom();
+        // await f1155.addAmbassador(amb.address);
+        await f1155.setSigner(await signer.getAddress());
+        await f1155
+          .connect(acc02)
+          .splitterCheck(
+            "MADSplitter1",
+            amb.address,
+            dead,
+            20,
+            0,
+          );
+        const splAddr =
+          await f1155.callStatic.getDeployedAddr(
+            "MADSplitter1",
+          );
+        const lazyAddr =
+          await f1155.callStatic.getDeployedAddr("LazySalt");
+        await f1155
+          .connect(acc02)
+          .createCollection(
+            3,
+            "LazySalt",
+            "1155Lazy",
+            "LAZY",
+            ethers.constants.Zero,
+            ethers.constants.Zero,
+            "ipfs://cid/",
+            splAddr,
+            750,
+          );
+        const lazy = await ethers.getContractAt(
+          "ERC1155Lazy",
+          lazyAddr,
+        );
+        const net = await lazy.provider.getNetwork();
+        const chainId = net.chainId;
+        const bnPrice = ethers.utils.parseEther("1");
+        const usrs = [owner.address, acc02.address];
+        const vId = ethers.utils.keccak256(
+          ethers.utils.toUtf8Bytes("voucher"),
+        );
+        const pk = Buffer.from(
+          signer.privateKey.slice(2),
+          "hex",
+        );
+
+        const domain = [
+          { name: "name", type: "string" },
+          { name: "version", type: "string" },
+          { name: "chainId", type: "uint256" },
+          { name: "verifyingContract", type: "address" },
+        ];
+        const voucherType = [
+          { name: "voucherId", type: "bytes32" },
+          { name: "users", type: "address[]" },
+          { name: "balances", type: "uint256[]" },
+          { name: "amount", type: "uint256" },
+          { name: "price", type: "uint256" },
+        ];
+        const domainData = {
+          name: "MAD",
+          version: "1",
+          chainId: chainId,
+          verifyingContract: lazy.address,
+        };
+        const Voucher = {
+          voucherId: vId,
+          users: usrs,
+          balances: [1],
+          amount: 1,
+          price: bnPrice.toString(),
+        };
+        const data = JSON.stringify({
+          types: {
+            EIP712Domain: domain,
+            Voucher: voucherType,
+          },
+          primaryType: "Voucher",
+          domain: domainData,
+          message: Voucher,
         });
-      const verArt = await artifacts.readArtifact(
-        "FactoryVerifier",
-      );
-      const ver = new ethers.Contract(
-        f1155.address,
-        verArt.abi,
-        ethers.provider,
-      );
-      expect(tx).to.be.ok;
-      expect(
-        await wl.callStatic.balanceOf(acc02.address, 1),
-      ).to.eq(0);
-      await expect(
-        r1155.burn(wlAddr, [1], [acc02.address], [1], {
-          value: ethers.utils.parseEther("0.5"),
-        }),
-      ).to.be.revertedWithCustomError(
-        ver,
-        RouterErrors.AccessDenied,
-      );
-    });
 
-    it("Should burn tokens for 1155Lazy collection type", async () => {
-      const signer = ethers.Wallet.createRandom();
-      // await f1155.addAmbassador(amb.address);
-      await f1155.setSigner(await signer.getAddress());
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
+        const parsedData = JSON.parse(data);
+        const signature = signTypedData({
+          privateKey: pk,
+          data: parsedData,
+          version: SignTypedDataVersion.V4,
+        });
+        const sigSplit =
+          ethers.utils.splitSignature(signature);
+
+        await lazy
+          .connect(acc02)
+          .lazyMint(
+            Voucher,
+            sigSplit.v,
+            sigSplit.r,
+            sigSplit.s,
+            {
+              value: price
+                .mul(ethers.BigNumber.from(2))
+                .add(ethers.utils.parseEther("0.25")),
+            },
+          );
+
+        await r1155.setFees(
+          ethers.utils.parseEther("2.5"),
+          ethers.utils.parseEther("0.5"),
         );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      const lazyAddr = await f1155.callStatic.getDeployedAddr(
-        "LazySalt",
-      );
-      await f1155
-        .connect(acc02)
-        .createCollection(
-          3,
-          "LazySalt",
-          "1155Lazy",
-          "LAZY",
-          ethers.constants.Zero,
-          ethers.constants.Zero,
-          "ipfs://cid/",
-          splAddr,
-          750,
-        );
-      const lazy = await ethers.getContractAt(
-        "ERC1155Lazy",
-        lazyAddr,
-      );
-      const net = await lazy.provider.getNetwork();
-      const chainId = net.chainId;
-      const bnPrice = ethers.utils.parseEther("1");
-      const usrs = [owner.address, acc02.address];
-      const vId = ethers.utils.keccak256(
-        ethers.utils.toUtf8Bytes("voucher"),
-      );
-      const pk = Buffer.from(
-        signer.privateKey.slice(2),
-        "hex",
-      );
-
-      const domain = [
-        { name: "name", type: "string" },
-        { name: "version", type: "string" },
-        { name: "chainId", type: "uint256" },
-        { name: "verifyingContract", type: "address" },
-      ];
-      const voucherType = [
-        { name: "voucherId", type: "bytes32" },
-        { name: "users", type: "address[]" },
-        { name: "balances", type: "uint256[]" },
-        { name: "amount", type: "uint256" },
-        { name: "price", type: "uint256" },
-      ];
-      const domainData = {
-        name: "MAD",
-        version: "1",
-        chainId: chainId,
-        verifyingContract: lazy.address,
-      };
-      const Voucher = {
-        voucherId: vId,
-        users: usrs,
-        balances: [1],
-        amount: 1,
-        price: bnPrice.toString(),
-      };
-      const data = JSON.stringify({
-        types: {
-          EIP712Domain: domain,
-          Voucher: voucherType,
-        },
-        primaryType: "Voucher",
-        domain: domainData,
-        message: Voucher,
-      });
-
-      const parsedData = JSON.parse(data);
-      const signature = signTypedData({
-        privateKey: pk,
-        data: parsedData,
-        version: SignTypedDataVersion.V4,
-      });
-      const sigSplit = ethers.utils.splitSignature(signature);
-
-      await lazy
-        .connect(acc02)
-        .lazyMint(
-          Voucher,
-          sigSplit.v,
-          sigSplit.r,
-          sigSplit.s,
-          { value: price.mul(ethers.BigNumber.from(2)).add(ethers.utils.parseEther("0.25")) },
+        await expect(
+          r1155
+            .connect(acc02)
+            .burn(
+              lazyAddr,
+              [1, 2],
+              [Voucher.users[0], Voucher.users[1]],
+              [1, 1],
+            ),
+        ).to.be.revertedWithCustomError(
+          lazy,
+          LazyErrors.WrongPrice,
         );
 
-      await r1155.setFees(
-        ethers.utils.parseEther("2.5"),
-        ethers.utils.parseEther("0.5"),
-      );
-      await expect(
-        r1155
+        const tx = await r1155
           .connect(acc02)
           .burn(
             lazyAddr,
             [1, 2],
             [Voucher.users[0], Voucher.users[1]],
             [1, 1],
-          ),
-      ).to.be.revertedWithCustomError(
-        lazy,
-        LazyErrors.WrongPrice,
-      );
-
-      const tx = await r1155
-        .connect(acc02)
-        .burn(
-          lazyAddr,
-          [1, 2],
-          [Voucher.users[0], Voucher.users[1]],
-          [1, 1],
-          { value: ethers.utils.parseEther("0.5") },
+            { value: ethers.utils.parseEther("0.5") },
+          );
+        const verArt = await artifacts.readArtifact(
+          "FactoryVerifier",
         );
-      const verArt = await artifacts.readArtifact(
-        "FactoryVerifier",
-      );
-      const ver = new ethers.Contract(
-        f1155.address,
-        verArt.abi,
-        ethers.provider,
-      );
+        const ver = new ethers.Contract(
+          f1155.address,
+          verArt.abi,
+          ethers.provider,
+        );
 
-      expect(tx).to.be.ok;
-      expect(await lazy.balanceOf(owner.address, 1)).to.eq(0);
-      expect(await lazy.balanceOf(acc02.address, 2)).to.eq(0);
-      await expect(
-        r1155.burn(lazyAddr, [1], [acc02.address], [1], {
-          value: ethers.utils.parseEther("0.5"),
-        }),
-      ).to.be.revertedWithCustomError(
-        ver,
-        RouterErrors.AccessDenied,
-      );
+        expect(tx).to.be.ok;
+        expect(await lazy.balanceOf(owner.address, 1)).to.eq(
+          0,
+        );
+        expect(await lazy.balanceOf(acc02.address, 2)).to.eq(
+          0,
+        );
+        await expect(
+          r1155.burn(lazyAddr, [1], [acc02.address], [1], {
+            value: ethers.utils.parseEther("0.5"),
+          }),
+        ).to.be.revertedWithCustomError(
+          ver,
+          RouterErrors.AccessDenied,
+        );
+      });
     });
-  });
   describe("Batch Burn", async () => {
     it("Should revert for invalid collection type", async () => {
       // await f1155.addAmbassador(amb.address);
@@ -3186,9 +3220,9 @@ describe("MADRouter1155", () => {
       await r1155
         .connect(acc02)
         .setMintState(minAddr, true, 0);
-      await min
-        .connect(acc01)
-        .publicMint(1, { value: price.add(ethers.utils.parseEther("0.25")) });
+      await min.connect(acc01).publicMint(1, {
+        value: price.add(ethers.utils.parseEther("0.25")),
+      });
 
       await r1155.setFees(
         ethers.utils.parseEther("2.5"),
@@ -3240,9 +3274,11 @@ describe("MADRouter1155", () => {
       await r1155
         .connect(acc02)
         .setMintState(basicAddr, true, 0);
-      await basic
-        .connect(acc01)
-        .mint(4, 1, { value: price.mul(pmul).add(ethers.utils.parseEther("0.25")) });
+      await basic.connect(acc01).mint(4, 1, {
+        value: price
+          .mul(pmul)
+          .add(ethers.utils.parseEther("0.25")),
+      });
 
       await r1155.setFees(
         ethers.utils.parseEther("2.5"),
@@ -3501,7 +3537,11 @@ describe("MADRouter1155", () => {
           sigSplit.v,
           sigSplit.r,
           sigSplit.s,
-          { value: price.mul(ethers.BigNumber.from(3)).add(ethers.utils.parseEther("0.25")) },
+          {
+            value: price
+              .mul(ethers.BigNumber.from(3))
+              .add(ethers.utils.parseEther("0.25")),
+          },
         );
 
       await r1155.setFees(
@@ -3799,11 +3839,9 @@ describe("MADRouter1155", () => {
       );
 
       await expect(
-        r1155
-          .connect(acc02)
-          .gift(wlAddr, addrs, [1, 1], 2, {
-            value: ethers.utils.parseEther("0.25"),
-          }),
+        r1155.connect(acc02).gift(wlAddr, addrs, [1, 1], 2, {
+          value: ethers.utils.parseEther("0.25"),
+        }),
       ).to.be.revertedWithCustomError(
         wl,
         WhitelistErrors.WrongPrice,

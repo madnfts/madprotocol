@@ -1023,11 +1023,9 @@ describe("ERC1155Whitelist", () => {
       const amount = ethers.BigNumber.from(4);
       const ids = [1, 2, 5];
       await wl.setPublicMintState(true);
-      await wl
-        .connect(acc02)
-        .mint(4, [1, 1, 1, 1], 4, {
-          value: price.mul(amount),
-        });
+      await wl.connect(acc02).mint(4, [1, 1, 1, 1], 4, {
+        value: price.mul(amount),
+      });
       const tx = wl
         .connect(owner)
         .burn(
@@ -1142,11 +1140,9 @@ describe("ERC1155Whitelist", () => {
       const amount = ethers.BigNumber.from(4);
       const ids = [1, 2, 5];
       await wl.setPublicMintState(true);
-      await wl
-        .connect(acc02)
-        .mint(4, [1, 1, 1, 1], 4, {
-          value: price.mul(amount),
-        });
+      await wl.connect(acc02).mint(4, [1, 1, 1, 1], 4, {
+        value: price.mul(amount),
+      });
       const tx = wl
         .connect(owner)
         .burnBatch(

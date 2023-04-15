@@ -49,12 +49,10 @@ abstract contract ERC1155B {
     mapping(uint256 => mapping(address => uint256))
         public ownerOf;
 
-    function balanceOf(address owner, uint256 id)
-        public
-        view
-        virtual
-        returns (uint256 bal)
-    {
+    function balanceOf(
+        address owner,
+        uint256 id
+    ) public view virtual returns (uint256 bal) {
         // address idOwner = ownerOf[id];
         bal = ownerOf[id][owner];
 
@@ -69,11 +67,9 @@ abstract contract ERC1155B {
                              METADATA LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function uri(uint256 id)
-        public
-        view
-        virtual
-        returns (string memory);
+    function uri(
+        uint256 id
+    ) public view virtual returns (string memory);
 
     /*//////////////////////////////////////////////////////////////
                               ERC1155 LOGIC

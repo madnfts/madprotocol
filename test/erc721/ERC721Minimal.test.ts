@@ -417,7 +417,10 @@ describe("ERC721Minimal", () => {
 
       await erc20.mint(minimal.address, price);
 
-      const tx = await minimal.withdrawERC20(erc20.address,dead);
+      const tx = await minimal.withdrawERC20(
+        erc20.address,
+        dead,
+      );
       expect(tx).to.be.ok;
       expect(
         await erc20.callStatic.balanceOf(payees[0]),

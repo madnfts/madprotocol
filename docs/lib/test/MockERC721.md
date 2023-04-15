@@ -1,13 +1,5 @@
 # MockERC721
 
-
-
-
-
-
-
-
-
 ## Methods
 
 ### approve
@@ -16,16 +8,12 @@
 function approve(address spender, uint256 id) external nonpayable
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| spender | address | undefined |
-| id | uint256 | undefined |
+| Name    | Type    | Description |
+| ------- | ------- | ----------- |
+| spender | address | undefined   |
+| id      | uint256 | undefined   |
 
 ### balanceOf
 
@@ -33,21 +21,17 @@ function approve(address spender, uint256 id) external nonpayable
 function balanceOf(address owner) external view returns (uint256)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| owner | address | undefined |
+| Name  | Type    | Description |
+| ----- | ------- | ----------- |
+| owner | address | undefined   |
 
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | uint256 | undefined   |
 
 ### getApproved
 
@@ -55,21 +39,17 @@ function balanceOf(address owner) external view returns (uint256)
 function getApproved(uint256) external view returns (address)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | uint256 | undefined   |
 
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | address | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | address | undefined   |
 
 ### isApprovedForAll
 
@@ -77,22 +57,18 @@ function getApproved(uint256) external view returns (address)
 function isApprovedForAll(address, address) external view returns (bool)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | address | undefined |
-| _1 | address | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | address | undefined   |
+| \_1  | address | undefined   |
 
 #### Returns
 
 | Name | Type | Description |
-|---|---|---|
-| _0 | bool | undefined |
+| ---- | ---- | ----------- |
+| \_0  | bool | undefined   |
 
 ### mint
 
@@ -100,16 +76,12 @@ function isApprovedForAll(address, address) external view returns (bool)
 function mint(address to, uint256 tokenId) external nonpayable
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| to | address | undefined |
-| tokenId | uint256 | undefined |
+| Name    | Type    | Description |
+| ------- | ------- | ----------- |
+| to      | address | undefined   |
+| tokenId | uint256 | undefined   |
 
 ### name
 
@@ -117,16 +89,11 @@ function mint(address to, uint256 tokenId) external nonpayable
 function name() external view returns (string)
 ```
 
-
-
-
-
-
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | string | undefined |
+| Name | Type   | Description |
+| ---- | ------ | ----------- |
+| \_0  | string | undefined   |
 
 ### ownerOf
 
@@ -134,21 +101,17 @@ function name() external view returns (string)
 function ownerOf(uint256 id) external view returns (address owner)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| id | uint256 | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| id   | uint256 | undefined   |
 
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| owner | address | undefined |
+| Name  | Type    | Description |
+| ----- | ------- | ----------- |
+| owner | address | undefined   |
 
 ### safeTransferFrom
 
@@ -156,17 +119,13 @@ function ownerOf(uint256 id) external view returns (address owner)
 function safeTransferFrom(address from, address to, uint256 id) external nonpayable
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| from | address | undefined |
-| to | address | undefined |
-| id | uint256 | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| from | address | undefined   |
+| to   | address | undefined   |
+| id   | uint256 | undefined   |
 
 ### safeTransferFrom
 
@@ -174,18 +133,14 @@ function safeTransferFrom(address from, address to, uint256 id) external nonpaya
 function safeTransferFrom(address from, address to, uint256 id, bytes data) external nonpayable
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| from | address | undefined |
-| to | address | undefined |
-| id | uint256 | undefined |
-| data | bytes | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| from | address | undefined   |
+| to   | address | undefined   |
+| id   | uint256 | undefined   |
+| data | bytes   | undefined   |
 
 ### setApprovalForAll
 
@@ -193,16 +148,12 @@ function safeTransferFrom(address from, address to, uint256 id, bytes data) exte
 function setApprovalForAll(address operator, bool approved) external nonpayable
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| operator | address | undefined |
-| approved | bool | undefined |
+| Name     | Type    | Description |
+| -------- | ------- | ----------- |
+| operator | address | undefined   |
+| approved | bool    | undefined   |
 
 ### supportsInterface
 
@@ -210,21 +161,17 @@ function setApprovalForAll(address operator, bool approved) external nonpayable
 function supportsInterface(bytes4 interfaceId) external view returns (bool)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| interfaceId | bytes4 | undefined |
+| Name        | Type   | Description |
+| ----------- | ------ | ----------- |
+| interfaceId | bytes4 | undefined   |
 
 #### Returns
 
 | Name | Type | Description |
-|---|---|---|
-| _0 | bool | undefined |
+| ---- | ---- | ----------- |
+| \_0  | bool | undefined   |
 
 ### symbol
 
@@ -232,16 +179,11 @@ function supportsInterface(bytes4 interfaceId) external view returns (bool)
 function symbol() external view returns (string)
 ```
 
-
-
-
-
-
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | string | undefined |
+| Name | Type   | Description |
+| ---- | ------ | ----------- |
+| \_0  | string | undefined   |
 
 ### tokenURI
 
@@ -249,21 +191,17 @@ function symbol() external view returns (string)
 function tokenURI(uint256) external pure returns (string)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | uint256 | undefined   |
 
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | string | undefined |
+| Name | Type   | Description |
+| ---- | ------ | ----------- |
+| \_0  | string | undefined   |
 
 ### transferFrom
 
@@ -271,19 +209,13 @@ function tokenURI(uint256) external pure returns (string)
 function transferFrom(address from, address to, uint256 id) external nonpayable
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| from | address | undefined |
-| to | address | undefined |
-| id | uint256 | undefined |
-
-
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| from | address | undefined   |
+| to   | address | undefined   |
+| id   | uint256 | undefined   |
 
 ## Events
 
@@ -293,17 +225,13 @@ function transferFrom(address from, address to, uint256 id) external nonpayable
 event Approval(address indexed owner, address indexed spender, uint256 indexed id)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| owner `indexed` | address | undefined |
-| spender `indexed` | address | undefined |
-| id `indexed` | uint256 | undefined |
+| Name              | Type    | Description |
+| ----------------- | ------- | ----------- |
+| owner `indexed`   | address | undefined   |
+| spender `indexed` | address | undefined   |
+| id `indexed`      | uint256 | undefined   |
 
 ### ApprovalForAll
 
@@ -311,17 +239,13 @@ event Approval(address indexed owner, address indexed spender, uint256 indexed i
 event ApprovalForAll(address indexed owner, address indexed operator, bool approved)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| owner `indexed` | address | undefined |
-| operator `indexed` | address | undefined |
-| approved  | bool | undefined |
+| Name               | Type    | Description |
+| ------------------ | ------- | ----------- |
+| owner `indexed`    | address | undefined   |
+| operator `indexed` | address | undefined   |
+| approved           | bool    | undefined   |
 
 ### Transfer
 
@@ -329,17 +253,10 @@ event ApprovalForAll(address indexed owner, address indexed operator, bool appro
 event Transfer(address indexed from, address indexed to, uint256 indexed id)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| from `indexed` | address | undefined |
-| to `indexed` | address | undefined |
-| id `indexed` | uint256 | undefined |
-
-
-
+| Name           | Type    | Description |
+| -------------- | ------- | ----------- |
+| from `indexed` | address | undefined   |
+| to `indexed`   | address | undefined   |
+| id `indexed`   | uint256 | undefined   |

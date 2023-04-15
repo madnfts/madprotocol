@@ -113,7 +113,7 @@ const main = async () => {
     erc20Address,
     deployer.address, // public mint fee address
     1, // max mint
-    1 // max burn
+    1, // max burn
   );
   console.log(`ERC721 Router address: ${r721.address}`);
 
@@ -164,7 +164,7 @@ const main = async () => {
     erc20Address,
     deployer.address, // public mint fee address
     1, // max mint
-    1 // max burn
+    1, // max burn
   );
   console.log(`ERC1155 Router address: ${r1155.address}`);
 

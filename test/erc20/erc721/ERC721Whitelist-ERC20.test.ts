@@ -838,7 +838,9 @@ describe("ERC721Whitelist - ERC20", () => {
       await wl.connect(acc02).mint(1);
 
       await expect(
-        wl.connect(acc01).withdraw(ethers.constants.AddressZero),
+        wl
+          .connect(acc01)
+          .withdraw(ethers.constants.AddressZero),
       ).to.be.revertedWith(WhitelistErrors.Unauthorized);
     });
 
@@ -865,7 +867,10 @@ describe("ERC721Whitelist - ERC20", () => {
       ];
 
       await expect(() =>
-        wl.withdrawERC20(erc20.address, ethers.constants.AddressZero),
+        wl.withdrawERC20(
+          erc20.address,
+          ethers.constants.AddressZero,
+        ),
       ).to.changeTokenBalances(erc20, addrs, vals);
 
       expect(
@@ -899,7 +904,10 @@ describe("ERC721Whitelist - ERC20", () => {
 
       await erc20.mint(wl.address, price);
 
-      const tx = await wl.withdrawERC20(erc20.address, ethers.constants.AddressZero);
+      const tx = await wl.withdrawERC20(
+        erc20.address,
+        ethers.constants.AddressZero,
+      );
       expect(tx).to.be.ok;
       expect(
         await erc20.callStatic.balanceOf(payees[0]),

@@ -5,8 +5,8 @@ import {
   mine,
 } from "@nomicfoundation/hardhat-network-helpers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { BigNumber, ContractReceipt, Wallet } from "ethers";
 import { expect } from "chai";
+import { BigNumber, ContractReceipt, Wallet } from "ethers";
 import {
   ethers,
   network, // tracer
@@ -78,7 +78,7 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
       expect(await m721.minOrderDuration()).to.eq(300);
       expect(await m721.minAuctionIncrement()).to.eq(300);
       expect(await m721.minBidValue()).to.eq(20);
-      expect(await m721.MADFactory721()).to.eq(f721.address);
+      expect(await m721.MADFactory()).to.eq(f721.address);
       expect(await f721.callStatic.erc20()).to.eq(
         erc20.address,
       );
@@ -547,10 +547,14 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
       );
       expect(await erc20.balanceOf(acc01.address)).to.equal(
         // we didn't reclaim yet
-        erc20Balance.sub(ethers.utils.parseEther("1")).sub(ethers.utils.parseEther("0.1")),
+        erc20Balance
+          .sub(ethers.utils.parseEther("1"))
+          .sub(ethers.utils.parseEther("0.1")),
       );
 
-      const bal = await m721.connect(acc01.address).getOutbidBalance();
+      const bal = await m721
+        .connect(acc01.address)
+        .getOutbidBalance();
       expect(bal).to.equal(ethers.utils.parseEther("0.1"));
 
       // acc02 = erc20Balance - 0.25 + (1 - 10%.royalties - 10%.fee) + 10%.royalties
@@ -585,10 +589,14 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
 
       // user withdraw their balance
       expect(
-        await m721.connect(acc01).withdrawOutbid(erc20.address, 0, 0)
+        await m721
+          .connect(acc01)
+          .withdrawOutbid(erc20.address, 0, 0),
       ).to.be.ok;
 
-      const bal2 = await m721.connect(acc01).getOutbidBalance();
+      const bal2 = await m721
+        .connect(acc01)
+        .getOutbidBalance();
       expect(bal2).to.equal(0);
 
       expect(await erc20.balanceOf(acc01.address)).to.equal(
@@ -727,10 +735,14 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
       );
       expect(await erc20.balanceOf(acc01.address)).to.equal(
         // we didn't reclaim yet
-        erc20Balance.sub(ethers.utils.parseEther("1")).sub(ethers.utils.parseEther("0.1")),
+        erc20Balance
+          .sub(ethers.utils.parseEther("1"))
+          .sub(ethers.utils.parseEther("0.1")),
       );
 
-      const bal = await m721.connect(acc01.address).getOutbidBalance();
+      const bal = await m721
+        .connect(acc01.address)
+        .getOutbidBalance();
       expect(bal).to.equal(ethers.utils.parseEther("0.1"));
 
       // acc02 = erc20Balance - 0.25 + (1 - 10%.royalties - 10%.fee) + 10%.royalties
@@ -765,10 +777,14 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
 
       // user withdraw their balance
       expect(
-        await m721.connect(acc01).withdrawOutbid(erc20.address, 0, 0)
+        await m721
+          .connect(acc01)
+          .withdrawOutbid(erc20.address, 0, 0),
       ).to.be.ok;
 
-      const bal2 = await m721.connect(acc01).getOutbidBalance();
+      const bal2 = await m721
+        .connect(acc01)
+        .getOutbidBalance();
       expect(bal2).to.equal(0);
 
       expect(await erc20.balanceOf(acc01.address)).to.equal(

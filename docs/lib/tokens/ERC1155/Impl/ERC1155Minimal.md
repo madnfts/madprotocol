@@ -1,13 +1,5 @@
 # ERC1155Minimal
 
-
-
-
-
-
-
-
-
 ## Methods
 
 ### balanceOf
@@ -16,22 +8,18 @@
 function balanceOf(address owner, uint256 id) external view returns (uint256 bal)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| owner | address | undefined |
-| id | uint256 | undefined |
+| Name  | Type    | Description |
+| ----- | ------- | ----------- |
+| owner | address | undefined   |
+| id    | uint256 | undefined   |
 
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| bal | uint256 | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| bal  | uint256 | undefined   |
 
 ### balanceOfBatch
 
@@ -39,22 +27,18 @@ function balanceOf(address owner, uint256 id) external view returns (uint256 bal
 function balanceOfBatch(address[] owners, uint256[] ids) external view returns (uint256[] balances)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| owners | address[] | undefined |
-| ids | uint256[] | undefined |
+| Name   | Type      | Description |
+| ------ | --------- | ----------- |
+| owners | address[] | undefined   |
+| ids    | uint256[] | undefined   |
 
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| balances | uint256[] | undefined |
+| Name     | Type      | Description |
+| -------- | --------- | ----------- |
+| balances | uint256[] | undefined   |
 
 ### burn
 
@@ -62,17 +46,13 @@ function balanceOfBatch(address[] owners, uint256[] ids) external view returns (
 function burn(address to, uint256 amount, address erc20Owner) external payable
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| to | address | undefined |
-| amount | uint256 | undefined |
-| erc20Owner | address | undefined |
+| Name       | Type    | Description |
+| ---------- | ------- | ----------- |
+| to         | address | undefined   |
+| amount     | uint256 | undefined   |
+| erc20Owner | address | undefined   |
 
 ### erc20
 
@@ -82,14 +62,11 @@ function erc20() external view returns (contract ERC20)
 
 ERC20 payment token address.
 
-
-
-
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | contract ERC20 | undefined |
+| Name | Type           | Description |
+| ---- | -------------- | ----------- |
+| \_0  | contract ERC20 | undefined   |
 
 ### feeCount
 
@@ -99,14 +76,11 @@ function feeCount() external view returns (uint256)
 
 Fee counter.
 
-
-
-
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | uint256 | undefined   |
 
 ### isApprovedForAll
 
@@ -114,22 +88,18 @@ Fee counter.
 function isApprovedForAll(address, address) external view returns (bool)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | address | undefined |
-| _1 | address | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | address | undefined   |
+| \_1  | address | undefined   |
 
 #### Returns
 
 | Name | Type | Description |
-|---|---|---|
-| _0 | bool | undefined |
+| ---- | ---- | ----------- |
+| \_0  | bool | undefined   |
 
 ### onERC1155BatchReceived
 
@@ -137,25 +107,21 @@ function isApprovedForAll(address, address) external view returns (bool)
 function onERC1155BatchReceived(address, address, uint256[], uint256[], bytes) external nonpayable returns (bytes4)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | address | undefined |
-| _1 | address | undefined |
-| _2 | uint256[] | undefined |
-| _3 | uint256[] | undefined |
-| _4 | bytes | undefined |
+| Name | Type      | Description |
+| ---- | --------- | ----------- |
+| \_0  | address   | undefined   |
+| \_1  | address   | undefined   |
+| \_2  | uint256[] | undefined   |
+| \_3  | uint256[] | undefined   |
+| \_4  | bytes     | undefined   |
 
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | bytes4 | undefined |
+| Name | Type   | Description |
+| ---- | ------ | ----------- |
+| \_0  | bytes4 | undefined   |
 
 ### onERC1155Received
 
@@ -163,25 +129,21 @@ function onERC1155BatchReceived(address, address, uint256[], uint256[], bytes) e
 function onERC1155Received(address, address, uint256, uint256, bytes) external nonpayable returns (bytes4)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | address | undefined |
-| _1 | address | undefined |
-| _2 | uint256 | undefined |
-| _3 | uint256 | undefined |
-| _4 | bytes | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | address | undefined   |
+| \_1  | address | undefined   |
+| \_2  | uint256 | undefined   |
+| \_3  | uint256 | undefined   |
+| \_4  | bytes   | undefined   |
 
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | bytes4 | undefined |
+| Name | Type   | Description |
+| ---- | ------ | ----------- |
+| \_0  | bytes4 | undefined   |
 
 ### owner
 
@@ -189,16 +151,11 @@ function onERC1155Received(address, address, uint256, uint256, bytes) external n
 function owner() external view returns (address)
 ```
 
-
-
-
-
-
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | address | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | address | undefined   |
 
 ### ownerOf
 
@@ -206,22 +163,18 @@ function owner() external view returns (address)
 function ownerOf(uint256, address) external view returns (uint256)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined |
-| _1 | address | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | uint256 | undefined   |
+| \_1  | address | undefined   |
 
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | uint256 | undefined   |
 
 ### price
 
@@ -231,14 +184,11 @@ function price() external view returns (uint256)
 
 Public mint price.
 
-
-
-
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | uint256 | undefined   |
 
 ### publicMint
 
@@ -246,15 +196,11 @@ Public mint price.
 function publicMint(uint256 balance) external payable
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| balance | uint256 | undefined |
+| Name    | Type    | Description |
+| ------- | ------- | ----------- |
+| balance | uint256 | undefined   |
 
 ### publicMintState
 
@@ -264,14 +210,11 @@ function publicMintState() external view returns (bool)
 
 Public mint state default := false.
 
-
-
-
 #### Returns
 
 | Name | Type | Description |
-|---|---|---|
-| _0 | bool | undefined |
+| ---- | ---- | ----------- |
+| \_0  | bool | undefined   |
 
 ### royaltyInfo
 
@@ -279,23 +222,19 @@ Public mint state default := false.
 function royaltyInfo(uint256, uint256 salePrice) external view returns (address receiver, uint256 royaltyAmount)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined |
-| salePrice | uint256 | undefined |
+| Name      | Type    | Description |
+| --------- | ------- | ----------- |
+| \_0       | uint256 | undefined   |
+| salePrice | uint256 | undefined   |
 
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| receiver | address | undefined |
-| royaltyAmount | uint256 | undefined |
+| Name          | Type    | Description |
+| ------------- | ------- | ----------- |
+| receiver      | address | undefined   |
+| royaltyAmount | uint256 | undefined   |
 
 ### safeBatchTransferFrom
 
@@ -303,19 +242,15 @@ function royaltyInfo(uint256, uint256 salePrice) external view returns (address 
 function safeBatchTransferFrom(address from, address to, uint256[] ids, uint256[] amounts, bytes data) external nonpayable
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| from | address | undefined |
-| to | address | undefined |
-| ids | uint256[] | undefined |
-| amounts | uint256[] | undefined |
-| data | bytes | undefined |
+| Name    | Type      | Description |
+| ------- | --------- | ----------- |
+| from    | address   | undefined   |
+| to      | address   | undefined   |
+| ids     | uint256[] | undefined   |
+| amounts | uint256[] | undefined   |
+| data    | bytes     | undefined   |
 
 ### safeMint
 
@@ -323,17 +258,13 @@ function safeBatchTransferFrom(address from, address to, uint256[] ids, uint256[
 function safeMint(address to, uint256 amount, address erc20Owner) external payable
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| to | address | undefined |
-| amount | uint256 | undefined |
-| erc20Owner | address | undefined |
+| Name       | Type    | Description |
+| ---------- | ------- | ----------- |
+| to         | address | undefined   |
+| amount     | uint256 | undefined   |
+| erc20Owner | address | undefined   |
 
 ### safeTransferFrom
 
@@ -341,19 +272,15 @@ function safeMint(address to, uint256 amount, address erc20Owner) external payab
 function safeTransferFrom(address from, address to, uint256 id, uint256 amount, bytes data) external nonpayable
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| from | address | undefined |
-| to | address | undefined |
-| id | uint256 | undefined |
-| amount | uint256 | undefined |
-| data | bytes | undefined |
+| Name   | Type    | Description |
+| ------ | ------- | ----------- |
+| from   | address | undefined   |
+| to     | address | undefined   |
+| id     | uint256 | undefined   |
+| amount | uint256 | undefined   |
+| data   | bytes   | undefined   |
 
 ### setApprovalForAll
 
@@ -361,16 +288,12 @@ function safeTransferFrom(address from, address to, uint256 id, uint256 amount, 
 function setApprovalForAll(address operator, bool approved) external nonpayable
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| operator | address | undefined |
-| approved | bool | undefined |
+| Name     | Type    | Description |
+| -------- | ------- | ----------- |
+| operator | address | undefined   |
+| approved | bool    | undefined   |
 
 ### setOwner
 
@@ -378,15 +301,11 @@ function setApprovalForAll(address operator, bool approved) external nonpayable
 function setOwner(address newOwner) external nonpayable
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newOwner | address | undefined |
+| Name     | Type    | Description |
+| -------- | ------- | ----------- |
+| newOwner | address | undefined   |
 
 ### setPublicMintState
 
@@ -394,15 +313,11 @@ function setOwner(address newOwner) external nonpayable
 function setPublicMintState(bool _publicMintState) external nonpayable
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _publicMintState | bool | undefined |
+| Name              | Type | Description |
+| ----------------- | ---- | ----------- |
+| \_publicMintState | bool | undefined   |
 
 ### splitter
 
@@ -412,14 +327,11 @@ function splitter() external view returns (contract SplitterImpl)
 
 Splitter address relationship.
 
-
-
-
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | contract SplitterImpl | undefined |
+| Name | Type                  | Description |
+| ---- | --------------------- | ----------- |
+| \_0  | contract SplitterImpl | undefined   |
 
 ### supportsInterface
 
@@ -427,21 +339,17 @@ Splitter address relationship.
 function supportsInterface(bytes4 interfaceId) external pure returns (bool)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| interfaceId | bytes4 | undefined |
+| Name        | Type   | Description |
+| ----------- | ------ | ----------- |
+| interfaceId | bytes4 | undefined   |
 
 #### Returns
 
 | Name | Type | Description |
-|---|---|---|
-| _0 | bool | undefined |
+| ---- | ---- | ----------- |
+| \_0  | bool | undefined   |
 
 ### uri
 
@@ -449,21 +357,17 @@ function supportsInterface(bytes4 interfaceId) external pure returns (bool)
 function uri(uint256 id) external view returns (string)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| id | uint256 | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| id   | uint256 | undefined   |
 
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | string | undefined |
+| Name | Type   | Description |
+| ---- | ------ | ----------- |
+| \_0  | string | undefined   |
 
 ### withdraw
 
@@ -471,15 +375,11 @@ function uri(uint256 id) external view returns (string)
 function withdraw(address recipient) external nonpayable
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| recipient | address | undefined |
+| Name      | Type    | Description |
+| --------- | ------- | ----------- |
+| recipient | address | undefined   |
 
 ### withdrawERC20
 
@@ -487,18 +387,12 @@ function withdraw(address recipient) external nonpayable
 function withdrawERC20(contract ERC20 _token, address recipient) external nonpayable
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _token | contract ERC20 | undefined |
-| recipient | address | undefined |
-
-
+| Name      | Type           | Description |
+| --------- | -------------- | ----------- |
+| \_token   | contract ERC20 | undefined   |
+| recipient | address        | undefined   |
 
 ## Events
 
@@ -508,17 +402,13 @@ function withdrawERC20(contract ERC20 _token, address recipient) external nonpay
 event ApprovalForAll(address indexed owner, address indexed operator, bool approved)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| owner `indexed` | address | undefined |
-| operator `indexed` | address | undefined |
-| approved  | bool | undefined |
+| Name               | Type    | Description |
+| ------------------ | ------- | ----------- |
+| owner `indexed`    | address | undefined   |
+| operator `indexed` | address | undefined   |
+| approved           | bool    | undefined   |
 
 ### OwnerUpdated
 
@@ -526,16 +416,12 @@ event ApprovalForAll(address indexed owner, address indexed operator, bool appro
 event OwnerUpdated(address indexed user, address indexed newOwner)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| user `indexed` | address | undefined |
-| newOwner `indexed` | address | undefined |
+| Name               | Type    | Description |
+| ------------------ | ------- | ----------- |
+| user `indexed`     | address | undefined   |
+| newOwner `indexed` | address | undefined   |
 
 ### PublicMintStateSet
 
@@ -543,15 +429,11 @@ event OwnerUpdated(address indexed user, address indexed newOwner)
 event PublicMintStateSet(bool indexed newPublicMintState)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newPublicMintState `indexed` | bool | undefined |
+| Name                         | Type | Description |
+| ---------------------------- | ---- | ----------- |
+| newPublicMintState `indexed` | bool | undefined   |
 
 ### RoyaltyFeeSet
 
@@ -559,15 +441,11 @@ event PublicMintStateSet(bool indexed newPublicMintState)
 event RoyaltyFeeSet(uint256 indexed newRoyaltyFee)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newRoyaltyFee `indexed` | uint256 | undefined |
+| Name                    | Type    | Description |
+| ----------------------- | ------- | ----------- |
+| newRoyaltyFee `indexed` | uint256 | undefined   |
 
 ### RoyaltyRecipientSet
 
@@ -575,15 +453,11 @@ event RoyaltyFeeSet(uint256 indexed newRoyaltyFee)
 event RoyaltyRecipientSet(address indexed newRecipient)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newRecipient `indexed` | address | undefined |
+| Name                   | Type    | Description |
+| ---------------------- | ------- | ----------- |
+| newRecipient `indexed` | address | undefined   |
 
 ### TransferBatch
 
@@ -591,19 +465,15 @@ event RoyaltyRecipientSet(address indexed newRecipient)
 event TransferBatch(address indexed operator, address indexed from, address indexed to, uint256[] ids, uint256[] amounts)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| operator `indexed` | address | undefined |
-| from `indexed` | address | undefined |
-| to `indexed` | address | undefined |
-| ids  | uint256[] | undefined |
-| amounts  | uint256[] | undefined |
+| Name               | Type      | Description |
+| ------------------ | --------- | ----------- |
+| operator `indexed` | address   | undefined   |
+| from `indexed`     | address   | undefined   |
+| to `indexed`       | address   | undefined   |
+| ids                | uint256[] | undefined   |
+| amounts            | uint256[] | undefined   |
 
 ### TransferSingle
 
@@ -611,19 +481,15 @@ event TransferBatch(address indexed operator, address indexed from, address inde
 event TransferSingle(address indexed operator, address indexed from, address indexed to, uint256 id, uint256 amount)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| operator `indexed` | address | undefined |
-| from `indexed` | address | undefined |
-| to `indexed` | address | undefined |
-| id  | uint256 | undefined |
-| amount  | uint256 | undefined |
+| Name               | Type    | Description |
+| ------------------ | ------- | ----------- |
+| operator `indexed` | address | undefined   |
+| from `indexed`     | address | undefined   |
+| to `indexed`       | address | undefined   |
+| id                 | uint256 | undefined   |
+| amount             | uint256 | undefined   |
 
 ### URI
 
@@ -631,18 +497,12 @@ event TransferSingle(address indexed operator, address indexed from, address ind
 event URI(string value, uint256 indexed id)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| value  | string | undefined |
-| id `indexed` | uint256 | undefined |
-
-
+| Name         | Type    | Description |
+| ------------ | ------- | ----------- |
+| value        | string  | undefined   |
+| id `indexed` | uint256 | undefined   |
 
 ## Errors
 
@@ -652,10 +512,7 @@ event URI(string value, uint256 indexed id)
 error AlreadyMinted()
 ```
 
-
-
-*0xddefae28*
-
+_0xddefae28_
 
 ### InvalidId
 
@@ -663,10 +520,7 @@ error AlreadyMinted()
 error InvalidId()
 ```
 
-
-
-*0xdfa1a408*
-
+_0xdfa1a408_
 
 ### NotMinted
 
@@ -674,10 +528,7 @@ error InvalidId()
 error NotMinted()
 ```
 
-
-
-*0x4d5e5fb3*
-
+_0x4d5e5fb3_
 
 ### PublicMintOff
 
@@ -685,10 +536,7 @@ error NotMinted()
 error PublicMintOff()
 ```
 
-
-
-*0x50eb1142*
-
+_0x50eb1142_
 
 ### WrongPrice
 
@@ -696,9 +544,4 @@ error PublicMintOff()
 error WrongPrice()
 ```
 
-
-
-*0xf7760f25*
-
-
-
+_0xf7760f25_

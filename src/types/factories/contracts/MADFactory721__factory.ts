@@ -313,6 +313,19 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
+        name: "newRecipient",
+        type: "address",
+      },
+    ],
+    name: "RecipientUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
         name: "newRouter",
         type: "address",
       },

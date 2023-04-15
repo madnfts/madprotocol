@@ -32,8 +32,7 @@ import type {
 
 export interface MADMarketplace1155Interface extends utils.Interface {
   functions: {
-    "MADFactory1155()": FunctionFragment;
-    "autoTransferFunds(address[])": FunctionFragment;
+    "MADFactory()": FunctionFragment;
     "basisPoints()": FunctionFragment;
     "bid(bytes32)": FunctionFragment;
     "buy(bytes32)": FunctionFragment;
@@ -83,8 +82,7 @@ export interface MADMarketplace1155Interface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "MADFactory1155"
-      | "autoTransferFunds"
+      | "MADFactory"
       | "basisPoints"
       | "bid"
       | "buy"
@@ -133,12 +131,8 @@ export interface MADMarketplace1155Interface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "MADFactory1155",
+    functionFragment: "MADFactory",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "autoTransferFunds",
-    values: [PromiseOrValue<string>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "basisPoints",
@@ -347,14 +341,7 @@ export interface MADMarketplace1155Interface extends utils.Interface {
     values?: undefined
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "MADFactory1155",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "autoTransferFunds",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "MADFactory", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "basisPoints",
     data: BytesLike
@@ -695,12 +682,7 @@ export interface MADMarketplace1155 extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    MADFactory1155(overrides?: CallOverrides): Promise<[string]>;
-
-    autoTransferFunds(
-      users: PromiseOrValue<string>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+    MADFactory(overrides?: CallOverrides): Promise<[string]>;
 
     basisPoints(overrides?: CallOverrides): Promise<[number]>;
 
@@ -945,12 +927,7 @@ export interface MADMarketplace1155 extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  MADFactory1155(overrides?: CallOverrides): Promise<string>;
-
-  autoTransferFunds(
-    users: PromiseOrValue<string>[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  MADFactory(overrides?: CallOverrides): Promise<string>;
 
   basisPoints(overrides?: CallOverrides): Promise<number>;
 
@@ -1193,12 +1170,7 @@ export interface MADMarketplace1155 extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    MADFactory1155(overrides?: CallOverrides): Promise<string>;
-
-    autoTransferFunds(
-      users: PromiseOrValue<string>[],
-      overrides?: CallOverrides
-    ): Promise<void>;
+    MADFactory(overrides?: CallOverrides): Promise<string>;
 
     basisPoints(overrides?: CallOverrides): Promise<number>;
 
@@ -1579,12 +1551,7 @@ export interface MADMarketplace1155 extends BaseContract {
   };
 
   estimateGas: {
-    MADFactory1155(overrides?: CallOverrides): Promise<BigNumber>;
-
-    autoTransferFunds(
-      users: PromiseOrValue<string>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
+    MADFactory(overrides?: CallOverrides): Promise<BigNumber>;
 
     basisPoints(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1800,12 +1767,7 @@ export interface MADMarketplace1155 extends BaseContract {
   };
 
   populateTransaction: {
-    MADFactory1155(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    autoTransferFunds(
-      users: PromiseOrValue<string>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+    MADFactory(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     basisPoints(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

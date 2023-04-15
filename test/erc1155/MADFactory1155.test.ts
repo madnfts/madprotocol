@@ -905,9 +905,9 @@ describe("MADFactory1155", () => {
       await r1155
         .connect(acc02)
         .setMintState(minAddr, true, 0);
-      await min
-        .connect(acc02)
-        .publicMint(1, { value: price.add(ethers.utils.parseEther("0.25")) });
+      await min.connect(acc02).publicMint(1, {
+        value: price.add(ethers.utils.parseEther("0.25")),
+      });
       const blockTimestamp = (
         await m1155.provider.getBlock(
           await m1155.provider.getBlockNumber(),

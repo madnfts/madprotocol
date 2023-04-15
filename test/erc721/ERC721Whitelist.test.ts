@@ -760,7 +760,9 @@ describe("ERC721Whitelist", () => {
       await wl.connect(acc02).mint(1, { value: price });
 
       await expect(
-        wl.connect(acc01).withdraw(ethers.constants.AddressZero),
+        wl
+          .connect(acc01)
+          .withdraw(ethers.constants.AddressZero),
       ).to.be.revertedWith(WhitelistErrors.Unauthorized);
     });
 

@@ -506,11 +506,19 @@ describe("ERC1155Lazy - ERC20", () => {
       ];
 
       await expect(() =>
-        lazy.withdrawERC20(erc20.address, ethers.constants.AddressZero),
+        lazy.withdrawERC20(
+          erc20.address,
+          ethers.constants.AddressZero,
+        ),
       ).to.changeTokenBalances(erc20, addrs, vals);
 
       await expect(
-        lazy.connect(acc01).withdrawERC20(erc20.address, ethers.constants.AddressZero),
+        lazy
+          .connect(acc01)
+          .withdrawERC20(
+            erc20.address,
+            ethers.constants.AddressZero,
+          ),
       ).to.be.revertedWith(LazyErrors.Unauthorized);
 
       expect(await erc20.balanceOf(lazy.address)).to.eq(

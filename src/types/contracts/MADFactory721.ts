@@ -225,6 +225,7 @@ export interface MADFactory721Interface extends utils.Interface {
     "OwnerUpdated(address,address)": EventFragment;
     "Paused(address)": EventFragment;
     "PaymentTokenUpdated(address)": EventFragment;
+    "RecipientUpdated(address)": EventFragment;
     "RouterUpdated(address)": EventFragment;
     "SignerUpdated(address)": EventFragment;
     "SplitterCreated(address,uint256[],address[],address,uint256)": EventFragment;
@@ -239,6 +240,7 @@ export interface MADFactory721Interface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "OwnerUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PaymentTokenUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RecipientUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RouterUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SignerUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SplitterCreated"): EventFragment;
@@ -352,6 +354,17 @@ export type PaymentTokenUpdatedEvent = TypedEvent<
 
 export type PaymentTokenUpdatedEventFilter =
   TypedEventFilter<PaymentTokenUpdatedEvent>;
+
+export interface RecipientUpdatedEventObject {
+  newRecipient: string;
+}
+export type RecipientUpdatedEvent = TypedEvent<
+  [string],
+  RecipientUpdatedEventObject
+>;
+
+export type RecipientUpdatedEventFilter =
+  TypedEventFilter<RecipientUpdatedEvent>;
 
 export interface RouterUpdatedEventObject {
   newRouter: string;
@@ -900,6 +913,13 @@ export interface MADFactory721 extends BaseContract {
     PaymentTokenUpdated(
       newPaymentToken?: PromiseOrValue<string> | null
     ): PaymentTokenUpdatedEventFilter;
+
+    "RecipientUpdated(address)"(
+      newRecipient?: PromiseOrValue<string> | null
+    ): RecipientUpdatedEventFilter;
+    RecipientUpdated(
+      newRecipient?: PromiseOrValue<string> | null
+    ): RecipientUpdatedEventFilter;
 
     "RouterUpdated(address)"(
       newRouter?: PromiseOrValue<string> | null

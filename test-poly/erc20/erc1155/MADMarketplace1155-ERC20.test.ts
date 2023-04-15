@@ -19,7 +19,7 @@ import {
   MockERC20,
   MockERC20__factory,
 } from "../../../src/types";
-import { MarketplaceErrors } from "./../../utils/errors";
+import { MarketplaceErrors } from "../../../test/utils/errors";
 import {
   dead,
   getOrderId1155,

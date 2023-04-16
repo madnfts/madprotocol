@@ -83,6 +83,7 @@ export enum MarketplaceErrors {
   Timeout = "Timeout",
   Paused = "PAUSED",
   EAOnly = "EAOnly",
+  ZeroAddress = "ZeroAddress",
 }
 
 export enum FactoryErrors {

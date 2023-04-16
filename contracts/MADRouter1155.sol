@@ -695,21 +695,6 @@ contract MADRouter1155 is
     //                         OWNER FX                           //
     ////////////////////////////////////////////////////////////////
 
-    /// @notice Set the Routers owner address.
-    /// @dev Function Signature := 0x13af4035
-    /// @param newOwner New owners address.
-    function setOwner(
-        address newOwner
-    ) public override onlyOwner {
-        require(newOwner != address(0), "Invalid address");
-        // owner = newOwner;
-        assembly {
-            sstore(owner.slot, newOwner)
-        }
-
-        emit OwnerUpdated(msg.sender, newOwner);
-    }
-
     /// @notice Change the address used for lazy minting voucher validation.
     /// @dev Event emitted by token contract.
     ///      Function Sighash := 0x17f9fad1

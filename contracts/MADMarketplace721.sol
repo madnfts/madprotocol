@@ -16,15 +16,11 @@ contract MADMarketplace721 is
 
     constructor(
         address _recipient,
-        uint256 _minOrderDuration,
-        FactoryVerifier _factory,
         address _paymentTokenAddress,
         address _swapRouter
     )
         MADMarketplaceBase(
             _recipient,
-            _minOrderDuration,
-            _factory,
             _paymentTokenAddress,
             _swapRouter
         )
@@ -102,9 +98,21 @@ contract MADMarketplace721 is
         Types.Order721 storage order = orderInfo[_order];
 
         uint256 lastBidPrice = order.lastBidPrice;
-        uint256 bidValue = address(erc20) != address(0)
-            ? erc20.allowance(msg.sender, address(this))
-            : msg.value;
+
+        uint256 bidValue = msg.value;
+
+        if (address(erc20) != address(0)) {
+            bidValue = erc20.allowance(
+                msg.sender,
+                address(this)
+            );
+            SafeTransferLib.safeTransferFrom(
+                erc20,
+                msg.sender,
+                address(this),
+                bidValue
+            );
+        }
 
         _bidChecks(
             order.orderType,
@@ -114,15 +122,6 @@ contract MADMarketplace721 is
             order.startPrice,
             bidValue
         );
-
-        if (address(erc20) != address(0)) {
-            SafeTransferLib.safeTransferFrom(
-                erc20,
-                msg.sender,
-                address(this),
-                bidValue
-            );
-        }
 
         // 1s blocktime
         assembly {
@@ -145,35 +144,16 @@ contract MADMarketplace721 is
         }
 
         if (lastBidPrice != 0) {
-            if (address(erc20) != address(0)) {
-                // SafeTransferLib.safeTransfer(
-                //     erc20,
-                //     order.lastBidder,
-                //     lastBidPrice
-                // );
-                // pull from user vs push
-                emit UserOutbid(
-                    order.lastBidder,
-                    address(erc20),
-                    lastBidPrice
-                );
-                totalOutbid += lastBidPrice;
-                userOutbid[order.lastBidder] += lastBidPrice;
-            } else {
-                // SafeTransferLib.safeTransferETH(
-                //     order.lastBidder,
-                //     lastBidPrice
-                // );
-                // pull from user vs push
+            totalOutbid += lastBidPrice;
+            userOutbid[order.lastBidder] += lastBidPrice;
 
-                emit UserOutbid(
-                    order.lastBidder,
-                    address(0),
-                    lastBidPrice
-                );
-                totalOutbid += lastBidPrice;
-                userOutbid[order.lastBidder] += lastBidPrice;
-            }
+            emit UserOutbid(
+                order.lastBidder,
+                address(erc20) != address(0)
+                    ? address(erc20)
+                    : address(0),
+                lastBidPrice
+            );
         }
 
         emit Bid(
@@ -370,7 +350,8 @@ contract MADMarketplace721 is
     //                         OWNER FX                           //
     ////////////////////////////////////////////////////////////////
 
-    /// @notice Delete order function only callabe by contract's owner, when contract is paused, as security measure.
+    /// @notice Delete order function only callabe by contract's owner,
+    /// when contract is paused, as security measure.
     /// @dev Function Signature := 0x0c026db9
     function delOrder(
         bytes32 hash,
@@ -565,7 +546,7 @@ contract MADMarketplace721 is
         address _to
     ) internal {
         // note: 2.5% flat fee for external listings
-        uint256 feePercent = feeVal3; // _feeResolver(key, _order.tokenId);
+        uint256 feePercent = maxFee; // _feeResolver(key, _order.tokenId);
         // load royalty info query to mem
         (address _receiver, uint256 _amount) = _order
             .token
@@ -633,7 +614,7 @@ contract MADMarketplace721 is
         address _to
     ) internal {
         // note: 2.5% flat fee for external listings
-        uint256 feePercent = feeVal3; // _feeResolver(key, _order.tokenId);
+        uint256 feePercent = maxFee; // _feeResolver(key, _order.tokenId);
         uint256 fee = (_price * feePercent) / basisPoints;
         if (address(erc20) != address(0)) {
             SafeTransferLib.safeTransfer(
@@ -686,10 +667,10 @@ contract MADMarketplace721 is
             switch sload(y)
             case 0 {
                 sstore(y, 1)
-                _feePercent := sload(feeVal2.slot)
+                _feePercent := sload(royaltyFee.slot)
             }
             case 1 {
-                _feePercent := sload(feeVal3.slot)
+                _feePercent := sload(maxFee.slot)
             }
         }
     }

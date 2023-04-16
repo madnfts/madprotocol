@@ -11,6 +11,9 @@ interface EventsAndErrorsBase {
     );
     event RecipientUpdated(address indexed newRecipient);
     event FeesUpdated(uint256 feeVal2, uint256 feeVal3);
+
+    // 0xd92e233d
+    error ZeroAddress();
 }
 
 interface FactoryEventsAndErrorsBase is EventsAndErrorsBase {

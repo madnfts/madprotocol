@@ -488,20 +488,7 @@ contract MADFactory1155 is MAD,
     //                         OWNER FX                           //
     ////////////////////////////////////////////////////////////////
 
-    /// @dev Function Signature := 0x13af4035
-    function setOwner(address newOwner)
-        public
-        override
-        onlyOwner
-    {
-        require(newOwner != address(0), "Invalid address");
-        // owner = newOwner;
-        assembly {
-            sstore(owner.slot, newOwner)
-        }
 
-        emit OwnerUpdated(msg.sender, newOwner);
-    }
     
     /// @dev `MADMarketplace` instance setter.
     /// @dev Function Sighash := 

@@ -202,20 +202,21 @@ describe("MADMarketplace721", () => {
     });
     it("Should withdraw to owner", async () => {
       const bal1 = await owner.getBalance();
-      await m721.pause();
       await mad.sendTransaction({
         to: m721.address,
         value: price.mul(ethers.BigNumber.from(100)),
       });
       const tx = await m721.connect(owner).withdraw();
       const bal2 = await owner.getBalance();
-      await m721.unpause();
-
       expect(tx).to.be.ok;
       expect(bal1).to.be.lt(bal2);
+
+
       await expect(m721.withdraw()).to.be.revertedWith(
-        MarketplaceErrors.Unpaused,
+        MarketplaceErrors.NoBalanceToWithdraw,
       );
+
+
     });
     it("Should delete order", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);

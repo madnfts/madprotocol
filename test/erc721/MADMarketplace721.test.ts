@@ -17,20 +17,16 @@ import {
 import {
   artifacts,
   ethers,
-  network, // tracer
+  network, // tracer 
 } from "hardhat";
-import keccak256 from "keccak256";
-import { MerkleTree } from "merkletreejs";
+
 
 import {
-  ERC721Whitelist,
   MADFactory721,
   MADMarketplace721,
   MADRouter721,
-  SplitterImpl,
 } from "../../src/types";
 import { MarketplaceErrors } from "./../utils/errors";
-import { padBuffer } from "./../utils/fixtures";
 import {
   OrderDetails721,
   dead,
@@ -98,7 +94,7 @@ describe("MADMarketplace721", () => {
     });
   });
   describe("Owner Functions", async () => {
-    it("Should update factory address", async () => {
+    it("Should update factory address and revert with 0x0", async () => {
       const tx = await m721.setFactory(r721.address);
 
       expect(tx).to.be.ok;
@@ -108,7 +104,15 @@ describe("MADMarketplace721", () => {
       await expect(
         m721.connect(acc01).setFactory(acc01.address),
       ).to.be.revertedWith(MarketplaceErrors.Unauthorized);
+
+      await expect(
+        m721.connect(owner).setFactory(dead),
+      ).to.be.revertedWithCustomError(
+        m721,
+        MarketplaceErrors.ZeroAddress,
+      );
     });
+
     it("Should update marketplace settings", async () => {
       const tx = await m721.updateSettings(
         600,
@@ -194,20 +198,21 @@ describe("MADMarketplace721", () => {
     });
     it("Should withdraw to owner", async () => {
       const bal1 = await owner.getBalance();
-      await m721.pause();
       await mad.sendTransaction({
         to: m721.address,
         value: price.mul(ethers.BigNumber.from(100)),
       });
       const tx = await m721.connect(owner).withdraw();
       const bal2 = await owner.getBalance();
-      await m721.unpause();
-
       expect(tx).to.be.ok;
       expect(bal1).to.be.lt(bal2);
+
+
       await expect(m721.withdraw()).to.be.revertedWith(
-        MarketplaceErrors.Unpaused,
+        MarketplaceErrors.NoBalanceToWithdraw,
       );
+
+
     });
     it("Should delete order", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);

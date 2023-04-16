@@ -83,6 +83,8 @@ export enum MarketplaceErrors {
   Timeout = "Timeout",
   Paused = "PAUSED",
   EAOnly = "EAOnly",
+  ZeroAddress = "ZeroAddress",
+  NoBalanceToWithdraw = "No balance to withdraw" 
 }
 
 export enum FactoryErrors {

@@ -61,7 +61,7 @@ describe("MADMarketplace1155", () => {
     ({ f1155, m1155, r1155 } = await loadFixture(
       madFixture1155C,
     ));
-    await r1155.deployed();
+    await r1155.deployed(); 
     await m1155.deployed();
     await f1155.deployed();
   });
@@ -90,6 +90,13 @@ describe("MADMarketplace1155", () => {
       await expect(
         m1155.connect(acc01).setFactory(acc01.address),
       ).to.be.revertedWith(MarketplaceErrors.Unauthorized);
+
+      await expect(
+        m1155.connect(owner).setFactory(dead),
+      ).to.be.revertedWithCustomError(
+        m1155,
+        MarketplaceErrors.ZeroAddress,
+      );
     });
     it("Should update marketplace settings", async () => {
       const tx = await m1155.updateSettings(
@@ -174,23 +181,27 @@ describe("MADMarketplace1155", () => {
         m1155.connect(acc02).setOwner(acc01.address),
       ).to.be.revertedWith(MarketplaceErrors.Unauthorized);
     });
+
+
     it("Should withdraw to owner", async () => {
       const bal1 = await owner.getBalance();
-      await m1155.pause();
+
       await mad.sendTransaction({
         to: m1155.address,
         value: price.mul(ethers.BigNumber.from(100)),
       });
+
       const tx = await m1155.connect(owner).withdraw();
       const bal2 = await owner.getBalance();
-      await m1155.unpause();
 
       expect(tx).to.be.ok;
       expect(bal1).to.be.lt(bal2);
       await expect(m1155.withdraw()).to.be.revertedWith(
-        MarketplaceErrors.Unpaused,
+        MarketplaceErrors.NoBalanceToWithdraw,
       );
     });
+
+
     it("Should delete order", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
       const zero = ethers.constants.Zero;

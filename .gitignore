@@ -1,5 +1,4 @@
 # directories
-src/types/
 .yarn/*
 !.yarn/patches
 !.yarn/releases

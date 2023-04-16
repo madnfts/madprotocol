@@ -12,6 +12,11 @@ import { Contract, Signer, utils } from "ethers";
 
 const _abi = [
   {
+    inputs: [],
+    name: "ZeroAddress",
+    type: "error",
+  },
+  {
     anonymous: false,
     inputs: [
       {

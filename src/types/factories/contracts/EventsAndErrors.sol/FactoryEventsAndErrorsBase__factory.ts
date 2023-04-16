@@ -22,6 +22,11 @@ const _abi = [
     type: "error",
   },
   {
+    inputs: [],
+    name: "ZeroAddress",
+    type: "error",
+  },
+  {
     anonymous: false,
     inputs: [
       {

@@ -19,15 +19,11 @@ contract MADMarketplace1155 is
     ////////////////////////////////////////////////////////////////
     constructor(
         address _recipient,
-        uint256 _minOrderDuration,
-        FactoryVerifier _factory,
         address _paymentTokenAddress,
         address _swapRouter
     )
         MADMarketplaceBase(
             _recipient,
-            _minOrderDuration,
-            _factory,
             _paymentTokenAddress,
             _swapRouter
         )
@@ -166,33 +162,18 @@ contract MADMarketplace1155 is
             sstore(add(order.slot, 7), caller())
             sstore(add(order.slot, 6), bidValue)
         }
+
         if (lastBidPrice != 0) {
-            if (address(erc20) != address(0)) {
-                // SafeTransferLib.safeTransfer(
-                //     erc20,
-                //     order.lastBidder,
-                //     lastBidPrice
-                // );
-                emit UserOutbid(
-                    order.lastBidder,
-                    address(erc20),
-                    lastBidPrice
-                );
-                totalOutbid += lastBidPrice;
-                userOutbid[order.lastBidder] += lastBidPrice;
-            } else {
-                // SafeTransferLib.safeTransferETH(
-                //     order.lastBidder,
-                //     lastBidPrice
-                // );
-                emit UserOutbid(
-                    order.lastBidder,
-                    address(0),
-                    lastBidPrice
-                );
-                totalOutbid += lastBidPrice;
-                userOutbid[order.lastBidder] += lastBidPrice;
-            }
+            totalOutbid += lastBidPrice;
+            userOutbid[order.lastBidder] += lastBidPrice;
+
+            emit UserOutbid(
+                order.lastBidder,
+                address(erc20) != address(0)
+                    ? address(erc20)
+                    : address(0),
+                lastBidPrice
+            );
         }
 
         emit Bid(
@@ -225,6 +206,7 @@ contract MADMarketplace1155 is
                 erc20.allowance(msg.sender, address(this)) <
                 currentPrice
             ) revert WrongPrice();
+
             SafeTransferLib.safeTransferFrom(
                 erc20,
                 msg.sender,
@@ -617,7 +599,7 @@ contract MADMarketplace1155 is
         bytes32 _orderId,
         address _to
     ) internal {
-        uint256 feePercent = feeVal3; // _feeResolver(
+        uint256 feePercent = maxFee; // _feeResolver(
         // key,
         // _order.tokenId,
         // _order.amount
@@ -694,7 +676,7 @@ contract MADMarketplace1155 is
         bytes32 _orderId,
         address _to
     ) internal {
-        uint256 feePercent = feeVal3; // _feeResolver(
+        uint256 feePercent = maxFee; // _feeResolver(
         //     key,
         //     _order.tokenId,
         //     _order.amount
@@ -759,10 +741,10 @@ contract MADMarketplace1155 is
             switch sload(z)
             case 0 {
                 sstore(y, 1)
-                _feePercent := sload(feeVal2.slot)
+                _feePercent := sload(royaltyFee.slot)
             }
             case 1 {
-                _feePercent := sload(feeVal3.slot)
+                _feePercent := sload(maxFee.slot)
             }
         }
     }
@@ -793,7 +775,7 @@ contract MADMarketplace1155 is
                     shr(32, not(0))
                 )
             }
-            // Ductch Auction
+            // Dutch Auction
             case 1 {
                 let _startPrice := and(
                     sload(add(order.slot, 2)),

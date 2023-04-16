@@ -33,6 +33,8 @@ import type {
 export interface MADMarketplace1155Interface extends utils.Interface {
   functions: {
     "MADFactory()": FunctionFragment;
+    "MAX_FEES()": FunctionFragment;
+    "MAX_ROYALTY_FEE()": FunctionFragment;
     "basisPoints()": FunctionFragment;
     "bid(bytes32)": FunctionFragment;
     "buy(bytes32)": FunctionFragment;
@@ -44,15 +46,16 @@ export interface MADMarketplace1155Interface extends utils.Interface {
     "erc20()": FunctionFragment;
     "feeSelector(uint256,uint256,uint256)": FunctionFragment;
     "feeTier()": FunctionFragment;
-    "feeVal2()": FunctionFragment;
-    "feeVal3()": FunctionFragment;
     "fixedPrice(address,uint256,uint256,uint256,uint256)": FunctionFragment;
     "getCurrentPrice(bytes32)": FunctionFragment;
     "getOutbidBalance()": FunctionFragment;
+    "maxFee()": FunctionFragment;
     "maxOrderDuration()": FunctionFragment;
     "minAuctionIncrement()": FunctionFragment;
+    "minAuctionIncrementMAX()": FunctionFragment;
     "minBidValue()": FunctionFragment;
     "minOrderDuration()": FunctionFragment;
+    "minOrderDurationtMAX()": FunctionFragment;
     "name()": FunctionFragment;
     "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "onERC1155Received(address,address,uint256,uint256,bytes)": FunctionFragment;
@@ -63,9 +66,12 @@ export interface MADMarketplace1155Interface extends utils.Interface {
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
     "recipient()": FunctionFragment;
+    "royaltyFee()": FunctionFragment;
     "sellerOrderLength(address)": FunctionFragment;
     "setFactory(address)": FunctionFragment;
     "setFees(uint256,uint256)": FunctionFragment;
+    "setMinAuctionIncrementMAX(uint256)": FunctionFragment;
+    "setMinOrderDurationtMAX(uint256)": FunctionFragment;
     "setOwner(address)": FunctionFragment;
     "setRecipient(address)": FunctionFragment;
     "swapRouter()": FunctionFragment;
@@ -75,7 +81,7 @@ export interface MADMarketplace1155Interface extends utils.Interface {
     "updateSettings(uint256,uint256,uint256,uint256)": FunctionFragment;
     "userOutbid(address)": FunctionFragment;
     "withdraw()": FunctionFragment;
-    "withdrawERC20(address)": FunctionFragment;
+    "withdrawERC20()": FunctionFragment;
     "withdrawOutbid(address,uint256,uint160)": FunctionFragment;
     "withdrawOutbidEth()": FunctionFragment;
   };
@@ -83,6 +89,8 @@ export interface MADMarketplace1155Interface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "MADFactory"
+      | "MAX_FEES"
+      | "MAX_ROYALTY_FEE"
       | "basisPoints"
       | "bid"
       | "buy"
@@ -94,15 +102,16 @@ export interface MADMarketplace1155Interface extends utils.Interface {
       | "erc20"
       | "feeSelector"
       | "feeTier"
-      | "feeVal2"
-      | "feeVal3"
       | "fixedPrice"
       | "getCurrentPrice"
       | "getOutbidBalance"
+      | "maxFee"
       | "maxOrderDuration"
       | "minAuctionIncrement"
+      | "minAuctionIncrementMAX"
       | "minBidValue"
       | "minOrderDuration"
+      | "minOrderDurationtMAX"
       | "name"
       | "onERC1155BatchReceived"
       | "onERC1155Received"
@@ -113,9 +122,12 @@ export interface MADMarketplace1155Interface extends utils.Interface {
       | "pause"
       | "paused"
       | "recipient"
+      | "royaltyFee"
       | "sellerOrderLength"
       | "setFactory"
       | "setFees"
+      | "setMinAuctionIncrementMAX"
+      | "setMinOrderDurationtMAX"
       | "setOwner"
       | "setRecipient"
       | "swapRouter"
@@ -132,6 +144,11 @@ export interface MADMarketplace1155Interface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "MADFactory",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "MAX_FEES", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "MAX_ROYALTY_FEE",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -195,8 +212,6 @@ export interface MADMarketplace1155Interface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(functionFragment: "feeTier", values?: undefined): string;
-  encodeFunctionData(functionFragment: "feeVal2", values?: undefined): string;
-  encodeFunctionData(functionFragment: "feeVal3", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "fixedPrice",
     values: [
@@ -215,6 +230,7 @@ export interface MADMarketplace1155Interface extends utils.Interface {
     functionFragment: "getOutbidBalance",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "maxFee", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "maxOrderDuration",
     values?: undefined
@@ -224,11 +240,19 @@ export interface MADMarketplace1155Interface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "minAuctionIncrementMAX",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "minBidValue",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "minOrderDuration",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "minOrderDurationtMAX",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
@@ -274,6 +298,10 @@ export interface MADMarketplace1155Interface extends utils.Interface {
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(functionFragment: "recipient", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "royaltyFee",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "sellerOrderLength",
     values: [PromiseOrValue<string>]
   ): string;
@@ -284,6 +312,14 @@ export interface MADMarketplace1155Interface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "setFees",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMinAuctionIncrementMAX",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMinOrderDurationtMAX",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "setOwner",
@@ -326,7 +362,7 @@ export interface MADMarketplace1155Interface extends utils.Interface {
   encodeFunctionData(functionFragment: "withdraw", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "withdrawERC20",
-    values: [PromiseOrValue<string>]
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "withdrawOutbid",
@@ -342,6 +378,11 @@ export interface MADMarketplace1155Interface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(functionFragment: "MADFactory", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "MAX_FEES", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "MAX_ROYALTY_FEE",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "basisPoints",
     data: BytesLike
@@ -368,8 +409,6 @@ export interface MADMarketplace1155Interface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "feeTier", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "feeVal2", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "feeVal3", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "fixedPrice", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getCurrentPrice",
@@ -379,6 +418,7 @@ export interface MADMarketplace1155Interface extends utils.Interface {
     functionFragment: "getOutbidBalance",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "maxFee", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "maxOrderDuration",
     data: BytesLike
@@ -388,11 +428,19 @@ export interface MADMarketplace1155Interface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "minAuctionIncrementMAX",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "minBidValue",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "minOrderDuration",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "minOrderDurationtMAX",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
@@ -417,12 +465,21 @@ export interface MADMarketplace1155Interface extends utils.Interface {
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "recipient", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "royaltyFee", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "sellerOrderLength",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setFactory", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setFees", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setMinAuctionIncrementMAX",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setMinOrderDurationtMAX",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "setOwner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setRecipient",
@@ -684,6 +741,10 @@ export interface MADMarketplace1155 extends BaseContract {
   functions: {
     MADFactory(overrides?: CallOverrides): Promise<[string]>;
 
+    MAX_FEES(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    MAX_ROYALTY_FEE(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     basisPoints(overrides?: CallOverrides): Promise<[number]>;
 
     bid(
@@ -745,10 +806,6 @@ export interface MADMarketplace1155 extends BaseContract {
 
     feeTier(overrides?: CallOverrides): Promise<[number]>;
 
-    feeVal2(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    feeVal3(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     fixedPrice(
       _token: PromiseOrValue<string>,
       _id: PromiseOrValue<BigNumberish>,
@@ -767,13 +824,19 @@ export interface MADMarketplace1155 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { balance: BigNumber }>;
 
+    maxFee(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     maxOrderDuration(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     minAuctionIncrement(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    minAuctionIncrementMAX(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     minBidValue(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     minOrderDuration(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    minOrderDurationtMAX(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
@@ -852,6 +915,8 @@ export interface MADMarketplace1155 extends BaseContract {
 
     recipient(overrides?: CallOverrides): Promise<[string]>;
 
+    royaltyFee(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     sellerOrderLength(
       _seller: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -863,8 +928,18 @@ export interface MADMarketplace1155 extends BaseContract {
     ): Promise<ContractTransaction>;
 
     setFees(
-      _feeVal2: PromiseOrValue<BigNumberish>,
-      _feeVal3: PromiseOrValue<BigNumberish>,
+      _royaltyFee: PromiseOrValue<BigNumberish>,
+      _maxFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setMinAuctionIncrementMAX(
+      _minAuctionIncrementMAX: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setMinOrderDurationtMAX(
+      _minOrderDurationtMAX: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -911,7 +986,6 @@ export interface MADMarketplace1155 extends BaseContract {
     ): Promise<ContractTransaction>;
 
     withdrawERC20(
-      _token: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -928,6 +1002,10 @@ export interface MADMarketplace1155 extends BaseContract {
   };
 
   MADFactory(overrides?: CallOverrides): Promise<string>;
+
+  MAX_FEES(overrides?: CallOverrides): Promise<BigNumber>;
+
+  MAX_ROYALTY_FEE(overrides?: CallOverrides): Promise<BigNumber>;
 
   basisPoints(overrides?: CallOverrides): Promise<number>;
 
@@ -990,10 +1068,6 @@ export interface MADMarketplace1155 extends BaseContract {
 
   feeTier(overrides?: CallOverrides): Promise<number>;
 
-  feeVal2(overrides?: CallOverrides): Promise<BigNumber>;
-
-  feeVal3(overrides?: CallOverrides): Promise<BigNumber>;
-
   fixedPrice(
     _token: PromiseOrValue<string>,
     _id: PromiseOrValue<BigNumberish>,
@@ -1010,13 +1084,19 @@ export interface MADMarketplace1155 extends BaseContract {
 
   getOutbidBalance(overrides?: CallOverrides): Promise<BigNumber>;
 
+  maxFee(overrides?: CallOverrides): Promise<BigNumber>;
+
   maxOrderDuration(overrides?: CallOverrides): Promise<BigNumber>;
 
   minAuctionIncrement(overrides?: CallOverrides): Promise<BigNumber>;
 
+  minAuctionIncrementMAX(overrides?: CallOverrides): Promise<BigNumber>;
+
   minBidValue(overrides?: CallOverrides): Promise<BigNumber>;
 
   minOrderDuration(overrides?: CallOverrides): Promise<BigNumber>;
+
+  minOrderDurationtMAX(overrides?: CallOverrides): Promise<BigNumber>;
 
   name(overrides?: CallOverrides): Promise<string>;
 
@@ -1095,6 +1175,8 @@ export interface MADMarketplace1155 extends BaseContract {
 
   recipient(overrides?: CallOverrides): Promise<string>;
 
+  royaltyFee(overrides?: CallOverrides): Promise<BigNumber>;
+
   sellerOrderLength(
     _seller: PromiseOrValue<string>,
     overrides?: CallOverrides
@@ -1106,8 +1188,18 @@ export interface MADMarketplace1155 extends BaseContract {
   ): Promise<ContractTransaction>;
 
   setFees(
-    _feeVal2: PromiseOrValue<BigNumberish>,
-    _feeVal3: PromiseOrValue<BigNumberish>,
+    _royaltyFee: PromiseOrValue<BigNumberish>,
+    _maxFee: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setMinAuctionIncrementMAX(
+    _minAuctionIncrementMAX: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setMinOrderDurationtMAX(
+    _minOrderDurationtMAX: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1154,7 +1246,6 @@ export interface MADMarketplace1155 extends BaseContract {
   ): Promise<ContractTransaction>;
 
   withdrawERC20(
-    _token: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1171,6 +1262,10 @@ export interface MADMarketplace1155 extends BaseContract {
 
   callStatic: {
     MADFactory(overrides?: CallOverrides): Promise<string>;
+
+    MAX_FEES(overrides?: CallOverrides): Promise<BigNumber>;
+
+    MAX_ROYALTY_FEE(overrides?: CallOverrides): Promise<BigNumber>;
 
     basisPoints(overrides?: CallOverrides): Promise<number>;
 
@@ -1233,10 +1328,6 @@ export interface MADMarketplace1155 extends BaseContract {
 
     feeTier(overrides?: CallOverrides): Promise<number>;
 
-    feeVal2(overrides?: CallOverrides): Promise<BigNumber>;
-
-    feeVal3(overrides?: CallOverrides): Promise<BigNumber>;
-
     fixedPrice(
       _token: PromiseOrValue<string>,
       _id: PromiseOrValue<BigNumberish>,
@@ -1253,13 +1344,19 @@ export interface MADMarketplace1155 extends BaseContract {
 
     getOutbidBalance(overrides?: CallOverrides): Promise<BigNumber>;
 
+    maxFee(overrides?: CallOverrides): Promise<BigNumber>;
+
     maxOrderDuration(overrides?: CallOverrides): Promise<BigNumber>;
 
     minAuctionIncrement(overrides?: CallOverrides): Promise<BigNumber>;
 
+    minAuctionIncrementMAX(overrides?: CallOverrides): Promise<BigNumber>;
+
     minBidValue(overrides?: CallOverrides): Promise<BigNumber>;
 
     minOrderDuration(overrides?: CallOverrides): Promise<BigNumber>;
+
+    minOrderDurationtMAX(overrides?: CallOverrides): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<string>;
 
@@ -1336,6 +1433,8 @@ export interface MADMarketplace1155 extends BaseContract {
 
     recipient(overrides?: CallOverrides): Promise<string>;
 
+    royaltyFee(overrides?: CallOverrides): Promise<BigNumber>;
+
     sellerOrderLength(
       _seller: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -1347,8 +1446,18 @@ export interface MADMarketplace1155 extends BaseContract {
     ): Promise<void>;
 
     setFees(
-      _feeVal2: PromiseOrValue<BigNumberish>,
-      _feeVal3: PromiseOrValue<BigNumberish>,
+      _royaltyFee: PromiseOrValue<BigNumberish>,
+      _maxFee: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setMinAuctionIncrementMAX(
+      _minAuctionIncrementMAX: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setMinOrderDurationtMAX(
+      _minOrderDurationtMAX: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1390,10 +1499,7 @@ export interface MADMarketplace1155 extends BaseContract {
 
     withdraw(overrides?: CallOverrides): Promise<void>;
 
-    withdrawERC20(
-      _token: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    withdrawERC20(overrides?: CallOverrides): Promise<void>;
 
     withdrawOutbid(
       _token: PromiseOrValue<string>,
@@ -1553,6 +1659,10 @@ export interface MADMarketplace1155 extends BaseContract {
   estimateGas: {
     MADFactory(overrides?: CallOverrides): Promise<BigNumber>;
 
+    MAX_FEES(overrides?: CallOverrides): Promise<BigNumber>;
+
+    MAX_ROYALTY_FEE(overrides?: CallOverrides): Promise<BigNumber>;
+
     basisPoints(overrides?: CallOverrides): Promise<BigNumber>;
 
     bid(
@@ -1614,10 +1724,6 @@ export interface MADMarketplace1155 extends BaseContract {
 
     feeTier(overrides?: CallOverrides): Promise<BigNumber>;
 
-    feeVal2(overrides?: CallOverrides): Promise<BigNumber>;
-
-    feeVal3(overrides?: CallOverrides): Promise<BigNumber>;
-
     fixedPrice(
       _token: PromiseOrValue<string>,
       _id: PromiseOrValue<BigNumberish>,
@@ -1634,13 +1740,19 @@ export interface MADMarketplace1155 extends BaseContract {
 
     getOutbidBalance(overrides?: CallOverrides): Promise<BigNumber>;
 
+    maxFee(overrides?: CallOverrides): Promise<BigNumber>;
+
     maxOrderDuration(overrides?: CallOverrides): Promise<BigNumber>;
 
     minAuctionIncrement(overrides?: CallOverrides): Promise<BigNumber>;
 
+    minAuctionIncrementMAX(overrides?: CallOverrides): Promise<BigNumber>;
+
     minBidValue(overrides?: CallOverrides): Promise<BigNumber>;
 
     minOrderDuration(overrides?: CallOverrides): Promise<BigNumber>;
+
+    minOrderDurationtMAX(overrides?: CallOverrides): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1691,6 +1803,8 @@ export interface MADMarketplace1155 extends BaseContract {
 
     recipient(overrides?: CallOverrides): Promise<BigNumber>;
 
+    royaltyFee(overrides?: CallOverrides): Promise<BigNumber>;
+
     sellerOrderLength(
       _seller: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -1702,8 +1816,18 @@ export interface MADMarketplace1155 extends BaseContract {
     ): Promise<BigNumber>;
 
     setFees(
-      _feeVal2: PromiseOrValue<BigNumberish>,
-      _feeVal3: PromiseOrValue<BigNumberish>,
+      _royaltyFee: PromiseOrValue<BigNumberish>,
+      _maxFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setMinAuctionIncrementMAX(
+      _minAuctionIncrementMAX: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setMinOrderDurationtMAX(
+      _minOrderDurationtMAX: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1750,7 +1874,6 @@ export interface MADMarketplace1155 extends BaseContract {
     ): Promise<BigNumber>;
 
     withdrawERC20(
-      _token: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1768,6 +1891,10 @@ export interface MADMarketplace1155 extends BaseContract {
 
   populateTransaction: {
     MADFactory(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    MAX_FEES(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    MAX_ROYALTY_FEE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     basisPoints(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1830,10 +1957,6 @@ export interface MADMarketplace1155 extends BaseContract {
 
     feeTier(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    feeVal2(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    feeVal3(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     fixedPrice(
       _token: PromiseOrValue<string>,
       _id: PromiseOrValue<BigNumberish>,
@@ -1850,15 +1973,25 @@ export interface MADMarketplace1155 extends BaseContract {
 
     getOutbidBalance(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    maxFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     maxOrderDuration(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     minAuctionIncrement(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    minAuctionIncrementMAX(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     minBidValue(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     minOrderDuration(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    minOrderDurationtMAX(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1909,6 +2042,8 @@ export interface MADMarketplace1155 extends BaseContract {
 
     recipient(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    royaltyFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     sellerOrderLength(
       _seller: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -1920,8 +2055,18 @@ export interface MADMarketplace1155 extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     setFees(
-      _feeVal2: PromiseOrValue<BigNumberish>,
-      _feeVal3: PromiseOrValue<BigNumberish>,
+      _royaltyFee: PromiseOrValue<BigNumberish>,
+      _maxFee: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMinAuctionIncrementMAX(
+      _minAuctionIncrementMAX: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMinOrderDurationtMAX(
+      _minOrderDurationtMAX: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1968,7 +2113,6 @@ export interface MADMarketplace1155 extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     withdrawERC20(
-      _token: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

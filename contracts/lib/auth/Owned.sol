@@ -41,10 +41,11 @@ abstract contract Owned {
                              OWNERSHIP LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function setOwner(
-        address newOwner
-    ) public virtual onlyOwner {
-        owner = newOwner;
+    function setOwner(address newOwner) public onlyOwner {
+        require(newOwner != address(0), "Invalid owner");
+        assembly {
+            sstore(owner.slot, newOwner)
+        }
 
         emit OwnerUpdated(msg.sender, newOwner);
     }

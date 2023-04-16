@@ -24,7 +24,7 @@ import {
   dead,
   getOrderId721,
   madFixture721F,
-} from "../../utils/madFixtures";
+} from "../../../test/utils/madFixtures";
 
 describe("MADMarketplace721 - ERC20 Payments", () => {
   type WalletWithAddress = Wallet & SignerWithAddress;

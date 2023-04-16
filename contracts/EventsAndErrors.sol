@@ -10,6 +10,7 @@ interface EventsAndErrorsBase {
         address indexed newPaymentToken
     );
     event RecipientUpdated(address indexed newRecipient);
+    event FeesUpdated(uint256 feeVal2, uint256 feeVal3);
 }
 
 interface FactoryEventsAndErrorsBase is EventsAndErrorsBase {
@@ -156,8 +157,6 @@ interface MarketplaceEventsAndErrorsBase is
         uint256 amount
     );
 
-    event FeesUpdated(uint256 feeVal2, uint256 feeVal3);
-
     ////////////////////////////////////////////////////////////////
     //                           ERRORS                           //
     ////////////////////////////////////////////////////////////////
@@ -297,8 +296,6 @@ interface RouterEvents is EventsAndErrorsBase {
         bytes32 indexed _id,
         string indexed _baseURI
     );
-
-    event FeesUpdated(uint256 burnFees, uint256 mintFees);
 
     /// @dev 0xf7760f25
     error WrongPrice();

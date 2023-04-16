@@ -18,6 +18,7 @@ export interface FactoryEventsAndErrorsBaseInterface extends utils.Interface {
   functions: {};
 
   events: {
+    "FeesUpdated(uint256,uint256)": EventFragment;
     "MarketplaceUpdated(address)": EventFragment;
     "PaymentTokenUpdated(address)": EventFragment;
     "RecipientUpdated(address)": EventFragment;
@@ -26,6 +27,7 @@ export interface FactoryEventsAndErrorsBaseInterface extends utils.Interface {
     "SplitterCreated(address,uint256[],address[],address,uint256)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "FeesUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MarketplaceUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PaymentTokenUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RecipientUpdated"): EventFragment;
@@ -33,6 +35,17 @@ export interface FactoryEventsAndErrorsBaseInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "SignerUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SplitterCreated"): EventFragment;
 }
+
+export interface FeesUpdatedEventObject {
+  feeVal2: BigNumber;
+  feeVal3: BigNumber;
+}
+export type FeesUpdatedEvent = TypedEvent<
+  [BigNumber, BigNumber],
+  FeesUpdatedEventObject
+>;
+
+export type FeesUpdatedEventFilter = TypedEventFilter<FeesUpdatedEvent>;
 
 export interface MarketplaceUpdatedEventObject {
   newMarket: string;
@@ -126,6 +139,12 @@ export interface FactoryEventsAndErrorsBase extends BaseContract {
   callStatic: {};
 
   filters: {
+    "FeesUpdated(uint256,uint256)"(
+      feeVal2?: null,
+      feeVal3?: null
+    ): FeesUpdatedEventFilter;
+    FeesUpdated(feeVal2?: null, feeVal3?: null): FeesUpdatedEventFilter;
+
     "MarketplaceUpdated(address)"(
       newMarket?: PromiseOrValue<string> | null
     ): MarketplaceUpdatedEventFilter;

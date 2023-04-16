@@ -22,6 +22,7 @@ export interface FactoryEventsAndErrors1155Interface extends utils.Interface {
     "ERC1155LazyCreated(address,address,string,string,uint256,uint256,uint256)": EventFragment;
     "ERC1155MinimalCreated(address,address,string,string,uint256,uint256,uint256)": EventFragment;
     "ERC1155WhitelistCreated(address,address,string,string,uint256,uint256,uint256)": EventFragment;
+    "FeesUpdated(uint256,uint256)": EventFragment;
     "MarketplaceUpdated(address)": EventFragment;
     "PaymentTokenUpdated(address)": EventFragment;
     "RecipientUpdated(address)": EventFragment;
@@ -34,6 +35,7 @@ export interface FactoryEventsAndErrors1155Interface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "ERC1155LazyCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ERC1155MinimalCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ERC1155WhitelistCreated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "FeesUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MarketplaceUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PaymentTokenUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RecipientUpdated"): EventFragment;
@@ -109,6 +111,17 @@ export type ERC1155WhitelistCreatedEvent = TypedEvent<
 
 export type ERC1155WhitelistCreatedEventFilter =
   TypedEventFilter<ERC1155WhitelistCreatedEvent>;
+
+export interface FeesUpdatedEventObject {
+  feeVal2: BigNumber;
+  feeVal3: BigNumber;
+}
+export type FeesUpdatedEvent = TypedEvent<
+  [BigNumber, BigNumber],
+  FeesUpdatedEventObject
+>;
+
+export type FeesUpdatedEventFilter = TypedEventFilter<FeesUpdatedEvent>;
 
 export interface MarketplaceUpdatedEventObject {
   newMarket: string;
@@ -277,6 +290,12 @@ export interface FactoryEventsAndErrors1155 extends BaseContract {
       maxSupply?: null,
       mintPrice?: null
     ): ERC1155WhitelistCreatedEventFilter;
+
+    "FeesUpdated(uint256,uint256)"(
+      feeVal2?: null,
+      feeVal3?: null
+    ): FeesUpdatedEventFilter;
+    FeesUpdated(feeVal2?: null, feeVal3?: null): FeesUpdatedEventFilter;
 
     "MarketplaceUpdated(address)"(
       newMarket?: PromiseOrValue<string> | null

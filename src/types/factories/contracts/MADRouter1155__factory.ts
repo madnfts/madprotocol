@@ -80,13 +80,13 @@ const _abi = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "burnFees",
+        name: "feeVal2",
         type: "uint256",
       },
       {
         indexed: false,
         internalType: "uint256",
-        name: "mintFees",
+        name: "feeVal3",
         type: "uint256",
       },
     ],

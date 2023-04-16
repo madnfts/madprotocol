@@ -181,7 +181,7 @@ async function _deployShared(
 // Base 721 fixture
 async function createMadFixture721(
   erc20?: MockERC20,
-  erc20RouterAddress?: string,
+  swapRouterAddress?: string,
 ): Promise<MADFixture721 | MADFixture721ERC20> {
   var erc20Address;
   // common setup
@@ -194,15 +194,13 @@ async function createMadFixture721(
 
   const m721 = (await Marketplace.deploy(
     owner[0],
-    300,
-    dead,
     erc20Address || dead,
-    erc20RouterAddress || dead,
+    swapRouterAddress || dead,
   )) as MADMarketplace721;
 
   const f721 = (await Factory.deploy(
     m721.address,
-    ethers.constants.AddressZero,
+    dead,
     owner[0],
     erc20Address || dead,
   )) as MADFactory721;
@@ -225,7 +223,7 @@ async function createMadFixture721(
 // Base 1155 fixture
 async function createMadFixture1155(
   erc20?: MockERC20,
-  erc20RouterAddress?: string,
+  swapRouterAddress?: string,
 ): Promise<MADFixture1155 | MADFixture1155ERC20> {
   var erc20Address;
   // common setup
@@ -238,15 +236,13 @@ async function createMadFixture1155(
 
   const m1155 = (await Marketplace.deploy(
     owner[0],
-    300,
-    dead,
     erc20Address || dead,
-    erc20RouterAddress || dead,
+    swapRouterAddress || dead,
   )) as MADMarketplace1155;
 
   const f1155 = (await Factory.deploy(
     m1155.address,
-    ethers.constants.AddressZero,
+    dead,
     owner[0],
     erc20Address || dead,
   )) as MADFactory1155;

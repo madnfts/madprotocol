@@ -98,7 +98,7 @@ describe("MADMarketplace721", () => {
     });
   });
   describe("Owner Functions", async () => {
-    it("Should update factory address", async () => {
+    it("Should update factory address and revert with 0x0", async () => {
       const tx = await m721.setFactory(r721.address);
 
       expect(tx).to.be.ok;
@@ -108,7 +108,15 @@ describe("MADMarketplace721", () => {
       await expect(
         m721.connect(acc01).setFactory(acc01.address),
       ).to.be.revertedWith(MarketplaceErrors.Unauthorized);
+
+      await expect(
+        m721.connect(owner).setFactory(dead),
+      ).to.be.revertedWithCustomError(
+        m721,
+        MarketplaceErrors.ZeroAddress,
+      );
     });
+
     it("Should update marketplace settings", async () => {
       const tx = await m721.updateSettings(
         600,

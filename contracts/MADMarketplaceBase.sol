@@ -37,12 +37,9 @@ abstract contract MADMarketplaceBase is
     ISwapRouter public immutable swapRouter;
     uint24 public constant feeTier = 3000;
 
-    // 0x8b30951df380b6b10da747e1167dd8e40bf8604c88c75b245dc172767f3b7320;
-    uint256 public feeVal2 = 1.0e3;
-    uint256 public feeVal3 = 2.5e2;
+    uint256 public royaltyFee = 1.0e3; // 10 %
+    uint256 public maxFee = 2.5e2; //  2.5%
 
-    // uint16 public constant feePercent1 = 2.5e2;
-    // uint16 public constant feePercent0 = 1.0e3;
     uint16 public constant basisPoints = 1.0e4;
 
     /// @dev when user is outbid on an erc20, deposit here and let the user withdraw it
@@ -51,9 +48,12 @@ abstract contract MADMarketplaceBase is
     /// @dev seller => orderID
     mapping(address => bytes32[]) public orderIdBySeller;
 
-    // /// @dev token => tokenId => amount => case0(feePercent0)/case1(feePercent1)
-    // mapping(uint256 => mapping(uint256 => mapping(uint256 => bool)))
-    //     public feeSelector;
+    uint public minAuctionIncrementMAX = 1200;
+    uint public minOrderDurationtMAX = 600;
+
+    // max fees, 15% for royalties, 5% for fees
+    uint public MAX_ROYALTY_FEE = 1.5e3;
+    uint public MAX_FEES = 5.0e2;
 
     uint256 public minOrderDuration;
     uint256 public minAuctionIncrement;
@@ -73,13 +73,19 @@ abstract contract MADMarketplaceBase is
 
     constructor(
         address _recipient,
-        uint256 _minOrderDuration,
-        FactoryVerifier _factory,
         address _paymentTokenAddress,
         address _swapRouter
     ) {
-        setFactory(_factory);
         setRecipient(_recipient);
+
+        // init settings
+        updateSettings(
+            300, // 5 min
+            300, // 5 min
+            20, // 5% (1/20th)
+            31536000 // 24 months
+        );
+
         swapRouter = ISwapRouter(_swapRouter);
 
         if (_paymentTokenAddress != address(0)) {
@@ -96,12 +102,6 @@ abstract contract MADMarketplaceBase is
                 2 ** 256 - 1
             );
         }
-        updateSettings(
-            300, // 5 min
-            _minOrderDuration,
-            20, // 5% (1/20th)
-            31536000 // 24 months
-        );
     }
 
     receive() external payable {}
@@ -110,34 +110,51 @@ abstract contract MADMarketplaceBase is
     //                         OWNER FX                           //
     ////////////////////////////////////////////////////////////////
 
+    // Setter for minAuctionIncrementMAX
+    function setMinAuctionIncrementMAX(
+        uint _minAuctionIncrementMAX
+    ) public onlyOwner {
+        minAuctionIncrementMAX = _minAuctionIncrementMAX;
+    }
+
+    // Setter for minOrderDurationtMAX
+    function setMinOrderDurationtMAX(
+        uint _minOrderDurationtMAX
+    ) public onlyOwner {
+        minOrderDurationtMAX = _minOrderDurationtMAX;
+    }
+
     /// @dev `MADFactory` instance setter.
     /// @dev Function Signature := 0x612990fe
     function setFactory(
         FactoryVerifier _factory
     ) public onlyOwner {
         assembly {
-            // MADFactory = _factory;
+            if iszero(_factory) {
+                mstore(0x00, 0xd92e233d)
+                revert(0x1c, 0x04)
+            }
             sstore(MADFactory.slot, _factory)
         }
         emit FactoryUpdated(_factory);
     }
 
     function setFees(
-        uint256 _feeVal2,
-        uint256 _feeVal3
-    ) external onlyOwner {
-        // max fees, 15% for royalties, 5% for fees
+        uint256 _royaltyFee,
+        uint256 _maxFee
+    ) public onlyOwner {
         require(
-            _feeVal2 <= 1.5e3 && _feeVal3 <= 5.0e2,
+            _royaltyFee <= MAX_ROYALTY_FEE &&
+                _maxFee <= MAX_FEES,
             "Invalid Fees"
         );
 
         assembly {
-            sstore(feeVal2.slot, _feeVal2)
-            sstore(feeVal3.slot, _feeVal3)
+            sstore(royaltyFee.slot, _royaltyFee)
+            sstore(maxFee.slot, _maxFee)
         }
 
-        emit FeesUpdated(_feeVal2, _feeVal3);
+        emit FeesUpdated(_royaltyFee, _maxFee);
     }
 
     /// @notice Marketplace config setter.
@@ -157,10 +174,16 @@ abstract contract MADMarketplaceBase is
         // minAuctionIncrement = _minAuctionIncrement;
         // minBidValue = _minBidValue;
         // maxOrderDuration = _maxOrderDuration;
+
+        // C.3 & D.3 BlockHat Audit
+        // Allow anything greater than 10 and less than the amount configured.
         require(
-            (_minAuctionIncrement <= 1200 &&
-                _minOrderDuration <= 600 &&
-                _minBidValue > 0) ||
+            (_minAuctionIncrement >= 10 &&
+                _minOrderDuration >= 10 &&
+                _minAuctionIncrement <=
+                minAuctionIncrementMAX &&
+                _minOrderDuration <= minOrderDurationtMAX &&
+                _minBidValue > 0) &&
                 _maxOrderDuration >= _minOrderDuration,
             "Invalid Settings"
         );
@@ -185,13 +208,13 @@ abstract contract MADMarketplaceBase is
 
     /// @notice Paused state initializer for security risk mitigation pratice.
     /// @dev Function Signature := 0x8456cb59
-    function pause() external onlyOwner {
+    function pause() public onlyOwner {
         _pause();
     }
 
     /// @notice Unpaused state initializer for security risk mitigation pratice.
     /// @dev Function Signature := 0x3f4ba83a
-    function unpause() external onlyOwner {
+    function unpause() public onlyOwner {
         _unpause();
     }
 
@@ -227,70 +250,58 @@ abstract contract MADMarketplaceBase is
         emit RecipientUpdated(_recipient);
     }
 
-    /// @dev Function Signature := 0x13af4035
-    function setOwner(
-        address newOwner
-    ) public override onlyOwner {
-        require(newOwner != address(0), "Invalid owner");
-
-        // owner = newOwner;
-        assembly {
-            sstore(owner.slot, newOwner)
-        }
-
-        emit OwnerUpdated(msg.sender, newOwner);
-    }
-
     /// @dev Function Signature := 0x3ccfd60b
-    function withdraw() external onlyOwner whenPaused {
+    function withdraw() external onlyOwner {
+        // C.5 & D.5 BlockHat audit - remove whenPaused
+        uint withdrawAmount = address(this).balance;
         require(
-            address(this).balance - totalOutbid > 0,
+            withdrawAmount - totalOutbid > 0,
             "No balance to withdraw"
         );
         SafeTransferLib.safeTransferETH(
             msg.sender,
-            address(this).balance - totalOutbid
+            withdrawAmount - totalOutbid
         );
     }
 
-    function withdrawERC20(
-        ERC20 _token
-    ) external onlyOwner whenPaused {
+    function withdrawERC20() external onlyOwner {
+        // C.2 & D.2 BlockHat audit - remove _token (It is immutable by design)
+        // C.5 & D.5 BlockHat audit - remove whenPaused
+        uint withdrawAmount = erc20.balanceOf(address(this));
+
         require(
-            _token.balanceOf(address(this)) - totalOutbid > 0,
+            withdrawAmount - totalOutbid > 0,
             "No balance to withdraw"
         );
         SafeTransferLib.safeTransfer(
-            _token,
+            erc20,
             msg.sender,
-            _token.balanceOf(address(this)) - totalOutbid
+            withdrawAmount - totalOutbid
         );
     }
 
     /// @dev when outbid (eth) the user must withdraw manually.
     function withdrawOutbidEth() external {
-        require(
-            userOutbid[msg.sender] > 0,
-            "nothing to withdraw"
-        );
+        uint256 amountOut = userOutbid[msg.sender];
+        require(amountOut > 0, "nothing to withdraw");
         require(
             address(erc20) == address(0),
             "cannot withdraw eth"
         );
 
-        uint256 amountOut = userOutbid[msg.sender];
         userOutbid[msg.sender] = 0;
         totalOutbid -= amountOut;
 
-        SafeTransferLib.safeTransferETH(
-            msg.sender,
-            amountOut
-        );
         emit WithdrawOutbid(
             msg.sender,
             address(0),
             amountOut
         ); // amount withdrawn
+
+        SafeTransferLib.safeTransferETH(
+            msg.sender,
+            amountOut
+        );
     }
 
     function withdrawOutbid(
@@ -298,16 +309,10 @@ abstract contract MADMarketplaceBase is
         uint256 minOut,
         uint160 priceLimit
     ) external {
-        _withdrawOutbid(
-            msg.sender,
-            _token,
-            minOut,
-            priceLimit
-        );
+        _withdrawOutbid(_token, minOut, priceLimit);
     }
 
     function _withdrawOutbid(
-        address _sender,
         ERC20 _token,
         uint256 minOut,
         uint160 priceLimit
@@ -318,22 +323,22 @@ abstract contract MADMarketplaceBase is
             "not erc20"
         );
         require(
-            userOutbid[_sender] > 0,
+            userOutbid[msg.sender] > 0,
             "nothing to withdraw"
         );
 
-        uint256 amountIn = userOutbid[_sender];
-        userOutbid[_sender] = 0;
+        uint256 amountIn = userOutbid[msg.sender];
+        userOutbid[msg.sender] = 0;
         totalOutbid -= amountIn;
 
         if (_token == erc20) {
             SafeTransferLib.safeTransfer(
                 _token,
-                _sender,
+                msg.sender,
                 amountIn
             );
             emit WithdrawOutbid(
-                _sender,
+                msg.sender,
                 address(_token),
                 amountIn
             ); // amount withdrawn
@@ -351,8 +356,8 @@ abstract contract MADMarketplaceBase is
                     tokenIn: address(erc20),
                     tokenOut: address(_token),
                     fee: feeTier,
-                    recipient: _sender,
-                    deadline: block.timestamp,
+                    recipient: msg.sender,
+                    deadline: block.timestamp + 60, // 1 minute from now
                     amountIn: amountIn,
                     amountOutMinimum: minOut,
                     sqrtPriceLimitX96: priceLimit
@@ -362,7 +367,7 @@ abstract contract MADMarketplaceBase is
             params
         );
         emit WithdrawOutbid(
-            _sender,
+            msg.sender,
             address(_token),
             amountOut
         ); // amount withdrawn

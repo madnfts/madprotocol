@@ -72,6 +72,11 @@ const _abi = [
     type: "error",
   },
   {
+    inputs: [],
+    name: "ZeroAddress",
+    type: "error",
+  },
+  {
     anonymous: false,
     inputs: [
       {
@@ -270,6 +275,32 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "MAX_FEES",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "MAX_ROYALTY_FEE",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "basisPoints",
     outputs: [
       {
@@ -309,37 +340,24 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "feeVal2",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "feeVal3",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
     name: "getOutbidBalance",
     outputs: [
       {
         internalType: "uint256",
         name: "balance",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "maxFee",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
         type: "uint256",
       },
     ],
@@ -374,6 +392,19 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "minAuctionIncrementMAX",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "minBidValue",
     outputs: [
       {
@@ -388,6 +419,19 @@ const _abi = [
   {
     inputs: [],
     name: "minOrderDuration",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "minOrderDurationtMAX",
     outputs: [
       {
         internalType: "uint256",
@@ -482,6 +526,19 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "royaltyFee",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "address",
@@ -517,16 +574,42 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_feeVal2",
+        name: "_royaltyFee",
         type: "uint256",
       },
       {
         internalType: "uint256",
-        name: "_feeVal3",
+        name: "_maxFee",
         type: "uint256",
       },
     ],
     name: "setFees",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_minAuctionIncrementMAX",
+        type: "uint256",
+      },
+    ],
+    name: "setMinAuctionIncrementMAX",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_minOrderDurationtMAX",
+        type: "uint256",
+      },
+    ],
+    name: "setMinOrderDurationtMAX",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -645,13 +728,7 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "contract ERC20",
-        name: "_token",
-        type: "address",
-      },
-    ],
+    inputs: [],
     name: "withdrawERC20",
     outputs: [],
     stateMutability: "nonpayable",

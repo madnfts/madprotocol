@@ -90,6 +90,13 @@ describe("MADMarketplace1155", () => {
       await expect(
         m1155.connect(acc01).setFactory(acc01.address),
       ).to.be.revertedWith(MarketplaceErrors.Unauthorized);
+
+      await expect(
+        m1155.connect(owner).setFactory(dead),
+      ).to.be.revertedWithCustomError(
+        m1155,
+        MarketplaceErrors.ZeroAddress,
+      );
     });
     it("Should update marketplace settings", async () => {
       const tx = await m1155.updateSettings(

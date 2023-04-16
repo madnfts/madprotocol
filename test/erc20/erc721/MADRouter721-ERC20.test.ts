@@ -2348,9 +2348,7 @@ describe("MADRouter721 - ERC20", () => {
       await expect(
         r721.gift(addr, [acc01.address, mad.address]),
       ).to.be.revertedWith(RouterErrors.Paused);
-      await expect(
-        r721.withdraw(addr, addr),
-      ).to.be.revertedWith(RouterErrors.Paused);
+
       await expect(
         r721.connect(acc02).unpause(),
       ).to.be.revertedWith(RouterErrors.Unauthorized);

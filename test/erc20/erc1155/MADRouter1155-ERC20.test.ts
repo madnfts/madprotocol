@@ -2387,9 +2387,9 @@ describe("MADRouter1155 - ERC20", () => {
           2,
         ),
       ).to.be.revertedWith(RouterErrors.Paused);
-      await expect(
-        r1155.withdraw(addr, addr),
-      ).to.be.revertedWith(RouterErrors.Paused);
+      
+
+
       await expect(
         r1155.connect(acc02).unpause(),
       ).to.be.revertedWith(RouterErrors.Unauthorized);

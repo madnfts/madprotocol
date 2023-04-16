@@ -41,16 +41,16 @@ contract MADRouter721 is
     bytes4 internal constant MINBURN = 0x44df8e70;
 
     /// @notice Mint fee store.
-    uint256 public feeMint = 0.25 ether;
+    uint256 public feeMint = 0;
 
     /// @notice Burn fee store.
     uint256 public feeBurn = 0;
 
-    /// @notice max fee that can be set for mint, configured on constructor
-    uint256 public maxFeeMint;
+    /// @notice max fee that can be set for mint
+    uint256 public maxFeeMint = 2.5 ether;
 
-    /// @notice max fee that can be set for burn, configured on constructor
-    uint256 public maxFeeBurn;
+    /// @notice max fee that can be set for burn
+    uint256 public maxFeeBurn = 0.5 ether;
 
     /// @dev The recipient address used for public mint fees.
     address public recipient;
@@ -78,21 +78,15 @@ contract MADRouter721 is
     /// @param _factory 721 factory address.
     /// @param _paymentTokenAddress erc20 token address | address(0).
     /// @param _recipient 721 factory address.
-    /// @param _maxFeeMint max fee contract owner can set for minting
-    /// @param _maxFeeBurnt max fee contract owner can set for burning
+    // A.1 - Remove maxFeeMint &  maxFeeBurn from constructor
     constructor(
         FactoryVerifier _factory,
         address _paymentTokenAddress,
-        address _recipient,
-        uint256 _maxFeeMint,
-        uint256 _maxFeeBurnt
+        address _recipient
     ) {
-        require(
-            _maxFeeMint > 0 && _maxFeeBurnt > 0,
-            "Invalid max fee settings"
-        );
-        maxFeeMint = _maxFeeMint;
-        maxFeeBurn = _maxFeeBurnt;
+        // A.3 BlockHat Audit
+        feeMint = 0.25 ether;
+
         MADFactory721 = _factory;
         if (_paymentTokenAddress != address(0)) {
             _setPaymentToken(_paymentTokenAddress);
@@ -363,10 +357,11 @@ contract MADRouter721 is
     ///      Function Sighash := 0xf940e385
     /// @param _token 721 token address.
     /// @param _erc20 ERC20 token address.
+    // A.2 BlockHat Audit  -remove whenPaused
     function withdraw(
         address _token,
         ERC20 _erc20
-    ) external nonReentrant whenNotPaused {
+    ) external nonReentrant {
         (bytes32 _colID, uint8 _tokenType) = _tokenRender(
             _token
         );

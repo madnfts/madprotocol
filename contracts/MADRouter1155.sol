@@ -41,7 +41,7 @@ contract MADRouter1155 is
     bytes4 internal constant MINBURN = 0x44df8e70;
 
     /// @notice Mint fee store.
-    uint256 public feeMint = 0.25 ether;
+    uint256 public feeMint = 0;
 
     /// @notice Burn fee store.
     uint256 public feeBurn = 0;
@@ -49,11 +49,11 @@ contract MADRouter1155 is
     /// @dev The recipient address used for public mint fees.
     address public recipient;
 
-    /// @notice max fee that can be set for mint, configured on constructor
-    uint256 public maxFeeMint;
+    /// @notice max fee that can be set for mint - B.1 remove from constructor
+    uint256 public maxFeeMint = 2.5 ether;
 
-    /// @notice max fee that can be set for burn, configured on constructor
-    uint256 public maxFeeBurn;
+    /// @notice max fee that can be set for burn - B.1 remove from constructor
+    uint256 public maxFeeBurn = 0.5 ether;
 
     /// @notice Contract name.
     /// @dev Function Sighash := 0x06fdde03
@@ -78,21 +78,15 @@ contract MADRouter1155 is
     /// @param _factory 1155 factory address.
     /// @param _paymentTokenAddress erc20 token address | address(0).
     /// @param _recipient 721 factory address.
-    /// @param _maxFeeMint max fee contract owner can set for minting
-    /// @param _maxFeeBurnt max fee contract owner can set for burning
+    // B.1 - Remove maxFeeMint &  maxFeeBurn from constructor
     constructor(
         FactoryVerifier _factory,
         address _paymentTokenAddress,
-        address _recipient,
-        uint256 _maxFeeMint,
-        uint256 _maxFeeBurnt
+        address _recipient
     ) {
-        require(
-            _maxFeeMint > 0 && _maxFeeBurnt > 0,
-            "Invalid max fee settings"
-        );
-        maxFeeMint = _maxFeeMint;
-        maxFeeBurn = _maxFeeBurnt;
+        // B.3 BlockHat Audit
+        feeMint = 0.25 ether;
+
         MADFactory1155 = _factory;
         if (_paymentTokenAddress != address(0)) {
             _setPaymentToken(_paymentTokenAddress);
@@ -481,10 +475,11 @@ contract MADRouter1155 is
     ///      Function Sighash := 0xf940e385
     /// @param _token 1155 token address.
     /// @param _erc20 ERC20 token address.
+    // B.2 BlockHat Audit  -remove whenPaused
     function withdraw(
         address _token,
         ERC20 _erc20
-    ) external nonReentrant whenNotPaused {
+    ) external nonReentrant {
         (bytes32 _colID, uint8 _tokenType) = _tokenRender(
             _token
         );
@@ -721,11 +716,6 @@ contract MADRouter1155 is
             _feeMint <= maxFeeMint && _feeBurn <= maxFeeBurn,
             "Invalid fee settings, beyond max"
         );
-
-        // require(
-        //     _feeMint < 50 ether && _feeBurn < 50 ether,
-        //     "Invalid Fees"
-        // );
         assembly {
             sstore(feeBurn.slot, _feeBurn)
             sstore(feeMint.slot, _feeMint)

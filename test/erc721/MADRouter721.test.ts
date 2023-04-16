@@ -49,6 +49,7 @@ describe("MADRouter721", () => {
   const price: BigNumber = ethers.utils.parseEther("1");
 
   before("Set signers and reset network", async () => {
+    console.log(ethers.utils.parseEther("2.5"));
     [owner, amb, mad, acc01, acc02] =
       await // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (ethers as any).getSigners();
@@ -2463,9 +2464,7 @@ describe("MADRouter721", () => {
       await expect(
         r721.gift(addr, [acc01.address, mad.address]),
       ).to.be.revertedWith(RouterErrors.Paused);
-      await expect(
-        r721.withdraw(addr, addr),
-      ).to.be.revertedWith(RouterErrors.Paused);
+
       await expect(
         r721.connect(acc02).unpause(),
       ).to.be.revertedWith(RouterErrors.Unauthorized);

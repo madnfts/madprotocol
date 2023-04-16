@@ -91,19 +91,22 @@ contract MADFactory1155 is MAD,
     constructor
     (
         address _marketplace, 
-        address _router, 
         address _signer,
         address _paymentTokenAddress
     )
     {
+        // F.1 BlockHat Audit
+        require(
+            _marketplace != address(0) &&
+                _signer != address(0),
+            "ZeroAddress"
+        );
         setMarket(_marketplace);
         setSigner(_signer);
         if (_paymentTokenAddress != address(0)) {
             _setPaymentToken(_paymentTokenAddress);
         }
 
-        router = _router;
-        emit RouterUpdated(_router);
     }
 
     /// @notice Enables the contract's owner to change payment token address.

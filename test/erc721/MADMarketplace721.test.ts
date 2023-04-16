@@ -17,9 +17,8 @@ import {
 import {
   artifacts,
   ethers,
-  network, // tracer 
+  network, // tracer
 } from "hardhat";
-
 
 import {
   MADFactory721,
@@ -207,12 +206,9 @@ describe("MADMarketplace721", () => {
       expect(tx).to.be.ok;
       expect(bal1).to.be.lt(bal2);
 
-
       await expect(m721.withdraw()).to.be.revertedWith(
         MarketplaceErrors.NoBalanceToWithdraw,
       );
-
-
     });
     it("Should delete order", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);

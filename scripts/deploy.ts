@@ -72,7 +72,6 @@ const main = async () => {
   );
   const f721 = await MADFactory721.deploy(
     m721.address, // marketplace addr
-    ethers.constants.AddressZero, // router addr
     deployer.address, // lazy signer addr
     erc20Address,
   );
@@ -86,8 +85,6 @@ const main = async () => {
     f721.address,
     erc20Address,
     deployer.address, // public mint fee address
-    1, // max mint
-    1, // max burn
   );
   console.log(`ERC721 Router address: ${r721.address}`);
 
@@ -117,7 +114,6 @@ const main = async () => {
   );
   const f1155 = await MADFactory1155.deploy(
     m1155.address, // marketplace addr
-    ethers.constants.AddressZero, // router addr
     deployer.address, // lazy signer addr
     erc20Address, // ERC20 payment token addr
   );
@@ -130,8 +126,6 @@ const main = async () => {
     f1155.address,
     erc20Address,
     deployer.address, // public mint fee address
-    1, // max mint
-    1, // max burn
   );
   console.log(`ERC1155 Router address: ${r1155.address}`);
 

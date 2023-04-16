@@ -200,7 +200,6 @@ async function createMadFixture721(
 
   const f721 = (await Factory.deploy(
     m721.address,
-    dead,
     owner[0],
     erc20Address || dead,
   )) as MADFactory721;
@@ -209,8 +208,6 @@ async function createMadFixture721(
     f721.address,
     erc20Address || dead,
     owner[0],
-    ethers.utils.parseEther("2.5"),
-    ethers.utils.parseEther("0.5"),
   )) as MADRouter721;
 
   await f721.setRouter(r721.address);
@@ -242,7 +239,6 @@ async function createMadFixture1155(
 
   const f1155 = (await Factory.deploy(
     m1155.address,
-    dead,
     owner[0],
     erc20Address || dead,
   )) as MADFactory1155;
@@ -251,8 +247,6 @@ async function createMadFixture1155(
     f1155.address,
     erc20Address || dead,
     owner[0],
-    ethers.utils.parseEther("2.5"),
-    ethers.utils.parseEther("0.5"),
   )) as MADRouter1155;
 
   await f1155.setRouter(r1155.address);

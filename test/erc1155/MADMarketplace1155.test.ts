@@ -61,7 +61,7 @@ describe("MADMarketplace1155", () => {
     ({ f1155, m1155, r1155 } = await loadFixture(
       madFixture1155C,
     ));
-    await r1155.deployed(); 
+    await r1155.deployed();
     await m1155.deployed();
     await f1155.deployed();
   });
@@ -182,7 +182,6 @@ describe("MADMarketplace1155", () => {
       ).to.be.revertedWith(MarketplaceErrors.Unauthorized);
     });
 
-
     it("Should withdraw to owner", async () => {
       const bal1 = await owner.getBalance();
 
@@ -200,7 +199,6 @@ describe("MADMarketplace1155", () => {
         MarketplaceErrors.NoBalanceToWithdraw,
       );
     });
-
 
     it("Should delete order", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);

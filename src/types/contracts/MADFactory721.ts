@@ -221,6 +221,7 @@ export interface MADFactory721Interface extends utils.Interface {
     "ERC721LazyCreated(address,address,string,string,uint256,uint256,uint256)": EventFragment;
     "ERC721MinimalCreated(address,address,string,string,uint256,uint256,uint256)": EventFragment;
     "ERC721WhitelistCreated(address,address,string,string,uint256,uint256,uint256)": EventFragment;
+    "FeesUpdated(uint256,uint256)": EventFragment;
     "MarketplaceUpdated(address)": EventFragment;
     "OwnerUpdated(address,address)": EventFragment;
     "Paused(address)": EventFragment;
@@ -236,6 +237,7 @@ export interface MADFactory721Interface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "ERC721LazyCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ERC721MinimalCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ERC721WhitelistCreated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "FeesUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MarketplaceUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnerUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
@@ -314,6 +316,17 @@ export type ERC721WhitelistCreatedEvent = TypedEvent<
 
 export type ERC721WhitelistCreatedEventFilter =
   TypedEventFilter<ERC721WhitelistCreatedEvent>;
+
+export interface FeesUpdatedEventObject {
+  feeVal2: BigNumber;
+  feeVal3: BigNumber;
+}
+export type FeesUpdatedEvent = TypedEvent<
+  [BigNumber, BigNumber],
+  FeesUpdatedEventObject
+>;
+
+export type FeesUpdatedEventFilter = TypedEventFilter<FeesUpdatedEvent>;
 
 export interface MarketplaceUpdatedEventObject {
   newMarket: string;
@@ -887,6 +900,12 @@ export interface MADFactory721 extends BaseContract {
       maxSupply?: null,
       mintPrice?: null
     ): ERC721WhitelistCreatedEventFilter;
+
+    "FeesUpdated(uint256,uint256)"(
+      feeVal2?: null,
+      feeVal3?: null
+    ): FeesUpdatedEventFilter;
+    FeesUpdated(feeVal2?: null, feeVal3?: null): FeesUpdatedEventFilter;
 
     "MarketplaceUpdated(address)"(
       newMarket?: PromiseOrValue<string> | null

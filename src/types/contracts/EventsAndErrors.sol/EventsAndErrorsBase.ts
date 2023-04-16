@@ -12,19 +12,32 @@ import type {
 } from "../../common";
 import type { EventFragment } from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
-import type { BaseContract, Signer, utils } from "ethers";
+import type { BaseContract, BigNumber, Signer, utils } from "ethers";
 
 export interface EventsAndErrorsBaseInterface extends utils.Interface {
   functions: {};
 
   events: {
+    "FeesUpdated(uint256,uint256)": EventFragment;
     "PaymentTokenUpdated(address)": EventFragment;
     "RecipientUpdated(address)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "FeesUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PaymentTokenUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RecipientUpdated"): EventFragment;
 }
+
+export interface FeesUpdatedEventObject {
+  feeVal2: BigNumber;
+  feeVal3: BigNumber;
+}
+export type FeesUpdatedEvent = TypedEvent<
+  [BigNumber, BigNumber],
+  FeesUpdatedEventObject
+>;
+
+export type FeesUpdatedEventFilter = TypedEventFilter<FeesUpdatedEvent>;
 
 export interface PaymentTokenUpdatedEventObject {
   newPaymentToken: string;
@@ -79,6 +92,12 @@ export interface EventsAndErrorsBase extends BaseContract {
   callStatic: {};
 
   filters: {
+    "FeesUpdated(uint256,uint256)"(
+      feeVal2?: null,
+      feeVal3?: null
+    ): FeesUpdatedEventFilter;
+    FeesUpdated(feeVal2?: null, feeVal3?: null): FeesUpdatedEventFilter;
+
     "PaymentTokenUpdated(address)"(
       newPaymentToken?: PromiseOrValue<string> | null
     ): PaymentTokenUpdatedEventFilter;

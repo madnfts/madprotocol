@@ -5,14 +5,7 @@ pragma solidity 0.8.16;
 import { FactoryVerifier } from "./lib/auth/FactoryVerifier.sol";
 import { IERC721, IERC1155 } from "./Types.sol";
 
-interface EventsAndErrorsBase {
-    event PaymentTokenUpdated(
-        address indexed newPaymentToken
-    );
-    event RecipientUpdated(address indexed newRecipient);
-}
-
-interface FactoryEventsAndErrorsBase is EventsAndErrorsBase {
+interface FactoryEventsAndErrors721 {
     ////////////////////////////////////////////////////////////////
     //                           EVENTS                           //
     ////////////////////////////////////////////////////////////////
@@ -156,8 +149,6 @@ interface MarketplaceEventsAndErrorsBase is
         uint256 amount
     );
 
-    event FeesUpdated(uint256 feeVal2, uint256 feeVal3);
-
     ////////////////////////////////////////////////////////////////
     //                           ERRORS                           //
     ////////////////////////////////////////////////////////////////
@@ -299,6 +290,12 @@ interface RouterEvents is EventsAndErrorsBase {
     );
 
     event FeesUpdated(uint256 burnFees, uint256 mintFees);
+
+    event PaymentTokenUpdated(
+        address indexed newPaymentToken
+    );
+
+    event RecipientUpdated(address indexed newRecipient);
 
     /// @dev 0xf7760f25
     error WrongPrice();

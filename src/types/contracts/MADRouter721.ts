@@ -290,8 +290,8 @@ export type BaseURIEvent = TypedEvent<[string, string], BaseURIEventObject>;
 export type BaseURIEventFilter = TypedEventFilter<BaseURIEvent>;
 
 export interface FeesUpdatedEventObject {
-  burnFees: BigNumber;
-  mintFees: BigNumber;
+  feeVal2: BigNumber;
+  feeVal3: BigNumber;
 }
 export type FeesUpdatedEvent = TypedEvent<
   [BigNumber, BigNumber],
@@ -812,10 +812,10 @@ export interface MADRouter721 extends BaseContract {
     ): BaseURIEventFilter;
 
     "FeesUpdated(uint256,uint256)"(
-      burnFees?: null,
-      mintFees?: null
+      feeVal2?: null,
+      feeVal3?: null
     ): FeesUpdatedEventFilter;
-    FeesUpdated(burnFees?: null, mintFees?: null): FeesUpdatedEventFilter;
+    FeesUpdated(feeVal2?: null, feeVal3?: null): FeesUpdatedEventFilter;
 
     "FreeClaimState(bytes32,uint8,bool)"(
       _id?: PromiseOrValue<BytesLike> | null,

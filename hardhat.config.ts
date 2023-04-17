@@ -159,15 +159,31 @@ const config: HardhatUserConfig = {
     sources: "./contracts",
     tests: "./test",
   },
+
+  // solidity: {
+  //   version: "0.8.16",
+  //   settings: {
+  //     metadata: {
+  //       bytecodeHash: "none",
+  //     },
+  //     optimizer: {
+  //       enabled: true,
+  //       runs: 800,
+  //     },
+  //   },
+  // },
   solidity: {
     version: "0.8.16",
     settings: {
-      metadata: {
-        bytecodeHash: "none",
-      },
+      viaIR: true,
       optimizer: {
-        enabled: true,
-        runs: 800,
+        enabled: true, 
+        details: { 
+          yul: true,
+          yulDetails: {
+            stackAllocation: true, 
+          },
+        },
       },
     },
   },

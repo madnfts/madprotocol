@@ -6,10 +6,10 @@ import { MAD } from "./MAD.sol";
 import { RouterEvents, FactoryVerifier } from "./EventsAndErrors.sol";
 
 import { ERC20 } from "./lib/tokens/ERC20.sol";
-import { ERC1155Minimal } from "./lib/tokens/ERC1155/Impl/ERC1155Minimal.sol";
+// import { ERC1155Minimal } from "./lib/tokens/ERC1155/Impl/ERC1155Minimal.sol";
 import { ERC1155Basic } from "./lib/tokens/ERC1155/Impl/ERC1155Basic.sol";
-import { ERC1155Whitelist } from "./lib/tokens/ERC1155/Impl/ERC1155Whitelist.sol";
-import { ERC1155Lazy } from "./lib/tokens/ERC1155/Impl/ERC1155Lazy.sol";
+// import { ERC1155Whitelist } from "./lib/tokens/ERC1155/Impl/ERC1155Whitelist.sol";
+// import { ERC1155Lazy } from "./lib/tokens/ERC1155/Impl/ERC1155Lazy.sol";
 import { SafeTransferLib } from "./lib/utils/SafeTransferLib.sol";
 import { ReentrancyGuard } from "./lib/security/ReentrancyGuard.sol";
 import { Pausable } from "./lib/security/Pausable.sol";
@@ -44,7 +44,7 @@ contract MADRouter1155 is
     uint256 public feeMint = 0;
 
     /// @notice Burn fee store.
-    uint256 public feeBurn = 0;
+    uint256 public feeBurn /* = 0 */;
 
     /// @dev The recipient address used for public mint fees.
     address public recipient;
@@ -136,19 +136,23 @@ contract MADRouter1155 is
             _token
         );
 
-        if (_tokenType == 1) {
-            ERC1155Basic(_token).setURI(_uri);
-            emit BaseURI(_colID, _uri);
-        } else if (_tokenType == 2) {
-            ERC1155Whitelist(_token).setURI(_uri);
-            emit BaseURI(_colID, _uri);
-        } else if (_tokenType > 2) {
-            ERC1155Lazy(_token).setURI(_uri);
-            emit BaseURI(_colID, _uri);
-        } else {
+        // if (_tokenType == 1) {
+            _tokenType == 1 ?
+            ERC1155Basic(_token).setURI(_uri) :
             revert("INVALID_TYPE");
-        }
+            
+            emit BaseURI(_colID, _uri);
+        // } else if (_tokenType == 2) {
+            // ERC1155Whitelist(_token).setURI(_uri);
+            // emit BaseURI(_colID, _uri);
+        // } else if (_tokenType > 2) {
+            // ERC1155Lazy(_token).setURI(_uri);
+            // emit BaseURI(_colID, _uri);
+        // } else {
+        // }
     }
+
+
 
     /// @notice Collection baseURI locker preventing URI updates when set.
     ///      Cannot be unset!
@@ -161,51 +165,58 @@ contract MADRouter1155 is
     ) external nonReentrant whenNotPaused {
         (, uint8 _tokenType) = _tokenRender(_token);
 
-        if (_tokenType == 1) {
-            ERC1155Basic(_token).setURILock();
-        } else if (_tokenType == 2) {
-            ERC1155Whitelist(_token).setURILock();
-        } else if (_tokenType > 2) {
-            ERC1155Lazy(_token).setURILock();
-        } else {
-            revert("INVALID_TYPE");
-        }
-    }
+        _tokenType == 1 ?
+        ERC1155Basic(_token).setURILock() :
+        revert("INVALID_TYPE");
 
-    /// @notice Global MintState setter/controller
-    /// @dev Switch cases/control flow handling conditioned by both `_stateType` and `_tokenType`.
+        // if (_tokenType == 1) {
+        // } else if (_tokenType == 2) {
+            // ERC1155Whitelist(_token).setURILock();
+        // } else if (_tokenType > 2) {
+            // ERC1155Lazy(_token).setURILock();
+        // } else {
+        // }
+    }
+    
+    /// @notice Global MintState setter/controller  
+    /// @dev Switch cases/control flow handling conditioned by both `_stateType` and `_tokenType`. 
     ///      Events logged by each tokens' `setState` functions.
     ///      Function Sighash := 0xab9acd57
     /// @param _token 1155 token address.
     /// @param _state Set state to true or false.
-    /// @param _stateType Values:
+/*     /// @param _stateType Values:
     ///      0 := PublicMintState (minimal, basic, whitelist);
     ///      1 := WhitelistMintState (whitelist);
-    ///      2 := FreeClaimState (whitelist).
+    ///      2 := FreeClaimState (whitelist). */
     function setMintState(
         address _token,
-        bool _state,
-        uint8 _stateType
+        bool _state
+        // uint8 _stateType
     ) external nonReentrant whenNotPaused {
-        require(_stateType < 3, "INVALID_TYPE");
+        // require(_stateType < 3, "INVALID_TYPE");
         (bytes32 _colID, uint8 _tokenType) = _tokenRender(
             _token
         );
 
-        if (_stateType < 1) {
-            _stateType0(_tokenType, _token, _state);
+            _tokenType == 1 ? 
+            ERC1155Basic(_token).setPublicMintState(_state) :
+            revert("INVALID_TYPE");
+            
             emit PublicMintState(_colID, _tokenType, _state);
-        } else if (_stateType == 1) {
-            _stateType1(_tokenType, _token, _state);
-            emit WhitelistMintState(
-                _colID,
-                _tokenType,
-                _state
-            );
-        } else if (_stateType == 2) {
-            _stateType2(_tokenType, _token, _state);
-            emit FreeClaimState(_colID, _tokenType, _state);
-        }
+        
+        // if (_stateType < 1) {
+            // _stateType0(_tokenType, _token, _state);
+        // } else if (_stateType == 1) {
+            // _stateType1(_tokenType, _token, _state);
+            // emit WhitelistMintState(
+                // _colID,
+                // _tokenType,
+                // _state
+            // );
+        // } else if (_stateType == 2) {
+            // _stateType2(_tokenType, _token, _state);
+            // emit FreeClaimState(_colID, _tokenType, _state);
+        // }
     }
 
     /// @notice ERC1155Whitelist whitelist config setter.
@@ -215,21 +226,21 @@ contract MADRouter1155 is
     /// @param _price Whitelist price per token.
     /// @param _supply Num tokens per address.
     /// @param _root Merkel root.
-    function whitelistSettings(
-        address _token,
-        uint256 _price,
-        uint256 _supply,
-        bytes32 _root
-    ) external nonReentrant whenNotPaused {
-        (, uint8 _tokenType) = _tokenRender(_token);
-        if (_tokenType == 2) {
-            ERC1155Whitelist(_token).whitelistConfig(
-                _price,
-                _supply,
-                _root
-            );
-        } else revert("INVALID_TYPE");
-    }
+    // function whitelistSettings(
+        // address _token,
+        // uint256 _price,
+        // uint256 _supply,
+        // bytes32 _root
+    // ) external nonReentrant whenNotPaused {
+        // (, uint8 _tokenType) = _tokenRender(_token);
+        // if (_tokenType == 2) {
+            // ERC1155Whitelist(_token).whitelistConfig(
+                // _price,
+                // _supply,
+                // _root
+            // );
+        // } else revert("INVALID_TYPE");
+    // }
 
     /// @notice ERC1155Whitelist free claim config setter.
     /// @dev Event emitted by ERC1155Whitelist token implementation contracts.
@@ -238,21 +249,21 @@ contract MADRouter1155 is
     /// @param _freeAmount Num tokens per address.
     /// @param _maxFree Max free tokens available.
     /// @param _claimRoot Merkel root.
-    function freeSettings(
-        address _token,
-        uint256 _freeAmount,
-        uint256 _maxFree,
-        bytes32 _claimRoot
-    ) external nonReentrant whenNotPaused {
-        (, uint8 _tokenType) = _tokenRender(_token);
-        if (_tokenType == 2) {
-            ERC1155Whitelist(_token).freeConfig(
-                _freeAmount,
-                _maxFree,
-                _claimRoot
-            );
-        } else revert("INVALID_TYPE");
-    }
+    // function freeSettings(
+    //     address _token,
+    //     uint256 _freeAmount,
+    //     uint256 _maxFree,
+    //     bytes32 _claimRoot
+    // ) external nonReentrant whenNotPaused {
+    //     (, uint8 _tokenType) = _tokenRender(_token);
+    //     if (_tokenType == 2) {
+    //         ERC1155Whitelist(_token).freeConfig(
+    //             _freeAmount,
+    //             _maxFree,
+    //             _claimRoot
+    //         );
+    //     } else revert("INVALID_TYPE");
+    // }
 
     ////////////////////////////////////////////////////////////////
     //                       CREATOR MINTING                      //
@@ -263,20 +274,20 @@ contract MADRouter1155 is
     /// @param _token 1155 token address.
     /// @param _to Receiver token address.
     /// @param balance Receiver token balance.
-    function minimalSafeMint(
-        address _token,
-        address _to,
-        uint256 balance
-    ) external payable nonReentrant whenNotPaused {
-        (, uint8 _tokenType) = _tokenRender(_token);
-        if (_tokenType != 0) revert("INVALID_TYPE");
-        _paymentCheck(0x40d097c3);
-        ERC1155Minimal(_token).safeMint{ value: msg.value }(
-            _to,
-            balance,
-            msg.sender
-        );
-    }
+    // function minimalSafeMint(
+    //     address _token,
+    //     address _to,
+    //     uint256 balance
+    // ) external payable nonReentrant whenNotPaused {
+    //     (, uint8 _tokenType) = _tokenRender(_token);
+    //     if (_tokenType != 0) revert("INVALID_TYPE");
+    //     _paymentCheck(0x40d097c3);
+    //     ERC1155Minimal(_token).safeMint{ value: msg.value }(
+    //         _to,
+    //         balance,
+    //         msg.sender
+    //     );
+    // }
 
     /// @notice ERC1155Basic creator mint function handler.
     /// @dev Function Sighash := 0x490f7027
@@ -301,9 +312,9 @@ contract MADRouter1155 is
         );
     }
 
-    /// @notice ERC1155Whitelist mint to creator function handler.
-    /// @dev Function Sighash := 0x182ee485
+    /// @dev Function Sighash := 0x535f64e7
     /// @param _token 1155 token address.
+    /// @param _to Token receiver address.
     /// @param _ids Receiver token _ids array.
     /// @param _balances Receiver token balances array, length should be = _ids.length.
     function basicMintBatchTo(
@@ -328,68 +339,68 @@ contract MADRouter1155 is
     /// @param _token 1155 token address.
     /// @param _amount Num tokens to mint and send.
     /// @param _balances Receiver token balances array, length should be = _amount.
-    /// @param totalBalance Totaled token amounts.
-    function creatorMint(
-        address _token,
-        uint256 _amount,
-        uint256[] memory _balances,
-        uint256 totalBalance
-    ) external payable nonReentrant whenNotPaused {
-        (, uint8 _tokenType) = _tokenRender(_token);
-        if (_tokenType == 2) {
-            _paymentCheck(0x40d097c3);
-            ERC1155Whitelist(_token).mintToCreator{
-                value: msg.value
-            }(_amount, _balances, totalBalance, msg.sender);
-        } else revert("INVALID_TYPE");
-    }
+    // /// @param totalBalance Totaled token amounts.
+    // function creatorMint(
+    //     address _token,
+    //     uint256 _amount,
+    //     uint256[] memory _balances,
+    //     uint256 totalBalance
+    // ) external payable nonReentrant whenNotPaused {
+    //     (, uint8 _tokenType) = _tokenRender(_token);
+    //     if (_tokenType == 2) {
+    //         _paymentCheck(0x40d097c3);
+    //         ERC1155Whitelist(_token).mintToCreator{
+    //             value: msg.value
+    //         }(_amount, _balances, totalBalance, msg.sender);
+    //     } else revert("INVALID_TYPE");
+    // }
 
-    /// @notice ERC1155Whitelist batch mint to creator function handler.
-    /// @dev Function Sighash := 0x182ee485
-    /// @param _token 1155 token address.
-    /// @param _ids Receiver token _ids array.
-    /// @param _balances Receiver token balances array, length should be = _ids.length.
-    /// @param totalBalance Totaled token amounts.
-    function creatorBatchMint(
-        address _token,
-        uint256[] memory _ids,
-        uint256[] memory _balances,
-        uint256 totalBalance
-    ) external payable nonReentrant whenNotPaused {
-        (, uint8 _tokenType) = _tokenRender(_token);
-        if (_tokenType == 2) {
-            _paymentCheck(0x40d097c3);
-            ERC1155Whitelist(_token).mintBatchToCreator{
-                value: msg.value
-            }(_ids, _balances, totalBalance, msg.sender);
-        } else revert("INVALID_TYPE");
-    }
+    // /// @notice ERC1155Whitelist batch mint to creator function handler.
+    // /// @dev Function Sighash := 0x182ee485
+    // /// @param _token 1155 token address.
+    // /// @param _ids Receiver token _ids array.
+    // /// @param _balances Receiver token balances array, length should be = _ids.length.
+    // /// @param totalBalance Totaled token amounts.
+    // function creatorBatchMint(
+    //     address _token,
+    //     uint256[] memory _ids,
+    //     uint256[] memory _balances,
+    //     uint256 totalBalance
+    // ) external payable nonReentrant whenNotPaused {
+    //     (, uint8 _tokenType) = _tokenRender(_token);
+    //     if (_tokenType == 2) {
+    //         _paymentCheck(0x40d097c3);
+    //         ERC1155Whitelist(_token).mintBatchToCreator{
+    //             value: msg.value
+    //         }(_ids, _balances, totalBalance, msg.sender);
+    //     } else revert("INVALID_TYPE");
+    // }
 
-    /// @notice ERC1155Whitelist gift tokens function handler.
-    /// @dev Function Sighash := 0x67b5a642
-    /// @param _token 1155 token address.
-    /// @param _addresses Array of addresses to gift too.
-    /// @param _balances Receiver token balances array, length should be = _ids.length.
-    /// @param totalBalance Totaled token amounts.
-    function gift(
-        address _token,
-        address[] calldata _addresses,
-        uint256[] memory _balances,
-        uint256 totalBalance
-    ) external payable nonReentrant whenNotPaused {
-        (, uint8 _tokenType) = _tokenRender(_token);
-        if (_tokenType == 2) {
-            _paymentCheck(0x40d097c3);
-            ERC1155Whitelist(_token).giftTokens{
-                value: msg.value
-            }(
-                _addresses,
-                _balances,
-                totalBalance,
-                msg.sender
-            );
-        } else revert("INVALID_TYPE");
-    }
+    // /// @notice ERC1155Whitelist gift tokens function handler.
+    // /// @dev Function Sighash := 0x67b5a642
+    // /// @param _token 1155 token address.
+    // /// @param _addresses Array of addresses to gift too.
+    // /// @param _balances Receiver token balances array, length should be = _ids.length.
+    // /// @param totalBalance Totaled token amounts.
+    // function gift(
+    //     address _token,
+    //     address[] calldata _addresses,
+    //     uint256[] memory _balances,
+    //     uint256 totalBalance
+    // ) external payable nonReentrant whenNotPaused {
+    //     (, uint8 _tokenType) = _tokenRender(_token);
+    //     if (_tokenType == 2) {
+    //         _paymentCheck(0x40d097c3);
+    //         ERC1155Whitelist(_token).giftTokens{
+    //             value: msg.value
+    //         }(
+    //             _addresses,
+    //             _balances,
+    //             totalBalance,
+    //             msg.sender
+    //         );
+    //     } else revert("INVALID_TYPE");
+    // }
 
     /// @notice Global token burn controller/single pusher for all token types.
     /// @dev Function Sighash := 0xba36b92d
@@ -405,33 +416,34 @@ contract MADRouter1155 is
         uint256[] memory _amount
     ) external payable nonReentrant whenNotPaused {
         (, uint8 _tokenType) = _tokenRender(_token);
-
         _paymentCheck(0x44df8e70);
-        _tokenType < 1
-            ? ERC1155Minimal(_token).burn{ value: msg.value }(
-                to[0],
-                _amount[0],
-                msg.sender
-            )
-            : _tokenType == 1
-            ? ERC1155Basic(_token).burn{ value: msg.value }(
-                to,
-                _ids,
-                _amount,
-                msg.sender
-            )
-            : _tokenType == 2
-            ? ERC1155Whitelist(_token).burn{
-                value: msg.value
-            }(to, _ids, _amount, msg.sender)
-            : _tokenType > 2
-            ? ERC1155Lazy(_token).burn{ value: msg.value }(
-                to,
-                _ids,
-                _amount,
-                msg.sender
-            )
-            : revert("INVALID_TYPE");
+        _tokenType == 1 ? 
+        ERC1155Basic(_token).burn{ value: msg.value }(
+            to,
+            _ids,
+            _amount,
+            msg.sender
+        )
+        : revert("INVALID_TYPE");
+
+        // _tokenType < 1
+        //     ? ERC1155Minimal(_token).burn{ value: msg.value }(
+        //         to[0],
+        //         _amount[0],
+        //         msg.sender
+        //     )
+        //     : 
+            // : _tokenType == 2
+            // ? ERC1155Whitelist(_token).burn{
+            //     value: msg.value
+            // }(to, _ids, _amount, msg.sender)
+            // : _tokenType > 2
+            // ? ERC1155Lazy(_token).burn{ value: msg.value }(
+            //     to,
+            //     _ids,
+            //     _amount,
+            //     msg.sender
+            // )
     }
 
     /// @notice Global token batch burn controller/single pusher for all token types.
@@ -454,15 +466,16 @@ contract MADRouter1155 is
             ? ERC1155Basic(_token).burnBatch{
                 value: msg.value
             }(_from, _ids, _balances, msg.sender)
-            : _tokenType == 2
-            ? ERC1155Whitelist(_token).burnBatch{
-                value: msg.value
-            }(_from, _ids, _balances, msg.sender)
-            : _tokenType > 2
-            ? ERC1155Lazy(_token).burnBatch{
-                value: msg.value
-            }(_from, _ids, _balances, msg.sender)
             : revert("INVALID_TYPE");
+
+            // : _tokenType == 2
+            // ? ERC1155Whitelist(_token).burnBatch{
+                // value: msg.value
+            // }(_from, _ids, _balances, msg.sender)
+            // : _tokenType > 2
+            // ? ERC1155Lazy(_token).burnBatch{
+                // value: msg.value
+            // }(_from, _ids, _balances, msg.sender)
     }
 
     ////////////////////////////////////////////////////////////////
@@ -484,24 +497,6 @@ contract MADRouter1155 is
             _token
         );
 
-        if (_tokenType < 1) {
-            address(_erc20) != address(0) &&
-                _erc20.balanceOf(_token) != 0
-                ? ERC1155Minimal(_token).withdrawERC20(
-                    _erc20,
-                    recipient
-                )
-                : _token.balance != 0
-                ? ERC1155Minimal(_token).withdraw(recipient)
-                : revert("NO_FUNDS");
-
-            emit TokenFundsWithdrawn(
-                _colID,
-                _tokenType,
-                msg.sender
-            );
-        }
-
         if (_tokenType == 1) {
             address(_erc20) != address(0) &&
                 _erc20.balanceOf(_token) != 0
@@ -518,43 +513,54 @@ contract MADRouter1155 is
                 _tokenType,
                 msg.sender
             );
-        }
+        } else 
+            revert("INVALID_TYPE");
 
-        if (_tokenType == 2) {
-            address(_erc20) != address(0) &&
-                _erc20.balanceOf(_token) != 0
-                ? ERC1155Whitelist(_token).withdrawERC20(
-                    _erc20,
-                    recipient
-                )
-                : _token.balance != 0
-                ? ERC1155Whitelist(_token).withdraw(recipient)
-                : revert("NO_FUNDS");
+        // if (_tokenType < 1) {
+            // address(_erc20) != address(0) &&
+                // _erc20.balanceOf(_token) != 0
+                // ? ERC1155Minimal(_token).withdrawERC20(_erc20, recipient)
+                // : _token.balance != 0
+                // ? ERC1155Minimal(_token).withdraw(recipient)
+                // : revert("NO_FUNDS");
+// 
+            // emit TokenFundsWithdrawn(
+                // _colID,
+                // _tokenType,
+                // msg.sender
+            // );
+        // }
 
-            emit TokenFundsWithdrawn(
-                _colID,
-                _tokenType,
-                msg.sender
-            );
-        }
 
-        if (_tokenType > 2) {
-            address(_erc20) != address(0) &&
-                _erc20.balanceOf(_token) != 0
-                ? ERC1155Lazy(_token).withdrawERC20(
-                    _erc20,
-                    recipient
-                )
-                : _token.balance != 0
-                ? ERC1155Lazy(_token).withdraw(recipient)
-                : revert("NO_FUNDS");
-
-            emit TokenFundsWithdrawn(
-                _colID,
-                _tokenType,
-                msg.sender
-            );
-        }
+        // if (_tokenType == 2) {
+            // address(_erc20) != address(0) &&
+                // _erc20.balanceOf(_token) != 0
+                // ? ERC1155Whitelist(_token).withdrawERC20(_erc20, recipient)
+                // : _token.balance != 0
+                // ? ERC1155Whitelist(_token).withdraw(recipient)
+                // : revert("NO_FUNDS");
+// 
+            // emit TokenFundsWithdrawn(
+                // _colID,
+                // _tokenType,
+                // msg.sender
+            // );
+        // }
+// 
+        // if (_tokenType > 2) {
+            // address(_erc20) != address(0) &&
+                // _erc20.balanceOf(_token) != 0
+                // ? ERC1155Lazy(_token).withdrawERC20(_erc20, recipient)
+                // : _token.balance != 0
+                // ? ERC1155Lazy(_token).withdraw(recipient)
+                // : revert("NO_FUNDS");
+// 
+            // emit TokenFundsWithdrawn(
+                // _colID,
+                // _tokenType,
+                // msg.sender
+            // );
+        // }
     }
 
     ////////////////////////////////////////////////////////////////
@@ -605,62 +611,62 @@ contract MADRouter1155 is
         tokenType = MADFactory1155.typeChecker(colID);
     }
 
-    /// @notice Internal function helper for resolving `PublicMintState` path.
-    /// @dev Function Sighash := 0xde21620a
-    /// @param _tokenType 0; 1; 2; Controls which token contract to invoke.
-    /// @param _token 1155 token address.
-    /// @param _state Set state to true or false.
-    function _stateType0(
-        uint8 _tokenType,
-        address _token,
-        bool _state
-    ) internal {
-        if (_tokenType < 1) {
-            ERC1155Minimal(_token).setPublicMintState(_state);
-        } else if (_tokenType == 1) {
-            ERC1155Basic(_token).setPublicMintState(_state);
-        } else if (_tokenType == 2) {
-            ERC1155Whitelist(_token).setPublicMintState(
-                _state
-            );
-        } else revert("INVALID_TYPE");
-    }
+    // /// @notice Internal function helper for resolving `PublicMintState` path.
+    // /// @dev Function Sighash := 0xde21620a
+    // /// @param _tokenType 0; 1; 2; Controls which token contract to invoke.
+    // /// @param _token 1155 token address.
+    // /// @param _state Set state to true or false.
+    // function _stateType0(
+    //     uint8 _tokenType,
+    //     address _token,
+    //     bool _state
+    // ) internal {
+    //     if (_tokenType < 1) {
+    //         ERC1155Minimal(_token).setPublicMintState(_state);
+    //     } else if (_tokenType == 1) {
+    //         ERC1155Basic(_token).setPublicMintState(_state);
+    //     } else if (_tokenType == 2) {
+    //         ERC1155Whitelist(_token).setPublicMintState(
+    //             _state
+    //         );
+    //     } else revert("INVALID_TYPE");
+    // }
 
-    /// @notice Internal function helper for resolving `WhitelistMintState` path.
-    /// @dev Function Sighash := 0x90036d9e
-    /// @param _tokenType 0; 1; 2; Controls which token contract to invoke.
-    /// @param _token 1155 token address.
-    /// @param _state Set state to true or false.
-    function _stateType1(
-        uint8 _tokenType,
-        address _token,
-        bool _state
-    ) internal {
-        if (_tokenType == 2) {
-            ERC1155Whitelist(_token).setWhitelistMintState(
-                _state
-            );
-        } else revert("INVALID_TYPE");
-    }
+    // /// @notice Internal function helper for resolving `WhitelistMintState` path.
+    // /// @dev Function Sighash := 0x90036d9e
+    // /// @param _tokenType 0; 1; 2; Controls which token contract to invoke.
+    // /// @param _token 1155 token address.
+    // /// @param _state Set state to true or false.
+    // function _stateType1(
+    //     uint8 _tokenType,
+    //     address _token,
+    //     bool _state
+    // ) internal {
+    //     if (_tokenType == 2) {
+    //         ERC1155Whitelist(_token).setWhitelistMintState(
+    //             _state
+    //         );
+    //     } else revert("INVALID_TYPE");
+    // }
 
-    /// @notice Internal function helper for resolving `FreeClaimState` path.
-    /// @dev Function Sighash := 0xff454f63
-    /// @param _tokenType 0; 1; 2; Controls which token contract to invoke.
-    /// @param _token 1155 token address.
-    /// @param _state Set state to true or false.
-    function _stateType2(
-        uint8 _tokenType,
-        address _token,
-        bool _state
-    ) internal {
-        if (_tokenType == 2) {
-            ERC1155Whitelist(_token).setFreeClaimState(
-                _state
-            );
-        } else revert("INVALID_TYPE");
-    }
+    // /// @notice Internal function helper for resolving `FreeClaimState` path.
+    // /// @dev Function Sighash := 0xff454f63
+    // /// @param _tokenType 0; 1; 2; Controls which token contract to invoke.
+    // /// @param _token 1155 token address.
+    // /// @param _state Set state to true or false.
+    // function _stateType2(
+    //     uint8 _tokenType,
+    //     address _token,
+    //     bool _state
+    // ) internal {
+    //     if (_tokenType == 2) {
+    //         ERC1155Whitelist(_token).setFreeClaimState(
+    //             _state
+    //         );
+    //     } else revert("INVALID_TYPE");
+    // }
 
-    /// @notice Checks if native || erc20 payments are matche required fees
+    // /// @notice Checks if native || erc20 payments are matche required fees
     /// @dev Envokes safeTransferFrom for erc20 payments.
     ///      Function Sighash := ?
     /// @param sigHash MINSAFEMINT | MINBURN
@@ -690,18 +696,18 @@ contract MADRouter1155 is
     //                         OWNER FX                           //
     ////////////////////////////////////////////////////////////////
 
-    /// @notice Change the address used for lazy minting voucher validation.
-    /// @dev Event emitted by token contract.
-    ///      Function Sighash := 0x17f9fad1
-    /// @param _token 1155 token address.
-    /// @param _signer New signers address.
-    function setSigner(
-        address _token,
-        address _signer
-    ) external onlyOwner {
-        require(_signer != address(0), "Invalid address");
-        ERC1155Lazy(_token).setSigner(_signer);
-    }
+    // /// @notice Change the address used for lazy minting voucher validation.
+    // /// @dev Event emitted by token contract.
+    // ///      Function Sighash := 0x17f9fad1
+    // /// @param _token 1155 token address.
+    // /// @param _signer New signers address.
+    // function setSigner(address _token, address _signer)
+    //     external
+    //     onlyOwner
+    // {
+    //     require(_signer != address(0), "Invalid address");
+    //     ERC1155Lazy(_token).setSigner(_signer);
+    // }
 
     /// @notice Change the Routers mint and burn fees.
     /// @dev Event emitted by token contract.

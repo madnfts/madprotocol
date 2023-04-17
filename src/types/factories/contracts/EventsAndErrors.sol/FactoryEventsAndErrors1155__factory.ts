@@ -81,6 +81,7 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
+<<<<<<< HEAD:src/types/factories/contracts/EventsAndErrors.sol/FactoryEventsAndErrors1155__factory.ts
         name: "newSplitter",
         type: "address",
       },
@@ -247,6 +248,8 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
+=======
+>>>>>>> github/main:src/types/factories/EventsAndErrors.sol/FactoryEventsAndErrors1155__factory.ts
         name: "newMarket",
         type: "address",
       },

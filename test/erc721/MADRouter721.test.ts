@@ -1,7 +1,7 @@
-import {
-  SignTypedDataVersion,
-  signTypedData,
-} from "@metamask/eth-sig-util";
+// import {
+  // SignTypedDataVersion,
+  // signTypedData,
+// } from "@metamask/eth-sig-util";
 import "@nomicfoundation/hardhat-chai-matchers";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
@@ -16,11 +16,11 @@ import {
   MockERC20,
 } from "../../src/types";
 import {
+  // MinimalErrors,
+  // LazyErrors,
+  // WhitelistErrors,
   BasicErrors,
-  LazyErrors,
-  MinimalErrors,
   RouterErrors,
-  WhitelistErrors,
 } from "./../utils/errors";
 import { getSignerAddrs } from "./../utils/fixtures";
 import { dead, madFixture721B } from "./../utils/madFixtures";
@@ -75,48 +75,49 @@ describe("MADRouter721", () => {
     });
   });
   describe("Set baseURI", async () => {
-    it("Should revert for invalid collection type", async () => {
-      // await f721.addAmbassador(amb.address);
-      await f721
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f721.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      const minAddr = await f721.callStatic.getDeployedAddr(
-        "MinSalt",
-      );
-      await f721
-        .connect(acc02)
-        .createCollection(
-          0,
-          "MinSalt",
-          "721Minimal",
-          "MIN",
-          price,
-          1,
-          "ipfs://cid/id.json",
-          splAddr,
-          750,
-        );
-      const min = await ethers.getContractAt(
-        "ERC721Minimal",
-        minAddr,
-      );
-      const tx = r721
-        .connect(acc02)
-        .setBase(min.address, "null");
+    // only basic tokens allowed at the moment
+    // it("Should revert for invalid collection type", async () => {
+    //   // await f721.addAmbassador(amb.address);
+    //   await f721
+    //     .connect(acc02)
+    //     .splitterCheck(
+    //       "MADSplitter1",
+    //       amb.address,
+    //       dead,
+    //       20,
+    //       0,
+    //     );
+    //   const splAddr = await f721.callStatic.getDeployedAddr(
+    //     "MADSplitter1",
+    //   );
+    //   const basicAddr = await f721.callStatic.getDeployedAddr(
+    //     "BasicSalt",
+    //   );
+    //   await f721
+    //     .connect(acc02)
+    //     .createCollection(
+    //       1,
+    //       "BasicSalt",
+    //       "721Basic",
+    //       "BASIC",
+    //       price,
+    //       1,
+    //       "ipfs://cid/id.json",
+    //       splAddr,
+    //       750,
+    //     );
+    //   const basic = await ethers.getContractAt(
+    //     "ERC721Basic",
+    //     basicAddr,
+    //   );
+    //   const tx = r721
+    //     .connect(acc02)
+    //     .setBase(basic.address, "null");
 
-      await expect(tx).to.be.revertedWith(
-        RouterErrors.InvalidType,
-      );
-    });
+    //   await expect(tx).to.be.revertedWith(
+    //     RouterErrors.InvalidType,
+    //   );
+    // });
     it("Should revert for locked base URI for all colTypes", async () => {
       await f721
         .connect(acc02)
@@ -167,77 +168,77 @@ describe("MADRouter721", () => {
         RouterErrors.UriLocked,
       );
 
-      // WL
-      const wlAddr = await f721.callStatic.getDeployedAddr(
-        "WlSalt",
-      );
-      await f721
-        .connect(acc02)
-        .createCollection(
-          3,
-          "WlSalt",
-          "721Whitelist",
-          "WL",
-          price,
-          1,
-          "ipfs://cid/id.json",
-          splAddr,
-          750,
-        );
-      const wl = await ethers.getContractAt(
-        "ERC721Whitelist",
-        wlAddr,
-      );
-      const wltx1 = r721
-        .connect(acc02)
-        .setBase(wl.address, "null");
-      const wltx2 = r721
-        .connect(acc02)
-        .setBaseLock(wl.address);
-      expect(await wltx1).to.be.ok;
-      expect(await wltx2).to.be.ok;
-      await expect(
-        r721.connect(acc02).setBase(wl.address, "null"),
-      ).to.be.revertedWithCustomError(
-        wl,
-        RouterErrors.UriLocked,
-      );
+      // // WL
+      // const wlAddr = await f721.callStatic.getDeployedAddr(
+      //   "WlSalt",
+      // );
+      // await f721
+      //   .connect(acc02)
+      //   .createCollection(
+      //     3,
+      //     "WlSalt",
+      //     "721Whitelist",
+      //     "WL",
+      //     price,
+      //     1,
+      //     "ipfs://cid/id.json",
+      //     splAddr,
+      //     750,
+      //   );
+      // const wl = await ethers.getContractAt(
+      //   "ERC721Whitelist",
+      //   wlAddr,
+      // );
+      // const wltx1 = r721
+      //   .connect(acc02)
+      //   .setBase(wl.address, "null");
+      // const wltx2 = r721
+      //   .connect(acc02)
+      //   .setBaseLock(wl.address);
+      // expect(await wltx1).to.be.ok
+      // expect(await wltx2).to.be.ok
+      // await expect(r721
+      //   .connect(acc02)
+      //   .setBase(wl.address, "null")).to.be.revertedWithCustomError(
+      //     wl,
+      //     RouterErrors.UriLocked,
+      // );
 
-      // lazy
-      const lazyAddr = await f721.callStatic.getDeployedAddr(
-        "LazySalt",
-      );
-      await f721
-        .connect(acc02)
-        .createCollection(
-          2,
-          "LazySalt",
-          "721Lazy",
-          "LAZY",
-          price,
-          1,
-          "ipfs://cid/id.json",
-          splAddr,
-          750,
-        );
-      const lazy = await ethers.getContractAt(
-        "ERC721Lazy",
-        lazyAddr,
-      );
-      const lazytx1 = r721
-        .connect(acc02)
-        .setBase(lazy.address, "null");
-      const lazytx2 = r721
-        .connect(acc02)
-        .setBaseLock(lazy.address);
-      expect(await lazytx1).to.be.ok;
-      expect(await lazytx2).to.be.ok;
-      await expect(
-        r721.connect(acc02).setBase(lazy.address, "null"),
-      ).to.be.revertedWithCustomError(
-        lazy,
-        RouterErrors.UriLocked,
-      );
+      // // lazy
+      // const lazyAddr = await f721.callStatic.getDeployedAddr(
+      //   "LazySalt",
+      // );
+      // await f721
+      //   .connect(acc02)
+      //   .createCollection(
+      //     2,
+      //     "LazySalt",
+      //     "721Lazy",
+      //     "LAZY",
+      //     price,
+      //     1,
+      //     "ipfs://cid/id.json",
+      //     splAddr,
+      //     750,
+      //   );
+      // const lazy = await ethers.getContractAt(
+      //   "ERC721Lazy",
+      //   lazyAddr,
+      // );
+      // const lazytx1 = r721
+      //   .connect(acc02)
+      //   .setBase(lazy.address, "null");
+      // const lazytx2 = r721
+      //   .connect(acc02)
+      //   .setBaseLock(lazy.address);
+      // expect(await lazytx1).to.be.ok
+      // expect(await lazytx2).to.be.ok
+      // await expect(r721
+      //   .connect(acc02)
+      //   .setBase(lazy.address, "null")).to.be.revertedWithCustomError(
+      //     lazy,
+      //     RouterErrors.UriLocked,
+      // );
     });
     it("Should set baseURI for 721Basic collection type", async () => {
       // await f721.addAmbassador(amb.address);
@@ -300,441 +301,441 @@ describe("MADRouter721", () => {
         RouterErrors.AccessDenied,
       );
     });
-    it("Should set baseURI for 721Whitelist collection type", async () => {
-      // await f721.addAmbassador(amb.address);
-      await f721
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f721.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      const wlAddr = await f721.callStatic.getDeployedAddr(
-        "WhiteSalt",
-      );
-      await f721
-        .connect(acc02)
-        .createCollection(
-          2,
-          "WhiteSalt",
-          "721Whitelist",
-          "WHITE",
-          price,
-          1000,
-          "ipfs://cid/",
-          splAddr,
-          750,
-        );
-      const colID = await f721.callStatic.getColID(wlAddr);
-      const wl = await ethers.getContractAt(
-        "ERC721Whitelist",
-        wlAddr,
-      );
-      const tx = await r721
-        .connect(acc02)
-        .setBase(wlAddr, "null");
+    // it("Should set baseURI for 721Whitelist collection type", async () => {
+    //   // await f721.addAmbassador(amb.address);
+    //   await f721
+    //     .connect(acc02)
+    //     .splitterCheck(
+    //       "MADSplitter1",
+    //       amb.address,
+    //       dead,
+    //       20,
+    //       0,
+    //     );
+    //   const splAddr = await f721.callStatic.getDeployedAddr(
+    //     "MADSplitter1",
+    //   );
+    //   const wlAddr = await f721.callStatic.getDeployedAddr(
+    //     "WhiteSalt",
+    //   );
+    //   await f721
+    //     .connect(acc02)
+    //     .createCollection(
+    //       2,
+    //       "WhiteSalt",
+    //       "721Whitelist",
+    //       "WHITE",
+    //       price,
+    //       1000,
+    //       "ipfs://cid/",
+    //       splAddr,
+    //       750,
+    //     );
+    //   const colID = await f721.callStatic.getColID(wlAddr);
+    //   const wl = await ethers.getContractAt(
+    //     "ERC721Whitelist",
+    //     wlAddr,
+    //   );
+    //   const tx = await r721
+    //     .connect(acc02)
+    //     .setBase(wlAddr, "null");
 
-      expect(tx).to.be.ok;
-      await expect(tx)
-        .to.emit(r721, "BaseURI")
-        .withArgs(colID, "null");
-      expect(await wl.callStatic.getBaseURI()).to.eq("null");
-      const verArt = await artifacts.readArtifact(
-        "FactoryVerifier",
-      );
-      const ver = new ethers.Contract(
-        f721.address,
-        verArt.abi,
-        ethers.provider,
-      );
-      await expect(
-        r721.connect(acc01).setBase(wlAddr, "void"),
-      ).to.be.revertedWithCustomError(
-        ver,
-        RouterErrors.AccessDenied,
-      );
-    });
-    it("Should set baseURI for 721Lazy collection type", async () => {
-      // await f721.addAmbassador(amb.address);
-      await f721
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f721.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      const lazyAddr = await f721.callStatic.getDeployedAddr(
-        "LazySalt",
-      );
-      await f721
-        .connect(acc02)
-        .createCollection(
-          3,
-          "LazySalt",
-          "721Lazy",
-          "LAZY",
-          ethers.constants.Zero,
-          ethers.constants.Zero,
-          "ipfs://cid/",
-          splAddr,
-          750,
-        );
-      const colID = await f721.callStatic.getColID(lazyAddr);
-      const lazy = await ethers.getContractAt(
-        "ERC721Lazy",
-        lazyAddr,
-      );
-      const tx = await r721
-        .connect(acc02)
-        .setBase(lazyAddr, "null");
+    //   expect(tx).to.be.ok;
+    //   await expect(tx)
+    //     .to.emit(r721, "BaseURI")
+    //     .withArgs(colID, "null");
+    //   expect(await wl.callStatic.getBaseURI()).to.eq("null");
+    //   const verArt = await artifacts.readArtifact(
+    //     "FactoryVerifier",
+    //   );
+    //   const ver = new ethers.Contract(
+    //     f721.address,
+    //     verArt.abi,
+    //     ethers.provider,
+    //   );
+    //   await expect(
+    //     r721.connect(acc01).setBase(wlAddr, "void"),
+    //   ).to.be.revertedWithCustomError(
+    //     ver,
+    //     RouterErrors.AccessDenied,
+    //   );
+    // });
+  //   it("Should set baseURI for 721Lazy collection type", async () => {
+  //     // await f721.addAmbassador(amb.address);
+  //     await f721
+  //       .connect(acc02)
+  //       .splitterCheck(
+  //         "MADSplitter1",
+  //         amb.address,
+  //         dead,
+  //         20,
+  //         0,
+  //       );
+  //     const splAddr = await f721.callStatic.getDeployedAddr(
+  //       "MADSplitter1",
+  //     );
+  //     const lazyAddr = await f721.callStatic.getDeployedAddr(
+  //       "LazySalt",
+  //     );
+  //     await f721
+  //       .connect(acc02)
+  //       .createCollection(
+  //         3,
+  //         "LazySalt",
+  //         "721Lazy",
+  //         "LAZY",
+  //         ethers.constants.Zero,
+  //         ethers.constants.Zero,
+  //         "ipfs://cid/",
+  //         splAddr,
+  //         750,
+  //       );
+  //     const colID = await f721.callStatic.getColID(lazyAddr);
+  //     const lazy = await ethers.getContractAt(
+  //       "ERC721Lazy",
+  //       lazyAddr,
+  //     );
+  //     const tx = await r721
+  //       .connect(acc02)
+  //       .setBase(lazyAddr, "null");
 
-      expect(tx).to.be.ok;
-      await expect(tx)
-        .to.emit(r721, "BaseURI")
-        .withArgs(colID, "null");
-      expect(await lazy.callStatic.getBaseURI()).to.eq(
-        "null",
-      );
-      const verArt = await artifacts.readArtifact(
-        "FactoryVerifier",
-      );
-      const ver = new ethers.Contract(
-        f721.address,
-        verArt.abi,
-        ethers.provider,
-      );
-      await expect(
-        r721.connect(acc01).setBase(lazyAddr, "void"),
-      ).to.be.revertedWithCustomError(
-        ver,
-        RouterErrors.AccessDenied,
-      );
-    });
+  //     expect(tx).to.be.ok;
+  //     await expect(tx)
+  //       .to.emit(r721, "BaseURI")
+  //       .withArgs(colID, "null");
+  //     expect(await lazy.callStatic.getBaseURI()).to.eq(
+  //       "null",
+  //     );
+  //     const verArt = await artifacts.readArtifact(
+  //       "FactoryVerifier",
+  //     );
+  //     const ver = new ethers.Contract(
+  //       f721.address,
+  //       verArt.abi,
+  //       ethers.provider,
+  //     );
+  //     await expect(
+  //       r721.connect(acc01).setBase(lazyAddr, "void"),
+  //     ).to.be.revertedWithCustomError(
+  //       ver,
+  //       RouterErrors.AccessDenied,
+  //     );
+  //   });
   });
-  describe("Whitelist Settings", async () => {
-    it("Should revert for invalid collection type", async () => {
-      const root = ethers.utils.keccak256(
-        ethers.utils.toUtf8Bytes("fakeRoot"),
-      );
-      // await f721.addAmbassador(amb.address);
-      await f721
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f721.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      const lazyAddr = await f721.callStatic.getDeployedAddr(
-        "LazySalt",
-      );
-      await f721
-        .connect(acc02)
-        .createCollection(
-          3,
-          "LazySalt",
-          "721Lazy",
-          "LAZY",
-          ethers.constants.Zero,
-          ethers.constants.Zero,
-          "ipfs://cid/",
-          splAddr,
-          750,
-        );
-      const lazy = await ethers.getContractAt(
-        "ERC721Lazy",
-        lazyAddr,
-      );
-      const tx = r721
-        .connect(acc02)
-        .whitelistSettings(lazy.address, price, 100, root);
+  // describe("Whitelist Settings", async () => {
+  //   it("Should revert for invalid collection type", async () => {
+  //     const root = ethers.utils.keccak256(
+  //       ethers.utils.toUtf8Bytes("fakeRoot"),
+  //     );
+  //     // await f721.addAmbassador(amb.address);
+  //     await f721
+  //       .connect(acc02)
+  //       .splitterCheck(
+  //         "MADSplitter1",
+  //         amb.address,
+  //         dead,
+  //         20,
+  //         0,
+  //       );
+  //     const splAddr = await f721.callStatic.getDeployedAddr(
+  //       "MADSplitter1",
+  //     );
+  //     const lazyAddr = await f721.callStatic.getDeployedAddr(
+  //       "LazySalt",
+  //     );
+  //     await f721
+  //       .connect(acc02)
+  //       .createCollection(
+  //         3,
+  //         "LazySalt",
+  //         "721Lazy",
+  //         "LAZY",
+  //         ethers.constants.Zero,
+  //         ethers.constants.Zero,
+  //         "ipfs://cid/",
+  //         splAddr,
+  //         750,
+  //       );
+  //     const lazy = await ethers.getContractAt(
+  //       "ERC721Lazy",
+  //       lazyAddr,
+  //     );
+  //     const tx = r721
+  //       .connect(acc02)
+  //       .whitelistSettings(lazy.address, price, 100, root);
 
-      await expect(tx).to.be.revertedWith(
-        RouterErrors.InvalidType,
-      );
-    });
-    it("Should set whitelist config for 721Whitelist collection type", async () => {
-      const root = ethers.utils.keccak256(
-        ethers.utils.toUtf8Bytes("fakeRoot"),
-      );
-      // await f721.addAmbassador(amb.address);
-      await f721
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f721.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      const wlAddr = await f721.callStatic.getDeployedAddr(
-        "WhiteSalt",
-      );
-      await f721
-        .connect(acc02)
-        .createCollection(
-          2,
-          "WhiteSalt",
-          "721Whitelist",
-          "WHITE",
-          price,
-          1000,
-          "ipfs://cid/",
-          splAddr,
-          750,
-        );
-      const wl = await ethers.getContractAt(
-        "ERC721Whitelist",
-        wlAddr,
-      );
-      const tx = await r721
-        .connect(acc02)
-        .whitelistSettings(wl.address, price, 100, root);
+  //     await expect(tx).to.be.revertedWith(
+  //       RouterErrors.InvalidType,
+  //     );
+  //   });
+  //   it("Should set whitelist config for 721Whitelist collection type", async () => {
+  //     const root = ethers.utils.keccak256(
+  //       ethers.utils.toUtf8Bytes("fakeRoot"),
+  //     );
+  //     // await f721.addAmbassador(amb.address);
+  //     await f721
+  //       .connect(acc02)
+  //       .splitterCheck(
+  //         "MADSplitter1",
+  //         amb.address,
+  //         dead,
+  //         20,
+  //         0,
+  //       );
+  //     const splAddr = await f721.callStatic.getDeployedAddr(
+  //       "MADSplitter1",
+  //     );
+  //     const wlAddr = await f721.callStatic.getDeployedAddr(
+  //       "WhiteSalt",
+  //     );
+  //     await f721
+  //       .connect(acc02)
+  //       .createCollection(
+  //         2,
+  //         "WhiteSalt",
+  //         "721Whitelist",
+  //         "WHITE",
+  //         price,
+  //         1000,
+  //         "ipfs://cid/",
+  //         splAddr,
+  //         750,
+  //       );
+  //     const wl = await ethers.getContractAt(
+  //       "ERC721Whitelist",
+  //       wlAddr,
+  //     );
+  //     const tx = await r721
+  //       .connect(acc02)
+  //       .whitelistSettings(wl.address, price, 100, root);
 
-      expect(tx).to.be.ok;
-      expect(await wl.callStatic.whitelistMerkleRoot()).to.eq(
-        root,
-      );
-      expect(await wl.callStatic.whitelistPrice()).to.eq(
-        price,
-      );
-      expect(await wl.callStatic.maxWhitelistSupply()).to.eq(
-        100,
-      );
-    });
-  });
-  describe("FreeClaim Settings", async () => {
-    it("Should revert for invalid collection type", async () => {
-      const root = ethers.utils.keccak256(
-        ethers.utils.toUtf8Bytes("fakeRoot"),
-      );
-      // await f721.addAmbassador(amb.address);
-      await f721
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f721.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      const lazyAddr = await f721.callStatic.getDeployedAddr(
-        "LazySalt",
-      );
-      await f721
-        .connect(acc02)
-        .createCollection(
-          3,
-          "LazySalt",
-          "721Lazy",
-          "LAZY",
-          ethers.constants.Zero,
-          ethers.constants.Zero,
-          "ipfs://cid/",
-          splAddr,
-          750,
-        );
-      const lazy = await ethers.getContractAt(
-        "ERC721Lazy",
-        lazyAddr,
-      );
-      const tx = r721
-        .connect(acc02)
-        .freeSettings(lazy.address, 1, 10, root);
+  //     expect(tx).to.be.ok;
+  //     expect(await wl.callStatic.whitelistMerkleRoot()).to.eq(
+  //       root,
+  //     );
+  //     expect(await wl.callStatic.whitelistPrice()).to.eq(
+  //       price,
+  //     );
+  //     expect(await wl.callStatic.maxWhitelistSupply()).to.eq(
+  //       100,
+  //     );
+  //   });
+  // });
+  // describe("FreeClaim Settings", async () => {
+  //   it("Should revert for invalid collection type", async () => {
+  //     const root = ethers.utils.keccak256(
+  //       ethers.utils.toUtf8Bytes("fakeRoot"),
+  //     );
+  //     // await f721.addAmbassador(amb.address);
+  //     await f721
+  //       .connect(acc02)
+  //       .splitterCheck(
+  //         "MADSplitter1",
+  //         amb.address,
+  //         dead,
+  //         20,
+  //         0,
+  //       );
+  //     const splAddr = await f721.callStatic.getDeployedAddr(
+  //       "MADSplitter1",
+  //     );
+  //     const lazyAddr = await f721.callStatic.getDeployedAddr(
+  //       "LazySalt",
+  //     );
+  //     await f721
+  //       .connect(acc02)
+  //       .createCollection(
+  //         3,
+  //         "LazySalt",
+  //         "721Lazy",
+  //         "LAZY",
+  //         ethers.constants.Zero,
+  //         ethers.constants.Zero,
+  //         "ipfs://cid/",
+  //         splAddr,
+  //         750,
+  //       );
+  //     const lazy = await ethers.getContractAt(
+  //       "ERC721Lazy",
+  //       lazyAddr,
+  //     );
+  //     const tx = r721
+  //       .connect(acc02)
+  //       .freeSettings(lazy.address, 1, 10, root);
 
-      await expect(tx).to.be.revertedWith(
-        RouterErrors.InvalidType,
-      );
-    });
-    it("Should set freeClaim config for 721Whitelist collection type", async () => {
-      const root = ethers.utils.keccak256(
-        ethers.utils.toUtf8Bytes("fakeRoot"),
-      );
-      // await f721.addAmbassador(amb.address);
-      await f721
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f721.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      const wlAddr = await f721.callStatic.getDeployedAddr(
-        "WhiteSalt",
-      );
-      await f721
-        .connect(acc02)
-        .createCollection(
-          2,
-          "WhiteSalt",
-          "721Whitelist",
-          "WHITE",
-          price,
-          1000,
-          "ipfs://cid/",
-          splAddr,
-          750,
-        );
-      const wl = await ethers.getContractAt(
-        "ERC721Whitelist",
-        wlAddr,
-      );
-      const tx = await r721
-        .connect(acc02)
-        .freeSettings(wl.address, 1, 10, root);
+  //     await expect(tx).to.be.revertedWith(
+  //       RouterErrors.InvalidType,
+  //     );
+  //   });
+  //   it("Should set freeClaim config for 721Whitelist collection type", async () => {
+  //     const root = ethers.utils.keccak256(
+  //       ethers.utils.toUtf8Bytes("fakeRoot"),
+  //     );
+  //     // await f721.addAmbassador(amb.address);
+  //     await f721
+  //       .connect(acc02)
+  //       .splitterCheck(
+  //         "MADSplitter1",
+  //         amb.address,
+  //         dead,
+  //         20,
+  //         0,
+  //       );
+  //     const splAddr = await f721.callStatic.getDeployedAddr(
+  //       "MADSplitter1",
+  //     );
+  //     const wlAddr = await f721.callStatic.getDeployedAddr(
+  //       "WhiteSalt",
+  //     );
+  //     await f721
+  //       .connect(acc02)
+  //       .createCollection(
+  //         2,
+  //         "WhiteSalt",
+  //         "721Whitelist",
+  //         "WHITE",
+  //         price,
+  //         1000,
+  //         "ipfs://cid/",
+  //         splAddr,
+  //         750,
+  //       );
+  //     const wl = await ethers.getContractAt(
+  //       "ERC721Whitelist",
+  //       wlAddr,
+  //     );
+  //     const tx = await r721
+  //       .connect(acc02)
+  //       .freeSettings(wl.address, 1, 10, root);
 
-      expect(tx).to.be.ok;
-      expect(await wl.callStatic.claimListMerkleRoot()).to.eq(
-        root,
-      );
-      expect(await wl.callStatic.freeAmount()).to.eq(1);
-      expect(await wl.callStatic.maxFree()).to.eq(10);
-    });
-  });
-  describe("Minimal SafeMint", async () => {
-    it("Should revert for invalid collection type", async () => {
-      // await f721.addAmbassador(amb.address);
-      await f721
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f721.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      const wlAddr = await f721.callStatic.getDeployedAddr(
-        "WhiteSalt",
-      );
-      await f721
-        .connect(acc02)
-        .createCollection(
-          2,
-          "WhiteSalt",
-          "721Whitelist",
-          "WHITE",
-          price,
-          1000,
-          "ipfs://cid/",
-          splAddr,
-          750,
-        );
-      const tx = r721.minimalSafeMint(wlAddr, acc01.address);
-      const verArt = await artifacts.readArtifact(
-        "FactoryVerifier",
-      );
-      const ver = new ethers.Contract(
-        f721.address,
-        verArt.abi,
-        ethers.provider,
-      );
+  //     expect(tx).to.be.ok;
+  //     expect(await wl.callStatic.claimListMerkleRoot()).to.eq(
+  //       root,
+  //     );
+  //     expect(await wl.callStatic.freeAmount()).to.eq(1);
+  //     expect(await wl.callStatic.maxFree()).to.eq(10);
+  //   });
+  // });
+  // describe("Minimal SafeMint", async () => {
+  //   it("Should revert for invalid collection type", async () => {
+  //     // await f721.addAmbassador(amb.address);
+  //     await f721
+  //       .connect(acc02)
+  //       .splitterCheck(
+  //         "MADSplitter1",
+  //         amb.address,
+  //         dead,
+  //         20,
+  //         0,
+  //       );
+  //     const splAddr = await f721.callStatic.getDeployedAddr(
+  //       "MADSplitter1",
+  //     );
+  //     const wlAddr = await f721.callStatic.getDeployedAddr(
+  //       "WhiteSalt",
+  //     );
+  //     await f721
+  //       .connect(acc02)
+  //       .createCollection(
+  //         2,
+  //         "WhiteSalt",
+  //         "721Whitelist",
+  //         "WHITE",
+  //         price,
+  //         1000,
+  //         "ipfs://cid/",
+  //         splAddr,
+  //         750,
+  //       );
+  //     const tx = r721.minimalSafeMint(wlAddr, acc01.address);
+  //     const verArt = await artifacts.readArtifact(
+  //       "FactoryVerifier",
+  //     );
+  //     const ver = new ethers.Contract(
+  //       f721.address,
+  //       verArt.abi,
+  //       ethers.provider,
+  //     );
 
-      await expect(tx).to.be.revertedWithCustomError(
-        ver,
-        RouterErrors.AccessDenied,
-      );
-    });
-    it("Should call safeMint for 721Minimal collection type", async () => {
-      // await f721.addAmbassador(amb.address);
-      await f721
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f721.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      const minAddr = await f721.callStatic.getDeployedAddr(
-        "MinSalt",
-      );
-      await f721
-        .connect(acc02)
-        .createCollection(
-          0,
-          "MinSalt",
-          "721Minimal",
-          "MIN",
-          price,
-          1,
-          "cid/id.json",
-          splAddr,
-          750,
-        );
-      const min = await ethers.getContractAt(
-        "ERC721Minimal",
-        minAddr,
-      );
-      const tx = await r721
-        .connect(acc02)
-        .minimalSafeMint(minAddr, acc01.address, {
-          value: ethers.utils.parseEther("0.25"),
-        });
+  //     await expect(tx).to.be.revertedWithCustomError(
+  //       ver,
+  //       RouterErrors.AccessDenied,
+  //     );
+  //   });
+  //   it("Should call safeMint for 721Minimal collection type", async () => {
+  //     // await f721.addAmbassador(amb.address);
+  //     await f721
+  //       .connect(acc02)
+  //       .splitterCheck(
+  //         "MADSplitter1",
+  //         amb.address,
+  //         dead,
+  //         20,
+  //         0,
+  //       );
+  //     const splAddr = await f721.callStatic.getDeployedAddr(
+  //       "MADSplitter1",
+  //     );
+  //     const minAddr = await f721.callStatic.getDeployedAddr(
+  //       "MinSalt",
+  //     );
+  //     await f721
+  //       .connect(acc02)
+  //       .createCollection(
+  //         0,
+  //         "MinSalt",
+  //         "721Minimal",
+  //         "MIN",
+  //         price,
+  //         1,
+  //         "cid/id.json",
+  //         splAddr,
+  //         750,
+  //       );
+  //     const min = await ethers.getContractAt(
+  //       "ERC721Minimal",
+  //       minAddr,
+  //     );
+  //     const tx = await r721
+  //       .connect(acc02)
+  //       .minimalSafeMint(minAddr, acc01.address, {
+  //         value: ethers.utils.parseEther("0.25"),
+  //       });
 
-      expect(tx).to.be.ok;
-      expect(await min.callStatic.ownerOf(1)).to.eq(
-        acc01.address,
-      );
-      const verArt = await artifacts.readArtifact(
-        "FactoryVerifier",
-      );
-      const ver = new ethers.Contract(
-        f721.address,
-        verArt.abi,
-        ethers.provider,
-      );
-      await expect(
-        r721
-          .connect(mad)
-          .minimalSafeMint(minAddr, acc02.address, {
-            value: ethers.utils.parseEther("0.25"),
-          }),
-      ).to.be.revertedWithCustomError(
-        ver,
-        RouterErrors.AccessDenied,
-      );
-      await expect(
-        r721
-          .connect(acc02)
-          .minimalSafeMint(minAddr, acc02.address, {
-            value: ethers.utils.parseEther("0.25"),
-          }),
-      ).to.be.revertedWithCustomError(
-        min,
-        RouterErrors.AlreadyMinted,
-      );
-    });
-  });
+  //     expect(tx).to.be.ok;
+  //     expect(await min.callStatic.ownerOf(1)).to.eq(
+  //       acc01.address,
+  //     );
+  //     const verArt = await artifacts.readArtifact(
+  //       "FactoryVerifier",
+  //     );
+  //     const ver = new ethers.Contract(
+  //       f721.address,
+  //       verArt.abi,
+  //       ethers.provider,
+  //     );
+  //     await expect(
+  //       r721
+  //         .connect(mad)
+  //         .minimalSafeMint(minAddr, acc02.address, {
+  //           value: ethers.utils.parseEther("0.25"),
+  //         }),
+  //     ).to.be.revertedWithCustomError(
+  //       ver,
+  //       RouterErrors.AccessDenied,
+  //     );
+  //     await expect(
+  //       r721
+  //         .connect(acc02)
+  //         .minimalSafeMint(minAddr, acc02.address, {
+  //           value: ethers.utils.parseEther("0.25"),
+  //         }),
+  //     ).to.be.revertedWithCustomError(
+  //       min,
+  //       RouterErrors.AlreadyMinted,
+  //     );
+  //   });
+  // });
 
   describe("Basic MintTo", async () => {
     it("Should call basicMintTo for 721Basic collection type", async () => {
@@ -750,7 +751,7 @@ describe("MADRouter721", () => {
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
-      const minAddr = await f721.callStatic.getDeployedAddr(
+      const basicAddr = await f721.callStatic.getDeployedAddr(
         "BasicSalt",
       );
       await f721
@@ -758,8 +759,8 @@ describe("MADRouter721", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "721Minimal",
-          "MIN",
+          "721Basic",
+          "BASIC",
           price,
           1,
           "cid/id.json",
@@ -768,11 +769,11 @@ describe("MADRouter721", () => {
         );
       const basic = await ethers.getContractAt(
         "ERC721Basic",
-        minAddr,
+        basicAddr,
       );
       const tx = await r721
         .connect(acc02)
-        .basicMintTo(minAddr, acc01.address, 1, {
+        .basicMintTo(basicAddr, acc01.address, 1, {
           value: ethers.utils.parseEther("0.25"),
         });
 
@@ -791,7 +792,7 @@ describe("MADRouter721", () => {
       await expect(
         r721
           .connect(mad)
-          .basicMintTo(minAddr, acc02.address, 1, {
+          .basicMintTo(basicAddr, acc02.address, 1, {
             value: ethers.utils.parseEther("0.25"),
           }),
       ).to.be.revertedWithCustomError(
@@ -801,67 +802,65 @@ describe("MADRouter721", () => {
     });
   });
   describe("Burn", async () => {
-    it("Should burn token for 721Minimal collection type", async () => {
-      // await f721.addAmbassador(amb.address);
-      await f721
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f721.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      const minAddr = await f721.callStatic.getDeployedAddr(
-        "MinSalt",
-      );
-      await f721
-        .connect(acc02)
-        .createCollection(
-          0,
-          "MinSalt",
-          "721Minimal",
-          "MIN",
-          price,
-          1,
-          "ipfs://cid/id.json",
-          splAddr,
-          750,
-        );
-      const min = await ethers.getContractAt(
-        "ERC721Minimal",
-        minAddr,
-      );
-      await r721
-        .connect(acc02)
-        .setMintState(minAddr, true, 0);
-      await min.connect(acc01).publicMint({
-        value: price.add(ethers.utils.parseEther("0.25")),
-      });
-
-      const tx = await r721.connect(acc02).burn(minAddr, []);
-      const verArt = await artifacts.readArtifact(
-        "FactoryVerifier",
-      );
-      const ver = new ethers.Contract(
-        f721.address,
-        verArt.abi,
-        ethers.provider,
-      );
-      expect(tx).to.be.ok;
-      expect(
-        await min.callStatic.balanceOf(acc01.address),
-      ).to.eq(0);
-      await expect(
-        r721.burn(minAddr, []),
-      ).to.be.revertedWithCustomError(
-        ver,
-        RouterErrors.AccessDenied,
-      );
-    });
+    // it("Should burn token for 721Minimal collection type", async () => {
+    //   // await f721.addAmbassador(amb.address);
+    //   await f721
+    //     .connect(acc02)
+    //     .splitterCheck(
+    //       "MADSplitter1",
+    //       amb.address,
+    //       dead,
+    //       20,
+    //       0,
+    //     );
+    //   const splAddr = await f721.callStatic.getDeployedAddr(
+    //     "MADSplitter1",
+    //   );
+    //   const basicAddr = await f721.callStatic.getDeployedAddr(
+    //     "BasicSalt",
+    //   );
+    //   await f721
+    //     .connect(acc02)
+    //     .createCollection(
+    //       0,
+    //       "BasicSalt",
+    //       "721Basic",
+    //       "BASIC",
+    //       price,
+    //       1,
+    //       "ipfs://cid/id.json",
+    //       splAddr,
+    //       750,
+    //     );
+    //   const basic = await ethers.getContractAt(
+    //     "ERC721Basic",
+    //     basicAddr,
+    //   );
+    //   await r721
+    //     .connect(acc02)
+    //     .setMintState(minAddr, true, 0);
+    //   await min.connect(acc01).publicMint({ value: price.add(ethers.utils.parseEther("0.25")) });
+      
+    //   const tx = await r721.connect(acc02).burn(minAddr, []);
+    //   const verArt = await artifacts.readArtifact(
+    //     "FactoryVerifier",
+    //   );
+    //   const ver = new ethers.Contract(
+    //     f721.address,
+    //     verArt.abi,
+    //     ethers.provider,
+    //   );
+    //   expect(tx).to.be.ok;
+    //   expect(
+    //     await min.callStatic.balanceOf(acc01.address),
+    //   ).to.eq(0);
+    //   await expect(
+    //     r721.burn(minAddr, []),
+    //   ).to.be.revertedWithCustomError(
+    //     ver,
+    //     RouterErrors.AccessDenied,
+    //   );
+    // });
     it("Should burn tokens for 721Basic collection type", async () => {
       // await f721.addAmbassador(amb.address);
       await f721
@@ -898,7 +897,7 @@ describe("MADRouter721", () => {
       );
       await r721
         .connect(acc02)
-        .setMintState(basicAddr, true, 0);
+        .setMintState(basicAddr, true);
 
       await basic.connect(acc01).mint(1, {
         value: price.add(ethers.utils.parseEther("0.25")),
@@ -926,245 +925,244 @@ describe("MADRouter721", () => {
         RouterErrors.AccessDenied,
       );
     });
-    it("Should burn tokens for 721Whitelist collection type", async () => {
-      const root = ethers.utils.keccak256(
-        ethers.utils.toUtf8Bytes("fakeRoot"),
-      );
-      // await f721.addAmbassador(amb.address);
-      await f721
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f721.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      const wlAddr = await f721.callStatic.getDeployedAddr(
-        "WhiteSalt",
-      );
-      await f721
-        .connect(acc02)
-        .createCollection(
-          2,
-          "WhiteSalt",
-          "721Whitelist",
-          "WHITE",
-          price,
-          1000,
-          "ipfs://cid/",
-          splAddr,
-          750,
-        );
-      const wl = await ethers.getContractAt(
-        "ERC721Whitelist",
-        wlAddr,
-      );
-      await r721
-        .connect(acc02)
-        .freeSettings(wl.address, 1, 10, root);
-      await r721.connect(acc02).creatorMint(wlAddr, 1, {
-        value: ethers.utils.parseEther("0.25"),
-      });
-      const tx = await r721.connect(acc02).burn(wlAddr, [1]);
-      const verArt = await artifacts.readArtifact(
-        "FactoryVerifier",
-      );
-      const ver = new ethers.Contract(
-        f721.address,
-        verArt.abi,
-        ethers.provider,
-      );
-      expect(tx).to.be.ok;
-      expect(
-        await wl.callStatic.balanceOf(acc02.address),
-      ).to.eq(0);
-      await expect(
-        r721.burn(wlAddr, [1]),
-      ).to.be.revertedWithCustomError(
-        ver,
-        RouterErrors.AccessDenied,
-      );
-    });
-    it("Should burn tokens for 721Lazy collection type", async () => {
-      const signer = ethers.Wallet.createRandom();
-      // await f721.addAmbassador(amb.address);
-      await f721.setSigner(await signer.getAddress());
-      await f721
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f721.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      const lazyAddr = await f721.callStatic.getDeployedAddr(
-        "LazySalt",
-      );
-      await f721
-        .connect(acc02)
-        .createCollection(
-          3,
-          "LazySalt",
-          "721Lazy",
-          "LAZY",
-          ethers.constants.Zero,
-          ethers.constants.Zero,
-          "ipfs://cid/",
-          splAddr,
-          750,
-        );
-      const lazy = await ethers.getContractAt(
-        "ERC721Lazy",
-        lazyAddr,
-      );
-      const net = await lazy.provider.getNetwork();
-      const chainId = net.chainId;
-      const bnPrice = ethers.utils.parseEther("1");
-      const usrs = [owner.address, acc02.address];
-      const vId = ethers.utils.keccak256(
-        ethers.utils.toUtf8Bytes("voucher"),
-      );
-      const pk = Buffer.from(
-        signer.privateKey.slice(2),
-        "hex",
-      );
+    // it("Should burn tokens for 721Whitelist collection type", async () => {
+    //   const root = ethers.utils.keccak256(
+    //     ethers.utils.toUtf8Bytes("fakeRoot"),
+    //   );
+    //   // await f721.addAmbassador(amb.address);
+    //   await f721
+    //     .connect(acc02)
+    //     .splitterCheck(
+    //       "MADSplitter1",
+    //       amb.address,
+    //       dead,
+    //       20,
+    //       0,
+    //     );
+    //   const splAddr = await f721.callStatic.getDeployedAddr(
+    //     "MADSplitter1",
+    //   );
+    //   const wlAddr = await f721.callStatic.getDeployedAddr(
+    //     "WhiteSalt",
+    //   );
+    //   await f721
+    //     .connect(acc02)
+    //     .createCollection(
+    //       2,
+    //       "WhiteSalt",
+    //       "721Whitelist",
+    //       "WHITE",
+    //       price,
+    //       1000,
+    //       "ipfs://cid/",
+    //       splAddr,
+    //       750,
+    //     );
+    //   const wl = await ethers.getContractAt(
+    //     "ERC721Whitelist",
+    //     wlAddr,
+    //   );
+    //   await r721
+    //     .connect(acc02)
+    //     .freeSettings(wl.address, 1, 10, root);
+    //   await r721
+    //     .connect(acc02)
+    //     .creatorMint(wlAddr, 1, {
+    //       value: ethers.utils.parseEther("0.25"),
+    //     });
+    //   const tx = await r721.connect(acc02).burn(wlAddr, [1]);
+    //   const verArt = await artifacts.readArtifact(
+    //     "FactoryVerifier",
+    //   );
+    //   const ver = new ethers.Contract(
+    //     f721.address,
+    //     verArt.abi,
+    //     ethers.provider,
+    //   );
+    //   expect(tx).to.be.ok;
+    //   expect(
+    //     await wl.callStatic.balanceOf(acc02.address),
+    //   ).to.eq(0);
+    //   await expect(
+    //     r721.burn(wlAddr, [1]),
+    //   ).to.be.revertedWithCustomError(
+    //     ver,
+    //     RouterErrors.AccessDenied,
+    //   );
+    // });
+    // it("Should burn tokens for 721Lazy collection type", async () => {
+    //   const signer = ethers.Wallet.createRandom();
+    //   // await f721.addAmbassador(amb.address);
+    //   await f721.setSigner(await signer.getAddress());
+    //   await f721
+    //     .connect(acc02)
+    //     .splitterCheck(
+    //       "MADSplitter1",
+    //       amb.address,
+    //       dead,
+    //       20,
+    //       0,
+    //     );
+    //   const splAddr = await f721.callStatic.getDeployedAddr(
+    //     "MADSplitter1",
+    //   );
+    //   const lazyAddr = await f721.callStatic.getDeployedAddr(
+    //     "LazySalt",
+    //   );
+    //   await f721
+    //     .connect(acc02)
+    //     .createCollection(
+    //       3,
+    //       "LazySalt",
+    //       "721Lazy",
+    //       "LAZY",
+    //       ethers.constants.Zero,
+    //       ethers.constants.Zero,
+    //       "ipfs://cid/",
+    //       splAddr,
+    //       750,
+    //     );
+    //   const lazy = await ethers.getContractAt(
+    //     "ERC721Lazy",
+    //     lazyAddr,
+    //   );
+    //   const net = await lazy.provider.getNetwork();
+    //   const chainId = net.chainId;
+    //   const bnPrice = ethers.utils.parseEther("1");
+    //   const usrs = [owner.address, acc02.address];
+    //   const vId = ethers.utils.keccak256(
+    //     ethers.utils.toUtf8Bytes("voucher"),
+    //   );
+    //   const pk = Buffer.from(
+    //     signer.privateKey.slice(2),
+    //     "hex",
+    //   );
 
-      const domain = [
-        { name: "name", type: "string" },
-        { name: "version", type: "string" },
-        { name: "chainId", type: "uint256" },
-        { name: "verifyingContract", type: "address" },
-      ];
-      const voucherType = [
-        { name: "voucherId", type: "bytes32" },
-        { name: "users", type: "address[]" },
-        { name: "balances", type: "uint256[]" },
-        { name: "amount", type: "uint256" },
-        { name: "price", type: "uint256" },
-      ];
-      const domainData = {
-        name: "721Lazy",
-        version: "1",
-        chainId: chainId,
-        verifyingContract: lazy.address,
-      };
-      const Voucher = {
-        voucherId: vId,
-        users: usrs,
-        balances: [1],
-        amount: 1,
-        price: bnPrice.toString(),
-      };
-      const data = JSON.stringify({
-        types: {
-          EIP712Domain: domain,
-          Voucher: voucherType,
-        },
-        primaryType: "Voucher",
-        domain: domainData,
-        message: Voucher,
-      });
+    //   const domain = [
+    //     { name: "name", type: "string" },
+    //     { name: "version", type: "string" },
+    //     { name: "chainId", type: "uint256" },
+    //     { name: "verifyingContract", type: "address" },
+    //   ];
+    //   const voucherType = [
+    //     { name: "voucherId", type: "bytes32" },
+    //     { name: "users", type: "address[]" },
+    //     { name: "balances", type: "uint256[]" },
+    //     { name: "amount", type: "uint256" },
+    //     { name: "price", type: "uint256" },
+    //   ];
+    //   const domainData = {
+    //     name: "721Lazy",
+    //     version: "1",
+    //     chainId: chainId,
+    //     verifyingContract: lazy.address,
+    //   };
+    //   const Voucher = {
+    //     voucherId: vId,
+    //     users: usrs,
+    //     balances: [1],
+    //     amount: 1,
+    //     price: bnPrice.toString(),
+    //   };
+    //   const data = JSON.stringify({
+    //     types: {
+    //       EIP712Domain: domain,
+    //       Voucher: voucherType,
+    //     },
+    //     primaryType: "Voucher",
+    //     domain: domainData,
+    //     message: Voucher,
+    //   });
 
-      const parsedData = JSON.parse(data);
-      const signature = signTypedData({
-        privateKey: pk,
-        data: parsedData,
-        version: SignTypedDataVersion.V4,
-      });
+    //   const parsedData = JSON.parse(data);
+    //   const signature = signTypedData({
+    //     privateKey: pk,
+    //     data: parsedData,
+    //     version: SignTypedDataVersion.V4,
+    //   });
 
-      const sigSplit = ethers.utils.splitSignature(signature);
+    //   const sigSplit = ethers.utils.splitSignature(signature);
 
-      await lazy
-        .connect(acc02)
-        .lazyMint(
-          Voucher,
-          sigSplit.v,
-          sigSplit.r,
-          sigSplit.s,
-          {
-            value: price
-              .mul(ethers.BigNumber.from(2))
-              .add(ethers.utils.parseEther("0.25")),
-          },
-        );
-      const tx = await r721
-        .connect(acc02)
-        .burn(lazyAddr, [1, 2]);
-      const verArt = await artifacts.readArtifact(
-        "FactoryVerifier",
-      );
-      const ver = new ethers.Contract(
-        f721.address,
-        verArt.abi,
-        ethers.provider,
-      );
+    //   await lazy
+    //     .connect(acc02)
+    //     .lazyMint(
+    //       Voucher,
+    //       sigSplit.v,
+    //       sigSplit.r,
+    //       sigSplit.s,
+    //       { value: price.mul(ethers.BigNumber.from(2)).add(ethers.utils.parseEther("0.25")) },
+    //     );
+    //   const tx = await r721
+    //     .connect(acc02)
+    //     .burn(lazyAddr, [1, 2]);
+    //   const verArt = await artifacts.readArtifact(
+    //     "FactoryVerifier",
+    //   );
+    //   const ver = new ethers.Contract(
+    //     f721.address,
+    //     verArt.abi,
+    //     ethers.provider,
+    //   );
 
-      expect(tx).to.be.ok;
-      expect(await lazy.balanceOf(acc02.address)).to.eq(0);
-      expect(await lazy.balanceOf(owner.address)).to.eq(0);
-      await expect(
-        r721.burn(lazyAddr, [1]),
-      ).to.be.revertedWithCustomError(
-        ver,
-        RouterErrors.AccessDenied,
-      );
-    });
+    //   expect(tx).to.be.ok;
+    //   expect(await lazy.balanceOf(acc02.address)).to.eq(0);
+    //   expect(await lazy.balanceOf(owner.address)).to.eq(0);
+    //   await expect(
+    //     r721.burn(lazyAddr, [1]),
+    //   ).to.be.revertedWithCustomError(
+    //     ver,
+    //     RouterErrors.AccessDenied,
+    //   );
+    // });
   });
   describe("Set MintState", async () => {
     it("Should revert for invalid stateType", async () => {
       const addr = await f721.getDeployedAddr("salt");
-      const tx = r721.setMintState(addr, true, 3);
+      const tx = r721.setMintState(addr, true);
 
-      await expect(tx).to.be.revertedWith(
-        RouterErrors.InvalidType,
+      await expect(tx).to.be.revertedWithCustomError(
+        f721,
+        RouterErrors.AccessDenied,
       );
     });
-    it("Should revert for invalid tokenType", async () => {
-      // await f721.addAmbassador(amb.address);
-      await f721
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f721.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      const minAddr = await f721.callStatic.getDeployedAddr(
-        "MinSalt",
-      );
-      await f721
-        .connect(acc02)
-        .createCollection(
-          0,
-          "MinSalt",
-          "721Minimal",
-          "MIN",
-          price,
-          1,
-          "ipfs://cid/id.json",
-          splAddr,
-          750,
-        );
-      const tx = r721
-        .connect(acc02)
-        .setMintState(minAddr, true, 2);
+    // it("Should revert for invalid tokenType", async () => {
+    //   // await f721.addAmbassador(amb.address);
+    //   await f721
+    //     .connect(acc02)
+    //     .splitterCheck(
+    //       "MADSplitter1",
+    //       amb.address,
+    //       dead,
+    //       20,
+    //       0,
+    //     );
+    //   const splAddr = await f721.callStatic.getDeployedAddr(
+    //     "MADSplitter1",
+    //   );
+    //   // const basicAddr = await f721.callStatic.getDeployedAddr(
+    //     // "BasicSalt",
+    //   // );
+    //   const tx = f721
+    //     .connect(acc02)
+    //     .createCollection(
+    //       0,
+    //       "MinSalt",
+    //       "721Minimal",
+    //       "MIN",
+    //       price,
+    //       1,
+    //       "ipfs://cid/id.json",
+    //       splAddr,
+    //       750,
+    //     );
+    //   // const tx = r721
+    //     // .connect(acc02)
+    //     // .setMintState(minAddr, true, 2);
 
-      await expect(tx).to.be.revertedWith(
-        RouterErrors.InvalidType,
-      );
-    });
+    //   await expect(tx).to.be.revertedWith(
+    //     RouterErrors.InvalidType,
+    //   );
+    // });
     it("Should set publicMintState for minimal, basic and whitelist colTypes", async () => {
       // await f721.addAmbassador(amb.address);
       await f721
@@ -1179,32 +1177,32 @@ describe("MADRouter721", () => {
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
-      const minAddr = await f721.callStatic.getDeployedAddr(
-        "MinSalt",
-      );
+      // const minAddr = await f721.callStatic.getDeployedAddr(
+        // "MinSalt",
+      // );
       const basicAddr = await f721.callStatic.getDeployedAddr(
         "BasicSalt",
       );
-      const wlAddr = await f721.callStatic.getDeployedAddr(
-        "WhiteSalt",
-      );
-      await f721
-        .connect(acc02)
-        .createCollection(
-          0,
-          "MinSalt",
-          "721Minimal",
-          "MIN",
-          price,
-          1,
-          "ipfs://cid/id.json",
-          splAddr,
-          750,
-        );
-      const min = await ethers.getContractAt(
-        "ERC721Minimal",
-        minAddr,
-      );
+      // const wlAddr = await f721.callStatic.getDeployedAddr(
+        // "WhiteSalt",
+      // );
+      // await f721
+      //   .connect(acc02)
+        // // .createCollection(
+        //   // 0,
+          // // "MinSalt",
+          // // "721Minimal",
+          // // "MIN",
+          // // price,
+          // // 1,
+          // // "ipfs://cid/id.json",
+          // // splAddr,
+        //   // 750,
+      //   // );
+      // // const min = await ethers.getContractAt(
+      //   // "ERC721Minimal",
+      //   // minAddr,
+      // );
       await f721
         .connect(acc02)
         .createCollection(
@@ -1222,46 +1220,46 @@ describe("MADRouter721", () => {
         "ERC721Basic",
         basicAddr,
       );
-      await f721
-        .connect(acc02)
-        .createCollection(
-          2,
-          "WhiteSalt",
-          "721Whitelist",
-          "WHITE",
-          price,
-          1,
-          "ipfs://cid/id.json",
-          splAddr,
-          750,
-        );
-      const wl = await ethers.getContractAt(
-        "ERC721Whitelist",
-        wlAddr,
-      );
-
-      const tx1 = await r721
-        .connect(acc02)
-        .setMintState(minAddr, true, 0);
+      // await f721
+        // .connect(acc02)
+        // .createCollection(
+          // 2,
+          // "WhiteSalt",
+          // "721Whitelist",
+          // "WHITE",
+          // price,
+          // 1,
+          // "ipfs://cid/id.json",
+          // splAddr,
+          // 750,
+        // );
+      // const wl = await ethers.getContractAt(
+        // "ERC721Whitelist",
+        // wlAddr,
+      // );
+// 
+      // const tx1 = await r721
+      //   .connect(acc02)
+      //   .setMintState(minAddr, true, 0);
       const tx2 = await r721
         .connect(acc02)
-        .setMintState(basicAddr, true, 0);
-      const tx3 = await r721
-        .connect(acc02)
-        .setMintState(wlAddr, true, 0);
+        .setMintState(basicAddr, true);
+      // const tx3 = await r721
+        // .connect(acc02)
+        // .setMintState(wlAddr, true, 0);
 
-      expect(tx1).to.be.ok;
+      // expect(tx1).to.be.ok;
       expect(tx2).to.be.ok;
-      expect(tx3).to.be.ok;
-      expect(await min.callStatic.publicMintState()).to.eq(
-        true,
-      );
+      // expect(tx3).to.be.ok;
+      // expect(await min.callStatic.publicMintState()).to.eq(
+        // true,
+      // );
       expect(await basic.callStatic.publicMintState()).to.eq(
         true,
       );
-      expect(await wl.callStatic.publicMintState()).to.eq(
-        true,
-      );
+      // expect(await wl.callStatic.publicMintState()).to.eq(
+        // true,
+      // );
       const verArt = await artifacts.readArtifact(
         "FactoryVerifier",
       );
@@ -1270,325 +1268,325 @@ describe("MADRouter721", () => {
         verArt.abi,
         ethers.provider,
       );
+      // await expect(
+        // r721.connect(acc01).setMintState(minAddr, true, 0),
+      // ).to.be.revertedWithCustomError(
+        // ver,
+        // RouterErrors.AccessDenied,
+      // );
       await expect(
-        r721.connect(acc01).setMintState(minAddr, true, 0),
+        r721.connect(acc01).setMintState(basicAddr, true),
       ).to.be.revertedWithCustomError(
         ver,
         RouterErrors.AccessDenied,
       );
-      await expect(
-        r721.connect(acc01).setMintState(basicAddr, true, 0),
-      ).to.be.revertedWithCustomError(
-        ver,
-        RouterErrors.AccessDenied,
-      );
-      await expect(
-        r721.connect(acc01).setMintState(wlAddr, true, 0),
-      ).to.be.revertedWithCustomError(
-        ver,
-        RouterErrors.AccessDenied,
-      );
+      // await expect(
+        // r721.connect(acc01).setMintState(wlAddr, true, 0),
+      // ).to.be.revertedWithCustomError(
+        // ver,
+        // RouterErrors.AccessDenied,
+      // );
     });
-    it("Should set whitelistMintState for whitelist colType", async () => {
-      // await f721.addAmbassador(amb.address);
-      await f721
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f721.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      await f721
-        .connect(acc02)
-        .createCollection(
-          2,
-          "WhiteSalt",
-          "721Whitelist",
-          "WHITE",
-          price,
-          1,
-          "ipfs://cid/id.json",
-          splAddr,
-          750,
-        );
-      const wlAddr = await f721.callStatic.getDeployedAddr(
-        "WhiteSalt",
-      );
-      const wl = await ethers.getContractAt(
-        "ERC721Whitelist",
-        wlAddr,
-      );
-      const tx = await r721
-        .connect(acc02)
-        .setMintState(wlAddr, true, 1);
+    // it("Should set whitelistMintState for whitelist colType", async () => {
+    //   // await f721.addAmbassador(amb.address);
+    //   await f721
+    //     .connect(acc02)
+    //     .splitterCheck(
+    //       "MADSplitter1",
+    //       amb.address,
+    //       dead,
+    //       20,
+    //       0,
+    //     );
+    //   const splAddr = await f721.callStatic.getDeployedAddr(
+    //     "MADSplitter1",
+    //   );
+    //   await f721
+    //     .connect(acc02)
+    //     .createCollection(
+    //       2,
+    //       "WhiteSalt",
+    //       "721Whitelist",
+    //       "WHITE",
+    //       price,
+    //       1,
+    //       "ipfs://cid/id.json",
+    //       splAddr,
+    //       750,
+    //     );
+    //   const wlAddr = await f721.callStatic.getDeployedAddr(
+    //     "WhiteSalt",
+    //   );
+    //   const wl = await ethers.getContractAt(
+    //     "ERC721Whitelist",
+    //     wlAddr,
+    //   );
+    //   const tx = await r721
+    //     .connect(acc02)
+    //     .setMintState(wlAddr, true, 1);
 
-      expect(tx).to.be.ok;
-      expect(await wl.callStatic.whitelistMintState()).to.eq(
-        true,
-      );
-      const verArt = await artifacts.readArtifact(
-        "FactoryVerifier",
-      );
-      const ver = new ethers.Contract(
-        f721.address,
-        verArt.abi,
-        ethers.provider,
-      );
-      await expect(
-        r721.connect(acc01).setMintState(wlAddr, true, 1),
-      ).to.be.revertedWithCustomError(
-        ver,
-        RouterErrors.AccessDenied,
-      );
-    });
-    it("Should set freeClaimState for whitelist colType", async () => {
-      // await f721.addAmbassador(amb.address);
-      await f721
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f721.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      await f721
-        .connect(acc02)
-        .createCollection(
-          2,
-          "WhiteSalt",
-          "721Whitelist",
-          "WHITE",
-          price,
-          1,
-          "ipfs://cid/id.json",
-          splAddr,
-          750,
-        );
-      const wlAddr = await f721.callStatic.getDeployedAddr(
-        "WhiteSalt",
-      );
-      const wl = await ethers.getContractAt(
-        "ERC721Whitelist",
-        wlAddr,
-      );
-      const tx = await r721
-        .connect(acc02)
-        .setMintState(wlAddr, true, 2);
+    //   expect(tx).to.be.ok;
+    //   expect(await wl.callStatic.whitelistMintState()).to.eq(
+    //     true,
+    //   );
+    //   const verArt = await artifacts.readArtifact(
+    //     "FactoryVerifier",
+    //   );
+    //   const ver = new ethers.Contract(
+    //     f721.address,
+    //     verArt.abi,
+    //     ethers.provider,
+    //   );
+    //   await expect(
+    //     r721.connect(acc01).setMintState(wlAddr, true, 1),
+    //   ).to.be.revertedWithCustomError(
+    //     ver,
+    //     RouterErrors.AccessDenied,
+    //   );
+    // });
+    // it("Should set freeClaimState for whitelist colType", async () => {
+    //   // await f721.addAmbassador(amb.address);
+    //   await f721
+    //     .connect(acc02)
+    //     .splitterCheck(
+    //       "MADSplitter1",
+    //       amb.address,
+    //       dead,
+    //       20,
+    //       0,
+    //     );
+    //   const splAddr = await f721.callStatic.getDeployedAddr(
+    //     "MADSplitter1",
+    //   );
+    //   await f721
+    //     .connect(acc02)
+    //     .createCollection(
+    //       2,
+    //       "WhiteSalt",
+    //       "721Whitelist",
+    //       "WHITE",
+    //       price,
+    //       1,
+    //       "ipfs://cid/id.json",
+    //       splAddr,
+    //       750,
+    //     );
+    //   const wlAddr = await f721.callStatic.getDeployedAddr(
+    //     "WhiteSalt",
+    //   );
+    //   const wl = await ethers.getContractAt(
+    //     "ERC721Whitelist",
+    //     wlAddr,
+    //   );
+    //   const tx = await r721
+    //     .connect(acc02)
+    //     .setMintState(wlAddr, true, 2);
 
-      expect(tx).to.be.ok;
-      expect(await wl.callStatic.freeClaimState()).to.eq(
-        true,
-      );
-      const verArt = await artifacts.readArtifact(
-        "FactoryVerifier",
-      );
-      const ver = new ethers.Contract(
-        f721.address,
-        verArt.abi,
-        ethers.provider,
-      );
-      await expect(
-        r721.connect(acc01).setMintState(wlAddr, true, 2),
-      ).to.be.revertedWithCustomError(
-        ver,
-        RouterErrors.AccessDenied,
-      );
-    });
+    //   expect(tx).to.be.ok;
+    //   expect(await wl.callStatic.freeClaimState()).to.eq(
+    //     true,
+    //   );
+    //   const verArt = await artifacts.readArtifact(
+    //     "FactoryVerifier",
+    //   );
+    //   const ver = new ethers.Contract(
+    //     f721.address,
+    //     verArt.abi,
+    //     ethers.provider,
+    //   );
+    //   await expect(
+    //     r721.connect(acc01).setMintState(wlAddr, true, 2),
+    //   ).to.be.revertedWithCustomError(
+    //     ver,
+    //     RouterErrors.AccessDenied,
+    //   );
+    // });
   });
-  describe("Whitelist Creator Mint", async () => {
-    it("Should revert for invalid coltype", async () => {
-      // await f721.addAmbassador(amb.address);
-      await f721
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f721.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      await f721
-        .connect(acc02)
-        .createCollection(
-          1,
-          "BasicSalt",
-          "721Basic",
-          "BASIC",
-          price,
-          100,
-          "ipfs://cid/",
-          splAddr,
-          750,
-        );
-      const basicAddr = await f721.callStatic.getDeployedAddr(
-        "BasicSalt",
-      );
-      const basic = await ethers.getContractAt(
-        "ERC721Basic",
-        basicAddr,
-      );
+  // describe("Whitelist Creator Mint", async () => {
+  //   it("Should revert for invalid coltype", async () => {
+  //     // await f721.addAmbassador(amb.address);
+  //     await f721
+  //       .connect(acc02)
+  //       .splitterCheck(
+  //         "MADSplitter1",
+  //         amb.address,
+  //         dead,
+  //         20,
+  //         0,
+  //       );
+  //     const splAddr = await f721.callStatic.getDeployedAddr(
+  //       "MADSplitter1",
+  //     );
+  //     await f721
+  //       .connect(acc02)
+  //       .createCollection(
+  //         1,
+  //         "BasicSalt",
+  //         "721Basic",
+  //         "BASIC",
+  //         price,
+  //         100,
+  //         "ipfs://cid/",
+  //         splAddr,
+  //         750,
+  //       );
+  //     const basicAddr = await f721.callStatic.getDeployedAddr(
+  //       "BasicSalt",
+  //     );
+  //     const basic = await ethers.getContractAt(
+  //       "ERC721Basic",
+  //       basicAddr,
+  //     );
 
-      await expect(
-        r721.connect(acc02).creatorMint(basic.address, 2),
-      ).to.be.revertedWith(RouterErrors.InvalidType);
-    });
-    it("Should mint to creator", async () => {
-      // await f721.addAmbassador(amb.address);
-      await f721
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f721.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      await f721
-        .connect(acc02)
-        .createCollection(
-          2,
-          "WhiteSalt",
-          "721Whitelist",
-          "WHITE",
-          price,
-          100,
-          "ipfs://cid/",
-          splAddr,
-          750,
-        );
-      const wlAddr = await f721.callStatic.getDeployedAddr(
-        "WhiteSalt",
-      );
-      const wl = await ethers.getContractAt(
-        "ERC721Whitelist",
-        wlAddr,
-      );
-      const root = ethers.utils.keccak256(
-        ethers.utils.toUtf8Bytes("root"),
-      );
+  //     await expect(
+  //       r721.connect(acc02).creatorMint(basic.address, 2),
+  //     ).to.be.revertedWith(RouterErrors.InvalidType);
+  //   });
+  //   it("Should mint to creator", async () => {
+  //     // await f721.addAmbassador(amb.address);
+  //     await f721
+  //       .connect(acc02)
+  //       .splitterCheck(
+  //         "MADSplitter1",
+  //         amb.address,
+  //         dead,
+  //         20,
+  //         0,
+  //       );
+  //     const splAddr = await f721.callStatic.getDeployedAddr(
+  //       "MADSplitter1",
+  //     );
+  //     await f721
+  //       .connect(acc02)
+  //       .createCollection(
+  //         2,
+  //         "WhiteSalt",
+  //         "721Whitelist",
+  //         "WHITE",
+  //         price,
+  //         100,
+  //         "ipfs://cid/",
+  //         splAddr,
+  //         750,
+  //       );
+  //     const wlAddr = await f721.callStatic.getDeployedAddr(
+  //       "WhiteSalt",
+  //     );
+  //     const wl = await ethers.getContractAt(
+  //       "ERC721Whitelist",
+  //       wlAddr,
+  //     );
+  //     const root = ethers.utils.keccak256(
+  //       ethers.utils.toUtf8Bytes("root"),
+  //     );
 
-      await r721
-        .connect(acc02)
-        .freeSettings(wlAddr, 1, 10, root);
-      await r721.connect(acc02).setMintState(wlAddr, true, 2);
-      const tx = await r721
-        .connect(acc02)
-        .creatorMint(wlAddr, 2, {
-          value: ethers.utils.parseEther("0.25"),
-        });
+  //     await r721
+  //       .connect(acc02)
+  //       .freeSettings(wlAddr, 1, 10, root);
+  //     await r721.connect(acc02).setMintState(wlAddr, true, 2);
+  //     const tx = await r721
+  //       .connect(acc02)
+  //       .creatorMint(wlAddr, 2, {
+  //         value: ethers.utils.parseEther("0.25"),
+  //       });
 
-      expect(tx).to.be.ok;
-      expect(await wl.callStatic.freeClaimState()).to.be.true;
-    });
-  });
-  describe("Whitelist token gifting", async () => {
-    it("Should revert for invalid coltype", async () => {
-      // await f721.addAmbassador(amb.address);
-      await f721
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f721.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      await f721
-        .connect(acc02)
-        .createCollection(
-          1,
-          "BasicSalt",
-          "721Basic",
-          "BASIC",
-          price,
-          100,
-          "ipfs://cid/",
-          splAddr,
-          750,
-        );
-      const basicAddr = await f721.callStatic.getDeployedAddr(
-        "BasicSalt",
-      );
-      const addrs = [owner.address, mad.address];
-      await expect(
-        r721.connect(acc02).gift(basicAddr, addrs),
-      ).to.be.revertedWith(RouterErrors.InvalidType);
-    });
-    it("Should gift tokens", async () => {
-      // await f721.addAmbassador(amb.address);
-      await f721
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f721.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      await f721
-        .connect(acc02)
-        .createCollection(
-          2,
-          "WhiteSalt",
-          "721Whitelist",
-          "WHITE",
-          price,
-          100,
-          "ipfs://cid/",
-          splAddr,
-          750,
-        );
-      const wlAddr = await f721.callStatic.getDeployedAddr(
-        "WhiteSalt",
-      );
-      const wl = await ethers.getContractAt(
-        "ERC721Whitelist",
-        wlAddr,
-      );
-      const root = ethers.utils.keccak256(
-        ethers.utils.toUtf8Bytes("root"),
-      );
-      const addrs = [owner.address, mad.address];
-      await r721
-        .connect(acc02)
-        .freeSettings(wlAddr, 1, 10, root);
-      await r721.connect(acc02).setMintState(wlAddr, true, 2);
-      const tx = await r721
-        .connect(acc02)
-        .gift(wlAddr, addrs, {
-          value: ethers.utils.parseEther("0.25"),
-        });
+  //     expect(tx).to.be.ok;
+  //     expect(await wl.callStatic.freeClaimState()).to.be.true;
+  //   });
+  // });
+  // describe("Whitelist token gifting", async () => {
+  //   it("Should revert for invalid coltype", async () => {
+  //     // await f721.addAmbassador(amb.address);
+  //     await f721
+  //       .connect(acc02)
+  //       .splitterCheck(
+  //         "MADSplitter1",
+  //         amb.address,
+  //         dead,
+  //         20,
+  //         0,
+  //       );
+  //     const splAddr = await f721.callStatic.getDeployedAddr(
+  //       "MADSplitter1",
+  //     );
+  //     await f721
+  //       .connect(acc02)
+  //       .createCollection(
+  //         1,
+  //         "BasicSalt",
+  //         "721Basic",
+  //         "BASIC",
+  //         price,
+  //         100,
+  //         "ipfs://cid/",
+  //         splAddr,
+  //         750,
+  //       );
+  //     const basicAddr = await f721.callStatic.getDeployedAddr(
+  //       "BasicSalt",
+  //     );
+  //     const addrs = [owner.address, mad.address];
+  //     await expect(
+  //       r721.connect(acc02).gift(basicAddr, addrs),
+  //     ).to.be.revertedWith(RouterErrors.InvalidType);
+  //   });
+  //   it("Should gift tokens", async () => {
+  //     // await f721.addAmbassador(amb.address);
+  //     await f721
+  //       .connect(acc02)
+  //       .splitterCheck(
+  //         "MADSplitter1",
+  //         amb.address,
+  //         dead,
+  //         20,
+  //         0,
+  //       );
+  //     const splAddr = await f721.callStatic.getDeployedAddr(
+  //       "MADSplitter1",
+  //     );
+  //     await f721
+  //       .connect(acc02)
+  //       .createCollection(
+  //         2,
+  //         "WhiteSalt",
+  //         "721Whitelist",
+  //         "WHITE",
+  //         price,
+  //         100,
+  //         "ipfs://cid/",
+  //         splAddr,
+  //         750,
+  //       );
+  //     const wlAddr = await f721.callStatic.getDeployedAddr(
+  //       "WhiteSalt",
+  //     );
+  //     const wl = await ethers.getContractAt(
+  //       "ERC721Whitelist",
+  //       wlAddr,
+  //     );
+  //     const root = ethers.utils.keccak256(
+  //       ethers.utils.toUtf8Bytes("root"),
+  //     );
+  //     const addrs = [owner.address, mad.address];
+  //     await r721
+  //       .connect(acc02)
+  //       .freeSettings(wlAddr, 1, 10, root);
+  //     await r721.connect(acc02).setMintState(wlAddr, true, 2);
+  //     const tx = await r721
+  //       .connect(acc02)
+  //       .gift(wlAddr, addrs, {
+  //         value: ethers.utils.parseEther("0.25"),
+  //       });
 
-      expect(tx).to.be.ok;
-      expect(
-        await wl.callStatic.balanceOf(owner.address),
-      ).to.eq(1);
-      expect(
-        await wl.callStatic.balanceOf(mad.address),
-      ).to.eq(1);
-    });
-  });
+  //     expect(tx).to.be.ok;
+  //     expect(
+  //       await wl.callStatic.balanceOf(owner.address),
+  //     ).to.eq(1);
+  //     expect(
+  //       await wl.callStatic.balanceOf(mad.address),
+  //     ).to.eq(1);
+  //   });
+  // });
   describe("Creator Withdraw", async () => {
     it("Should withdraw balance and ERC20 for all colTypes", async () => {
       const ERC20 = await ethers.getContractFactory(
@@ -1610,49 +1608,47 @@ describe("MADRouter721", () => {
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
-      const minAddr = await f721.callStatic.getDeployedAddr(
-        "MinSalt",
+      const basicAddr = await f721.callStatic.getDeployedAddr(
+        "BasicSalt",
       );
       await f721
         .connect(acc02)
         .createCollection(
-          0,
-          "MinSalt",
-          "721Minimal",
-          "MIN",
+          1,
+          "BasicSalt",
+          "721Basic",
+          "BASIC",
           price,
           1,
           "ipfs://cid/id.json",
           splAddr,
           750,
         );
-      const min = await ethers.getContractAt(
-        "ERC721Minimal",
-        minAddr,
+      const basic = await ethers.getContractAt(
+        "ERC721Basic",
+        basicAddr,
       );
-      await erc20.mint(min.address, price);
+      await erc20.mint(basic.address, price);
       await r721
         .connect(acc02)
-        .setMintState(min.address, true, 0);
-      await min.connect(acc01).publicMint({
-        value: price.add(ethers.utils.parseEther("0.25")),
-      });
+        .setMintState(basic.address, true);
+      await basic.connect(acc01).mint(1,{ value: price.add(ethers.utils.parseEther("0.25")) });
       const bal1 = await ethers.provider.getBalance(
         acc02.address,
       );
       const bal2 = await erc20.balanceOf(acc02.address);
       const tx1 = await r721
         .connect(acc02)
-        .withdraw(min.address, dead);
+        .withdraw(basic.address, dead);
       const tx2 = await r721
         .connect(acc02)
-        .withdraw(min.address, erc20.address);
+        .withdraw(basic.address, erc20.address);
       const newBal1 = await ethers.provider.getBalance(
         acc02.address,
       );
       const newBal2 = await erc20.balanceOf(acc02.address);
 
-      const basicAddr = await f721.callStatic.getDeployedAddr(
+      const basicAddr2 = await f721.callStatic.getDeployedAddr(
         "salt",
       );
       await f721
@@ -1681,27 +1677,25 @@ describe("MADRouter721", () => {
           madSpl,
           750,
         );
-      const basic = await ethers.getContractAt(
+      const basic2 = await ethers.getContractAt(
         "ERC721Basic",
-        basicAddr,
+        basicAddr2,
       );
-      await erc20.mint(basic.address, price);
+      await erc20.mint(basic2.address, price);
       await r721
         .connect(mad)
-        .setMintState(basic.address, true, 0);
-      await basic.connect(acc01).mint(1, {
-        value: price.add(ethers.utils.parseEther("0.25")),
-      });
+        .setMintState(basic2.address, true);
+      await basic2.connect(acc01).mint(1, { value: price.add(ethers.utils.parseEther("0.25")) });
       const bala = await ethers.provider.getBalance(
         mad.address,
       );
       const balb = await erc20.balanceOf(mad.address);
       const txa = await r721
         .connect(mad)
-        .withdraw(basic.address, dead);
+        .withdraw(basic2.address, dead);
       const txb = await r721
         .connect(mad)
-        .withdraw(basic.address, erc20.address);
+        .withdraw(basic2.address, erc20.address);
       const newBala = await ethers.provider.getBalance(
         mad.address,
       );
@@ -1719,7 +1713,7 @@ describe("MADRouter721", () => {
       await f721
         .connect(amb)
         .createCollection(
-          2,
+          1,
           "WhiteSalt",
           "721Whitelist",
           "WHITE",
@@ -1730,16 +1724,14 @@ describe("MADRouter721", () => {
           750,
         );
       const wl = await ethers.getContractAt(
-        "ERC721Whitelist",
+        "ERC721Basic",
         wlAddr,
       );
       await erc20.mint(wl.address, price);
       await r721
         .connect(amb)
-        .setMintState(wl.address, true, 0);
-      await wl.connect(acc01).mint(1, {
-        value: price.add(ethers.utils.parseEther("0.25")),
-      });
+        .setMintState(wl.address, true);
+      await wl.connect(acc01).mint(1, { value: price.add(ethers.utils.parseEther("0.25")) });
       const balc = await ethers.provider.getBalance(
         amb.address,
       );
@@ -1773,91 +1765,101 @@ describe("MADRouter721", () => {
       await f721
         .connect(await ethers.getSigner(newUser))
         .createCollection(
-          3,
+          1,
           "LazySalt",
           "721Lazy",
           "LAZY",
-          ethers.constants.Zero,
-          ethers.constants.Zero,
+          price,
+          100,
           "ipfs://cid/",
           userSpl,
           750,
         );
       const lazy = await ethers.getContractAt(
-        "ERC721Lazy",
+        "ERC721Basic",
         lazyAddr,
       );
-      const net = await lazy.provider.getNetwork();
-      const chainId = net.chainId;
-      const bnPrice = ethers.utils.parseEther("1");
-      const usrs = [acc01.address];
-      const vId = ethers.utils.keccak256(
-        ethers.utils.toUtf8Bytes("voucher"),
-      );
-      const signer = ethers.Wallet.createRandom();
-      const signerAddr = await signer.getAddress();
-      await r721.setSigner(lazyAddr, signerAddr);
-      const pk = Buffer.from(
-        signer.privateKey.slice(2),
-        "hex",
-      );
 
-      const domain = [
-        { name: "name", type: "string" },
-        { name: "version", type: "string" },
-        { name: "chainId", type: "uint256" },
-        { name: "verifyingContract", type: "address" },
-      ];
-      const voucherType = [
-        { name: "voucherId", type: "bytes32" },
-        { name: "users", type: "address[]" },
-        { name: "balances", type: "uint256[]" },
-        { name: "amount", type: "uint256" },
-        { name: "price", type: "uint256" },
-      ];
-      const domainData = {
-        name: "721Lazy",
-        version: "1",
-        chainId: chainId,
-        verifyingContract: lazy.address,
-      };
-      const Voucher = {
-        voucherId: vId,
-        users: usrs,
-        balances: [1],
-        amount: 1,
-        price: bnPrice.toString(),
-      };
-      const data = JSON.stringify({
-        types: {
-          EIP712Domain: domain,
-          Voucher: voucherType,
-        },
-        primaryType: "Voucher",
-        domain: domainData,
-        message: Voucher,
-      });
 
-      const parsedData = JSON.parse(data);
-      const signature = signTypedData({
-        privateKey: pk,
-        data: parsedData,
-        version: SignTypedDataVersion.V4,
-      });
-      const sigSplit = ethers.utils.splitSignature(signature);
+
+      
+      // const net = await lazy.provider.getNetwork();
+      // const chainId = net.chainId;
+      // const bnPrice = ethers.utils.parseEther("1");
+      // const usrs = [acc01.address];
+      // const vId = ethers.utils.keccak256(
+      //   ethers.utils.toUtf8Bytes("voucher"),
+      // );
+      // const signer = ethers.Wallet.createRandom();
+      // const signerAddr = await signer.getAddress();
+      // await r721.setSigner(lazyAddr, signerAddr);
+      // const pk = Buffer.from(
+      //   signer.privateKey.slice(2),
+      //   "hex",
+      // );
+
+      // const domain = [
+      //   { name: "name", type: "string" },
+      //   { name: "version", type: "string" },
+      //   { name: "chainId", type: "uint256" },
+      //   { name: "verifyingContract", type: "address" },
+      // ];
+      // const voucherType = [
+      //   { name: "voucherId", type: "bytes32" },
+      //   { name: "users", type: "address[]" },
+      //   { name: "balances", type: "uint256[]" },
+      //   { name: "amount", type: "uint256" },
+      //   { name: "price", type: "uint256" },
+      // ];
+      // const domainData = {
+      //   name: "721Lazy",
+      //   version: "1",
+      //   chainId: chainId,
+      //   verifyingContract: lazy.address,
+      // };
+      // const Voucher = {
+      //   voucherId: vId,
+      //   users: usrs,
+      //   balances: [1],
+      //   amount: 1,
+      //   price: bnPrice.toString(),
+      // };
+      // const data = JSON.stringify({
+      //   types: {
+      //     EIP712Domain: domain,
+      //     Voucher: voucherType,
+      //   },
+      //   primaryType: "Voucher",
+      //   domain: domainData,
+      //   message: Voucher,
+      // });
+
+      // const parsedData = JSON.parse(data);
+      // const signature = signTypedData({
+      //   privateKey: pk,
+      //   data: parsedData,
+      //   version: SignTypedDataVersion.V4,
+      // });
+      // const sigSplit = ethers.utils.splitSignature(signature);
+      // await erc20.mint(lazy.address, price);
+
+      // await lazy
+      //   .connect(acc01)
+      //   .lazyMint(
+      //     Voucher,
+      //     sigSplit.v,
+      //     sigSplit.r,
+      //     sigSplit.s,
+      //     { value: price.add(ethers.utils.parseEther("0.25")) },
+      //   );
+
+
+
       await erc20.mint(lazy.address, price);
-
-      await lazy
-        .connect(acc01)
-        .lazyMint(
-          Voucher,
-          sigSplit.v,
-          sigSplit.r,
-          sigSplit.s,
-          {
-            value: price.add(ethers.utils.parseEther("0.25")),
-          },
-        );
+      await r721
+        .connect(await ethers.getSigner(newUser))
+        .setMintState(lazy.address, true);
+      await lazy.connect(acc01).mint(1, { value: price.add(ethers.utils.parseEther("0.25")) });
 
       const bal3 = await ethers.provider.getBalance(newUser);
       const bal4 = await erc20.balanceOf(newUser);
@@ -1891,7 +1893,7 @@ describe("MADRouter721", () => {
       await expect(
         r721
           .connect(acc01)
-          .withdraw(min.address, erc20.address),
+          .withdraw(basic.address, erc20.address),
       ).to.be.revertedWithCustomError(
         ver,
         RouterErrors.AccessDenied,
@@ -1899,10 +1901,10 @@ describe("MADRouter721", () => {
       await expect(
         r721
           .connect(acc02)
-          .withdraw(min.address, erc20.address),
+          .withdraw(basic.address, erc20.address),
       ).to.be.revertedWith(RouterErrors.NoFunds);
       await expect(
-        r721.connect(acc02).withdraw(min.address, dead),
+        r721.connect(acc02).withdraw(basic.address, dead),
       ).to.be.revertedWith(RouterErrors.NoFunds);
 
       expect(txa).to.be.ok;
@@ -1913,7 +1915,7 @@ describe("MADRouter721", () => {
       await expect(
         r721
           .connect(acc01)
-          .withdraw(basic.address, erc20.address),
+          .withdraw(basic2.address, erc20.address),
       ).to.be.revertedWithCustomError(
         ver,
         RouterErrors.AccessDenied,
@@ -1921,10 +1923,10 @@ describe("MADRouter721", () => {
       await expect(
         r721
           .connect(mad)
-          .withdraw(basic.address, erc20.address),
+          .withdraw(basic2.address, erc20.address),
       ).to.be.revertedWith(RouterErrors.NoFunds);
       await expect(
-        r721.connect(mad).withdraw(basic.address, dead),
+        r721.connect(mad).withdraw(basic2.address, dead),
       ).to.be.revertedWith(RouterErrors.NoFunds);
 
       expect(txc).to.be.ok;
@@ -2000,30 +2002,30 @@ describe("MADRouter721", () => {
       );
 
       // Deploy MINIMAL contracts and set public mint = true
-      const minAddr = await f721.callStatic.getDeployedAddr(
-        "MinSalt",
+      const basicAddr = await f721.callStatic.getDeployedAddr(
+        "BasicSalt",
       );
       await f721
         .connect(mad)
         .createCollection(
-          0,
-          "MinSalt",
-          "721Minimal",
-          "MIN",
+          1,
+          "BasicSalt",
+          "721Basic",
+          "BASIC",
           price,
           1,
           "ipfs://cid/id.json",
           madSpl,
           750,
         );
-      const min = await ethers.getContractAt(
-        "ERC721Minimal",
-        minAddr,
+      const basic = await ethers.getContractAt(
+        "ERC721Basic",
+        basicAddr,
       );
       await r721
         .connect(mad)
-        .setMintState(min.address, true, 0);
-
+        .setMintState(basic.address, true);
+      
       // Record start balances
       const startBalMadMin = await ethers.provider.getBalance(
         mad.address,
@@ -2036,21 +2038,15 @@ describe("MADRouter721", () => {
       const startBalAcc01Min =
         await ethers.provider.getBalance(acc01.address);
 
-      // Mint a public token - fee 2.5 + price 1
-      const txMintMin = await min.connect(acc01).publicMint({
-        value: price.add(ethers.utils.parseEther("2.5")),
-      });
-      const receiptMintMin = await txMintMin.wait();
-      const txMintGasMin = receiptMintMin.gasUsed.mul(
-        receiptMintMin.effectiveGasPrice,
-      );
+      // Mint a public token - fee 2.5 + price 1 
+      const txMintMin = await basic.connect(acc01).mint(1,{ value: price.add(ethers.utils.parseEther("2.5")) });
+      const receiptMintMin = await txMintMin.wait()
+      const txMintGasMin = receiptMintMin.gasUsed.mul(receiptMintMin.effectiveGasPrice)
       const txWithdrawMin = await r721
         .connect(mad)
-        .withdraw(min.address, dead);
-      const receiptMin = await txWithdrawMin.wait();
-      const txWithdrawGasMin = receiptMin.gasUsed.mul(
-        receiptMin.effectiveGasPrice,
-      );
+        .withdraw(basic.address, dead);
+      const receiptMin = await txWithdrawMin.wait()
+      const txWithdrawGasMin = receiptMin.gasUsed.mul(receiptMin.effectiveGasPrice)
 
       // Record end balances
       const endBalMadMin = await ethers.provider.getBalance(
@@ -2089,7 +2085,7 @@ describe("MADRouter721", () => {
       );
 
       // Deploy BASIC contracts and set public mint = true
-      const basicAddr = await f721.callStatic.getDeployedAddr(
+      const basicAddr2 = await f721.callStatic.getDeployedAddr(
         "salt",
       );
       await f721
@@ -2097,21 +2093,21 @@ describe("MADRouter721", () => {
         .createCollection(
           1,
           "salt",
-          "721Basic",
-          "BAS",
+          "721Basic2",
+          "BAS2",
           price,
           1000,
           "ipfs://cid/",
           madSpl,
           1000,
         );
-      const basic = await ethers.getContractAt(
+      const basic2 = await ethers.getContractAt(
         "ERC721Basic",
-        basicAddr,
+        basicAddr2,
       );
       await r721
         .connect(mad)
-        .setMintState(basic.address, true, 0);
+        .setMintState(basic2.address, true);
 
       // Record start balances
       const startBalMad = await ethers.provider.getBalance(
@@ -2125,22 +2121,16 @@ describe("MADRouter721", () => {
       const startBalAcc01 = await ethers.provider.getBalance(
         acc01.address,
       );
-
-      // Mint a public token - fee 2.5 + price 1
-      const txMint = await basic.connect(acc01).mint(1, {
-        value: price.add(ethers.utils.parseEther("2.5")),
-      });
-      const receiptMint = await txMint.wait();
-      const txMintGas = receiptMint.gasUsed.mul(
-        receiptMint.effectiveGasPrice,
-      );
+      
+      // Mint a public token - fee 2.5 + price 1 
+      const txMint = await basic2.connect(acc01).mint(1, { value: price.add(ethers.utils.parseEther("2.5")) });
+      const receiptMint = await txMint.wait()
+      const txMintGas = receiptMint.gasUsed.mul(receiptMint.effectiveGasPrice)
       const txWithdraw = await r721
         .connect(mad)
-        .withdraw(basic.address, dead);
-      const receipt = await txWithdraw.wait();
-      const txWithdrawGas = receipt.gasUsed.mul(
-        receipt.effectiveGasPrice,
-      );
+        .withdraw(basic2.address, dead);
+      const receipt = await txWithdraw.wait()
+      const txWithdrawGas = receipt.gasUsed.mul(receipt.effectiveGasPrice)
 
       // Record end balances
       const endBalMad = await ethers.provider.getBalance(
@@ -2170,247 +2160,212 @@ describe("MADRouter721", () => {
         startBalRecipient.add(ethers.utils.parseEther("2.5")),
       );
       // acc01.address = buyer = - price - fee - txFees
-      expect(endBalAcc01).to.eq(
-        startBalAcc01
-          .sub(txMintGas)
-          .sub(ethers.utils.parseEther("3.5")),
-      );
+      expect(endBalAcc01).to.eq(startBalAcc01.sub(txMintGas).sub(ethers.utils.parseEther("3.5")))
 
-      // LAZY prepare the token
-      const lazyAddr = await f721.callStatic.getDeployedAddr(
-        "LazySalt",
-      );
-      await f721
-        .connect(mad)
-        .createCollection(
-          3,
-          "LazySalt",
-          "721Lazy",
-          "LAZY",
-          ethers.constants.Zero,
-          ethers.constants.Zero,
-          "ipfs://cid/",
-          madSpl,
-          750,
-        );
-      const lazy = await ethers.getContractAt(
-        "ERC721Lazy",
-        lazyAddr,
-      );
-      const net = await lazy.provider.getNetwork();
-      const chainId = net.chainId;
-      const bnPrice = ethers.utils.parseEther("1");
-      const usrs = [acc01.address];
-      const vId = ethers.utils.keccak256(
-        ethers.utils.toUtf8Bytes("voucher"),
-      );
-      const signer = ethers.Wallet.createRandom();
-      const signerAddr = await signer.getAddress();
-      await r721.setSigner(lazyAddr, signerAddr);
-      const pk = Buffer.from(
-        signer.privateKey.slice(2),
-        "hex",
-      );
-      const domain = [
-        { name: "name", type: "string" },
-        { name: "version", type: "string" },
-        { name: "chainId", type: "uint256" },
-        { name: "verifyingContract", type: "address" },
-      ];
-      const voucherType = [
-        { name: "voucherId", type: "bytes32" },
-        { name: "users", type: "address[]" },
-        { name: "balances", type: "uint256[]" },
-        { name: "amount", type: "uint256" },
-        { name: "price", type: "uint256" },
-      ];
-      const domainData = {
-        name: "721Lazy",
-        version: "1",
-        chainId: chainId,
-        verifyingContract: lazy.address,
-      };
-      const Voucher = {
-        voucherId: vId,
-        users: usrs,
-        balances: [1],
-        amount: 1,
-        price: bnPrice.toString(),
-      };
-      const data = JSON.stringify({
-        types: {
-          EIP712Domain: domain,
-          Voucher: voucherType,
-        },
-        primaryType: "Voucher",
-        domain: domainData,
-        message: Voucher,
-      });
-      const parsedData = JSON.parse(data);
-      const signature = signTypedData({
-        privateKey: pk,
-        data: parsedData,
-        version: SignTypedDataVersion.V4,
-      });
-      const sigSplit = ethers.utils.splitSignature(signature);
+      // // LAZY prepare the token
+      // const lazyAddr = await f721.callStatic.getDeployedAddr(
+      //   "LazySalt",
+      // );
+      // await f721
+      //   .connect(mad)
+      //   .createCollection(
+      //     3,
+      //     "LazySalt",
+      //     "721Lazy",
+      //     "LAZY",
+      //     ethers.constants.Zero,
+      //     ethers.constants.Zero,
+      //     "ipfs://cid/",
+      //     madSpl,
+      //     750,
+      //   );
+      // const lazy = await ethers.getContractAt(
+      //   "ERC721Lazy",
+      //   lazyAddr,
+      // );
+      // const net = await lazy.provider.getNetwork();
+      // const chainId = net.chainId;
+      // const bnPrice = ethers.utils.parseEther("1");
+      // const usrs = [acc01.address];
+      // const vId = ethers.utils.keccak256(
+      //   ethers.utils.toUtf8Bytes("voucher"),
+      // );
+      // const signer = ethers.Wallet.createRandom();
+      // const signerAddr = await signer.getAddress();
+      // await r721.setSigner(lazyAddr, signerAddr);
+      // const pk = Buffer.from(
+      //   signer.privateKey.slice(2),
+      //   "hex",
+      // );
+      // const domain = [
+      //   { name: "name", type: "string" },
+      //   { name: "version", type: "string" },
+      //   { name: "chainId", type: "uint256" },
+      //   { name: "verifyingContract", type: "address" },
+      // ];
+      // const voucherType = [
+      //   { name: "voucherId", type: "bytes32" },
+      //   { name: "users", type: "address[]" },
+      //   { name: "balances", type: "uint256[]" },
+      //   { name: "amount", type: "uint256" },
+      //   { name: "price", type: "uint256" },
+      // ];
+      // const domainData = {
+      //   name: "721Lazy",
+      //   version: "1",
+      //   chainId: chainId,
+      //   verifyingContract: lazy.address,
+      // };
+      // const Voucher = {
+      //   voucherId: vId,
+      //   users: usrs,
+      //   balances: [1],
+      //   amount: 1,
+      //   price: bnPrice.toString(),
+      // };
+      // const data = JSON.stringify({
+      //   types: {
+      //     EIP712Domain: domain,
+      //     Voucher: voucherType,
+      //   },
+      //   primaryType: "Voucher",
+      //   domain: domainData,
+      //   message: Voucher,
+      // });
+      // const parsedData = JSON.parse(data);
+      // const signature = signTypedData({
+      //   privateKey: pk,
+      //   data: parsedData,
+      //   version: SignTypedDataVersion.V4,
+      // });
+      // const sigSplit = ethers.utils.splitSignature(signature);
 
-      // Record start balances
-      const startBalMadLazy =
-        await ethers.provider.getBalance(mad.address);
-      const startBalAmbLazy =
-        await ethers.provider.getBalance(amb.address);
-      const startBalRecipientLazy =
-        await ethers.provider.getBalance(recipient);
-      const startBalAcc01Lazy =
-        await ethers.provider.getBalance(acc01.address);
+      // // Record start balances
+      // const startBalMadLazy = await ethers.provider.getBalance(
+      //   mad.address,
+      // );
+      // const startBalAmbLazy = await ethers.provider.getBalance(
+      //   amb.address,
+      // );
+      // const startBalRecipientLazy = await ethers.provider.getBalance(
+      //   recipient,
+      // );
+      // const startBalAcc01Lazy = await ethers.provider.getBalance(
+      //   acc01.address,
+      // );
+      
+      // // Mint a lazy public token - fee 2.5 + price 1 
+      // const txMintLazy = await lazy
+      //   .connect(acc01)
+      //   .lazyMint(
+      //     Voucher,
+      //     sigSplit.v,
+      //     sigSplit.r,
+      //     sigSplit.s,
+      //     { value: price.add(ethers.utils.parseEther("2.5")) },
+      //   );
+      // const receiptMintLazy = await txMintLazy.wait()
+      // const txMintGasLazy = receiptMintLazy.gasUsed.mul(receiptMintLazy.effectiveGasPrice)
+      // const txWithdrawLazy = await r721
+      //   .connect(mad)
+      //   .withdraw(lazy.address, dead);
+      // const receiptLazy = await txWithdrawLazy.wait()
+      // const txWithdrawGasLazy = receiptLazy.gasUsed.mul(receiptLazy.effectiveGasPrice)
+          
+      // // Record end balances
+      // const endBalMadLazy = await ethers.provider.getBalance(
+      //   mad.address,
+      // );
+      // const endBalAmbLazy = await ethers.provider.getBalance(
+      //   amb.address,
+      // );
+      // const endBalRecipientLazy = await ethers.provider.getBalance(
+      //   recipient,
+      // );
+      // const endBalAcc01Lazy = await ethers.provider.getBalance(
+      //   acc01.address,
+      // );
+      
+      // // mad.address = creator = - txWithdrawGas + 80% of price (remaining 20% goes to ambassador)
+      // expect(endBalMadLazy).to.eq(startBalMadLazy.sub(txWithdrawGasLazy).add(ethers.utils.parseEther("0.8")))
+      // // amb.address = ambassador = + 20% of price (remaining 80% goes to creator)
+      // expect(endBalAmbLazy).to.eq(startBalAmbLazy.add(ethers.utils.parseEther("0.2")))
+      // // owner.address = MAD receiver = + 100% mint fees
+      // expect(endBalRecipientLazy).to.eq(startBalRecipientLazy.add(ethers.utils.parseEther("2.5")))
+      // // acc01.address = buyer = - price - fee - txFees
+      // expect(endBalAcc01Lazy).to.eq(startBalAcc01Lazy.sub(txMintGasLazy).sub(ethers.utils.parseEther("3.5")))
+      
+      // // Whitelist
+      // const wlAddr = await f721.callStatic.getDeployedAddr(
+      //   "WhiteSalt",
+      // );
+      // await f721
+      //   .connect(mad)
+      //   .createCollection(
+      //     2,
+      //     "WhiteSalt",
+      //     "721Whitelist",
+      //     "WHITE",
+      //     price,
+      //     1000,
+      //     "ipfs://cid/",
+      //     madSpl,
+      //     750,
+      //   );
+      // const wl = await ethers.getContractAt(
+      //   "ERC721Whitelist",
+      //   wlAddr,
+      // );
+      // await r721
+      //   .connect(mad)
+      //   .setMintState(wl.address, true, 0);
 
-      // Mint a lazy public token - fee 2.5 + price 1
-      const txMintLazy = await lazy
-        .connect(acc01)
-        .lazyMint(
-          Voucher,
-          sigSplit.v,
-          sigSplit.r,
-          sigSplit.s,
-          {
-            value: price.add(ethers.utils.parseEther("2.5")),
-          },
-        );
-      const receiptMintLazy = await txMintLazy.wait();
-      const txMintGasLazy = receiptMintLazy.gasUsed.mul(
-        receiptMintLazy.effectiveGasPrice,
-      );
-      const txWithdrawLazy = await r721
-        .connect(mad)
-        .withdraw(lazy.address, dead);
-      const receiptLazy = await txWithdrawLazy.wait();
-      const txWithdrawGasLazy = receiptLazy.gasUsed.mul(
-        receiptLazy.effectiveGasPrice,
-      );
+      // // Record start balances
+      // const startBalMadWl = await ethers.provider.getBalance(
+      //   mad.address,
+      // );
+      // const startBalAmbWl = await ethers.provider.getBalance(
+      //   amb.address,
+      // );
+      // const startBalRecipientWl = await ethers.provider.getBalance(
+      //   recipient,
+      // );
+      // const startBalAcc01Wl = await ethers.provider.getBalance(
+      //   acc01.address,
+      // );
+      
+      // // Mint a lazy public token - fee 2.5 + price 1 
+      // const txMintWl = await wl.connect(acc01).mint(1, { value: price.add(ethers.utils.parseEther("2.5")) });
+      // const receiptMintWl = await txMintWl.wait()
+      // const txMintGasWl = receiptMintWl.gasUsed.mul(receiptMintWl.effectiveGasPrice)
+      // const txWithdrawWl = await r721
+      //   .connect(mad)
+      //   .withdraw(wl.address, dead);
+      // const receiptWl = await txWithdrawWl.wait()
+      // const txWithdrawGasWl = receiptWl.gasUsed.mul(receiptWl.effectiveGasPrice)
 
-      // Record end balances
-      const endBalMadLazy = await ethers.provider.getBalance(
-        mad.address,
-      );
-      const endBalAmbLazy = await ethers.provider.getBalance(
-        amb.address,
-      );
-      const endBalRecipientLazy =
-        await ethers.provider.getBalance(recipient);
-      const endBalAcc01Lazy =
-        await ethers.provider.getBalance(acc01.address);
-
-      // mad.address = creator = - txWithdrawGas + 80% of price (remaining 20% goes to ambassador)
-      expect(endBalMadLazy).to.eq(
-        startBalMadLazy
-          .sub(txWithdrawGasLazy)
-          .add(ethers.utils.parseEther("0.8")),
-      );
-      // amb.address = ambassador = + 20% of price (remaining 80% goes to creator)
-      expect(endBalAmbLazy).to.eq(
-        startBalAmbLazy.add(ethers.utils.parseEther("0.2")),
-      );
-      // owner.address = MAD receiver = + 100% mint fees
-      expect(endBalRecipientLazy).to.eq(
-        startBalRecipientLazy.add(
-          ethers.utils.parseEther("2.5"),
-        ),
-      );
-      // acc01.address = buyer = - price - fee - txFees
-      expect(endBalAcc01Lazy).to.eq(
-        startBalAcc01Lazy
-          .sub(txMintGasLazy)
-          .sub(ethers.utils.parseEther("3.5")),
-      );
-
-      // Whitelist
-      const wlAddr = await f721.callStatic.getDeployedAddr(
-        "WhiteSalt",
-      );
-      await f721
-        .connect(mad)
-        .createCollection(
-          2,
-          "WhiteSalt",
-          "721Whitelist",
-          "WHITE",
-          price,
-          1000,
-          "ipfs://cid/",
-          madSpl,
-          750,
-        );
-      const wl = await ethers.getContractAt(
-        "ERC721Whitelist",
-        wlAddr,
-      );
-      await r721
-        .connect(mad)
-        .setMintState(wl.address, true, 0);
-
-      // Record start balances
-      const startBalMadWl = await ethers.provider.getBalance(
-        mad.address,
-      );
-      const startBalAmbWl = await ethers.provider.getBalance(
-        amb.address,
-      );
-      const startBalRecipientWl =
-        await ethers.provider.getBalance(recipient);
-      const startBalAcc01Wl =
-        await ethers.provider.getBalance(acc01.address);
-
-      // Mint a lazy public token - fee 2.5 + price 1
-      const txMintWl = await wl.connect(acc01).mint(1, {
-        value: price.add(ethers.utils.parseEther("2.5")),
-      });
-      const receiptMintWl = await txMintWl.wait();
-      const txMintGasWl = receiptMintWl.gasUsed.mul(
-        receiptMintWl.effectiveGasPrice,
-      );
-      const txWithdrawWl = await r721
-        .connect(mad)
-        .withdraw(wl.address, dead);
-      const receiptWl = await txWithdrawWl.wait();
-      const txWithdrawGasWl = receiptWl.gasUsed.mul(
-        receiptWl.effectiveGasPrice,
-      );
-
-      // Record end balances
-      const endBalMadWl = await ethers.provider.getBalance(
-        mad.address,
-      );
-      const endBalAmbWl = await ethers.provider.getBalance(
-        amb.address,
-      );
-      const endBalRecipientWl =
-        await ethers.provider.getBalance(recipient);
-      const endBalAcc01Wl = await ethers.provider.getBalance(
-        acc01.address,
-      );
-
-      // mad.address = creator = - txWithdrawGas + 80% of price (remaining 20% goes to ambassador)
-      expect(endBalMadWl).to.eq(
-        startBalMadWl
-          .sub(txWithdrawGasWl)
-          .add(ethers.utils.parseEther("0.8")),
-      );
-      // amb.address = ambassador = + 20% of price (remaining 80% goes to creator)
-      expect(endBalAmbWl).to.eq(
-        startBalAmbWl.add(ethers.utils.parseEther("0.2")),
-      );
-      // owner.address = MAD receiver = + 100% mint fees
-      expect(endBalRecipientWl).to.eq(
-        startBalRecipientWl.add(
-          ethers.utils.parseEther("2.5"),
-        ),
-      );
-      // acc01.address = buyer = - price - fee - txFees
-      expect(endBalAcc01Wl).to.eq(
-        startBalAcc01Wl
-          .sub(txMintGasWl)
-          .sub(ethers.utils.parseEther("3.5")),
-      );
+      // // Record end balances
+      // const endBalMadWl = await ethers.provider.getBalance(
+      //   mad.address,
+      // );
+      // const endBalAmbWl = await ethers.provider.getBalance(
+      //   amb.address,
+      // );
+      // const endBalRecipientWl = await ethers.provider.getBalance(
+      //   recipient,
+      // );
+      // const endBalAcc01Wl = await ethers.provider.getBalance(
+      //   acc01.address,
+      // );
+      
+      // // mad.address = creator = - txWithdrawGas + 80% of price (remaining 20% goes to ambassador)
+      // expect(endBalMadWl).to.eq(startBalMadWl.sub(txWithdrawGasWl).add(ethers.utils.parseEther("0.8")))
+      // // amb.address = ambassador = + 20% of price (remaining 80% goes to creator)
+      // expect(endBalAmbWl).to.eq(startBalAmbWl.add(ethers.utils.parseEther("0.2")))
+      // // owner.address = MAD receiver = + 100% mint fees
+      // expect(endBalRecipientWl).to.eq(startBalRecipientWl.add(ethers.utils.parseEther("2.5")))
+      // // acc01.address = buyer = - price - fee - txFees
+      // expect(endBalAcc01Wl).to.eq(startBalAcc01Wl.sub(txMintGasWl).sub(ethers.utils.parseEther("3.5")))
     });
   });
   describe("Only Owner", async () => {
@@ -2429,9 +2384,9 @@ describe("MADRouter721", () => {
       ).to.be.revertedWith(RouterErrors.Unauthorized);
     });
     it("Should initialize paused and unpaused states", async () => {
-      const root = ethers.utils.keccak256(
-        ethers.utils.toUtf8Bytes("root"),
-      );
+      // const root = ethers.utils.keccak256(
+        // ethers.utils.toUtf8Bytes("root"),
+      // );
       const addr = await f721.callStatic.getDeployedAddr(
         "salt",
       );
@@ -2443,28 +2398,30 @@ describe("MADRouter721", () => {
       await expect(r721.setBase(addr, "")).to.be.revertedWith(
         RouterErrors.Paused,
       );
-      await expect(
-        r721.whitelistSettings(addr, price, 100, root),
-      ).to.be.revertedWith(RouterErrors.Paused);
-      await expect(
-        r721.freeSettings(addr, 1, 100, root),
-      ).to.be.revertedWith(RouterErrors.Paused);
-      await expect(
-        r721.minimalSafeMint(addr, acc01.address),
-      ).to.be.revertedWith(RouterErrors.Paused);
+      // await expect(
+        // r721.whitelistSettings(addr, price, 100, root),
+      // ).to.be.revertedWith(RouterErrors.Paused);
+      // await expect(
+        // r721.freeSettings(addr, 1, 100, root),
+      // ).to.be.revertedWith(RouterErrors.Paused);
+      // await expect(
+        // r721.minimalSafeMint(addr, acc01.address),
+      // ).to.be.revertedWith(RouterErrors.Paused);
       await expect(
         r721.burn(addr, [1, 2, 3]),
       ).to.be.revertedWith(RouterErrors.Paused);
       await expect(
-        r721.setMintState(addr, false, 2),
+        r721.setMintState(addr, false),
       ).to.be.revertedWith(RouterErrors.Paused);
+      // await expect(
+        // r721.creatorMint(addr, 1),
+      // ).to.be.revertedWith(RouterErrors.Paused);
+      // await expect(
+        // r721.gift(addr, [acc01.address, mad.address]),
+      // ).to.be.revertedWith(RouterErrors.Paused);
       await expect(
-        r721.creatorMint(addr, 1),
+        r721.withdraw(addr, addr),
       ).to.be.revertedWith(RouterErrors.Paused);
-      await expect(
-        r721.gift(addr, [acc01.address, mad.address]),
-      ).to.be.revertedWith(RouterErrors.Paused);
-
       await expect(
         r721.connect(acc02).unpause(),
       ).to.be.revertedWith(RouterErrors.Unauthorized);
@@ -2472,9 +2429,117 @@ describe("MADRouter721", () => {
     });
   });
 
-  // set base fees
-  describe("Minimal SafeMint-setBaseFee", async () => {
-    it("Should call safeMint for 721Minimal collection type", async () => {
+  // // set base fees
+  // describe("Minimal SafeMint-setBaseFee", async () => {
+  //   it("Should call safeMint for 721Minimal collection type", async () => {
+  //     // await f721.addAmbassador(amb.address);
+  //     await f721
+  //       .connect(acc02)
+  //       .splitterCheck(
+  //         "MADSplitter1",
+  //         amb.address,
+  //         dead,
+  //         20,
+  //         0,
+  //       );
+  //     const splAddr = await f721.callStatic.getDeployedAddr(
+  //       "MADSplitter1",
+  //     );
+  //     const minAddr = await f721.callStatic.getDeployedAddr(
+  //       "MinSalt",
+  //     );
+  //     await f721
+  //       .connect(acc02)
+  //       .createCollection(
+  //         0,
+  //         "MinSalt",
+  //         "721Minimal",
+  //         "MIN",
+  //         price,
+  //         1,
+  //         "cid/id.json",
+  //         splAddr,
+  //         750,
+  //       );
+  //     const min = await ethers.getContractAt(
+  //       "ERC721Minimal",
+  //       minAddr,
+  //     );
+  //     await r721.setFees(
+  //       ethers.utils.parseEther("2.5"),
+  //       ethers.utils.parseEther("0.5"),
+  //     );
+  //     await expect(
+  //       r721
+  //         .connect(acc02)
+  //         .minimalSafeMint(minAddr, acc01.address, {
+  //           value: ethers.utils.parseEther("0.25"),
+  //         }),
+  //     ).to.be.revertedWithCustomError(
+  //       min,
+  //       MinimalErrors.WrongPrice,
+  //     );
+
+  //     const tx = await r721
+  //       .connect(acc02)
+  //       .minimalSafeMint(minAddr, acc01.address, {
+  //         value: ethers.utils.parseEther("2.5"),
+  //       });
+
+  //     expect(tx).to.be.ok;
+  //     expect(await min.callStatic.ownerOf(1)).to.eq(
+  //       acc01.address,
+  //     );
+  //     const verArt = await artifacts.readArtifact(
+  //       "FactoryVerifier",
+  //     );
+  //     const ver = new ethers.Contract(
+  //       f721.address,
+  //       verArt.abi,
+  //       ethers.provider,
+  //     );
+  //     await expect(
+  //       r721
+  //         .connect(mad)
+  //         .minimalSafeMint(minAddr, acc02.address, {
+  //           value: ethers.utils.parseEther("2.5"),
+  //         }),
+  //     ).to.be.revertedWithCustomError(
+  //       ver,
+  //       RouterErrors.AccessDenied,
+  //     );
+  //     await expect(
+  //       r721
+  //         .connect(acc02)
+  //         .minimalSafeMint(minAddr, acc02.address, {
+  //           value: ethers.utils.parseEther("2.5"),
+  //         }),
+  //     ).to.be.revertedWithCustomError(
+  //       min,
+  //       RouterErrors.AlreadyMinted,
+  //     );
+  //   });
+  // });
+  describe("Set Fee Set Max Tests", async () => {
+    it("Should allow setting fees below and at the limit (2.5 eth and 0.5 eth for our fixtures)", async () => {
+      await expect(r721.setFees(
+        ethers.utils.parseEther("2.4"),
+        ethers.utils.parseEther("0.4"),
+      )).to.be.ok;
+
+      await expect(r721.setFees(
+        ethers.utils.parseEther("2.5"),
+        ethers.utils.parseEther("0.5"),
+      )).to.be.ok;
+
+      await expect(r721.setFees(
+        ethers.utils.parseEther("2.6"),
+        ethers.utils.parseEther("0.6"),
+      )).to.be.reverted;
+    })
+  }),
+  describe("Burn-setBaseFee", async () => {
+    it("Should burn tokens for 721Basic collection type", async () => {
       // await f721.addAmbassador(amb.address);
       await f721
         .connect(acc02)
@@ -2488,51 +2553,53 @@ describe("MADRouter721", () => {
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
-      const minAddr = await f721.callStatic.getDeployedAddr(
-        "MinSalt",
+      const basicAddr = await f721.callStatic.getDeployedAddr(
+        "BasicSalt",
       );
       await f721
         .connect(acc02)
         .createCollection(
-          0,
-          "MinSalt",
-          "721Minimal",
-          "MIN",
-          price,
           1,
-          "cid/id.json",
+          "BasicSalt",
+          "721Basic",
+          "BASIC",
+          price,
+          1000,
+          "ipfs://cid/",
           splAddr,
           750,
         );
-      const min = await ethers.getContractAt(
-        "ERC721Minimal",
-        minAddr,
-      );
       await r721.setFees(
         ethers.utils.parseEther("2.5"),
         ethers.utils.parseEther("0.5"),
       );
+
+      const basic = await ethers.getContractAt(
+        "ERC721Basic",
+        basicAddr,
+      );
+      await r721
+        .connect(acc02)
+        .setMintState(basicAddr, true);
+      await basic.connect(acc01).mint(1, { value: price.add(ethers.utils.parseEther("2.5")) });
+
       await expect(
-        r721
-          .connect(acc02)
-          .minimalSafeMint(minAddr, acc01.address, {
-            value: ethers.utils.parseEther("0.25"),
-          }),
+        r721.connect(acc02).burn(basicAddr, [1]),
       ).to.be.revertedWithCustomError(
-        min,
-        MinimalErrors.WrongPrice,
+        basic,
+        BasicErrors.WrongPrice,
       );
 
       const tx = await r721
         .connect(acc02)
-        .minimalSafeMint(minAddr, acc01.address, {
-          value: ethers.utils.parseEther("2.5"),
+        .burn(basicAddr, [1], {
+          value: ethers.utils.parseEther("0.5"),
         });
 
       expect(tx).to.be.ok;
-      expect(await min.callStatic.ownerOf(1)).to.eq(
-        acc01.address,
-      );
+      expect(
+        await basic.callStatic.balanceOf(acc01.address),
+      ).to.eq(0);
       const verArt = await artifacts.readArtifact(
         "FactoryVerifier",
       );
@@ -2542,478 +2609,361 @@ describe("MADRouter721", () => {
         ethers.provider,
       );
       await expect(
-        r721
-          .connect(mad)
-          .minimalSafeMint(minAddr, acc02.address, {
-            value: ethers.utils.parseEther("2.5"),
-          }),
+        r721.burn(basicAddr, [1], {
+          value: ethers.utils.parseEther("0.5"),
+        }),
       ).to.be.revertedWithCustomError(
         ver,
         RouterErrors.AccessDenied,
       );
-      await expect(
-        r721
-          .connect(acc02)
-          .minimalSafeMint(minAddr, acc02.address, {
-            value: ethers.utils.parseEther("2.5"),
-          }),
-      ).to.be.revertedWithCustomError(
-        min,
-        RouterErrors.AlreadyMinted,
-      );
     });
+  //   it("Should burn tokens for 721Whitelist collection type", async () => {
+  //     const root = ethers.utils.keccak256(
+  //       ethers.utils.toUtf8Bytes("fakeRoot"),
+  //     );
+  //     // await f721.addAmbassador(amb.address);
+  //     await f721
+  //       .connect(acc02)
+  //       .splitterCheck(
+  //         "MADSplitter1",
+  //         amb.address,
+  //         dead,
+  //         20,
+  //         0,
+  //       );
+  //     const splAddr = await f721.callStatic.getDeployedAddr(
+  //       "MADSplitter1",
+  //     );
+  //     const wlAddr = await f721.callStatic.getDeployedAddr(
+  //       "WhiteSalt",
+  //     );
+  //     await f721
+  //       .connect(acc02)
+  //       .createCollection(
+  //         2,
+  //         "WhiteSalt",
+  //         "721Whitelist",
+  //         "WHITE",
+  //         price,
+  //         1000,
+  //         "ipfs://cid/",
+  //         splAddr,
+  //         750,
+  //       );
+  //     const wl = await ethers.getContractAt(
+  //       "ERC721Whitelist",
+  //       wlAddr,
+  //     );
+  //     await r721
+  //       .connect(acc02)
+  //       .freeSettings(wl.address, 1, 10, root);
+  //     await r721
+  //       .connect(acc02)
+  //       .creatorMint(wlAddr, 1, {
+  //         value: ethers.utils.parseEther("0.25"),
+  //       });
+  //     const tx = await r721.connect(acc02).burn(wlAddr, [1]);
+  //     const verArt = await artifacts.readArtifact(
+  //       "FactoryVerifier",
+  //     );
+  //     const ver = new ethers.Contract(
+  //       f721.address,
+  //       verArt.abi,
+  //       ethers.provider,
+  //     );
+  //     await r721.setFees(
+  //       ethers.utils.parseEther("2.5"),
+  //       ethers.utils.parseEther("0.5"),
+  //     );
+  //     expect(tx).to.be.ok;
+  //     expect(
+  //       await wl.callStatic.balanceOf(acc02.address),
+  //     ).to.eq(0);
+  //     await expect(
+  //       r721.burn(wlAddr, [1]),
+  //     ).to.be.revertedWithCustomError(
+  //       ver,
+  //       RouterErrors.AccessDenied,
+  //     );
+  //   });
+  //   it("Should burn tokens for 721Lazy collection type", async () => {
+  //     const signer = ethers.Wallet.createRandom();
+  //     // await f721.addAmbassador(amb.address);
+  //     await f721.setSigner(await signer.getAddress());
+  //     await f721
+  //       .connect(acc02)
+  //       .splitterCheck(
+  //         "MADSplitter1",
+  //         amb.address,
+  //         dead,
+  //         20,
+  //         0,
+  //       );
+  //     const splAddr = await f721.callStatic.getDeployedAddr(
+  //       "MADSplitter1",
+  //     );
+  //     const lazyAddr = await f721.callStatic.getDeployedAddr(
+  //       "LazySalt",
+  //     );
+  //     await f721
+  //       .connect(acc02)
+  //       .createCollection(
+  //         3,
+  //         "LazySalt",
+  //         "721Lazy",
+  //         "LAZY",
+  //         ethers.constants.Zero,
+  //         ethers.constants.Zero,
+  //         "ipfs://cid/",
+  //         splAddr,
+  //         750,
+  //       );
+  //     const lazy = await ethers.getContractAt(
+  //       "ERC721Lazy",
+  //       lazyAddr,
+  //     );
+  //     const net = await lazy.provider.getNetwork();
+  //     const chainId = net.chainId;
+  //     const bnPrice = ethers.utils.parseEther("1");
+  //     const usrs = [owner.address, acc02.address];
+  //     const vId = ethers.utils.keccak256(
+  //       ethers.utils.toUtf8Bytes("voucher"),
+  //     );
+  //     const pk = Buffer.from(
+  //       signer.privateKey.slice(2),
+  //       "hex",
+  //     );
+
+  //     const domain = [
+  //       { name: "name", type: "string" },
+  //       { name: "version", type: "string" },
+  //       { name: "chainId", type: "uint256" },
+  //       { name: "verifyingContract", type: "address" },
+  //     ];
+  //     const voucherType = [
+  //       { name: "voucherId", type: "bytes32" },
+  //       { name: "users", type: "address[]" },
+  //       { name: "balances", type: "uint256[]" },
+  //       { name: "amount", type: "uint256" },
+  //       { name: "price", type: "uint256" },
+  //     ];
+  //     const domainData = {
+  //       name: "721Lazy",
+  //       version: "1",
+  //       chainId: chainId,
+  //       verifyingContract: lazy.address,
+  //     };
+  //     const Voucher = {
+  //       voucherId: vId,
+  //       users: usrs,
+  //       balances: [1],
+  //       amount: 1,
+  //       price: bnPrice.toString(),
+  //     };
+  //     const data = JSON.stringify({
+  //       types: {
+  //         EIP712Domain: domain,
+  //         Voucher: voucherType,
+  //       },
+  //       primaryType: "Voucher",
+  //       domain: domainData,
+  //       message: Voucher,
+  //     });
+
+  //     const parsedData = JSON.parse(data);
+  //     const signature = signTypedData({
+  //       privateKey: pk,
+  //       data: parsedData,
+  //       version: SignTypedDataVersion.V4,
+  //     });
+
+  //     const sigSplit = ethers.utils.splitSignature(signature);
+  //     await r721.setFees(
+  //       ethers.utils.parseEther("2.5"),
+  //       ethers.utils.parseEther("0.5"),
+  //     );
+  //     await lazy
+  //       .connect(acc02)
+  //       .lazyMint(
+  //         Voucher,
+  //         sigSplit.v,
+  //         sigSplit.r,
+  //         sigSplit.s,
+  //         { value: price.mul(ethers.BigNumber.from(2)).add(ethers.utils.parseEther("2.5")) },
+  //       );
+  //     await expect(
+  //       r721.connect(acc02).burn(lazyAddr, [1, 2]),
+  //     ).to.be.revertedWithCustomError(
+  //       lazy,
+  //       LazyErrors.WrongPrice,
+  //     );
+  //     const tx = await r721
+  //       .connect(acc02)
+  //       .burn(lazyAddr, [1, 2], {
+  //         value: ethers.utils.parseEther("0.5"),
+  //       });
+  //     const verArt = await artifacts.readArtifact(
+  //       "FactoryVerifier",
+  //     );
+  //     const ver = new ethers.Contract(
+  //       f721.address,
+  //       verArt.abi,
+  //       ethers.provider,
+  //     );
+
+  //     expect(tx).to.be.ok;
+  //     expect(await lazy.balanceOf(acc02.address)).to.eq(0);
+  //     expect(await lazy.balanceOf(owner.address)).to.eq(0);
+  //     await expect(
+  //       r721.burn(lazyAddr, [1], {
+  //         value: ethers.utils.parseEther("0.5"),
+  //       }),
+  //     ).to.be.revertedWithCustomError(
+  //       ver,
+  //       RouterErrors.AccessDenied,
+  //     );
+  //   });
   });
-  describe("Set Fee Set Max Tests", async () => {
-    it("Should allow setting fees below and at the limit (2.5 eth and 0.5 eth for our fixtures)", async () => {
-      await expect(
-        r721.setFees(
-          ethers.utils.parseEther("2.4"),
-          ethers.utils.parseEther("0.4"),
-        ),
-      ).to.be.ok;
+  // describe("Whitelist Creator Mint-setBaseFee", async () => {
+  //   it("Should mint to creator", async () => {
+  //     // await f721.addAmbassador(amb.address);
+  //     await f721
+  //       .connect(acc02)
+  //       .splitterCheck(
+  //         "MADSplitter1",
+  //         amb.address,
+  //         dead,
+  //         20,
+  //         0,
+  //       );
+  //     const splAddr = await f721.callStatic.getDeployedAddr(
+  //       "MADSplitter1",
+  //     );
+  //     await f721
+  //       .connect(acc02)
+  //       .createCollection(
+  //         2,
+  //         "WhiteSalt",
+  //         "721Whitelist",
+  //         "WHITE",
+  //         price,
+  //         100,
+  //         "ipfs://cid/",
+  //         splAddr,
+  //         750,
+  //       );
+  //     const wlAddr = await f721.callStatic.getDeployedAddr(
+  //       "WhiteSalt",
+  //     );
+  //     const wl = await ethers.getContractAt(
+  //       "ERC721Whitelist",
+  //       wlAddr,
+  //     );
+  //     const root = ethers.utils.keccak256(
+  //       ethers.utils.toUtf8Bytes("root"),
+  //     );
+  //     await r721.setFees(
+  //       ethers.utils.parseEther("2.5"),
+  //       ethers.utils.parseEther("0.5"),
+  //     );
+  //     await r721
+  //       .connect(acc02)
+  //       .freeSettings(wlAddr, 1, 10, root);
+  //     await r721.connect(acc02).setMintState(wlAddr, true, 2);
 
-      await expect(
-        r721.setFees(
-          ethers.utils.parseEther("2.5"),
-          ethers.utils.parseEther("0.5"),
-        ),
-      ).to.be.ok;
+  //     await expect(
+  //       r721
+  //         .connect(acc02)
+  //         .creatorMint(wlAddr, 2, {
+  //           value: ethers.utils.parseEther("0.25"),
+  //         }),
+  //     ).to.be.revertedWithCustomError(
+  //       wl,
+  //       WhitelistErrors.WrongPrice,
+  //     );
 
-      await expect(
-        r721.setFees(
-          ethers.utils.parseEther("2.6"),
-          ethers.utils.parseEther("0.6"),
-        ),
-      ).to.be.reverted;
-    });
-  }),
-    describe("Burn-setBaseFee", async () => {
-      it("Should burn tokens for 721Basic collection type", async () => {
-        // await f721.addAmbassador(amb.address);
-        await f721
-          .connect(acc02)
-          .splitterCheck(
-            "MADSplitter1",
-            amb.address,
-            dead,
-            20,
-            0,
-          );
-        const splAddr = await f721.callStatic.getDeployedAddr(
-          "MADSplitter1",
-        );
-        const basicAddr =
-          await f721.callStatic.getDeployedAddr("BasicSalt");
-        await f721
-          .connect(acc02)
-          .createCollection(
-            1,
-            "BasicSalt",
-            "721Basic",
-            "BASIC",
-            price,
-            1000,
-            "ipfs://cid/",
-            splAddr,
-            750,
-          );
-        await r721.setFees(
-          ethers.utils.parseEther("2.5"),
-          ethers.utils.parseEther("0.5"),
-        );
+  //     const tx = await r721
+  //       .connect(acc02)
+  //       .creatorMint(wlAddr, 2, {
+  //         value: ethers.utils.parseEther("2.5"),
+  //       });
 
-        const basic = await ethers.getContractAt(
-          "ERC721Basic",
-          basicAddr,
-        );
-        await r721
-          .connect(acc02)
-          .setMintState(basicAddr, true, 0);
-        await basic.connect(acc01).mint(1, {
-          value: price.add(ethers.utils.parseEther("2.5")),
-        });
+  //     expect(tx).to.be.ok;
+  //     expect(await wl.callStatic.freeClaimState()).to.be.true;
+  //   });
+  // });
+  // describe("Whitelist token gifting-setBaseFee", async () => {
+  //   it("Should gift tokens", async () => {
+  //     // await f721.addAmbassador(amb.address);
+  //     await f721
+  //       .connect(acc02)
+  //       .splitterCheck(
+  //         "MADSplitter1",
+  //         amb.address,
+  //         dead,
+  //         20,
+  //         0,
+  //       );
+  //     const splAddr = await f721.callStatic.getDeployedAddr(
+  //       "MADSplitter1",
+  //     );
+  //     await f721
+  //       .connect(acc02)
+  //       .createCollection(
+  //         2,
+  //         "WhiteSalt",
+  //         "721Whitelist",
+  //         "WHITE",
+  //         price,
+  //         100,
+  //         "ipfs://cid/",
+  //         splAddr,
+  //         750,
+  //       );
+  //     const wlAddr = await f721.callStatic.getDeployedAddr(
+  //       "WhiteSalt",
+  //     );
+  //     const wl = await ethers.getContractAt(
+  //       "ERC721Whitelist",
+  //       wlAddr,
+  //     );
+  //     const root = ethers.utils.keccak256(
+  //       ethers.utils.toUtf8Bytes("root"),
+  //     );
+  //     await r721.setFees(
+  //       ethers.utils.parseEther("2.5"),
+  //       ethers.utils.parseEther("0.5"),
+  //     );
+  //     const addrs = [owner.address, mad.address];
+  //     await r721
+  //       .connect(acc02)
+  //       .freeSettings(wlAddr, 1, 10, root);
+  //     await r721.connect(acc02).setMintState(wlAddr, true, 2);
 
-        await expect(
-          r721.connect(acc02).burn(basicAddr, [1]),
-        ).to.be.revertedWithCustomError(
-          basic,
-          BasicErrors.WrongPrice,
-        );
+  //     await expect(
+  //       r721
+  //         .connect(acc02)
+  //         .gift(wlAddr, addrs, {
+  //           value: ethers.utils.parseEther("0.25"),
+  //         }),
+  //     ).to.be.revertedWithCustomError(
+  //       wl,
+  //       WhitelistErrors.WrongPrice,
+  //     );
 
-        const tx = await r721
-          .connect(acc02)
-          .burn(basicAddr, [1], {
-            value: ethers.utils.parseEther("0.5"),
-          });
+  //     const tx = await r721
+  //       .connect(acc02)
+  //       .gift(wlAddr, addrs, {
+  //         value: ethers.utils.parseEther("2.5"),
+  //       });
 
-        expect(tx).to.be.ok;
-        expect(
-          await basic.callStatic.balanceOf(acc01.address),
-        ).to.eq(0);
-        const verArt = await artifacts.readArtifact(
-          "FactoryVerifier",
-        );
-        const ver = new ethers.Contract(
-          f721.address,
-          verArt.abi,
-          ethers.provider,
-        );
-        await expect(
-          r721.burn(basicAddr, [1], {
-            value: ethers.utils.parseEther("0.5"),
-          }),
-        ).to.be.revertedWithCustomError(
-          ver,
-          RouterErrors.AccessDenied,
-        );
-      });
-      it("Should burn tokens for 721Whitelist collection type", async () => {
-        const root = ethers.utils.keccak256(
-          ethers.utils.toUtf8Bytes("fakeRoot"),
-        );
-        // await f721.addAmbassador(amb.address);
-        await f721
-          .connect(acc02)
-          .splitterCheck(
-            "MADSplitter1",
-            amb.address,
-            dead,
-            20,
-            0,
-          );
-        const splAddr = await f721.callStatic.getDeployedAddr(
-          "MADSplitter1",
-        );
-        const wlAddr = await f721.callStatic.getDeployedAddr(
-          "WhiteSalt",
-        );
-        await f721
-          .connect(acc02)
-          .createCollection(
-            2,
-            "WhiteSalt",
-            "721Whitelist",
-            "WHITE",
-            price,
-            1000,
-            "ipfs://cid/",
-            splAddr,
-            750,
-          );
-        const wl = await ethers.getContractAt(
-          "ERC721Whitelist",
-          wlAddr,
-        );
-        await r721
-          .connect(acc02)
-          .freeSettings(wl.address, 1, 10, root);
-        await r721.connect(acc02).creatorMint(wlAddr, 1, {
-          value: ethers.utils.parseEther("0.25"),
-        });
-        const tx = await r721
-          .connect(acc02)
-          .burn(wlAddr, [1]);
-        const verArt = await artifacts.readArtifact(
-          "FactoryVerifier",
-        );
-        const ver = new ethers.Contract(
-          f721.address,
-          verArt.abi,
-          ethers.provider,
-        );
-        await r721.setFees(
-          ethers.utils.parseEther("2.5"),
-          ethers.utils.parseEther("0.5"),
-        );
-        expect(tx).to.be.ok;
-        expect(
-          await wl.callStatic.balanceOf(acc02.address),
-        ).to.eq(0);
-        await expect(
-          r721.burn(wlAddr, [1]),
-        ).to.be.revertedWithCustomError(
-          ver,
-          RouterErrors.AccessDenied,
-        );
-      });
-      it("Should burn tokens for 721Lazy collection type", async () => {
-        const signer = ethers.Wallet.createRandom();
-        // await f721.addAmbassador(amb.address);
-        await f721.setSigner(await signer.getAddress());
-        await f721
-          .connect(acc02)
-          .splitterCheck(
-            "MADSplitter1",
-            amb.address,
-            dead,
-            20,
-            0,
-          );
-        const splAddr = await f721.callStatic.getDeployedAddr(
-          "MADSplitter1",
-        );
-        const lazyAddr =
-          await f721.callStatic.getDeployedAddr("LazySalt");
-        await f721
-          .connect(acc02)
-          .createCollection(
-            3,
-            "LazySalt",
-            "721Lazy",
-            "LAZY",
-            ethers.constants.Zero,
-            ethers.constants.Zero,
-            "ipfs://cid/",
-            splAddr,
-            750,
-          );
-        const lazy = await ethers.getContractAt(
-          "ERC721Lazy",
-          lazyAddr,
-        );
-        const net = await lazy.provider.getNetwork();
-        const chainId = net.chainId;
-        const bnPrice = ethers.utils.parseEther("1");
-        const usrs = [owner.address, acc02.address];
-        const vId = ethers.utils.keccak256(
-          ethers.utils.toUtf8Bytes("voucher"),
-        );
-        const pk = Buffer.from(
-          signer.privateKey.slice(2),
-          "hex",
-        );
-
-        const domain = [
-          { name: "name", type: "string" },
-          { name: "version", type: "string" },
-          { name: "chainId", type: "uint256" },
-          { name: "verifyingContract", type: "address" },
-        ];
-        const voucherType = [
-          { name: "voucherId", type: "bytes32" },
-          { name: "users", type: "address[]" },
-          { name: "balances", type: "uint256[]" },
-          { name: "amount", type: "uint256" },
-          { name: "price", type: "uint256" },
-        ];
-        const domainData = {
-          name: "721Lazy",
-          version: "1",
-          chainId: chainId,
-          verifyingContract: lazy.address,
-        };
-        const Voucher = {
-          voucherId: vId,
-          users: usrs,
-          balances: [1],
-          amount: 1,
-          price: bnPrice.toString(),
-        };
-        const data = JSON.stringify({
-          types: {
-            EIP712Domain: domain,
-            Voucher: voucherType,
-          },
-          primaryType: "Voucher",
-          domain: domainData,
-          message: Voucher,
-        });
-
-        const parsedData = JSON.parse(data);
-        const signature = signTypedData({
-          privateKey: pk,
-          data: parsedData,
-          version: SignTypedDataVersion.V4,
-        });
-
-        const sigSplit =
-          ethers.utils.splitSignature(signature);
-        await r721.setFees(
-          ethers.utils.parseEther("2.5"),
-          ethers.utils.parseEther("0.5"),
-        );
-        await lazy
-          .connect(acc02)
-          .lazyMint(
-            Voucher,
-            sigSplit.v,
-            sigSplit.r,
-            sigSplit.s,
-            {
-              value: price
-                .mul(ethers.BigNumber.from(2))
-                .add(ethers.utils.parseEther("2.5")),
-            },
-          );
-        await expect(
-          r721.connect(acc02).burn(lazyAddr, [1, 2]),
-        ).to.be.revertedWithCustomError(
-          lazy,
-          LazyErrors.WrongPrice,
-        );
-        const tx = await r721
-          .connect(acc02)
-          .burn(lazyAddr, [1, 2], {
-            value: ethers.utils.parseEther("0.5"),
-          });
-        const verArt = await artifacts.readArtifact(
-          "FactoryVerifier",
-        );
-        const ver = new ethers.Contract(
-          f721.address,
-          verArt.abi,
-          ethers.provider,
-        );
-
-        expect(tx).to.be.ok;
-        expect(await lazy.balanceOf(acc02.address)).to.eq(0);
-        expect(await lazy.balanceOf(owner.address)).to.eq(0);
-        await expect(
-          r721.burn(lazyAddr, [1], {
-            value: ethers.utils.parseEther("0.5"),
-          }),
-        ).to.be.revertedWithCustomError(
-          ver,
-          RouterErrors.AccessDenied,
-        );
-      });
-    });
-  describe("Whitelist Creator Mint-setBaseFee", async () => {
-    it("Should mint to creator", async () => {
-      // await f721.addAmbassador(amb.address);
-      await f721
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f721.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      await f721
-        .connect(acc02)
-        .createCollection(
-          2,
-          "WhiteSalt",
-          "721Whitelist",
-          "WHITE",
-          price,
-          100,
-          "ipfs://cid/",
-          splAddr,
-          750,
-        );
-      const wlAddr = await f721.callStatic.getDeployedAddr(
-        "WhiteSalt",
-      );
-      const wl = await ethers.getContractAt(
-        "ERC721Whitelist",
-        wlAddr,
-      );
-      const root = ethers.utils.keccak256(
-        ethers.utils.toUtf8Bytes("root"),
-      );
-      await r721.setFees(
-        ethers.utils.parseEther("2.5"),
-        ethers.utils.parseEther("0.5"),
-      );
-      await r721
-        .connect(acc02)
-        .freeSettings(wlAddr, 1, 10, root);
-      await r721.connect(acc02).setMintState(wlAddr, true, 2);
-
-      await expect(
-        r721.connect(acc02).creatorMint(wlAddr, 2, {
-          value: ethers.utils.parseEther("0.25"),
-        }),
-      ).to.be.revertedWithCustomError(
-        wl,
-        WhitelistErrors.WrongPrice,
-      );
-
-      const tx = await r721
-        .connect(acc02)
-        .creatorMint(wlAddr, 2, {
-          value: ethers.utils.parseEther("2.5"),
-        });
-
-      expect(tx).to.be.ok;
-      expect(await wl.callStatic.freeClaimState()).to.be.true;
-    });
-  });
-  describe("Whitelist token gifting-setBaseFee", async () => {
-    it("Should gift tokens", async () => {
-      // await f721.addAmbassador(amb.address);
-      await f721
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f721.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      await f721
-        .connect(acc02)
-        .createCollection(
-          2,
-          "WhiteSalt",
-          "721Whitelist",
-          "WHITE",
-          price,
-          100,
-          "ipfs://cid/",
-          splAddr,
-          750,
-        );
-      const wlAddr = await f721.callStatic.getDeployedAddr(
-        "WhiteSalt",
-      );
-      const wl = await ethers.getContractAt(
-        "ERC721Whitelist",
-        wlAddr,
-      );
-      const root = ethers.utils.keccak256(
-        ethers.utils.toUtf8Bytes("root"),
-      );
-      await r721.setFees(
-        ethers.utils.parseEther("2.5"),
-        ethers.utils.parseEther("0.5"),
-      );
-      const addrs = [owner.address, mad.address];
-      await r721
-        .connect(acc02)
-        .freeSettings(wlAddr, 1, 10, root);
-      await r721.connect(acc02).setMintState(wlAddr, true, 2);
-
-      await expect(
-        r721.connect(acc02).gift(wlAddr, addrs, {
-          value: ethers.utils.parseEther("0.25"),
-        }),
-      ).to.be.revertedWithCustomError(
-        wl,
-        WhitelistErrors.WrongPrice,
-      );
-
-      const tx = await r721
-        .connect(acc02)
-        .gift(wlAddr, addrs, {
-          value: ethers.utils.parseEther("2.5"),
-        });
-
-      expect(tx).to.be.ok;
-      expect(
-        await wl.callStatic.balanceOf(owner.address),
-      ).to.eq(1);
-      expect(
-        await wl.callStatic.balanceOf(mad.address),
-      ).to.eq(1);
-    });
-  });
+  //     expect(tx).to.be.ok;
+  //     expect(
+  //       await wl.callStatic.balanceOf(owner.address),
+  //     ).to.eq(1);
+  //     expect(
+  //       await wl.callStatic.balanceOf(mad.address),
+  //     ).to.eq(1);
+  //   });
+  // });
 });

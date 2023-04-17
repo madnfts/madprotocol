@@ -1,5 +1,4 @@
 import "@nomicfoundation/hardhat-chai-matchers";
-// import "hardhat-tracer";
 import {
   loadFixture,
   mine,
@@ -19,18 +18,13 @@ import {
   ethers,
   network, // tracer
 } from "hardhat";
-// import keccak256 from "keccak256";
-// import { MerkleTree } from "merkletreejs";
 
 import {
-  // ERC721Whitelist,
   MADFactory721,
   MADMarketplace721,
-  MADRouter721,
-  // SplitterImpl,
+  MADRouter721, // SplitterImpl,
 } from "../../src/types";
 import { MarketplaceErrors } from "./../utils/errors";
-// import { padBuffer } from "./../utils/fixtures";
 import {
   OrderDetails721,
   dead,
@@ -57,10 +51,7 @@ describe("MADMarketplace721", () => {
   let f721: MADFactory721;
   let m721: MADMarketplace721;
   let r721: MADRouter721;
-  // let erc20: MockERC20;
-  // let splitter: SplitterImpl;
-  // let wl: ERC721Whitelist;
-  // let whitelist: ERC721Whitelist;
+
 
   const price: BigNumber = ethers.utils.parseEther("1");
 
@@ -82,14 +73,10 @@ describe("MADMarketplace721", () => {
 
   describe("Init", async () => {
     it("Marketplace should initialize", async () => {
-      // await m721.deployed();
       expect(m721).to.be.ok;
 
-      // check each global var
-      // tracer.enabled = true;
-      // tracer.nameTags[m721.address] = "MADMarketplace721";
+
       expect(await m721.callStatic.name()).to.eq("market");
-      // tracer.enabled = false;
       expect(await m721.recipient()).to.eq(owner.address);
       expect(await m721.minOrderDuration()).to.eq(300);
       expect(await m721.minAuctionIncrement()).to.eq(300);
@@ -218,7 +205,7 @@ describe("MADMarketplace721", () => {
     it("Should delete order", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
       const zero = ethers.constants.Zero;
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -261,12 +248,9 @@ describe("MADMarketplace721", () => {
       ).timestamp;
       await r721
         .connect(acc02)
-        .basicMintTo(
-          basicAddr, 
-          acc02.address, 
-          1,
-          { value: ethers.utils.parseEther("0.25") },
-        );
+        .basicMintTo(basicAddr, acc02.address, 1, {
+          value: ethers.utils.parseEther("0.25"),
+        });
       await basic.connect(acc02).approve(m721.address, 1);
       const fixepPrice: ContractTransaction = await m721
         .connect(acc02)
@@ -351,7 +335,7 @@ describe("MADMarketplace721", () => {
   describe("Fixed Price Listing", async () => {
     it("Should revert if transaction approval hasn't been set", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -416,7 +400,7 @@ describe("MADMarketplace721", () => {
       ).to.be.revertedWith(MarketplaceErrors.NotAuthorized);
     });
     it("Should revert if duration is less than min allowed", async () => {
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -472,14 +456,19 @@ describe("MADMarketplace721", () => {
       await expect(
         m721
           .connect(acc02)
-          .fixedPrice(basic.address, 1, price, blockTimestamp),
+          .fixedPrice(
+            basic.address,
+            1,
+            price,
+            blockTimestamp,
+          ),
       ).to.be.revertedWithCustomError(
         m721,
         MarketplaceErrors.NeedMoreTime,
       );
     });
     it("Should revert if duration is less than min allowed", async () => {
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -535,7 +524,12 @@ describe("MADMarketplace721", () => {
       await expect(
         m721
           .connect(acc02)
-          .fixedPrice(basic.address, 1, price, blockTimestamp),
+          .fixedPrice(
+            basic.address,
+            1,
+            price,
+            blockTimestamp,
+          ),
       ).to.be.revertedWithCustomError(
         m721,
         MarketplaceErrors.NeedMoreTime,
@@ -543,7 +537,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if price is invalid", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -604,7 +598,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should list fixed price order, update storage and emit event", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -721,7 +715,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should handle multiple fixed price orders", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -779,30 +773,22 @@ describe("MADMarketplace721", () => {
       //     { value: ethers.utils.parseEther("0.25") },
       //   );
 
-      
       const wlOwners = [
         mad.address,
         acc01.address,
         acc02.address,
         owner.address,
         amb.address,
-      ]
-      .reduce(
-        (acc, curr) => (
-        { ...acc, [curr]: true }), {}
-      );
+      ].reduce((acc, curr) => ({ ...acc, [curr]: true }), {});
 
       for (const wlOwner of Object.keys(wlOwners)) {
         await r721
           .connect(acc02)
-          .basicMintTo(
-            whitelist.address,
-            wlOwner,
-            1,
-            { value: ethers.utils.parseEther("0.25") },
-          );
-      };
-      
+          .basicMintTo(whitelist.address, wlOwner, 1, {
+            value: ethers.utils.parseEther("0.25"),
+          });
+      }
+
       await whitelist.connect(mad).approve(m721.address, 1);
       await whitelist.connect(acc01).approve(m721.address, 2);
       await whitelist.connect(acc02).approve(m721.address, 3);
@@ -1047,7 +1033,7 @@ describe("MADMarketplace721", () => {
   describe("Dutch Auction Listing", async () => {
     it("Should revert if transaction approval hasn't been set", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -1113,7 +1099,7 @@ describe("MADMarketplace721", () => {
       ).to.be.revertedWith(MarketplaceErrors.NotAuthorized);
     });
     it("Should revert if duration is less than min allowed", async () => {
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -1188,7 +1174,7 @@ describe("MADMarketplace721", () => {
       );
     });
     it("Should revert if duration is greater than max allowed", async () => {
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -1264,7 +1250,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if startPrice is invalid", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -1334,7 +1320,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should list dutch auction order, update storage and emit event", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -1452,7 +1438,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should handle multiple dutch auction orders", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -1484,7 +1470,7 @@ describe("MADMarketplace721", () => {
       );
 
       const whitelist = await ethers.getContractAt(
-        "ERC721Whitelist",
+        "ERC721Basic",
         wlAddr,
       );
 
@@ -1508,29 +1494,22 @@ describe("MADMarketplace721", () => {
       //       amb.address,
       //     ],
       //     { value: ethers.utils.parseEther("0.25") },
-      
+
       const wlOwners = [
         mad.address,
         acc01.address,
         acc02.address,
         owner.address,
         amb.address,
-      ]
-      .reduce(
-        (acc, curr) => (
-        { ...acc, [curr]: true }), {}
-      );
-      
+      ].reduce((acc, curr) => ({ ...acc, [curr]: true }), {});
+
       for (const wlOwner of Object.keys(wlOwners)) {
         await r721
-        .connect(acc02)
-        .basicMintTo(
-          whitelist.address,
-          wlOwner,
-          1,
-          { value: ethers.utils.parseEther("0.25") },
-        );
-      };
+          .connect(acc02)
+          .basicMintTo(whitelist.address, wlOwner, 1, {
+            value: ethers.utils.parseEther("0.25"),
+          });
+      }
       await whitelist.connect(mad).approve(m721.address, 1);
       await whitelist.connect(acc01).approve(m721.address, 2);
       await whitelist.connect(acc02).approve(m721.address, 3);
@@ -1779,7 +1758,7 @@ describe("MADMarketplace721", () => {
   describe("English Auction Listing", async () => {
     it("Should revert if transaction approval hasn't been set", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -1845,7 +1824,7 @@ describe("MADMarketplace721", () => {
       ).to.be.revertedWith(MarketplaceErrors.NotAuthorized);
     });
     it("Should revert if duration is less than min allowed", async () => {
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -1914,7 +1893,7 @@ describe("MADMarketplace721", () => {
       );
     });
     it("Should revert if duration is greater than max allowed", async () => {
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -1984,7 +1963,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if startPrice is invalid", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -2045,7 +2024,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should list english auction order, update storage and emit event", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -2162,7 +2141,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should handle multiple english auction orders", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -2194,7 +2173,7 @@ describe("MADMarketplace721", () => {
       );
 
       const whitelist = await ethers.getContractAt(
-        "ERC721Whitelist",
+        "ERC721Basic",
         wlAddr,
       );
 
@@ -2218,29 +2197,22 @@ describe("MADMarketplace721", () => {
       //       amb.address,
       //     ],
       //     { value: ethers.utils.parseEther("0.25") },
-      
+
       const wlOwners = [
         mad.address,
         acc01.address,
         acc02.address,
         owner.address,
         amb.address,
-      ]
-      .reduce(
-        (acc, curr) => (
-        { ...acc, [curr]: true }), {}
-      );
-      
+      ].reduce((acc, curr) => ({ ...acc, [curr]: true }), {});
+
       for (const wlOwner of Object.keys(wlOwners)) {
         await r721
-        .connect(acc02)
-        .basicMintTo(
-          whitelist.address,
-          wlOwner,
-          1,
-          { value: ethers.utils.parseEther("0.25") },
-        );
-      };
+          .connect(acc02)
+          .basicMintTo(whitelist.address, wlOwner, 1, {
+            value: ethers.utils.parseEther("0.25"),
+          });
+      }
       await whitelist.connect(mad).approve(m721.address, 1);
       await whitelist.connect(acc01).approve(m721.address, 2);
       await whitelist.connect(acc02).approve(m721.address, 3);
@@ -2484,7 +2456,7 @@ describe("MADMarketplace721", () => {
   describe("Bidding", async () => {
     it("Should revert if price is wrong", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -2569,7 +2541,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if not English Auction", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -2640,7 +2612,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if order was canceled", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -2713,7 +2685,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if order has timed out", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -2787,7 +2759,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if bidder is the seller", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -2858,7 +2830,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should bid, update storage and emit events", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -2966,7 +2938,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should bid, update storage and emit events; check user is returned their bid amount (which must be withdrawn)", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -3100,7 +3072,7 @@ describe("MADMarketplace721", () => {
   describe("Buying", async () => {
     it("Should revert if price is wrong", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -3171,7 +3143,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if order is an English Auction", async () => {
       await m721.updateSettings(20, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -3242,7 +3214,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if order was canceled", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -3316,7 +3288,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if order has timed out", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -3391,7 +3363,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if token has already been sold", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -3467,7 +3439,7 @@ describe("MADMarketplace721", () => {
     it("Should buy inhouse minted tokens, update storage and emit events", async () => {
       // fixed price order
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -3535,9 +3507,8 @@ describe("MADMarketplace721", () => {
         .buy(fpOrderId, { value: price });
 
       // dutch auction order
-      const basicAddr2 = await f721.callStatic.getDeployedAddr(
-        "BasicSalt2",
-      );
+      const basicAddr2 =
+        await f721.callStatic.getDeployedAddr("BasicSalt2");
       await f721
         .connect(acc02)
         .createCollection(
@@ -3556,13 +3527,15 @@ describe("MADMarketplace721", () => {
         basicAddr2,
       );
       // await r721
-        // .connect(acc02)
-        // .setMintState(basic.address, true);
+      // .connect(acc02)
+      // .setMintState(basic.address, true);
       await r721
         .connect(acc02)
         .setMintState(basic2.address, true);
       // await basic2.connect(acc02).mint(1, { value: price.add(ethers.utils.parseEther("0.25")) });
-      await basic2.connect(acc02).mint(1, { value: price.add(ethers.utils.parseEther("0.25")) });
+      await basic2.connect(acc02).mint(1, {
+        value: price.add(ethers.utils.parseEther("0.25")),
+      });
       // await basic.connect(acc02).approve(m721.address, 1);
       await basic2.connect(acc02).approve(m721.address, 1);
       const daTx = await m721
@@ -3816,9 +3789,8 @@ describe("MADMarketplace721", () => {
       );
 
       // dutch auction order
-      const basicAddr2 = await f721.callStatic.getDeployedAddr(
-        "BasicSalt2",
-      );
+      const basicAddr2 =
+        await f721.callStatic.getDeployedAddr("BasicSalt2");
       await f721
         .connect(acc02)
         .createCollection(
@@ -3839,7 +3811,9 @@ describe("MADMarketplace721", () => {
       await r721
         .connect(acc02)
         .setMintState(basic2.address, true);
-      await basic2.connect(acc02).mint(1, { value: price.add(ethers.utils.parseEther("0.25")) });
+      await basic2.connect(acc02).mint(1, {
+        value: price.add(ethers.utils.parseEther("0.25")),
+      });
       await basic2.connect(acc02).approve(m721.address, 1);
       const daTx = await m721
         .connect(acc02)
@@ -4198,9 +4172,8 @@ describe("MADMarketplace721", () => {
       );
 
       // dutch auction order
-      const basicAddr2 = await f721.callStatic.getDeployedAddr(
-        "BasicSalt2",
-      );
+      const basicAddr2 =
+        await f721.callStatic.getDeployedAddr("BasicSalt2");
       await f721
         .connect(acc02)
         .createCollection(
@@ -4221,7 +4194,9 @@ describe("MADMarketplace721", () => {
       await r721
         .connect(acc02)
         .setMintState(basic2.address, true);
-      await basic2.connect(acc02).mint(1, { value: price.add(ethers.utils.parseEther("0.25")) });
+      await basic2.connect(acc02).mint(1, {
+        value: price.add(ethers.utils.parseEther("0.25")),
+      });
       await basic2.connect(acc02).approve(m721.address, 1);
       const daTx = await m721
         .connect(acc02)
@@ -4502,7 +4477,7 @@ describe("MADMarketplace721", () => {
   describe("Claim", async () => {
     it("Should revert if caller is seller or bidder", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -4590,7 +4565,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if token has already been claimed", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -4660,7 +4635,11 @@ describe("MADMarketplace721", () => {
       await m721
         .connect(acc02)
         .claim(
-          await m721.callStatic.orderIdByToken(basicAddr, 1, 0),
+          await m721.callStatic.orderIdByToken(
+            basicAddr,
+            1,
+            0,
+          ),
         );
 
       await expect(
@@ -4725,7 +4704,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if auction hasn't ended", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -4799,7 +4778,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should claim inhouse minted tokens, update storage and emit events", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -4873,7 +4852,11 @@ describe("MADMarketplace721", () => {
       const tx = await m721
         .connect(acc02)
         .claim(
-          await m721.callStatic.orderIdByToken(basicAddr, 1, 0),
+          await m721.callStatic.orderIdByToken(
+            basicAddr,
+            1,
+            0,
+          ),
         );
       const eaOrderInfo: OrderDetails721 =
         await m721.callStatic.orderInfo(orderId);
@@ -4943,7 +4926,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should verify inhouse minted tokens balance changes", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -5171,7 +5154,7 @@ describe("MADMarketplace721", () => {
   describe("Order Cancelling", async () => {
     it("Should revert due to already sold fixed price order", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -5246,7 +5229,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert due to already sold dutch auction order", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -5340,7 +5323,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert due to already sold english auction order", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -5416,7 +5399,11 @@ describe("MADMarketplace721", () => {
       await m721
         .connect(acc02)
         .claim(
-          await m721.callStatic.orderIdByToken(basicAddr, 1, 0),
+          await m721.callStatic.orderIdByToken(
+            basicAddr,
+            1,
+            0,
+          ),
         );
 
       await expect(
@@ -5430,7 +5417,7 @@ describe("MADMarketplace721", () => {
     // `BidExists` error only valid for english auction listings
     it("Should cancel fixed price order", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -5530,7 +5517,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should cancel dutch auction order", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -5631,7 +5618,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should cancel english auction order", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -5733,7 +5720,7 @@ describe("MADMarketplace721", () => {
   describe("Public Helpers", async () => {
     it("Should fetch the length of orderIds for a token", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -5789,22 +5776,15 @@ describe("MADMarketplace721", () => {
         mad.address,
         acc01.address,
         acc02.address,
-      ]
-      .reduce(
-        (acc, curr) => (
-        { ...acc, [curr]: true }), {}
-      );
-      
+      ].reduce((acc, curr) => ({ ...acc, [curr]: true }), {});
+
       for (const wlOwner of Object.keys(wlOwners)) {
         await r721
-        .connect(acc02)
-        .basicMintTo(
-          whitelist.address,
-          wlOwner,
-          1,
-          { value: ethers.utils.parseEther("0.25") },
-        );
-      };
+          .connect(acc02)
+          .basicMintTo(whitelist.address, wlOwner, 1, {
+            value: ethers.utils.parseEther("0.25"),
+          });
+      }
       await whitelist.connect(mad).approve(m721.address, 1);
       await whitelist.connect(acc01).approve(m721.address, 2);
       const tx = await whitelist
@@ -5863,7 +5843,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should fetch the length of orderIds for a seller", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      // await f721.addAmbassador(amb.address);
+      
       await f721
         .connect(acc02)
         .splitterCheck(

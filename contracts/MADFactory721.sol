@@ -7,10 +7,9 @@ import { MAD } from "./MAD.sol";
 import { FactoryEventsAndErrors721, FactoryVerifier } from "./EventsAndErrors.sol";
 
 import { 
-    // ERC721MinimalDeployer, 
+
     ERC721BasicDeployer
-    // ERC721WhitelistDeployer,
-    // ERC721LazyDeployer
+
 } from "./lib/deployers/ERC721Deployer.sol";
 
 import { SplitterDeployer } from "./lib/deployers/SplitterDeployer.sol";
@@ -349,47 +348,11 @@ contract MADFactory721 is
         address _splitter,
         uint256 _royalty
     ) external nonReentrant isThisOg whenNotPaused {
-        // removed as price can be set to 0
-        // require(_tokenType > 2 || _price > 0, 'Invalid price');
+
         _limiter(_tokenType, _splitter);
         _royaltyLocker(_royalty);
 
-        // if (_tokenType < 1) {
-            // (bytes32 tokenSalt, address deployed) = 
-                // ERC721MinimalDeployer._721MinimalDeploy(
-                    // _tokenSalt,
-                    // _name,
-                    // _symbol,
-                    // _baseURI,
-                    // _price,
-                    // _splitter,
-                    // router,
-                    // _royalty,
-                    // erc20
-                // );
 
-        //     bytes32 colId = deployed.fillLast12Bytes();
-        //     userTokens[tx.origin].push(colId);
-
-        //     colInfo[colId] = Types.Collection721(
-        //         tx.origin,
-        //         Types.ERC721Type.ERC721Minimal,
-        //         tokenSalt,
-        //         block.number,
-        //         _splitter
-        //     );
-
-        //     emit ERC721MinimalCreated(
-        //         _splitter,
-        //         deployed,
-        //         _name,
-        //         _symbol, 
-        //         _royalty,
-        //         _maxSupply,
-        //         _price
-        //     );
-        // }
-        // if (_tokenType == 1) {
         (bytes32 tokenSalt, address deployed) = 
         ERC721BasicDeployer._721BasicDeploy(
             _tokenSalt,
@@ -424,78 +387,7 @@ contract MADFactory721 is
             _maxSupply,
             _price
         );
-        // }
-        // if (_tokenType == 2) {
-        //     (bytes32 tokenSalt, address deployed) = 
-        //     ERC721WhitelistDeployer._721WhitelistDeploy(
-        //         _tokenSalt,
-        //         _name,
-        //         _symbol,
-        //         _baseURI,
-        //         _price,
-        //         _maxSupply,
-        //         _splitter,
-        //         router,
-        //         _royalty,
-        //         erc20
-        //     );
-
-        //     bytes32 colId = deployed.fillLast12Bytes();
-        //     userTokens[tx.origin].push(colId);
-
-        //     colInfo[colId] = Types.Collection721(
-        //         tx.origin,
-        //         Types.ERC721Type.ERC721Whitelist,
-        //         tokenSalt,
-        //         block.number,
-        //         _splitter
-        //     );
-
-        //     emit ERC721WhitelistCreated(
-        //         _splitter,
-        //         deployed,
-        //         _name,
-        //         _symbol, 
-        //         _royalty,
-        //         _maxSupply,
-        //         _price
-        //     );
-        // }
-        // if (_tokenType > 2) {
-        //     (bytes32 tokenSalt, address deployed) = 
-        //     ERC721LazyDeployer._721LazyDeploy(
-        //         _tokenSalt,
-        //         _name,
-        //         _symbol,
-        //         _baseURI,
-        //         _splitter,
-        //         router,
-        //         signer,
-        //         _royalty,
-        //         erc20
-        //     );
-
-        //     bytes32 colId = deployed.fillLast12Bytes();
-        //     userTokens[tx.origin].push(colId);
-
-        //     colInfo[colId] = Types.Collection721(
-        //         tx.origin,
-        //         Types.ERC721Type.ERC721Lazy,
-        //         tokenSalt,
-        //         block.number,
-        //         _splitter
-        //     );
-
-        //     emit ERC721LazyCreated(
-        //         _splitter,
-        //         deployed,
-        //         _name,
-        //         _symbol, 
-        //         _royalty,
-        //         _maxSupply,
-        //         _price
-        //     );
-        // }
+       
     }
 
     ////////////////////////////////////////////////////////////////

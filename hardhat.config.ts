@@ -177,11 +177,11 @@ const config: HardhatUserConfig = {
     settings: {
       viaIR: true,
       optimizer: {
-        enabled: true, 
-        details: { 
+        enabled: true,
+        details: {
           yul: true,
           yulDetails: {
-            stackAllocation: true, 
+            stackAllocation: true,
           },
         },
       },

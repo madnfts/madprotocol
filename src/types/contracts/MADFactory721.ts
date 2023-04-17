@@ -218,9 +218,6 @@ export interface MADFactory721Interface extends utils.Interface {
 
   events: {
     "ERC721BasicCreated(address,address,string,string,uint256,uint256,uint256)": EventFragment;
-    "ERC721LazyCreated(address,address,string,string,uint256,uint256,uint256)": EventFragment;
-    "ERC721MinimalCreated(address,address,string,string,uint256,uint256,uint256)": EventFragment;
-    "ERC721WhitelistCreated(address,address,string,string,uint256,uint256,uint256)": EventFragment;
     "FeesUpdated(uint256,uint256)": EventFragment;
     "MarketplaceUpdated(address)": EventFragment;
     "OwnerUpdated(address,address)": EventFragment;
@@ -234,9 +231,6 @@ export interface MADFactory721Interface extends utils.Interface {
   };
 
   getEvent(nameOrSignatureOrTopic: "ERC721BasicCreated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ERC721LazyCreated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ERC721MinimalCreated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ERC721WhitelistCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FeesUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MarketplaceUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnerUpdated"): EventFragment;
@@ -265,57 +259,6 @@ export type ERC721BasicCreatedEvent = TypedEvent<
 
 export type ERC721BasicCreatedEventFilter =
   TypedEventFilter<ERC721BasicCreatedEvent>;
-
-export interface ERC721LazyCreatedEventObject {
-  newSplitter: string;
-  newCollection: string;
-  name: string;
-  symbol: string;
-  royalties: BigNumber;
-  maxSupply: BigNumber;
-  mintPrice: BigNumber;
-}
-export type ERC721LazyCreatedEvent = TypedEvent<
-  [string, string, string, string, BigNumber, BigNumber, BigNumber],
-  ERC721LazyCreatedEventObject
->;
-
-export type ERC721LazyCreatedEventFilter =
-  TypedEventFilter<ERC721LazyCreatedEvent>;
-
-export interface ERC721MinimalCreatedEventObject {
-  newSplitter: string;
-  newCollection: string;
-  name: string;
-  symbol: string;
-  royalties: BigNumber;
-  maxSupply: BigNumber;
-  mintPrice: BigNumber;
-}
-export type ERC721MinimalCreatedEvent = TypedEvent<
-  [string, string, string, string, BigNumber, BigNumber, BigNumber],
-  ERC721MinimalCreatedEventObject
->;
-
-export type ERC721MinimalCreatedEventFilter =
-  TypedEventFilter<ERC721MinimalCreatedEvent>;
-
-export interface ERC721WhitelistCreatedEventObject {
-  newSplitter: string;
-  newCollection: string;
-  name: string;
-  symbol: string;
-  royalties: BigNumber;
-  maxSupply: BigNumber;
-  mintPrice: BigNumber;
-}
-export type ERC721WhitelistCreatedEvent = TypedEvent<
-  [string, string, string, string, BigNumber, BigNumber, BigNumber],
-  ERC721WhitelistCreatedEventObject
->;
-
-export type ERC721WhitelistCreatedEventFilter =
-  TypedEventFilter<ERC721WhitelistCreatedEvent>;
 
 export interface FeesUpdatedEventObject {
   feeVal2: BigNumber;
@@ -843,63 +786,6 @@ export interface MADFactory721 extends BaseContract {
       maxSupply?: null,
       mintPrice?: null
     ): ERC721BasicCreatedEventFilter;
-
-    "ERC721LazyCreated(address,address,string,string,uint256,uint256,uint256)"(
-      newSplitter?: PromiseOrValue<string> | null,
-      newCollection?: PromiseOrValue<string> | null,
-      name?: null,
-      symbol?: null,
-      royalties?: null,
-      maxSupply?: null,
-      mintPrice?: null
-    ): ERC721LazyCreatedEventFilter;
-    ERC721LazyCreated(
-      newSplitter?: PromiseOrValue<string> | null,
-      newCollection?: PromiseOrValue<string> | null,
-      name?: null,
-      symbol?: null,
-      royalties?: null,
-      maxSupply?: null,
-      mintPrice?: null
-    ): ERC721LazyCreatedEventFilter;
-
-    "ERC721MinimalCreated(address,address,string,string,uint256,uint256,uint256)"(
-      newSplitter?: PromiseOrValue<string> | null,
-      newCollection?: PromiseOrValue<string> | null,
-      name?: null,
-      symbol?: null,
-      royalties?: null,
-      maxSupply?: null,
-      mintPrice?: null
-    ): ERC721MinimalCreatedEventFilter;
-    ERC721MinimalCreated(
-      newSplitter?: PromiseOrValue<string> | null,
-      newCollection?: PromiseOrValue<string> | null,
-      name?: null,
-      symbol?: null,
-      royalties?: null,
-      maxSupply?: null,
-      mintPrice?: null
-    ): ERC721MinimalCreatedEventFilter;
-
-    "ERC721WhitelistCreated(address,address,string,string,uint256,uint256,uint256)"(
-      newSplitter?: PromiseOrValue<string> | null,
-      newCollection?: PromiseOrValue<string> | null,
-      name?: null,
-      symbol?: null,
-      royalties?: null,
-      maxSupply?: null,
-      mintPrice?: null
-    ): ERC721WhitelistCreatedEventFilter;
-    ERC721WhitelistCreated(
-      newSplitter?: PromiseOrValue<string> | null,
-      newCollection?: PromiseOrValue<string> | null,
-      name?: null,
-      symbol?: null,
-      royalties?: null,
-      maxSupply?: null,
-      mintPrice?: null
-    ): ERC721WhitelistCreatedEventFilter;
 
     "FeesUpdated(uint256,uint256)"(
       feeVal2?: null,

@@ -2,6 +2,3 @@
 /* tslint:disable */
 /* eslint-disable */
 export { ERC721BasicEventsAndErrors__factory } from "./ERC721BasicEventsAndErrors__factory";
-export { ERC721LazyEventsAndErrors__factory } from "./ERC721LazyEventsAndErrors__factory";
-export { ERC721MinimalEventsAndErrors__factory } from "./ERC721MinimalEventsAndErrors__factory";
-export { ERC721WhitelistEventsAndErrors__factory } from "./ERC721WhitelistEventsAndErrors__factory";

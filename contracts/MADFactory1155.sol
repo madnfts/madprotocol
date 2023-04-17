@@ -10,10 +10,8 @@ import {
 } from "./EventsAndErrors.sol";
 
 import { 
-    // ERC1155MinimalDeployer, 
     ERC1155BasicDeployer
-    // ERC1155WhitelistDeployer,
-    // ERC1155LazyDeployer
+
 } from "./lib/deployers/ERC1155Deployer.sol";
 
 import { SplitterDeployer } from "./lib/deployers/SplitterDeployer.sol";

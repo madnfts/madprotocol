@@ -32,11 +32,11 @@
 // } from "./../../utils/interfaces";
 
 // describe("ERC1155Lazy - ERC20", () => {
-//   /* 
-//   For the sake of solely testing the nft functionalities, we consider 
-//   the user as the contract's owner, and the marketplace just as the 
-//   recipient for the royalties distribution; even though these tx 
-//   would've been proxied through the marketplace address when the 
+//   /*
+//   For the sake of solely testing the nft functionalities, we consider
+//   the user as the contract's owner, and the marketplace just as the
+//   recipient for the royalties distribution; even though these tx
+//   would've been proxied through the marketplace address when the
 //   other core contracts are taken into account.
 //   */
 

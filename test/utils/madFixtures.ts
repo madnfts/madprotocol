@@ -1,4 +1,3 @@
-import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { BigNumber } from "ethers";
 import { ethers, network } from "hardhat";
 
@@ -138,34 +137,16 @@ async function _deployShared(
   );
   const splDep = await SplitterDeployer.deploy();
 
-  const MinimalDeployer = await ethers.getContractFactory(
-    `ERC${contractType}MinimalDeployer`,
-  );
-  const minDep = await MinimalDeployer.deploy();
-
   const BasicDeployer = await ethers.getContractFactory(
     `ERC${contractType}BasicDeployer`,
   );
   const basDep = await BasicDeployer.deploy();
 
-  const WhitelistDeployer = await ethers.getContractFactory(
-    `ERC${contractType}WhitelistDeployer`,
-  );
-  const wlDep = await WhitelistDeployer.deploy();
-
-  const LazyDeployer = await ethers.getContractFactory(
-    `ERC${contractType}LazyDeployer`,
-  );
-  const lazyDep = await LazyDeployer.deploy();
-
   const lib: { [key: string]: string } = {
     SplitterDeployer: splDep.address,
   };
 
-  lib[`ERC${contractType}MinimalDeployer`] = minDep.address;
   lib[`ERC${contractType}BasicDeployer`] = basDep.address;
-  lib[`ERC${contractType}WhitelistDeployer`] = wlDep.address;
-  lib[`ERC${contractType}LazyDeployer`] = lazyDep.address;
 
   const Factory = await ethers.getContractFactory(
     `MADFactory${contractType}`,

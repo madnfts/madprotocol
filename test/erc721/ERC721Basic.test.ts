@@ -403,7 +403,9 @@ describe("ERC721Basic", () => {
       ).to.eq(ethers.constants.Zero);
 
       await expect(
-        basic.connect(acc01).withdraw(ethers.constants.AddressZero),
+        basic
+          .connect(acc01)
+          .withdraw(ethers.constants.AddressZero),
       ).to.be.revertedWith(BasicErrors.Unauthorized);
     });
 
@@ -433,7 +435,10 @@ describe("ERC721Basic", () => {
 
       await erc20.mint(basic.address, price);
 
-      const tx = await basic.withdrawERC20(erc20.address, ethers.constants.AddressZero);
+      const tx = await basic.withdrawERC20(
+        erc20.address,
+        ethers.constants.AddressZero,
+      );
       expect(tx).to.be.ok;
       expect(
         await erc20.callStatic.balanceOf(payees[0]),

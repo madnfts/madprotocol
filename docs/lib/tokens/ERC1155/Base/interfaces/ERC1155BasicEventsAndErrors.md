@@ -1,14 +1,5 @@
 # ERC1155BasicEventsAndErrors
 
-
-
-
-
-
-
-
-
-
 ## Events
 
 ### BaseURILocked
@@ -17,15 +8,11 @@
 event BaseURILocked(string indexed baseURI)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| baseURI `indexed` | string | undefined |
+| Name              | Type   | Description |
+| ----------------- | ------ | ----------- |
+| baseURI `indexed` | string | undefined   |
 
 ### BaseURISet
 
@@ -33,15 +20,11 @@ event BaseURILocked(string indexed baseURI)
 event BaseURISet(string indexed newBaseURI)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newBaseURI `indexed` | string | undefined |
+| Name                 | Type   | Description |
+| -------------------- | ------ | ----------- |
+| newBaseURI `indexed` | string | undefined   |
 
 ### PublicMintStateSet
 
@@ -49,15 +32,11 @@ event BaseURISet(string indexed newBaseURI)
 event PublicMintStateSet(bool indexed newPublicState)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newPublicState `indexed` | bool | undefined |
+| Name                     | Type | Description |
+| ------------------------ | ---- | ----------- |
+| newPublicState `indexed` | bool | undefined   |
 
 ### RoyaltyFeeSet
 
@@ -65,15 +44,11 @@ event PublicMintStateSet(bool indexed newPublicState)
 event RoyaltyFeeSet(uint256 indexed newRoyaltyFee)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newRoyaltyFee `indexed` | uint256 | undefined |
+| Name                    | Type    | Description |
+| ----------------------- | ------- | ----------- |
+| newRoyaltyFee `indexed` | uint256 | undefined   |
 
 ### RoyaltyRecipientSet
 
@@ -81,17 +56,11 @@ event RoyaltyFeeSet(uint256 indexed newRoyaltyFee)
 event RoyaltyRecipientSet(address indexed newRecipient)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newRecipient `indexed` | address | undefined |
-
-
+| Name                   | Type    | Description |
+| ---------------------- | ------- | ----------- |
+| newRecipient `indexed` | address | undefined   |
 
 ## Errors
 
@@ -101,10 +70,7 @@ event RoyaltyRecipientSet(address indexed newRecipient)
 error LoopOverflow()
 ```
 
-
-
-*0xdfb035c9*
-
+_0xdfb035c9_
 
 ### MaxSupplyReached
 
@@ -112,10 +78,7 @@ error LoopOverflow()
 error MaxSupplyReached()
 ```
 
-
-
-*0xd05cb609*
-
+_0xd05cb609_
 
 ### NotMintedYet
 
@@ -123,10 +86,7 @@ error MaxSupplyReached()
 error NotMintedYet()
 ```
 
-
-
-*0xbad086ea*
-
+_0xbad086ea_
 
 ### PublicMintClosed
 
@@ -134,10 +94,7 @@ error NotMintedYet()
 error PublicMintClosed()
 ```
 
-
-
-*0x2d0a3f8e*
-
+_0x2d0a3f8e_
 
 ### UriLocked
 
@@ -145,10 +102,7 @@ error PublicMintClosed()
 error UriLocked()
 ```
 
-
-
-*?*
-
+_?_
 
 ### WrongPrice
 
@@ -156,9 +110,4 @@ error UriLocked()
 error WrongPrice()
 ```
 
-
-
-*0xf7760f25*
-
-
-
+_0xf7760f25_

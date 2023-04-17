@@ -117,8 +117,6 @@ describe("ERC1155Basic", () => {
       // can't be eq to ethAmount due to contract deployment cost
       res = await ethers.provider.getBalance(owner.address);
       expect(res.toString()).to.have.lengthOf(22);
-      // console.log(res); // lengthOf = 22
-      // console.log(ethAmount); // lengthOf = 23
 
       // those should eq to hardhat prefunded account's value
       expect(
@@ -335,10 +333,6 @@ describe("ERC1155Basic", () => {
       const tx = await basic
         .connect(acc02)
         .mintBatch(ids, [1, 1, 1]);
-      // const ownerOfNull = await basic.callStatic.ownerOf(1);
-      // const ownerOfA = await basic.callStatic.ownerOf(123);
-      // const ownerOfB = await basic.callStatic.ownerOf(14);
-      // const ownerOfC = await basic.callStatic.ownerOf(500);
       const balNull = await basic.callStatic.balanceOf(
         acc02.address,
         1,
@@ -361,10 +355,7 @@ describe("ERC1155Basic", () => {
       expect(one).to.eq(balA);
       expect(one).to.eq(balB);
       expect(one).to.eq(balC);
-      // expect(dead).to.eq(ownerOfNull);
-      // expect(acc02.address).to.eq(ownerOfA);
-      // expect(acc02.address).to.eq(ownerOfB);
-      // expect(acc02.address).to.eq(ownerOfC);
+
       await expect(tx)
         .to.emit(basic, "TransferBatch")
         .withArgs(
@@ -432,10 +423,7 @@ describe("ERC1155Basic", () => {
       expect(one).to.eq(balA);
       expect(one).to.eq(balB);
       expect(one).to.eq(balC);
-      // expect(dead).to.eq(ownerOfNull);
-      // expect(acc02.address).to.eq(ownerOfA);
-      // expect(owner.address).to.eq(ownerOfB);
-      // expect(amb.address).to.eq(ownerOfC);
+
       await expect(tx1)
         .to.emit(basic, "TransferBatch")
         .withArgs(
@@ -816,7 +804,10 @@ describe("ERC1155Basic", () => {
       ];
 
       await expect(() =>
-        basic.withdrawERC20(erc20.address, ethers.constants.AddressZero),
+        basic.withdrawERC20(
+          erc20.address,
+          ethers.constants.AddressZero,
+        ),
       ).to.changeTokenBalances(erc20, addrs, vals);
 
       expect(
@@ -824,7 +815,12 @@ describe("ERC1155Basic", () => {
       ).to.eq(ethers.constants.Zero);
 
       await expect(
-        basic.connect(acc01).withdrawERC20(erc20.address, ethers.constants.AddressZero),
+        basic
+          .connect(acc01)
+          .withdrawERC20(
+            erc20.address,
+            ethers.constants.AddressZero,
+          ),
       ).to.be.revertedWith(BasicErrors.Unauthorized);
     });
 
@@ -854,7 +850,10 @@ describe("ERC1155Basic", () => {
 
       await erc20.mint(basic.address, price);
 
-      const tx = await basic.withdrawERC20(erc20.address, ethers.constants.AddressZero);
+      const tx = await basic.withdrawERC20(
+        erc20.address,
+        ethers.constants.AddressZero,
+      );
       expect(tx).to.be.ok;
       expect(
         await erc20.callStatic.balanceOf(payees[0]),

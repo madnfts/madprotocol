@@ -2,57 +2,37 @@
 
 pragma solidity 0.8.16;
 
-import { MAD } from "./MAD.sol";
-import { MarketplaceEventsAndErrors721, FactoryVerifier, IERC721 } from "./EventsAndErrors.sol";
-import { Types } from "./Types.sol";
-import { Pausable } from "./lib/security/Pausable.sol";
-import { Owned } from "./lib/auth/Owned.sol";
+import { MarketplaceEventsAndErrors721, IERC721 } from "./EventsAndErrors.sol";
 import { ERC721Holder } from "./lib/tokens/ERC721/Base/utils/ERC721Holder.sol";
-import { SafeTransferLib } from "./lib/utils/SafeTransferLib.sol";
-import { ERC20 } from "./lib/tokens/ERC20.sol";
+import { FactoryVerifier, MADMarketplaceBase, SafeTransferLib } from "./MADMarketplaceBase.sol";
+import { Types } from "./Types.sol";
 
 contract MADMarketplace721 is
-    MAD,
+    MADMarketplaceBase,
     MarketplaceEventsAndErrors721,
-    ERC721Holder,
-    Owned(msg.sender),
-    Pausable
+    ERC721Holder
 {
     using Types for Types.Order721;
 
-    /// @dev Function Signature := 0x06fdde03
-    function name()
-        external
-        pure
-        override(MAD)
-        returns (string memory)
-    {
-        assembly {
-            mstore(0x20, 0x20)
-            mstore(0x46, 0x066D61726B6574)
-            return(0x20, 0x60)
-        }
-    }
+    constructor(
+        address _recipient,
+        address _paymentTokenAddress,
+        address _swapRouter
+    )
+        MADMarketplaceBase(
+            _recipient,
+            _paymentTokenAddress,
+            _swapRouter
+        )
+    {}
 
     ////////////////////////////////////////////////////////////////
     //                           STORAGE                          //
     ////////////////////////////////////////////////////////////////
 
-    // uint256 constant NAME_SLOT =
-    // 0x8b30951df380b6b10da747e1167dd8e40bf8604c88c75b245dc172767f3b7320;
-    uint256 public feeVal2 = 1.0e3; // 1000
-    uint256 public feeVal3 = 2.5e2; // 250
-
-    // uint16 public constant feePercent1 = 2.5e2;
-    // uint16 public constant feePercent0 = 1.0e3;
-    uint16 public constant basisPoints = 1.0e4; // 10000
-
     /// @dev token => id => orderID[]
     mapping(IERC721 => mapping(uint256 => bytes32[]))
         public orderIdByToken;
-
-    /// @dev seller => orderID
-    mapping(address => bytes32[]) public orderIdBySeller;
 
     /// @dev orderID => order details
     mapping(bytes32 => Types.Order721) public orderInfo;
@@ -60,39 +40,6 @@ contract MADMarketplace721 is
     /// @dev token => tokenId => case0(feePercent0)/case1(feePercent1)
     mapping(uint256 => mapping(uint256 => bool))
         public feeSelector;
-
-    uint256 public minOrderDuration;
-    uint256 public maxOrderDuration;
-    uint256 public minAuctionIncrement;
-    uint256 public minBidValue;
-
-    address public recipient;
-    FactoryVerifier public MADFactory721;
-
-    ERC20 public erc20;
-
-    ////////////////////////////////////////////////////////////////
-    //                         CONSTRUCTOR                        //
-    ////////////////////////////////////////////////////////////////
-
-    constructor(
-        address _recipient,
-        uint256 _minOrderDuration,
-        FactoryVerifier _factory,
-        address _paymentTokenAddress
-    ) {
-        setFactory(_factory);
-        setRecipient(_recipient);
-        if (_paymentTokenAddress != address(0)) {
-            _setPaymentToken(_paymentTokenAddress);
-        }
-        updateSettings(
-            300, // 5 min
-            _minOrderDuration,
-            20, // 5% (1/20th)
-            31536000 // 24 months
-        );
-    }
 
     ////////////////////////////////////////////////////////////////
     //                           USER FX                          //
@@ -145,17 +92,27 @@ contract MADMarketplace721 is
     /// @dev By default, bids must be at least 5% higher than the previous one.
     /// @dev By default, auction will be extended in 5 minutes if last bid is placed 5 minutes prior to auction's end.
     /// @dev 5 minutes eq to 300 mined blocks since block mining time is expected to take 1s in the harmony blockchain.
-    function bid(bytes32 _order)
-        public
-        payable
-        whenNotPaused
-    {
+    function bid(
+        bytes32 _order
+    ) public payable whenNotPaused {
         Types.Order721 storage order = orderInfo[_order];
 
         uint256 lastBidPrice = order.lastBidPrice;
-        uint256 bidValue = address(erc20) != address(0)
-            ? erc20.allowance(msg.sender, address(this))
-            : msg.value;
+
+        uint256 bidValue = msg.value;
+
+        if (address(erc20) != address(0)) {
+            bidValue = erc20.allowance(
+                msg.sender,
+                address(this)
+            );
+            SafeTransferLib.safeTransferFrom(
+                erc20,
+                msg.sender,
+                address(this),
+                bidValue
+            );
+        }
 
         _bidChecks(
             order.orderType,
@@ -165,15 +122,6 @@ contract MADMarketplace721 is
             order.startPrice,
             bidValue
         );
-
-        if (address(erc20) != address(0)) {
-            SafeTransferLib.safeTransferFrom(
-                erc20,
-                msg.sender,
-                address(this),
-                bidValue
-            );
-        }
 
         // 1s blocktime
         assembly {
@@ -196,18 +144,16 @@ contract MADMarketplace721 is
         }
 
         if (lastBidPrice != 0) {
-            if (address(erc20) != address(0)) {
-                SafeTransferLib.safeTransfer(
-                    erc20,
-                    order.lastBidder,
-                    lastBidPrice
-                );
-            } else {
-                SafeTransferLib.safeTransferETH(
-                    order.lastBidder,
-                    lastBidPrice
-                );
-            }
+            totalOutbid += lastBidPrice;
+            userOutbid[order.lastBidder] += lastBidPrice;
+
+            emit UserOutbid(
+                order.lastBidder,
+                address(erc20) != address(0)
+                    ? address(erc20)
+                    : address(0),
+                lastBidPrice
+            );
         }
 
         emit Bid(
@@ -222,11 +168,9 @@ contract MADMarketplace721 is
     /// @notice Enables user to buy an nft for both Fixed Price and Dutch Auction listings.
     /// @dev Price overrunning not accepted in fixed price and dutch auction.
     /// @dev Function Signature := 0x9c9a1061
-    function buy(bytes32 _order)
-        external
-        payable
-        whenNotPaused
-    {
+    function buy(
+        bytes32 _order
+    ) external payable whenNotPaused {
         Types.Order721 storage order = orderInfo[_order];
 
         _buyChecks(
@@ -240,7 +184,9 @@ contract MADMarketplace721 is
             if (
                 erc20.allowance(msg.sender, address(this)) <
                 currentPrice
-            ) revert WrongPrice();
+            ) {
+                revert WrongPrice();
+            }
             SafeTransferLib.safeTransferFrom(
                 erc20,
                 msg.sender,
@@ -261,7 +207,7 @@ contract MADMarketplace721 is
         // path for inhouse minted tokens
         if (
             !feeSelector[key][order.tokenId] &&
-            MADFactory721.creatorAuth(
+            MADFactory.creatorAuth(
                 address(order.token),
                 order.seller
             ) ==
@@ -329,7 +275,7 @@ contract MADMarketplace721 is
         // path for inhouse minted tokens
         if (
             !feeSelector[key][order.tokenId] &&
-            MADFactory721.creatorAuth(
+            MADFactory.creatorAuth(
                 address(order.token),
                 order.seller
             ) ==
@@ -400,160 +346,12 @@ contract MADMarketplace721 is
         );
     }
 
-    receive() external payable {}
-
     ////////////////////////////////////////////////////////////////
     //                         OWNER FX                           //
     ////////////////////////////////////////////////////////////////
 
-    /// @dev `MADFactory` instance setter.
-    /// @dev Function Signature := 0x612990fe
-    function setFactory(FactoryVerifier _factory)
-        public
-        onlyOwner
-    {
-        assembly {
-            // MADFactory721 = _factory;
-            sstore(MADFactory721.slot, _factory)
-        }
-        emit FactoryUpdated(_factory);
-    }
-
-    function setFees(uint256 _feeVal2, uint256 _feeVal3)
-        external
-        onlyOwner
-    {
-        // max fees, 15% for royalties, 5% for fees
-        require(
-            _feeVal2 <= 1.5e3 && _feeVal3 <= 5.0e2,
-            "Invalid Fees"
-        );
-        assembly {
-            sstore(feeVal2.slot, _feeVal2)
-            sstore(feeVal3.slot, _feeVal3)
-        }
-
-        emit FeesUpdated(_feeVal2, _feeVal3);
-    }
-
-    /// @notice Marketplace config setter.
-    /// @dev Function Signature := 0x0465c563
-    /// @dev Time tracking criteria based on `blocknumber`.
-    /// @param _minAuctionIncrement Min. time threshold for Auction extension.
-    /// @param _minOrderDuration Min. order listing duration
-    /// @param _minBidValue Min. value for a bid to be considered.
-    function updateSettings(
-        uint256 _minAuctionIncrement,
-        uint256 _minOrderDuration,
-        uint256 _minBidValue,
-        uint256 _maxOrderDuration
-    ) public onlyOwner {
-        // minOrderDuration = _minOrderDuration;
-        // minAuctionIncrement = _minAuctionIncrement;
-        // minBidValue = _minBidValue;
-        // maxOrderDuration = _maxOrderDuration;
-        require(
-            (_minAuctionIncrement <= 1200 &&
-                _minOrderDuration <= 600 &&
-                _minBidValue > 0) ||
-                _maxOrderDuration >= _minOrderDuration,
-            "Invalid Settings"
-        );
-
-        assembly {
-            sstore(minOrderDuration.slot, _minOrderDuration)
-            sstore(
-                minAuctionIncrement.slot,
-                _minAuctionIncrement
-            )
-            sstore(minBidValue.slot, _minBidValue)
-            sstore(maxOrderDuration.slot, _maxOrderDuration)
-        }
-
-        emit AuctionSettingsUpdated(
-            _minOrderDuration,
-            _minAuctionIncrement,
-            _minBidValue,
-            _maxOrderDuration
-        );
-    }
-
-    /// @notice Paused state initializer for security risk mitigation pratice.
-    /// @dev Function Signature := 0x8456cb59
-    function pause() external onlyOwner {
-        _pause();
-    }
-
-    /// @notice Unpaused state initializer for security risk mitigation pratice.
-    /// @dev Function Signature := 0x3f4ba83a
-    function unpause() external onlyOwner {
-        _unpause();
-    }
-
-    /// @notice Enables the contract's owner to change payment token address.
-    /// @dev Function Signature := ?
-    function _setPaymentToken(address _paymentTokenAddress)
-        private
-    {
-        erc20 = ERC20(_paymentTokenAddress);
-        emit PaymentTokenUpdated(_paymentTokenAddress);
-    }
-
-    /// @notice Enables the contract's owner to change recipient address.
-    /// @dev Function Signature := 0x3bbed4a0
-    function setRecipient(address _recipient)
-        public
-        onlyOwner
-    {
-        require(
-            _recipient != address(0),
-            "Invalid recipient"
-        );
-
-        // recipient = _recipient;
-        assembly {
-            sstore(recipient.slot, _recipient)
-        }
-
-        emit RecipientUpdated(_recipient);
-    }
-
-    /// @dev Function Signature := 0x13af4035
-    function setOwner(address newOwner)
-        public
-        override
-        onlyOwner
-    {
-        require(newOwner != address(0), "Invalid owner");
-        // owner = newOwner;
-        assembly {
-            sstore(owner.slot, newOwner)
-        }
-
-        emit OwnerUpdated(msg.sender, newOwner);
-    }
-
-    /// @dev Function Signature := 0x3ccfd60b
-    function withdraw() external onlyOwner whenPaused {
-        SafeTransferLib.safeTransferETH(
-            msg.sender,
-            address(this).balance
-        );
-    }
-
-    function withdrawERC20(ERC20 _token)
-        external
-        onlyOwner
-        whenPaused
-    {
-        SafeTransferLib.safeTransfer(
-            _token,
-            msg.sender,
-            address(this).balance
-        );
-    }
-
-    /// @notice Delete order function only callabe by contract's owner, when contract is paused, as security measure.
+    /// @notice Delete order function only callabe by contract's owner,
+    /// when contract is paused, as security measure.
     /// @dev Function Signature := 0x0c026db9
     function delOrder(
         bytes32 hash,
@@ -664,11 +462,9 @@ contract MADMarketplace721 is
     /// @notice Modified from OpenZeppelin Contracts
     /// (v4.4.1 - utils/introspection/ERC165Checker.sol)
     /// (https://github.com/OpenZeppelin/openzeppelin-contracts)
-    function ERC165Check(address account)
-        internal
-        view
-        returns (bool)
-    {
+    function ERC165Check(
+        address account
+    ) internal view returns (bool) {
         return
             interfaceCheck(account, 0x01ffc9a7) &&
             !interfaceCheck(account, 0xffffffff);
@@ -750,7 +546,7 @@ contract MADMarketplace721 is
         address _to
     ) internal {
         // note: 2.5% flat fee for external listings
-        uint256 feePercent = feeVal3; // _feeResolver(key, _order.tokenId);
+        uint256 feePercent = maxFee; // _feeResolver(key, _order.tokenId);
         // load royalty info query to mem
         (address _receiver, uint256 _amount) = _order
             .token
@@ -818,7 +614,7 @@ contract MADMarketplace721 is
         address _to
     ) internal {
         // note: 2.5% flat fee for external listings
-        uint256 feePercent = feeVal3; // _feeResolver(key, _order.tokenId);
+        uint256 feePercent = maxFee; // _feeResolver(key, _order.tokenId);
         uint256 fee = (_price * feePercent) / basisPoints;
         if (address(erc20) != address(0)) {
             SafeTransferLib.safeTransfer(
@@ -857,10 +653,10 @@ contract MADMarketplace721 is
         );
     }
 
-    function _feeResolver(uint256 _key, uint256 _tokenId)
-        internal
-        returns (uint16 _feePercent)
-    {
+    function _feeResolver(
+        uint256 _key,
+        uint256 _tokenId
+    ) internal returns (uint16 _feePercent) {
         assembly {
             mstore(0x00, _key)
             mstore(0x20, feeSelector.slot)
@@ -871,234 +667,10 @@ contract MADMarketplace721 is
             switch sload(y)
             case 0 {
                 sstore(y, 1)
-                _feePercent := sload(feeVal2.slot)
+                _feePercent := sload(royaltyFee.slot)
             }
             case 1 {
-                _feePercent := sload(feeVal3.slot)
-            }
-        }
-    }
-
-    ////////////////////////////////////////////////////////////////
-    //                        PRIVATE FX                          //
-    ////////////////////////////////////////////////////////////////
-
-    function _exceedsMaxEP(
-        uint256 _startPrice,
-        uint256 _endPrice
-    ) private pure {
-        assembly {
-            // ExceedsMaxEP()
-            if iszero(
-                iszero(
-                    or(
-                        eq(_startPrice, _endPrice),
-                        lt(_startPrice, _endPrice)
-                    )
-                )
-            ) {
-                mstore(0x00, 0x70f8f33a)
-                revert(0x1c, 0x04)
-            }
-        }
-    }
-
-    function _isBidderOrSeller(
-        address _bidder,
-        address _seller
-    ) private view {
-        assembly {
-            // AccessDenied()
-            if iszero(
-                or(
-                    eq(caller(), _seller),
-                    eq(caller(), _bidder)
-                )
-            ) {
-                mstore(0x00, 0x4ca88867)
-                revert(0x1c, 0x04)
-            }
-        }
-    }
-
-    function _makeOrderChecks(
-        uint256 _endTime,
-        uint256 _startPrice
-    ) private view {
-        assembly {
-            // NeedMoreTime()
-            if iszero(
-                iszero(
-                    or(
-                        or(
-                            eq(timestamp(), _endTime),
-                            lt(_endTime, timestamp())
-                        ),
-                        lt(
-                            sub(_endTime, timestamp()),
-                            sload(minOrderDuration.slot)
-                        )
-                    )
-                )
-            ) {
-                mstore(0x00, 0x921dbfec)
-                revert(0x1c, 0x04)
-            }
-            // Exceeds max time - NeedMoreTime()
-            if iszero(
-                lt(
-                    sub(_endTime, timestamp()),
-                    sload(maxOrderDuration.slot)
-                )
-            ) {
-                mstore(0x00, 0x921dbfec)
-                revert(0x1c, 0x04)
-            }
-            // WrongPrice()
-            if iszero(_startPrice) {
-                mstore(0x00, 0xf7760f25)
-                revert(0x1c, 0x04)
-            }
-        }
-    }
-
-    function _cancelOrderChecks(
-        address _seller,
-        bool _isSold,
-        uint256 _lastBidPrice
-    ) private view {
-        assembly {
-            // AccessDenied()
-            if iszero(eq(_seller, caller())) {
-                mstore(0x00, 0x4ca88867)
-                revert(0x1c, 0x04)
-            }
-            // SoldToken()
-            if iszero(iszero(_isSold)) {
-                mstore(0x00, 0xf88b07a3)
-                revert(0x1c, 0x04)
-            }
-            // BidExists()
-            if iszero(iszero(_lastBidPrice)) {
-                mstore(0x00, 0x3e0827ab)
-                revert(0x1c, 0x04)
-            }
-        }
-    }
-
-    function _bidChecks(
-        uint8 _orderType,
-        uint256 _endTime,
-        address _seller,
-        uint256 _lastBidPrice,
-        uint256 _startPrice,
-        uint256 _bidValue
-    ) private view {
-        assembly {
-            // EAOnly()
-            if iszero(eq(_orderType, 2)) {
-                mstore(0x00, 0xffc96cb0)
-                revert(0x1c, 0x04)
-            }
-            // CanceledOrder()
-            if iszero(_endTime) {
-                mstore(0x00, 0xdf9428da)
-                revert(0x1c, 0x04)
-            }
-            // Timeout()
-            if gt(timestamp(), _endTime) {
-                mstore(0x00, 0x2af0c7f8)
-                revert(0x1c, 0x04)
-            }
-            // InvalidBidder()
-            if eq(caller(), _seller) {
-                mstore(0x00, 0x0863b103)
-                revert(0x1c, 0x04)
-            }
-            // WrongPrice()
-            switch iszero(_lastBidPrice)
-            case 0 {
-                if lt(
-                    _bidValue,
-                    add(
-                        _lastBidPrice,
-                        div(
-                            _lastBidPrice,
-                            sload(minBidValue.slot)
-                        )
-                    )
-                ) {
-                    mstore(0x00, 0xf7760f25)
-                    revert(0x1c, 0x04)
-                }
-            }
-            case 1 {
-                if or(
-                    iszero(_bidValue),
-                    lt(_bidValue, _startPrice)
-                ) {
-                    mstore(0x00, 0xf7760f25)
-                    revert(0x1c, 0x04)
-                }
-            }
-        }
-    }
-
-    function _buyChecks(
-        uint256 _endTime,
-        uint8 _orderType,
-        bool _isSold
-    ) private view {
-        assembly {
-            // CanceledOrder()
-            if iszero(_endTime) {
-                mstore(0x00, 0xdf9428da)
-                revert(0x1c, 0x04)
-            }
-            // Timeout()
-            if or(
-                eq(timestamp(), _endTime),
-                lt(_endTime, timestamp())
-            ) {
-                mstore(0x00, 0x2af0c7f8)
-                revert(0x1c, 0x04)
-            }
-            // NotBuyable()
-            if eq(_orderType, 0x02) {
-                mstore(0x00, 0x07ae5744)
-                revert(0x1c, 0x04)
-            }
-            // SoldToken()
-            if iszero(iszero(_isSold)) {
-                mstore(0x00, 0xf88b07a3)
-                revert(0x1c, 0x04)
-            }
-        }
-    }
-
-    function _claimChecks(
-        bool _isSold,
-        uint8 _orderType,
-        uint256 _endTime
-    ) private view {
-        assembly {
-            // SoldToken()
-            if iszero(iszero(_isSold)) {
-                mstore(0x00, 0xf88b07a3)
-                revert(0x1c, 0x04)
-            }
-            // EAOnly()
-            if iszero(eq(_orderType, 0x02)) {
-                mstore(0x00, 0xffc96cb0)
-                revert(0x1c, 0x04)
-            }
-            // NeedMoreTime()
-            if or(
-                eq(timestamp(), _endTime),
-                lt(timestamp(), _endTime)
-            ) {
-                mstore(0x00, 0x921dbfec)
-                revert(0x1c, 0x04)
+                _feePercent := sload(maxFee.slot)
             }
         }
     }
@@ -1110,11 +682,9 @@ contract MADMarketplace721 is
     /// @notice Works as price fetcher of listed tokens
     /// @dev Function Signature := 0x161e444e
     /// @dev Used for price fetching in buy function.
-    function getCurrentPrice(bytes32 _order)
-        public
-        view
-        returns (uint256 price)
-    {
+    function getCurrentPrice(
+        bytes32 _order
+    ) public view returns (uint256 price) {
         Types.Order721 storage order = orderInfo[_order];
 
         assembly {
@@ -1183,24 +753,10 @@ contract MADMarketplace721 is
     /// @dev This public getter serve as a hook to ease frontend
     /// fetching whilst estimating `orderIdByToken` indexes by length.
     /// @dev Function Signature := 0x8c5ac795
-    function tokenOrderLength(IERC721 _token, uint256 _id)
-        external
-        view
-        returns (uint256)
-    {
+    function tokenOrderLength(
+        IERC721 _token,
+        uint256 _id
+    ) external view returns (uint256) {
         return orderIdByToken[_token][_id].length;
-    }
-
-    /// @notice Everything in storage can be fetch through the
-    /// getters natively provided by all public mappings.
-    /// @dev This public getter serve as a hook to ease frontend
-    /// fetching whilst estimating `orderIdBySeller` indexes by length.
-    /// @dev Function Signature := 0x8aae982a
-    function sellerOrderLength(address _seller)
-        external
-        view
-        returns (uint256)
-    {
-        return orderIdBySeller[_seller].length;
     }
 }

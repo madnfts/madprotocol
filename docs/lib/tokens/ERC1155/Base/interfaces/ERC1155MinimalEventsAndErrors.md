@@ -1,14 +1,5 @@
 # ERC1155MinimalEventsAndErrors
 
-
-
-
-
-
-
-
-
-
 ## Events
 
 ### PublicMintStateSet
@@ -17,15 +8,11 @@
 event PublicMintStateSet(bool indexed newPublicMintState)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newPublicMintState `indexed` | bool | undefined |
+| Name                         | Type | Description |
+| ---------------------------- | ---- | ----------- |
+| newPublicMintState `indexed` | bool | undefined   |
 
 ### RoyaltyFeeSet
 
@@ -33,15 +20,11 @@ event PublicMintStateSet(bool indexed newPublicMintState)
 event RoyaltyFeeSet(uint256 indexed newRoyaltyFee)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newRoyaltyFee `indexed` | uint256 | undefined |
+| Name                    | Type    | Description |
+| ----------------------- | ------- | ----------- |
+| newRoyaltyFee `indexed` | uint256 | undefined   |
 
 ### RoyaltyRecipientSet
 
@@ -49,17 +32,11 @@ event RoyaltyFeeSet(uint256 indexed newRoyaltyFee)
 event RoyaltyRecipientSet(address indexed newRecipient)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newRecipient `indexed` | address | undefined |
-
-
+| Name                   | Type    | Description |
+| ---------------------- | ------- | ----------- |
+| newRecipient `indexed` | address | undefined   |
 
 ## Errors
 
@@ -69,10 +46,7 @@ event RoyaltyRecipientSet(address indexed newRecipient)
 error AlreadyMinted()
 ```
 
-
-
-*0xddefae28*
-
+_0xddefae28_
 
 ### InvalidId
 
@@ -80,10 +54,7 @@ error AlreadyMinted()
 error InvalidId()
 ```
 
-
-
-*0xdfa1a408*
-
+_0xdfa1a408_
 
 ### NotMinted
 
@@ -91,10 +62,7 @@ error InvalidId()
 error NotMinted()
 ```
 
-
-
-*0x4d5e5fb3*
-
+_0x4d5e5fb3_
 
 ### PublicMintOff
 
@@ -102,10 +70,7 @@ error NotMinted()
 error PublicMintOff()
 ```
 
-
-
-*0x50eb1142*
-
+_0x50eb1142_
 
 ### WrongPrice
 
@@ -113,9 +78,4 @@ error PublicMintOff()
 error WrongPrice()
 ```
 
-
-
-*0xf7760f25*
-
-
-
+_0xf7760f25_

@@ -4,16 +4,12 @@ pragma solidity 0.8.16;
 
 import { MAD } from "./MAD.sol";
 
-import { 
-    FactoryEventsAndErrors721, 
-    FactoryVerifier 
-} from "./EventsAndErrors.sol";
+import { FactoryEventsAndErrors721, FactoryVerifier } from "./EventsAndErrors.sol";
 
 import { 
-    // ERC721MinimalDeployer, 
+
     ERC721BasicDeployer
-    // ERC721WhitelistDeployer,
-    // ERC721LazyDeployer
+
 } from "./lib/deployers/ERC721Deployer.sol";
 
 import { SplitterDeployer } from "./lib/deployers/SplitterDeployer.sol";
@@ -27,11 +23,12 @@ import { ERC20 } from "./lib/tokens/ERC20.sol";
 
 import { CREATE3, Bytes32AddressLib } from "./lib/utils/CREATE3.sol";
 
-contract MADFactory721 is MAD,
+contract MADFactory721 is
+    MAD,
     FactoryEventsAndErrors721,
     FactoryVerifier,
     ReentrancyGuard,
-    DCPrevent(),
+    DCPrevent,
     Owned(msg.sender),
     Pausable
 {
@@ -55,7 +52,6 @@ contract MADFactory721 is MAD,
         }
     }
 
-
     ////////////////////////////////////////////////////////////////
     //                           STORAGE                          //
     ////////////////////////////////////////////////////////////////
@@ -65,9 +61,9 @@ contract MADFactory721 is MAD,
     mapping(bytes32 => Types.Collection721) public colInfo;
 
     /// @dev Maps an collection creator, of type address, to an array of `colIDs`.
-    mapping(address => bytes32[]) public  userTokens;
+    mapping(address => bytes32[]) public userTokens;
 
-    /// @dev Nested mapping that takes an collection creator as key of 
+    /// @dev Nested mapping that takes an collection creator as key of
     /// an hashmap of splitter contracts to its respective deployment configs.
     mapping(address => mapping(address => Types.SplitterConfig))
         public splitterInfo;
@@ -88,29 +84,31 @@ contract MADFactory721 is MAD,
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    constructor
-    (
-        address _marketplace, 
-        address _router, 
+    constructor(
+        address _marketplace,
         address _signer,
         address _paymentTokenAddress
-    )
-    {
+    ) {
+        // E.1 BlockHat Audit
+        require(
+            _marketplace != address(0) &&
+                _signer != address(0),
+            "ZeroAddress"
+        );
+
         setMarket(_marketplace);
         setSigner(_signer);
+
         if (_paymentTokenAddress != address(0)) {
             _setPaymentToken(_paymentTokenAddress);
         }
-
-        router = _router;
-        emit RouterUpdated(_router);
     }
 
     /// @notice Enables the contract's owner to change payment token address.
     /// @dev Function Signature := ?
-    function _setPaymentToken(address _paymentTokenAddress)
-        private
-    {
+    function _setPaymentToken(
+        address _paymentTokenAddress
+    ) private {
         erc20 = ERC20(_paymentTokenAddress);
         emit PaymentTokenUpdated(_paymentTokenAddress);
     }
@@ -142,22 +140,23 @@ contract MADFactory721 is MAD,
             bytes(_splitterSalt)
         );
         if (
-            _ambassador == address(0) && 
-            _project == address(0)) 
-        {
+            _ambassador == address(0) &&
+            _project == address(0)
+        ) {
             // [owner, tx.origin]
             address[] memory _payees = _payeesBuffer(
                 address(0),
                 address(0)
             );
             // [10, 90]
-            uint256[] memory _shares = _sharesBuffer(0,0);
+            uint256[] memory _shares = _sharesBuffer(0, 0);
 
-            address _splitter = SplitterDeployer._SplitterDeploy(
-                _splitterSalt,
-                _payees,
-                _shares
-            );
+            address _splitter = SplitterDeployer
+                ._SplitterDeploy(
+                    _splitterSalt,
+                    _payees,
+                    _shares
+                );
 
             splitterInfo[tx.origin][_splitter] = Types
                 .SplitterConfig({
@@ -177,26 +176,29 @@ contract MADFactory721 is MAD,
                 _splitter,
                 0 // flag 0 is no ambassador and no project
             );
-
         } else if (
             _ambassador != address(0) &&
             _project == address(0) &&
-            _ambShare != 0 && 
-            _ambShare < 21 
+            _ambShare != 0 &&
+            _ambShare < 21
         ) {
             // [owner, _ambassador, tx.origin]
             address[] memory _payees = _payeesBuffer(
-                _ambassador, 
+                _ambassador,
                 address(0)
             );
             // [10, _ambShare, 90 - _ambShare]
-            uint256[] memory _shares = _sharesBuffer(_ambShare, 0); 
-
-            address _splitter = SplitterDeployer._SplitterDeploy(
-                _splitterSalt,
-                _payees,
-                _shares
+            uint256[] memory _shares = _sharesBuffer(
+                _ambShare,
+                0
             );
+
+            address _splitter = SplitterDeployer
+                ._SplitterDeploy(
+                    _splitterSalt,
+                    _payees,
+                    _shares
+                );
 
             splitterInfo[tx.origin][_splitter] = Types
                 .SplitterConfig({
@@ -216,9 +218,8 @@ contract MADFactory721 is MAD,
                 _splitter,
                 1 // ambassador only
             );
-
-        } else if(
-            _project != address(0) && 
+        } else if (
+            _project != address(0) &&
             _ambassador == address(0) &&
             _projectShare != 0 &&
             _projectShare < 91
@@ -229,13 +230,17 @@ contract MADFactory721 is MAD,
                 _project
             );
             // [10, _projectShare, 90 - _projectShare]
-            uint256[] memory _shares = _sharesBuffer(0, _projectShare); 
-
-            address _splitter = SplitterDeployer._SplitterDeploy(
-                _splitterSalt,
-                _payees,
-                _shares
+            uint256[] memory _shares = _sharesBuffer(
+                0,
+                _projectShare
             );
+
+            address _splitter = SplitterDeployer
+                ._SplitterDeploy(
+                    _splitterSalt,
+                    _payees,
+                    _shares
+                );
 
             splitterInfo[tx.origin][_splitter] = Types
                 .SplitterConfig({
@@ -255,15 +260,14 @@ contract MADFactory721 is MAD,
                 _splitter,
                 2 // project only
             );
-
-        } else if(
+        } else if (
             _ambassador != address(0) &&
-            _project != address(0) && 
-            _ambShare != 0 && 
+            _project != address(0) &&
+            _ambShare != 0 &&
             _ambShare < 21 &&
             _projectShare != 0 &&
             _projectShare < 71
-        ) { 
+        ) {
             // [owner, _ambassador, _project, tx.origin]
             address[] memory _payees = _payeesBuffer(
                 _ambassador,
@@ -271,18 +275,22 @@ contract MADFactory721 is MAD,
             );
 
             // [
-                // 10, 
-                // _ambShare, 
-                // _projectShare, 
-                // 90 - (_ambShare + _projectShare) 
+            // 10,
+            // _ambShare,
+            // _projectShare,
+            // 90 - (_ambShare + _projectShare)
             // ]
-            uint256[] memory _shares = _sharesBuffer(_ambShare, _projectShare); 
-
-            address _splitter = SplitterDeployer._SplitterDeploy(
-                _splitterSalt,
-                _payees,
-                _shares
+            uint256[] memory _shares = _sharesBuffer(
+                _ambShare,
+                _projectShare
             );
+
+            address _splitter = SplitterDeployer
+                ._SplitterDeploy(
+                    _splitterSalt,
+                    _payees,
+                    _shares
+                );
 
             splitterInfo[tx.origin][_splitter] = Types
                 .SplitterConfig({
@@ -302,13 +310,11 @@ contract MADFactory721 is MAD,
                 _splitter,
                 3 // both ambassador and project
             );
-
-        } else { 
+        } else {
             // revert SplitterFail();
             assembly {
                 mstore(0x00, 0x00adecf0)
                 revert(0x1c, 0x04)
-            
             }
         }
     }
@@ -341,53 +347,12 @@ contract MADFactory721 is MAD,
         string memory _baseURI,
         address _splitter,
         uint256 _royalty
-    )
-        external
-        nonReentrant
-        isThisOg
-        whenNotPaused
-    {
-        // removed as price can be set to 0
-        // require(_tokenType > 2 || _price > 0, 'Invalid price');
+    ) external nonReentrant isThisOg whenNotPaused {
+
         _limiter(_tokenType, _splitter);
         _royaltyLocker(_royalty);
 
-        // if (_tokenType < 1) {
-            // (bytes32 tokenSalt, address deployed) = 
-                // ERC721MinimalDeployer._721MinimalDeploy(
-                    // _tokenSalt,
-                    // _name,
-                    // _symbol,
-                    // _baseURI,
-                    // _price,
-                    // _splitter,
-                    // router,
-                    // _royalty,
-                    // erc20
-                // );
 
-        //     bytes32 colId = deployed.fillLast12Bytes();
-        //     userTokens[tx.origin].push(colId);
-
-        //     colInfo[colId] = Types.Collection721(
-        //         tx.origin,
-        //         Types.ERC721Type.ERC721Minimal,
-        //         tokenSalt,
-        //         block.number,
-        //         _splitter
-        //     );
-
-        //     emit ERC721MinimalCreated(
-        //         _splitter,
-        //         deployed,
-        //         _name,
-        //         _symbol, 
-        //         _royalty,
-        //         _maxSupply,
-        //         _price
-        //     );
-        // }
-        // if (_tokenType == 1) {
         (bytes32 tokenSalt, address deployed) = 
         ERC721BasicDeployer._721BasicDeploy(
             _tokenSalt,
@@ -422,101 +387,15 @@ contract MADFactory721 is MAD,
             _maxSupply,
             _price
         );
-        // }
-        // if (_tokenType == 2) {
-        //     (bytes32 tokenSalt, address deployed) = 
-        //     ERC721WhitelistDeployer._721WhitelistDeploy(
-        //         _tokenSalt,
-        //         _name,
-        //         _symbol,
-        //         _baseURI,
-        //         _price,
-        //         _maxSupply,
-        //         _splitter,
-        //         router,
-        //         _royalty,
-        //         erc20
-        //     );
-
-        //     bytes32 colId = deployed.fillLast12Bytes();
-        //     userTokens[tx.origin].push(colId);
-
-        //     colInfo[colId] = Types.Collection721(
-        //         tx.origin,
-        //         Types.ERC721Type.ERC721Whitelist,
-        //         tokenSalt,
-        //         block.number,
-        //         _splitter
-        //     );
-
-        //     emit ERC721WhitelistCreated(
-        //         _splitter,
-        //         deployed,
-        //         _name,
-        //         _symbol, 
-        //         _royalty,
-        //         _maxSupply,
-        //         _price
-        //     );
-        // }
-        // if (_tokenType > 2) {
-        //     (bytes32 tokenSalt, address deployed) = 
-        //     ERC721LazyDeployer._721LazyDeploy(
-        //         _tokenSalt,
-        //         _name,
-        //         _symbol,
-        //         _baseURI,
-        //         _splitter,
-        //         router,
-        //         signer,
-        //         _royalty,
-        //         erc20
-        //     );
-
-        //     bytes32 colId = deployed.fillLast12Bytes();
-        //     userTokens[tx.origin].push(colId);
-
-        //     colInfo[colId] = Types.Collection721(
-        //         tx.origin,
-        //         Types.ERC721Type.ERC721Lazy,
-        //         tokenSalt,
-        //         block.number,
-        //         _splitter
-        //     );
-
-        //     emit ERC721LazyCreated(
-        //         _splitter,
-        //         deployed,
-        //         _name,
-        //         _symbol, 
-        //         _royalty,
-        //         _maxSupply,
-        //         _price
-        //     );
-        // }
+       
     }
 
     ////////////////////////////////////////////////////////////////
     //                         OWNER FX                           //
     ////////////////////////////////////////////////////////////////
 
-    /// @dev Function Signature := 0x13af4035
-    function setOwner(address newOwner)
-        public
-        override
-        onlyOwner
-    {
-        require(newOwner != address(0), "Invalid address");
-
-        assembly {
-            sstore(owner.slot, newOwner)
-        }
-
-        emit OwnerUpdated(msg.sender, newOwner);
-    }
-    
     /// @dev `MADMarketplace` instance setter.
-    /// @dev Function Sighash := 
+    /// @dev Function Sighash :=
     function setMarket(address _market) public onlyOwner {
         require(_market != address(0), "Invalid address");
 
@@ -567,30 +446,41 @@ contract MADFactory721 is MAD,
     //                           HELPERS                          //
     ////////////////////////////////////////////////////////////////
 
-    /// @notice Everything in storage can be fetch through the 
+    /// @notice Everything in storage can be fetch through the
     /// getters natively provided by all public mappings.
-    /// @dev This public getter serve as a hook to ease frontend 
+    /// @dev This public getter serve as a hook to ease frontend
     /// fetching whilst estimating user's colID indexes.
     /// @dev Function Sighash := 0x8691fe46
-    function getIDsLength(address _user) 
-        external 
-        view 
-        returns (uint256) 
-    {
+    function getIDsLength(
+        address _user
+    ) external view returns (uint256) {
         return userTokens[_user].length;
     }
 
     /// @inheritdoc FactoryVerifier
-    function getColID(address _colAddress) external pure override(FactoryVerifier) returns (bytes32 colID) {
+    function getColID(
+        address _colAddress
+    )
+        external
+        pure
+        override(FactoryVerifier)
+        returns (bytes32 colID)
+    {
         colID = _colAddress.fillLast12Bytes();
-        
     }
 
     /// @inheritdoc FactoryVerifier
-    function typeChecker(bytes32 _colID) external override(FactoryVerifier) view returns(uint8 pointer) {
+    function typeChecker(
+        bytes32 _colID
+    )
+        external
+        view
+        override(FactoryVerifier)
+        returns (uint8 pointer)
+    {
         _isRouter();
         Types.Collection721 storage col = colInfo[_colID];
-        
+
         assembly {
             let x := sload(col.slot)
             pointer := shr(160, x)
@@ -599,17 +489,11 @@ contract MADFactory721 is MAD,
 
     /// @dev Builds payees dynamic sized array buffer for `splitterCheck` cases.
     function _payeesBuffer(
-        address amb, 
-        address project) 
-    internal 
-    view 
-    returns (address[] memory memOffset) 
-    {
+        address amb,
+        address project
+    ) internal view returns (address[] memory memOffset) {
         assembly {
-            switch and(
-                    iszero(amb),
-                    iszero(project)
-                    )
+            switch and(iszero(amb), iszero(project))
             case 1 {
                 memOffset := mload(0x40)
                 mstore(add(memOffset, 0x00), 1)
@@ -648,20 +532,19 @@ contract MADFactory721 is MAD,
     }
 
     /// @dev Builds shares dynamic sized array buffer for `splitterCheck` cases.
-    function _sharesBuffer(uint256 _ambShare, uint256 _projectShare) 
-    internal 
-    pure 
-    returns (uint256[] memory memOffset) 
-    {
+    function _sharesBuffer(
+        uint256 _ambShare,
+        uint256 _projectShare
+    ) internal pure returns (uint256[] memory memOffset) {
         assembly {
             switch and(
-                    iszero(_ambShare),
-                    iszero(_projectShare)
-                    )
+                iszero(_ambShare),
+                iszero(_projectShare)
+            )
             case 1 {
                 memOffset := mload(0x40)
-                mstore(add(memOffset, 0x00), 1) 
-                mstore(add(memOffset, 0x20), 100) 
+                mstore(add(memOffset, 0x00), 1)
+                mstore(add(memOffset, 0x20), 100)
                 mstore(0x40, add(memOffset, 0x40))
             }
             case 0 {
@@ -669,8 +552,11 @@ contract MADFactory721 is MAD,
                 case 1 {
                     memOffset := mload(0x40)
                     mstore(add(memOffset, 0x00), 2)
-                    mstore(add(memOffset, 0x20), _ambShare) 
-                    mstore(add(memOffset, 0x40), sub(100,_ambShare)) 
+                    mstore(add(memOffset, 0x20), _ambShare)
+                    mstore(
+                        add(memOffset, 0x40),
+                        sub(100, _ambShare)
+                    )
                     mstore(0x40, add(memOffset, 0x60))
                 }
                 case 0 {
@@ -678,16 +564,34 @@ contract MADFactory721 is MAD,
                     case 1 {
                         memOffset := mload(0x40)
                         mstore(add(memOffset, 0x00), 2)
-                        mstore(add(memOffset, 0x20), _projectShare) 
-                        mstore(add(memOffset, 0x40), sub(100,_projectShare)) 
+                        mstore(
+                            add(memOffset, 0x20),
+                            _projectShare
+                        )
+                        mstore(
+                            add(memOffset, 0x40),
+                            sub(100, _projectShare)
+                        )
                         mstore(0x40, add(memOffset, 0x60))
                     }
                     case 0 {
                         memOffset := mload(0x40)
                         mstore(add(memOffset, 0x00), 3)
-                        mstore(add(memOffset, 0x20), _ambShare) 
-                        mstore(add(memOffset, 0x40), _projectShare) 
-                        mstore(add(memOffset, 0x60), sub(100,add(_ambShare,_projectShare))) 
+                        mstore(
+                            add(memOffset, 0x20),
+                            _ambShare
+                        )
+                        mstore(
+                            add(memOffset, 0x40),
+                            _projectShare
+                        )
+                        mstore(
+                            add(memOffset, 0x60),
+                            sub(
+                                100,
+                                add(_ambShare, _projectShare)
+                            )
+                        )
                         mstore(0x40, add(memOffset, 0x80))
                     }
                 }
@@ -722,24 +626,29 @@ contract MADFactory721 is MAD,
     }
 
     /// @inheritdoc FactoryVerifier
-    function creatorCheck(bytes32 _colID) 
-    external
-    override(FactoryVerifier)
-    view
-    returns(address creator, bool check) 
+    function creatorCheck(
+        bytes32 _colID
+    )
+        external
+        view
+        override(FactoryVerifier)
+        returns (address creator, bool check)
     {
         _isRouter();
         Types.Collection721 storage col = colInfo[_colID];
-        
+
         assembly {
             let x := sload(col.slot)
             // bitmask to get the first 20 bytes of storage slot
-            creator := and(x, 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
+            creator := and(
+                x,
+                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            )
 
             if eq(creator, origin()) {
                 check := true
             }
-        // if(!check) revert AccessDenied();
+            // if(!check) revert AccessDenied();
             if iszero(check) {
                 mstore(0x00, 0x4ca88867)
                 revert(0x1c, 0x04)
@@ -755,21 +664,27 @@ contract MADFactory721 is MAD,
             // let stdin := sload(router.slot)
             // if eq(origin(), sload(router.slot)) {
             if iszero(eq(caller(), sload(router.slot))) {
-                mstore(0x00, 0x4ca88867FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
+                mstore(
+                    0x00,
+                    0x4ca88867FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                )
                 revert(0, 4) // (offset, length)
             }
-        } 
+        }
     }
 
     /// @dev Establishes sealed/safe callpath for `MADMarketplace` contract.
-    /// @dev Function Sighash := 
+    /// @dev Function Sighash :=
     function _isMarket() private view {
         assembly {
             if iszero(eq(caller(), sload(market.slot))) {
-                mstore(0x00, 0x4ca88867FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
+                mstore(
+                    0x00,
+                    0x4ca88867FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                )
                 revert(0, 4) // (offset, length)
             }
-        } 
+        }
     }
 
     function _limiter(
@@ -792,17 +707,15 @@ contract MADFactory721 is MAD,
         }
     }
 
-    function _royaltyLocker(uint256 _share) 
-    private 
-    pure
-    {
+    function _royaltyLocker(uint256 _share) private pure {
         assembly {
             if or(
-                gt(_share,0x3E8),
-                iszero(iszero(mod(_share,0x19)))) {
-                    mstore(0x00, 0xe0e54ced)
-                    revert(0x1c, 0x04)
-                }
+                gt(_share, 0x3E8),
+                iszero(iszero(mod(_share, 0x19)))
+            ) {
+                mstore(0x00, 0xe0e54ced)
+                revert(0x1c, 0x04)
+            }
         }
     }
 
@@ -810,12 +723,17 @@ contract MADFactory721 is MAD,
     /// @dev Function Sighash := 0xbe749257
     /// @dev `creatorAuth` method extension.
     /// @return _stdout := 1 as boolean standard output.
-    function _userRender(address _user) private view returns(bool _stdout){
+    function _userRender(
+        address _user
+    ) private view returns (bool _stdout) {
         assembly {
             let freeMemoryPointer := mload(0x40)
             // sload(userTokens.slot)
-            mstore(add(freeMemoryPointer, 32), userTokens.slot)
-            mstore(add(freeMemoryPointer, 64), _user) 
+            mstore(
+                add(freeMemoryPointer, 32),
+                userTokens.slot
+            )
+            mstore(add(freeMemoryPointer, 64), _user)
             let hash := keccak256(freeMemoryPointer, 64)
             if iszero(sload(hash)) {
                 _stdout := false
@@ -823,13 +741,9 @@ contract MADFactory721 is MAD,
         }
     }
 
-    function getDeployedAddr(string memory _salt)
-        external
-        view
-        returns (
-            address
-        )
-    {
+    function getDeployedAddr(
+        string memory _salt
+    ) external view returns (address) {
         bytes32 salt = keccak256(bytes(_salt));
         return CREATE3.getDeployed(salt);
     }

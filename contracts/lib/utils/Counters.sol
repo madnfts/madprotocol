@@ -16,11 +16,9 @@ library Counters {
     /// @dev 0xce3a3d37
     error DecOverflow();
 
-    function current(Counter storage counter)
-        internal
-        view
-        returns (uint256 _val)
-    {
+    function current(
+        Counter storage counter
+    ) internal view returns (uint256 _val) {
         assembly {
             _val := sload(counter.slot)
         }

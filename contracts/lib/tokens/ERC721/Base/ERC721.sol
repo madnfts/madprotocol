@@ -35,11 +35,9 @@ abstract contract ERC721 {
 
     string public symbol;
 
-    function tokenURI(uint256 id)
-        public
-        view
-        virtual
-        returns (string memory);
+    function tokenURI(
+        uint256 id
+    ) public view virtual returns (string memory);
 
     /*//////////////////////////////////////////////////////////////
                       ERC721 BALANCE/OWNER STORAGE
@@ -49,24 +47,18 @@ abstract contract ERC721 {
 
     mapping(address => uint256) internal _balanceOf;
 
-    function ownerOf(uint256 id)
-        public
-        view
-        virtual
-        returns (address owner)
-    {
+    function ownerOf(
+        uint256 id
+    ) public view virtual returns (address owner) {
         require(
             (owner = _ownerOf[id]) != address(0),
             "NOT_MINTED"
         );
     }
 
-    function balanceOf(address owner)
-        public
-        view
-        virtual
-        returns (uint256)
-    {
+    function balanceOf(
+        address owner
+    ) public view virtual returns (uint256) {
         require(owner != address(0), "ZERO_ADDRESS");
 
         return _balanceOf[owner];
@@ -94,10 +86,10 @@ abstract contract ERC721 {
                               ERC721 LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function approve(address spender, uint256 id)
-        public
-        virtual
-    {
+    function approve(
+        address spender,
+        uint256 id
+    ) public virtual {
         address owner = _ownerOf[id];
 
         require(
@@ -196,12 +188,9 @@ abstract contract ERC721 {
                               ERC165 LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        virtual
-        returns (bool)
-    {
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view virtual returns (bool) {
         return
             interfaceId == 0x01ffc9a7 || // ERC165 Interface ID for ERC165
             interfaceId == 0x80ac58cd || // ERC165 Interface ID for ERC721
@@ -248,10 +237,10 @@ abstract contract ERC721 {
                         INTERNAL SAFE MINT LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function _safeMint(address to, uint256 id)
-        internal
-        virtual
-    {
+    function _safeMint(
+        address to,
+        uint256 id
+    ) internal virtual {
         _mint(to, id);
 
         require(

@@ -98,34 +98,34 @@ export async function madFixture721A(): Promise<MADFixture721> {
   );
   const splDep = await SplitterDeployer.deploy();
 
-  const MinimalDeployer = await ethers.getContractFactory(
-    "ERC721MinimalDeployer",
-  );
-  const minDep = await MinimalDeployer.deploy();
+  // const MinimalDeployer = await ethers.getContractFactory(
+    // "ERC721MinimalDeployer",
+  // );
+  // const minDep = await MinimalDeployer.deploy();
 
   const BasicDeployer = await ethers.getContractFactory(
     "ERC721BasicDeployer",
   );
   const basDep = await BasicDeployer.deploy();
 
-  const WhitelistDeployer = await ethers.getContractFactory(
-    "ERC721WhitelistDeployer",
-  );
-  const wlDep = await WhitelistDeployer.deploy();
+  // const WhitelistDeployer = await ethers.getContractFactory(
+    // "ERC721WhitelistDeployer",
+  // );
+  // const wlDep = await WhitelistDeployer.deploy();
 
-  const LazyDeployer = await ethers.getContractFactory(
-    "ERC721LazyDeployer",
-  );
-  const lazyDep = await LazyDeployer.deploy();
+  // const LazyDeployer = await ethers.getContractFactory(
+    // "ERC721LazyDeployer",
+  // );
+  // const lazyDep = await LazyDeployer.deploy();
 
   const Factory = await ethers.getContractFactory(
     "MADFactory721",
     {
       libraries: {
-        ERC721MinimalDeployer: minDep.address,
+        // ERC721MinimalDeployer: minDep.address,
         ERC721BasicDeployer: basDep.address,
-        ERC721WhitelistDeployer: wlDep.address,
-        ERC721LazyDeployer: lazyDep.address,
+        // ERC721WhitelistDeployer: wlDep.address,
+        // ERC721LazyDeployer: lazyDep.address,
         SplitterDeployer: splDep.address,
       },
     },
@@ -174,34 +174,34 @@ export async function madFixture721B(): Promise<MADFixture721> {
   );
   const splDep = await SplitterDeployer.deploy();
 
-  const MinimalDeployer = await ethers.getContractFactory(
-    "ERC721MinimalDeployer",
-  );
-  const minDep = await MinimalDeployer.deploy();
+  // const MinimalDeployer = await ethers.getContractFactory(
+    // "ERC721MinimalDeployer",
+  // );
+  // const minDep = await MinimalDeployer.deploy();
 
   const BasicDeployer = await ethers.getContractFactory(
     "ERC721BasicDeployer",
   );
   const basDep = await BasicDeployer.deploy();
 
-  const WhitelistDeployer = await ethers.getContractFactory(
-    "ERC721WhitelistDeployer",
-  );
-  const wlDep = await WhitelistDeployer.deploy();
+  // const WhitelistDeployer = await ethers.getContractFactory(
+    // "ERC721WhitelistDeployer",
+  // );
+  // const wlDep = await WhitelistDeployer.deploy();
 
-  const LazyDeployer = await ethers.getContractFactory(
-    "ERC721LazyDeployer",
-  );
-  const lazyDep = await LazyDeployer.deploy();
+  // const LazyDeployer = await ethers.getContractFactory(
+    // "ERC721LazyDeployer",
+  // );
+  // const lazyDep = await LazyDeployer.deploy();
 
   const Factory = await ethers.getContractFactory(
     "MADFactory721",
     {
       libraries: {
-        ERC721MinimalDeployer: minDep.address,
+        // ERC721MinimalDeployer: minDep.address,
         ERC721BasicDeployer: basDep.address,
-        ERC721WhitelistDeployer: wlDep.address,
-        ERC721LazyDeployer: lazyDep.address,
+        // ERC721WhitelistDeployer: wlDep.address,
+        // ERC721LazyDeployer: lazyDep.address,
         SplitterDeployer: splDep.address,
       },
     },
@@ -250,34 +250,34 @@ export async function madFixture721C(): Promise<MADFixture721> {
   );
   const splDep = await SplitterDeployer.deploy();
 
-  const MinimalDeployer = await ethers.getContractFactory(
-    "ERC721MinimalDeployer",
-  );
-  const minDep = await MinimalDeployer.deploy();
+  // const MinimalDeployer = await ethers.getContractFactory(
+    // "ERC721MinimalDeployer",
+  // );
+  // const minDep = await MinimalDeployer.deploy();
 
   const BasicDeployer = await ethers.getContractFactory(
     "ERC721BasicDeployer",
   );
   const basDep = await BasicDeployer.deploy();
 
-  const WhitelistDeployer = await ethers.getContractFactory(
-    "ERC721WhitelistDeployer",
-  );
-  const wlDep = await WhitelistDeployer.deploy();
+  // const WhitelistDeployer = await ethers.getContractFactory(
+    // "ERC721WhitelistDeployer",
+  // );
+  // const wlDep = await WhitelistDeployer.deploy();
 
-  const LazyDeployer = await ethers.getContractFactory(
-    "ERC721LazyDeployer",
-  );
-  const lazyDep = await LazyDeployer.deploy();
+  // const LazyDeployer = await ethers.getContractFactory(
+    // "ERC721LazyDeployer",
+  // );
+  // const lazyDep = await LazyDeployer.deploy();
 
   const Factory = await ethers.getContractFactory(
     "MADFactory721",
     {
       libraries: {
-        ERC721MinimalDeployer: minDep.address,
+        // ERC721MinimalDeployer: minDep.address,
         ERC721BasicDeployer: basDep.address,
-        ERC721WhitelistDeployer: wlDep.address,
-        ERC721LazyDeployer: lazyDep.address,
+        // ERC721WhitelistDeployer: wlDep.address,
+        // ERC721LazyDeployer: lazyDep.address,
         SplitterDeployer: splDep.address,
       },
     },
@@ -332,34 +332,34 @@ export async function madFixture721D(): Promise<MADFixture721ERC20> {
   );
   const splDep = await SplitterDeployer.deploy();
 
-  const MinimalDeployer = await ethers.getContractFactory(
-    "ERC721MinimalDeployer",
-  );
-  const minDep = await MinimalDeployer.deploy();
+  // const MinimalDeployer = await ethers.getContractFactory(
+    // "ERC721MinimalDeployer",
+  // );
+  // const minDep = await MinimalDeployer.deploy();
 
   const BasicDeployer = await ethers.getContractFactory(
     "ERC721BasicDeployer",
   );
   const basDep = await BasicDeployer.deploy();
 
-  const WhitelistDeployer = await ethers.getContractFactory(
-    "ERC721WhitelistDeployer",
-  );
-  const wlDep = await WhitelistDeployer.deploy();
+  // const WhitelistDeployer = await ethers.getContractFactory(
+    // "ERC721WhitelistDeployer",
+  // );
+  // const wlDep = await WhitelistDeployer.deploy();
 
-  const LazyDeployer = await ethers.getContractFactory(
-    "ERC721LazyDeployer",
-  );
-  const lazyDep = await LazyDeployer.deploy();
+  // const LazyDeployer = await ethers.getContractFactory(
+    // "ERC721LazyDeployer",
+  // );
+  // const lazyDep = await LazyDeployer.deploy();
 
   const Factory = await ethers.getContractFactory(
     "MADFactory721",
     {
       libraries: {
-        ERC721MinimalDeployer: minDep.address,
+        // ERC721MinimalDeployer: minDep.address,
         ERC721BasicDeployer: basDep.address,
-        ERC721WhitelistDeployer: wlDep.address,
-        ERC721LazyDeployer: lazyDep.address,
+        // ERC721WhitelistDeployer: wlDep.address,
+        // ERC721LazyDeployer: lazyDep.address,
         SplitterDeployer: splDep.address,
       },
     },
@@ -414,34 +414,34 @@ export async function madFixture721E(): Promise<MADFixture721ERC20> {
   );
   const splDep = await SplitterDeployer.deploy();
 
-  const MinimalDeployer = await ethers.getContractFactory(
-    "ERC721MinimalDeployer",
-  );
-  const minDep = await MinimalDeployer.deploy();
+  // const MinimalDeployer = await ethers.getContractFactory(
+    // "ERC721MinimalDeployer",
+  // );
+  // const minDep = await MinimalDeployer.deploy();
 
   const BasicDeployer = await ethers.getContractFactory(
     "ERC721BasicDeployer",
   );
   const basDep = await BasicDeployer.deploy();
 
-  const WhitelistDeployer = await ethers.getContractFactory(
-    "ERC721WhitelistDeployer",
-  );
-  const wlDep = await WhitelistDeployer.deploy();
+  // const WhitelistDeployer = await ethers.getContractFactory(
+    // "ERC721WhitelistDeployer",
+  // );
+  // const wlDep = await WhitelistDeployer.deploy();
 
-  const LazyDeployer = await ethers.getContractFactory(
-    "ERC721LazyDeployer",
-  );
-  const lazyDep = await LazyDeployer.deploy();
+  // const LazyDeployer = await ethers.getContractFactory(
+    // "ERC721LazyDeployer",
+  // );
+  // const lazyDep = await LazyDeployer.deploy();
 
   const Factory = await ethers.getContractFactory(
     "MADFactory721",
     {
       libraries: {
-        ERC721MinimalDeployer: minDep.address,
+        // ERC721MinimalDeployer: minDep.address,
         ERC721BasicDeployer: basDep.address,
-        ERC721WhitelistDeployer: wlDep.address,
-        ERC721LazyDeployer: lazyDep.address,
+        // ERC721WhitelistDeployer: wlDep.address,
+        // ERC721LazyDeployer: lazyDep.address,
         SplitterDeployer: splDep.address,
       },
     },
@@ -490,34 +490,34 @@ export async function madFixture1155A(): Promise<MADFixture1155> {
   );
   const splDep = await SplitterDeployer.deploy();
 
-  const MinimalDeployer = await ethers.getContractFactory(
-    "ERC1155MinimalDeployer",
-  );
-  const minDep = await MinimalDeployer.deploy();
+  // const MinimalDeployer = await ethers.getContractFactory(
+    // "ERC1155MinimalDeployer",
+  // );
+  // const minDep = await MinimalDeployer.deploy();
 
   const BasicDeployer = await ethers.getContractFactory(
     "ERC1155BasicDeployer",
   );
   const basDep = await BasicDeployer.deploy();
 
-  const WhitelistDeployer = await ethers.getContractFactory(
-    "ERC1155WhitelistDeployer",
-  );
-  const wlDep = await WhitelistDeployer.deploy();
+  // const WhitelistDeployer = await ethers.getContractFactory(
+    // "ERC1155WhitelistDeployer",
+  // );
+  // const wlDep = await WhitelistDeployer.deploy();
 
-  const LazyDeployer = await ethers.getContractFactory(
-    "ERC1155LazyDeployer",
-  );
-  const lazyDep = await LazyDeployer.deploy();
+  // const LazyDeployer = await ethers.getContractFactory(
+    // "ERC1155LazyDeployer",
+  // );
+  // const lazyDep = await LazyDeployer.deploy();
 
   const Factory = await ethers.getContractFactory(
     "MADFactory1155",
     {
       libraries: {
-        ERC1155MinimalDeployer: minDep.address,
+        // ERC1155MinimalDeployer: minDep.address,
         ERC1155BasicDeployer: basDep.address,
-        ERC1155WhitelistDeployer: wlDep.address,
-        ERC1155LazyDeployer: lazyDep.address,
+        // ERC1155WhitelistDeployer: wlDep.address,
+        // ERC1155LazyDeployer: lazyDep.address,
         SplitterDeployer: splDep.address,
       },
     },
@@ -566,34 +566,34 @@ export async function madFixture1155B(): Promise<MADFixture1155> {
   );
   const splDep = await SplitterDeployer.deploy();
 
-  const MinimalDeployer = await ethers.getContractFactory(
-    "ERC1155MinimalDeployer",
-  );
-  const minDep = await MinimalDeployer.deploy();
+  // const MinimalDeployer = await ethers.getContractFactory(
+    // "ERC1155MinimalDeployer",
+  // );
+  // const minDep = await MinimalDeployer.deploy();
 
   const BasicDeployer = await ethers.getContractFactory(
     "ERC1155BasicDeployer",
   );
   const basDep = await BasicDeployer.deploy();
 
-  const WhitelistDeployer = await ethers.getContractFactory(
-    "ERC1155WhitelistDeployer",
-  );
-  const wlDep = await WhitelistDeployer.deploy();
+  // const WhitelistDeployer = await ethers.getContractFactory(
+    // "ERC1155WhitelistDeployer",
+  // );
+  // const wlDep = await WhitelistDeployer.deploy();
 
-  const LazyDeployer = await ethers.getContractFactory(
-    "ERC1155LazyDeployer",
-  );
-  const lazyDep = await LazyDeployer.deploy();
+  // const LazyDeployer = await ethers.getContractFactory(
+    // "ERC1155LazyDeployer",
+  // );
+  // const lazyDep = await LazyDeployer.deploy();
 
   const Factory = await ethers.getContractFactory(
     "MADFactory1155",
     {
       libraries: {
-        ERC1155MinimalDeployer: minDep.address,
+        // ERC1155MinimalDeployer: minDep.address,
         ERC1155BasicDeployer: basDep.address,
-        ERC1155WhitelistDeployer: wlDep.address,
-        ERC1155LazyDeployer: lazyDep.address,
+        // ERC1155WhitelistDeployer: wlDep.address,
+        // ERC1155LazyDeployer: lazyDep.address,
         SplitterDeployer: splDep.address,
       },
     },
@@ -642,34 +642,34 @@ export async function madFixture1155C(): Promise<MADFixture1155> {
   );
   const splDep = await SplitterDeployer.deploy();
 
-  const MinimalDeployer = await ethers.getContractFactory(
-    "ERC1155MinimalDeployer",
-  );
-  const minDep = await MinimalDeployer.deploy();
+  // const MinimalDeployer = await ethers.getContractFactory(
+    // "ERC1155MinimalDeployer",
+  // );
+  // const minDep = await MinimalDeployer.deploy();
 
   const BasicDeployer = await ethers.getContractFactory(
     "ERC1155BasicDeployer",
   );
   const basDep = await BasicDeployer.deploy();
 
-  const WhitelistDeployer = await ethers.getContractFactory(
-    "ERC1155WhitelistDeployer",
-  );
-  const wlDep = await WhitelistDeployer.deploy();
+  // const WhitelistDeployer = await ethers.getContractFactory(
+    // "ERC1155WhitelistDeployer",
+  // );
+  // const wlDep = await WhitelistDeployer.deploy();
 
-  const LazyDeployer = await ethers.getContractFactory(
-    "ERC1155LazyDeployer",
-  );
-  const lazyDep = await LazyDeployer.deploy();
+  // const LazyDeployer = await ethers.getContractFactory(
+    // "ERC1155LazyDeployer",
+  // );
+  // const lazyDep = await LazyDeployer.deploy();
 
   const Factory = await ethers.getContractFactory(
     "MADFactory1155",
     {
       libraries: {
-        ERC1155MinimalDeployer: minDep.address,
+        // ERC1155MinimalDeployer: minDep.address,
         ERC1155BasicDeployer: basDep.address,
-        ERC1155WhitelistDeployer: wlDep.address,
-        ERC1155LazyDeployer: lazyDep.address,
+        // ERC1155WhitelistDeployer: wlDep.address,
+        // ERC1155LazyDeployer: lazyDep.address,
         SplitterDeployer: splDep.address,
       },
     },
@@ -724,34 +724,34 @@ export async function madFixture1155D(): Promise<MADFixture1155ERC20> {
   );
   const splDep = await SplitterDeployer.deploy();
 
-  const MinimalDeployer = await ethers.getContractFactory(
-    "ERC1155MinimalDeployer",
-  );
-  const minDep = await MinimalDeployer.deploy();
+  // const MinimalDeployer = await ethers.getContractFactory(
+    // "ERC1155MinimalDeployer",
+  // );
+  // const minDep = await MinimalDeployer.deploy();
 
   const BasicDeployer = await ethers.getContractFactory(
     "ERC1155BasicDeployer",
   );
   const basDep = await BasicDeployer.deploy();
 
-  const WhitelistDeployer = await ethers.getContractFactory(
-    "ERC1155WhitelistDeployer",
-  );
-  const wlDep = await WhitelistDeployer.deploy();
+  // const WhitelistDeployer = await ethers.getContractFactory(
+    // "ERC1155WhitelistDeployer",
+  // );
+  // const wlDep = await WhitelistDeployer.deploy();
 
-  const LazyDeployer = await ethers.getContractFactory(
-    "ERC1155LazyDeployer",
-  );
-  const lazyDep = await LazyDeployer.deploy();
+  // const LazyDeployer = await ethers.getContractFactory(
+    // "ERC1155LazyDeployer",
+  // );
+  // const lazyDep = await LazyDeployer.deploy();
 
   const Factory = await ethers.getContractFactory(
     "MADFactory1155",
     {
       libraries: {
-        ERC1155MinimalDeployer: minDep.address,
+        // ERC1155MinimalDeployer: minDep.address,
         ERC1155BasicDeployer: basDep.address,
-        ERC1155WhitelistDeployer: wlDep.address,
-        ERC1155LazyDeployer: lazyDep.address,
+        // ERC1155WhitelistDeployer: wlDep.address,
+        // ERC1155LazyDeployer: lazyDep.address,
         SplitterDeployer: splDep.address,
       },
     },
@@ -806,34 +806,34 @@ export async function madFixture1155E(): Promise<MADFixture1155ERC20> {
   );
   const splDep = await SplitterDeployer.deploy();
 
-  const MinimalDeployer = await ethers.getContractFactory(
-    "ERC1155MinimalDeployer",
-  );
-  const minDep = await MinimalDeployer.deploy();
+  // const MinimalDeployer = await ethers.getContractFactory(
+    // "ERC1155MinimalDeployer",
+  // );
+  // const minDep = await MinimalDeployer.deploy();
 
   const BasicDeployer = await ethers.getContractFactory(
     "ERC1155BasicDeployer",
   );
   const basDep = await BasicDeployer.deploy();
 
-  const WhitelistDeployer = await ethers.getContractFactory(
-    "ERC1155WhitelistDeployer",
-  );
-  const wlDep = await WhitelistDeployer.deploy();
-
-  const LazyDeployer = await ethers.getContractFactory(
-    "ERC1155LazyDeployer",
-  );
-  const lazyDep = await LazyDeployer.deploy();
+  // const WhitelistDeployer = await ethers.getContractFactory(
+    // "ERC1155WhitelistDeployer",
+  // );
+  // const wlDep = await WhitelistDeployer.deploy();
+// 
+  // const LazyDeployer = await ethers.getContractFactory(
+    // "ERC1155LazyDeployer",
+  // );
+  // const lazyDep = await LazyDeployer.deploy();
 
   const Factory = await ethers.getContractFactory(
     "MADFactory1155",
     {
       libraries: {
-        ERC1155MinimalDeployer: minDep.address,
+        // ERC1155MinimalDeployer: minDep.address,
         ERC1155BasicDeployer: basDep.address,
-        ERC1155WhitelistDeployer: wlDep.address,
-        ERC1155LazyDeployer: lazyDep.address,
+        // ERC1155WhitelistDeployer: wlDep.address,
+        // ERC1155LazyDeployer: lazyDep.address,
         SplitterDeployer: splDep.address,
       },
     },

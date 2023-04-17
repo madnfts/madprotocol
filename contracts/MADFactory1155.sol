@@ -10,10 +10,10 @@ import {
 } from "./EventsAndErrors.sol";
 
 import { 
-    ERC1155MinimalDeployer, 
-    ERC1155BasicDeployer,
-    ERC1155WhitelistDeployer,
-    ERC1155LazyDeployer
+    // ERC1155MinimalDeployer, 
+    ERC1155BasicDeployer
+    // ERC1155WhitelistDeployer,
+    // ERC1155LazyDeployer
 } from "./lib/deployers/ERC1155Deployer.sol";
 
 import { SplitterDeployer } from "./lib/deployers/SplitterDeployer.sol";
@@ -348,51 +348,51 @@ contract MADFactory1155 is MAD,
         _limiter(_tokenType, _splitter);
         _royaltyLocker(_royalty);
 
-        if (_tokenType < 1) {
+        // if (_tokenType < 1) {
+        // (bytes32 tokenSalt, address deployed) = 
+        //     ERC1155MinimalDeployer._1155MinimalDeploy(
+        //         _tokenSalt,
+        //         _uri,
+        //         _price,
+        //         _splitter,
+        //         router,
+        //         _royalty,
+        //         erc20
+        //     );
+
+        // bytes32 colId = deployed.fillLast12Bytes();
+        // userTokens[tx.origin].push(colId);
+
+        // colInfo[colId] = Types.Collection1155(
+        //     tx.origin,
+        //     Types.ERC1155Type.ERC1155Minimal,
+        //     tokenSalt,
+        //     block.number,
+        //     _splitter
+        // );
+
+        // emit ERC1155MinimalCreated(
+        //     _splitter,
+        //     deployed,
+        //     _name,
+        //     _symbol, 
+        //     _royalty,
+        //     _maxSupply,
+        //     _price
+        // );
+        // }
+        // if (_tokenType == 1) {
         (bytes32 tokenSalt, address deployed) = 
-            ERC1155MinimalDeployer._1155MinimalDeploy(
-                _tokenSalt,
-                _uri,
-                _price,
-                _splitter,
-                router,
-                _royalty,
-                erc20
-            );
-
-        bytes32 colId = deployed.fillLast12Bytes();
-        userTokens[tx.origin].push(colId);
-
-        colInfo[colId] = Types.Collection1155(
-            tx.origin,
-            Types.ERC1155Type.ERC1155Minimal,
-            tokenSalt,
-            block.number,
-            _splitter
-        );
-
-        emit ERC1155MinimalCreated(
-            _splitter,
-            deployed,
-            _name,
-            _symbol, 
-            _royalty,
+        ERC1155BasicDeployer._1155BasicDeploy(
+            _tokenSalt,
+            _uri,
+            _price,
             _maxSupply,
-            _price
+            _splitter,
+            router,
+            _royalty,
+            erc20
         );
-        }
-        if (_tokenType == 1) {
-            (bytes32 tokenSalt, address deployed) = 
-            ERC1155BasicDeployer._1155BasicDeploy(
-                _tokenSalt,
-                _uri,
-                _price,
-                _maxSupply,
-                _splitter,
-                router,
-                _royalty,
-                erc20
-            );
 
         bytes32 colId = deployed.fillLast12Bytes();
         userTokens[tx.origin].push(colId);
@@ -414,74 +414,74 @@ contract MADFactory1155 is MAD,
             _maxSupply,
             _price
         );
-        }
-        if (_tokenType == 2) {
-            (bytes32 tokenSalt, address deployed) = 
-            ERC1155WhitelistDeployer._1155WhitelistDeploy(
-                _tokenSalt,
-                _uri,
-                _price,
-                _maxSupply,
-                _splitter,
-                router,
-                _royalty,
-                erc20
-            );
+        // }
+        // if (_tokenType == 2) {
+        //     (bytes32 tokenSalt, address deployed) = 
+        //     ERC1155WhitelistDeployer._1155WhitelistDeploy(
+        //         _tokenSalt,
+        //         _uri,
+        //         _price,
+        //         _maxSupply,
+        //         _splitter,
+        //         router,
+        //         _royalty,
+        //         erc20
+        //     );
 
-        bytes32 colId = deployed.fillLast12Bytes();
-        userTokens[tx.origin].push(colId);
+        // bytes32 colId = deployed.fillLast12Bytes();
+        // userTokens[tx.origin].push(colId);
 
-        colInfo[colId] = Types.Collection1155(
-            tx.origin,
-            Types.ERC1155Type.ERC1155Whitelist,
-            tokenSalt,
-            block.number,
-            _splitter
-        );
+        // colInfo[colId] = Types.Collection1155(
+        //     tx.origin,
+        //     Types.ERC1155Type.ERC1155Whitelist,
+        //     tokenSalt,
+        //     block.number,
+        //     _splitter
+        // );
 
-        emit ERC1155WhitelistCreated(
-            _splitter,
-            deployed,
-            _name,
-            _symbol, 
-            _royalty,
-            _maxSupply,
-            _price
-        );
-        }
-        if (_tokenType > 2) {
-            (bytes32 tokenSalt, address deployed) = 
-                ERC1155LazyDeployer._1155LazyDeploy(
-                    _tokenSalt,
-                    _uri,
-                    _splitter,
-                    router,
-                    signer,
-                    _royalty,
-                    erc20
-                );
+        // emit ERC1155WhitelistCreated(
+        //     _splitter,
+        //     deployed,
+        //     _name,
+        //     _symbol, 
+        //     _royalty,
+        //     _maxSupply,
+        //     _price
+        // );
+        // }
+        // if (_tokenType > 2) {
+        //     (bytes32 tokenSalt, address deployed) = 
+        //         ERC1155LazyDeployer._1155LazyDeploy(
+        //             _tokenSalt,
+        //             _uri,
+        //             _splitter,
+        //             router,
+        //             signer,
+        //             _royalty,
+        //             erc20
+        //         );
 
-        bytes32 colId = deployed.fillLast12Bytes();
-        userTokens[tx.origin].push(colId);
+        // bytes32 colId = deployed.fillLast12Bytes();
+        // userTokens[tx.origin].push(colId);
 
-        colInfo[colId] = Types.Collection1155(
-            tx.origin,
-            Types.ERC1155Type.ERC1155Lazy,
-            tokenSalt,
-            block.number,
-            _splitter
-        );
+        // colInfo[colId] = Types.Collection1155(
+        //     tx.origin,
+        //     Types.ERC1155Type.ERC1155Lazy,
+        //     tokenSalt,
+        //     block.number,
+        //     _splitter
+        // );
 
-        emit ERC1155LazyCreated(
-            _splitter,
-            deployed,
-            _name,
-            _symbol, 
-            _royalty,
-            _maxSupply,
-            _price
-        );
-        }
+        // emit ERC1155LazyCreated(
+        //     _splitter,
+        //     deployed,
+        //     _name,
+        //     _symbol, 
+        //     _royalty,
+        //     _maxSupply,
+        //     _price
+        // );
+        // }
     }
 
     ////////////////////////////////////////////////////////////////
@@ -767,7 +767,11 @@ contract MADFactory1155 is MAD,
         // if (!splitterInfo[tx.origin][_splitter].valid)
         //     revert AccessDenied();
         assembly {
-            if or(gt(_tokenType,3),iszero(val)) {
+            if or(
+                /* gt(_tokenType,3) */
+                iszero(eq(iszero(0x0),_tokenType)),
+                iszero(val)) 
+            {
                 mstore(0x00,0x4ca8886700000000000000000000000000000000000000000000000000000000)
                 revert(0,4)
             }

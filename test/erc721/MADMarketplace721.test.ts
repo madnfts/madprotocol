@@ -52,7 +52,6 @@ describe("MADMarketplace721", () => {
   let m721: MADMarketplace721;
   let r721: MADRouter721;
 
-
   const price: BigNumber = ethers.utils.parseEther("1");
 
   before("Set signers and reset network", async () => {
@@ -74,7 +73,6 @@ describe("MADMarketplace721", () => {
   describe("Init", async () => {
     it("Marketplace should initialize", async () => {
       expect(m721).to.be.ok;
-
 
       expect(await m721.callStatic.name()).to.eq("market");
       expect(await m721.recipient()).to.eq(owner.address);
@@ -205,7 +203,7 @@ describe("MADMarketplace721", () => {
     it("Should delete order", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
       const zero = ethers.constants.Zero;
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -335,7 +333,7 @@ describe("MADMarketplace721", () => {
   describe("Fixed Price Listing", async () => {
     it("Should revert if transaction approval hasn't been set", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -400,7 +398,6 @@ describe("MADMarketplace721", () => {
       ).to.be.revertedWith(MarketplaceErrors.NotAuthorized);
     });
     it("Should revert if duration is less than min allowed", async () => {
-      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -468,7 +465,6 @@ describe("MADMarketplace721", () => {
       );
     });
     it("Should revert if duration is less than min allowed", async () => {
-      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -537,7 +533,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if price is invalid", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -598,7 +594,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should list fixed price order, update storage and emit event", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -715,7 +711,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should handle multiple fixed price orders", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -1033,7 +1029,7 @@ describe("MADMarketplace721", () => {
   describe("Dutch Auction Listing", async () => {
     it("Should revert if transaction approval hasn't been set", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -1099,7 +1095,6 @@ describe("MADMarketplace721", () => {
       ).to.be.revertedWith(MarketplaceErrors.NotAuthorized);
     });
     it("Should revert if duration is less than min allowed", async () => {
-      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -1174,7 +1169,6 @@ describe("MADMarketplace721", () => {
       );
     });
     it("Should revert if duration is greater than max allowed", async () => {
-      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -1250,7 +1244,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if startPrice is invalid", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -1320,7 +1314,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should list dutch auction order, update storage and emit event", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -1438,7 +1432,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should handle multiple dutch auction orders", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -1758,7 +1752,7 @@ describe("MADMarketplace721", () => {
   describe("English Auction Listing", async () => {
     it("Should revert if transaction approval hasn't been set", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -1824,7 +1818,6 @@ describe("MADMarketplace721", () => {
       ).to.be.revertedWith(MarketplaceErrors.NotAuthorized);
     });
     it("Should revert if duration is less than min allowed", async () => {
-      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -1893,7 +1886,6 @@ describe("MADMarketplace721", () => {
       );
     });
     it("Should revert if duration is greater than max allowed", async () => {
-      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -1963,7 +1955,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if startPrice is invalid", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -2024,7 +2016,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should list english auction order, update storage and emit event", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -2141,7 +2133,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should handle multiple english auction orders", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -2456,7 +2448,7 @@ describe("MADMarketplace721", () => {
   describe("Bidding", async () => {
     it("Should revert if price is wrong", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -2541,7 +2533,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if not English Auction", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -2612,7 +2604,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if order was canceled", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -2685,7 +2677,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if order has timed out", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -2759,7 +2751,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if bidder is the seller", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -2830,7 +2822,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should bid, update storage and emit events", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -2938,7 +2930,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should bid, update storage and emit events; check user is returned their bid amount (which must be withdrawn)", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -3072,7 +3064,7 @@ describe("MADMarketplace721", () => {
   describe("Buying", async () => {
     it("Should revert if price is wrong", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -3143,7 +3135,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if order is an English Auction", async () => {
       await m721.updateSettings(20, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -3214,7 +3206,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if order was canceled", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -3288,7 +3280,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if order has timed out", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -3363,7 +3355,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if token has already been sold", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -3439,7 +3431,7 @@ describe("MADMarketplace721", () => {
     it("Should buy inhouse minted tokens, update storage and emit events", async () => {
       // fixed price order
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -4477,7 +4469,7 @@ describe("MADMarketplace721", () => {
   describe("Claim", async () => {
     it("Should revert if caller is seller or bidder", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -4565,7 +4557,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if token has already been claimed", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -4704,7 +4696,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert if auction hasn't ended", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -4778,7 +4770,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should claim inhouse minted tokens, update storage and emit events", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -4926,7 +4918,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should verify inhouse minted tokens balance changes", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -5154,7 +5146,7 @@ describe("MADMarketplace721", () => {
   describe("Order Cancelling", async () => {
     it("Should revert due to already sold fixed price order", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -5229,7 +5221,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert due to already sold dutch auction order", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -5323,7 +5315,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should revert due to already sold english auction order", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -5417,7 +5409,7 @@ describe("MADMarketplace721", () => {
     // `BidExists` error only valid for english auction listings
     it("Should cancel fixed price order", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -5517,7 +5509,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should cancel dutch auction order", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -5618,7 +5610,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should cancel english auction order", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -5720,7 +5712,7 @@ describe("MADMarketplace721", () => {
   describe("Public Helpers", async () => {
     it("Should fetch the length of orderIds for a token", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -5843,7 +5835,7 @@ describe("MADMarketplace721", () => {
     });
     it("Should fetch the length of orderIds for a seller", async () => {
       await m721.updateSettings(300, 10, 20, 31536000);
-      
+
       await f721
         .connect(acc02)
         .splitterCheck(

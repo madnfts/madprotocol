@@ -52,7 +52,7 @@ describe("MADFactory721", () => {
   before("Set signers and reset network", async () => {
     [owner, amb, mad, acc01, acc02] =
       await // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (ethers as any).getSigners();
+      (ethers as any).getSigners();
 
     await network.provider.send("hardhat_reset");
   });
@@ -218,7 +218,6 @@ describe("MADFactory721", () => {
       expect(storage.valid).to.eq(true);
     });
     it("Should deploy splitter with ambassador and project, update storage and emit events", async () => {
-      
       const tx: ContractTransaction = await f721
         .connect(acc02)
         .splitterCheck(
@@ -297,9 +296,7 @@ describe("MADFactory721", () => {
     });
   });
   describe("Create collection", async () => {
-
     it("Should deploy ERC721Basic, update storage and emit events", async () => {
-      
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -493,7 +490,7 @@ describe("MADFactory721", () => {
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
- 
+
       await f721
         .connect(acc02)
         .createCollection(
@@ -521,7 +518,6 @@ describe("MADFactory721", () => {
           750,
         );
 
-
       expect(await f721.getIDsLength(acc02.address)).to.eq(2);
     });
     it("Should get collection ID from address", async () => {
@@ -535,7 +531,6 @@ describe("MADFactory721", () => {
       expect(tx).to.eq(colID);
     });
     it("Should retrieve collection type", async () => {
-      
       await f721
         .connect(acc02)
         .splitterCheck(

@@ -12,7 +12,6 @@ import {
   MockERC20,
 } from "../../../src/types";
 import {
-
   BasicErrors,
   RouterErrors,
 } from "./../../utils/errors";
@@ -49,7 +48,7 @@ describe("MADRouter721 - ERC20", () => {
   before("Set signers and reset network", async () => {
     [owner, amb, mad, acc01, acc02] =
       await // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (ethers as any).getSigners();
+      (ethers as any).getSigners();
 
     await network.provider.send("hardhat_reset");
   });
@@ -144,7 +143,6 @@ describe("MADRouter721 - ERC20", () => {
     });
   });
 
-
   describe("Basic MintTo", async () => {
     it("Should call basicMintTo for 721Basic collection type", async () => {
       await f721
@@ -213,9 +211,7 @@ describe("MADRouter721 - ERC20", () => {
     });
   });
   describe("Burn", async () => {
-
     it("Should burn tokens for 721Basic collection type", async () => {
-
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -294,7 +290,6 @@ describe("MADRouter721 - ERC20", () => {
     });
 
     it("Should set publicMintState for minimal, basic and whitelist colTypes", async () => {
-
       await f721
         .connect(acc02)
         .splitterCheck(
@@ -353,16 +348,12 @@ describe("MADRouter721 - ERC20", () => {
         ver,
         RouterErrors.AccessDenied,
       );
-
     });
 
     describe("Creator Withdraw", async () => {
       it("Should withdraw balance and ERC20 for all colTypes", async () => {
-
-
-        const basicAddr = await f721.callStatic.getDeployedAddr(
-          "salt",
-        );
+        const basicAddr =
+          await f721.callStatic.getDeployedAddr("salt");
         await f721
           .connect(mad)
           .splitterCheck(
@@ -412,7 +403,6 @@ describe("MADRouter721 - ERC20", () => {
           .withdraw(basic.address, erc20.address);
         const newBal2 = await erc20.balanceOf(mad.address);
 
-
         const verArt = await artifacts.readArtifact(
           "FactoryVerifier",
         );
@@ -422,14 +412,12 @@ describe("MADRouter721 - ERC20", () => {
           ethers.provider,
         );
 
-
         expect(tx2).to.be.ok;
         // we no longer take 10% of platform fees
 
         expect(price.mul(8000).div(10_000)).to.be.eq(
           newBal2.sub(bal2),
         );
-
 
         expect(tx2).to.be.ok;
 
@@ -451,8 +439,6 @@ describe("MADRouter721 - ERC20", () => {
         await expect(
           r721.connect(mad).withdraw(basic.address, dead),
         ).to.be.revertedWith(RouterErrors.NoFunds);
-
-
       });
       it("Should withdraw ERC20 and distribute public mint fees for all colTypes", async () => {
         // mad.address is creator - 10% royalties
@@ -483,9 +469,8 @@ describe("MADRouter721 - ERC20", () => {
         );
 
         // Deploy BASIC contracts and set public mint = true
-        const basicAddr = await f721.callStatic.getDeployedAddr(
-          "salt",
-        );
+        const basicAddr =
+          await f721.callStatic.getDeployedAddr("salt");
         await f721
           .connect(mad)
           .createCollection(
@@ -508,8 +493,12 @@ describe("MADRouter721 - ERC20", () => {
           .setMintState(basic.address, true);
 
         // Record ERC20 start balances
-        const startBalMad = await erc20.balanceOf(mad.address);
-        const startBalAmb = await erc20.balanceOf(amb.address);
+        const startBalMad = await erc20.balanceOf(
+          mad.address,
+        );
+        const startBalAmb = await erc20.balanceOf(
+          amb.address,
+        );
         const startBalRecipient = await erc20.balanceOf(
           recipient,
         );
@@ -549,13 +538,14 @@ describe("MADRouter721 - ERC20", () => {
         );
         // owner.address = MAD receiver = + 100% mint fees
         expect(endBalRecipient).to.eq(
-          startBalRecipient.add(ethers.utils.parseEther("2.5")),
+          startBalRecipient.add(
+            ethers.utils.parseEther("2.5"),
+          ),
         );
         // acc01.address = buyer = - price - fee - txFees
         expect(endBalAcc01).to.eq(
           startBalAcc01.sub(ethers.utils.parseEther("3.5")),
         );
-
       });
     });
     describe("Only Owner", async () => {
@@ -574,7 +564,6 @@ describe("MADRouter721 - ERC20", () => {
         ).to.be.revertedWith(RouterErrors.Unauthorized);
       });
       it("Should initialize paused and unpaused states", async () => {
-
         const addr = await f721.callStatic.getDeployedAddr(
           "salt",
         );
@@ -583,9 +572,9 @@ describe("MADRouter721 - ERC20", () => {
         await expect(
           r721.connect(acc01).pause(),
         ).to.be.revertedWith(RouterErrors.Unauthorized);
-        await expect(r721.setBase(addr, "")).to.be.revertedWith(
-          RouterErrors.Paused,
-        );
+        await expect(
+          r721.setBase(addr, ""),
+        ).to.be.revertedWith(RouterErrors.Paused);
 
         await expect(
           r721.burn(addr, [1, 2, 3]),
@@ -594,14 +583,12 @@ describe("MADRouter721 - ERC20", () => {
           r721.setMintState(addr, false),
         ).to.be.revertedWith(RouterErrors.Paused);
 
-
         await expect(
           r721.connect(acc02).unpause(),
         ).to.be.revertedWith(RouterErrors.Unauthorized);
         expect(await r721.unpause()).to.be.ok;
       });
     });
-
 
     describe("Burn-setBaseFee", async () => {
       it("Should burn tokens for 721Basic collection type", async () => {
@@ -617,9 +604,8 @@ describe("MADRouter721 - ERC20", () => {
         const splAddr = await f721.callStatic.getDeployedAddr(
           "MADSplitter1",
         );
-        const basicAddr = await f721.callStatic.getDeployedAddr(
-          "BasicSalt",
-        );
+        const basicAddr =
+          await f721.callStatic.getDeployedAddr("BasicSalt");
         await f721
           .connect(acc02)
           .createCollection(
@@ -648,7 +634,9 @@ describe("MADRouter721 - ERC20", () => {
             r721.address,
             ethers.utils.parseEther("2.5"),
           );
-        await r721.connect(acc02).setMintState(basicAddr, true);
+        await r721
+          .connect(acc02)
+          .setMintState(basicAddr, true);
 
         await erc20
           .connect(acc01)
@@ -700,8 +688,6 @@ describe("MADRouter721 - ERC20", () => {
           RouterErrors.AccessDenied,
         );
       });
-
     });
-
   });
 });

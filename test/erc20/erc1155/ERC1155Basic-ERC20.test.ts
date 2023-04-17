@@ -117,7 +117,7 @@ describe("ERC1155Basic", () => {
       // can't be eq to ethAmount due to contract deployment cost
       res = await ethers.provider.getBalance(owner.address);
       expect(res.toString()).to.have.lengthOf(22);
-     
+
       // those should eq to hardhat prefunded account's value
       expect(
         await ethers.provider.getBalance(amb.address),

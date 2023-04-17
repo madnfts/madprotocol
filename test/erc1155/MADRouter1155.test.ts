@@ -1,4 +1,3 @@
-
 import "@nomicfoundation/hardhat-chai-matchers";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
@@ -12,11 +11,7 @@ import {
   MADRouter1155,
   MockERC20,
 } from "../../src/types";
-import {
-
-  BasicErrors,
-  RouterErrors,
-} from "./../utils/errors";
+import { BasicErrors, RouterErrors } from "./../utils/errors";
 import { getSignerAddrs } from "./../utils/fixtures";
 import {
   dead,
@@ -73,7 +68,6 @@ describe("MADRouter1155", () => {
     });
   });
   describe("Set URI", async () => {
-   
     it("Should revert for locked base URI", async () => {
       await f1155
         .connect(acc02)
@@ -122,10 +116,9 @@ describe("MADRouter1155", () => {
         basic,
         RouterErrors.UriLocked,
       );
-   });
+    });
 
     it("Should set URI for 1155Basic collection type", async () => {
-      
       await f1155
         .connect(acc02)
         .splitterCheck(
@@ -184,10 +177,9 @@ describe("MADRouter1155", () => {
         RouterErrors.AccessDenied,
       );
     });
-   });
+  });
   describe("Burn", async () => {
     it("Should burn tokens for 1155Basic collection type", async () => {
-      
       await f1155
         .connect(acc02)
         .splitterCheck(
@@ -248,10 +240,9 @@ describe("MADRouter1155", () => {
         RouterErrors.AccessDenied,
       );
     });
-    });
+  });
   describe("Batch Burn", async () => {
     it("Should batch burn token for 1155Basic collection type", async () => {
-      
       await f1155
         .connect(acc02)
         .splitterCheck(
@@ -340,7 +331,7 @@ describe("MADRouter1155", () => {
         RouterErrors.AccessDenied,
       );
     });
-    
+
     await f1155
       .connect(acc02)
       .splitterCheck(
@@ -378,7 +369,6 @@ describe("MADRouter1155", () => {
     );
     // });
     it("Should set publicMintState for minimal, basic and whitelist colTypes", async () => {
-      
       await f1155
         .connect(acc02)
         .splitterCheck(
@@ -499,7 +489,7 @@ describe("MADRouter1155", () => {
         RouterErrors.AccessDenied,
       );
     });
-    });
+  });
   describe("Creator Withdraw", async () => {
     it("Should withdraw balance and ERC20 for all colTypes", async () => {
       const prevBal = BigNumber.from(2).pow(255);
@@ -900,7 +890,6 @@ describe("MADRouter1155", () => {
       ).to.be.revertedWith(RouterErrors.Unauthorized);
     });
     it("Should initialize paused and unpaused states", async () => {
-
       const addr = await f1155.callStatic.getDeployedAddr(
         "salt",
       );
@@ -912,7 +901,7 @@ describe("MADRouter1155", () => {
       await expect(r1155.setURI(addr, "")).to.be.revertedWith(
         RouterErrors.Paused,
       );
-     
+
       await expect(
         r1155.burn(
           addr,
@@ -924,8 +913,7 @@ describe("MADRouter1155", () => {
       await expect(
         r1155.setMintState(addr, false),
       ).to.be.revertedWith(RouterErrors.Paused);
-    
-     
+
       await expect(
         r1155.connect(acc02).unpause(),
       ).to.be.revertedWith(RouterErrors.Unauthorized);
@@ -1123,7 +1111,6 @@ describe("MADRouter1155", () => {
   }),
     describe("Burn-setfees", async () => {
       it("Should burn tokens for 1155Basic collection type", async () => {
-        
         await f1155
           .connect(acc02)
           .splitterCheck(
@@ -1205,10 +1192,9 @@ describe("MADRouter1155", () => {
           RouterErrors.AccessDenied,
         );
       });
-     });
+    });
   describe("Batch Burn", async () => {
-     it("Should batch burn token for 1155Basic collection type", async () => {
-      
+    it("Should batch burn token for 1155Basic collection type", async () => {
       await f1155
         .connect(acc02)
         .splitterCheck(
@@ -1309,5 +1295,5 @@ describe("MADRouter1155", () => {
         RouterErrors.AccessDenied,
       );
     });
-   });
+  });
 });

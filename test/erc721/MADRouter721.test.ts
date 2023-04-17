@@ -1,4 +1,3 @@
-
 import "@nomicfoundation/hardhat-chai-matchers";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
@@ -12,10 +11,7 @@ import {
   MADRouter721,
   MockERC20,
 } from "../../src/types";
-import {
-  BasicErrors,
-  RouterErrors,
-} from "./../utils/errors";
+import { BasicErrors, RouterErrors } from "./../utils/errors";
 import { getSignerAddrs } from "./../utils/fixtures";
 import { dead, madFixture721B } from "./../utils/madFixtures";
 
@@ -331,7 +327,7 @@ describe("MADRouter721", () => {
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
-          const basicAddr = await f721.callStatic.getDeployedAddr(
+      const basicAddr = await f721.callStatic.getDeployedAddr(
         "BasicSalt",
       );
 
@@ -356,13 +352,13 @@ describe("MADRouter721", () => {
       const tx2 = await r721
         .connect(acc02)
         .setMintState(basicAddr, true);
-   
+
       expect(tx2).to.be.ok;
 
       expect(await basic.callStatic.publicMintState()).to.eq(
         true,
       );
-    
+
       const verArt = await artifacts.readArtifact(
         "FactoryVerifier",
       );
@@ -371,16 +367,14 @@ describe("MADRouter721", () => {
         verArt.abi,
         ethers.provider,
       );
-   
+
       await expect(
         r721.connect(acc01).setMintState(basicAddr, true),
       ).to.be.revertedWithCustomError(
         ver,
         RouterErrors.AccessDenied,
       );
-  
     });
-
   });
   describe("Creator Withdraw", async () => {
     it("Should withdraw balance and ERC20 for all colTypes", async () => {
@@ -577,8 +571,6 @@ describe("MADRouter721", () => {
         "ERC721Basic",
         lazyAddr,
       );
-
- 
 
       await erc20.mint(lazy.address, price);
       await r721
@@ -903,8 +895,7 @@ describe("MADRouter721", () => {
           .sub(txMintGas)
           .sub(ethers.utils.parseEther("3.5")),
       );
-
-        });
+    });
   });
   describe("Only Owner", async () => {
     it("Should update contract's owner", async () => {
@@ -922,7 +913,6 @@ describe("MADRouter721", () => {
       ).to.be.revertedWith(RouterErrors.Unauthorized);
     });
     it("Should initialize paused and unpaused states", async () => {
-     
       const addr = await f721.callStatic.getDeployedAddr(
         "salt",
       );
@@ -934,14 +924,14 @@ describe("MADRouter721", () => {
       await expect(r721.setBase(addr, "")).to.be.revertedWith(
         RouterErrors.Paused,
       );
-    
+
       await expect(
         r721.burn(addr, [1, 2, 3]),
       ).to.be.revertedWith(RouterErrors.Paused);
       await expect(
         r721.setMintState(addr, false),
       ).to.be.revertedWith(RouterErrors.Paused);
-    
+
       await expect(
         r721.connect(acc02).unpause(),
       ).to.be.revertedWith(RouterErrors.Unauthorized);
@@ -949,7 +939,7 @@ describe("MADRouter721", () => {
     });
   });
 
-   describe("Set Fee Set Max Tests", async () => {
+  describe("Set Fee Set Max Tests", async () => {
     it("Should allow setting fees below and at the limit (2.5 eth and 0.5 eth for our fixtures)", async () => {
       await expect(
         r721.setFees(
@@ -1056,7 +1046,7 @@ describe("MADRouter721", () => {
       //     const root = ethers.utils.keccak256(
       //       ethers.utils.toUtf8Bytes("fakeRoot"),
       //     );
-      //     
+      //
       //     await f721
       //       .connect(acc02)
       //       .splitterCheck(
@@ -1123,7 +1113,7 @@ describe("MADRouter721", () => {
       //   });
       //   it("Should burn tokens for 721Lazy collection type", async () => {
       //     const signer = ethers.Wallet.createRandom();
-      //     
+      //
       //     await f721.setSigner(await signer.getAddress());
       //     await f721
       //       .connect(acc02)
@@ -1261,7 +1251,7 @@ describe("MADRouter721", () => {
     });
   // describe("Whitelist Creator Mint-setBaseFee", async () => {
   //   it("Should mint to creator", async () => {
-  //     
+  //
   //     await f721
   //       .connect(acc02)
   //       .splitterCheck(
@@ -1329,7 +1319,7 @@ describe("MADRouter721", () => {
   // });
   // describe("Whitelist token gifting-setBaseFee", async () => {
   //   it("Should gift tokens", async () => {
-  //     
+  //
   //     await f721
   //       .connect(acc02)
   //       .splitterCheck(

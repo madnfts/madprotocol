@@ -1,4 +1,3 @@
-
 import "@nomicfoundation/hardhat-chai-matchers";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
@@ -13,7 +12,6 @@ import {
   MockERC20,
 } from "../../../src/types";
 import {
-
   BasicErrors,
   RouterErrors,
 } from "../../utils/errors";
@@ -50,7 +48,7 @@ describe("MADRouter1155 - ERC20", () => {
   before("Set signers and reset network", async () => {
     [owner, amb, mad, acc01, acc02] =
       await // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (ethers as any).getSigners();
+      (ethers as any).getSigners();
 
     await network.provider.send("hardhat_reset");
   });
@@ -85,7 +83,6 @@ describe("MADRouter1155 - ERC20", () => {
     });
   });
   describe("Set URI", async () => {
-
     it("Should set URI for 1155Basic collection type", async () => {
       await f1155
         .connect(acc02)
@@ -145,11 +142,9 @@ describe("MADRouter1155 - ERC20", () => {
         RouterErrors.AccessDenied,
       );
     });
-
   });
 
   describe("Burn", async () => {
-
     it("Should burn tokens for 1155Basic collection type", async () => {
       await f1155
         .connect(acc02)
@@ -216,10 +211,8 @@ describe("MADRouter1155 - ERC20", () => {
         RouterErrors.AccessDenied,
       );
     });
-
   });
   describe("Batch Burn", async () => {
-
     it("Should batch burn token for 1155Basic collection type", async () => {
       await f1155
         .connect(acc02)
@@ -303,7 +296,6 @@ describe("MADRouter1155 - ERC20", () => {
         RouterErrors.AccessDenied,
       );
     });
-
   });
   describe("Set MintState", async () => {
     it("Should revert for invalid stateType", async () => {
@@ -317,7 +309,6 @@ describe("MADRouter1155 - ERC20", () => {
     });
 
     it("Should set publicMintState for minimal, basic and whitelist colTypes", async () => {
-      
       await f1155
         .connect(acc02)
         .splitterCheck(
@@ -377,15 +368,11 @@ describe("MADRouter1155 - ERC20", () => {
         ver,
         RouterErrors.AccessDenied,
       );
-
     });
-
   });
 
   describe("Creator Withdraw", async () => {
     it("Should withdraw balance and ERC20 for all colTypes", async () => {
-
-
       const basicAddr =
         await f1155.callStatic.getDeployedAddr("salt");
       await f1155
@@ -435,7 +422,6 @@ describe("MADRouter1155 - ERC20", () => {
         .withdraw(basic.address, erc20.address);
       const newBal2 = await erc20.balanceOf(mad.address);
 
-
       const verArt = await artifacts.readArtifact(
         "FactoryVerifier",
       );
@@ -449,7 +435,6 @@ describe("MADRouter1155 - ERC20", () => {
       expect(price.mul(16000).div(10_000)).to.be.eq(
         newBal2.sub(bal2),
       );
-
 
       await expect(
         r1155
@@ -467,8 +452,6 @@ describe("MADRouter1155 - ERC20", () => {
       await expect(
         r1155.connect(mad).withdraw(basic.address, dead),
       ).to.be.revertedWith(RouterErrors.NoFunds);
-
-
     });
   });
   describe("Only Owner", async () => {
@@ -487,7 +470,6 @@ describe("MADRouter1155 - ERC20", () => {
       ).to.be.revertedWith(RouterErrors.Unauthorized);
     });
     it("Should initialize paused and unpaused states", async () => {
-
       const addr = await f1155.callStatic.getDeployedAddr(
         "salt",
       );
@@ -512,7 +494,6 @@ describe("MADRouter1155 - ERC20", () => {
         r1155.setMintState(addr, false),
       ).to.be.revertedWith(RouterErrors.Paused);
 
- 
       await expect(
         r1155.connect(acc02).unpause(),
       ).to.be.revertedWith(RouterErrors.Unauthorized);
@@ -713,7 +694,6 @@ describe("MADRouter1155 - ERC20", () => {
     });
   });
   describe("Burn-setfees", async () => {
-
     it("Should burn tokens for 1155Basic collection type", async () => {
       await f1155
         .connect(acc02)
@@ -917,7 +897,5 @@ describe("MADRouter1155 - ERC20", () => {
         RouterErrors.AccessDenied,
       );
     });
-
   });
-
 });

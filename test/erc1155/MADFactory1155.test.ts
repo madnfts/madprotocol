@@ -75,7 +75,7 @@ describe("MADFactory1155", () => {
   });
 
   describe("Splitter check", async () => {
-  it("Should revert if repeated salt is provided", async () => {
+    it("Should revert if repeated salt is provided", async () => {
       await f1155
         .connect(acc02)
         .splitterCheck("MADSplitter1", dead, dead, 0, 0);
@@ -144,7 +144,6 @@ describe("MADFactory1155", () => {
       expect(storage.valid).to.eq(true);
     });
     it("Should deploy splitter with ambassador, update storage and emit events", async () => {
-      
       const tx: ContractTransaction = await f1155
         .connect(acc02)
         .splitterCheck(
@@ -218,10 +217,7 @@ describe("MADFactory1155", () => {
   });
 
   describe("Create collection", async () => {
-
-
     it("Should deploy ERC1155Basic, update storage and emit events", async () => {
-      
       await f1155
         .connect(acc02)
         .splitterCheck(
@@ -322,7 +318,7 @@ describe("MADFactory1155", () => {
         FactoryErrors.AccessDenied,
       );
     });
-     });
+  });
 
   // `router` and `signer` setters tested in init.
   describe("Only owner functions", async () => {
@@ -426,7 +422,7 @@ describe("MADFactory1155", () => {
       const splAddr = await f1155.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
-     
+
       await f1155
         .connect(acc02)
         .createCollection(
@@ -440,7 +436,6 @@ describe("MADFactory1155", () => {
           splAddr,
           750,
         );
-
 
       expect(await f1155.getIDsLength(acc02.address)).to.eq(
         1,
@@ -624,7 +619,6 @@ describe("MADFactory1155", () => {
       );
     });
     it("Should verify a collection's creator", async () => {
-      
       await f1155
         .connect(acc02)
         .splitterCheck(

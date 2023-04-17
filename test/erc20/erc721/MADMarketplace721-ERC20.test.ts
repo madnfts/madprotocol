@@ -23,6 +23,7 @@ import {
   dead,
   getOrderId721,
   madFixture721D,
+  swapTokens,
 } from "./../../utils/madFixtures";
 
 describe("MADMarketplace721 - ERC20 Payments", () => {
@@ -620,7 +621,7 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
       await f721
         .connect(acc02)
         .createCollection(
-          0,
+          1,
           "BasicSalt",
           "721Basic",
           "BASIC",
@@ -640,12 +641,13 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
       );
 
       // Mint the token with erc20
-      await erc20
+      const erc20MintTx = await erc20
         .connect(acc02)
         .approve(
           r721.address,
           ethers.utils.parseEther("0.25"),
         );
+      expect(erc20MintTx).to.be.ok;
       await r721
         .connect(acc02)
         .basicMintTo(basic.address, acc02.address, 1);

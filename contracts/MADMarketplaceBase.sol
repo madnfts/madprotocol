@@ -2,13 +2,13 @@
 
 pragma solidity 0.8.16;
 
-import { MAD } from "./MAD.sol";
-import { FactoryVerifier, MarketplaceEventsAndErrorsBase } from "./EventsAndErrors.sol";
+import { MAD } from "contracts/MAD.sol";
+import { FactoryVerifier, MarketplaceEventsAndErrorsBase } from "contracts/EventsAndErrors.sol";
 // import { Types } from "./Types.sol";
-import { Pausable } from "./lib/security/Pausable.sol";
-import { Owned } from "./lib/auth/Owned.sol";
-import { SafeTransferLib } from "./lib/utils/SafeTransferLib.sol";
-import { ERC20 } from "./lib/tokens/ERC20.sol";
+import { Pausable } from "contracts/lib/security/Pausable.sol";
+import { Owned } from "contracts/lib/auth/Owned.sol";
+import { SafeTransferLib } from "contracts/lib/utils/SafeTransferLib.sol";
+import { ERC20 } from "contracts/lib/tokens/ERC20.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 
 abstract contract MADMarketplaceBase is MAD, Owned(msg.sender), Pausable, MarketplaceEventsAndErrorsBase {

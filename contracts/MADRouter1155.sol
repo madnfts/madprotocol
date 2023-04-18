@@ -2,17 +2,17 @@
 
 pragma solidity 0.8.16;
 
-import { MAD } from "./MAD.sol";
-import { RouterEvents, FactoryVerifier } from "./EventsAndErrors.sol";
+import { MAD } from "contracts/MAD.sol";
+import { RouterEvents, FactoryVerifier } from "contracts/EventsAndErrors.sol";
 
-import { ERC20 } from "./lib/tokens/ERC20.sol";
-import { ERC1155Basic } from "./lib/tokens/ERC1155/Impl/ERC1155Basic.sol";
+import { ERC20 } from "contracts/lib/tokens/ERC20.sol";
+import { ERC1155Basic } from "contracts/lib/tokens/ERC1155/Impl/ERC1155Basic.sol";
 
-import { SafeTransferLib } from "./lib/utils/SafeTransferLib.sol";
-import { ReentrancyGuard } from "./lib/security/ReentrancyGuard.sol";
-import { Pausable } from "./lib/security/Pausable.sol";
-import { Owned } from "./lib/auth/Owned.sol";
-import { FeeOracle } from "./lib/tokens/common/FeeOracle.sol";
+import { SafeTransferLib } from "contracts/lib/utils/SafeTransferLib.sol";
+import { ReentrancyGuard } from "contracts/lib/security/ReentrancyGuard.sol";
+import { Pausable } from "contracts/lib/security/Pausable.sol";
+import { Owned } from "contracts/lib/auth/Owned.sol";
+import { FeeOracle } from "contracts/lib/tokens/common/FeeOracle.sol";
 
 contract MADRouter1155 is MAD, RouterEvents, Owned(msg.sender), Pausable, ReentrancyGuard, FeeOracle {
     ////////////////////////////////////////////////////////////////

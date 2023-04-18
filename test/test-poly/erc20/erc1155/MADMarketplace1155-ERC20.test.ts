@@ -18,13 +18,13 @@ import {
   MADRouter1155,
   MockERC20,
   MockERC20__factory,
-} from "../../../src/types";
-import { MarketplaceErrors } from "../../../test/utils/errors";
+} from "../../../../src/types";
+import { MarketplaceErrors } from "../../../utils/errors";
 import {
   dead,
   getOrderId1155,
   madFixture1155F,
-} from "../../../test/utils/madFixtures";
+} from "../../../utils/madFixtures";
 
 describe("MADMarketplace1155 - ERC20 Payments", () => {
   type WalletWithAddress = Wallet & SignerWithAddress;
@@ -55,7 +55,7 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
   before("Set signers and reset network", async () => {
     [owner, amb, mad, acc01, acc02, acc03] =
       await // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (ethers as any).getSigners();
+      (ethers as any).getSigners();
 
     await network.provider.send("hardhat_reset", [
       {
@@ -124,9 +124,8 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
       const splAddr = await f1155.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
-      const basicAddr = await f1155.callStatic.getDeployedAddr(
-        "BasicSalt",
-      );
+      const basicAddr =
+        await f1155.callStatic.getDeployedAddr("BasicSalt");
       await f1155
         .connect(acc02)
         .createCollection(
@@ -211,9 +210,8 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
       const splAddr = await f1155.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
-      const basicAddr = await f1155.callStatic.getDeployedAddr(
-        "BasicSalt",
-      );
+      const basicAddr =
+        await f1155.callStatic.getDeployedAddr("BasicSalt");
       await f1155
         .connect(acc02)
         .createCollection(
@@ -365,9 +363,8 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
       const splAddr = await f1155.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
-      const basicAddr = await f1155.callStatic.getDeployedAddr(
-        "BasicSalt",
-      );
+      const basicAddr =
+        await f1155.callStatic.getDeployedAddr("BasicSalt");
       await f1155
         .connect(acc02)
         .createCollection(
@@ -451,9 +448,8 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
       const splAddr = await f1155.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
-      const basicAddr = await f1155.callStatic.getDeployedAddr(
-        "BasicSalt",
-      );
+      const basicAddr =
+        await f1155.callStatic.getDeployedAddr("BasicSalt");
       await f1155
         .connect(acc02)
         .createCollection(
@@ -638,9 +634,8 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
       const splAddr = await f1155.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
-      const basicAddr = await f1155.callStatic.getDeployedAddr(
-        "BasicSalt",
-      );
+      const basicAddr =
+        await f1155.callStatic.getDeployedAddr("BasicSalt");
       await f1155
         .connect(acc02)
         .createCollection(
@@ -982,9 +977,8 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
         .withdrawOutbid(erc20.address, 0, 0),
     ).to.be.reverted;
 
-    await expect(
-      m1155.connect(owner).withdrawERC20(),
-    ).to.be.reverted;
+    await expect(m1155.connect(owner).withdrawERC20()).to.be
+      .reverted;
 
     expect(await m1155.totalOutbid()).to.be.equal(
       ethers.utils.parseEther("0"),

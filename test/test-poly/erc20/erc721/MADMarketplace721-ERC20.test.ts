@@ -18,13 +18,13 @@ import {
   MADRouter721,
   MockERC20,
   MockERC20__factory,
-} from "../../../src/types";
+} from "../../../../src/types";
 // import { MarketplaceErrors } from "../../../test/utils/errors";
 import {
   dead,
   getOrderId721,
   madFixture721F,
-} from "../../../test/utils/madFixtures";
+} from "../../../utils/madFixtures";
 
 describe("MADMarketplace721 - ERC20 Payments", () => {
   type WalletWithAddress = Wallet & SignerWithAddress;
@@ -55,7 +55,7 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
   before("Set signers", async () => {
     [owner, amb, acc01, acc02, acc03] =
       await // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (ethers as any).getSigners();
+      (ethers as any).getSigners();
 
     await network.provider.send("hardhat_reset", [
       {
@@ -642,9 +642,8 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
       ethers.utils.parseEther("0"),
     );
 
-    await expect(
-      m721.connect(owner).withdrawERC20(),
-    ).to.be.reverted;
+    await expect(m721.connect(owner).withdrawERC20()).to.be
+      .reverted;
   });
 
   it("Test full end-to-end purchase and then withdraw; pause then clear the contract of the tokens (outbid and sold out and auto-withdraw)", async () => {
@@ -794,9 +793,8 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
       m721.connect(acc01).withdrawOutbid(erc20.address, 0, 0),
     ).to.be.reverted;
 
-    await expect(
-      m721.connect(owner).withdrawERC20(),
-    ).to.be.reverted;
+    await expect(m721.connect(owner).withdrawERC20()).to.be
+      .reverted;
 
     expect(await m721.totalOutbid()).to.be.equal(
       ethers.utils.parseEther("0"),

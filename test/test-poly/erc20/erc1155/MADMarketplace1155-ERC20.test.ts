@@ -930,10 +930,8 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
     // user withdraw
     // with one bid stuck because the contract is paused
 
-   
     await mine(600);
     await m1155.pause();
-
 
     expect(await m1155.totalOutbid()).to.be.equal(
       ethers.utils.parseEther("1.1"),
@@ -971,7 +969,5 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
     expect(await erc20.balanceOf(m1155.address)).to.be.equal(
       ethers.utils.parseEther("0"),
     );
-
-
   });
 });

@@ -135,44 +135,17 @@ contract MADFactory1155 is MAD,
         uint256 _ambShare,
         uint256 _projectShare
     ) external nonReentrant isThisOg whenNotPaused {
-        bytes32 splitterSalt = keccak256(
-            bytes(_splitterSalt)
-        );
         if (
             _ambassador == address(0) && 
             _project == address(0)) 
         {
-            // [owner, tx.origin]
-            address[] memory _payees = _payeesBuffer(
-                address(0),
-                address(0)
-            );
-            // [10, 90]
-            uint256[] memory _shares = _sharesBuffer(0,0);
-
-            address _splitter = SplitterDeployer._SplitterDeploy(
+            _splitterResolver(
                 _splitterSalt,
-                _payees,
-                _shares
-            );
-
-            splitterInfo[tx.origin][_splitter] = Types
-                .SplitterConfig({
-                    splitter: _splitter,
-                    splitterSalt: splitterSalt,
-                    ambassador: address(0),
-                    project: address(0),
-                    ambShare: 0,
-                    projectShare: 0,
-                    valid: true
-                });
-
-            emit SplitterCreated(
-                tx.origin,
-                _shares,
-                _payees,
-                _splitter,
-                0 // neither ambassador or project
+                address(0), // _ambassador
+                address(0), // _project
+                0,          // _ambShare
+                0,          // _projectShare
+                0           // _flag := no project/ambassador
             );
 
         } else if (
@@ -181,37 +154,13 @@ contract MADFactory1155 is MAD,
             _ambShare != 0 && 
             _ambShare < 21 
         ) {
-            // [owner, _ambassador, tx.origin]
-            address[] memory _payees = _payeesBuffer(
-                _ambassador, 
-                address(0)
-            );
-            // [10, _ambShare, 90 - _ambShare]
-            uint256[] memory _shares = _sharesBuffer(_ambShare, 0); 
-
-            address _splitter = SplitterDeployer._SplitterDeploy(
+            _splitterResolver(
                 _splitterSalt,
-                _payees,
-                _shares
-            );
-
-            splitterInfo[tx.origin][_splitter] = Types
-                .SplitterConfig({
-                    splitter: _splitter,
-                    splitterSalt: splitterSalt,
-                    ambassador: _ambassador,
-                    project: address(0),
-                    ambShare: _ambShare,
-                    projectShare: 0,
-                    valid: true
-                });
-
-            emit SplitterCreated(
-                tx.origin,
-                _shares,
-                _payees,
-                _splitter,
-                1 // ambassador only
+                _ambassador, // _ambassador
+                address(0),   // _project
+                _ambShare,   // _ambShare
+                0,            // _projectShare
+                1             // _flag := ambassador only
             );
 
         } else if(
@@ -220,37 +169,13 @@ contract MADFactory1155 is MAD,
             _projectShare != 0 &&
             _projectShare < 91
         ) {
-            // [owner, _project, tx.origin]
-            address[] memory _payees = _payeesBuffer(
-                address(0),
-                _project 
-            );
-            // [10, _projectShare, 90 - _projectShare]
-            uint256[] memory _shares = _sharesBuffer(0, _projectShare); 
-
-            address _splitter = SplitterDeployer._SplitterDeploy(
+            _splitterResolver(
                 _splitterSalt,
-                _payees,
-                _shares
-            );
-
-            splitterInfo[tx.origin][_splitter] = Types
-                .SplitterConfig({
-                    splitter: _splitter,
-                    splitterSalt: splitterSalt,
-                    ambassador: address(0),
-                    project: _project,
-                    ambShare: 0,
-                    projectShare: _projectShare,
-                    valid: true
-                });
-
-            emit SplitterCreated(
-                tx.origin,
-                _shares,
-                _payees,
-                _splitter,
-                2 // project only
+                address(0),     // _ambassador
+                _project,      // _project
+                0,              // _ambShare
+                _projectShare, // _projectShare
+                2               // _flag := project only
             );
 
         } else if(
@@ -261,43 +186,13 @@ contract MADFactory1155 is MAD,
             _projectShare != 0 &&
             _projectShare < 71
         ) { 
-            // [owner, _ambassador, _project, tx.origin]
-            address[] memory _payees = _payeesBuffer(
-                _ambassador,
-                _project
-            );
-
-            // [
-                // 10, 
-                // _ambShare, 
-                // _projectShare, 
-                // 90 - (_ambShare + _projectShare) 
-            // ]
-            uint256[] memory _shares = _sharesBuffer(_ambShare, _projectShare); 
-
-            address _splitter = SplitterDeployer._SplitterDeploy(
+            _splitterResolver(
                 _splitterSalt,
-                _payees,
-                _shares
-            );
-
-            splitterInfo[tx.origin][_splitter] = Types
-                .SplitterConfig({
-                    splitter: _splitter,
-                    splitterSalt: splitterSalt,
-                    ambassador: _ambassador,
-                    project: _project,
-                    ambShare: _ambShare,
-                    projectShare: _projectShare,
-                    valid: true
-                });
-
-            emit SplitterCreated(
-                tx.origin,
-                _shares,
-                _payees,
-                _splitter,
-                3 // both ambassador and project
+                _ambassador,   // _ambassador
+                _project,      // _project
+                _ambShare,     // _ambShare
+                _projectShare, // _projectShare
+                3               // _flag := ambassador and project
             );
 
         } else { 
@@ -344,45 +239,9 @@ contract MADFactory1155 is MAD,
         isThisOg
         whenNotPaused
     {
-        // removed as price can be set to 0
-        // require(_tokenType > 2 || _price > 0, 'Invalid price');
         _limiter(_tokenType, _splitter);
         _royaltyLocker(_royalty);
 
-        // if (_tokenType < 1) {
-        // (bytes32 tokenSalt, address deployed) = 
-        //     ERC1155MinimalDeployer._1155MinimalDeploy(
-        //         _tokenSalt,
-        //         _uri,
-        //         _price,
-        //         _splitter,
-        //         router,
-        //         _royalty,
-        //         erc20
-        //     );
-
-        // bytes32 colId = deployed.fillLast12Bytes();
-        // userTokens[tx.origin].push(colId);
-
-        // colInfo[colId] = Types.Collection1155(
-        //     tx.origin,
-        //     Types.ERC1155Type.ERC1155Minimal,
-        //     tokenSalt,
-        //     block.number,
-        //     _splitter
-        // );
-
-        // emit ERC1155MinimalCreated(
-        //     _splitter,
-        //     deployed,
-        //     _name,
-        //     _symbol, 
-        //     _royalty,
-        //     _maxSupply,
-        //     _price
-        // );
-        // }
-        // if (_tokenType == 1) {
         (bytes32 tokenSalt, address deployed) = 
         ERC1155BasicDeployer._1155BasicDeploy(
             _tokenSalt,
@@ -415,74 +274,6 @@ contract MADFactory1155 is MAD,
             _maxSupply,
             _price
         );
-        // }
-        // if (_tokenType == 2) {
-        //     (bytes32 tokenSalt, address deployed) = 
-        //     ERC1155WhitelistDeployer._1155WhitelistDeploy(
-        //         _tokenSalt,
-        //         _uri,
-        //         _price,
-        //         _maxSupply,
-        //         _splitter,
-        //         router,
-        //         _royalty,
-        //         erc20
-        //     );
-
-        // bytes32 colId = deployed.fillLast12Bytes();
-        // userTokens[tx.origin].push(colId);
-
-        // colInfo[colId] = Types.Collection1155(
-        //     tx.origin,
-        //     Types.ERC1155Type.ERC1155Whitelist,
-        //     tokenSalt,
-        //     block.number,
-        //     _splitter
-        // );
-
-        // emit ERC1155WhitelistCreated(
-        //     _splitter,
-        //     deployed,
-        //     _name,
-        //     _symbol, 
-        //     _royalty,
-        //     _maxSupply,
-        //     _price
-        // );
-        // }
-        // if (_tokenType > 2) {
-        //     (bytes32 tokenSalt, address deployed) = 
-        //         ERC1155LazyDeployer._1155LazyDeploy(
-        //             _tokenSalt,
-        //             _uri,
-        //             _splitter,
-        //             router,
-        //             signer,
-        //             _royalty,
-        //             erc20
-        //         );
-
-        // bytes32 colId = deployed.fillLast12Bytes();
-        // userTokens[tx.origin].push(colId);
-
-        // colInfo[colId] = Types.Collection1155(
-        //     tx.origin,
-        //     Types.ERC1155Type.ERC1155Lazy,
-        //     tokenSalt,
-        //     block.number,
-        //     _splitter
-        // );
-
-        // emit ERC1155LazyCreated(
-        //     _splitter,
-        //     deployed,
-        //     _name,
-        //     _symbol, 
-        //     _royalty,
-        //     _maxSupply,
-        //     _price
-        // );
-        // }
     }
 
     ////////////////////////////////////////////////////////////////
@@ -669,6 +460,48 @@ contract MADFactory1155 is MAD,
             }
         }
     }
+
+    function _splitterResolver(
+        string memory _splitterSalt,
+        address _ambassador,
+        address _project,
+        uint256 _ambShare,
+        uint256 _projectShare,
+        uint256 _flag 
+        ) internal 
+    {
+        address[] memory _payees = 
+            _payeesBuffer(_ambassador, _project);
+
+        uint256[] memory _shares = 
+            _sharesBuffer(_ambShare,_projectShare);
+
+        (address splitter, bytes32 splitterSalt) = 
+        SplitterDeployer._SplitterDeploy(
+            _splitterSalt,
+            _payees,
+            _shares
+        );
+
+        splitterInfo[tx.origin][splitter] = Types
+        .SplitterConfig(
+            splitter,
+            splitterSalt,
+            _ambassador,
+            _project,
+            _ambShare,
+            _projectShare,
+            true
+        );
+
+        emit SplitterCreated(
+            tx.origin,
+            _shares,
+            _payees,
+            splitter,
+            _flag
+        );
+    } 
 
     /// @inheritdoc FactoryVerifier
     function creatorAuth(address _token, address _user) 

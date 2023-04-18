@@ -611,7 +611,6 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
       ethers.utils.parseEther("3.1"),
     );
 
-
     await m721.connect(owner).withdrawERC20();
 
     // withdraw outbids
@@ -742,7 +741,6 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
     // user withdraw
     // with one bid stuck because the contract is paused
 
-  
     await mine(600);
     await m721.pause();
 
@@ -754,7 +752,7 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
     );
 
     // withdraw after pause
-  
+
     await m721.connect(owner).withdrawERC20();
 
     // withdraw outbids
@@ -779,6 +777,5 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
     expect(await erc20.balanceOf(m721.address)).to.be.equal(
       ethers.utils.parseEther("0"),
     );
-
   });
 });

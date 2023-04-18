@@ -2,6 +2,3 @@
 /* tslint:disable */
 /* eslint-disable */
 export { ERC1155Basic__factory } from "./ERC1155Basic__factory";
-export { ERC1155Lazy__factory } from "./ERC1155Lazy__factory";
-export { ERC1155Minimal__factory } from "./ERC1155Minimal__factory";
-export { ERC1155Whitelist__factory } from "./ERC1155Whitelist__factory";

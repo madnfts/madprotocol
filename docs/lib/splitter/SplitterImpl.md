@@ -1,58 +1,46 @@
 # SplitterImpl
 
-
-
-
-
-
-
-*This contract assumes that ERC20 tokens will behave similarly to native tokens (Ether). Rebasing tokens, and tokens that apply fees during transfers, are likely to not be supported as expected. If in doubt, we encourage you to run tests before sending real value to this contract.*
+_This contract assumes that ERC20 tokens will behave similarly to native tokens (Ether). Rebasing tokens, and tokens that apply fees during transfers, are likely to not be supported as expected. If in doubt, we encourage you to run tests before sending real value to this contract._
 
 ## Methods
 
-### _payees
+### \_payees
 
 ```solidity
 function _payees(uint256) external view returns (address)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | uint256 | undefined   |
 
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | address | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | address | undefined   |
 
-### _shares
+### \_shares
 
 ```solidity
 function _shares(address) external view returns (uint256)
 ```
 
-
-
-*Native public getters provided.*
+_Native public getters provided._
 
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | address | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | address | undefined   |
 
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | uint256 | undefined   |
 
 ### payeesLength
 
@@ -60,16 +48,13 @@ function _shares(address) external view returns (uint256)
 function payeesLength() external view returns (uint256)
 ```
 
-
-
-*Getter for `_payees.length`.*
-
+_Getter for `_payees.length`._
 
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | uint256 | undefined   |
 
 ### releasable
 
@@ -77,21 +62,19 @@ function payeesLength() external view returns (uint256)
 function releasable(address account) external view returns (uint256)
 ```
 
-
-
-*Getter for the amount of payee&#39;s releasable Ether.*
+_Getter for the amount of payee&#39;s releasable Ether._
 
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| account | address | undefined |
+| Name    | Type    | Description |
+| ------- | ------- | ----------- |
+| account | address | undefined   |
 
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | uint256 | undefined   |
 
 ### releasable
 
@@ -99,22 +82,20 @@ function releasable(address account) external view returns (uint256)
 function releasable(contract ERC20 token, address account) external view returns (uint256)
 ```
 
-
-
-*Getter for the amount of payee&#39;s releasable  `token` tokens.`token` should be the address of an ERC20 contract.*
+_Getter for the amount of payee&#39;s releasable `token` tokens.`token` should be the address of an ERC20 contract._
 
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| token | contract ERC20 | undefined |
-| account | address | undefined |
+| Name    | Type           | Description |
+| ------- | -------------- | ----------- |
+| token   | contract ERC20 | undefined   |
+| account | address        | undefined   |
 
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | uint256 | undefined   |
 
 ### release
 
@@ -122,15 +103,13 @@ function releasable(contract ERC20 token, address account) external view returns
 function release(address payable account) external nonpayable
 ```
 
-
-
-*Triggers a transfer to `account` of the amount of  Ether they are owed, according to their percentage of  the total shares and their previous withdrawals.*
+_Triggers a transfer to `account` of the amount of Ether they are owed, according to their percentage of the total shares and their previous withdrawals._
 
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| account | address payable | undefined |
+| Name    | Type            | Description |
+| ------- | --------------- | ----------- |
+| account | address payable | undefined   |
 
 ### release
 
@@ -138,16 +117,14 @@ function release(address payable account) external nonpayable
 function release(contract ERC20 token, address account) external nonpayable
 ```
 
-
-
-*Triggers a transfer to `account` of the amount of `token` tokens they are owed, according to their percentage of the total shares and their previous withdrawals. `token` must be the address of an ERC20 contract.*
+_Triggers a transfer to `account` of the amount of `token` tokens they are owed, according to their percentage of the total shares and their previous withdrawals. `token` must be the address of an ERC20 contract._
 
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| token | contract ERC20 | undefined |
-| account | address | undefined |
+| Name    | Type           | Description |
+| ------- | -------------- | ----------- |
+| token   | contract ERC20 | undefined   |
+| account | address        | undefined   |
 
 ### releaseAll
 
@@ -155,10 +132,7 @@ function release(contract ERC20 token, address account) external nonpayable
 function releaseAll() external nonpayable
 ```
 
-
-
-*Release all pending withdrawals.*
-
+_Release all pending withdrawals._
 
 ### released
 
@@ -166,22 +140,20 @@ function releaseAll() external nonpayable
 function released(contract ERC20 token, address account) external view returns (uint256)
 ```
 
-
-
-*Getter for the amount of `token` tokens already  released to a payee. `token` should be the address of an ERC20 contract.*
+_Getter for the amount of `token` tokens already released to a payee. `token` should be the address of an ERC20 contract._
 
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| token | contract ERC20 | undefined |
-| account | address | undefined |
+| Name    | Type           | Description |
+| ------- | -------------- | ----------- |
+| token   | contract ERC20 | undefined   |
+| account | address        | undefined   |
 
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | uint256 | undefined   |
 
 ### released
 
@@ -189,21 +161,19 @@ function released(contract ERC20 token, address account) external view returns (
 function released(address account) external view returns (uint256)
 ```
 
-
-
-*Getter for the amount of Ether already  released to a payee.*
+_Getter for the amount of Ether already released to a payee._
 
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| account | address | undefined |
+| Name    | Type    | Description |
+| ------- | ------- | ----------- |
+| account | address | undefined   |
 
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | uint256 | undefined   |
 
 ### totalReleased
 
@@ -211,21 +181,19 @@ function released(address account) external view returns (uint256)
 function totalReleased(contract ERC20 token) external view returns (uint256)
 ```
 
-
-
-*Getter for the total amount of `token`  already released.`token` should be the address of an ERC20 contract.*
+_Getter for the total amount of `token` already released.`token` should be the address of an ERC20 contract._
 
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| token | contract ERC20 | undefined |
+| Name  | Type           | Description |
+| ----- | -------------- | ----------- |
+| token | contract ERC20 | undefined   |
 
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | uint256 | undefined   |
 
 ### totalReleased
 
@@ -233,16 +201,13 @@ function totalReleased(contract ERC20 token) external view returns (uint256)
 function totalReleased() external view returns (uint256)
 ```
 
-
-
-*Getter for the total amount of Ether already released.*
-
+_Getter for the total amount of Ether already released._
 
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | uint256 | undefined   |
 
 ### totalShares
 
@@ -250,18 +215,13 @@ function totalReleased() external view returns (uint256)
 function totalShares() external view returns (uint256)
 ```
 
-
-
-*Getter for the total shares held by payees.*
-
+_Getter for the total shares held by payees._
 
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined |
-
-
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | uint256 | undefined   |
 
 ## Events
 
@@ -271,17 +231,13 @@ function totalShares() external view returns (uint256)
 event ERC20PaymentReleased(address indexed token, address to, uint256 amount)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| token `indexed` | address | undefined |
-| to  | address | undefined |
-| amount  | uint256 | undefined |
+| Name            | Type    | Description |
+| --------------- | ------- | ----------- |
+| token `indexed` | address | undefined   |
+| to              | address | undefined   |
+| amount          | uint256 | undefined   |
 
 ### PayeeAdded
 
@@ -289,16 +245,12 @@ event ERC20PaymentReleased(address indexed token, address to, uint256 amount)
 event PayeeAdded(address account, uint256 shares)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| account  | address | undefined |
-| shares  | uint256 | undefined |
+| Name    | Type    | Description |
+| ------- | ------- | ----------- |
+| account | address | undefined   |
+| shares  | uint256 | undefined   |
 
 ### PaymentReceived
 
@@ -306,16 +258,12 @@ event PayeeAdded(address account, uint256 shares)
 event PaymentReceived(address from, uint256 amount)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| from  | address | undefined |
-| amount  | uint256 | undefined |
+| Name   | Type    | Description |
+| ------ | ------- | ----------- |
+| from   | address | undefined   |
+| amount | uint256 | undefined   |
 
 ### PaymentReleased
 
@@ -323,18 +271,12 @@ event PaymentReceived(address from, uint256 amount)
 event PaymentReleased(address to, uint256 amount)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| to  | address | undefined |
-| amount  | uint256 | undefined |
-
-
+| Name   | Type    | Description |
+| ------ | ------- | ----------- |
+| to     | address | undefined   |
+| amount | uint256 | undefined   |
 
 ## Errors
 
@@ -344,10 +286,7 @@ event PaymentReleased(address to, uint256 amount)
 error AlreadyPayee()
 ```
 
-
-
-*0x42b50ca2*
-
+_0x42b50ca2_
 
 ### DeadAddress
 
@@ -355,10 +294,7 @@ error AlreadyPayee()
 error DeadAddress()
 ```
 
-
-
-*0x84ff3e1b*
-
+_0x84ff3e1b_
 
 ### DeniedAccount
 
@@ -366,10 +302,7 @@ error DeadAddress()
 error DeniedAccount()
 ```
 
-
-
-*0xb8e10e7e*
-
+_0xb8e10e7e_
 
 ### InvalidShare
 
@@ -377,10 +310,7 @@ error DeniedAccount()
 error InvalidShare()
 ```
 
-
-
-*0x100d5f74*
-
+_0x100d5f74_
 
 ### LengthMismatch
 
@@ -388,10 +318,7 @@ error InvalidShare()
 error LengthMismatch()
 ```
 
-
-
-*0xff633a38*
-
+_0xff633a38_
 
 ### NoPayees
 
@@ -399,10 +326,7 @@ error LengthMismatch()
 error NoPayees()
 ```
 
-
-
-*0x7b21919d*
-
+_0x7b21919d_
 
 ### NoShares
 
@@ -410,9 +334,4 @@ error NoPayees()
 error NoShares()
 ```
 
-
-
-*0xb317087b*
-
-
-
+_0xb317087b_

@@ -218,13 +218,12 @@ export interface MADFactory1155Interface extends utils.Interface {
 
   events: {
     "ERC1155BasicCreated(address,address,string,string,uint256,uint256,uint256)": EventFragment;
-    "ERC1155LazyCreated(address,address,string,string,uint256,uint256,uint256)": EventFragment;
-    "ERC1155MinimalCreated(address,address,string,string,uint256,uint256,uint256)": EventFragment;
-    "ERC1155WhitelistCreated(address,address,string,string,uint256,uint256,uint256)": EventFragment;
+    "FeesUpdated(uint256,uint256)": EventFragment;
     "MarketplaceUpdated(address)": EventFragment;
     "OwnerUpdated(address,address)": EventFragment;
     "Paused(address)": EventFragment;
     "PaymentTokenUpdated(address)": EventFragment;
+    "RecipientUpdated(address)": EventFragment;
     "RouterUpdated(address)": EventFragment;
     "SignerUpdated(address)": EventFragment;
     "SplitterCreated(address,uint256[],address[],address,uint256)": EventFragment;
@@ -232,13 +231,12 @@ export interface MADFactory1155Interface extends utils.Interface {
   };
 
   getEvent(nameOrSignatureOrTopic: "ERC1155BasicCreated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ERC1155LazyCreated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ERC1155MinimalCreated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ERC1155WhitelistCreated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "FeesUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MarketplaceUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnerUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PaymentTokenUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RecipientUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RouterUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SignerUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SplitterCreated"): EventFragment;
@@ -262,56 +260,16 @@ export type ERC1155BasicCreatedEvent = TypedEvent<
 export type ERC1155BasicCreatedEventFilter =
   TypedEventFilter<ERC1155BasicCreatedEvent>;
 
-export interface ERC1155LazyCreatedEventObject {
-  newSplitter: string;
-  newCollection: string;
-  name: string;
-  symbol: string;
-  royalties: BigNumber;
-  maxSupply: BigNumber;
-  mintPrice: BigNumber;
+export interface FeesUpdatedEventObject {
+  feeVal2: BigNumber;
+  feeVal3: BigNumber;
 }
-export type ERC1155LazyCreatedEvent = TypedEvent<
-  [string, string, string, string, BigNumber, BigNumber, BigNumber],
-  ERC1155LazyCreatedEventObject
+export type FeesUpdatedEvent = TypedEvent<
+  [BigNumber, BigNumber],
+  FeesUpdatedEventObject
 >;
 
-export type ERC1155LazyCreatedEventFilter =
-  TypedEventFilter<ERC1155LazyCreatedEvent>;
-
-export interface ERC1155MinimalCreatedEventObject {
-  newSplitter: string;
-  newCollection: string;
-  name: string;
-  symbol: string;
-  royalties: BigNumber;
-  maxSupply: BigNumber;
-  mintPrice: BigNumber;
-}
-export type ERC1155MinimalCreatedEvent = TypedEvent<
-  [string, string, string, string, BigNumber, BigNumber, BigNumber],
-  ERC1155MinimalCreatedEventObject
->;
-
-export type ERC1155MinimalCreatedEventFilter =
-  TypedEventFilter<ERC1155MinimalCreatedEvent>;
-
-export interface ERC1155WhitelistCreatedEventObject {
-  newSplitter: string;
-  newCollection: string;
-  name: string;
-  symbol: string;
-  royalties: BigNumber;
-  maxSupply: BigNumber;
-  mintPrice: BigNumber;
-}
-export type ERC1155WhitelistCreatedEvent = TypedEvent<
-  [string, string, string, string, BigNumber, BigNumber, BigNumber],
-  ERC1155WhitelistCreatedEventObject
->;
-
-export type ERC1155WhitelistCreatedEventFilter =
-  TypedEventFilter<ERC1155WhitelistCreatedEvent>;
+export type FeesUpdatedEventFilter = TypedEventFilter<FeesUpdatedEvent>;
 
 export interface MarketplaceUpdatedEventObject {
   newMarket: string;
@@ -352,6 +310,17 @@ export type PaymentTokenUpdatedEvent = TypedEvent<
 
 export type PaymentTokenUpdatedEventFilter =
   TypedEventFilter<PaymentTokenUpdatedEvent>;
+
+export interface RecipientUpdatedEventObject {
+  newRecipient: string;
+}
+export type RecipientUpdatedEvent = TypedEvent<
+  [string],
+  RecipientUpdatedEventObject
+>;
+
+export type RecipientUpdatedEventFilter =
+  TypedEventFilter<RecipientUpdatedEvent>;
 
 export interface RouterUpdatedEventObject {
   newRouter: string;
@@ -818,62 +787,11 @@ export interface MADFactory1155 extends BaseContract {
       mintPrice?: null
     ): ERC1155BasicCreatedEventFilter;
 
-    "ERC1155LazyCreated(address,address,string,string,uint256,uint256,uint256)"(
-      newSplitter?: PromiseOrValue<string> | null,
-      newCollection?: PromiseOrValue<string> | null,
-      name?: null,
-      symbol?: null,
-      royalties?: null,
-      maxSupply?: null,
-      mintPrice?: null
-    ): ERC1155LazyCreatedEventFilter;
-    ERC1155LazyCreated(
-      newSplitter?: PromiseOrValue<string> | null,
-      newCollection?: PromiseOrValue<string> | null,
-      name?: null,
-      symbol?: null,
-      royalties?: null,
-      maxSupply?: null,
-      mintPrice?: null
-    ): ERC1155LazyCreatedEventFilter;
-
-    "ERC1155MinimalCreated(address,address,string,string,uint256,uint256,uint256)"(
-      newSplitter?: PromiseOrValue<string> | null,
-      newCollection?: PromiseOrValue<string> | null,
-      name?: null,
-      symbol?: null,
-      royalties?: null,
-      maxSupply?: null,
-      mintPrice?: null
-    ): ERC1155MinimalCreatedEventFilter;
-    ERC1155MinimalCreated(
-      newSplitter?: PromiseOrValue<string> | null,
-      newCollection?: PromiseOrValue<string> | null,
-      name?: null,
-      symbol?: null,
-      royalties?: null,
-      maxSupply?: null,
-      mintPrice?: null
-    ): ERC1155MinimalCreatedEventFilter;
-
-    "ERC1155WhitelistCreated(address,address,string,string,uint256,uint256,uint256)"(
-      newSplitter?: PromiseOrValue<string> | null,
-      newCollection?: PromiseOrValue<string> | null,
-      name?: null,
-      symbol?: null,
-      royalties?: null,
-      maxSupply?: null,
-      mintPrice?: null
-    ): ERC1155WhitelistCreatedEventFilter;
-    ERC1155WhitelistCreated(
-      newSplitter?: PromiseOrValue<string> | null,
-      newCollection?: PromiseOrValue<string> | null,
-      name?: null,
-      symbol?: null,
-      royalties?: null,
-      maxSupply?: null,
-      mintPrice?: null
-    ): ERC1155WhitelistCreatedEventFilter;
+    "FeesUpdated(uint256,uint256)"(
+      feeVal2?: null,
+      feeVal3?: null
+    ): FeesUpdatedEventFilter;
+    FeesUpdated(feeVal2?: null, feeVal3?: null): FeesUpdatedEventFilter;
 
     "MarketplaceUpdated(address)"(
       newMarket?: PromiseOrValue<string> | null
@@ -900,6 +818,13 @@ export interface MADFactory1155 extends BaseContract {
     PaymentTokenUpdated(
       newPaymentToken?: PromiseOrValue<string> | null
     ): PaymentTokenUpdatedEventFilter;
+
+    "RecipientUpdated(address)"(
+      newRecipient?: PromiseOrValue<string> | null
+    ): RecipientUpdatedEventFilter;
+    RecipientUpdated(
+      newRecipient?: PromiseOrValue<string> | null
+    ): RecipientUpdatedEventFilter;
 
     "RouterUpdated(address)"(
       newRouter?: PromiseOrValue<string> | null

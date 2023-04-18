@@ -44,7 +44,7 @@
     "fs-extra": "^10.1.0",
     "hardhat": "^2.9.9",
     "hardhat-gas-reporter": "^1.0.8",
-    "hardhat-tracer": "^1.1.0-rc.8",
+    "hardhat-tracer": "^2.2.2",
     "husky": "^8.0.1",
     "jsbi": "^4.3.0",
     "keccak256": "^1.0.6",

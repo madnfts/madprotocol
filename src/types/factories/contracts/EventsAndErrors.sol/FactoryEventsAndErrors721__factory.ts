@@ -22,6 +22,11 @@ const _abi = [
     type: "error",
   },
   {
+    inputs: [],
+    name: "ZeroAddress",
+    type: "error",
+  },
+  {
     anonymous: false,
     inputs: [
       {
@@ -74,147 +79,19 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
-        indexed: true,
-        internalType: "address",
-        name: "newSplitter",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "newCollection",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "string",
-        name: "name",
-        type: "string",
-      },
-      {
-        indexed: false,
-        internalType: "string",
-        name: "symbol",
-        type: "string",
-      },
-      {
         indexed: false,
         internalType: "uint256",
-        name: "royalties",
+        name: "feeVal2",
         type: "uint256",
       },
       {
         indexed: false,
         internalType: "uint256",
-        name: "maxSupply",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "mintPrice",
+        name: "feeVal3",
         type: "uint256",
       },
     ],
-    name: "ERC721LazyCreated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "newSplitter",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "newCollection",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "string",
-        name: "name",
-        type: "string",
-      },
-      {
-        indexed: false,
-        internalType: "string",
-        name: "symbol",
-        type: "string",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "royalties",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "maxSupply",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "mintPrice",
-        type: "uint256",
-      },
-    ],
-    name: "ERC721MinimalCreated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "newSplitter",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "newCollection",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "string",
-        name: "name",
-        type: "string",
-      },
-      {
-        indexed: false,
-        internalType: "string",
-        name: "symbol",
-        type: "string",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "royalties",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "maxSupply",
-        type: "uint256",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "mintPrice",
-        type: "uint256",
-      },
-    ],
-    name: "ERC721WhitelistCreated",
+    name: "FeesUpdated",
     type: "event",
   },
   {
@@ -241,6 +118,19 @@ const _abi = [
       },
     ],
     name: "PaymentTokenUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "newRecipient",
+        type: "address",
+      },
+    ],
+    name: "RecipientUpdated",
     type: "event",
   },
   {

@@ -24,8 +24,13 @@ const parser = yargs
 
 // Load and validate .env configs
 dotenvConfig({ path: resolve(__dirname, "./.env") });
-const { INFURA_API_KEY, MNEMONIC, ETHERSCAN_API_KEY, PK, ALCHEMY_KEY } =
-  process.env;
+const {
+  INFURA_API_KEY,
+  MNEMONIC,
+  ETHERSCAN_API_KEY,
+  PK,
+  ALCHEMY_KEY,
+} = process.env;
 const DEFAULT_MNEMONIC =
   "candy maple cake sugar pudding cream honey rich smooth crumble sweet treat";
 (async () => {
@@ -144,9 +149,9 @@ const config: HardhatUserConfig = {
     hardhat: {
       forking: {
         url: `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`,
-        blockNumber: 39835000
-      }
-    }
+        blockNumber: 39835000,
+      },
+    },
   },
   paths: {
     artifacts: "./artifacts",
@@ -154,15 +159,31 @@ const config: HardhatUserConfig = {
     sources: "./contracts",
     tests: "./test",
   },
+
+  // solidity: {
+  //   version: "0.8.16",
+  //   settings: {
+  //     metadata: {
+  //       bytecodeHash: "none",
+  //     },
+  //     optimizer: {
+  //       enabled: true,
+  //       runs: 800,
+  //     },
+  //   },
+  // },
   solidity: {
     version: "0.8.16",
     settings: {
-      metadata: {
-        bytecodeHash: "none",
-      },
+      viaIR: true,
       optimizer: {
         enabled: true,
-        runs: 800,
+        details: {
+          yul: true,
+          yulDetails: {
+            stackAllocation: true,
+          },
+        },
       },
     },
   },

@@ -2,6 +2,3 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { ERC721BasicEventsAndErrors } from "./ERC721BasicEventsAndErrors";
-export type { ERC721LazyEventsAndErrors } from "./ERC721LazyEventsAndErrors";
-export type { ERC721MinimalEventsAndErrors } from "./ERC721MinimalEventsAndErrors";
-export type { ERC721WhitelistEventsAndErrors } from "./ERC721WhitelistEventsAndErrors";

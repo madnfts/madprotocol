@@ -75,34 +75,6 @@ describe("MADFactory1155", () => {
   });
 
   describe("Splitter check", async () => {
-    // it("Should revert if wrong ambassador or ambShare is provided", async () => {
-    //   await f1155.addAmbassador(amb.address);
-    //   const tx = f1155
-    //     .connect(acc02)
-    //     .splitterCheck("MADSplitter1", acc01.address, 20);
-    //   const tx2 = f1155
-    //     .connect(acc02)
-    //     .splitterCheck("MADSplitter1", amb.address, 21);
-
-    //   await expect(tx).to.be.revertedWithCustomError(
-    //     f1155,
-    //     FactoryErrors.SplitterFail,
-    //   );
-    //   await expect(tx2).to.be.revertedWithCustomError(
-    //     f1155,
-    //     FactoryErrors.SplitterFail,
-    //   );
-    // });
-    // this won't fail with latest release because we no longer give royalties to contract owner
-    // it("Should revert if creator and owner are the same", async () => {
-    //   const tx = f1155
-    //     .connect(owner)
-    //     .splitterCheck("MADSplitter1", dead, dead, 0, 0);
-
-    //   await expect(tx).to.be.revertedWith(
-    //     FactoryErrors.InitFailed,
-    //   );
-    // });
     it("Should revert if repeated salt is provided", async () => {
       await f1155
         .connect(acc02)
@@ -172,7 +144,6 @@ describe("MADFactory1155", () => {
       expect(storage.valid).to.eq(true);
     });
     it("Should deploy splitter with ambassador, update storage and emit events", async () => {
-      // await f1155.addAmbassador(amb.address);
       const tx: ContractTransaction = await f1155
         .connect(acc02)
         .splitterCheck(
@@ -246,110 +217,7 @@ describe("MADFactory1155", () => {
   });
 
   describe("Create collection", async () => {
-    it("Should deploy ERC1155Minimal, update storage and emit events", async () => {
-      // await f1155.addAmbassador(amb.address);
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      const minAddr = await f1155.callStatic.getDeployedAddr(
-        "MinSalt",
-      );
-      const tx = await f1155
-        .connect(acc02)
-        .createCollection(
-          0,
-          "MinSalt",
-          "1155Min",
-          "MIN",
-          price,
-          1,
-          "cid/id.json",
-          splAddr,
-          750,
-        );
-      const colID = await f1155.callStatic.getColID(minAddr);
-      const storage = await f1155.callStatic.userTokens(
-        acc02.address,
-        0,
-      );
-      const colInfo: Collection =
-        await f1155.callStatic.colInfo(colID);
-
-      const fail1 = f1155
-        .connect(acc01)
-        .createCollection(
-          0,
-          "MinSalt",
-          "1155Min",
-          "MIN",
-          price,
-          1,
-          "cid/id.json",
-          splAddr,
-          750,
-        );
-
-      const fail2 = f1155
-        .connect(acc02)
-        .createCollection(
-          4,
-          "MinSalt",
-          "1155Min",
-          "MIN",
-          price,
-          1,
-          "cid/id.json",
-          splAddr,
-          750,
-        );
-
-      expect(tx).to.be.ok;
-      expect(storage).to.eq(colID);
-      expect(colInfo.blocknumber).to.eq(
-        ethers.BigNumber.from(
-          await f1155.provider.getBlockNumber(),
-        ),
-      );
-      expect(colInfo.colType).to.eq(0);
-      expect(colInfo.creator).to.eq(acc02.address);
-      expect(colInfo.splitter).to.eq(splAddr);
-      expect(colInfo.colSalt).to.eq(
-        ethers.utils.keccak256(
-          ethers.utils.toUtf8Bytes("MinSalt"),
-        ),
-      );
-      await expect(tx)
-        .to.emit(f1155, "ERC1155MinimalCreated")
-        .withArgs(
-          splAddr,
-          minAddr,
-          "1155Min",
-          "MIN",
-          750,
-          1,
-          price,
-        );
-      await expect(fail1).to.be.revertedWithCustomError(
-        f1155,
-        FactoryErrors.AccessDenied,
-      );
-      await expect(fail2).to.be.revertedWithCustomError(
-        f1155,
-        FactoryErrors.AccessDenied,
-      );
-    });
-
     it("Should deploy ERC1155Basic, update storage and emit events", async () => {
-      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck(
@@ -440,209 +308,6 @@ describe("MADFactory1155", () => {
           750,
           1000,
           price,
-        );
-      await expect(fail1).to.be.revertedWithCustomError(
-        f1155,
-        FactoryErrors.AccessDenied,
-      );
-      await expect(fail2).to.be.revertedWithCustomError(
-        f1155,
-        FactoryErrors.AccessDenied,
-      );
-    });
-    it("Should deploy ERC1155Whitelist, update storage and emit events", async () => {
-      // await f1155.addAmbassador(amb.address);
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      const wlAddr = await f1155.callStatic.getDeployedAddr(
-        "WhiteSalt",
-      );
-      const tx = await f1155
-        .connect(acc02)
-        .createCollection(
-          2,
-          "WhiteSalt",
-          "1155Whitelist",
-          "WL",
-          price,
-          1000,
-          "ipfs://cid/",
-          splAddr,
-          750,
-        );
-      const colID = await f1155.callStatic.getColID(wlAddr);
-      const storage = await f1155.callStatic.userTokens(
-        acc02.address,
-        0,
-      );
-      const colInfo: Collection =
-        await f1155.callStatic.colInfo(colID);
-
-      const fail1 = f1155
-        .connect(acc01)
-        .createCollection(
-          2,
-          "WhiteSalt",
-          "1155Whitelist",
-          "WL",
-          price,
-          1000,
-          "ipfs://cid/",
-          splAddr,
-          750,
-        );
-
-      const fail2 = f1155
-        .connect(acc02)
-        .createCollection(
-          30,
-          "WhiteSalt",
-          "1155Whitelist",
-          "WL",
-          price,
-          1000,
-          "ipfs://cid/",
-          splAddr,
-          750,
-        );
-
-      expect(tx).to.be.ok;
-      expect(storage).to.eq(colID);
-      expect(colInfo.blocknumber).to.eq(
-        ethers.BigNumber.from(
-          await f1155.provider.getBlockNumber(),
-        ),
-      );
-      expect(colInfo.colType).to.eq(2);
-      expect(colInfo.creator).to.eq(acc02.address);
-      expect(colInfo.splitter).to.eq(splAddr);
-      expect(colInfo.colSalt).to.eq(
-        ethers.utils.keccak256(
-          ethers.utils.toUtf8Bytes("WhiteSalt"),
-        ),
-      );
-      await expect(tx)
-        .to.emit(f1155, "ERC1155WhitelistCreated")
-        .withArgs(
-          splAddr,
-          wlAddr,
-          "1155Whitelist",
-          "WL",
-          750,
-          1000,
-          price,
-        );
-      await expect(fail1).to.be.revertedWithCustomError(
-        f1155,
-        FactoryErrors.AccessDenied,
-      );
-      await expect(fail2).to.be.revertedWithCustomError(
-        f1155,
-        FactoryErrors.AccessDenied,
-      );
-    });
-    it("Should deploy ERC1155Lazy, update storage and emit events", async () => {
-      // await f1155.addAmbassador(amb.address);
-      await f1155
-        .connect(acc01)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      const tx = await f1155
-        .connect(acc01)
-        .createCollection(
-          3,
-          "LazySalt",
-          "1155Lazy",
-          "LAZY",
-          ethers.constants.Zero,
-          ethers.constants.Zero,
-          "ipfs://cid/",
-          splAddr,
-          750,
-        );
-      const lazyAddr = await f1155.callStatic.getDeployedAddr(
-        "LazySalt",
-      );
-
-      const colID = await f1155.callStatic.getColID(lazyAddr);
-      const storage = await f1155.callStatic.userTokens(
-        acc01.address,
-        0,
-      );
-      const colInfo: Collection =
-        await f1155.callStatic.colInfo(colID);
-
-      const fail1 = f1155
-        .connect(acc02)
-        .createCollection(
-          3,
-          "LazySalt",
-          "1155Lazy",
-          "LAZY",
-          0,
-          0,
-          "ipfs://cid/",
-          splAddr,
-          750,
-        );
-
-      const fail2 = f1155
-        .connect(acc02)
-        .createCollection(
-          4,
-          "LazySalt",
-          "1155Lazy",
-          "LAZY",
-          0,
-          0,
-          "ipfs://cid/",
-          splAddr,
-          750,
-        );
-
-      expect(tx).to.be.ok;
-      expect(storage).to.eq(colID);
-      expect(colInfo.blocknumber).to.eq(
-        ethers.BigNumber.from(
-          await f1155.provider.getBlockNumber(),
-        ),
-      );
-      expect(colInfo.colType).to.eq(3);
-      expect(colInfo.creator).to.eq(acc01.address);
-      expect(colInfo.splitter).to.eq(splAddr);
-      expect(colInfo.colSalt).to.eq(
-        ethers.utils.keccak256(
-          ethers.utils.toUtf8Bytes("LazySalt"),
-        ),
-      );
-      await expect(tx)
-        .to.emit(f1155, "ERC1155LazyCreated")
-        .withArgs(
-          splAddr,
-          lazyAddr,
-          "1155Lazy",
-          "LAZY",
-          750,
-          0,
-          0,
         );
       await expect(fail1).to.be.revertedWithCustomError(
         f1155,
@@ -745,7 +410,6 @@ describe("MADFactory1155", () => {
   // `getDeployedAddr` already tested in `splitterCheck` and `createCollection` unit tests
   describe("Helpers", async () => {
     it("Should retrieve user's colID indexes", async () => {
-      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck(
@@ -758,19 +422,7 @@ describe("MADFactory1155", () => {
       const splAddr = await f1155.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
-      await f1155
-        .connect(acc02)
-        .createCollection(
-          2,
-          "WhiteSalt",
-          "1155Whitelist",
-          "WL",
-          price,
-          1000,
-          "ipfs://cid/",
-          splAddr,
-          750,
-        );
+
       await f1155
         .connect(acc02)
         .createCollection(
@@ -784,22 +436,9 @@ describe("MADFactory1155", () => {
           splAddr,
           750,
         );
-      await f1155
-        .connect(acc02)
-        .createCollection(
-          0,
-          "MinSalt",
-          "1155Min",
-          "MIN",
-          price,
-          1,
-          "ipfs://cid/",
-          splAddr,
-          750,
-        );
 
       expect(await f1155.getIDsLength(acc02.address)).to.eq(
-        3,
+        1,
       );
     });
     it("Should get collection ID from address", async () => {
@@ -813,7 +452,6 @@ describe("MADFactory1155", () => {
       expect(tx).to.eq(colID);
     });
     it("Should retrieve collection type", async () => {
-      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck(
@@ -826,33 +464,34 @@ describe("MADFactory1155", () => {
       const splAddr = await f1155.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
-      const minAddr = await f1155.callStatic.getDeployedAddr(
-        "MinSalt",
-      );
+      const basicAddr =
+        await f1155.callStatic.getDeployedAddr("BasicSalt");
       await f1155
         .connect(acc02)
         .createCollection(
-          0,
-          "MinSalt",
-          "1155Min",
-          "MIN",
-          price,
           1,
+          "BasicSalt",
+          "1155Basic",
+          "BASIC",
+          price,
+          10,
           "cid/id.json",
           splAddr,
           750,
         );
-      const colID = await f1155.callStatic.getColID(minAddr);
-      const min = await ethers.getContractAt(
-        "ERC1155Minimal",
-        minAddr,
+      const colID = await f1155.callStatic.getColID(
+        basicAddr,
+      );
+      const basic = await ethers.getContractAt(
+        "ERC1155Basic",
+        basicAddr,
       );
       const setPublic = await r1155
         .connect(acc02)
-        .setMintState(minAddr, true, 0);
+        .setMintState(basicAddr, true);
 
       expect(setPublic).to.be.ok;
-      expect(await min.callStatic.publicMintState()).to.eq(
+      expect(await basic.callStatic.publicMintState()).to.eq(
         true,
       );
       await expect(
@@ -862,14 +501,13 @@ describe("MADFactory1155", () => {
         FactoryErrors.AccessDenied,
       );
       await expect(
-        r1155.setMintState(minAddr, true, 0),
+        r1155.setMintState(basicAddr, true),
       ).to.be.revertedWithCustomError(
         f1155,
         FactoryErrors.AccessDenied,
       );
     });
     it("Should enable marketplace no-fee listing", async () => {
-      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck(
@@ -882,46 +520,64 @@ describe("MADFactory1155", () => {
       const splAddr = await f1155.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
-      const minAddr = await f1155.callStatic.getDeployedAddr(
-        "MinSalt",
+      const basicAddr =
+        await f1155.callStatic.getDeployedAddr("BasicSalt");
+      await expect(
+        f1155
+          .connect(acc02)
+          .createCollection(
+            0,
+            "MinSalt",
+            "1155Min",
+            "MIN",
+            price,
+            1,
+            "cid/id.json",
+            splAddr,
+            750,
+          ),
+      ).to.be.revertedWithCustomError(
+        f1155,
+        FactoryErrors.AccessDenied,
       );
+
       await f1155
         .connect(acc02)
         .createCollection(
-          0,
-          "MinSalt",
-          "1155Min",
-          "MIN",
-          price,
           1,
+          "BasicSalt",
+          "1155Basic",
+          "BASIC",
+          price,
+          10,
           "cid/id.json",
           splAddr,
           750,
         );
-      const min = await ethers.getContractAt(
-        "ERC1155Minimal",
-        minAddr,
+
+      const basic = await ethers.getContractAt(
+        "ERC1155Basic",
+        basicAddr,
       );
       await r1155
         .connect(acc02)
-        .setMintState(minAddr, true, 0);
-      await min
-        .connect(acc02)
-        .publicMint(1, { value: price.add(ethers.utils.parseEther("0.25")) });
+        .setMintState(basicAddr, true);
+      await basic.connect(acc02).mint(1, 1, {
+        value: price.add(ethers.utils.parseEther("0.25")),
+      });
       const blockTimestamp = (
         await m1155.provider.getBlock(
           await m1155.provider.getBlockNumber(),
         )
       ).timestamp;
 
-      // const blocknum = await m1155.provider.getBlockNumber();
-      await min
+      await basic
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
       const daTx = await m1155
         .connect(acc02)
         .fixedPrice(
-          minAddr,
+          basicAddr,
           1,
           1,
           price,
@@ -942,11 +598,11 @@ describe("MADFactory1155", () => {
 
       await f1155.setMarket(owner.address);
       const false1 = await f1155.creatorAuth(
-        minAddr,
+        basicAddr,
         mad.address,
       );
       const true1 = await f1155.creatorAuth(
-        minAddr,
+        basicAddr,
         acc02.address,
       );
 
@@ -956,14 +612,13 @@ describe("MADFactory1155", () => {
       await expect(
         f1155
           .connect(amb)
-          .creatorAuth(minAddr, acc02.address),
+          .creatorAuth(basicAddr, acc02.address),
       ).to.be.revertedWithCustomError(
         f1155,
         FactoryErrors.AccessDenied,
       );
     });
     it("Should verify a collection's creator", async () => {
-      // await f1155.addAmbassador(amb.address);
       await f1155
         .connect(acc02)
         .splitterCheck(
@@ -976,23 +631,24 @@ describe("MADFactory1155", () => {
       const splAddr = await f1155.callStatic.getDeployedAddr(
         "MADSplitter1",
       );
-      const minAddr = await f1155.callStatic.getDeployedAddr(
-        "MinSalt",
-      );
+      const basicAddr =
+        await f1155.callStatic.getDeployedAddr("BasicSalt");
       await f1155
         .connect(acc02)
         .createCollection(
-          0,
-          "MinSalt",
-          "1155Min",
-          "MIN",
+          1,
+          "BasicSalt",
+          "1155Basic",
+          "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
         );
-      const colID = await f1155.callStatic.getColID(minAddr);
+      const colID = await f1155.callStatic.getColID(
+        basicAddr,
+      );
 
       await f1155.setRouter(acc02.address);
       const true1 = await f1155

@@ -19,12 +19,12 @@ import {
   MockERC20,
   MockERC20__factory,
 } from "../../../src/types";
-import { MarketplaceErrors } from "./../../utils/errors";
+import { MarketplaceErrors } from "../../../test/utils/errors";
 import {
   dead,
   getOrderId1155,
   madFixture1155F,
-} from "./../../utils/madFixtures";
+} from "../../../test/utils/madFixtures";
 
 describe("MADMarketplace1155 - ERC20 Payments", () => {
   type WalletWithAddress = Wallet & SignerWithAddress;
@@ -102,9 +102,7 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
       expect(await m1155.minOrderDuration()).to.eq(300);
       expect(await m1155.minAuctionIncrement()).to.eq(300);
       expect(await m1155.minBidValue()).to.eq(20);
-      expect(await m1155.MADFactory1155()).to.eq(
-        f1155.address,
-      );
+      expect(await m1155.MADFactory()).to.eq(f1155.address);
     });
   });
   // describe("Owner Functions", async () => {
@@ -803,8 +801,10 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
         "0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6",
         acc01,
       );
-      expect(await erc20_btc.balanceOf(acc01.address)).to.equal(0);
-  
+      expect(
+        await erc20_btc.balanceOf(acc01.address),
+      ).to.equal(0);
+
       // user withdraw their balance
       expect(
         await m1155
@@ -815,15 +815,20 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
             0,
           ),
       ).to.be.ok;
-      const bal2 = await m1155.connect(acc01).getOutbidBalance();
+      const bal2 = await m1155
+        .connect(acc01)
+        .getOutbidBalance();
       expect(bal2).to.equal(0);
-  
-      expect(await erc20_btc.balanceOf(acc01.address)).to.be.gt(0);
-  
+
+      expect(
+        await erc20_btc.balanceOf(acc01.address),
+      ).to.be.gt(0);
+
       expect(await erc20.balanceOf(acc01.address)).to.equal(
         // claimed but got BTC
-        erc20Balance.sub(ethers.utils.parseEther("1"))
-        .sub(ethers.utils.parseEther("0.1")),
+        erc20Balance
+          .sub(ethers.utils.parseEther("1"))
+          .sub(ethers.utils.parseEther("0.1")),
       );
     });
   });
@@ -876,7 +881,10 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
     // Mint the token with erc20
     await erc20
       .connect(acc02)
-      .approve(r1155.address, ethers.utils.parseEther("0.25"));
+      .approve(
+        r1155.address,
+        ethers.utils.parseEther("0.25"),
+      );
     await r1155
       .connect(acc02)
       .minimalSafeMint(min.address, acc02.address, 1);
@@ -927,7 +935,9 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
 
     await mine(300);
 
-    await erc20.connect(acc03).approve(m1155.address, price.mul(2));
+    await erc20
+      .connect(acc03)
+      .approve(m1155.address, price.mul(2));
     const bidTx3 = await m1155.connect(acc03).bid(fpOrderId); // bid again?
     expect(bidTx3).to.be.ok;
 
@@ -936,37 +946,73 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
     // user withdraw
     // with one bid stuck because the contract is paused
 
-    console.log(await m1155.connect(acc01).getOutbidBalance());
-    console.log(await m1155.connect(acc03).getOutbidBalance());
+    console.log(
+      await m1155.connect(acc01).getOutbidBalance(),
+    );
+    console.log(
+      await m1155.connect(acc03).getOutbidBalance(),
+    );
     console.log(await erc20.balanceOf(m1155.address));
-    
+
     await mine(600);
     await m1155.pause();
 
     console.log(await m1155.totalOutbid());
 
-    expect(await m1155.totalOutbid()).to.be.equal(ethers.utils.parseEther("1.1"));
-    expect(await erc20.balanceOf(m1155.address)).to.be.equal(ethers.utils.parseEther("3.1"));
+    expect(await m1155.totalOutbid()).to.be.equal(
+      ethers.utils.parseEther("1.1"),
+    );
+    expect(await erc20.balanceOf(m1155.address)).to.be.equal(
+      ethers.utils.parseEther("3.1"),
+    );
 
     // withdraw after pause
-    console.log(await m1155.owner())
+    console.log(await m1155.owner());
     console.log(owner.address);
-    console.log((await erc20.balanceOf(m1155.address)).sub(await m1155.totalOutbid()).toString());
+    console.log(
+      (await erc20.balanceOf(m1155.address))
+        .sub(await m1155.totalOutbid())
+        .toString(),
+    );
     await m1155.connect(owner).withdrawERC20(erc20.address);
 
     // withdraw outbids
-    await m1155.connect(acc03).withdrawOutbid(erc20.address, 0, 0);
-    await expect(m1155.connect(owner).autoTransferFunds([owner.address])).to.be.reverted;
-    await expect(m1155.connect(owner).autoTransferFunds([acc01.address])).to.be.ok;
-    await expect(m1155.connect(owner).autoTransferFunds([acc01.address])).to.be.reverted;
+    await m1155
+      .connect(acc03)
+      .withdrawOutbid(erc20.address, 0, 0);
+
+    await expect(
+      m1155
+        .connect(acc01)
+        .withdrawOutbid(erc20.address, 0, 0),
+    ).to.be.ok;
+
+    await expect(
+      m1155
+        .connect(acc01)
+        .withdrawOutbid(erc20.address, 0, 0),
+    ).to.be.reverted;
+
+    await expect(
+      m1155.connect(owner).withdrawERC20(erc20.address),
+    ).to.be.reverted;
+
+    expect(await m1155.totalOutbid()).to.be.equal(
+      ethers.utils.parseEther("0"),
+    );
+    expect(await erc20.balanceOf(m1155.address)).to.be.equal(
+      ethers.utils.parseEther("0"),
+    );
 
     console.log(await m1155.totalOutbid());
-    console.log(await m1155.connect(acc01).getOutbidBalance());
-    console.log(await m1155.connect(acc03).getOutbidBalance());
-
-    expect(await m1155.totalOutbid()).to.be.equal(ethers.utils.parseEther("0"));
-    expect(await erc20.balanceOf(m1155.address)).to.be.equal(ethers.utils.parseEther("0"));
-    await expect(m1155.connect(acc01).withdrawOutbid(erc20.address, 0, 0)).to.be.reverted;
-    await expect(m1155.connect(owner).withdrawERC20(erc20.address)).to.be.reverted;
+    console.log(
+      await m1155.connect(owner).getOutbidBalance(),
+    );
+    console.log(
+      await m1155.connect(acc01).getOutbidBalance(),
+    );
+    console.log(
+      await m1155.connect(acc03).getOutbidBalance(),
+    );
   });
 });

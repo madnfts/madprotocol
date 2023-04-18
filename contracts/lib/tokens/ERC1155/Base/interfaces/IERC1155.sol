@@ -33,10 +33,10 @@ interface IERC1155 {
     );
 
     /// @return Returns the amount of tokens of token type `id` owned by `account`.
-    function balanceOf(address account, uint256 id)
-        external
-        view
-        returns (uint256);
+    function balanceOf(
+        address account,
+        uint256 id
+    ) external view returns (uint256);
 
     /// @dev Batched version of {balanceOf}.
     function balanceOfBatch(
@@ -80,14 +80,16 @@ interface IERC1155 {
     ) external view returns (bool);
 
     /// @notice Queries EIP2981 royalty info for marketplace royalty payment enforcement.
-    function royaltyInfo(uint256 tokenId, uint256 salePrice)
+    function royaltyInfo(
+        uint256 tokenId,
+        uint256 salePrice
+    )
         external
         view
         returns (address receiver, uint256 royaltyAmount);
 
     /// @notice Queries for ERC165 introspection support.
-    function supportsInterface(bytes4 interfaceId)
-        external
-        view
-        returns (bool);
+    function supportsInterface(
+        bytes4 interfaceId
+    ) external view returns (bool);
 }

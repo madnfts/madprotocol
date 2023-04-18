@@ -37,31 +37,24 @@ export interface MADRouter1155Interface extends utils.Interface {
     "basicMintTo(address,address,uint256,uint256[])": FunctionFragment;
     "batchBurn(address,address,uint256[],uint256[])": FunctionFragment;
     "burn(address,uint256[],address[],uint256[])": FunctionFragment;
-    "creatorBatchMint(address,uint256[],uint256[],uint256)": FunctionFragment;
-    "creatorMint(address,uint256,uint256[],uint256)": FunctionFragment;
     "erc20()": FunctionFragment;
     "feeBurn()": FunctionFragment;
     "feeLookup(bytes4)": FunctionFragment;
     "feeMint()": FunctionFragment;
-    "freeSettings(address,uint256,uint256,bytes32)": FunctionFragment;
-    "gift(address,address[],uint256[],uint256)": FunctionFragment;
     "maxFeeBurn()": FunctionFragment;
     "maxFeeMint()": FunctionFragment;
-    "minimalSafeMint(address,address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "owner()": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
     "recipient()": FunctionFragment;
     "setFees(uint256,uint256)": FunctionFragment;
-    "setMintState(address,bool,uint8)": FunctionFragment;
+    "setMintState(address,bool)": FunctionFragment;
     "setOwner(address)": FunctionFragment;
     "setRecipient(address)": FunctionFragment;
-    "setSigner(address,address)": FunctionFragment;
     "setURI(address,string)": FunctionFragment;
     "setURILock(address)": FunctionFragment;
     "unpause()": FunctionFragment;
-    "whitelistSettings(address,uint256,uint256,bytes32)": FunctionFragment;
     "withdraw(address,address)": FunctionFragment;
   };
 
@@ -72,17 +65,12 @@ export interface MADRouter1155Interface extends utils.Interface {
       | "basicMintTo"
       | "batchBurn"
       | "burn"
-      | "creatorBatchMint"
-      | "creatorMint"
       | "erc20"
       | "feeBurn"
       | "feeLookup"
       | "feeMint"
-      | "freeSettings"
-      | "gift"
       | "maxFeeBurn"
       | "maxFeeMint"
-      | "minimalSafeMint"
       | "name"
       | "owner"
       | "pause"
@@ -92,11 +80,9 @@ export interface MADRouter1155Interface extends utils.Interface {
       | "setMintState"
       | "setOwner"
       | "setRecipient"
-      | "setSigner"
       | "setURI"
       | "setURILock"
       | "unpause"
-      | "whitelistSettings"
       | "withdraw"
   ): FunctionFragment;
 
@@ -140,24 +126,6 @@ export interface MADRouter1155Interface extends utils.Interface {
       PromiseOrValue<BigNumberish>[]
     ]
   ): string;
-  encodeFunctionData(
-    functionFragment: "creatorBatchMint",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<BigNumberish>
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "creatorMint",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<BigNumberish>
-    ]
-  ): string;
   encodeFunctionData(functionFragment: "erc20", values?: undefined): string;
   encodeFunctionData(functionFragment: "feeBurn", values?: undefined): string;
   encodeFunctionData(
@@ -166,38 +134,12 @@ export interface MADRouter1155Interface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "feeMint", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "freeSettings",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BytesLike>
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "gift",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<string>[],
-      PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<BigNumberish>
-    ]
-  ): string;
-  encodeFunctionData(
     functionFragment: "maxFeeBurn",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "maxFeeMint",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "minimalSafeMint",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>
-    ]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
@@ -210,11 +152,7 @@ export interface MADRouter1155Interface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setMintState",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<boolean>,
-      PromiseOrValue<BigNumberish>
-    ]
+    values: [PromiseOrValue<string>, PromiseOrValue<boolean>]
   ): string;
   encodeFunctionData(
     functionFragment: "setOwner",
@@ -225,10 +163,6 @@ export interface MADRouter1155Interface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "setSigner",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "setURI",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
@@ -237,15 +171,6 @@ export interface MADRouter1155Interface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "whitelistSettings",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BytesLike>
-    ]
-  ): string;
   encodeFunctionData(
     functionFragment: "withdraw",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
@@ -265,29 +190,12 @@ export interface MADRouter1155Interface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "batchBurn", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "creatorBatchMint",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "creatorMint",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "erc20", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "feeBurn", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "feeLookup", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "feeMint", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "freeSettings",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "gift", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "maxFeeBurn", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "maxFeeMint", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "minimalSafeMint",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
@@ -303,14 +211,9 @@ export interface MADRouter1155Interface extends utils.Interface {
     functionFragment: "setRecipient",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "setSigner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setURI", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setURILock", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "whitelistSettings",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
 
   events: {
@@ -349,8 +252,8 @@ export type BaseURIEvent = TypedEvent<[string, string], BaseURIEventObject>;
 export type BaseURIEventFilter = TypedEventFilter<BaseURIEvent>;
 
 export interface FeesUpdatedEventObject {
-  burnFees: BigNumber;
-  mintFees: BigNumber;
+  feeVal2: BigNumber;
+  feeVal3: BigNumber;
 }
 export type FeesUpdatedEvent = TypedEvent<
   [BigNumber, BigNumber],
@@ -517,22 +420,6 @@ export interface MADRouter1155 extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    creatorBatchMint(
-      _token: PromiseOrValue<string>,
-      _ids: PromiseOrValue<BigNumberish>[],
-      _balances: PromiseOrValue<BigNumberish>[],
-      totalBalance: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    creatorMint(
-      _token: PromiseOrValue<string>,
-      _amount: PromiseOrValue<BigNumberish>,
-      _balances: PromiseOrValue<BigNumberish>[],
-      totalBalance: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     erc20(overrides?: CallOverrides): Promise<[string]>;
 
     feeBurn(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -544,32 +431,9 @@ export interface MADRouter1155 extends BaseContract {
 
     feeMint(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    freeSettings(
-      _token: PromiseOrValue<string>,
-      _freeAmount: PromiseOrValue<BigNumberish>,
-      _maxFree: PromiseOrValue<BigNumberish>,
-      _claimRoot: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    gift(
-      _token: PromiseOrValue<string>,
-      _addresses: PromiseOrValue<string>[],
-      _balances: PromiseOrValue<BigNumberish>[],
-      totalBalance: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     maxFeeBurn(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     maxFeeMint(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    minimalSafeMint(
-      _token: PromiseOrValue<string>,
-      _to: PromiseOrValue<string>,
-      balance: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
@@ -592,7 +456,6 @@ export interface MADRouter1155 extends BaseContract {
     setMintState(
       _token: PromiseOrValue<string>,
       _state: PromiseOrValue<boolean>,
-      _stateType: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -603,12 +466,6 @@ export interface MADRouter1155 extends BaseContract {
 
     setRecipient(
       _recipient: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setSigner(
-      _token: PromiseOrValue<string>,
-      _signer: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -624,14 +481,6 @@ export interface MADRouter1155 extends BaseContract {
     ): Promise<ContractTransaction>;
 
     unpause(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    whitelistSettings(
-      _token: PromiseOrValue<string>,
-      _price: PromiseOrValue<BigNumberish>,
-      _supply: PromiseOrValue<BigNumberish>,
-      _root: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -676,22 +525,6 @@ export interface MADRouter1155 extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  creatorBatchMint(
-    _token: PromiseOrValue<string>,
-    _ids: PromiseOrValue<BigNumberish>[],
-    _balances: PromiseOrValue<BigNumberish>[],
-    totalBalance: PromiseOrValue<BigNumberish>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  creatorMint(
-    _token: PromiseOrValue<string>,
-    _amount: PromiseOrValue<BigNumberish>,
-    _balances: PromiseOrValue<BigNumberish>[],
-    totalBalance: PromiseOrValue<BigNumberish>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   erc20(overrides?: CallOverrides): Promise<string>;
 
   feeBurn(overrides?: CallOverrides): Promise<BigNumber>;
@@ -703,32 +536,9 @@ export interface MADRouter1155 extends BaseContract {
 
   feeMint(overrides?: CallOverrides): Promise<BigNumber>;
 
-  freeSettings(
-    _token: PromiseOrValue<string>,
-    _freeAmount: PromiseOrValue<BigNumberish>,
-    _maxFree: PromiseOrValue<BigNumberish>,
-    _claimRoot: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  gift(
-    _token: PromiseOrValue<string>,
-    _addresses: PromiseOrValue<string>[],
-    _balances: PromiseOrValue<BigNumberish>[],
-    totalBalance: PromiseOrValue<BigNumberish>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   maxFeeBurn(overrides?: CallOverrides): Promise<BigNumber>;
 
   maxFeeMint(overrides?: CallOverrides): Promise<BigNumber>;
-
-  minimalSafeMint(
-    _token: PromiseOrValue<string>,
-    _to: PromiseOrValue<string>,
-    balance: PromiseOrValue<BigNumberish>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
 
   name(overrides?: CallOverrides): Promise<string>;
 
@@ -751,7 +561,6 @@ export interface MADRouter1155 extends BaseContract {
   setMintState(
     _token: PromiseOrValue<string>,
     _state: PromiseOrValue<boolean>,
-    _stateType: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -762,12 +571,6 @@ export interface MADRouter1155 extends BaseContract {
 
   setRecipient(
     _recipient: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  setSigner(
-    _token: PromiseOrValue<string>,
-    _signer: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -783,14 +586,6 @@ export interface MADRouter1155 extends BaseContract {
   ): Promise<ContractTransaction>;
 
   unpause(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  whitelistSettings(
-    _token: PromiseOrValue<string>,
-    _price: PromiseOrValue<BigNumberish>,
-    _supply: PromiseOrValue<BigNumberish>,
-    _root: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -835,22 +630,6 @@ export interface MADRouter1155 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    creatorBatchMint(
-      _token: PromiseOrValue<string>,
-      _ids: PromiseOrValue<BigNumberish>[],
-      _balances: PromiseOrValue<BigNumberish>[],
-      totalBalance: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    creatorMint(
-      _token: PromiseOrValue<string>,
-      _amount: PromiseOrValue<BigNumberish>,
-      _balances: PromiseOrValue<BigNumberish>[],
-      totalBalance: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     erc20(overrides?: CallOverrides): Promise<string>;
 
     feeBurn(overrides?: CallOverrides): Promise<BigNumber>;
@@ -862,32 +641,9 @@ export interface MADRouter1155 extends BaseContract {
 
     feeMint(overrides?: CallOverrides): Promise<BigNumber>;
 
-    freeSettings(
-      _token: PromiseOrValue<string>,
-      _freeAmount: PromiseOrValue<BigNumberish>,
-      _maxFree: PromiseOrValue<BigNumberish>,
-      _claimRoot: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    gift(
-      _token: PromiseOrValue<string>,
-      _addresses: PromiseOrValue<string>[],
-      _balances: PromiseOrValue<BigNumberish>[],
-      totalBalance: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     maxFeeBurn(overrides?: CallOverrides): Promise<BigNumber>;
 
     maxFeeMint(overrides?: CallOverrides): Promise<BigNumber>;
-
-    minimalSafeMint(
-      _token: PromiseOrValue<string>,
-      _to: PromiseOrValue<string>,
-      balance: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     name(overrides?: CallOverrides): Promise<string>;
 
@@ -908,7 +664,6 @@ export interface MADRouter1155 extends BaseContract {
     setMintState(
       _token: PromiseOrValue<string>,
       _state: PromiseOrValue<boolean>,
-      _stateType: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -919,12 +674,6 @@ export interface MADRouter1155 extends BaseContract {
 
     setRecipient(
       _recipient: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setSigner(
-      _token: PromiseOrValue<string>,
-      _signer: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -940,14 +689,6 @@ export interface MADRouter1155 extends BaseContract {
     ): Promise<void>;
 
     unpause(overrides?: CallOverrides): Promise<void>;
-
-    whitelistSettings(
-      _token: PromiseOrValue<string>,
-      _price: PromiseOrValue<BigNumberish>,
-      _supply: PromiseOrValue<BigNumberish>,
-      _root: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     withdraw(
       _token: PromiseOrValue<string>,
@@ -967,10 +708,10 @@ export interface MADRouter1155 extends BaseContract {
     ): BaseURIEventFilter;
 
     "FeesUpdated(uint256,uint256)"(
-      burnFees?: null,
-      mintFees?: null
+      feeVal2?: null,
+      feeVal3?: null
     ): FeesUpdatedEventFilter;
-    FeesUpdated(burnFees?: null, mintFees?: null): FeesUpdatedEventFilter;
+    FeesUpdated(feeVal2?: null, feeVal3?: null): FeesUpdatedEventFilter;
 
     "FreeClaimState(bytes32,uint8,bool)"(
       _id?: PromiseOrValue<BytesLike> | null,
@@ -1081,22 +822,6 @@ export interface MADRouter1155 extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    creatorBatchMint(
-      _token: PromiseOrValue<string>,
-      _ids: PromiseOrValue<BigNumberish>[],
-      _balances: PromiseOrValue<BigNumberish>[],
-      totalBalance: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    creatorMint(
-      _token: PromiseOrValue<string>,
-      _amount: PromiseOrValue<BigNumberish>,
-      _balances: PromiseOrValue<BigNumberish>[],
-      totalBalance: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     erc20(overrides?: CallOverrides): Promise<BigNumber>;
 
     feeBurn(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1108,32 +833,9 @@ export interface MADRouter1155 extends BaseContract {
 
     feeMint(overrides?: CallOverrides): Promise<BigNumber>;
 
-    freeSettings(
-      _token: PromiseOrValue<string>,
-      _freeAmount: PromiseOrValue<BigNumberish>,
-      _maxFree: PromiseOrValue<BigNumberish>,
-      _claimRoot: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    gift(
-      _token: PromiseOrValue<string>,
-      _addresses: PromiseOrValue<string>[],
-      _balances: PromiseOrValue<BigNumberish>[],
-      totalBalance: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     maxFeeBurn(overrides?: CallOverrides): Promise<BigNumber>;
 
     maxFeeMint(overrides?: CallOverrides): Promise<BigNumber>;
-
-    minimalSafeMint(
-      _token: PromiseOrValue<string>,
-      _to: PromiseOrValue<string>,
-      balance: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1156,7 +858,6 @@ export interface MADRouter1155 extends BaseContract {
     setMintState(
       _token: PromiseOrValue<string>,
       _state: PromiseOrValue<boolean>,
-      _stateType: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1167,12 +868,6 @@ export interface MADRouter1155 extends BaseContract {
 
     setRecipient(
       _recipient: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setSigner(
-      _token: PromiseOrValue<string>,
-      _signer: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1188,14 +883,6 @@ export interface MADRouter1155 extends BaseContract {
     ): Promise<BigNumber>;
 
     unpause(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    whitelistSettings(
-      _token: PromiseOrValue<string>,
-      _price: PromiseOrValue<BigNumberish>,
-      _supply: PromiseOrValue<BigNumberish>,
-      _root: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1241,22 +928,6 @@ export interface MADRouter1155 extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    creatorBatchMint(
-      _token: PromiseOrValue<string>,
-      _ids: PromiseOrValue<BigNumberish>[],
-      _balances: PromiseOrValue<BigNumberish>[],
-      totalBalance: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    creatorMint(
-      _token: PromiseOrValue<string>,
-      _amount: PromiseOrValue<BigNumberish>,
-      _balances: PromiseOrValue<BigNumberish>[],
-      totalBalance: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     erc20(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     feeBurn(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1268,32 +939,9 @@ export interface MADRouter1155 extends BaseContract {
 
     feeMint(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    freeSettings(
-      _token: PromiseOrValue<string>,
-      _freeAmount: PromiseOrValue<BigNumberish>,
-      _maxFree: PromiseOrValue<BigNumberish>,
-      _claimRoot: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    gift(
-      _token: PromiseOrValue<string>,
-      _addresses: PromiseOrValue<string>[],
-      _balances: PromiseOrValue<BigNumberish>[],
-      totalBalance: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     maxFeeBurn(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     maxFeeMint(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    minimalSafeMint(
-      _token: PromiseOrValue<string>,
-      _to: PromiseOrValue<string>,
-      balance: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1316,7 +964,6 @@ export interface MADRouter1155 extends BaseContract {
     setMintState(
       _token: PromiseOrValue<string>,
       _state: PromiseOrValue<boolean>,
-      _stateType: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1327,12 +974,6 @@ export interface MADRouter1155 extends BaseContract {
 
     setRecipient(
       _recipient: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setSigner(
-      _token: PromiseOrValue<string>,
-      _signer: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1348,14 +989,6 @@ export interface MADRouter1155 extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     unpause(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    whitelistSettings(
-      _token: PromiseOrValue<string>,
-      _price: PromiseOrValue<BigNumberish>,
-      _supply: PromiseOrValue<BigNumberish>,
-      _root: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -83,6 +83,8 @@ export enum MarketplaceErrors {
   Timeout = "Timeout",
   Paused = "PAUSED",
   EAOnly = "EAOnly",
+  ZeroAddress = "ZeroAddress",
+  NoBalanceToWithdraw = "No balance to withdraw",
 }
 
 export enum FactoryErrors {
@@ -105,5 +107,5 @@ export enum RouterErrors {
   InvalidTypeBytes4 = "InvalidType",
   NoFunds = "NO_FUNDS",
   Paused = "PAUSED",
-  UriLocked = 'UriLocked'
+  UriLocked = "UriLocked",
 }

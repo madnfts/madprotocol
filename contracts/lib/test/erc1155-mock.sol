@@ -13,13 +13,9 @@ contract MockERC1155 is
 {
     constructor() {}
 
-    function uri(uint256)
-        public
-        pure
-        virtual
-        override
-        returns (string memory)
-    {}
+    function uri(
+        uint256
+    ) public pure virtual override returns (string memory) {}
 
     function mint(
         address to,
@@ -37,11 +33,9 @@ contract MockERC1155 is
         _batchMint(to, ids, balances, "");
     }
 
-    function supportsInterface(bytes4 interfaceId)
-        public
-        pure
-        returns (bool)
-    {
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public pure returns (bool) {
         return
             // ERC165 Interface ID for ERC165
             interfaceId == 0x01ffc9a7 ||

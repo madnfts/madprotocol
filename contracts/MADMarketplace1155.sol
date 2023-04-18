@@ -2,10 +2,10 @@
 
 pragma solidity 0.8.16;
 
-import { MarketplaceEventsAndErrors1155, IERC1155 } from "./EventsAndErrors.sol";
-import { ERC1155Holder } from "./lib/tokens/ERC1155/Base/utils/ERC1155Holder.sol";
-import { FactoryVerifier, MADMarketplaceBase, SafeTransferLib } from "./MADMarketplaceBase.sol";
-import { Types } from "./Types.sol";
+import { MarketplaceEventsAndErrors1155, IERC1155 } from "contracts/EventsAndErrors.sol";
+import { ERC1155Holder } from "contracts/lib/tokens/ERC1155/Base/utils/ERC1155Holder.sol";
+import { FactoryVerifier, MADMarketplaceBase, SafeTransferLib } from "contracts/MADMarketplaceBase.sol";
+import { Types } from "contracts/Types.sol";
 
 contract MADMarketplace1155 is MADMarketplaceBase, MarketplaceEventsAndErrors1155, ERC1155Holder {
     using Types for Types.Order1155;

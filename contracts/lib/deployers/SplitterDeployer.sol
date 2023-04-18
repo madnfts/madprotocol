@@ -11,8 +11,8 @@ library SplitterDeployer {
         string memory _salt,
         address[] memory _payees,
         uint256[] memory _shares
-    ) public returns (address deployed) {
-        bytes32 salt = keccak256(bytes(_salt));
+    ) public returns (address deployed, bytes32 salt) {
+        salt = keccak256(bytes(_salt));
         deployed = CREATE3.deploy(
             salt,
             abi.encodePacked(

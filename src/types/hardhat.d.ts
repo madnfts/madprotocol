@@ -13,13 +13,9 @@ import { ethers } from "ethers";
 declare module "hardhat/types/runtime" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
     getContractFactory(
-      name: "IUniswapV3SwapCallback",
+      name: "_MAD",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IUniswapV3SwapCallback__factory>;
-    getContractFactory(
-      name: "ISwapRouter",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ISwapRouter__factory>;
+    ): Promise<Contracts._MAD__factory>;
     getContractFactory(
       name: "MADFactory1155",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -141,6 +137,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC721Holder__factory>;
     getContractFactory(
+      name: "ISwapRouter",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ISwapRouter__factory>;
+    getContractFactory(
+      name: "IUniswapV3SwapCallback",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IUniswapV3SwapCallback__factory>;
+    getContractFactory(
       name: "Counters",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Counters__factory>;
@@ -226,15 +230,10 @@ declare module "hardhat/types/runtime" {
     ): Promise<Contracts.MADBase__factory>;
 
     getContractAt(
-      name: "IUniswapV3SwapCallback",
+      name: "_MAD",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.IUniswapV3SwapCallback>;
-    getContractAt(
-      name: "ISwapRouter",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ISwapRouter>;
+    ): Promise<Contracts._MAD>;
     getContractAt(
       name: "MADFactory1155",
       address: string,
@@ -385,6 +384,16 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC721Holder>;
+    getContractAt(
+      name: "ISwapRouter",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ISwapRouter>;
+    getContractAt(
+      name: "IUniswapV3SwapCallback",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IUniswapV3SwapCallback>;
     getContractAt(
       name: "Counters",
       address: string,

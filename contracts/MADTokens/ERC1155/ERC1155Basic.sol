@@ -12,6 +12,8 @@ contract ERC1155Basic is ImplBase, ERC1155, ERC1155TokenReceiver {
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
+    //     /// @notice ERC20 payment token address.
+    // ERC20 public erc20;
 
     constructor(
         string memory _baseURI,
@@ -19,9 +21,13 @@ contract ERC1155Basic is ImplBase, ERC1155, ERC1155TokenReceiver {
         uint256 _maxSupply,
         SplitterImpl _splitter,
         uint96 _fraction,
-        address _router,
-        ERC20 _erc20
-    ) ImplBase(_baseURI, _price, _maxSupply, _splitter, _fraction, _router, _erc20) {}
+        address _router
+        ,ERC20 _erc20
+    ) ImplBase(_baseURI, _price, _maxSupply, _splitter, _fraction, _router
+    // ,_erc20
+    ) {
+        erc20 = _erc20;
+    }
 
     ////////////////////////////////////////////////////////////////
     //                       OWNER MINTING                        //

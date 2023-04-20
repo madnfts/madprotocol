@@ -83,8 +83,8 @@ abstract contract ImplBase is ERC2981, ImplBaseEventsAndErrors, Owned, Reentranc
         uint256 _maxSupply,
         SplitterImpl _splitter,
         uint96 _fraction,
-        address _router,
-        ERC20 _erc20
+        address _router
+        // ,ERC20 _erc20
     ) Owned(_router) {
         baseURI = _baseURI;
         price = _price;
@@ -92,7 +92,7 @@ abstract contract ImplBase is ERC2981, ImplBaseEventsAndErrors, Owned, Reentranc
         splitter = _splitter;
         _royaltyFee = _fraction;
         _royaltyRecipient = payable(splitter);
-        erc20 = _erc20;
+        // erc20 = _erc20;
 
         emit RoyaltyFeeSet(_royaltyFee);
         emit RoyaltyRecipientSet(_royaltyRecipient);

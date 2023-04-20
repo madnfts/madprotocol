@@ -40,6 +40,7 @@ The following number of issues were found, categorized by their severity:
 - [contracts/Router/MADRouter1155.sol](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Router/MADRouter1155.sol)
 - [contracts/lib/tokens/ERC1155/Base/ERC1155B.sol](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/tokens/ERC1155/Base/ERC1155B.sol)
 - [contracts/lib/tokens/ERC721/Base/ERC721.sol](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/tokens/ERC721/Base/ERC721.sol)
+- [contracts/lib/utils/MerkleProof.sol](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/utils/MerkleProof.sol)
 - [contracts/lib/utils/CREATE3.sol](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/utils/CREATE3.sol)
 - [contracts/lib/uniswap/IUniswapV3SwapCallback.sol](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/uniswap/IUniswapV3SwapCallback.sol)
 - [contracts/lib/utils/SafeTransferLib.sol](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/utils/SafeTransferLib.sol)
@@ -48,7 +49,7 @@ The following number of issues were found, categorized by their severity:
 
 ## Smart Contracts Analysed With NO Issues: 
 - [contracts/MAD.sol](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/MAD.sol)
-- [contracts/_MAD.sol](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/_MAD.sol)
+- [contracts/static_analysis.sol](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/static_analysis.sol)
 - [contracts/lib/auth/FactoryVerifier.sol](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/auth/FactoryVerifier.sol)
 - [contracts/lib/deployers/ERC1155Deployer.sol](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/deployers/ERC1155Deployer.sol)
 - [contracts/lib/deployers/ERC721Deployer.sol](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/deployers/ERC721Deployer.sol)
@@ -69,7 +70,6 @@ The following number of issues were found, categorized by their severity:
 - [contracts/lib/tokens/ERC721/Base/interfaces/IERC721.sol](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/tokens/ERC721/Base/interfaces/IERC721.sol)
 - [contracts/lib/tokens/ERC721/Base/utils/ERC721Holder.sol](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/tokens/ERC721/Base/utils/ERC721Holder.sol)
 - [contracts/lib/uniswap/ISwapRouter.sol](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/uniswap/ISwapRouter.sol)
-- [contracts/lib/utils/MerkleProof.sol](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/utils/MerkleProof.sol)
 - [contracts/lib/utils/Strings.sol](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/utils/Strings.sol)
 - [contracts/MADTokens/common/interfaces/ImplBaseEventsAndErrors.sol](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/MADTokens/common/interfaces/ImplBaseEventsAndErrors.sol)
 - [contracts/Shared/EventsAndErrors.sol](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Shared/EventsAndErrors.sol)
@@ -107,7 +107,7 @@ _Item 1 / 19_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -134,7 +134,7 @@ _Item 2 / 19_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -160,7 +160,7 @@ _Item 3 / 19_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -187,7 +187,7 @@ _Item 4 / 19_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -213,7 +213,7 @@ _Item 5 / 19_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -240,7 +240,7 @@ _Item 6 / 19_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -266,7 +266,7 @@ _Item 7 / 19_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -293,7 +293,7 @@ _Item 8 / 19_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -319,7 +319,7 @@ _Item 9 / 19_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -345,7 +345,7 @@ _Item 10 / 19_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -371,7 +371,7 @@ _Item 11 / 19_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -397,7 +397,7 @@ _Item 12 / 19_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -422,7 +422,7 @@ _Item 13 / 19_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -448,7 +448,7 @@ _Item 14 / 19_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -474,7 +474,7 @@ _Item 15 / 19_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -500,7 +500,7 @@ _Item 16 / 19_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -527,7 +527,7 @@ _Item 17 / 19_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -554,7 +554,7 @@ _Item 18 / 19_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -582,7 +582,7 @@ _Item 19 / 19_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -613,7 +613,7 @@ _Item 1 / 2_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -639,7 +639,7 @@ _Item 2 / 2_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -669,7 +669,7 @@ _Item 1 / 1_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -703,7 +703,7 @@ _Item 1 / 5_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -735,7 +735,7 @@ _Item 2 / 5_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -763,7 +763,7 @@ _Item 3 / 5_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -792,7 +792,7 @@ _Item 4 / 5_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -821,7 +821,7 @@ _Item 5 / 5_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -850,7 +850,7 @@ _Item 1 / 2_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -874,7 +874,7 @@ _Item 2 / 2_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -904,7 +904,7 @@ _Item 1 / 2_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -929,7 +929,7 @@ _Item 2 / 2_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -958,7 +958,7 @@ _Item 1 / 7_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -982,7 +982,7 @@ _Item 2 / 7_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1006,7 +1006,7 @@ _Item 3 / 7_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1030,7 +1030,7 @@ _Item 4 / 7_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1054,7 +1054,7 @@ _Item 5 / 7_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1078,7 +1078,7 @@ _Item 6 / 7_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1102,7 +1102,7 @@ _Item 7 / 7_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1131,7 +1131,7 @@ _Item 1 / 2_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1155,7 +1155,7 @@ _Item 2 / 2_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1186,7 +1186,7 @@ _Item 1 / 1_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1215,7 +1215,7 @@ _Item 1 / 6_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1239,7 +1239,7 @@ _Item 2 / 6_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1263,7 +1263,7 @@ _Item 3 / 6_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1287,7 +1287,7 @@ _Item 4 / 6_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1311,7 +1311,7 @@ _Item 5 / 6_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1335,7 +1335,7 @@ _Item 6 / 6_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1369,7 +1369,7 @@ _Item 1 / 3_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1398,7 +1398,7 @@ _Item 2 / 3_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1426,7 +1426,7 @@ _Item 3 / 3_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1459,7 +1459,7 @@ _Item 1 / 4_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1487,7 +1487,7 @@ _Item 2 / 4_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1515,7 +1515,7 @@ _Item 3 / 4_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1543,7 +1543,7 @@ _Item 4 / 4_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1572,7 +1572,7 @@ _Item 1 / 18_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1596,7 +1596,7 @@ _Item 2 / 18_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1620,7 +1620,7 @@ _Item 3 / 18_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1644,7 +1644,7 @@ _Item 4 / 18_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1668,7 +1668,7 @@ _Item 5 / 18_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1692,7 +1692,7 @@ _Item 6 / 18_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1716,7 +1716,7 @@ _Item 7 / 18_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1740,7 +1740,7 @@ _Item 8 / 18_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1764,7 +1764,7 @@ _Item 9 / 18_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1788,7 +1788,7 @@ _Item 10 / 18_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1812,7 +1812,7 @@ _Item 11 / 18_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1836,7 +1836,7 @@ _Item 12 / 18_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1860,7 +1860,7 @@ _Item 13 / 18_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1884,7 +1884,7 @@ _Item 14 / 18_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1908,7 +1908,7 @@ _Item 15 / 18_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1932,7 +1932,7 @@ _Item 16 / 18_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1956,7 +1956,7 @@ _Item 17 / 18_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -1980,7 +1980,7 @@ _Item 18 / 18_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -2009,7 +2009,7 @@ _Item 1 / 8_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -2033,7 +2033,7 @@ _Item 2 / 8_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -2057,7 +2057,7 @@ _Item 3 / 8_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -2081,7 +2081,7 @@ _Item 4 / 8_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -2105,7 +2105,7 @@ _Item 5 / 8_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -2129,7 +2129,7 @@ _Item 6 / 8_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -2153,7 +2153,7 @@ _Item 7 / 8_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 
@@ -2177,7 +2177,7 @@ _Item 8 / 8_
 
 ## Recommendations
 
-[Slither Detectors](https://github.com/crytic/slither?s=35#detectors)**
+*[Slither Detectors Information](https://github.com/crytic/slither?s=35#detectors)*
 
 ---
 

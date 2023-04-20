@@ -2,6 +2,7 @@ import json
 import os
 import glob
 import pathlib
+from typing import Dict, List, Tuple
 from templates import base_template, check_template, checks_header, issues_found
 from constants import (
     REPO_CONTRACT_PATH,
@@ -14,11 +15,16 @@ from constants import (
     STARS,
     IGNORED_DIR,
     ERC_GLOB,
-    EXCLUDED_DETECTORS
+    EXCLUDED_DETECTORS,
 )
 
 
-def find_unlisted_contracts(contracts_list: list, contracts_folder: str):
+def find_unlisted_contracts(
+    contracts_list: List[str], contracts_folder: str
+) -> List[str]:
+
+    IGNORED_DIR = os.path.join("contracts", "lib", "test")
+
     contracts_folder = pathlib.Path(contracts_folder)
     unlisted_paths = []
 
@@ -30,8 +36,8 @@ def find_unlisted_contracts(contracts_list: list, contracts_folder: str):
 
         if formatted_path not in contracts_list:
             unlisted_paths.append(formatted_path)
-
     return unlisted_paths
+
 
 def get_erc_checks() -> str:
     check_str = ""
@@ -41,7 +47,7 @@ def get_erc_checks() -> str:
     return check_str
 
 
-def parse_results(results):
+def parse_results(results) -> Tuple[Dict[str, List[str]], Dict[str, int], List[str]]:
     markdown_data = {}
     items_count = {"High": 0, "Medium": 0, "Low": 0, "Optimization": 0}
     contracts = []
@@ -93,7 +99,7 @@ def parse_results(results):
     return markdown_data, items_count, contracts
 
 
-def generate_header(items_count, contracts):
+def generate_header(items_count: Dict[str, int], contracts: List[str]) -> str:
     nl = "\n\n"
     header = (
         "# Slither Results\n\n"
@@ -118,8 +124,7 @@ def generate_header(items_count, contracts):
     return header
 
 
-def write_output(header, markdown_data):
-    done = []
+def write_output(header: str, markdown_data: Dict[str, List[str]]) -> None:
     with open(OUTFILE, "w") as f:
         f.write(header)
         for checkType, items in markdown_data.items():
@@ -130,7 +135,29 @@ def write_output(header, markdown_data):
         f.write(checks_header + get_erc_checks())
 
 
-def main():
+def delete_file(file_path: str) -> None:
+    try:
+        os.remove(file_path)
+        print(f"File '{file_path}' has been deleted.")
+    except FileNotFoundError:
+        print(f"File '{file_path}' not found.")
+    except Exception as e:
+        print(f"Error while deleting the file '{file_path}': {e}")
+
+
+def generate_import_file(folder: str) -> None:
+    gen = "// SPDX-License-Identifier: AGPL-3.0-only\n\npragma solidity 0.8.19;\n\n"
+
+    for i in find_unlisted_contracts([], folder):
+        gen += f'import "{i}";\n'
+
+    gen += "\ncontract StaticAnalysis {}\n"
+
+    with open(os.path.join(folder, "static_analysis.sol"), "w") as file:
+        file.write(gen)
+
+
+def main() -> None:
     with open(FN) as f:
         results = json.load(f)["results"]["detectors"]
 
@@ -141,3 +168,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+    generate_import_file("contracts")
+    # delete_file("Slither/results/slither.results.json")

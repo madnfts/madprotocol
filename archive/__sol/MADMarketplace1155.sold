@@ -10,7 +10,7 @@ import { Owned } from "./lib/auth/Owned.sol";
 import { ERC1155Holder } from "./lib/tokens/ERC1155/Base/utils/ERC1155Holder.sol";
 import { SafeTransferLib } from "./lib/utils/SafeTransferLib.sol";
 import { ERC20 } from "./lib/tokens/ERC20.sol";
-import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
+import "contracts/lib/uniswap/ISwapRouter.sol";
 
 contract MADMarketplace1155 is
     MAD,

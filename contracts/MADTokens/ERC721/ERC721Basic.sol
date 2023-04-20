@@ -13,6 +13,9 @@ contract ERC721Basic is ERC721, ImplBase, ERC721TokenReceiver {
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
+    // /// @notice ERC20 payment token address.
+    // ERC20 public erc20;
+
     constructor(
         string memory _name,
         string memory _symbol,
@@ -23,7 +26,14 @@ contract ERC721Basic is ERC721, ImplBase, ERC721TokenReceiver {
         uint96 _fraction,
         address _router,
         ERC20 _erc20
-    ) ImplBase(_baseURI, _price, _maxSupply, _splitter, _fraction, _router, _erc20) ERC721(_name, _symbol) {}
+    ) ImplBase(_baseURI, _price, _maxSupply, _splitter, _fraction, 
+    _router   
+    
+    // ,_erc20
+    )
+     ERC721(_name, _symbol) {
+        erc20 = _erc20;
+     }
 
     ////////////////////////////////////////////////////////////////
     //                       OWNER MINTING                        //

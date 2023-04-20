@@ -105,11 +105,11 @@ contract SplitterImpl is SplitterEventsAndErrors {
     /// Ether they are owed, according to their percentage of 
     /// the total shares and their previous withdrawals.
     function release(address payable account) public {
-        if (_shares[account] == 0) 
+        if (_shares[account] < 1) 
             revert NoShares();
         uint256 payment = 
             releasable(account);
-        if (payment == 0) 
+        if (payment < 1) 
             revert DeniedAccount();
 
         _released[account] += payment;

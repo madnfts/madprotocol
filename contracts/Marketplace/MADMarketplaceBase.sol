@@ -6,7 +6,7 @@ import { MAD } from "contracts/MAD.sol";
 import { MADBase, ERC20 } from "contracts/Shared/MADBase.sol";
 import { FactoryVerifier, MarketplaceEventsAndErrorsBase } from "contracts/Shared/EventsAndErrors.sol";
 import { SafeTransferLib } from "contracts/lib/utils/SafeTransferLib.sol";
-import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
+import "contracts/lib/uniswap/ISwapRouter.sol";
 
 abstract contract MADMarketplaceBase is MAD, MADBase, MarketplaceEventsAndErrorsBase {
     /// @dev Function Signature := 0x06fdde03

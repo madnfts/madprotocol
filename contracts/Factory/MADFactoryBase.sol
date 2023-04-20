@@ -63,7 +63,7 @@ FactoryEventsAndErrorsBase,
     address public market;
 
     /// @dev The signer address used for lazy minting voucher validation.
-    address private signer;
+    address public signer;
 
 
     ////////////////////////////////////////////////////////////////

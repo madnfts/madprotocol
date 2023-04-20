@@ -47,6 +47,7 @@ export interface MADFactoryBaseInterface extends utils.Interface {
     "setOwner(address)": FunctionFragment;
     "setRouter(address)": FunctionFragment;
     "setSigner(address)": FunctionFragment;
+    "signer()": FunctionFragment;
     "splitterCheck(string,address,address,uint256,uint256)": FunctionFragment;
     "splitterInfo(address,address)": FunctionFragment;
     "typeChecker(bytes32)": FunctionFragment;
@@ -72,6 +73,7 @@ export interface MADFactoryBaseInterface extends utils.Interface {
       | "setOwner"
       | "setRouter"
       | "setSigner"
+      | "signer"
       | "splitterCheck"
       | "splitterInfo"
       | "typeChecker"
@@ -122,6 +124,7 @@ export interface MADFactoryBaseInterface extends utils.Interface {
     functionFragment: "setSigner",
     values: [PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(functionFragment: "signer", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "splitterCheck",
     values: [
@@ -174,6 +177,7 @@ export interface MADFactoryBaseInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "setOwner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setRouter", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setSigner", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "signer", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "splitterCheck",
     data: BytesLike
@@ -400,6 +404,8 @@ export interface MADFactoryBase extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    signer(overrides?: CallOverrides): Promise<[string]>;
+
     splitterCheck(
       _splitterSalt: PromiseOrValue<string>,
       _ambassador: PromiseOrValue<string>,
@@ -604,6 +610,8 @@ export interface MADFactoryBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    signer(overrides?: CallOverrides): Promise<string>;
+
     splitterCheck(
       _splitterSalt: PromiseOrValue<string>,
       _ambassador: PromiseOrValue<string>,
@@ -779,6 +787,8 @@ export interface MADFactoryBase extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    signer(overrides?: CallOverrides): Promise<BigNumber>;
+
     splitterCheck(
       _splitterSalt: PromiseOrValue<string>,
       _ambassador: PromiseOrValue<string>,
@@ -872,6 +882,8 @@ export interface MADFactoryBase extends BaseContract {
       _signer: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    signer(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     splitterCheck(
       _splitterSalt: PromiseOrValue<string>,

@@ -42,7 +42,7 @@ git push origin release/1.0
 
 `git fetch origin`
 
-`git fetch github`
+`git fetch github release/1.0`
 
 `git fetch github main`
 

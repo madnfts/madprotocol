@@ -23,8 +23,6 @@ def find_unlisted_contracts(
     contracts_list: List[str], contracts_folder: str
 ) -> List[str]:
 
-    IGNORED_DIR = os.path.join("contracts", "lib", "test")
-
     contracts_folder = pathlib.Path(contracts_folder)
     unlisted_paths = []
 
@@ -169,4 +167,4 @@ def main() -> None:
 if __name__ == "__main__":
     main()
     generate_import_file("contracts")
-    # delete_file("Slither/results/slither.results.json")
+    # delete_file("Audit/Analysis/Slither/results/slither.results.json")

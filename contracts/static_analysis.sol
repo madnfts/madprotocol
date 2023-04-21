@@ -3,6 +3,7 @@
 pragma solidity 0.8.19;
 
 import "contracts/MAD.sol";
+import "contracts/static_analysis.sol";
 import "contracts/Factory/MADFactory1155.sol";
 import "contracts/Factory/MADFactory721.sol";
 import "contracts/Factory/MADFactoryBase.sol";
@@ -16,6 +17,11 @@ import "contracts/lib/security/Pausable.sol";
 import "contracts/lib/security/ReentrancyGuard.sol";
 import "contracts/lib/splitter/SplitterEventsAndErrors.sol";
 import "contracts/lib/splitter/SplitterImpl.sol";
+import "contracts/lib/test/erc1155-mock.sol";
+import "contracts/lib/test/erc20-mock.sol";
+import "contracts/lib/test/erc2981-mock.sol";
+import "contracts/lib/test/erc721-mock.sol";
+import "contracts/lib/test/test-interfaces.sol";
 import "contracts/lib/tokens/ERC20.sol";
 import "contracts/lib/tokens/common/ERC2981.sol";
 import "contracts/lib/tokens/common/FeeOracle.sol";

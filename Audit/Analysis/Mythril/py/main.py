@@ -12,6 +12,7 @@ from constants import (
     OUT,
     EXECUTION_TIMEOUT,
     SOLVER_TIMEOUT,
+    WITH_DOCKER,
 )
 
 
@@ -52,7 +53,7 @@ def generate_script(folder: str) -> None:
     for i in find_unlisted_contracts([], folder):
         if i not in scripts:
             scripts.append(
-                f"docker run -v $(pwd):/tmp mythril/myth analyze /tmp/{i} -t {TX_COUNT}  -o {OUT} --max-depth {RECURSION_DEPTH} --solc-json {SOLC_JSON_PATH} --execution-timeout {EXECUTION_TIMEOUT} --solver-timeout {SOLVER_TIMEOUT}"
+                f"{WITH_DOCKER}myth analyze /tmp/{i} -t {TX_COUNT}  -o {OUT} --max-depth {RECURSION_DEPTH} --solc-json {SOLC_JSON_PATH} --execution-timeout {EXECUTION_TIMEOUT} --solver-timeout {SOLVER_TIMEOUT}"
             )
 
     with open(RUNS_SAVE_PATH, "w") as file:

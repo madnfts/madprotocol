@@ -1,5 +1,11 @@
 # Mythril
 
+1. Run `./py/main.py`
+
+2. copy scripts to server (ensure LF)
+
+3. from the root directory run `bash runAll.sh`
+
 https://swcregistry.io/
 
 https://github.com/ConsenSys/mythril

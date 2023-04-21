@@ -3,7 +3,6 @@
 pragma solidity 0.8.19;
 
 import "contracts/MAD.sol";
-import "contracts/static_analysis.sol";
 import "contracts/Factory/MADFactory1155.sol";
 import "contracts/Factory/MADFactory721.sol";
 import "contracts/Factory/MADFactoryBase.sol";

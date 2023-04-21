@@ -4,10 +4,10 @@
 /// @author Modified from OpenZeppelin Contracts
 /// (https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/finance/PaymentSplitter.sol)
 
-pragma solidity 0.8.16;
+pragma solidity 0.8.19;
 
-import { SplitterEventsAndErrors } from "./SplitterEventsAndErrors.sol";
-import "../utils/SafeTransferLib.sol";
+import { SplitterEventsAndErrors } from "contracts/lib/splitter/SplitterEventsAndErrors.sol";
+import "contracts/lib/utils/SafeTransferLib.sol";
 
 // prettier-ignore
 
@@ -105,11 +105,11 @@ contract SplitterImpl is SplitterEventsAndErrors {
     /// Ether they are owed, according to their percentage of 
     /// the total shares and their previous withdrawals.
     function release(address payable account) public {
-        if (_shares[account] == 0) 
+        if (_shares[account] < 1) 
             revert NoShares();
         uint256 payment = 
             releasable(account);
-        if (payment == 0) 
+        if (payment < 1) 
             revert DeniedAccount();
 
         _released[account] += payment;

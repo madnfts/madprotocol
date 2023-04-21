@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pragma solidity 0.8.16;
+pragma solidity 0.8.19;
 
 interface SplitterEventsAndErrors {
     ////////////////////////////////////////////////////////////////
@@ -13,11 +13,7 @@ interface SplitterEventsAndErrors {
 
     event PaymentReceived(address from, uint256 amount);
 
-    event ERC20PaymentReleased(
-        address indexed token,
-        address to,
-        uint256 amount
-    );
+    event ERC20PaymentReleased(address indexed token, address to, uint256 amount);
 
     ////////////////////////////////////////////////////////////////
     //                           ERRORS                           //

@@ -71,7 +71,7 @@ describe("MADRouter721 - ERC20", () => {
 
       // check each global var
       expect(await r721.callStatic.name()).to.eq("router");
-      expect(await r721.MADFactory721()).to.eq(f721.address);
+      expect(await r721.madFactory()).to.eq(f721.address);
       expect(await f721.callStatic.erc20()).to.eq(
         erc20.address,
       );
@@ -121,11 +121,9 @@ describe("MADRouter721 - ERC20", () => {
 
       expect(tx).to.be.ok;
       await expect(tx)
-        .to.emit(r721, "BaseURI")
+        .to.emit(r721, "BaseURISet")
         .withArgs(colID, "null");
-      expect(await basic.callStatic.getBaseURI()).to.eq(
-        "null",
-      );
+      expect(await basic.callStatic.baseURI()).to.eq("null");
       const verArt = await artifacts.readArtifact(
         "FactoryVerifier",
       );

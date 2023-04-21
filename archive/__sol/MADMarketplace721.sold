@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pragma solidity 0.8.16;
+pragma solidity 0.8.19;
 
 import { MAD } from "./MAD.sol";
 import { MarketplaceEventsAndErrors721, FactoryVerifier, IERC721 } from "./EventsAndErrors.sol";
@@ -10,7 +10,7 @@ import { Owned } from "./lib/auth/Owned.sol";
 import { ERC721Holder } from "./lib/tokens/ERC721/Base/utils/ERC721Holder.sol";
 import { SafeTransferLib } from "./lib/utils/SafeTransferLib.sol";
 import { ERC20 } from "./lib/tokens/ERC20.sol";
-import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
+import "contracts/lib/uniswap/ISwapRouter.sol";
 
 contract MADMarketplace721 is
     MAD,

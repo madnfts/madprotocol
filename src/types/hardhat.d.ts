@@ -13,45 +13,21 @@ import { ethers } from "ethers";
 declare module "hardhat/types/runtime" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
     getContractFactory(
-      name: "IUniswapV3SwapCallback",
+      name: "_MAD",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IUniswapV3SwapCallback__factory>;
+    ): Promise<Contracts._MAD__factory>;
     getContractFactory(
-      name: "ISwapRouter",
+      name: "MADFactory1155",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ISwapRouter__factory>;
+    ): Promise<Contracts.MADFactory1155__factory>;
     getContractFactory(
-      name: "EventsAndErrorsBase",
+      name: "MADFactory721",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.EventsAndErrorsBase__factory>;
+    ): Promise<Contracts.MADFactory721__factory>;
     getContractFactory(
-      name: "FactoryEventsAndErrors1155",
+      name: "MADFactoryBase",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.FactoryEventsAndErrors1155__factory>;
-    getContractFactory(
-      name: "FactoryEventsAndErrors721",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.FactoryEventsAndErrors721__factory>;
-    getContractFactory(
-      name: "FactoryEventsAndErrorsBase",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.FactoryEventsAndErrorsBase__factory>;
-    getContractFactory(
-      name: "MarketplaceEventsAndErrors1155",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.MarketplaceEventsAndErrors1155__factory>;
-    getContractFactory(
-      name: "MarketplaceEventsAndErrors721",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.MarketplaceEventsAndErrors721__factory>;
-    getContractFactory(
-      name: "MarketplaceEventsAndErrorsBase",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.MarketplaceEventsAndErrorsBase__factory>;
-    getContractFactory(
-      name: "RouterEvents",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.RouterEvents__factory>;
+    ): Promise<Contracts.MADFactoryBase__factory>;
     getContractFactory(
       name: "FactoryVerifier",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -133,10 +109,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC1155TokenReceiver__factory>;
     getContractFactory(
-      name: "ERC1155BasicEventsAndErrors",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC1155BasicEventsAndErrors__factory>;
-    getContractFactory(
       name: "IERC1155",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC1155__factory>;
@@ -144,10 +116,6 @@ declare module "hardhat/types/runtime" {
       name: "ERC1155Holder",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC1155Holder__factory>;
-    getContractFactory(
-      name: "ERC1155Basic",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC1155Basic__factory>;
     getContractFactory(
       name: "ERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -161,10 +129,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC721TokenReceiver__factory>;
     getContractFactory(
-      name: "ERC721BasicEventsAndErrors",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC721BasicEventsAndErrors__factory>;
-    getContractFactory(
       name: "IERC721",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC721__factory>;
@@ -173,9 +137,13 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC721Holder__factory>;
     getContractFactory(
-      name: "ERC721Basic",
+      name: "ISwapRouter",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC721Basic__factory>;
+    ): Promise<Contracts.ISwapRouter__factory>;
+    getContractFactory(
+      name: "IUniswapV3SwapCallback",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IUniswapV3SwapCallback__factory>;
     getContractFactory(
       name: "Counters",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -185,13 +153,21 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MAD__factory>;
     getContractFactory(
-      name: "MADFactory1155",
+      name: "ImplBase",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.MADFactory1155__factory>;
+    ): Promise<Contracts.ImplBase__factory>;
     getContractFactory(
-      name: "MADFactory721",
+      name: "ImplBaseEventsAndErrors",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.MADFactory721__factory>;
+    ): Promise<Contracts.ImplBaseEventsAndErrors__factory>;
+    getContractFactory(
+      name: "ERC1155Basic",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC1155Basic__factory>;
+    getContractFactory(
+      name: "ERC721Basic",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC721Basic__factory>;
     getContractFactory(
       name: "MADMarketplace1155",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -212,57 +188,67 @@ declare module "hardhat/types/runtime" {
       name: "MADRouter721",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MADRouter721__factory>;
+    getContractFactory(
+      name: "MADRouterBase",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MADRouterBase__factory>;
+    getContractFactory(
+      name: "EventsAndErrorsBase",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.EventsAndErrorsBase__factory>;
+    getContractFactory(
+      name: "FactoryEventsAndErrors1155",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.FactoryEventsAndErrors1155__factory>;
+    getContractFactory(
+      name: "FactoryEventsAndErrors721",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.FactoryEventsAndErrors721__factory>;
+    getContractFactory(
+      name: "FactoryEventsAndErrorsBase",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.FactoryEventsAndErrorsBase__factory>;
+    getContractFactory(
+      name: "MarketplaceEventsAndErrors1155",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MarketplaceEventsAndErrors1155__factory>;
+    getContractFactory(
+      name: "MarketplaceEventsAndErrors721",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MarketplaceEventsAndErrors721__factory>;
+    getContractFactory(
+      name: "MarketplaceEventsAndErrorsBase",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MarketplaceEventsAndErrorsBase__factory>;
+    getContractFactory(
+      name: "RouterEvents",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.RouterEvents__factory>;
+    getContractFactory(
+      name: "MADBase",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MADBase__factory>;
 
     getContractAt(
-      name: "IUniswapV3SwapCallback",
+      name: "_MAD",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.IUniswapV3SwapCallback>;
+    ): Promise<Contracts._MAD>;
     getContractAt(
-      name: "ISwapRouter",
+      name: "MADFactory1155",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.ISwapRouter>;
+    ): Promise<Contracts.MADFactory1155>;
     getContractAt(
-      name: "EventsAndErrorsBase",
+      name: "MADFactory721",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.EventsAndErrorsBase>;
+    ): Promise<Contracts.MADFactory721>;
     getContractAt(
-      name: "FactoryEventsAndErrors1155",
+      name: "MADFactoryBase",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.FactoryEventsAndErrors1155>;
-    getContractAt(
-      name: "FactoryEventsAndErrors721",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.FactoryEventsAndErrors721>;
-    getContractAt(
-      name: "FactoryEventsAndErrorsBase",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.FactoryEventsAndErrorsBase>;
-    getContractAt(
-      name: "MarketplaceEventsAndErrors1155",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.MarketplaceEventsAndErrors1155>;
-    getContractAt(
-      name: "MarketplaceEventsAndErrors721",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.MarketplaceEventsAndErrors721>;
-    getContractAt(
-      name: "MarketplaceEventsAndErrorsBase",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.MarketplaceEventsAndErrorsBase>;
-    getContractAt(
-      name: "RouterEvents",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.RouterEvents>;
+    ): Promise<Contracts.MADFactoryBase>;
     getContractAt(
       name: "FactoryVerifier",
       address: string,
@@ -364,11 +350,6 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ERC1155TokenReceiver>;
     getContractAt(
-      name: "ERC1155BasicEventsAndErrors",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ERC1155BasicEventsAndErrors>;
-    getContractAt(
       name: "IERC1155",
       address: string,
       signer?: ethers.Signer
@@ -378,11 +359,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC1155Holder>;
-    getContractAt(
-      name: "ERC1155Basic",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ERC1155Basic>;
     getContractAt(
       name: "ERC20",
       address: string,
@@ -399,11 +375,6 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ERC721TokenReceiver>;
     getContractAt(
-      name: "ERC721BasicEventsAndErrors",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ERC721BasicEventsAndErrors>;
-    getContractAt(
       name: "IERC721",
       address: string,
       signer?: ethers.Signer
@@ -414,10 +385,15 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ERC721Holder>;
     getContractAt(
-      name: "ERC721Basic",
+      name: "ISwapRouter",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.ERC721Basic>;
+    ): Promise<Contracts.ISwapRouter>;
+    getContractAt(
+      name: "IUniswapV3SwapCallback",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IUniswapV3SwapCallback>;
     getContractAt(
       name: "Counters",
       address: string,
@@ -429,15 +405,25 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.MAD>;
     getContractAt(
-      name: "MADFactory1155",
+      name: "ImplBase",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.MADFactory1155>;
+    ): Promise<Contracts.ImplBase>;
     getContractAt(
-      name: "MADFactory721",
+      name: "ImplBaseEventsAndErrors",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.MADFactory721>;
+    ): Promise<Contracts.ImplBaseEventsAndErrors>;
+    getContractAt(
+      name: "ERC1155Basic",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC1155Basic>;
+    getContractAt(
+      name: "ERC721Basic",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC721Basic>;
     getContractAt(
       name: "MADMarketplace1155",
       address: string,
@@ -463,6 +449,56 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.MADRouter721>;
+    getContractAt(
+      name: "MADRouterBase",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MADRouterBase>;
+    getContractAt(
+      name: "EventsAndErrorsBase",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.EventsAndErrorsBase>;
+    getContractAt(
+      name: "FactoryEventsAndErrors1155",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.FactoryEventsAndErrors1155>;
+    getContractAt(
+      name: "FactoryEventsAndErrors721",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.FactoryEventsAndErrors721>;
+    getContractAt(
+      name: "FactoryEventsAndErrorsBase",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.FactoryEventsAndErrorsBase>;
+    getContractAt(
+      name: "MarketplaceEventsAndErrors1155",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MarketplaceEventsAndErrors1155>;
+    getContractAt(
+      name: "MarketplaceEventsAndErrors721",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MarketplaceEventsAndErrors721>;
+    getContractAt(
+      name: "MarketplaceEventsAndErrorsBase",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MarketplaceEventsAndErrorsBase>;
+    getContractAt(
+      name: "RouterEvents",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.RouterEvents>;
+    getContractAt(
+      name: "MADBase",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MADBase>;
 
     // default types
     getContractFactory(

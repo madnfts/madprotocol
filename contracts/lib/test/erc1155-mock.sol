@@ -1,41 +1,25 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pragma solidity 0.8.16;
+pragma solidity 0.8.19;
 
-import { ERC1155B, ERC1155TokenReceiver } from "../tokens/ERC1155/Base/ERC1155B.sol";
+import { ERC1155B, ERC1155TokenReceiver } from "contracts/lib/tokens/ERC1155/Base/ERC1155B.sol";
 
-import { Owned } from "../auth/Owned.sol";
+import { Owned } from "contracts/lib/auth/Owned.sol";
 
-contract MockERC1155 is
-    ERC1155B,
-    ERC1155TokenReceiver,
-    Owned(msg.sender)
-{
+contract MockERC1155 is ERC1155B, ERC1155TokenReceiver, Owned(msg.sender) {
     constructor() {}
 
-    function uri(
-        uint256
-    ) public pure virtual override returns (string memory) {}
+    function uri(uint256) public pure virtual override returns (string memory) {}
 
-    function mint(
-        address to,
-        uint256 id,
-        uint256 total
-    ) public onlyOwner {
+    function mint(address to, uint256 id, uint256 total) public onlyOwner {
         _mint(to, id, total, "");
     }
 
-    function batchMint(
-        address to,
-        uint256[] memory ids,
-        uint256[] memory balances
-    ) public onlyOwner {
+    function batchMint(address to, uint256[] memory ids, uint256[] memory balances) public onlyOwner {
         _batchMint(to, ids, balances, "");
     }
 
-    function supportsInterface(
-        bytes4 interfaceId
-    ) public pure returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public pure returns (bool) {
         return
             // ERC165 Interface ID for ERC165
             interfaceId == 0x01ffc9a7 ||

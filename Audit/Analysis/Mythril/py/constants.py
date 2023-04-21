@@ -9,7 +9,10 @@ IMPACTS = ("High", "Medium", "Low", "Optimization")
 OMIT_KEYS = ("elements", "markdown", "id", "first_markdown_element")
 OMIT_CHECKS = ()
 OMIT_FOLDERS = ("test", "script")
-IGNORED_DIR = os.path.join("contracts", "lib", "test")
+ignored_dirs = (os.path.join("contracts", "lib", "test"),)
+IGNORED_DIRS = tuple([str(x).replace("\\", "/") for x in ignored_dirs])
+IGNORED_FILES = ("static_analysis.sol",)
+
 STARS = "*" * 80
 EXCLUDED_DETECTORS = "pragma", "solc-version", "assembly", "naming-convention"
 CONTRACTS_FOLDER = "contracts"

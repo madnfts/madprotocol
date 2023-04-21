@@ -1,5 +1,4 @@
 docker run -v $(pwd):/tmp mythril/myth analyze /tmp/contracts/MAD.sol -t 100000  -o jsonv2 --max-depth 1000 --solc-json /tmp/solc.json --execution-timeout 7200 --solver-timeout 60000
-docker run -v $(pwd):/tmp mythril/myth analyze /tmp/contracts/static_analysis.sol -t 100000  -o jsonv2 --max-depth 1000 --solc-json /tmp/solc.json --execution-timeout 7200 --solver-timeout 60000
 docker run -v $(pwd):/tmp mythril/myth analyze /tmp/contracts/Factory/MADFactory1155.sol -t 100000  -o jsonv2 --max-depth 1000 --solc-json /tmp/solc.json --execution-timeout 7200 --solver-timeout 60000
 docker run -v $(pwd):/tmp mythril/myth analyze /tmp/contracts/Factory/MADFactory721.sol -t 100000  -o jsonv2 --max-depth 1000 --solc-json /tmp/solc.json --execution-timeout 7200 --solver-timeout 60000
 docker run -v $(pwd):/tmp mythril/myth analyze /tmp/contracts/Factory/MADFactoryBase.sol -t 100000  -o jsonv2 --max-depth 1000 --solc-json /tmp/solc.json --execution-timeout 7200 --solver-timeout 60000
@@ -13,11 +12,6 @@ docker run -v $(pwd):/tmp mythril/myth analyze /tmp/contracts/lib/security/Pausa
 docker run -v $(pwd):/tmp mythril/myth analyze /tmp/contracts/lib/security/ReentrancyGuard.sol -t 100000  -o jsonv2 --max-depth 1000 --solc-json /tmp/solc.json --execution-timeout 7200 --solver-timeout 60000
 docker run -v $(pwd):/tmp mythril/myth analyze /tmp/contracts/lib/splitter/SplitterEventsAndErrors.sol -t 100000  -o jsonv2 --max-depth 1000 --solc-json /tmp/solc.json --execution-timeout 7200 --solver-timeout 60000
 docker run -v $(pwd):/tmp mythril/myth analyze /tmp/contracts/lib/splitter/SplitterImpl.sol -t 100000  -o jsonv2 --max-depth 1000 --solc-json /tmp/solc.json --execution-timeout 7200 --solver-timeout 60000
-docker run -v $(pwd):/tmp mythril/myth analyze /tmp/contracts/lib/test/erc1155-mock.sol -t 100000  -o jsonv2 --max-depth 1000 --solc-json /tmp/solc.json --execution-timeout 7200 --solver-timeout 60000
-docker run -v $(pwd):/tmp mythril/myth analyze /tmp/contracts/lib/test/erc20-mock.sol -t 100000  -o jsonv2 --max-depth 1000 --solc-json /tmp/solc.json --execution-timeout 7200 --solver-timeout 60000
-docker run -v $(pwd):/tmp mythril/myth analyze /tmp/contracts/lib/test/erc2981-mock.sol -t 100000  -o jsonv2 --max-depth 1000 --solc-json /tmp/solc.json --execution-timeout 7200 --solver-timeout 60000
-docker run -v $(pwd):/tmp mythril/myth analyze /tmp/contracts/lib/test/erc721-mock.sol -t 100000  -o jsonv2 --max-depth 1000 --solc-json /tmp/solc.json --execution-timeout 7200 --solver-timeout 60000
-docker run -v $(pwd):/tmp mythril/myth analyze /tmp/contracts/lib/test/test-interfaces.sol -t 100000  -o jsonv2 --max-depth 1000 --solc-json /tmp/solc.json --execution-timeout 7200 --solver-timeout 60000
 docker run -v $(pwd):/tmp mythril/myth analyze /tmp/contracts/lib/tokens/ERC20.sol -t 100000  -o jsonv2 --max-depth 1000 --solc-json /tmp/solc.json --execution-timeout 7200 --solver-timeout 60000
 docker run -v $(pwd):/tmp mythril/myth analyze /tmp/contracts/lib/tokens/common/ERC2981.sol -t 100000  -o jsonv2 --max-depth 1000 --solc-json /tmp/solc.json --execution-timeout 7200 --solver-timeout 60000
 docker run -v $(pwd):/tmp mythril/myth analyze /tmp/contracts/lib/tokens/common/FeeOracle.sol -t 100000  -o jsonv2 --max-depth 1000 --solc-json /tmp/solc.json --execution-timeout 7200 --solver-timeout 60000

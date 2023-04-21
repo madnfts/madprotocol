@@ -4,7 +4,8 @@ from pathlib import Path
 from typing import List
 from constants import (
     RUNS_SAVE_PATH,
-    IGNORED_DIR,
+    IGNORED_DIRS,
+    IGNORED_FILES,
     SOLC_REMAPPINGS_PATH,
     RECURSION_DEPTH,
     SOLC_JSON_PATH,
@@ -25,7 +26,9 @@ def find_unlisted_contracts(
     for file_path in contracts_folder.rglob("*.sol"):
         formatted_path = str(file_path).replace("\\", "/")
 
-        if formatted_path.startswith(IGNORED_DIR):
+        if formatted_path.startswith(IGNORED_DIRS) or formatted_path.endswith(
+            IGNORED_FILES
+        ):
             continue
 
         if formatted_path not in contracts_list:

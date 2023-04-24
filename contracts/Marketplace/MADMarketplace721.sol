@@ -89,7 +89,7 @@ contract MADMarketplace721 is MADMarketplaceBase, MarketplaceEventsAndErrors721,
         }
 
         if (lastBidPrice != 0) {
-            totalOutbid += lastBidPrice;
+            totalOutbid = totalOutbid + lastBidPrice;
             userOutbid[order.lastBidder] += lastBidPrice;
 
             emit UserOutbid(order.lastBidder, address(erc20) != address(0) ? address(erc20) : address(0), lastBidPrice);

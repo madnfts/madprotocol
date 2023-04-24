@@ -1,6 +1,5 @@
 {
     "remappings": [
-        "contracts=/tmp/contracts",
         "contractsFactory=/tmp/contractsFactory",
         "contractslibauth=/tmp/contractslibauth",
         "contractslibdeployers=/tmp/contractslibdeployers",

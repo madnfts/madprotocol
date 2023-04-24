@@ -1,7 +1,7 @@
 #!/bin/bash
 
 error_count=0
-error_log="error_log.log"
+error_log="error.log"
 summary=""
 commands_file="runs"
 
@@ -26,8 +26,12 @@ while IFS= read -r cmd; do
     # Trap errors and call handle_error
     trap 'handle_error "$cmd"; continue;' ERR
 
+    # Print the command to the screen
+    echo "Executing: $cmd"
+    
     # Execute the command
-    eval "$cmd" 2> "$error_log"
+    eval "${cmd}" > /tmp/cmd_output.txt 2> "$error_log"
+    cat /tmp/cmd_output.txt >> /tmp/mythril.json
 done < "$commands_file"
 
 # Print the summary of errors
@@ -37,3 +41,4 @@ if [ $error_count -gt 0 ]; then
 else
     echo "All commands executed successfully."
 fi
+

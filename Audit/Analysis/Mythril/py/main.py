@@ -14,6 +14,11 @@ from constants import (
     EXECUTION_TIMEOUT,
     SOLVER_TIMEOUT,
     WITH_DOCKER,
+    OUTPUT_FILE,
+    SOLVER_LOG,
+    PRUNING_FACTOR,
+    STRATEGIES,
+    LOG_LEVEL,
 )
 
 
@@ -50,14 +55,17 @@ def generate_remappings(folder: str) -> None:
         json.dump(remappings, outfile, indent=4)
 
 
-def generate_script(folder: str) -> None:
+def generate_script(
+    folder: str,
+) -> None:
     scripts = []
 
     for i in find_unlisted_contracts([], folder):
         if i not in scripts:
-            scripts.append(
-                f"{WITH_DOCKER}myth analyze /tmp/{i} -t {TX_COUNT}  -o {OUT} --max-depth {RECURSION_DEPTH} --solc-json {SOLC_JSON_PATH} --execution-timeout {EXECUTION_TIMEOUT} --solver-timeout {SOLVER_TIMEOUT}"
-            )
+            for s in STRATEGIES:
+                scripts.append(
+                    f"{WITH_DOCKER}myth analyze /tmp/{i} -t {TX_COUNT} --max-depth {RECURSION_DEPTH} --solc-json {SOLC_JSON_PATH} --execution-timeout {EXECUTION_TIMEOUT} --solver-timeout {SOLVER_TIMEOUT} -o {OUT} --solver-log {SOLVER_LOG}  -j {OUTPUT_FILE} --pruning-factor {PRUNING_FACTOR} --strategy {s} --enable-coverage-strategy  --unconstrained-storage --disable-dependency-pruning"
+                )
 
     with open(RUNS_SAVE_PATH, "w") as file:
         for x in scripts:

@@ -39,7 +39,7 @@ describe("MADRouter721", () => {
   const price: BigNumber = ethers.utils.parseEther("1");
 
   before("Set signers and reset network", async () => {
-    console.log(ethers.utils.parseEther("2.5"));
+    // console.log(ethers.utils.parseEther("2.5"));
     [owner, amb, mad, acc01, acc02] =
       await // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (ethers as any).getSigners();
@@ -95,6 +95,7 @@ describe("MADRouter721", () => {
           "ipfs://cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC721Basic",
@@ -143,6 +144,7 @@ describe("MADRouter721", () => {
           "ipfs://cid/",
           splAddr,
           750,
+          []
         );
       const colID = await f721.callStatic.getColID(basicAddr);
       const basic = await ethers.getContractAt(
@@ -204,6 +206,7 @@ describe("MADRouter721", () => {
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC721Basic",
@@ -268,6 +271,7 @@ describe("MADRouter721", () => {
           "ipfs://cid/",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC721Basic",
@@ -341,6 +345,7 @@ describe("MADRouter721", () => {
           "ipfs://cid/",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC721Basic",
@@ -410,6 +415,7 @@ describe("MADRouter721", () => {
           "ipfs://cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC721Basic",
@@ -464,6 +470,7 @@ describe("MADRouter721", () => {
           "ipfs://cid/",
           madSpl,
           750,
+          []
         );
       const basic2 = await ethers.getContractAt(
         "ERC721Basic",
@@ -512,6 +519,7 @@ describe("MADRouter721", () => {
           "ipfs://cid/",
           ambSpl,
           750,
+          []
         );
       const wl = await ethers.getContractAt(
         "ERC721Basic",
@@ -564,6 +572,7 @@ describe("MADRouter721", () => {
           "ipfs://cid/",
           userSpl,
           750,
+          []
         );
       const lazy = await ethers.getContractAt(
         "ERC721Basic",
@@ -734,6 +743,7 @@ describe("MADRouter721", () => {
           "ipfs://cid/id.json",
           madSpl,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC721Basic",
@@ -822,6 +832,7 @@ describe("MADRouter721", () => {
           "ipfs://cid/",
           madSpl,
           1000,
+          []
         );
       const basic2 = await ethers.getContractAt(
         "ERC721Basic",
@@ -989,6 +1000,7 @@ describe("MADRouter721", () => {
             "ipfs://cid/",
             splAddr,
             750,
+            []
           );
         await r721.setFees(
           ethers.utils.parseEther("2.5"),

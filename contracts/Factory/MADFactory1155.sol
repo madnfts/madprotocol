@@ -3,8 +3,7 @@
 pragma solidity 0.8.19;
 
 import { FactoryEventsAndErrors1155 } from "contracts/Shared/EventsAndErrors.sol";
-import { MADFactoryBase, FactoryVerifier, Types, Bytes32AddressLib } from "contracts/Factory/MADFactoryBase.sol";
-import { ERC1155BasicDeployer } from "contracts/lib/deployers/ERC1155Deployer.sol";
+import { MADFactoryBase, FactoryVerifier, Types, Bytes32AddressLib, SplitterImpl } from "contracts/Factory/MADFactoryBase.sol";
 
 // prettier-ignore
 contract MADFactory1155 is MADFactoryBase,
@@ -49,8 +48,6 @@ contract MADFactory1155 is MADFactoryBase,
     /// 0=Minimal; 1=Basic; 2=Whitelist; 3=Lazy.
     /// @param _tokenSalt Nonce/Entropy factor used by CREATE3 method
     /// to generate collection deployment address. Must be always different to avoid address collision.
-    /// @param _name Name of the collection to be deployed.
-    /// @param _symbol Symbol of the collection to be deployed.
     /// @param _price Public mint price of the collection to be deployed.
     /// @param _maxSupply Maximum supply of tokens to be minted of the collection to be deployed
     /// (Not used for ERC1155Minimal token type, since it always equals to one).
@@ -61,15 +58,14 @@ contract MADFactory1155 is MADFactoryBase,
     function createCollection(
         uint8 _tokenType,
         string memory _tokenSalt,
-        string memory _name,
-        string memory _symbol,
         uint256 _price,
         uint256 _maxSupply,
         string memory _uri,
         address _splitter,
-        uint256 _royalty
+        uint96 _royalty,
+        bytes32[] memory _extra
     )
-        public
+        external
         nonReentrant
         isThisOg
         whenNotPaused
@@ -77,16 +73,24 @@ contract MADFactory1155 is MADFactoryBase,
         _limiter(_tokenType, _splitter);
         _royaltyLocker(_royalty);
 
-        (bytes32 tokenSalt, address deployed) = 
-        ERC1155BasicDeployer._1155BasicDeploy(
-            _tokenSalt,
-            _uri,
-            _price,
+        Types.ColArgs memory args = Types.ColArgs(
+            "", 
+            "", 
+            _uri, 
+            _price, 
             _maxSupply,
-            _splitter,
-            router,
+            SplitterImpl(payable(_splitter)),
             _royalty,
+            router,
             erc20
+        );
+
+        (bytes32 tokenSalt, address deployed) = 
+        _collectionDeploy(
+            _tokenType,
+            _tokenSalt,
+            args,
+            _extra
         );
 
         bytes32 colId = deployed.fillLast12Bytes();
@@ -94,17 +98,16 @@ contract MADFactory1155 is MADFactoryBase,
 
         colInfo[colId] = Types.Collection1155(
             tx.origin,
-            Types.ERC1155Type.ERC1155Basic,
+            _tokenType,
             tokenSalt,
             block.number,
             _splitter
         );
 
-        emit ERC1155BasicCreated(
+        emit ERC1155Created(
             _splitter,
             deployed,
-            _name,
-            _symbol, 
+            _tokenType,
             _royalty,
             _maxSupply,
             _price

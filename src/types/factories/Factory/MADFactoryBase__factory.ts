@@ -18,6 +18,11 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "InvalidAddress",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "InvalidRoyalty",
     type: "error",
   },
@@ -30,6 +35,19 @@ const _abi = [
     inputs: [],
     name: "ZeroAddress",
     type: "error",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "index",
+        type: "uint256",
+      },
+    ],
+    name: "ColTypeUpdated",
+    type: "event",
   },
   {
     anonymous: false,
@@ -196,6 +214,43 @@ const _abi = [
     ],
     name: "Unpaused",
     type: "event",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "index",
+        type: "uint256",
+      },
+      {
+        internalType: "bytes",
+        name: "impl",
+        type: "bytes",
+      },
+    ],
+    name: "addColType",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "colTypes",
+    outputs: [
+      {
+        internalType: "bytes",
+        name: "",
+        type: "bytes",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [

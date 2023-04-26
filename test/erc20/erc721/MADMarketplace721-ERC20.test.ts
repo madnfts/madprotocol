@@ -116,6 +116,7 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC721Basic",
@@ -204,6 +205,7 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
           "cid/id.json",
           splAddr,
           1000,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC721Basic",
@@ -356,6 +358,7 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC721Basic",
@@ -441,6 +444,7 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
           "cid/id.json",
           splAddr,
           1000,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC721Basic",
@@ -629,6 +633,7 @@ describe("MADMarketplace721 - ERC20 Payments", () => {
           "cid/id.json",
           splAddr,
           1000,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC721Basic",

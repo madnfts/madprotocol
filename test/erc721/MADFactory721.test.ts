@@ -324,6 +324,7 @@ describe("MADFactory721", () => {
           "ipfs://cid/",
           splAddr,
           750,
+          []
         );
       const colID = await f721.callStatic.getColID(basicAddr);
       const storage = await f721.callStatic.userTokens(
@@ -345,6 +346,7 @@ describe("MADFactory721", () => {
           "ipfs://cid/",
           splAddr,
           750,
+          []
         );
 
       const fail2 = f721
@@ -359,6 +361,7 @@ describe("MADFactory721", () => {
           "ipfs://cid/",
           splAddr,
           750,
+          []
         );
 
       expect(tx).to.be.ok;
@@ -377,10 +380,11 @@ describe("MADFactory721", () => {
         ),
       );
       await expect(tx)
-        .to.emit(f721, "ERC721BasicCreated")
+        .to.emit(f721, "ERC721Created")
         .withArgs(
           splAddr,
           basicAddr,
+          ethers.constants.One,
           "721Basic",
           "BASIC",
           750,
@@ -423,6 +427,11 @@ describe("MADFactory721", () => {
       await expect(
         f721.connect(acc01).setMarket(owner.address),
       ).to.be.revertedWith(FactoryErrors.Unauthorized);
+      await expect(
+        f721.setMarket(ethers.constants.AddressZero),
+      ).to.be.revertedWithCustomError(
+        f721, FactoryErrors.InvalidAddress,
+      );
       expect(tx).to.be.ok;
       expect(owner.address).to.eq(
         await f721.callStatic.market(),
@@ -431,7 +440,21 @@ describe("MADFactory721", () => {
         .to.emit(f721, "MarketplaceUpdated")
         .withArgs(owner.address);
     });
-
+    it("Should update ERC721Lazy signer", async () => {
+      const tx = await f721.setSigner(acc01.address);
+      expect(tx).to.be.ok;
+      await expect(tx)
+        .to.emit(f721, "SignerUpdated")
+        .withArgs(acc01.address);
+      await expect(
+        f721.connect(acc01).setSigner(acc02.address),
+      ).to.be.revertedWith(FactoryErrors.Unauthorized);
+      await expect(
+        f721.setSigner(ethers.constants.AddressZero),
+      ).to.be.revertedWithCustomError(
+        f721, FactoryErrors.InvalidAddress,
+      );
+    });
     it("Should update router's address", async () => {
       const tx = await f721.setRouter(acc01.address);
       expect(tx).to.be.ok;
@@ -442,8 +465,13 @@ describe("MADFactory721", () => {
         acc01.address,
       );
       await expect(
-        f721.connect(acc01).setSigner(acc02.address),
+        f721.connect(acc01).setRouter(acc02.address),
       ).to.be.revertedWith(FactoryErrors.Unauthorized);
+      await expect(
+        f721.setRouter(ethers.constants.AddressZero),
+      ).to.be.revertedWithCustomError(
+        f721, FactoryErrors.InvalidAddress,
+      );
     });
     it("Should initialize paused and unpaused states", async () => {
       const tx = await f721.pause();
@@ -466,6 +494,7 @@ describe("MADFactory721", () => {
           "",
           dead,
           75,
+          []
         ),
       ).to.be.revertedWith(FactoryErrors.Paused);
       await expect(
@@ -503,6 +532,7 @@ describe("MADFactory721", () => {
           "ipfs://cid/",
           splAddr,
           750,
+          []
         );
       await f721
         .connect(acc02)
@@ -516,6 +546,7 @@ describe("MADFactory721", () => {
           "ipfs://cid/",
           splAddr,
           750,
+          []
         );
 
       expect(await f721.getIDsLength(acc02.address)).to.eq(2);
@@ -558,6 +589,7 @@ describe("MADFactory721", () => {
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const colID = await f721.callStatic.getColID(basicAddr);
       const basic = await ethers.getContractAt(
@@ -613,6 +645,7 @@ describe("MADFactory721", () => {
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC721Basic",
@@ -682,6 +715,7 @@ describe("MADFactory721", () => {
             "cid/id.json",
             splAddr,
             750,
+            []
           ),
       ).to.be.revertedWithCustomError(
         f721,
@@ -716,6 +750,7 @@ describe("MADFactory721", () => {
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const colID = await f721.callStatic.getColID(basicAddr);
 

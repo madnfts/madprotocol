@@ -2,3 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export { Counters__factory } from "./Counters__factory";
+export { LibClone__factory } from "./LibClone__factory";

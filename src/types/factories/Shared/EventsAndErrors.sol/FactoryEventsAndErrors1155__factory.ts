@@ -13,6 +13,11 @@ import { Contract, Signer, utils } from "ethers";
 const _abi = [
   {
     inputs: [],
+    name: "InvalidAddress",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "InvalidRoyalty",
     type: "error",
   },
@@ -31,6 +36,19 @@ const _abi = [
     inputs: [
       {
         indexed: true,
+        internalType: "uint256",
+        name: "index",
+        type: "uint256",
+      },
+    ],
+    name: "ColTypeUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
         internalType: "address",
         name: "newSplitter",
         type: "address",
@@ -43,15 +61,9 @@ const _abi = [
       },
       {
         indexed: false,
-        internalType: "string",
-        name: "name",
-        type: "string",
-      },
-      {
-        indexed: false,
-        internalType: "string",
-        name: "symbol",
-        type: "string",
+        internalType: "uint8",
+        name: "tokenType",
+        type: "uint8",
       },
       {
         indexed: false,
@@ -72,7 +84,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "ERC1155BasicCreated",
+    name: "ERC1155Created",
     type: "event",
   },
   {

@@ -13,10 +13,6 @@ import { ethers } from "ethers";
 declare module "hardhat/types/runtime" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
     getContractFactory(
-      name: "_MAD",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts._MAD__factory>;
-    getContractFactory(
       name: "MADFactory1155",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MADFactory1155__factory>;
@@ -149,6 +145,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Counters__factory>;
     getContractFactory(
+      name: "LibClone",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.LibClone__factory>;
+    getContractFactory(
       name: "MAD",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MAD__factory>;
@@ -229,11 +229,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MADBase__factory>;
 
-    getContractAt(
-      name: "_MAD",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts._MAD>;
     getContractAt(
       name: "MADFactory1155",
       address: string,
@@ -399,6 +394,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Counters>;
+    getContractAt(
+      name: "LibClone",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.LibClone>;
     getContractAt(
       name: "MAD",
       address: string,

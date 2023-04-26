@@ -88,13 +88,14 @@ describe("MADRouter1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "ipfs://cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -138,13 +139,14 @@ describe("MADRouter1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1000,
           "ipfs://cid/",
           splAddr,
           750,
+          []
         );
       const colID = await f1155.callStatic.getColID(
         basicAddr,
@@ -199,13 +201,14 @@ describe("MADRouter1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1000,
           "ipfs://cid/",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -262,13 +265,14 @@ describe("MADRouter1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1000,
           "ipfs://cid/",
           splAddr,
           750,
+          []
         );
       const pmul = await ethers.BigNumber.from(4);
       const basic = await ethers.getContractAt(
@@ -352,13 +356,14 @@ describe("MADRouter1155", () => {
       .createCollection(
         0,
         "MinSalt",
-        "1155Min",
-        "MIN",
+        // "1155Min",
+        // "MIN",
         price,
         1,
         "ipfs://cid/id.json",
         splAddr,
         750,
+        []
       );
     const tx = r1155
       .connect(acc02)
@@ -393,13 +398,14 @@ describe("MADRouter1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "ipfs://cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -410,13 +416,14 @@ describe("MADRouter1155", () => {
         .createCollection(
           1,
           "BasicSalt2",
-          "1155Basic2",
-          "BASIC2",
+          // "1155Basic2",
+          // "BASIC2",
           price,
           1000,
           "ipfs://cid/",
           splAddr,
           750,
+          []
         );
       const basic2 = await ethers.getContractAt(
         "ERC1155Basic",
@@ -427,13 +434,14 @@ describe("MADRouter1155", () => {
         .createCollection(
           1,
           "WhiteSalt",
-          "1155Whitelist",
-          "WL",
+          // "1155Whitelist",
+          // "WL",
           price,
           1,
           "ipfs://cid/id.json",
           splAddr,
           750,
+          []
         );
       const wl = await ethers.getContractAt(
         "ERC1155Basic",
@@ -519,13 +527,14 @@ describe("MADRouter1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "ipfs://cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -573,13 +582,12 @@ describe("MADRouter1155", () => {
         .createCollection(
           1,
           "salt",
-          "",
-          "",
           price,
           1000,
           "ipfs://cid/",
           madSpl,
           750,
+          []
         );
       const basic2 = await ethers.getContractAt(
         "ERC1155Basic",
@@ -621,13 +629,14 @@ describe("MADRouter1155", () => {
         .createCollection(
           1,
           "WhiteSalt",
-          "1155Whitelist",
-          "WL",
+          // "1155Whitelist",
+          // "WL",
           price,
           1000,
           "ipfs://cid/",
           ambSpl,
           750,
+          []
         );
       const wl = await ethers.getContractAt(
         "ERC1155Basic",
@@ -673,13 +682,14 @@ describe("MADRouter1155", () => {
         .createCollection(
           1,
           "LazySalt",
-          "1155Lazy",
-          "LAZY",
+          // "1155Lazy",
+          // "LAZY",
           price,
           100,
           "ipfs://cid/",
           userSpl,
           750,
+          []
         );
       const lazy = await ethers.getContractAt(
         "ERC1155Basic",
@@ -943,13 +953,14 @@ describe("MADRouter1155", () => {
         .createCollection(
           1,
           "MinSalt",
-          "1155Min",
-          "MIN",
+          // "1155Min",
+          // "MIN",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const min = await ethers.getContractAt(
         "ERC1155Basic",
@@ -1019,13 +1030,14 @@ describe("MADRouter1155", () => {
         .createCollection(
           1,
           "MinSalt",
-          "1155Min",
-          "MIN",
+          // "1155Min",
+          // "MIN",
           price,
           2,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const min = await ethers.getContractAt(
         "ERC1155Basic",
@@ -1131,13 +1143,14 @@ describe("MADRouter1155", () => {
           .createCollection(
             1,
             "BasicSalt",
-            "1155Basic",
-            "BASIC",
+            // "1155Basic",
+            // "BASIC",
             price,
             1000,
             "ipfs://cid/",
             splAddr,
             750,
+            []
           );
         const basic = await ethers.getContractAt(
           "ERC1155Basic",
@@ -1214,13 +1227,14 @@ describe("MADRouter1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1000,
           "ipfs://cid/",
           splAddr,
           750,
+          []
         );
       const pmul = await ethers.BigNumber.from(4);
       const basic = await ethers.getContractAt(

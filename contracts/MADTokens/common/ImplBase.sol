@@ -84,15 +84,16 @@ abstract contract ImplBase is ERC2981, ImplBaseEventsAndErrors, Owned, Reentranc
         SplitterImpl _splitter,
         uint96 _fraction,
         address _router
-        // ,ERC20 _erc20
-    ) Owned(_router) {
+    )
+        /*  */
+        Owned(_router)
+    {
         baseURI = _baseURI;
         price = _price;
         maxSupply = _maxSupply;
         splitter = _splitter;
         _royaltyFee = _fraction;
         _royaltyRecipient = payable(splitter);
-        // erc20 = _erc20;
 
         emit RoyaltyFeeSet(_royaltyFee);
         emit RoyaltyRecipientSet(_royaltyRecipient);
@@ -247,6 +248,16 @@ abstract contract ImplBase is ERC2981, ImplBaseEventsAndErrors, Owned, Reentranc
         }
     }
 
+    function _loopOverflow(uint256 _index, uint256 _end) internal pure {
+        assembly {
+            if lt(_index, _end) {
+                // LoopOverflow()
+                mstore(0x00, 0xdfb035c9)
+                revert(0x1c, 0x04)
+            }
+        }
+    }
+
     function _getPriceValue(address _erc20Owner) internal view returns (uint256 value) {
         value = (address(erc20) != address(0)) ? erc20.allowance(_erc20Owner, address(this)) : msg.value;
     }
@@ -258,5 +269,9 @@ abstract contract ImplBase is ERC2981, ImplBaseEventsAndErrors, Owned, Reentranc
             _size := extcodesize(_owner)
         }
         value = _size == 0 ? 0 : FeeOracle(owner).feeLookup(_method);
+    }
+
+    function _extraArgsCheck(bytes32[] memory _extra) internal pure virtual {
+        if (_extra.length != 0) revert WrongArgsLength();
     }
 }

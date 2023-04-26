@@ -131,13 +131,14 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -217,13 +218,14 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           1000,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -370,13 +372,14 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -455,13 +458,14 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           1000,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -641,13 +645,14 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           1000,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -845,13 +850,14 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
       .createCollection(
         1,
         "BasicSalt",
-        "ERC1155Basic",
-        "BASIC",
+        // "ERC1155Basic",
+        // "BASIC",
         price,
         1,
         "cid/id.json",
         splAddr,
         1000,
+        []
       );
     const basic = await ethers.getContractAt(
       "ERC1155Basic",

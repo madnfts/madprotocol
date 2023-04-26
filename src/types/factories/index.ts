@@ -8,4 +8,3 @@ export * as router from "./Router";
 export * as shared from "./Shared";
 export * as lib from "./lib";
 export { MAD__factory } from "./MAD__factory";
-export { _MAD__factory } from "./_MAD__factory";

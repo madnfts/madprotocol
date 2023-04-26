@@ -90,6 +90,7 @@ export enum MarketplaceErrors {
 export enum FactoryErrors {
   DeploymentFailed = "DEPLOYMENT_FAILED",
   InitFailed = "INITIALIZATION_FAILED",
+  InvalidAddress = "InvalidAddress",
   Unauthorized = "UNAUTHORIZED",
   AccessDenied = "AccessDenied",
   SplitterFail = "SplitterFail",

@@ -237,13 +237,14 @@ describe("MADFactory1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1000,
           "ipfs://cid/",
           splAddr,
           750,
+          []
         );
       const colID = await f1155.callStatic.getColID(
         basicAddr,
@@ -260,13 +261,14 @@ describe("MADFactory1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1000,
           "ipfs://cid/",
           splAddr,
           750,
+          []
         );
 
       const fail2 = f1155
@@ -274,13 +276,14 @@ describe("MADFactory1155", () => {
         .createCollection(
           7,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1000,
           "ipfs://cid/",
           splAddr,
           750,
+          []
         );
 
       expect(tx).to.be.ok;
@@ -299,12 +302,13 @@ describe("MADFactory1155", () => {
         ),
       );
       await expect(tx)
-        .to.emit(f1155, "ERC1155BasicCreated")
+        .to.emit(f1155, "ERC1155Created")
         .withArgs(
           splAddr,
           basicAddr,
-          "1155Basic",
-          "BASIC",
+          ethers.constants.One,
+          // "1155Basic",
+          // "BASIC",
           750,
           1000,
           price,
@@ -346,6 +350,11 @@ describe("MADFactory1155", () => {
       await expect(
         f1155.connect(acc01).setMarket(owner.address),
       ).to.be.revertedWith(FactoryErrors.Unauthorized);
+      await expect(
+        f1155.setMarket(ethers.constants.AddressZero),
+      ).to.be.revertedWithCustomError(
+        f1155, FactoryErrors.InvalidAddress,
+      );
       expect(tx).to.be.ok;
       expect(owner.address).to.eq(
         await f1155.callStatic.market(),
@@ -363,6 +372,11 @@ describe("MADFactory1155", () => {
       await expect(
         f1155.connect(acc01).setSigner(acc02.address),
       ).to.be.revertedWith(FactoryErrors.Unauthorized);
+      await expect(
+        f1155.setSigner(ethers.constants.AddressZero),
+      ).to.be.revertedWithCustomError(
+        f1155, FactoryErrors.InvalidAddress,
+      );
     });
     it("Should update router's address", async () => {
       const tx = await f1155.setRouter(acc01.address);
@@ -374,8 +388,13 @@ describe("MADFactory1155", () => {
         acc01.address,
       );
       await expect(
-        f1155.connect(acc01).setSigner(acc02.address),
+        f1155.connect(acc01).setRouter(acc02.address),
       ).to.be.revertedWith(FactoryErrors.Unauthorized);
+      await expect(
+        f1155.setRouter(ethers.constants.AddressZero),
+      ).to.be.revertedWithCustomError(
+        f1155, FactoryErrors.InvalidAddress,
+      );
     });
     it("Should initialize paused and unpaused states", async () => {
       const tx = await f1155.pause();
@@ -391,13 +410,12 @@ describe("MADFactory1155", () => {
         f1155.createCollection(
           1,
           "",
-          "",
-          "",
           0,
           1,
           "",
           dead,
           750,
+          []
         ),
       ).to.be.revertedWith(FactoryErrors.Paused);
       await expect(
@@ -428,13 +446,14 @@ describe("MADFactory1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1000,
           "ipfs://cid/",
           splAddr,
           750,
+          []
         );
 
       expect(await f1155.getIDsLength(acc02.address)).to.eq(
@@ -471,13 +490,14 @@ describe("MADFactory1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           10,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const colID = await f1155.callStatic.getColID(
         basicAddr,
@@ -528,13 +548,14 @@ describe("MADFactory1155", () => {
           .createCollection(
             0,
             "MinSalt",
-            "1155Min",
-            "MIN",
+            // "1155Min",
+            // "MIN",
             price,
             1,
             "cid/id.json",
             splAddr,
             750,
+            []
           ),
       ).to.be.revertedWithCustomError(
         f1155,
@@ -546,13 +567,14 @@ describe("MADFactory1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           10,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
 
       const basic = await ethers.getContractAt(
@@ -638,13 +660,14 @@ describe("MADFactory1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const colID = await f1155.callStatic.getColID(
         basicAddr,

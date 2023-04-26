@@ -30,6 +30,42 @@ import type {
   utils,
 } from "ethers";
 
+export declare namespace Types {
+  export type ColArgsStruct = {
+    _name: PromiseOrValue<string>;
+    _symbol: PromiseOrValue<string>;
+    _baseURI: PromiseOrValue<string>;
+    _price: PromiseOrValue<BigNumberish>;
+    _maxSupply: PromiseOrValue<BigNumberish>;
+    _splitter: PromiseOrValue<string>;
+    _fraction: PromiseOrValue<BigNumberish>;
+    _router: PromiseOrValue<string>;
+    _erc20: PromiseOrValue<string>;
+  };
+
+  export type ColArgsStructOutput = [
+    string,
+    string,
+    string,
+    BigNumber,
+    BigNumber,
+    string,
+    BigNumber,
+    string,
+    string
+  ] & {
+    _name: string;
+    _symbol: string;
+    _baseURI: string;
+    _price: BigNumber;
+    _maxSupply: BigNumber;
+    _splitter: string;
+    _fraction: BigNumber;
+    _router: string;
+    _erc20: string;
+  };
+}
+
 export interface ERC721BasicInterface extends utils.Interface {
   functions: {
     "approve(address,uint256)": FunctionFragment;

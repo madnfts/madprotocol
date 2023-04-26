@@ -2,29 +2,45 @@
 
 pragma solidity 0.8.19;
 
-import { SplitterImpl } from "contracts/lib/splitter/SplitterImpl.sol";
+import { SplitterImpl, ERC20 } from "contracts/lib/splitter/SplitterImpl.sol";
 import { IERC721 } from "contracts/lib/tokens/ERC721/Base/interfaces/IERC721.sol";
 import { IERC1155 } from "contracts/lib/tokens/ERC1155/Base/interfaces/IERC1155.sol";
 
 // prettier-ignore
 library Types {
-    enum ERC721Type {     /// @dev Values:
-        ERC721Minimal,    /// := 0
-        ERC721Basic,      /// := 1
-        ERC721Whitelist,  /// := 2
-        ERC721Lazy        /// := 3
-    }
+    // enum ERC721Type {     /// @dev Values:
+    //     ERC721Minimal,    /// := 0
+    //     ERC721Basic,      /// := 1
+    //     ERC721Whitelist,  /// := 2
+    //     ERC721Lazy        /// := 3
+    // }
     
-    enum ERC1155Type {     /// @dev Values: 
-        ERC1155Minimal,    /// := 0
-        ERC1155Basic,      /// := 1
-        ERC1155Whitelist,  /// := 2
-        ERC1155Lazy        /// := 3
+    // enum ERC1155Type {     /// @dev Values: 
+    //     ERC1155Minimal,    /// := 0
+    //     ERC1155Basic,      /// := 1
+    //     ERC1155Whitelist,  /// := 2
+    //     ERC1155Lazy        /// := 3
+    // }
+
+    struct ColArgs {
+        string _name;
+        string _symbol;
+        string _baseURI;
+        uint256 _price;
+        uint256 _maxSupply;
+        SplitterImpl _splitter;
+        uint96 _fraction;
+        address _router;
+        ERC20 _erc20;
     }
+
+    // struct splitterArgs {
+
+    // }
 
     struct Collection721 {
         address creator;
-        Types.ERC721Type colType;
+        uint8 colType;
         bytes32 colSalt;
         uint256 blocknumber;
         address splitter;
@@ -32,7 +48,7 @@ library Types {
 
     struct Collection1155 {
         address creator;
-        Types.ERC1155Type colType;
+        uint8 colType;
         bytes32 colSalt;
         uint256 blocknumber;
         address splitter;

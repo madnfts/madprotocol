@@ -7,9 +7,7 @@ import { MADBase, ERC20 } from "contracts/Shared/MADBase.sol";
 
 import { FactoryEventsAndErrorsBase, FactoryVerifier } from "contracts/Shared/EventsAndErrors.sol";
 
-import { ERC1155BasicDeployer } from "contracts/lib/deployers/ERC1155Deployer.sol";
-
-import { SplitterDeployer } from "contracts/lib/deployers/SplitterDeployer.sol";
+// import { SplitterDeployer } from "contracts/lib/deployers/SplitterDeployer.sol";
 
 import { DCPrevent } from "contracts/lib/security/DCPrevent.sol";
 import { Types, SplitterImpl } from "contracts/Shared/Types.sol";
@@ -20,11 +18,9 @@ import { CREATE3, Bytes32AddressLib } from "contracts/lib/utils/CREATE3.sol";
 abstract contract MADFactoryBase is MAD, MADBase,
 FactoryEventsAndErrorsBase,
     FactoryVerifier,
-   
     DCPrevent()
-   
 {
-    using Types for Types.ERC721Type;
+    using Types for Types.ColArgs;
     using Types for Types.SplitterConfig;
     using Bytes32AddressLib for address;
     using Bytes32AddressLib for bytes32;
@@ -47,6 +43,8 @@ FactoryEventsAndErrorsBase,
     //                           STORAGE                          //
     ////////////////////////////////////////////////////////////////
 
+    /// @dev Maps collection's index to its respective bytecode.
+    mapping(uint256 => bytes) public colTypes;
 
     /// @dev Maps an collection creator, of type address, to an array of `colIDs`.
     mapping(address => bytes32[]) public  userTokens;
@@ -78,11 +76,8 @@ FactoryEventsAndErrorsBase,
     )
     {
         // F.1 BlockHat Audit
-        require(
-            _marketplace != address(0) &&
-                _signer != address(0),
-            "ZeroAddress"
-        );
+        // `setSigner` and `setMarket` 
+        // already handle the zeroAddress case.
         setMarket(_marketplace);
         setSigner(_signer);
         if (_paymentTokenAddress != address(0)) {
@@ -320,7 +315,7 @@ FactoryEventsAndErrorsBase,
             _sharesBuffer(_ambShare,_projectShare);
 
         (address splitter, bytes32 splitterSalt) = 
-        SplitterDeployer._SplitterDeploy(
+        _SplitterDeploy(
             _splitterSalt,
             _payees,
             _shares
@@ -345,6 +340,42 @@ FactoryEventsAndErrorsBase,
             _flag
         );
     } 
+
+    function _collectionDeploy(
+        uint8 _tokenType,
+        string memory _tokenSalt,
+        Types.ColArgs memory _args,
+        bytes32[] memory _extra
+    ) internal returns (bytes32 tokenSalt, address deployed){
+
+        tokenSalt = keccak256(bytes(_tokenSalt));
+
+        deployed = CREATE3.deploy(
+            tokenSalt,
+            abi.encodePacked(
+                // implementation
+                colTypes[uint256(_tokenType)],
+                abi.encode(
+                    _args,
+                    _extra
+                )
+            ),
+            0
+        );
+    }
+
+    function _SplitterDeploy(
+        string memory _salt,
+        address[] memory _payees,
+        uint256[] memory _shares
+    ) internal returns (address deployed, bytes32 salt) {
+        salt = keccak256(bytes(_salt));
+        deployed = CREATE3.deploy(
+            salt,
+            abi.encodePacked(type(SplitterImpl).creationCode, abi.encode(_payees, _shares)),
+            0
+        );
+    }
 
     /// @inheritdoc FactoryVerifier
     function creatorAuth(address _token, address _user) 
@@ -381,13 +412,16 @@ FactoryEventsAndErrorsBase,
             // let stdin := sload(router.slot)
             // if eq(origin(), sload(router.slot)) {
             if iszero(eq(caller(), sload(router.slot))) {
-                mstore(0x00, 0x4ca88867FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
+                mstore(
+                    0x00, 
+                    0x4ca88867FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                )
                 revert(0, 4) // (offset, length)
             }
         } 
     }
 
-        function _royaltyLocker(uint256 _share) 
+        function _royaltyLocker(uint96 _share) 
     internal 
     pure
     {
@@ -408,25 +442,42 @@ FactoryEventsAndErrorsBase,
     ) internal view {
         bool val = splitterInfo[tx.origin][_splitter].valid;
         assembly {
+            mstore(0x00, _tokenType)
+            mstore(0x20, colTypes.slot)
             if or(
-                /* gt(_tokenType,3) */
-                iszero(eq(iszero(0x0),_tokenType)),
+                // colType not allowed 
+                iszero(sload(keccak256(0x00,0x40))),
+                // invalid splitter
                 iszero(val)) 
             {
-                mstore(0x00,0x4ca8886700000000000000000000000000000000000000000000000000000000)
+                mstore(
+                    0x00,
+                    0x4ca8886700000000000000000000000000000000000000000000000000000000
+                )
                 revert(0,4)
             }
         }
     }
 
-
+    function _isZeroAddr(address _addr) private pure {
+        assembly {
+            if iszero(_addr) { 
+                // Revert InvalidAddress()
+                mstore(0x00, 0xe6c4247b)
+                revert(0x1c, 0x04)
+            }
+        }
+    }
 
     /// @dev Stablishes sealed/safe callpath for `MADMarketplace` contract.
     /// @dev Function Sighash := 
     function _isMarket() private view {
         assembly {
             if iszero(eq(caller(), sload(market.slot))) {
-                mstore(0x00, 0x4ca88867FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
+                mstore(
+                    0x00, 
+                    0x4ca88867FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                )
                 revert(0, 4) // (offset, length)
             }
         } 
@@ -450,6 +501,8 @@ FactoryEventsAndErrorsBase,
         }
     }
 
+    /// @dev External getter for deployed splitters.
+    /// @dev Function Sighash := 0xbc8b5838
     function getDeployedAddr(string memory _salt)
         external
         view
@@ -461,16 +514,17 @@ FactoryEventsAndErrorsBase,
         return CREATE3.getDeployed(salt);
     }
 
-    
     ////////////////////////////////////////////////////////////////
     //                         OWNER FX                           //
     ////////////////////////////////////////////////////////////////
 
 
     /// @dev `MADMarketplace` instance setter.
-    /// @dev Function Sighash := 
+    /// @dev Function Sighash := 0x6dcea85f
     function setMarket(address _market) public onlyOwner {
-        require(_market != address(0), "Invalid address");
+        // require(_market != address(0), "Invalid address");
+        // market = _market;
+        _isZeroAddr(_market);
         assembly {
             sstore(market.slot, _market)
         }
@@ -481,8 +535,9 @@ FactoryEventsAndErrorsBase,
     /// @dev `MADRouter` instance setter.
     /// @dev Function Sighash := 0xc0d78655
     function setRouter(address _router) external onlyOwner {
-        require(_router != address(0), "Invalid address");
+        // require(_router != address(0), "Invalid address");
         // router = _router;
+        _isZeroAddr(_router);
         assembly {
             sstore(router.slot, _router)
         }
@@ -493,8 +548,9 @@ FactoryEventsAndErrorsBase,
     /// @dev Setter for EIP712 signer/validator instance.
     /// @dev Function Sighash := 0x6c19e783
     function setSigner(address _signer) public onlyOwner {
-        require(_signer != address(0), "Invalid address");
+        // require(_signer != address(0), "Invalid address");
         // signer = _signer;
+        _isZeroAddr(_signer);
         assembly {
             sstore(signer.slot, _signer)
         }
@@ -502,5 +558,17 @@ FactoryEventsAndErrorsBase,
         emit SignerUpdated(_signer);
     }
 
-   
+    /// @dev Setter for Collection types.
+    /// @dev We allow a colectionType to be set as the zeroAddr,
+    /// so its slot can be reset to default value.
+    /// @dev Function Sighash := 0x7ebbf770
+    function addColType(
+        uint256 index, 
+        bytes calldata impl) 
+    public onlyOwner {
+        colTypes[index] = impl;
+
+        emit ColTypeUpdated(index);
+    }
+
 }

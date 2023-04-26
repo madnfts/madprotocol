@@ -22,9 +22,7 @@ export type { shared };
 
 export type { lib };
 export type { MAD } from "./MAD";
-export type { _MAD } from "./_MAD";
 export * as factories from "./factories";
-export { _MAD__factory } from "./factories/_MAD__factory";
 export type { MADFactory1155 } from "./Factory/MADFactory1155";
 export { MADFactory1155__factory } from "./factories/Factory/MADFactory1155__factory";
 export type { MADFactory721 } from "./Factory/MADFactory721";
@@ -85,6 +83,8 @@ export type { IUniswapV3SwapCallback } from "./lib/uniswap/IUniswapV3SwapCallbac
 export { IUniswapV3SwapCallback__factory } from "./factories/lib/uniswap/IUniswapV3SwapCallback__factory";
 export type { Counters } from "./lib/utils/Counters";
 export { Counters__factory } from "./factories/lib/utils/Counters__factory";
+export type { LibClone } from "./lib/utils/LibClone";
+export { LibClone__factory } from "./factories/lib/utils/LibClone__factory";
 export { MAD__factory } from "./factories/MAD__factory";
 export type { ImplBase } from "./MADTokens/common/ImplBase";
 export { ImplBase__factory } from "./factories/MADTokens/common/ImplBase__factory";

@@ -33,6 +33,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Owned__factory>;
     getContractFactory(
+      name: "TwoFactor",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TwoFactor__factory>;
+    getContractFactory(
       name: "Pausable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Pausable__factory>;
@@ -145,10 +149,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Counters__factory>;
     getContractFactory(
-      name: "LibClone",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.LibClone__factory>;
-    getContractFactory(
       name: "MAD",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MAD__factory>;
@@ -254,6 +254,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Owned>;
+    getContractAt(
+      name: "TwoFactor",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TwoFactor>;
     getContractAt(
       name: "Pausable",
       address: string,
@@ -394,11 +399,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Counters>;
-    getContractAt(
-      name: "LibClone",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.LibClone>;
     getContractAt(
       name: "MAD",
       address: string,

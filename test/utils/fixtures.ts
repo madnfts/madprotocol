@@ -235,7 +235,7 @@ export async function basicFixture721(): Promise<SplitterAndBasic721> {
     _maxSupply: ethers.BigNumber.from(1000),
     _splitter: splitter.address,
     _fraction: ethers.BigNumber.from(750),
-    _router: owner.address,
+    _router: mad.address,
     _erc20: ethers.constants.AddressZero,
   };
 
@@ -276,7 +276,7 @@ export async function basicFixture721ERC20(): Promise<SplitterAndBasic721ERC20> 
     _maxSupply: ethers.BigNumber.from(1000),
     _splitter: splitter.address,
     _fraction: ethers.BigNumber.from(750),
-    _router: owner.address,
+    _router: mad.address,
     _erc20: erc20.address,
   };
 
@@ -863,7 +863,7 @@ export async function basicFixture1155(): Promise<SplitterAndBasic1155> {
     _maxSupply: ethers.BigNumber.from(1000),
     _splitter: splitter.address,
     _fraction: ethers.BigNumber.from(750),
-    _router: owner.address,
+    _router: mad.address,
     _erc20: ethers.constants.AddressZero,
   };
 

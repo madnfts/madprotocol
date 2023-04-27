@@ -44,7 +44,7 @@ contract ERC1155Basic is ImplBase, ERC1155, ERC1155TokenReceiver {
         uint256 amount,
         uint256[] memory balance,
         address erc20Owner
-    ) external payable nonReentrant onlyOwner hasReachedMax(_sumAmounts(balance) * amount) {
+    ) external payable nonReentrant authorised hasReachedMax(_sumAmounts(balance) * amount) {
         _paymentCheck(erc20Owner, 0);
         uint256 i;
         for (i; i < amount; ) {
@@ -62,7 +62,7 @@ contract ERC1155Basic is ImplBase, ERC1155, ERC1155TokenReceiver {
         uint256[] memory ids,
         uint256[] memory amounts,
         address erc20Owner
-    ) external payable onlyOwner hasReachedMax(_sumAmounts(amounts)) {
+    ) external payable authorised hasReachedMax(_sumAmounts(amounts)) {
         _paymentCheck(erc20Owner, 0);
         uint256 i;
         uint256 len = ids.length;
@@ -82,7 +82,7 @@ contract ERC1155Basic is ImplBase, ERC1155, ERC1155TokenReceiver {
         uint256[] memory ids,
         uint256[] memory balances,
         address erc20Owner
-    ) external payable onlyOwner {
+    ) external payable authorised {
         _paymentCheck(erc20Owner, 1);
         uint256 i;
         uint256 len = ids.length;
@@ -103,7 +103,7 @@ contract ERC1155Basic is ImplBase, ERC1155, ERC1155TokenReceiver {
         uint256[] memory ids,
         uint256[] memory amounts,
         address erc20Owner
-    ) external payable onlyOwner {
+    ) external payable authorised {
         require(ids.length == amounts.length, "LENGTH_MISMATCH");
         _paymentCheck(erc20Owner, 1);
         uint256 i;

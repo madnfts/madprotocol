@@ -5,7 +5,7 @@ pragma solidity 0.8.19;
 import { ImplBaseEventsAndErrors } from "contracts/MADTokens/common/interfaces/ImplBaseEventsAndErrors.sol";
 import { ERC2981 } from "contracts/lib/tokens/common/ERC2981.sol";
 import { ERC20 } from "contracts/lib/tokens/ERC20.sol";
-import { Owned } from "contracts/lib/auth/Owned.sol";
+import { TwoFactor } from "contracts/lib/auth/TwoFactor.sol";
 import { ReentrancyGuard } from "contracts/lib/security/ReentrancyGuard.sol";
 import { SplitterImpl } from "contracts/lib/splitter/SplitterImpl.sol";
 import { Counters } from "contracts/lib/utils/Counters.sol";
@@ -13,7 +13,7 @@ import { Strings } from "contracts/lib/utils/Strings.sol";
 import { SafeTransferLib } from "contracts/lib/utils/SafeTransferLib.sol";
 import { FeeOracle } from "contracts/lib/tokens/common/FeeOracle.sol";
 
-abstract contract ImplBase is ERC2981, ImplBaseEventsAndErrors, Owned, ReentrancyGuard {
+abstract contract ImplBase is ERC2981, ImplBaseEventsAndErrors, TwoFactor, ReentrancyGuard {
     using Counters for Counters.Counter;
     using Strings for uint256;
 
@@ -86,7 +86,7 @@ abstract contract ImplBase is ERC2981, ImplBaseEventsAndErrors, Owned, Reentranc
         address _router
     )
         /*  */
-        Owned(_router)
+        TwoFactor(_router, tx.origin)
     {
         baseURI = _baseURI;
         price = _price;
@@ -103,18 +103,18 @@ abstract contract ImplBase is ERC2981, ImplBaseEventsAndErrors, Owned, Reentranc
     //                         OWNER FX                           //
     ////////////////////////////////////////////////////////////////
 
-    function setBaseURI(string memory _baseURI) public onlyOwner {
+    function setBaseURI(string memory _baseURI) public authorised {
         if (uriLock == true) revert URILocked();
         baseURI = _baseURI;
         emit BaseURISet(_baseURI);
     }
 
-    function setBaseURILock() public onlyOwner {
+    function setBaseURILock() public authorised {
         uriLock = true;
         emit BaseURILocked(baseURI);
     }
 
-    function setPublicMintState(bool _publicMintState) public onlyOwner {
+    function setPublicMintState(bool _publicMintState) public authorised {
         publicMintState = _publicMintState;
 
         emit PublicMintStateSet(_publicMintState);
@@ -124,7 +124,7 @@ abstract contract ImplBase is ERC2981, ImplBaseEventsAndErrors, Owned, Reentranc
     //                       OWNER WITHDRAW                        //
     ////////////////////////////////////////////////////////////////
 
-    function withdraw(address recipient) public onlyOwner {
+    function withdraw(address recipient) public authorised {
         uint256 len = splitter.payeesLength();
         address[] memory addrs = new address[](len);
         uint256[] memory values = new uint256[](len);
@@ -155,7 +155,7 @@ abstract contract ImplBase is ERC2981, ImplBaseEventsAndErrors, Owned, Reentranc
         }
     }
 
-    function withdrawERC20(ERC20 _token, address recipient) public onlyOwner {
+    function withdrawERC20(ERC20 _token, address recipient) public authorised {
         uint256 len = splitter.payeesLength();
         address[] memory addrs = new address[](len);
         uint256[] memory values = new uint256[](len);
@@ -262,13 +262,38 @@ abstract contract ImplBase is ERC2981, ImplBaseEventsAndErrors, Owned, Reentranc
         value = (address(erc20) != address(0)) ? erc20.allowance(_erc20Owner, address(this)) : msg.value;
     }
 
+    //prettier-ignore
     function _getFeeValue(bytes4 _method) internal view returns (uint256 value) {
-        address _owner = owner;
-        uint32 _size;
+        // value = _size == 0 ? 0 : FeeOracle(_router).feeLookup(_method);
+        bytes memory encoded = 
+            abi.encodeWithSelector(0xedc9e7a4, _method);
+
         assembly {
-            _size := extcodesize(_owner)
+            let _router := shr(12, sload(router.slot)) 
+            let _size := extcodesize( _router)
+            switch iszero(_size)
+            case 1 { value := 0x00 }
+            case 0 {
+                pop(
+                    staticcall(
+                        gas(),
+                        _router,
+                        add(encoded, 0x20), 
+                        mload(encoded),
+                        0x00, 
+                        0x20
+                    )
+                )
+                value := mload(0x00)
+            }
         }
-        value = _size == 0 ? 0 : FeeOracle(owner).feeLookup(_method);
+
+// gas: amount of gas to send to the sub context to execute. The gas that is not used by the sub context is returned to this one.
+// address: the account which context to execute.
+// argsOffset: byte offset in the memory in bytes, the calldata of the sub context.
+// argsSize: byte size to copy (size of the calldata).
+// retOffset: byte offset in the memory in bytes, where to store the return data of the sub context.
+// retSize: byte size to copy (size of the return data).
     }
 
     function _extraArgsCheck(bytes32[] memory _extra) internal pure virtual {

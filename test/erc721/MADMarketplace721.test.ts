@@ -3910,7 +3910,7 @@ describe("MADMarketplace721", () => {
         _maxSupply: ethers.BigNumber.from(100),
         _splitter: acc02.address,
         _fraction: ethers.BigNumber.from(500),
-        _router: acc02.address,
+        _router: owner.address,
         _erc20: dead
       };
 
@@ -4301,7 +4301,7 @@ describe("MADMarketplace721", () => {
         _maxSupply: ethers.BigNumber.from(100),
         _splitter: acc02.address,
         _fraction: ethers.BigNumber.from(500),
-        _router: acc02.address,
+        _router: owner.address,
         _erc20: dead
       };
 
@@ -4705,7 +4705,7 @@ describe("MADMarketplace721", () => {
         _maxSupply: ethers.BigNumber.from(100),
         _splitter: acc02.address,
         _fraction: ethers.BigNumber.from(500),
-        _router: acc02.address,
+        _router: owner.address,
         _erc20: dead
       };
 
@@ -5086,7 +5086,7 @@ describe("MADMarketplace721", () => {
         _maxSupply: ethers.BigNumber.from(100),
         _splitter: acc02.address,
         _fraction: ethers.BigNumber.from(500),
-        _router: acc02.address,
+        _router: owner.address,
         _erc20: dead
       };
 

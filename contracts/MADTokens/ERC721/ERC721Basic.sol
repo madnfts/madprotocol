@@ -44,7 +44,7 @@ contract ERC721Basic is ERC721, ImplBase, ERC721TokenReceiver {
         address to,
         uint256 amount,
         address erc20Owner
-    ) external payable onlyOwner nonReentrant hasReachedMax(amount) {
+    ) external payable authorised nonReentrant hasReachedMax(amount) {
         _paymentCheck(erc20Owner, 0);
         uint256 i;
         for (i; i < amount; ) {
@@ -57,12 +57,11 @@ contract ERC721Basic is ERC721, ImplBase, ERC721TokenReceiver {
         // Transfer event emited by parent ERC721 contract
     }
 
-    function burn(uint256[] memory ids, address erc20Owner) external payable onlyOwner {
+    function burn(uint256[] memory ids, address erc20Owner) external payable authorised {
         _paymentCheck(erc20Owner, 1);
 
         uint256 i;
         uint256 len = ids.length;
-        // for (uint256 i = 0; i < ids.length; i++) {
         for (i; i < len; ) {
             // delId();
             liveSupply.decrement();
@@ -84,7 +83,6 @@ contract ERC721Basic is ERC721, ImplBase, ERC721TokenReceiver {
     ) external payable nonReentrant publicMintAccess hasReachedMax(amount) publicMintPriceCheck(price, amount) {
         _paymentCheck(msg.sender, 2);
         uint256 i;
-        // for (uint256 i = 0; i < amount; i++) {
         for (i; i < amount; ) {
             _safeMint(msg.sender, _incrementCounter());
             unchecked {

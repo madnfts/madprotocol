@@ -152,8 +152,9 @@ describe("ERC721Basic - ERC20", () => {
       await expect(set)
         .to.emit(basic, "BaseURISet")
         .withArgs(change);
-      await expect(setFail).to.be.revertedWith(
-        BasicErrors.Unauthorized,
+      await expect(setFail).to.be.revertedWithCustomError(
+        basic,
+        BasicErrors.NotAuthorised,
       );
     });
 
@@ -172,8 +173,9 @@ describe("ERC721Basic - ERC20", () => {
       await expect(set)
         .to.emit(basic, "PublicMintStateSet")
         .withArgs(true);
-      await expect(setFail).to.be.revertedWith(
-        BasicErrors.Unauthorized,
+      await expect(setFail).to.be.revertedWithCustomError(
+        basic,
+        BasicErrors.NotAuthorised,
       );
     });
   });
@@ -289,8 +291,9 @@ describe("ERC721Basic - ERC20", () => {
         .connect(acc02)
         .burn(ids, acc02.address);
 
-      await expect(tx).to.be.revertedWith(
-        BasicErrors.Unauthorized,
+      await expect(tx).to.be.revertedWithCustomError(
+        basic,
+        BasicErrors.NotAuthorised,
       );
     });
 
@@ -422,7 +425,7 @@ describe("ERC721Basic - ERC20", () => {
             erc20.address,
             ethers.constants.AddressZero,
           ),
-      ).to.be.revertedWith(BasicErrors.Unauthorized);
+      ).to.be.revertedWithCustomError(basic, BasicErrors.NotAuthorised);
     });
 
     it("Should withdraw contract's ERC20s", async () => {

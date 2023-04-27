@@ -22,6 +22,7 @@ export enum BasicErrors {
   WrongFrom = "WRONG_FROM",
   NotMinted = "NOT_MINTED",
   InvalidAmount = "INVALID_AMOUNT",
+  NotAuthorised = "NotAuthorised",
 }
 
 export enum WhitelistErrors {

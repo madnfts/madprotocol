@@ -33,6 +33,8 @@ export type { FactoryVerifier } from "./lib/auth/FactoryVerifier";
 export { FactoryVerifier__factory } from "./factories/lib/auth/FactoryVerifier__factory";
 export type { Owned } from "./lib/auth/Owned";
 export { Owned__factory } from "./factories/lib/auth/Owned__factory";
+export type { TwoFactor } from "./lib/auth/TwoFactor";
+export { TwoFactor__factory } from "./factories/lib/auth/TwoFactor__factory";
 export type { Pausable } from "./lib/security/Pausable";
 export { Pausable__factory } from "./factories/lib/security/Pausable__factory";
 export type { SplitterEventsAndErrors } from "./lib/splitter/SplitterEventsAndErrors";
@@ -83,8 +85,6 @@ export type { IUniswapV3SwapCallback } from "./lib/uniswap/IUniswapV3SwapCallbac
 export { IUniswapV3SwapCallback__factory } from "./factories/lib/uniswap/IUniswapV3SwapCallback__factory";
 export type { Counters } from "./lib/utils/Counters";
 export { Counters__factory } from "./factories/lib/utils/Counters__factory";
-export type { LibClone } from "./lib/utils/LibClone";
-export { LibClone__factory } from "./factories/lib/utils/LibClone__factory";
 export { MAD__factory } from "./factories/MAD__factory";
 export type { ImplBase } from "./MADTokens/common/ImplBase";
 export { ImplBase__factory } from "./factories/MADTokens/common/ImplBase__factory";

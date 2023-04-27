@@ -8,19 +8,6 @@ import { IERC1155 } from "contracts/lib/tokens/ERC1155/Base/interfaces/IERC1155.
 
 // prettier-ignore
 library Types {
-    // enum ERC721Type {     /// @dev Values:
-    //     ERC721Minimal,    /// := 0
-    //     ERC721Basic,      /// := 1
-    //     ERC721Whitelist,  /// := 2
-    //     ERC721Lazy        /// := 3
-    // }
-    
-    // enum ERC1155Type {     /// @dev Values: 
-    //     ERC1155Minimal,    /// := 0
-    //     ERC1155Basic,      /// := 1
-    //     ERC1155Whitelist,  /// := 2
-    //     ERC1155Lazy        /// := 3
-    // }
 
     struct ColArgs {
         string _name;
@@ -33,10 +20,6 @@ library Types {
         address _router;
         ERC20 _erc20;
     }
-
-    // struct splitterArgs {
-
-    // }
 
     struct Collection721 {
         address creator;

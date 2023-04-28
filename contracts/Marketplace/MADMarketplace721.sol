@@ -410,7 +410,7 @@ contract MADMarketplace721 is MADMarketplaceBase, MarketplaceEventsAndErrors721,
             case 0 {
                 price := and(sload(add(order.slot, 1)), shr(32, not(0)))
             }
-            // Ductch Auction
+            // Dutch Auction
             case 1 {
                 let _startPrice := and(sload(add(order.slot, 1)), shr(32, not(0)))
                 let _startTime := and(sload(add(order.slot, 3)), shr(32, not(0)))

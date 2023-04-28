@@ -21,17 +21,18 @@ OMIT_KEYS = ("elements", "markdown", "id", "first_markdown_element")
 EXCLUDED_DETECTORS = "pragma", "solc-version", "assembly", "naming-convention"
 
 # Mythril
+docker_folder = "/tmp/"
 timeouts = {"simple": 600, "medium": 1800, "large": 3600, "complex": 7200}
 EXECUTION_TIMEOUT = timeouts["complex"]  # defaults 24 hours (secs)
 SOLVER_TIMEOUT = 60_000  #  defaults 25 seconds (milliseconds)
 RECURSION_DEPTH = 1000
-TX_COUNT = 1_000_000
-SOLC_JSON_PATH = "/tmp/solc.json"
+TX_COUNT = 1_000
+SOLC_JSON_PATH = f"{docker_folder}solc.json"
 OUT = "jsonv2"  # text, markdown, json, and jsonv2
 SOLC_REMAPPINGS_PATH = os.path.join(ROOT, "solc.json")
 OUTPUT_FILE = "Mythril.json"
 SOLVER_LOG = "solver.log"
-WITH_DOCKER = "docker run -v $(pwd):/tmp mythril/"  # uses 'tmp' dir as a volume.  Leave as str() or '' if running local
+WITH_DOCKER = "" #"docker run -v $(pwd):/tmp mythril/"  # uses 'tmp' dir as a volume.  Leave as str() or '' if running local
 STRATEGIES = ("delayed", "weighted-random")
 
 # 0-1 where 0 = Fast and 1 is slower but more detalied

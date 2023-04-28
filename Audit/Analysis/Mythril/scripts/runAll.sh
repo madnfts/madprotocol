@@ -21,17 +21,26 @@ if [ ! -f "$commands_file" ]; then
     exit 1
 fi
 
-# Loop through the commands from the file
+# Initialize the counter
+count=1
+
 while IFS= read -r cmd; do
     # Trap errors and call handle_error
     trap 'handle_error "$cmd"; continue;' ERR
 
     # Print the command to the screen
     echo "Executing: $cmd"
+
+    # Set the filename
+    filename="mythril_${count}.json"
+
+    # Execute the command and write output to file
+    eval "${cmd}" > cmd_output.txt 2> "$error_log"
+    cat cmd_output.txt >> "$filename"
+
+    # Increment the counter
+    count=$((count+1))
     
-    # Execute the command
-    eval "${cmd}" > /tmp/cmd_output.txt 2> "$error_log"
-    cat /tmp/cmd_output.txt >> /tmp/mythril.json
 done < "$commands_file"
 
 # Print the summary of errors

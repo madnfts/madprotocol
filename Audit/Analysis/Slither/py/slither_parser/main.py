@@ -27,8 +27,7 @@ def find_unlisted_contracts(
     unlisted_paths = []
 
     for file_path in contracts_folder.rglob("*.sol"):
-        formatted_path = str(file_path).replace("\\", "/")
-
+        formatted_path = str(file_path)
         if formatted_path.startswith(IGNORED_DIR):
             continue
 
@@ -165,6 +164,6 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    # main()
     generate_import_file("contracts")
     # delete_file("Audit/Analysis/Slither/results/slither.results.json")

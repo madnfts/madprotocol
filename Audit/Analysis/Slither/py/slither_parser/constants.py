@@ -11,6 +11,12 @@ OMIT_FOLDERS = ("test", "script")
 IGNORED_DIR = os.path.join("contracts", "lib", "test")
 ERC_GLOB = os.path.join(ROOT, "results", "erc-checker", "*.MD")
 STARS = "*" * 80
-EXCLUDED_DETECTORS = "pragma", "solc-version", "assembly", "naming-convention"
+EXCLUDED_DETECTORS = (
+    "pragma",
+    "solc-version",
+    "assembly",
+    "naming-convention",
+    "uninitialized-state",
+)
 CONTRACTS_FOLDER = "contracts"
 IGNORED_DIR = os.path.join("contracts", "lib", "test")

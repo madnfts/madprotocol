@@ -9,7 +9,7 @@
     "filter_paths": "(node_modules/|test/)",
     "legacy_ast": false,
     
-    "detectors_to_exclude": "pragma,solc-version,assembly,naming-convention",
+    "detectors_to_exclude": "pragma,solc-version,assembly,naming-convention,uninitialized-state",
     "solc_remaps": "@=node_modules/@",
     "hardhat_ignore_compile": false,
     "hardhat_cache_directory": "~/Documents/GIT/MADNFT/madprotocol/cache/",

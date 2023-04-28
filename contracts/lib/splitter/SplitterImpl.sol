@@ -10,7 +10,7 @@ import { SplitterEventsAndErrors } from "contracts/lib/splitter/SplitterEventsAn
 import "contracts/lib/utils/SafeTransferLib.sol";
 
 // prettier-ignore
-
+//  {SafeTransferLib, ERC20} from 
 /// @notice The split can be in equal parts or in any other arbitrary proportion.
 /// The way this is specified is by assigning each account to a number of shares.
 /// Of all the Ether that this contract receives, each account will then be able to claim

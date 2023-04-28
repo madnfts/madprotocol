@@ -149,6 +149,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Counters__factory>;
     getContractFactory(
+      name: "SafeTransferLib",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.SafeTransferLib__factory>;
+    getContractFactory(
       name: "MAD",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MAD__factory>;
@@ -399,6 +403,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Counters>;
+    getContractAt(
+      name: "SafeTransferLib",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.SafeTransferLib>;
     getContractAt(
       name: "MAD",
       address: string,

@@ -85,6 +85,8 @@ export type { IUniswapV3SwapCallback } from "./lib/uniswap/IUniswapV3SwapCallbac
 export { IUniswapV3SwapCallback__factory } from "./factories/lib/uniswap/IUniswapV3SwapCallback__factory";
 export type { Counters } from "./lib/utils/Counters";
 export { Counters__factory } from "./factories/lib/utils/Counters__factory";
+export type { SafeTransferLib } from "./lib/utils/SafeTransferLib";
+export { SafeTransferLib__factory } from "./factories/lib/utils/SafeTransferLib__factory";
 export { MAD__factory } from "./factories/MAD__factory";
 export type { ImplBase } from "./MADTokens/common/ImplBase";
 export { ImplBase__factory } from "./factories/MADTokens/common/ImplBase__factory";

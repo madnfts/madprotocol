@@ -20,7 +20,7 @@ Install modules
 
 run Slither using Config file and the `auditFiles` directory.
 
-`slither . --config-file Slither/slither.config.json`
+`slither . --config-file Audit/Analysis/Slither/slither.config.json`
 
 ## ERC check
 

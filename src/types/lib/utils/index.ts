@@ -2,3 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { Counters } from "./Counters";
+export type { SafeTransferLib } from "./SafeTransferLib";

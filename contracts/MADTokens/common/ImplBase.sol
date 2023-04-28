@@ -62,7 +62,7 @@ abstract contract ImplBase is ERC2981, ImplBaseEventsAndErrors, TwoFactor, Reent
 
     modifier publicMintPriceCheck(uint256 _price, uint256 _amount) {
         uint256 _fee = _getFeeValue(0x40d097c3);
-        feeCount += _fee;
+        feeCount = feeCount + _fee;
         uint256 value = _getPriceValue(msg.sender);
         if ((_price * _amount) + _fee != value) revert WrongPrice();
         _;
@@ -194,13 +194,13 @@ abstract contract ImplBase is ERC2981, ImplBaseEventsAndErrors, TwoFactor, Reent
 
     function _incrementCounter() internal returns (uint256) {
         liveSupply.increment();
-        mintCount += 1;
+        mintCount = mintCount + 1;
         return mintCount;
     }
 
     function _incrementCounter(uint256 amount) internal returns (uint256) {
         liveSupply.increment(amount);
-        mintCount += amount;
+        mintCount = mintCount + amount;
         return mintCount;
     }
 

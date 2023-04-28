@@ -111,9 +111,9 @@ contract SplitterImpl is SplitterEventsAndErrors {
             releasable(account);
         if (payment < 1) 
             revert DeniedAccount();
-
-        _released[account] += payment;
-        _totalReleased += payment;
+         // Audit GAS
+        _released[account] = _released[account] + payment;
+        _totalReleased = _totalReleased + payment;
 
         SafeTransferLib.safeTransferETH(
             account, 

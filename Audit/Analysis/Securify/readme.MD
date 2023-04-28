@@ -29,7 +29,10 @@ sudo docker build -t securify .
 ```
 To run the container:
 ````angular2
-sudo docker run -it -v <contract-dir-full-path>:/share securify /share/<contract>.sol
+sudo docker run -v $(pwd):/share securify /share/contracts/Factory/MADFactory1155.sol
+
+
+
 ````
 Note: to run the code via Docker with a Solidity version that is different than `0.5.12`, you will need to modify the variable `ARG SOLC=0.5.12` at the top of the `Dockerfile` to point to your version. After building with the correct version, you should not run into errors.
 

@@ -13,10 +13,6 @@ import { ethers } from "ethers";
 declare module "hardhat/types/runtime" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
     getContractFactory(
-      name: "_MAD",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts._MAD__factory>;
-    getContractFactory(
       name: "MADFactory1155",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MADFactory1155__factory>;
@@ -36,6 +32,10 @@ declare module "hardhat/types/runtime" {
       name: "Owned",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Owned__factory>;
+    getContractFactory(
+      name: "TwoFactor",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TwoFactor__factory>;
     getContractFactory(
       name: "Pausable",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -230,11 +230,6 @@ declare module "hardhat/types/runtime" {
     ): Promise<Contracts.MADBase__factory>;
 
     getContractAt(
-      name: "_MAD",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts._MAD>;
-    getContractAt(
       name: "MADFactory1155",
       address: string,
       signer?: ethers.Signer
@@ -259,6 +254,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Owned>;
+    getContractAt(
+      name: "TwoFactor",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TwoFactor>;
     getContractAt(
       name: "Pausable",
       address: string,

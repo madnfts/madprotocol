@@ -22,9 +22,7 @@ export type { shared };
 
 export type { lib };
 export type { MAD } from "./MAD";
-export type { _MAD } from "./_MAD";
 export * as factories from "./factories";
-export { _MAD__factory } from "./factories/_MAD__factory";
 export type { MADFactory1155 } from "./Factory/MADFactory1155";
 export { MADFactory1155__factory } from "./factories/Factory/MADFactory1155__factory";
 export type { MADFactory721 } from "./Factory/MADFactory721";
@@ -35,6 +33,8 @@ export type { FactoryVerifier } from "./lib/auth/FactoryVerifier";
 export { FactoryVerifier__factory } from "./factories/lib/auth/FactoryVerifier__factory";
 export type { Owned } from "./lib/auth/Owned";
 export { Owned__factory } from "./factories/lib/auth/Owned__factory";
+export type { TwoFactor } from "./lib/auth/TwoFactor";
+export { TwoFactor__factory } from "./factories/lib/auth/TwoFactor__factory";
 export type { Pausable } from "./lib/security/Pausable";
 export { Pausable__factory } from "./factories/lib/security/Pausable__factory";
 export type { SplitterEventsAndErrors } from "./lib/splitter/SplitterEventsAndErrors";

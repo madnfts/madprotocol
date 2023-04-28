@@ -12,12 +12,19 @@ import type {
 } from "../../common";
 import type { EventFragment } from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
-import type { BaseContract, BigNumber, Signer, utils } from "ethers";
+import type {
+  BaseContract,
+  BigNumber,
+  BigNumberish,
+  Signer,
+  utils,
+} from "ethers";
 
 export interface FactoryEventsAndErrorsBaseInterface extends utils.Interface {
   functions: {};
 
   events: {
+    "ColTypeUpdated(uint256)": EventFragment;
     "FeesUpdated(uint256,uint256)": EventFragment;
     "MarketplaceUpdated(address)": EventFragment;
     "PaymentTokenUpdated(address)": EventFragment;
@@ -27,6 +34,7 @@ export interface FactoryEventsAndErrorsBaseInterface extends utils.Interface {
     "SplitterCreated(address,uint256[],address[],address,uint256)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "ColTypeUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FeesUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MarketplaceUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PaymentTokenUpdated"): EventFragment;
@@ -35,6 +43,16 @@ export interface FactoryEventsAndErrorsBaseInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "SignerUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SplitterCreated"): EventFragment;
 }
+
+export interface ColTypeUpdatedEventObject {
+  index: BigNumber;
+}
+export type ColTypeUpdatedEvent = TypedEvent<
+  [BigNumber],
+  ColTypeUpdatedEventObject
+>;
+
+export type ColTypeUpdatedEventFilter = TypedEventFilter<ColTypeUpdatedEvent>;
 
 export interface FeesUpdatedEventObject {
   feeVal2: BigNumber;
@@ -139,6 +157,13 @@ export interface FactoryEventsAndErrorsBase extends BaseContract {
   callStatic: {};
 
   filters: {
+    "ColTypeUpdated(uint256)"(
+      index?: PromiseOrValue<BigNumberish> | null
+    ): ColTypeUpdatedEventFilter;
+    ColTypeUpdated(
+      index?: PromiseOrValue<BigNumberish> | null
+    ): ColTypeUpdatedEventFilter;
+
     "FeesUpdated(uint256,uint256)"(
       feeVal2?: null,
       feeVal3?: null

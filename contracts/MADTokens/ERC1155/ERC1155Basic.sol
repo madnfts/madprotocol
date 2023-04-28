@@ -5,28 +5,34 @@ pragma solidity 0.8.19;
 import { ImplBase, SplitterImpl, ERC20, ERC2981, Counters, Strings, SafeTransferLib } from "contracts/MADTokens/common/ImplBase.sol";
 import { ERC1155B as ERC1155, ERC1155TokenReceiver } from "contracts/lib/tokens/ERC1155/Base/ERC1155B.sol";
 
+import { Types } from "contracts/Shared/Types.sol";
+
 contract ERC1155Basic is ImplBase, ERC1155, ERC1155TokenReceiver {
     using Counters for Counters.Counter;
+    using Types for Types.ColArgs;
     using Strings for uint256;
 
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
-    //     /// @notice ERC20 payment token address.
-    // ERC20 public erc20;
 
     constructor(
-        string memory _baseURI,
-        uint256 _price,
-        uint256 _maxSupply,
-        SplitterImpl _splitter,
-        uint96 _fraction,
-        address _router
-        ,ERC20 _erc20
-    ) ImplBase(_baseURI, _price, _maxSupply, _splitter, _fraction, _router
-    // ,_erc20
-    ) {
-        erc20 = _erc20;
+        Types.ColArgs memory args,
+        bytes32[] memory _extra
+    )
+        ImplBase(
+            /*  */
+            args._baseURI,
+            args._price,
+            args._maxSupply,
+            args._splitter,
+            args._fraction,
+            args._router
+            /*  */
+        )
+    {
+        erc20 = args._erc20;
+        _extraArgsCheck(_extra);
     }
 
     ////////////////////////////////////////////////////////////////
@@ -38,24 +44,16 @@ contract ERC1155Basic is ImplBase, ERC1155, ERC1155TokenReceiver {
         uint256 amount,
         uint256[] memory balance,
         address erc20Owner
-    ) external payable nonReentrant onlyOwner hasReachedMax(_sumAmounts(balance) * amount) {
+    ) external payable nonReentrant authorised hasReachedMax(_sumAmounts(balance) * amount) {
         _paymentCheck(erc20Owner, 0);
         uint256 i;
-        // for (uint256 i = 0; i < amount; i++) {
         for (i; i < amount; ) {
             _mint(to, _incrementCounter(1), balance[i], "");
             unchecked {
                 ++i;
             }
         }
-
-        assembly {
-            if lt(i, amount) {
-                // LoopOverflow()
-                mstore(0x00, 0xdfb035c9)
-                revert(0x1c, 0x04)
-            }
-        }
+        _loopOverflow(i, amount);
         // Transfer event emited by parent ERC1155 contract
     }
 
@@ -64,7 +62,7 @@ contract ERC1155Basic is ImplBase, ERC1155, ERC1155TokenReceiver {
         uint256[] memory ids,
         uint256[] memory amounts,
         address erc20Owner
-    ) external payable onlyOwner hasReachedMax(_sumAmounts(amounts)) {
+    ) external payable authorised hasReachedMax(_sumAmounts(amounts)) {
         _paymentCheck(erc20Owner, 0);
         uint256 i;
         uint256 len = ids.length;
@@ -74,12 +72,7 @@ contract ERC1155Basic is ImplBase, ERC1155, ERC1155TokenReceiver {
                 ++i;
             }
         }
-        assembly {
-            if lt(i, len) {
-                mstore(0x00, 0xdfb035c9)
-                revert(0x1c, 0x04)
-            }
-        }
+        _loopOverflow(i, len);
         _batchMint(to, ids, amounts, "");
         // Transfer event emited by parent ERC1155 contract
     }
@@ -89,7 +82,7 @@ contract ERC1155Basic is ImplBase, ERC1155, ERC1155TokenReceiver {
         uint256[] memory ids,
         uint256[] memory balances,
         address erc20Owner
-    ) external payable onlyOwner {
+    ) external payable authorised {
         _paymentCheck(erc20Owner, 1);
         uint256 i;
         uint256 len = ids.length;
@@ -101,12 +94,7 @@ contract ERC1155Basic is ImplBase, ERC1155, ERC1155TokenReceiver {
                 ++i;
             }
         }
-        assembly {
-            if lt(i, len) {
-                mstore(0x00, 0xdfb035c9)
-                revert(0x1c, 0x04)
-            }
-        }
+        _loopOverflow(i, len);
         // Transfer events emited by parent ERC1155 contract
     }
 
@@ -115,7 +103,7 @@ contract ERC1155Basic is ImplBase, ERC1155, ERC1155TokenReceiver {
         uint256[] memory ids,
         uint256[] memory amounts,
         address erc20Owner
-    ) external payable onlyOwner {
+    ) external payable authorised {
         require(ids.length == amounts.length, "LENGTH_MISMATCH");
         _paymentCheck(erc20Owner, 1);
         uint256 i;
@@ -126,12 +114,7 @@ contract ERC1155Basic is ImplBase, ERC1155, ERC1155TokenReceiver {
                 ++i;
             }
         }
-        assembly {
-            if lt(i, len) {
-                mstore(0x00, 0xdfb035c9)
-                revert(0x1c, 0x04)
-            }
-        }
+        _loopOverflow(i, len);
         _batchBurn(from, ids, amounts);
         // Transfer event emited by parent ERC1155 contract
     }
@@ -159,13 +142,7 @@ contract ERC1155Basic is ImplBase, ERC1155, ERC1155TokenReceiver {
                 ++i;
             }
         }
-        // assembly overflow check
-        assembly {
-            if lt(i, amount) {
-                mstore(0x00, 0xdfb035c9)
-                revert(0x1c, 0x04)
-            }
-        }
+        _loopOverflow(i, amount);
         // Transfer events emited by parent ERC1155 contract
     }
 
@@ -193,12 +170,7 @@ contract ERC1155Basic is ImplBase, ERC1155, ERC1155TokenReceiver {
                 ++i;
             }
         }
-        assembly {
-            if lt(i, len) {
-                mstore(0x00, 0xdfb035c9)
-                revert(0x1c, 0x04)
-            }
-        }
+        _loopOverflow(i, len);
         _batchMint(msg.sender, ids, amounts, "");
         // Transfer event emited by parent ERC1155 contract
     }
@@ -220,8 +192,8 @@ contract ERC1155Basic is ImplBase, ERC1155, ERC1155TokenReceiver {
 
     function uri(uint256 id) public view virtual override returns (string memory) {
         if (id > mintCount) {
-            // revert("NotMintedYet");
             assembly {
+                // revert("NotMintedYet");
                 mstore(0x00, 0xbad086ea)
                 revert(0x1c, 0x04)
             }

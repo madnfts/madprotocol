@@ -13,6 +13,11 @@ import { Contract, Signer, utils } from "ethers";
 const _abi = [
   {
     inputs: [],
+    name: "InvalidAddress",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "InvalidRoyalty",
     type: "error",
   },
@@ -25,6 +30,19 @@ const _abi = [
     inputs: [],
     name: "ZeroAddress",
     type: "error",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "index",
+        type: "uint256",
+      },
+    ],
+    name: "ColTypeUpdated",
+    type: "event",
   },
   {
     anonymous: false,

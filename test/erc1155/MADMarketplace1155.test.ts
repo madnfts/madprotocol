@@ -21,6 +21,7 @@ import {
   MADRouter1155,
 } from "../../src/types";
 import { MarketplaceErrors } from "./../utils/errors";
+import { ColArgs } from "./../utils/interfaces";
 import {
   OrderDetails1155,
   dead,
@@ -222,13 +223,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -370,13 +372,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -438,13 +441,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -506,13 +510,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -576,13 +581,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -638,13 +644,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -767,13 +774,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "salt",
-          "min",
-          "min",
+          // "min",
+          // "min",
           price,
           1000,
           "ipfs://cid/",
           splAddr,
           750,
+          []
         );
 
       const wlAddr = await f1155.callStatic.getDeployedAddr(
@@ -1117,13 +1125,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -1185,13 +1194,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -1260,13 +1270,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -1337,13 +1348,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -1415,13 +1427,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -1544,13 +1557,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "salt",
-          "",
-          "",
+          // "",
+          // "",
           price,
           1000,
           "ipfs://cid/",
           splAddr,
           750,
+          []
         );
 
       const wlAddr = await f1155.callStatic.getDeployedAddr(
@@ -1899,13 +1913,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -1964,13 +1979,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -2037,13 +2053,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -2112,13 +2129,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -2174,13 +2192,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -2301,13 +2320,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "salt",
-          "",
-          "",
+          // "",
+          // "",
           price,
           1000,
           "ipfs://cid/",
           splAddr,
           750,
+          []
         );
 
       const wlAddr = await f1155.callStatic.getDeployedAddr(
@@ -2651,13 +2671,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -2738,13 +2759,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -2810,13 +2832,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -2885,13 +2908,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -2960,13 +2984,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -3032,13 +3057,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -3141,13 +3167,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -3276,13 +3303,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -3348,13 +3376,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -3420,13 +3449,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -3495,13 +3525,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -3570,13 +3601,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -3647,13 +3679,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -3702,13 +3735,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt2",
-          "1155Basic2",
-          "BASIC2",
+          // "1155Basic2",
+          // "BASIC2",
           price,
           1,
           "ipfs://cid/",
           splAddr,
           750,
+          []
         );
       const basic2 = await ethers.getContractAt(
         "ERC1155Basic",
@@ -3928,13 +3962,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -3994,13 +4029,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt2",
-          "1155Basic2",
-          "BASIC2",
+          // "1155Basic2",
+          // "BASIC2",
           price,
           1,
           "ipfs://cid/",
           splAddr,
           750,
+          []
         );
       const basic2 = await ethers.getContractAt(
         "ERC1155Basic",
@@ -4074,15 +4110,22 @@ describe("MADMarketplace1155", () => {
       const ExtToken = await ethers.getContractFactory(
         "ERC1155Basic",
       );
+      const args:ColArgs = {
+        _name: "",
+        _symbol: "",
+        _baseURI: "ipfs://cid/", 
+        _price: price,
+        _maxSupply: ethers.BigNumber.from(100),
+        _splitter: acc02.address,
+        _fraction: ethers.BigNumber.from(500),
+        _router: acc02.address,
+        _erc20: dead
+      };
+
       const extToken = await ExtToken.connect(acc02).deploy(
-        "ipfs://cid/",
-        price,
-        100,
-        acc02.address,
-        500,
-        acc02.address,
-        dead,
-      );
+        args,
+        []
+        );
 
       await extToken.connect(acc02).setPublicMintState(true);
       await extToken.connect(acc02).mint(2, 1, {
@@ -4313,13 +4356,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           10,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -4382,13 +4426,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt2",
-          "1155Basic2",
-          "BASIC2",
+          // "1155Basic2",
+          // "BASIC2",
           price,
           10,
           "ipfs://cid/",
           splAddr,
           750,
+          []
         );
       const basic2 = await ethers.getContractAt(
         "ERC1155Basic",
@@ -4464,15 +4509,22 @@ describe("MADMarketplace1155", () => {
       const ExtToken = await ethers.getContractFactory(
         "ERC1155Basic",
       );
+      const args:ColArgs = {
+        _name: "",
+        _symbol: "",
+        _baseURI: "ipfs://cid/", 
+        _price: price,
+        _maxSupply: ethers.BigNumber.from(100),
+        _splitter: acc02.address,
+        _fraction: ethers.BigNumber.from(500),
+        _router: acc02.address,
+        _erc20: dead
+      };
+
       const extToken = await ExtToken.connect(acc02).deploy(
-        "ipfs://cid/",
-        price,
-        100,
-        acc02.address,
-        500,
-        acc02.address,
-        dead,
-      );
+        args,
+        []
+        );
 
       await extToken.connect(acc02).setPublicMintState(true);
       await extToken.connect(acc02).mint(2, 1, {
@@ -4701,13 +4753,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -4790,13 +4843,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -4861,15 +4915,22 @@ describe("MADMarketplace1155", () => {
       const ExtToken = await ethers.getContractFactory(
         "ERC1155Basic",
       );
+      const args:ColArgs = {
+        _name: "",
+        _symbol: "",
+        _baseURI: "ipfs://cid/", 
+        _price: price,
+        _maxSupply: ethers.BigNumber.from(100),
+        _splitter: acc02.address,
+        _fraction: ethers.BigNumber.from(500),
+        _router: acc02.address,
+        _erc20: dead
+      };
+
       const extToken = await ExtToken.connect(acc02).deploy(
-        "ipfs://cid/",
-        price,
-        100,
-        acc02.address,
-        500,
-        acc02.address,
-        dead,
-      );
+        args,
+        []
+        );
 
       await extToken.connect(acc02).setPublicMintState(true);
       await extToken.connect(acc02).mint(2, 1, {
@@ -4930,13 +4991,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -5005,13 +5067,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -5162,13 +5225,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -5243,15 +5307,22 @@ describe("MADMarketplace1155", () => {
       const ExtToken = await ethers.getContractFactory(
         "ERC1155Basic",
       );
+      const args:ColArgs = {
+        _name: "",
+        _symbol: "",
+        _baseURI: "ipfs://cid/", 
+        _price: price,
+        _maxSupply: ethers.BigNumber.from(100),
+        _splitter: acc02.address,
+        _fraction: ethers.BigNumber.from(500),
+        _router: acc02.address,
+        _erc20: dead
+      };
+
       const extToken = await ExtToken.connect(acc02).deploy(
-        "ipfs://cid/",
-        price,
-        100,
-        acc02.address,
-        500,
-        acc02.address,
-        dead,
-      );
+        args,
+        []
+        );
 
       await extToken.connect(acc02).setPublicMintState(true);
       await extToken
@@ -5391,13 +5462,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -5466,13 +5538,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -5560,13 +5633,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -5655,13 +5729,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -5756,13 +5831,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -5858,13 +5934,14 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "BasicSalt",
-          "1155Basic",
-          "BASIC",
+          // "1155Basic",
+          // "BASIC",
           price,
           1,
           "cid/id.json",
           splAddr,
           750,
+          []
         );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -5959,13 +6036,12 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "salt",
-          "",
-          "",
           price,
           1000,
           "ipfs://cid/",
           splAddr,
           750,
+          []
         );
 
       const wlAddr = await f1155.callStatic.getDeployedAddr(
@@ -6096,13 +6172,12 @@ describe("MADMarketplace1155", () => {
         .createCollection(
           1,
           "salt",
-          "",
-          "",
           price,
           1000,
           "ipfs://cid/",
           splAddr,
           750,
+          []
         );
 
       const wlAddr = await f1155.callStatic.getDeployedAddr(

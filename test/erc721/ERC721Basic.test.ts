@@ -88,8 +88,11 @@ describe("ERC721Basic", () => {
       await splitter.deployed();
       expect(basic).to.be.ok;
       expect(splitter).to.be.ok;
-      expect(await basic.callStatic.owner()).to.eq(
+      expect(await basic.callStatic.getOwner()).to.eq(
         owner.address,
+      );
+      expect(await basic.callStatic.getRouter()).to.eq(
+        mad.address,
       );
       expect(await basic.callStatic.name()).to.eq("721Basic");
       expect(await basic.callStatic.symbol()).to.eq("BASIC");
@@ -158,8 +161,9 @@ describe("ERC721Basic", () => {
         .to.emit(basic, "BaseURISet")
         .withArgs(change);
 
-      await expect(setFail).to.be.revertedWith(
-        BasicErrors.Unauthorized,
+      await expect(setFail).to.be.revertedWithCustomError(
+        basic,
+        BasicErrors.NotAuthorised,
       );
     });
 
@@ -178,8 +182,9 @@ describe("ERC721Basic", () => {
       await expect(set)
         .to.emit(basic, "PublicMintStateSet")
         .withArgs(true);
-      await expect(setFail).to.be.revertedWith(
-        BasicErrors.Unauthorized,
+      await expect(setFail).to.be.revertedWithCustomError(
+        basic,
+        BasicErrors.NotAuthorised,
       );
     });
   });
@@ -288,8 +293,9 @@ describe("ERC721Basic", () => {
         .connect(acc02)
         .burn(ids, acc02.address);
 
-      await expect(tx).to.be.revertedWith(
-        BasicErrors.Unauthorized,
+      await expect(tx).to.be.revertedWithCustomError(
+        basic,
+        BasicErrors.NotAuthorised,
       );
     });
 
@@ -408,7 +414,7 @@ describe("ERC721Basic", () => {
         basic
           .connect(acc01)
           .withdraw(ethers.constants.AddressZero),
-      ).to.be.revertedWith(BasicErrors.Unauthorized);
+      ).to.be.revertedWithCustomError(basic,BasicErrors.NotAuthorised);
     });
 
     it("Should withdraw contract's ERC20s", async () => {

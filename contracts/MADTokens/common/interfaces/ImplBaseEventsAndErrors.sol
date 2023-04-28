@@ -27,6 +27,8 @@ interface ImplBaseEventsAndErrors {
     error WrongPrice();
     /// @dev 0xdfb035c9
     error LoopOverflow();
-    /// @dev ?
+    /// @dev 0x31d1c0a3
     error URILocked();
+    /// @dev 0x7734d3ab
+    error WrongArgsLength();
 }

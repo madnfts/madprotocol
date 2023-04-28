@@ -9,7 +9,8 @@ import { MockERC20 } from "../src/types";
 
 config({ path: resolve(__dirname, "./.env") });
 
-const uniswapRouterAddress = ethers.constants.AddressZero;
+const { UNISWAP_ROUTER } = process.env;
+const uniswapRouterAddress = UNISWAP_ROUTER;
 
 const { ERC20_TOKEN } = process.env;
 const hre = require("hardhat");
@@ -45,30 +46,15 @@ const main = async () => {
 
   console.log(`ERC721 Marketplace address: ${m721.address}`);
 
-  /// deploy the libraries and link them
-  const SplitterDeployer = await ethers.getContractFactory(
-    "SplitterDeployer",
+  const ERC721Basic = await ethers.getContractFactory(
+    "ERC721Basic",
   );
-
-  const ERC1155BasicDeployer =
-    await ethers.getContractFactory("ERC1155BasicDeployer");
-
-  const ERC721BasicDeployer = await ethers.getContractFactory(
-    "ERC721BasicDeployer",
+  const ERC1155Basic = await ethers.getContractFactory(
+    "ERC1155Basic",
   );
-
-  const sd = await SplitterDeployer.deploy();
-  const bd1155 = await ERC1155BasicDeployer.deploy();
-  const bd721 = await ERC721BasicDeployer.deploy();
 
   const MADFactory721 = await ethers.getContractFactory(
     "MADFactory721",
-    {
-      libraries: {
-        ERC721BasicDeployer: bd721.address,
-        SplitterDeployer: sd.address,
-      },
-    },
   );
   const f721 = await MADFactory721.deploy(
     m721.address, // marketplace addr
@@ -77,6 +63,7 @@ const main = async () => {
   );
   console.log(`ERC721 Factory address: ${f721.address}`);
 
+  await f721.addColType(ethers.constants.One, ERC721Basic.bytecode);
   const MADRouter721 = await ethers.getContractFactory(
     "MADRouter721",
   );
@@ -105,12 +92,6 @@ const main = async () => {
 
   const MADFactory1155 = await ethers.getContractFactory(
     "MADFactory1155",
-    {
-      libraries: {
-        ERC1155BasicDeployer: bd1155.address,
-        SplitterDeployer: sd.address,
-      },
-    },
   );
   const f1155 = await MADFactory1155.deploy(
     m1155.address, // marketplace addr
@@ -118,6 +99,8 @@ const main = async () => {
     erc20Address, // ERC20 payment token addr
   );
   console.log(`ERC1155 Factory address: ${f1155.address}`);
+
+  await f1155.addColType(ethers.constants.One, ERC1155Basic.bytecode);
 
   const MADRouter1155 = await ethers.getContractFactory(
     "MADRouter1155",

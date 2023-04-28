@@ -31,8 +31,10 @@ import type {
 
 export interface MADFactory721Interface extends utils.Interface {
   functions: {
+    "addColType(uint256,bytes)": FunctionFragment;
     "colInfo(bytes32)": FunctionFragment;
-    "createCollection(uint8,string,string,string,uint256,uint256,string,address,uint256)": FunctionFragment;
+    "colTypes(uint256)": FunctionFragment;
+    "createCollection(uint8,string,string,string,uint256,uint256,string,address,uint96,bytes32[])": FunctionFragment;
     "creatorAuth(address,address)": FunctionFragment;
     "creatorCheck(bytes32)": FunctionFragment;
     "erc20()": FunctionFragment;
@@ -59,7 +61,9 @@ export interface MADFactory721Interface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "addColType"
       | "colInfo"
+      | "colTypes"
       | "createCollection"
       | "creatorAuth"
       | "creatorCheck"
@@ -86,8 +90,16 @@ export interface MADFactory721Interface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(
+    functionFragment: "addColType",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "colInfo",
     values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "colTypes",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "createCollection",
@@ -100,7 +112,8 @@ export interface MADFactory721Interface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
       PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>[]
     ]
   ): string;
   encodeFunctionData(
@@ -171,7 +184,9 @@ export interface MADFactory721Interface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
 
+  decodeFunctionResult(functionFragment: "addColType", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "colInfo", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "colTypes", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "createCollection",
     data: BytesLike
@@ -221,7 +236,8 @@ export interface MADFactory721Interface extends utils.Interface {
   decodeFunctionResult(functionFragment: "userTokens", data: BytesLike): Result;
 
   events: {
-    "ERC721BasicCreated(address,address,string,string,uint256,uint256,uint256)": EventFragment;
+    "ColTypeUpdated(uint256)": EventFragment;
+    "ERC721Created(address,address,uint8,string,string,uint96,uint256,uint256)": EventFragment;
     "FeesUpdated(uint256,uint256)": EventFragment;
     "MarketplaceUpdated(address)": EventFragment;
     "OwnerUpdated(address,address)": EventFragment;
@@ -234,7 +250,8 @@ export interface MADFactory721Interface extends utils.Interface {
     "Unpaused(address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "ERC721BasicCreated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ColTypeUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ERC721Created"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FeesUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MarketplaceUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnerUpdated"): EventFragment;
@@ -247,22 +264,32 @@ export interface MADFactory721Interface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
 }
 
-export interface ERC721BasicCreatedEventObject {
+export interface ColTypeUpdatedEventObject {
+  index: BigNumber;
+}
+export type ColTypeUpdatedEvent = TypedEvent<
+  [BigNumber],
+  ColTypeUpdatedEventObject
+>;
+
+export type ColTypeUpdatedEventFilter = TypedEventFilter<ColTypeUpdatedEvent>;
+
+export interface ERC721CreatedEventObject {
   newSplitter: string;
   newCollection: string;
+  tokenType: number;
   name: string;
   symbol: string;
   royalties: BigNumber;
   maxSupply: BigNumber;
   mintPrice: BigNumber;
 }
-export type ERC721BasicCreatedEvent = TypedEvent<
-  [string, string, string, string, BigNumber, BigNumber, BigNumber],
-  ERC721BasicCreatedEventObject
+export type ERC721CreatedEvent = TypedEvent<
+  [string, string, number, string, string, BigNumber, BigNumber, BigNumber],
+  ERC721CreatedEventObject
 >;
 
-export type ERC721BasicCreatedEventFilter =
-  TypedEventFilter<ERC721BasicCreatedEvent>;
+export type ERC721CreatedEventFilter = TypedEventFilter<ERC721CreatedEvent>;
 
 export interface FeesUpdatedEventObject {
   feeVal2: BigNumber;
@@ -388,6 +415,12 @@ export interface MADFactory721 extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    addColType(
+      index: PromiseOrValue<BigNumberish>,
+      impl: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     colInfo(
       arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -401,6 +434,11 @@ export interface MADFactory721 extends BaseContract {
       }
     >;
 
+    colTypes(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     createCollection(
       _tokenType: PromiseOrValue<BigNumberish>,
       _tokenSalt: PromiseOrValue<string>,
@@ -411,6 +449,7 @@ export interface MADFactory721 extends BaseContract {
       _baseURI: PromiseOrValue<string>,
       _splitter: PromiseOrValue<string>,
       _royalty: PromiseOrValue<BigNumberish>,
+      _extra: PromiseOrValue<BytesLike>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -519,6 +558,12 @@ export interface MADFactory721 extends BaseContract {
     ): Promise<[string]>;
   };
 
+  addColType(
+    index: PromiseOrValue<BigNumberish>,
+    impl: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   colInfo(
     arg0: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
@@ -532,6 +577,11 @@ export interface MADFactory721 extends BaseContract {
     }
   >;
 
+  colTypes(
+    arg0: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   createCollection(
     _tokenType: PromiseOrValue<BigNumberish>,
     _tokenSalt: PromiseOrValue<string>,
@@ -542,6 +592,7 @@ export interface MADFactory721 extends BaseContract {
     _baseURI: PromiseOrValue<string>,
     _splitter: PromiseOrValue<string>,
     _royalty: PromiseOrValue<BigNumberish>,
+    _extra: PromiseOrValue<BytesLike>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -648,6 +699,12 @@ export interface MADFactory721 extends BaseContract {
   ): Promise<string>;
 
   callStatic: {
+    addColType(
+      index: PromiseOrValue<BigNumberish>,
+      impl: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     colInfo(
       arg0: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
@@ -661,6 +718,11 @@ export interface MADFactory721 extends BaseContract {
       }
     >;
 
+    colTypes(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     createCollection(
       _tokenType: PromiseOrValue<BigNumberish>,
       _tokenSalt: PromiseOrValue<string>,
@@ -671,6 +733,7 @@ export interface MADFactory721 extends BaseContract {
       _baseURI: PromiseOrValue<string>,
       _splitter: PromiseOrValue<string>,
       _royalty: PromiseOrValue<BigNumberish>,
+      _extra: PromiseOrValue<BytesLike>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -776,24 +839,33 @@ export interface MADFactory721 extends BaseContract {
   };
 
   filters: {
-    "ERC721BasicCreated(address,address,string,string,uint256,uint256,uint256)"(
+    "ColTypeUpdated(uint256)"(
+      index?: PromiseOrValue<BigNumberish> | null
+    ): ColTypeUpdatedEventFilter;
+    ColTypeUpdated(
+      index?: PromiseOrValue<BigNumberish> | null
+    ): ColTypeUpdatedEventFilter;
+
+    "ERC721Created(address,address,uint8,string,string,uint96,uint256,uint256)"(
       newSplitter?: PromiseOrValue<string> | null,
       newCollection?: PromiseOrValue<string> | null,
+      tokenType?: null,
       name?: null,
       symbol?: null,
       royalties?: null,
       maxSupply?: null,
       mintPrice?: null
-    ): ERC721BasicCreatedEventFilter;
-    ERC721BasicCreated(
+    ): ERC721CreatedEventFilter;
+    ERC721Created(
       newSplitter?: PromiseOrValue<string> | null,
       newCollection?: PromiseOrValue<string> | null,
+      tokenType?: null,
       name?: null,
       symbol?: null,
       royalties?: null,
       maxSupply?: null,
       mintPrice?: null
-    ): ERC721BasicCreatedEventFilter;
+    ): ERC721CreatedEventFilter;
 
     "FeesUpdated(uint256,uint256)"(
       feeVal2?: null,
@@ -868,8 +940,19 @@ export interface MADFactory721 extends BaseContract {
   };
 
   estimateGas: {
+    addColType(
+      index: PromiseOrValue<BigNumberish>,
+      impl: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     colInfo(
       arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    colTypes(
+      arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -883,6 +966,7 @@ export interface MADFactory721 extends BaseContract {
       _baseURI: PromiseOrValue<string>,
       _splitter: PromiseOrValue<string>,
       _royalty: PromiseOrValue<BigNumberish>,
+      _extra: PromiseOrValue<BytesLike>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -982,8 +1066,19 @@ export interface MADFactory721 extends BaseContract {
   };
 
   populateTransaction: {
+    addColType(
+      index: PromiseOrValue<BigNumberish>,
+      impl: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     colInfo(
       arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    colTypes(
+      arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -997,6 +1092,7 @@ export interface MADFactory721 extends BaseContract {
       _baseURI: PromiseOrValue<string>,
       _splitter: PromiseOrValue<string>,
       _royalty: PromiseOrValue<BigNumberish>,
+      _extra: PromiseOrValue<BytesLike>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -22,6 +22,7 @@ export enum BasicErrors {
   WrongFrom = "WRONG_FROM",
   NotMinted = "NOT_MINTED",
   InvalidAmount = "INVALID_AMOUNT",
+  NotAuthorised = "NotAuthorised",
 }
 
 export enum WhitelistErrors {
@@ -90,6 +91,7 @@ export enum MarketplaceErrors {
 export enum FactoryErrors {
   DeploymentFailed = "DEPLOYMENT_FAILED",
   InitFailed = "INITIALIZATION_FAILED",
+  InvalidAddress = "InvalidAddress",
   Unauthorized = "UNAUTHORIZED",
   AccessDenied = "AccessDenied",
   SplitterFail = "SplitterFail",

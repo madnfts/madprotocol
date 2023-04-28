@@ -38,6 +38,11 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "WrongArgsLength",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "WrongPrice",
     type: "error",
   },

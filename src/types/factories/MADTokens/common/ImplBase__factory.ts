@@ -13,12 +13,22 @@ import { Contract, Signer, utils } from "ethers";
 const _abi = [
   {
     inputs: [],
+    name: "InvalidValue",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "LoopOverflow",
     type: "error",
   },
   {
     inputs: [],
     name: "MaxSupplyReached",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "NotAuthorised",
     type: "error",
   },
   {
@@ -34,6 +44,11 @@ const _abi = [
   {
     inputs: [],
     name: "URILocked",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "WrongArgsLength",
     type: "error",
   },
   {
@@ -104,6 +119,19 @@ const _abi = [
     inputs: [
       {
         indexed: true,
+        internalType: "address",
+        name: "newRouter",
+        type: "address",
+      },
+    ],
+    name: "RouterSet",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
         internalType: "uint256",
         name: "newRoyaltyFee",
         type: "uint256",
@@ -166,6 +194,32 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "getOwner",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getRouter",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "liveSupply",
     outputs: [
       {
@@ -198,19 +252,6 @@ const _abi = [
         internalType: "uint256",
         name: "",
         type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "owner",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
       },
     ],
     stateMutability: "view",
@@ -295,11 +336,11 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "newOwner",
+        name: "_owner",
         type: "address",
       },
     ],
-    name: "setOwner",
+    name: "setOwnership",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

@@ -22,7 +22,7 @@ interface FactoryEventsAndErrorsBase is EventsAndErrorsBase {
     event MarketplaceUpdated(address indexed newMarket);
     event RouterUpdated(address indexed newRouter);
     event SignerUpdated(address indexed newSigner);
-
+    event ColTypeUpdated(uint256 indexed index);
     event SplitterCreated(address indexed creator, uint256[] shares, address[] payees, address splitter, uint256 flag);
 
     ////////////////////////////////////////////////////////////////
@@ -33,6 +33,8 @@ interface FactoryEventsAndErrorsBase is EventsAndErrorsBase {
     error SplitterFail();
     /// @dev 0xe0e54ced
     error InvalidRoyalty();
+    /// @dev 0xe6c4247b
+    error InvalidAddress();
 }
 
 interface FactoryEventsAndErrors721 is FactoryEventsAndErrorsBase {
@@ -40,12 +42,13 @@ interface FactoryEventsAndErrors721 is FactoryEventsAndErrorsBase {
     //                           EVENTS                           //
     ////////////////////////////////////////////////////////////////
 
-    event ERC721BasicCreated(
+    event ERC721Created(
         address indexed newSplitter,
         address indexed newCollection,
+        uint8 tokenType,
         string name,
         string symbol,
-        uint256 royalties,
+        uint96 royalties,
         uint256 maxSupply,
         uint256 mintPrice
     );
@@ -56,11 +59,10 @@ interface FactoryEventsAndErrors1155 is FactoryEventsAndErrorsBase {
     //                           EVENTS                           //
     ////////////////////////////////////////////////////////////////
 
-    event ERC1155BasicCreated(
+    event ERC1155Created(
         address indexed newSplitter,
         address indexed newCollection,
-        string name,
-        string symbol,
+        uint8 tokenType,
         uint256 royalties,
         uint256 maxSupply,
         uint256 mintPrice

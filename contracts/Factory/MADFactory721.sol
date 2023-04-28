@@ -2,12 +2,12 @@
 
 pragma solidity 0.8.19;
 import { FactoryEventsAndErrors721 } from "contracts/Shared/EventsAndErrors.sol";
-import { MADFactoryBase, FactoryVerifier, Types, Bytes32AddressLib } from "contracts/Factory/MADFactoryBase.sol";
+import { MADFactoryBase, FactoryVerifier, Types, SplitterImpl, Bytes32AddressLib } from "contracts/Factory/MADFactoryBase.sol";
 
-import { ERC721BasicDeployer } from "contracts/lib/deployers/ERC721Deployer.sol";
+// import { ERC721BasicDeployer } from "contracts/lib/deployers/ERC721Deployer.sol";
 
 contract MADFactory721 is MADFactoryBase, FactoryEventsAndErrors721 {
-    using Types for Types.ERC721Type;
+    // using Types for Types.ERC721Type;
     using Bytes32AddressLib for address;
     using Bytes32AddressLib for bytes32;
 
@@ -56,22 +56,35 @@ contract MADFactory721 is MADFactoryBase, FactoryEventsAndErrors721 {
         uint256 _maxSupply,
         string memory _baseURI,
         address _splitter,
-        uint256 _royalty
-    ) external nonReentrant isThisOg whenNotPaused {
+        uint96 _royalty,
+        bytes32[] memory _extra
+    ) 
+        external 
+        nonReentrant 
+        isThisOg 
+        whenNotPaused 
+    {
         _limiter(_tokenType, _splitter);
         _royaltyLocker(_royalty);
 
-        (bytes32 tokenSalt, address deployed) = ERC721BasicDeployer._721BasicDeploy(
-            _tokenSalt,
-            _name,
-            _symbol,
-            _baseURI,
-            _price,
+        Types.ColArgs memory args = Types.ColArgs(
+            _name, 
+            _symbol, 
+            _baseURI, 
+            _price, 
             _maxSupply,
-            _splitter,
-            router,
+            SplitterImpl(payable(_splitter)),
             _royalty,
+            router,
             erc20
+        );
+
+        (bytes32 tokenSalt, address deployed) = 
+        _collectionDeploy(
+            _tokenType,
+            _tokenSalt,
+            args,
+            _extra
         );
 
         bytes32 colId = deployed.fillLast12Bytes();
@@ -79,13 +92,22 @@ contract MADFactory721 is MADFactoryBase, FactoryEventsAndErrors721 {
 
         colInfo[colId] = Types.Collection721(
             tx.origin,
-            Types.ERC721Type.ERC721Basic,
+            _tokenType,
             tokenSalt,
             block.number,
             _splitter
         );
 
-        emit ERC721BasicCreated(_splitter, deployed, _name, _symbol, _royalty, _maxSupply, _price);
+        emit ERC721Created(
+            _splitter, 
+            deployed,
+            _tokenType, 
+            _name, 
+            _symbol, 
+            _royalty, 
+            _maxSupply, 
+            _price
+        );
     }
 
     ////////////////////////////////////////////////////////////////

@@ -1,4 +1,4 @@
-import { Signature, Wallet, ethers } from "ethers";
+import { Signature, Wallet, ethers, BigNumber } from "ethers";
 
 import {
   ERC721Basic,
@@ -127,6 +127,18 @@ export interface MADFixture1155ERC20 {
   m1155: MADMarketplace1155;
   r1155: MADRouter1155;
   erc20: MockERC20;
+}
+
+export interface ColArgs {
+  _name: string;
+  _symbol: string;
+  _baseURI: string;
+  _price: BigNumber;
+  _maxSupply: BigNumber;
+  _splitter: string;
+  _fraction: BigNumber;
+  _router: string;
+  _erc20: string;
 }
 
 // exported consts

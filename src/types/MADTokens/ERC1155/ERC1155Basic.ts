@@ -30,6 +30,42 @@ import type {
   utils,
 } from "ethers";
 
+export declare namespace Types {
+  export type ColArgsStruct = {
+    _name: PromiseOrValue<string>;
+    _symbol: PromiseOrValue<string>;
+    _baseURI: PromiseOrValue<string>;
+    _price: PromiseOrValue<BigNumberish>;
+    _maxSupply: PromiseOrValue<BigNumberish>;
+    _splitter: PromiseOrValue<string>;
+    _fraction: PromiseOrValue<BigNumberish>;
+    _router: PromiseOrValue<string>;
+    _erc20: PromiseOrValue<string>;
+  };
+
+  export type ColArgsStructOutput = [
+    string,
+    string,
+    string,
+    BigNumber,
+    BigNumber,
+    string,
+    BigNumber,
+    string,
+    string
+  ] & {
+    _name: string;
+    _symbol: string;
+    _baseURI: string;
+    _price: BigNumber;
+    _maxSupply: BigNumber;
+    _splitter: string;
+    _fraction: BigNumber;
+    _router: string;
+    _erc20: string;
+  };
+}
+
 export interface ERC1155BasicInterface extends utils.Interface {
   functions: {
     "balanceOf(address,uint256)": FunctionFragment;
@@ -39,6 +75,8 @@ export interface ERC1155BasicInterface extends utils.Interface {
     "burnBatch(address,uint256[],uint256[],address)": FunctionFragment;
     "erc20()": FunctionFragment;
     "feeCount()": FunctionFragment;
+    "getOwner()": FunctionFragment;
+    "getRouter()": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "liveSupply()": FunctionFragment;
     "maxSupply()": FunctionFragment;
@@ -49,7 +87,6 @@ export interface ERC1155BasicInterface extends utils.Interface {
     "mintTo(address,uint256,uint256[],address)": FunctionFragment;
     "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "onERC1155Received(address,address,uint256,uint256,bytes)": FunctionFragment;
-    "owner()": FunctionFragment;
     "ownerOf(uint256,address)": FunctionFragment;
     "price()": FunctionFragment;
     "publicMintState()": FunctionFragment;
@@ -59,7 +96,7 @@ export interface ERC1155BasicInterface extends utils.Interface {
     "setApprovalForAll(address,bool)": FunctionFragment;
     "setBaseURI(string)": FunctionFragment;
     "setBaseURILock()": FunctionFragment;
-    "setOwner(address)": FunctionFragment;
+    "setOwnership(address)": FunctionFragment;
     "setPublicMintState(bool)": FunctionFragment;
     "splitter()": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
@@ -79,6 +116,8 @@ export interface ERC1155BasicInterface extends utils.Interface {
       | "burnBatch"
       | "erc20"
       | "feeCount"
+      | "getOwner"
+      | "getRouter"
       | "isApprovedForAll"
       | "liveSupply"
       | "maxSupply"
@@ -89,7 +128,6 @@ export interface ERC1155BasicInterface extends utils.Interface {
       | "mintTo"
       | "onERC1155BatchReceived"
       | "onERC1155Received"
-      | "owner"
       | "ownerOf"
       | "price"
       | "publicMintState"
@@ -99,7 +137,7 @@ export interface ERC1155BasicInterface extends utils.Interface {
       | "setApprovalForAll"
       | "setBaseURI"
       | "setBaseURILock"
-      | "setOwner"
+      | "setOwnership"
       | "setPublicMintState"
       | "splitter"
       | "supportsInterface"
@@ -139,6 +177,8 @@ export interface ERC1155BasicInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "erc20", values?: undefined): string;
   encodeFunctionData(functionFragment: "feeCount", values?: undefined): string;
+  encodeFunctionData(functionFragment: "getOwner", values?: undefined): string;
+  encodeFunctionData(functionFragment: "getRouter", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "isApprovedForAll",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
@@ -195,7 +235,6 @@ export interface ERC1155BasicInterface extends utils.Interface {
       PromiseOrValue<BytesLike>
     ]
   ): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "ownerOf",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
@@ -242,7 +281,7 @@ export interface ERC1155BasicInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "setOwner",
+    functionFragment: "setOwnership",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -282,6 +321,8 @@ export interface ERC1155BasicInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "burnBatch", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "erc20", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "feeCount", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getOwner", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getRouter", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isApprovedForAll",
     data: BytesLike
@@ -304,7 +345,6 @@ export interface ERC1155BasicInterface extends utils.Interface {
     functionFragment: "onERC1155Received",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "ownerOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "price", data: BytesLike): Result;
   decodeFunctionResult(
@@ -332,7 +372,10 @@ export interface ERC1155BasicInterface extends utils.Interface {
     functionFragment: "setBaseURILock",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "setOwner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setOwnership",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "setPublicMintState",
     data: BytesLike
@@ -360,6 +403,7 @@ export interface ERC1155BasicInterface extends utils.Interface {
     "BaseURISet(string)": EventFragment;
     "OwnerUpdated(address,address)": EventFragment;
     "PublicMintStateSet(bool)": EventFragment;
+    "RouterSet(address)": EventFragment;
     "RoyaltyFeeSet(uint256)": EventFragment;
     "RoyaltyRecipientSet(address)": EventFragment;
     "TransferBatch(address,address,address,uint256[],uint256[])": EventFragment;
@@ -372,6 +416,7 @@ export interface ERC1155BasicInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "BaseURISet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnerUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PublicMintStateSet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RouterSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoyaltyFeeSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoyaltyRecipientSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TransferBatch"): EventFragment;
@@ -426,6 +471,13 @@ export type PublicMintStateSetEvent = TypedEvent<
 
 export type PublicMintStateSetEventFilter =
   TypedEventFilter<PublicMintStateSetEvent>;
+
+export interface RouterSetEventObject {
+  newRouter: string;
+}
+export type RouterSetEvent = TypedEvent<[string], RouterSetEventObject>;
+
+export type RouterSetEventFilter = TypedEventFilter<RouterSetEvent>;
 
 export interface RoyaltyFeeSetEventObject {
   newRoyaltyFee: BigNumber;
@@ -545,6 +597,10 @@ export interface ERC1155Basic extends BaseContract {
 
     feeCount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    getOwner(overrides?: CallOverrides): Promise<[string]>;
+
+    getRouter(overrides?: CallOverrides): Promise<[string]>;
+
     isApprovedForAll(
       arg0: PromiseOrValue<string>,
       arg1: PromiseOrValue<string>,
@@ -605,8 +661,6 @@ export interface ERC1155Basic extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    owner(overrides?: CallOverrides): Promise<[string]>;
-
     ownerOf(
       arg0: PromiseOrValue<BigNumberish>,
       arg1: PromiseOrValue<string>,
@@ -658,8 +712,8 @@ export interface ERC1155Basic extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    setOwner(
-      newOwner: PromiseOrValue<string>,
+    setOwnership(
+      _owner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -730,6 +784,10 @@ export interface ERC1155Basic extends BaseContract {
 
   feeCount(overrides?: CallOverrides): Promise<BigNumber>;
 
+  getOwner(overrides?: CallOverrides): Promise<string>;
+
+  getRouter(overrides?: CallOverrides): Promise<string>;
+
   isApprovedForAll(
     arg0: PromiseOrValue<string>,
     arg1: PromiseOrValue<string>,
@@ -788,8 +846,6 @@ export interface ERC1155Basic extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  owner(overrides?: CallOverrides): Promise<string>;
-
   ownerOf(
     arg0: PromiseOrValue<BigNumberish>,
     arg1: PromiseOrValue<string>,
@@ -841,8 +897,8 @@ export interface ERC1155Basic extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  setOwner(
-    newOwner: PromiseOrValue<string>,
+  setOwnership(
+    _owner: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -913,6 +969,10 @@ export interface ERC1155Basic extends BaseContract {
 
     feeCount(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getOwner(overrides?: CallOverrides): Promise<string>;
+
+    getRouter(overrides?: CallOverrides): Promise<string>;
+
     isApprovedForAll(
       arg0: PromiseOrValue<string>,
       arg1: PromiseOrValue<string>,
@@ -971,8 +1031,6 @@ export interface ERC1155Basic extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    owner(overrides?: CallOverrides): Promise<string>;
-
     ownerOf(
       arg0: PromiseOrValue<BigNumberish>,
       arg1: PromiseOrValue<string>,
@@ -1022,8 +1080,8 @@ export interface ERC1155Basic extends BaseContract {
 
     setBaseURILock(overrides?: CallOverrides): Promise<void>;
 
-    setOwner(
-      newOwner: PromiseOrValue<string>,
+    setOwnership(
+      _owner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1101,6 +1159,11 @@ export interface ERC1155Basic extends BaseContract {
     PublicMintStateSet(
       newPublicState?: PromiseOrValue<boolean> | null
     ): PublicMintStateSetEventFilter;
+
+    "RouterSet(address)"(
+      newRouter?: PromiseOrValue<string> | null
+    ): RouterSetEventFilter;
+    RouterSet(newRouter?: PromiseOrValue<string> | null): RouterSetEventFilter;
 
     "RoyaltyFeeSet(uint256)"(
       newRoyaltyFee?: PromiseOrValue<BigNumberish> | null
@@ -1188,6 +1251,10 @@ export interface ERC1155Basic extends BaseContract {
 
     feeCount(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getOwner(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getRouter(overrides?: CallOverrides): Promise<BigNumber>;
+
     isApprovedForAll(
       arg0: PromiseOrValue<string>,
       arg1: PromiseOrValue<string>,
@@ -1246,8 +1313,6 @@ export interface ERC1155Basic extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
-
     ownerOf(
       arg0: PromiseOrValue<BigNumberish>,
       arg1: PromiseOrValue<string>,
@@ -1297,8 +1362,8 @@ export interface ERC1155Basic extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    setOwner(
-      newOwner: PromiseOrValue<string>,
+    setOwnership(
+      _owner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1370,6 +1435,10 @@ export interface ERC1155Basic extends BaseContract {
 
     feeCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    getOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getRouter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     isApprovedForAll(
       arg0: PromiseOrValue<string>,
       arg1: PromiseOrValue<string>,
@@ -1428,8 +1497,6 @@ export interface ERC1155Basic extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     ownerOf(
       arg0: PromiseOrValue<BigNumberish>,
       arg1: PromiseOrValue<string>,
@@ -1479,8 +1546,8 @@ export interface ERC1155Basic extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    setOwner(
-      newOwner: PromiseOrValue<string>,
+    setOwnership(
+      _owner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

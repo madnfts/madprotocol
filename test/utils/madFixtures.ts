@@ -132,28 +132,30 @@ async function _deployShared(
   );
 
   // Library deployers
-  const SplitterDeployer = await ethers.getContractFactory(
-    "SplitterDeployer",
-  );
-  const splDep = await SplitterDeployer.deploy();
+  // const SplitterDeployer = await ethers.getContractFactory(
+    // "SplitterDeployer",
+  // );
+  // const splDep = await SplitterDeployer.deploy();
 
-  const BasicDeployer = await ethers.getContractFactory(
-    `ERC${contractType}BasicDeployer`,
-  );
-  const basDep = await BasicDeployer.deploy();
+  // const BasicDeployer = await ethers.getContractFactory(
+  //   `ERC${contractType}BasicDeployer`,
+  // );
+  // const basDep = await BasicDeployer.deploy();
 
-  const lib: { [key: string]: string } = {
-    SplitterDeployer: splDep.address,
-  };
+  // const lib: { [key: string]: string } = {
+  //   SplitterDeployer: splDep.address,
+  // };
 
-  lib[`ERC${contractType}BasicDeployer`] = basDep.address;
+  // lib[`ERC${contractType}BasicDeployer`] = basDep.address;
 
   const Factory = await ethers.getContractFactory(
     `MADFactory${contractType}`,
-    {
-      libraries: lib,
-    },
+    // {
+      // libraries: lib,
+    // },
   );
+
+
 
   const allSigners = await ethers.getSigners();
   const owner = getSignerAddrs(1, allSigners);
@@ -191,8 +193,14 @@ async function createMadFixture721(
     owner[0],
   )) as MADRouter721;
 
+  const Basic = await ethers.getContractFactory(
+    `ERC721Basic`,
+  );
+  const basicBytecode = await Basic.bytecode;
+
   await f721.setRouter(r721.address);
   await m721.setFactory(f721.address);
+  await f721.addColType(ethers.constants.One, basicBytecode);
 
   // return { f721, m721, r721 };
   return { f721, m721, r721, erc20 };
@@ -230,8 +238,14 @@ async function createMadFixture1155(
     owner[0],
   )) as MADRouter1155;
 
+  const Basic = await ethers.getContractFactory(
+    `ERC1155Basic`,
+  );
+  const basicBytecode = await Basic.bytecode;
+
   await f1155.setRouter(r1155.address);
   await m1155.setFactory(f1155.address);
+  await f1155.addColType(ethers.constants.One, basicBytecode);
 
   // return { f1155, m1155, r1155 };
   return { f1155, m1155, r1155, erc20 };

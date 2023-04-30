@@ -40,14 +40,18 @@ abstract contract TwoFactor {
     uint256 internal router;
     uint256 internal owner;
 
+    /// @dev For the set `|{0,1}^2| = 4 = 2^2` 
+    /// (i.e., { (0,0), (0,1), (1,0), (1,1) } )
+    /// we trap state (0,0) as our revert case 
+    /// within the modifier's control flow.
     modifier authorised() {
       assembly {
         let _caller := shl(12, caller())
         if 
-          and(
-            iszero(eq(_caller, sload(router.slot))),
-            iszero(eq(_caller, sload(owner.slot)))
-          )
+          iszero(or(
+            eq(_caller, sload(router.slot)),
+            eq(_caller, sload(owner.slot))
+          ))
 
         // revert NotAuthorised
         { mstore( 0, _NOT_AUTHORISED ) revert( 28, 4 ) }
@@ -55,9 +59,9 @@ abstract contract TwoFactor {
       _;
     }
 
-    modifier noZeroAddr(address _owner) {
+    modifier noZeroAddr(address _addr) {
       assembly {
-        if iszero(_owner) 
+        if iszero(_addr) 
 
         // revert InvalidValue
         { mstore( 0, _INVALID_VALUE ) revert( 28, 4 ) }
@@ -73,16 +77,13 @@ abstract contract TwoFactor {
       address _router, 
       address _owner
     ) noZeroAddr(
+      _router
+    ) noZeroAddr(
       _owner
     ) {
         assembly {
-          if iszero(_router) 
-
-          // revert InvalidValue
-          { mstore( 0x00, _INVALID_VALUE ) revert( 28, 4 ) }
-
-          sstore(router.slot, shl(12,_router))
-          sstore(owner.slot, shl(12,_owner))
+          sstore(router.slot, shl(12, _router))
+          sstore(owner.slot, shl(12, _owner))
           
           // emit OwnerUpdated
           log3( 0, 0, _OWNER_UPDATED, caller(), _owner )
@@ -95,13 +96,14 @@ abstract contract TwoFactor {
     //                       OWNERSHIP LOGIC                      //
     ////////////////////////////////////////////////////////////////
 
+    /// @dev Function Signature := 0xa7016023
     function setOwnership(address _owner) 
       public 
       authorised 
       noZeroAddr(_owner)
     {
     assembly {
-      sstore(owner.slot, shl(12,_owner))
+      sstore(owner.slot, shl(12, _owner))
 
       // emit OwnerUpdated
       log3( 0, 0, _OWNER_UPDATED, caller(), _owner )
@@ -112,16 +114,19 @@ abstract contract TwoFactor {
     //                        PUBLIC GETTERS                      //
     ////////////////////////////////////////////////////////////////
 
+    /// @dev Function Signature := 0xb0f479a1
     function getRouter() public view returns(address) {
       assembly {
-        mstore(0,shr(12,sload(router.slot)))
-        return(0,32)
+        mstore(0, shr(12, sload(router.slot)))
+        return(0, 32)
       }
     }
+
+    /// @dev Function Signature := 0x893d20e8
     function getOwner() public view returns(address) {
       assembly {
-        mstore(0,shr(12,sload(owner.slot)))
-        return(0,32)
+        mstore(0, shr(12, sload(owner.slot)))
+        return(0, 32)
       }
     }
 

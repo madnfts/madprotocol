@@ -32,7 +32,7 @@ contract MADRouter1155 is MADRouterBase {
     ///      Function Sighash := 0x4328bd00
     /// @param _token 1155 token address.
     /// @param _uri New URI string.
-    function setBaseURI(address _token, string memory _uri) external nonReentrant whenNotPaused {
+    function setBaseURI(address _token, string memory _uri) external {
         (bytes32 _colID, uint8 _tokenType) = _tokenRender(_token);
 
         // if (_tokenType == 1) {
@@ -47,7 +47,7 @@ contract MADRouter1155 is MADRouterBase {
     ///      by each tokens' setBaseURILock functions.
     ///      Function Sighash := ?
     /// @param _token 721 token address.
-    function setURILock(address _token) public whenNotPaused {
+    function setURILock(address _token) public {
         (, uint8 _tokenType) = _tokenRender(_token);
 
         _tokenType == 1 ? ERC1155Basic(_token).setBaseURILock() : revert("INVALID_TYPE");
@@ -63,15 +63,7 @@ contract MADRouter1155 is MADRouterBase {
     ///      0 := PublicMintState (minimal, basic, whitelist);
     ///      1 := WhitelistMintState (whitelist);
     ///      2 := FreeClaimState (whitelist). */
-    function setMintState(
-        address _token,
-        bool _state
-    )
-        external
-        // uint8 _stateType
-        nonReentrant
-        whenNotPaused
-    {
+    function setMintState(address _token, bool _state) external {
         // require(_stateType < 3, "INVALID_TYPE");
         (bytes32 _colID, uint8 _tokenType) = _tokenRender(_token);
 
@@ -89,17 +81,12 @@ contract MADRouter1155 is MADRouterBase {
     /// @param _token 1155 token address.
     /// @param _to Receiver token address.
     /// @param _amount Num tokens to mint and send.
-    /// @param _balances Receiver token balances array, length should be = _amount.
-    function basicMintTo(
-        address _token,
-        address _to,
-        uint256 _amount,
-        uint256[] memory _balances
-    ) external payable nonReentrant whenNotPaused {
+    /// @param _balance Receiver token balance.
+    function basicMintTo(address _token, address _to, uint128 _amount, uint128 _balance) external payable {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType != 1) revert("INVALID_TYPE");
-        _paymentCheck(0x40d097c3);
-        ERC1155Basic(_token).mintTo{ value: msg.value }(_to, _amount, _balances, msg.sender);
+        // _paymentCheck(0x40d097c3);
+        ERC1155Basic(_token).mintTo{ value: msg.value }(_to, _amount, _balance, msg.sender);
     }
 
     /// @dev Function Sighash := 0x535f64e7
@@ -110,12 +97,12 @@ contract MADRouter1155 is MADRouterBase {
     function basicMintBatchTo(
         address _token,
         address _to,
-        uint256[] memory _ids,
-        uint256[] memory _balances
-    ) external payable nonReentrant whenNotPaused {
+        uint128[] memory _ids,
+        uint128[] memory _balances
+    ) external payable {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType != 1) revert("INVALID_TYPE");
-        _paymentCheck(0x40d097c3);
+        // _paymentCheck(0x40d097c3);
         ERC1155Basic(_token).mintBatchTo{ value: msg.value }(_to, _ids, _balances, msg.sender);
     }
 
@@ -128,12 +115,12 @@ contract MADRouter1155 is MADRouterBase {
     /// @param _amount Array of receiver token balances array.
     function burn(
         address _token,
-        uint256[] memory _ids,
+        uint128[] memory _ids,
         address[] memory to,
-        uint256[] memory _amount
-    ) external payable nonReentrant whenNotPaused {
+        uint128[] memory _amount
+    ) external payable {
         (, uint8 _tokenType) = _tokenRender(_token);
-        _paymentCheck(0x44df8e70);
+        // _paymentCheck(0x44df8e70);
         _tokenType == 1
             ? ERC1155Basic(_token).burn{ value: msg.value }(to, _ids, _amount, msg.sender)
             : revert("INVALID_TYPE");
@@ -149,12 +136,12 @@ contract MADRouter1155 is MADRouterBase {
     function batchBurn(
         address _token,
         address _from,
-        uint256[] memory _ids,
-        uint256[] memory _balances
-    ) external payable nonReentrant whenNotPaused {
+        uint128[] memory _ids,
+        uint128[] memory _balances
+    ) external payable {
         (, uint8 _tokenType) = _tokenRender(_token);
 
-        _paymentCheck(0x44df8e70);
+        // _paymentCheck(0x44df8e70);
         _tokenType == 1
             ? ERC1155Basic(_token).burnBatch{ value: msg.value }(_from, _ids, _balances, msg.sender)
             : revert("INVALID_TYPE");
@@ -171,12 +158,12 @@ contract MADRouter1155 is MADRouterBase {
     /// @param _token 1155 token address.
     /// @param _erc20 ERC20 token address.
     // B.2 BlockHat Audit  -remove whenPaused
-    function withdraw(address _token, ERC20 _erc20) external nonReentrant {
+    function withdraw(address _token, ERC20 _erc20) external {
         (bytes32 _colID, uint8 _tokenType) = _tokenRender(_token);
 
         if (_tokenType == 1) {
             address(_erc20) != address(0) && _erc20.balanceOf(_token) != 0
-                ? ERC1155Basic(_token).withdrawERC20(_erc20, recipient)
+                ? ERC1155Basic(_token).withdrawERC20(address(_erc20), recipient)
                 : _token.balance != 0
                 ? ERC1155Basic(_token).withdraw(recipient)
                 : revert("NO_FUNDS");

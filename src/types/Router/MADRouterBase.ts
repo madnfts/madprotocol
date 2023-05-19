@@ -40,14 +40,11 @@ export interface MADRouterBaseInterface extends utils.Interface {
     "maxFeeMint()": FunctionFragment;
     "name()": FunctionFragment;
     "owner()": FunctionFragment;
-    "pause()": FunctionFragment;
-    "paused()": FunctionFragment;
     "recipient()": FunctionFragment;
     "setFactory(address)": FunctionFragment;
     "setFees(uint256,uint256)": FunctionFragment;
     "setOwner(address)": FunctionFragment;
     "setRecipient(address)": FunctionFragment;
-    "unpause()": FunctionFragment;
   };
 
   getFunction(
@@ -61,14 +58,11 @@ export interface MADRouterBaseInterface extends utils.Interface {
       | "maxFeeMint"
       | "name"
       | "owner"
-      | "pause"
-      | "paused"
       | "recipient"
       | "setFactory"
       | "setFees"
       | "setOwner"
       | "setRecipient"
-      | "unpause"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "erc20", values?: undefined): string;
@@ -92,8 +86,6 @@ export interface MADRouterBaseInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(functionFragment: "pause", values?: undefined): string;
-  encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(functionFragment: "recipient", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "setFactory",
@@ -111,7 +103,6 @@ export interface MADRouterBaseInterface extends utils.Interface {
     functionFragment: "setRecipient",
     values: [PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "erc20", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "feeBurn", data: BytesLike): Result;
@@ -122,8 +113,6 @@ export interface MADRouterBaseInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "maxFeeMint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "recipient", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setFactory", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setFees", data: BytesLike): Result;
@@ -132,7 +121,6 @@ export interface MADRouterBaseInterface extends utils.Interface {
     functionFragment: "setRecipient",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
 
   events: {
     "BaseURISet(bytes32,string)": EventFragment;
@@ -140,12 +128,10 @@ export interface MADRouterBaseInterface extends utils.Interface {
     "FeesUpdated(uint256,uint256)": EventFragment;
     "FreeClaimState(bytes32,uint8,bool)": EventFragment;
     "OwnerUpdated(address,address)": EventFragment;
-    "Paused(address)": EventFragment;
     "PaymentTokenUpdated(address)": EventFragment;
     "PublicMintState(bytes32,uint8,bool)": EventFragment;
     "RecipientUpdated(address)": EventFragment;
     "TokenFundsWithdrawn(bytes32,uint8,address)": EventFragment;
-    "Unpaused(address)": EventFragment;
     "WhitelistMintState(bytes32,uint8,bool)": EventFragment;
   };
 
@@ -154,12 +140,10 @@ export interface MADRouterBaseInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "FeesUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FreeClaimState"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnerUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PaymentTokenUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PublicMintState"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RecipientUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TokenFundsWithdrawn"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "WhitelistMintState"): EventFragment;
 }
 
@@ -218,13 +202,6 @@ export type OwnerUpdatedEvent = TypedEvent<
 
 export type OwnerUpdatedEventFilter = TypedEventFilter<OwnerUpdatedEvent>;
 
-export interface PausedEventObject {
-  account: string;
-}
-export type PausedEvent = TypedEvent<[string], PausedEventObject>;
-
-export type PausedEventFilter = TypedEventFilter<PausedEvent>;
-
 export interface PaymentTokenUpdatedEventObject {
   newPaymentToken: string;
 }
@@ -271,13 +248,6 @@ export type TokenFundsWithdrawnEvent = TypedEvent<
 
 export type TokenFundsWithdrawnEventFilter =
   TypedEventFilter<TokenFundsWithdrawnEvent>;
-
-export interface UnpausedEventObject {
-  account: string;
-}
-export type UnpausedEvent = TypedEvent<[string], UnpausedEventObject>;
-
-export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
 
 export interface WhitelistMintStateEventObject {
   _id: string;
@@ -340,12 +310,6 @@ export interface MADRouterBase extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
-    pause(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    paused(overrides?: CallOverrides): Promise<[boolean]>;
-
     recipient(overrides?: CallOverrides): Promise<[string]>;
 
     setFactory(
@@ -366,10 +330,6 @@ export interface MADRouterBase extends BaseContract {
 
     setRecipient(
       _recipient: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    unpause(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
@@ -395,12 +355,6 @@ export interface MADRouterBase extends BaseContract {
 
   owner(overrides?: CallOverrides): Promise<string>;
 
-  pause(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  paused(overrides?: CallOverrides): Promise<boolean>;
-
   recipient(overrides?: CallOverrides): Promise<string>;
 
   setFactory(
@@ -421,10 +375,6 @@ export interface MADRouterBase extends BaseContract {
 
   setRecipient(
     _recipient: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  unpause(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -450,10 +400,6 @@ export interface MADRouterBase extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<string>;
 
-    pause(overrides?: CallOverrides): Promise<void>;
-
-    paused(overrides?: CallOverrides): Promise<boolean>;
-
     recipient(overrides?: CallOverrides): Promise<string>;
 
     setFactory(
@@ -476,8 +422,6 @@ export interface MADRouterBase extends BaseContract {
       _recipient: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    unpause(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {
@@ -523,9 +467,6 @@ export interface MADRouterBase extends BaseContract {
       newOwner?: PromiseOrValue<string> | null
     ): OwnerUpdatedEventFilter;
 
-    "Paused(address)"(account?: null): PausedEventFilter;
-    Paused(account?: null): PausedEventFilter;
-
     "PaymentTokenUpdated(address)"(
       newPaymentToken?: PromiseOrValue<string> | null
     ): PaymentTokenUpdatedEventFilter;
@@ -562,9 +503,6 @@ export interface MADRouterBase extends BaseContract {
       _payee?: PromiseOrValue<string> | null
     ): TokenFundsWithdrawnEventFilter;
 
-    "Unpaused(address)"(account?: null): UnpausedEventFilter;
-    Unpaused(account?: null): UnpausedEventFilter;
-
     "WhitelistMintState(bytes32,uint8,bool)"(
       _id?: PromiseOrValue<BytesLike> | null,
       _type?: PromiseOrValue<BigNumberish> | null,
@@ -599,12 +537,6 @@ export interface MADRouterBase extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
-    pause(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    paused(overrides?: CallOverrides): Promise<BigNumber>;
-
     recipient(overrides?: CallOverrides): Promise<BigNumber>;
 
     setFactory(
@@ -625,10 +557,6 @@ export interface MADRouterBase extends BaseContract {
 
     setRecipient(
       _recipient: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    unpause(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
@@ -655,12 +583,6 @@ export interface MADRouterBase extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    pause(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     recipient(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     setFactory(
@@ -681,10 +603,6 @@ export interface MADRouterBase extends BaseContract {
 
     setRecipient(
       _recipient: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    unpause(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };

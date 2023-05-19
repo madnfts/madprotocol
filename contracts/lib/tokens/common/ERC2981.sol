@@ -7,18 +7,25 @@ pragma solidity 0.8.19;
 
 abstract contract ERC2981 {
     /// @dev one global fee for all royalties.
-    uint256 internal _royaltyFee;
+    uint256 public immutable _royaltyFee;
+
     /// @dev one global recipient for all royalties.
-    address internal _royaltyRecipient;
+    // address internal _royaltyRecipient;
+
+    constructor(uint256 royaltyFee) {
+        _royaltyFee = royaltyFee;
+    }
 
     // solhint-disable-line no-unused-vars
     function royaltyInfo(
         uint256,
         uint256 salePrice
-    ) public view virtual returns (address receiver, uint256 royaltyAmount) {
-        receiver = _royaltyRecipient;
-        royaltyAmount = (salePrice * _royaltyFee) / 10000;
-    }
+    ) public view virtual returns (address receiver, uint256 royaltyAmount);
+
+    // {
+    // receiver = _royaltyRecipient;
+    // royaltyAmount = (salePrice * _royaltyFee) / 10000;
+    // }
 
     function supportsInterface(bytes4 interfaceId) public pure virtual returns (bool) {
         return

@@ -24,7 +24,7 @@ export interface ImplBaseEventsAndErrorsInterface extends utils.Interface {
   functions: {};
 
   events: {
-    "BaseURILocked(string)": EventFragment;
+    "BaseURILocked()": EventFragment;
     "BaseURISet(string)": EventFragment;
     "PublicMintStateSet(bool)": EventFragment;
     "RoyaltyFeeSet(uint256)": EventFragment;
@@ -38,10 +38,8 @@ export interface ImplBaseEventsAndErrorsInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "RoyaltyRecipientSet"): EventFragment;
 }
 
-export interface BaseURILockedEventObject {
-  baseURI: string;
-}
-export type BaseURILockedEvent = TypedEvent<[string], BaseURILockedEventObject>;
+export interface BaseURILockedEventObject {}
+export type BaseURILockedEvent = TypedEvent<[], BaseURILockedEventObject>;
 
 export type BaseURILockedEventFilter = TypedEventFilter<BaseURILockedEvent>;
 
@@ -115,12 +113,8 @@ export interface ImplBaseEventsAndErrors extends BaseContract {
   callStatic: {};
 
   filters: {
-    "BaseURILocked(string)"(
-      baseURI?: PromiseOrValue<string> | null
-    ): BaseURILockedEventFilter;
-    BaseURILocked(
-      baseURI?: PromiseOrValue<string> | null
-    ): BaseURILockedEventFilter;
+    "BaseURILocked()"(): BaseURILockedEventFilter;
+    BaseURILocked(): BaseURILockedEventFilter;
 
     "BaseURISet(string)"(
       newBaseURI?: PromiseOrValue<string> | null

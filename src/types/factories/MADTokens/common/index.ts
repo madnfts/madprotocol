@@ -3,3 +3,4 @@
 /* eslint-disable */
 export * as interfaces from "./interfaces";
 export { ImplBase__factory } from "./ImplBase__factory";
+export { PaymentManager__factory } from "./PaymentManager__factory";

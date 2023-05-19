@@ -60,9 +60,7 @@ contract MADFactory721 is MADFactoryBase, FactoryEventsAndErrors721 {
         bytes32[] memory _extra
     ) 
         external 
-        nonReentrant 
         isThisOg 
-        whenNotPaused 
     {
         _limiter(_tokenType, _splitter);
         _royaltyLocker(_royalty);
@@ -73,10 +71,10 @@ contract MADFactory721 is MADFactoryBase, FactoryEventsAndErrors721 {
             _baseURI, 
             _price, 
             _maxSupply,
-            SplitterImpl(payable(_splitter)),
+            _splitter,
             _royalty,
             router,
-            erc20
+            address(erc20)
         );
 
         (bytes32 tokenSalt, address deployed) = 
@@ -98,10 +96,9 @@ contract MADFactory721 is MADFactoryBase, FactoryEventsAndErrors721 {
             _splitter
         );
 
-        emit ERC721Created(
+        emit ERC721BasicCreated(
             _splitter, 
             deployed,
-            _tokenType, 
             _name, 
             _symbol, 
             _royalty, 
@@ -109,10 +106,6 @@ contract MADFactory721 is MADFactoryBase, FactoryEventsAndErrors721 {
             _price
         );
     }
-
-    ////////////////////////////////////////////////////////////////
-    //                         OWNER FX                           //
-    ////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////
     //                           HELPERS                          //

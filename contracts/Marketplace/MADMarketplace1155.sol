@@ -38,13 +38,7 @@ contract MADMarketplace1155 is MADMarketplaceBase, MarketplaceEventsAndErrors115
 
     /// @notice Fixed Price listing order public pusher.
     /// @dev Function Signature := 0x40b78b0f
-    function fixedPrice(
-        IERC1155 _token,
-        uint256 _id,
-        uint256 _amount,
-        uint256 _price,
-        uint256 _endTime
-    ) external whenNotPaused {
+    function fixedPrice(IERC1155 _token, uint256 _id, uint256 _amount, uint256 _price, uint256 _endTime) external {
         _makeOrder(0, _token, _id, _amount, _price, 0, _endTime);
     }
 
@@ -57,7 +51,7 @@ contract MADMarketplace1155 is MADMarketplaceBase, MarketplaceEventsAndErrors115
         uint256 _startPrice,
         uint256 _endPrice,
         uint256 _endTime
-    ) external whenNotPaused {
+    ) external {
         _exceedsMaxEP(_startPrice, _endPrice);
         _makeOrder(1, _token, _id, _amount, _startPrice, _endPrice, _endTime);
     }
@@ -70,7 +64,7 @@ contract MADMarketplace1155 is MADMarketplaceBase, MarketplaceEventsAndErrors115
         uint256 _amount,
         uint256 _startPrice,
         uint256 _endTime
-    ) external whenNotPaused {
+    ) external {
         _makeOrder(2, _token, _id, _amount, _startPrice, 0, _endTime);
     }
 
@@ -79,7 +73,7 @@ contract MADMarketplace1155 is MADMarketplaceBase, MarketplaceEventsAndErrors115
     /// @dev By default, bids must be at least 5% higher than the previous one.
     /// @dev By default, auction will be extended in 5 minutes if last bid is placed 5 minutes prior to auction's end.
     /// @dev 5 minutes eq to 300 mined blocks since block mining time is expected to take 1s in the harmony blockchain.
-    function bid(bytes32 _order) external payable whenNotPaused {
+    function bid(bytes32 _order) external payable {
         Types.Order1155 storage order = orderInfo[_order];
 
         uint256 lastBidPrice = order.lastBidPrice;
@@ -115,7 +109,7 @@ contract MADMarketplace1155 is MADMarketplaceBase, MarketplaceEventsAndErrors115
     /// @notice Enables user to buy an nft for both Fixed Price and Dutch Auction listings.
     /// @dev Price overrunning not accepted in fixed price and dutch auction.
     /// @dev Function Signature := 0x9c9a1061
-    function buy(bytes32 _order) external payable whenNotPaused {
+    function buy(bytes32 _order) external payable {
         Types.Order1155 storage order = orderInfo[_order];
 
         _buyChecks(order.endTime, order.orderType, order.isSold);
@@ -155,7 +149,7 @@ contract MADMarketplace1155 is MADMarketplaceBase, MarketplaceEventsAndErrors115
     /// @notice Pull method for NFT withdrawing in English Auction.
     /// @dev Function Signature := 0xbd66528a
     /// @dev Callable by both the seller and the auction winner.
-    function claim(bytes32 _order) external whenNotPaused {
+    function claim(bytes32 _order) external {
         Types.Order1155 storage order = orderInfo[_order];
 
         _isBidderOrSeller(order.lastBidder, order.seller);
@@ -207,15 +201,10 @@ contract MADMarketplace1155 is MADMarketplaceBase, MarketplaceEventsAndErrors115
     //                         OWNER FX                           //
     ////////////////////////////////////////////////////////////////
 
-    /// @notice Delete order function only callabe by contract's owner, when contract is paused, as security measure.
+    /// @notice Delete order function only callabe by contract's owner,
+    /// as security measure.
     /// @dev Function Signature := 0x0c026db9
-    function delOrder(
-        bytes32 hash,
-        IERC1155 _token,
-        uint256 _id,
-        uint256 _amount,
-        address _seller
-    ) external onlyOwner whenPaused {
+    function delOrder(bytes32 hash, IERC1155 _token, uint256 _id, uint256 _amount, address _seller) external onlyOwner {
         delete orderInfo[hash];
         delete orderIdByToken[_token][_id][_amount];
         delete orderIdBySeller[_seller];

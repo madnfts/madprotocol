@@ -13,6 +13,11 @@ import { Contract, Signer, utils } from "ethers";
 const _abi = [
   {
     inputs: [],
+    name: "DecOverflow",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "LoopOverflow",
     type: "error",
   },
@@ -48,14 +53,7 @@ const _abi = [
   },
   {
     anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "string",
-        name: "baseURI",
-        type: "string",
-      },
-    ],
+    inputs: [],
     name: "BaseURILocked",
     type: "event",
   },

@@ -31,24 +31,34 @@ import type {
 
 export interface MockERC2981Interface extends utils.Interface {
   functions: {
+    "_royaltyFee()": FunctionFragment;
+    "_royaltyRecipient()": FunctionFragment;
     "owner()": FunctionFragment;
     "royaltyInfo(uint256,uint256)": FunctionFragment;
     "setOwner(address)": FunctionFragment;
-    "setRoyaltyFee(uint256)": FunctionFragment;
     "setRoyaltyRecipient(address)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "_royaltyFee"
+      | "_royaltyRecipient"
       | "owner"
       | "royaltyInfo"
       | "setOwner"
-      | "setRoyaltyFee"
       | "setRoyaltyRecipient"
       | "supportsInterface"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "_royaltyFee",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_royaltyRecipient",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "royaltyInfo",
@@ -59,10 +69,6 @@ export interface MockERC2981Interface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "setRoyaltyFee",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "setRoyaltyRecipient",
     values: [PromiseOrValue<string>]
   ): string;
@@ -71,16 +77,20 @@ export interface MockERC2981Interface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "_royaltyFee",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_royaltyRecipient",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "royaltyInfo",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setOwner", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "setRoyaltyFee",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "setRoyaltyRecipient",
     data: BytesLike
@@ -160,6 +170,10 @@ export interface MockERC2981 extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    _royaltyFee(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    _royaltyRecipient(overrides?: CallOverrides): Promise<[string]>;
+
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     royaltyInfo(
@@ -175,11 +189,6 @@ export interface MockERC2981 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    setRoyaltyFee(
-      fee: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     setRoyaltyRecipient(
       recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -190,6 +199,10 @@ export interface MockERC2981 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
   };
+
+  _royaltyFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+  _royaltyRecipient(overrides?: CallOverrides): Promise<string>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -206,11 +219,6 @@ export interface MockERC2981 extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  setRoyaltyFee(
-    fee: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   setRoyaltyRecipient(
     recipient: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -222,6 +230,10 @@ export interface MockERC2981 extends BaseContract {
   ): Promise<boolean>;
 
   callStatic: {
+    _royaltyFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    _royaltyRecipient(overrides?: CallOverrides): Promise<string>;
+
     owner(overrides?: CallOverrides): Promise<string>;
 
     royaltyInfo(
@@ -234,11 +246,6 @@ export interface MockERC2981 extends BaseContract {
 
     setOwner(
       newOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setRoyaltyFee(
-      fee: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -279,6 +286,10 @@ export interface MockERC2981 extends BaseContract {
   };
 
   estimateGas: {
+    _royaltyFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    _royaltyRecipient(overrides?: CallOverrides): Promise<BigNumber>;
+
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     royaltyInfo(
@@ -289,11 +300,6 @@ export interface MockERC2981 extends BaseContract {
 
     setOwner(
       newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setRoyaltyFee(
-      fee: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -309,6 +315,10 @@ export interface MockERC2981 extends BaseContract {
   };
 
   populateTransaction: {
+    _royaltyFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    _royaltyRecipient(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     royaltyInfo(
@@ -319,11 +329,6 @@ export interface MockERC2981 extends BaseContract {
 
     setOwner(
       newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setRoyaltyFee(
-      fee: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

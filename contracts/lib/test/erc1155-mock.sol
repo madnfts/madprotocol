@@ -2,11 +2,11 @@
 
 pragma solidity 0.8.19;
 
-import { ERC1155B, ERC1155TokenReceiver } from "contracts/lib/tokens/ERC1155/Base/ERC1155B.sol";
+import { ERC1155 } from "contracts/lib/tokens/ERC1155/Base/ERC1155.sol";
 
 import { Owned } from "contracts/lib/auth/Owned.sol";
 
-contract MockERC1155 is ERC1155B, ERC1155TokenReceiver, Owned(msg.sender) {
+contract MockERC1155 is ERC1155, Owned(msg.sender) {
     constructor() {}
 
     function uri(uint256) public pure virtual override returns (string memory) {}
@@ -19,7 +19,7 @@ contract MockERC1155 is ERC1155B, ERC1155TokenReceiver, Owned(msg.sender) {
         _batchMint(to, ids, balances, "");
     }
 
-    function supportsInterface(bytes4 interfaceId) public pure returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public pure override(ERC1155) returns (bool) {
         return
             // ERC165 Interface ID for ERC165
             interfaceId == 0x01ffc9a7 ||

@@ -27,7 +27,7 @@ import {
   madFixture721A,
 } from "./../utils/madFixtures";
 
-describe("MADFactory721", () => {
+describe.only("MADFactory721", () => {
   type WalletWithAddress = Wallet & SignerWithAddress;
 
   // contract deployer/admin
@@ -103,7 +103,7 @@ describe("MADFactory721", () => {
       const indexed = rc.logs[0].data;
       const data = rc.logs[1].data;
 
-      const addr = await f721.getDeployedAddr("MADSplitter1");
+      const addr = await f721.getDeployedAddr("MADSplitter1", acc02.address);
       const creator = ethers.utils.defaultAbiCoder.decode(
         ["address"],
         indexed,
@@ -141,7 +141,7 @@ describe("MADFactory721", () => {
       expect(storage.splitter).to.eq(addr);
       expect(storage.splitterSalt).to.eq(
         ethers.utils.keccak256(
-          ethers.utils.toUtf8Bytes("MADSplitter1"),
+          ethers.utils.toUtf8Bytes("MADSplitter1", acc02.address),
         ),
       );
       expect(storage.ambassador).to.eq(dead);
@@ -163,7 +163,7 @@ describe("MADFactory721", () => {
       const indexed = rc.logs[1].data;
       const data = rc.logs[2].data;
 
-      const addr = await f721.getDeployedAddr("MADSplitter1");
+      const addr = await f721.getDeployedAddr("MADSplitter1", acc02.address);
       const creator = ethers.utils.defaultAbiCoder.decode(
         ["address"],
         indexed,
@@ -232,7 +232,7 @@ describe("MADFactory721", () => {
       const indexed = rc.logs[2].data;
       const data = rc.logs[3].data;
 
-      const addr = await f721.getDeployedAddr("MADSplitter1");
+      const addr = await f721.getDeployedAddr("MADSplitter1", acc02.address);
       const creator = ethers.utils.defaultAbiCoder.decode(
         ["address"],
         indexed,
@@ -308,10 +308,12 @@ describe("MADFactory721", () => {
         );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
+        acc02.address
       );
       const basicAddr = await f721.callStatic.getDeployedAddr(
         "BasicSalt",
-      );
+        acc02.address
+        );
       const tx = await f721
         .connect(acc02)
         .createCollection(
@@ -518,6 +520,7 @@ describe("MADFactory721", () => {
         );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
+        acc02.address
       );
 
       await f721
@@ -552,7 +555,7 @@ describe("MADFactory721", () => {
       expect(await f721.getIDsLength(acc02.address)).to.eq(2);
     });
     it("Should get collection ID from address", async () => {
-      const addr = await f721.getDeployedAddr("BasicSalt");
+      const addr = await f721.getDeployedAddr("BasicSalt", acc02.address);
       const colID = addr
         .toLowerCase()
         .concat("000000000000000000000000");
@@ -573,9 +576,11 @@ describe("MADFactory721", () => {
         );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
+        acc02.address
       );
       const basicAddr = await f721.callStatic.getDeployedAddr(
         "BasicSalt",
+        acc02.address
       );
       await f721
         .connect(acc02)
@@ -629,9 +634,11 @@ describe("MADFactory721", () => {
         );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
-      );
+        acc02.address
+        );
       const basicAddr = await f721.callStatic.getDeployedAddr(
         "BasicSalt",
+        acc02.address
       );
       await f721
         .connect(acc02)
@@ -734,9 +741,11 @@ describe("MADFactory721", () => {
         );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
-      );
+        acc02.address
+        );
       const basicAddr = await f721.callStatic.getDeployedAddr(
         "BasicSalt",
+        acc02.address
       );
       await f721
         .connect(acc02)

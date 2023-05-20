@@ -3,12 +3,10 @@
 /* tslint:disable */
 
 /* eslint-disable */
-import type * as erc1155BSol from "./ERC1155B.sol";
 import type * as interfaces from "./interfaces";
 import type * as utils from "./utils";
-
-export type { erc1155BSol };
 
 export type { interfaces };
 
 export type { utils };
+export type { ERC1155 } from "./ERC1155";

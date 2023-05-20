@@ -32,7 +32,7 @@ contract MADRouter721 is MADRouterBase {
     ///      Function Sighash := 0x4328bd00
     /// @param _token 721 token address.
     /// @param _baseURI New base URI string.
-    function setBase(address _token, string memory _baseURI) external nonReentrant whenNotPaused {
+    function setBase(address _token, string memory _baseURI) external {
         (bytes32 _colID, uint8 _tokenType) = _tokenRender(_token);
 
         _tokenType == 1 ? ERC721Basic(_token).setBaseURI(_baseURI) : revert("INVALID_TYPE");
@@ -46,7 +46,7 @@ contract MADRouter721 is MADRouterBase {
     ///      by each tokens' setBaseURILock functions.
     ///      Function Sighash := ?
     /// @param _token 721 token address.
-    function setBaseLock(address _token) external nonReentrant whenNotPaused {
+    function setBaseLock(address _token) external {
         (, uint8 _tokenType) = _tokenRender(_token);
 
         _tokenType == 1 ? ERC721Basic(_token).setBaseURILock() : revert("INVALID_TYPE");
@@ -62,16 +62,7 @@ contract MADRouter721 is MADRouterBase {
     ///      0 := PublicMintState (minimal, basic, whitelist);
     ///      1 := WhitelistMintState (whitelist);
     ///      2 := FreeClaimState (whitelist). */
-    function setMintState(
-        address _token,
-        bool _state
-    )
-        external
-        // uint8 _stateType
-        nonReentrant
-        whenNotPaused
-    {
-        // require(_stateType < 3, "INVALID_TYPE");
+    function setMintState(address _token, bool _state) external {
         (bytes32 _colID, uint8 _tokenType) = _tokenRender(_token);
 
         _tokenType == 1 ? ERC721Basic(_token).setPublicMintState(_state) : revert("INVALID_TYPE");
@@ -88,10 +79,10 @@ contract MADRouter721 is MADRouterBase {
     /// @param _token 721 token address.
     /// @param _to Receiver token address.
     /// @param _amount Num tokens to mint and send.
-    function basicMintTo(address _token, address _to, uint256 _amount) external payable nonReentrant whenNotPaused {
+    function basicMintTo(address _token, address _to, uint128 _amount) external payable {
         (, uint8 _tokenType) = _tokenRender(_token);
         if (_tokenType != 1) revert("INVALID_TYPE");
-        _paymentCheck(0x40d097c3);
+        // _paymentCheck(0x40d097c3);
         ERC721Basic(_token).mintTo{ value: msg.value }(_to, _amount, msg.sender);
     }
 
@@ -100,9 +91,9 @@ contract MADRouter721 is MADRouterBase {
     /// @param _token 721 token address.
     /// @param _ids The token IDs of each token to be burnt;
     ///        should be left empty for the `ERC721Minimal` type.
-    function burn(address _token, uint256[] memory _ids) external payable nonReentrant whenNotPaused {
+    function burn(address _token, uint128[] memory _ids) external payable {
         (, uint8 _tokenType) = _tokenRender(_token);
-        _paymentCheck(0x44df8e70);
+        // _paymentCheck(0x44df8e70);
 
         _tokenType == 1 ? ERC721Basic(_token).burn{ value: msg.value }(_ids, msg.sender) : revert("INVALID_TYPE");
     }
@@ -118,12 +109,12 @@ contract MADRouter721 is MADRouterBase {
     /// @param _token 721 token address.
     /// @param _erc20 ERC20 token address.
     // A.2 BlockHat Audit  -remove whenPaused
-    function withdraw(address _token, ERC20 _erc20) external nonReentrant {
+    function withdraw(address _token, ERC20 _erc20) external {
         (bytes32 _colID, uint8 _tokenType) = _tokenRender(_token);
 
         if (_tokenType == 1) {
             address(_erc20) != address(0) && _erc20.balanceOf(_token) != 0
-                ? ERC721Basic(_token).withdrawERC20(_erc20, recipient)
+                ? ERC721Basic(_token).withdrawERC20(address(_erc20), recipient)
                 : _token.balance != 0
                 ? ERC721Basic(_token).withdraw(recipient)
                 : revert("NO_FUNDS");

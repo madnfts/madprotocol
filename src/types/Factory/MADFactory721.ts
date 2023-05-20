@@ -39,13 +39,11 @@ export interface MADFactory721Interface extends utils.Interface {
     "creatorCheck(bytes32)": FunctionFragment;
     "erc20()": FunctionFragment;
     "getColID(address)": FunctionFragment;
-    "getDeployedAddr(string)": FunctionFragment;
+    "getDeployedAddr(string,address)": FunctionFragment;
     "getIDsLength(address)": FunctionFragment;
     "market()": FunctionFragment;
     "name()": FunctionFragment;
     "owner()": FunctionFragment;
-    "pause()": FunctionFragment;
-    "paused()": FunctionFragment;
     "router()": FunctionFragment;
     "setMarket(address)": FunctionFragment;
     "setOwner(address)": FunctionFragment;
@@ -55,7 +53,6 @@ export interface MADFactory721Interface extends utils.Interface {
     "splitterCheck(string,address,address,uint256,uint256)": FunctionFragment;
     "splitterInfo(address,address)": FunctionFragment;
     "typeChecker(bytes32)": FunctionFragment;
-    "unpause()": FunctionFragment;
     "userTokens(address,uint256)": FunctionFragment;
   };
 
@@ -74,8 +71,6 @@ export interface MADFactory721Interface extends utils.Interface {
       | "market"
       | "name"
       | "owner"
-      | "pause"
-      | "paused"
       | "router"
       | "setMarket"
       | "setOwner"
@@ -85,7 +80,6 @@ export interface MADFactory721Interface extends utils.Interface {
       | "splitterCheck"
       | "splitterInfo"
       | "typeChecker"
-      | "unpause"
       | "userTokens"
   ): FunctionFragment;
 
@@ -131,7 +125,7 @@ export interface MADFactory721Interface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getDeployedAddr",
-    values: [PromiseOrValue<string>]
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "getIDsLength",
@@ -140,8 +134,6 @@ export interface MADFactory721Interface extends utils.Interface {
   encodeFunctionData(functionFragment: "market", values?: undefined): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(functionFragment: "pause", values?: undefined): string;
-  encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(functionFragment: "router", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "setMarket",
@@ -178,7 +170,6 @@ export interface MADFactory721Interface extends utils.Interface {
     functionFragment: "typeChecker",
     values: [PromiseOrValue<BytesLike>]
   ): string;
-  encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "userTokens",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
@@ -212,8 +203,6 @@ export interface MADFactory721Interface extends utils.Interface {
   decodeFunctionResult(functionFragment: "market", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "router", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setMarket", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setOwner", data: BytesLike): Result;
@@ -232,36 +221,31 @@ export interface MADFactory721Interface extends utils.Interface {
     functionFragment: "typeChecker",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "userTokens", data: BytesLike): Result;
 
   events: {
     "ColTypeUpdated(uint256)": EventFragment;
-    "ERC721Created(address,address,uint8,string,string,uint96,uint256,uint256)": EventFragment;
+    "ERC721BasicCreated(address,address,string,string,uint256,uint256,uint256)": EventFragment;
     "FeesUpdated(uint256,uint256)": EventFragment;
     "MarketplaceUpdated(address)": EventFragment;
     "OwnerUpdated(address,address)": EventFragment;
-    "Paused(address)": EventFragment;
     "PaymentTokenUpdated(address)": EventFragment;
     "RecipientUpdated(address)": EventFragment;
     "RouterUpdated(address)": EventFragment;
     "SignerUpdated(address)": EventFragment;
     "SplitterCreated(address,uint256[],address[],address,uint256)": EventFragment;
-    "Unpaused(address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "ColTypeUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ERC721Created"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ERC721BasicCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FeesUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MarketplaceUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnerUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PaymentTokenUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RecipientUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RouterUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SignerUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SplitterCreated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
 }
 
 export interface ColTypeUpdatedEventObject {
@@ -274,22 +258,22 @@ export type ColTypeUpdatedEvent = TypedEvent<
 
 export type ColTypeUpdatedEventFilter = TypedEventFilter<ColTypeUpdatedEvent>;
 
-export interface ERC721CreatedEventObject {
+export interface ERC721BasicCreatedEventObject {
   newSplitter: string;
   newCollection: string;
-  tokenType: number;
   name: string;
   symbol: string;
   royalties: BigNumber;
   maxSupply: BigNumber;
   mintPrice: BigNumber;
 }
-export type ERC721CreatedEvent = TypedEvent<
-  [string, string, number, string, string, BigNumber, BigNumber, BigNumber],
-  ERC721CreatedEventObject
+export type ERC721BasicCreatedEvent = TypedEvent<
+  [string, string, string, string, BigNumber, BigNumber, BigNumber],
+  ERC721BasicCreatedEventObject
 >;
 
-export type ERC721CreatedEventFilter = TypedEventFilter<ERC721CreatedEvent>;
+export type ERC721BasicCreatedEventFilter =
+  TypedEventFilter<ERC721BasicCreatedEvent>;
 
 export interface FeesUpdatedEventObject {
   feeVal2: BigNumber;
@@ -323,13 +307,6 @@ export type OwnerUpdatedEvent = TypedEvent<
 >;
 
 export type OwnerUpdatedEventFilter = TypedEventFilter<OwnerUpdatedEvent>;
-
-export interface PausedEventObject {
-  account: string;
-}
-export type PausedEvent = TypedEvent<[string], PausedEventObject>;
-
-export type PausedEventFilter = TypedEventFilter<PausedEvent>;
 
 export interface PaymentTokenUpdatedEventObject {
   newPaymentToken: string;
@@ -380,13 +357,6 @@ export type SplitterCreatedEvent = TypedEvent<
 >;
 
 export type SplitterCreatedEventFilter = TypedEventFilter<SplitterCreatedEvent>;
-
-export interface UnpausedEventObject {
-  account: string;
-}
-export type UnpausedEvent = TypedEvent<[string], UnpausedEventObject>;
-
-export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
 
 export interface MADFactory721 extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -473,6 +443,7 @@ export interface MADFactory721 extends BaseContract {
 
     getDeployedAddr(
       _salt: PromiseOrValue<string>,
+      _addr: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
@@ -486,12 +457,6 @@ export interface MADFactory721 extends BaseContract {
     name(overrides?: CallOverrides): Promise<[string]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
-
-    pause(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    paused(overrides?: CallOverrides): Promise<[boolean]>;
 
     router(overrides?: CallOverrides): Promise<[string]>;
 
@@ -546,10 +511,6 @@ export interface MADFactory721 extends BaseContract {
       _colID: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[number] & { pointer: number }>;
-
-    unpause(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
 
     userTokens(
       arg0: PromiseOrValue<string>,
@@ -616,6 +577,7 @@ export interface MADFactory721 extends BaseContract {
 
   getDeployedAddr(
     _salt: PromiseOrValue<string>,
+    _addr: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<string>;
 
@@ -629,12 +591,6 @@ export interface MADFactory721 extends BaseContract {
   name(overrides?: CallOverrides): Promise<string>;
 
   owner(overrides?: CallOverrides): Promise<string>;
-
-  pause(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  paused(overrides?: CallOverrides): Promise<boolean>;
 
   router(overrides?: CallOverrides): Promise<string>;
 
@@ -687,10 +643,6 @@ export interface MADFactory721 extends BaseContract {
     _colID: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<number>;
-
-  unpause(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
 
   userTokens(
     arg0: PromiseOrValue<string>,
@@ -757,6 +709,7 @@ export interface MADFactory721 extends BaseContract {
 
     getDeployedAddr(
       _salt: PromiseOrValue<string>,
+      _addr: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -770,10 +723,6 @@ export interface MADFactory721 extends BaseContract {
     name(overrides?: CallOverrides): Promise<string>;
 
     owner(overrides?: CallOverrides): Promise<string>;
-
-    pause(overrides?: CallOverrides): Promise<void>;
-
-    paused(overrides?: CallOverrides): Promise<boolean>;
 
     router(overrides?: CallOverrides): Promise<string>;
 
@@ -829,8 +778,6 @@ export interface MADFactory721 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<number>;
 
-    unpause(overrides?: CallOverrides): Promise<void>;
-
     userTokens(
       arg0: PromiseOrValue<string>,
       arg1: PromiseOrValue<BigNumberish>,
@@ -846,26 +793,24 @@ export interface MADFactory721 extends BaseContract {
       index?: PromiseOrValue<BigNumberish> | null
     ): ColTypeUpdatedEventFilter;
 
-    "ERC721Created(address,address,uint8,string,string,uint96,uint256,uint256)"(
+    "ERC721BasicCreated(address,address,string,string,uint256,uint256,uint256)"(
       newSplitter?: PromiseOrValue<string> | null,
       newCollection?: PromiseOrValue<string> | null,
-      tokenType?: null,
       name?: null,
       symbol?: null,
       royalties?: null,
       maxSupply?: null,
       mintPrice?: null
-    ): ERC721CreatedEventFilter;
-    ERC721Created(
+    ): ERC721BasicCreatedEventFilter;
+    ERC721BasicCreated(
       newSplitter?: PromiseOrValue<string> | null,
       newCollection?: PromiseOrValue<string> | null,
-      tokenType?: null,
       name?: null,
       symbol?: null,
       royalties?: null,
       maxSupply?: null,
       mintPrice?: null
-    ): ERC721CreatedEventFilter;
+    ): ERC721BasicCreatedEventFilter;
 
     "FeesUpdated(uint256,uint256)"(
       feeVal2?: null,
@@ -888,9 +833,6 @@ export interface MADFactory721 extends BaseContract {
       user?: PromiseOrValue<string> | null,
       newOwner?: PromiseOrValue<string> | null
     ): OwnerUpdatedEventFilter;
-
-    "Paused(address)"(account?: null): PausedEventFilter;
-    Paused(account?: null): PausedEventFilter;
 
     "PaymentTokenUpdated(address)"(
       newPaymentToken?: PromiseOrValue<string> | null
@@ -934,9 +876,6 @@ export interface MADFactory721 extends BaseContract {
       splitter?: null,
       flag?: null
     ): SplitterCreatedEventFilter;
-
-    "Unpaused(address)"(account?: null): UnpausedEventFilter;
-    Unpaused(account?: null): UnpausedEventFilter;
   };
 
   estimateGas: {
@@ -990,6 +929,7 @@ export interface MADFactory721 extends BaseContract {
 
     getDeployedAddr(
       _salt: PromiseOrValue<string>,
+      _addr: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1003,12 +943,6 @@ export interface MADFactory721 extends BaseContract {
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    pause(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    paused(overrides?: CallOverrides): Promise<BigNumber>;
 
     router(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1052,10 +986,6 @@ export interface MADFactory721 extends BaseContract {
     typeChecker(
       _colID: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    unpause(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     userTokens(
@@ -1116,6 +1046,7 @@ export interface MADFactory721 extends BaseContract {
 
     getDeployedAddr(
       _salt: PromiseOrValue<string>,
+      _addr: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1129,12 +1060,6 @@ export interface MADFactory721 extends BaseContract {
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    pause(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     router(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1178,10 +1103,6 @@ export interface MADFactory721 extends BaseContract {
     typeChecker(
       _colID: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    unpause(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     userTokens(

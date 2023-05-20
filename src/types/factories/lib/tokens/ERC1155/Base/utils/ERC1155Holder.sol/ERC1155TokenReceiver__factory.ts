@@ -6,7 +6,7 @@
 import type {
   ERC1155TokenReceiver,
   ERC1155TokenReceiverInterface,
-} from "../../../../../../lib/tokens/ERC1155/Base/ERC1155B.sol/ERC1155TokenReceiver";
+} from "../../../../../../../lib/tokens/ERC1155/Base/utils/ERC1155Holder.sol/ERC1155TokenReceiver";
 import type { Provider } from "@ethersproject/providers";
 import { Contract, Signer, utils } from "ethers";
 

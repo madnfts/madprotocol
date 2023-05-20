@@ -31,9 +31,10 @@ import type {
 
 export interface ImplBaseInterface extends utils.Interface {
   functions: {
-    "baseURI()": FunctionFragment;
+    "_royaltyFee()": FunctionFragment;
     "erc20()": FunctionFragment;
     "feeCount()": FunctionFragment;
+    "feeCountERC20()": FunctionFragment;
     "getOwner()": FunctionFragment;
     "getRouter()": FunctionFragment;
     "liveSupply()": FunctionFragment;
@@ -48,7 +49,6 @@ export interface ImplBaseInterface extends utils.Interface {
     "setPublicMintState(bool)": FunctionFragment;
     "splitter()": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
-    "totalSupply()": FunctionFragment;
     "uriLock()": FunctionFragment;
     "withdraw(address)": FunctionFragment;
     "withdrawERC20(address,address)": FunctionFragment;
@@ -56,9 +56,10 @@ export interface ImplBaseInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "baseURI"
+      | "_royaltyFee"
       | "erc20"
       | "feeCount"
+      | "feeCountERC20"
       | "getOwner"
       | "getRouter"
       | "liveSupply"
@@ -73,15 +74,21 @@ export interface ImplBaseInterface extends utils.Interface {
       | "setPublicMintState"
       | "splitter"
       | "supportsInterface"
-      | "totalSupply"
       | "uriLock"
       | "withdraw"
       | "withdrawERC20"
   ): FunctionFragment;
 
-  encodeFunctionData(functionFragment: "baseURI", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "_royaltyFee",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "erc20", values?: undefined): string;
   encodeFunctionData(functionFragment: "feeCount", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "feeCountERC20",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "getOwner", values?: undefined): string;
   encodeFunctionData(functionFragment: "getRouter", values?: undefined): string;
   encodeFunctionData(
@@ -120,10 +127,6 @@ export interface ImplBaseInterface extends utils.Interface {
     functionFragment: "supportsInterface",
     values: [PromiseOrValue<BytesLike>]
   ): string;
-  encodeFunctionData(
-    functionFragment: "totalSupply",
-    values?: undefined
-  ): string;
   encodeFunctionData(functionFragment: "uriLock", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "withdraw",
@@ -134,9 +137,16 @@ export interface ImplBaseInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
 
-  decodeFunctionResult(functionFragment: "baseURI", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "_royaltyFee",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "erc20", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "feeCount", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "feeCountERC20",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getOwner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getRouter", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "liveSupply", data: BytesLike): Result;
@@ -169,10 +179,6 @@ export interface ImplBaseInterface extends utils.Interface {
     functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "totalSupply",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "uriLock", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
   decodeFunctionResult(
@@ -181,7 +187,7 @@ export interface ImplBaseInterface extends utils.Interface {
   ): Result;
 
   events: {
-    "BaseURILocked(string)": EventFragment;
+    "BaseURILocked()": EventFragment;
     "BaseURISet(string)": EventFragment;
     "OwnerUpdated(address,address)": EventFragment;
     "PublicMintStateSet(bool)": EventFragment;
@@ -199,10 +205,8 @@ export interface ImplBaseInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "RoyaltyRecipientSet"): EventFragment;
 }
 
-export interface BaseURILockedEventObject {
-  baseURI: string;
-}
-export type BaseURILockedEvent = TypedEvent<[string], BaseURILockedEventObject>;
+export interface BaseURILockedEventObject {}
+export type BaseURILockedEvent = TypedEvent<[], BaseURILockedEventObject>;
 
 export type BaseURILockedEventFilter = TypedEventFilter<BaseURILockedEvent>;
 
@@ -290,11 +294,13 @@ export interface ImplBase extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    baseURI(overrides?: CallOverrides): Promise<[string]>;
+    _royaltyFee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     erc20(overrides?: CallOverrides): Promise<[string]>;
 
     feeCount(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    feeCountERC20(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getOwner(overrides?: CallOverrides): Promise<[string]>;
 
@@ -302,11 +308,13 @@ export interface ImplBase extends BaseContract {
 
     liveSupply(
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { _val: BigNumber }>;
+    ): Promise<[BigNumber] & { _liveSupply: BigNumber }>;
 
     maxSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    mintCount(overrides?: CallOverrides): Promise<[BigNumber]>;
+    mintCount(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { _mintCount: BigNumber }>;
 
     price(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -346,8 +354,6 @@ export interface ImplBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     uriLock(overrides?: CallOverrides): Promise<[boolean]>;
 
     withdraw(
@@ -356,17 +362,19 @@ export interface ImplBase extends BaseContract {
     ): Promise<ContractTransaction>;
 
     withdrawERC20(
-      _token: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
       recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
-  baseURI(overrides?: CallOverrides): Promise<string>;
+  _royaltyFee(overrides?: CallOverrides): Promise<BigNumber>;
 
   erc20(overrides?: CallOverrides): Promise<string>;
 
   feeCount(overrides?: CallOverrides): Promise<BigNumber>;
+
+  feeCountERC20(overrides?: CallOverrides): Promise<BigNumber>;
 
   getOwner(overrides?: CallOverrides): Promise<string>;
 
@@ -416,8 +424,6 @@ export interface ImplBase extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
   uriLock(overrides?: CallOverrides): Promise<boolean>;
 
   withdraw(
@@ -426,17 +432,19 @@ export interface ImplBase extends BaseContract {
   ): Promise<ContractTransaction>;
 
   withdrawERC20(
-    _token: PromiseOrValue<string>,
+    token: PromiseOrValue<string>,
     recipient: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    baseURI(overrides?: CallOverrides): Promise<string>;
+    _royaltyFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     erc20(overrides?: CallOverrides): Promise<string>;
 
     feeCount(overrides?: CallOverrides): Promise<BigNumber>;
+
+    feeCountERC20(overrides?: CallOverrides): Promise<BigNumber>;
 
     getOwner(overrides?: CallOverrides): Promise<string>;
 
@@ -484,8 +492,6 @@ export interface ImplBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
     uriLock(overrides?: CallOverrides): Promise<boolean>;
 
     withdraw(
@@ -494,19 +500,15 @@ export interface ImplBase extends BaseContract {
     ): Promise<void>;
 
     withdrawERC20(
-      _token: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
       recipient: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
 
   filters: {
-    "BaseURILocked(string)"(
-      baseURI?: PromiseOrValue<string> | null
-    ): BaseURILockedEventFilter;
-    BaseURILocked(
-      baseURI?: PromiseOrValue<string> | null
-    ): BaseURILockedEventFilter;
+    "BaseURILocked()"(): BaseURILockedEventFilter;
+    BaseURILocked(): BaseURILockedEventFilter;
 
     "BaseURISet(string)"(
       newBaseURI?: PromiseOrValue<string> | null
@@ -552,11 +554,13 @@ export interface ImplBase extends BaseContract {
   };
 
   estimateGas: {
-    baseURI(overrides?: CallOverrides): Promise<BigNumber>;
+    _royaltyFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     erc20(overrides?: CallOverrides): Promise<BigNumber>;
 
     feeCount(overrides?: CallOverrides): Promise<BigNumber>;
+
+    feeCountERC20(overrides?: CallOverrides): Promise<BigNumber>;
 
     getOwner(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -604,8 +608,6 @@ export interface ImplBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
     uriLock(overrides?: CallOverrides): Promise<BigNumber>;
 
     withdraw(
@@ -614,18 +616,20 @@ export interface ImplBase extends BaseContract {
     ): Promise<BigNumber>;
 
     withdrawERC20(
-      _token: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
       recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    baseURI(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    _royaltyFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     erc20(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     feeCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    feeCountERC20(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -673,8 +677,6 @@ export interface ImplBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     uriLock(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     withdraw(
@@ -683,7 +685,7 @@ export interface ImplBase extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     withdrawERC20(
-      _token: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
       recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

@@ -9,7 +9,7 @@ import type {
   TypedListener,
   OnEvent,
   PromiseOrValue,
-} from "../../../../../common";
+} from "../../../../../../common";
 import type { FunctionFragment, Result } from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type {
@@ -25,7 +25,7 @@ import type {
   utils,
 } from "ethers";
 
-export interface ERC1155HolderInterface extends utils.Interface {
+export interface ERC1155TokenReceiverInterface extends utils.Interface {
   functions: {
     "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "onERC1155Received(address,address,uint256,uint256,bytes)": FunctionFragment;
@@ -68,12 +68,12 @@ export interface ERC1155HolderInterface extends utils.Interface {
   events: {};
 }
 
-export interface ERC1155Holder extends BaseContract {
+export interface ERC1155TokenReceiver extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: ERC1155HolderInterface;
+  interface: ERC1155TokenReceiverInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

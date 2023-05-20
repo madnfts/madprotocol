@@ -61,9 +61,15 @@ const _abi = [
       },
       {
         indexed: false,
-        internalType: "uint8",
-        name: "tokenType",
-        type: "uint8",
+        internalType: "string",
+        name: "name",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "symbol",
+        type: "string",
       },
       {
         indexed: false,
@@ -84,7 +90,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "ERC1155Created",
+    name: "ERC1155BasicCreated",
     type: "event",
   },
   {

@@ -32,12 +32,11 @@ contract MADFactory1155 is MADFactoryBase,
         address _signer,
         address _paymentTokenAddress
     ) MADFactoryBase(_marketplace, _signer, _paymentTokenAddress)
-    {}
+    {/*  */}
 
     ////////////////////////////////////////////////////////////////
     //                           CORE FX                          //
     ////////////////////////////////////////////////////////////////
-
 
     /// @notice Core public ERC1155 token types deployment pusher.
     /// @dev Function Sighash := 0x73fd6808
@@ -58,6 +57,8 @@ contract MADFactory1155 is MADFactoryBase,
     function createCollection(
         uint8 _tokenType,
         string memory _tokenSalt,
+        string memory _name,
+        string memory _symbol,
         uint256 _price,
         uint256 _maxSupply,
         string memory _uri,
@@ -66,9 +67,7 @@ contract MADFactory1155 is MADFactoryBase,
         bytes32[] memory _extra
     )
         external
-        nonReentrant
         isThisOg
-        whenNotPaused
     {
         _limiter(_tokenType, _splitter);
         _royaltyLocker(_royalty);
@@ -79,10 +78,10 @@ contract MADFactory1155 is MADFactoryBase,
             _uri, 
             _price, 
             _maxSupply,
-            SplitterImpl(payable(_splitter)),
+            _splitter,
             _royalty,
             router,
-            erc20
+            address(erc20)
         );
 
         (bytes32 tokenSalt, address deployed) = 
@@ -104,17 +103,18 @@ contract MADFactory1155 is MADFactoryBase,
             _splitter
         );
 
-        emit ERC1155Created(
+        emit ERC1155BasicCreated(
             _splitter,
             deployed,
-            _tokenType,
+            _name,
+            _symbol,
             _royalty,
             _maxSupply,
             _price
         );
     }
 
-        ////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////
     //                           HELPERS                          //
     ////////////////////////////////////////////////////////////////
 
@@ -129,7 +129,7 @@ contract MADFactory1155 is MADFactoryBase,
         }
     }
 
-        /// @inheritdoc FactoryVerifier
+    /// @inheritdoc FactoryVerifier
     function creatorCheck(bytes32 _colID) 
     external
     override(FactoryVerifier)
@@ -138,12 +138,14 @@ contract MADFactory1155 is MADFactoryBase,
     {
         _isRouter();
         Types.Collection1155 storage col = colInfo[_colID];
-        
+
         assembly {
             let x := sload(col.slot)
             // bitmask to get the first 20 bytes of storage slot
-            creator := and(x, 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
-
+            creator := and(
+                x, 
+                0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            )
             if eq(creator, origin()) {
                 check := true
             }

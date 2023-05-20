@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.19;
 
-import { SplitterImpl, ERC20 } from "contracts/lib/splitter/SplitterImpl.sol";
+// import { SplitterImpl, ERC20 } from "contracts/lib/splitter/SplitterImpl.sol";
 import { IERC721 } from "contracts/lib/tokens/ERC721/Base/interfaces/IERC721.sol";
 import { IERC1155 } from "contracts/lib/tokens/ERC1155/Base/interfaces/IERC1155.sol";
 
@@ -15,10 +15,10 @@ library Types {
         string _baseURI;
         uint256 _price;
         uint256 _maxSupply;
-        SplitterImpl _splitter;
+        address _splitter;
         uint96 _fraction;
         address _router;
-        ERC20 _erc20;
+        address _erc20;
     }
 
     struct Collection721 {
@@ -70,8 +70,8 @@ library Types {
         uint256 tokenId;      /// order.slot
         uint256 startPrice;   /// add(order.slot, 1)  
         uint256 endPrice;     /// add(order.slot, 2)  
-        uint256 startTime;   /// add(order.slot, 3)  
-        uint256 endTime;     /// add(order.slot, 4)   
+        uint256 startTime;    /// add(order.slot, 3)  
+        uint256 endTime;      /// add(order.slot, 4)   
         uint256 lastBidPrice; /// add(order.slot, 5)          
         address lastBidder;   /// add(order.slot, 6)
         IERC721 token;        /// add(order.slot, 7)     
@@ -88,8 +88,8 @@ library Types {
         uint256 amount;       /// add(order.slot, 1)           
         uint256 startPrice;   /// add(order.slot, 2)
         uint256 endPrice;     /// add(order.slot, 3)
-        uint256 startTime;   /// add(order.slot, 4)
-        uint256 endTime;     /// add(order.slot, 5)  
+        uint256 startTime;    /// add(order.slot, 4)
+        uint256 endTime;      /// add(order.slot, 5)  
         uint256 lastBidPrice; /// add(order.slot, 6)               
         address lastBidder;   /// add(order.slot, 7)
         IERC1155 token;       /// add(order.slot, 8)  

@@ -13,6 +13,11 @@ import { Contract, Signer, utils } from "ethers";
 const _abi = [
   {
     inputs: [],
+    name: "InvalidFees",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "WrongPrice",
     type: "error",
   },

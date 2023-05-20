@@ -4,15 +4,12 @@ pragma solidity 0.8.19;
 
 import { MAD } from "contracts/MAD.sol";
 import { MADBase, ERC20 } from "contracts/Shared/MADBase.sol";
-
 import { FactoryEventsAndErrorsBase, FactoryVerifier } from "contracts/Shared/EventsAndErrors.sol";
-
-// import { SplitterDeployer } from "contracts/lib/deployers/SplitterDeployer.sol";
-
 import { DCPrevent } from "contracts/lib/security/DCPrevent.sol";
-import { Types, SplitterImpl } from "contracts/Shared/Types.sol";
-
+import { Types } from "contracts/Shared/Types.sol";
+import { SplitterImpl } from "contracts/lib/splitter/SplitterImpl.sol";
 import { CREATE3, Bytes32AddressLib } from "contracts/lib/utils/CREATE3.sol";
+import { SplitterBufferLib as BufferLib } from "contracts/lib/utils/SplitterBufferLib.sol";
 
 // prettier-ignore
 abstract contract MADFactoryBase is MAD, MADBase,
@@ -104,11 +101,13 @@ FactoryEventsAndErrorsBase,
         address _project,
         uint256 _ambShare,
         uint256 _projectShare
-    ) external nonReentrant isThisOg whenNotPaused {
+    ) 
+        external 
+        isThisOg 
+    {
         if (
-            _ambassador == address(0) && 
-            _project == address(0)) 
-        {
+            _ambassador == address(0) && _project == address(0)
+        ) {
             _splitterResolver(
                 _splitterSalt,
                 address(0), // _ambassador
@@ -119,10 +118,8 @@ FactoryEventsAndErrorsBase,
             );
 
         } else if (
-            _ambassador != address(0) &&
-            _project == address(0) &&
-            _ambShare != 0 && 
-            _ambShare < 21 
+            _ambassador != address(0) && _project == address(0) &&
+            _ambShare != 0 && _ambShare < 21 
         ) {
             _splitterResolver(
                 _splitterSalt,
@@ -134,10 +131,8 @@ FactoryEventsAndErrorsBase,
             );
 
         } else if(
-            _project != address(0) && 
-            _ambassador == address(0) &&
-            _projectShare != 0 &&
-            _projectShare < 91
+            _project != address(0) && _ambassador == address(0) &&
+            _projectShare != 0 && _projectShare < 91
         ) {
             _splitterResolver(
                 _splitterSalt,
@@ -149,12 +144,9 @@ FactoryEventsAndErrorsBase,
             );
 
         } else if(
-            _ambassador != address(0) &&
-            _project != address(0) && 
-            _ambShare != 0 && 
-            _ambShare < 21 &&
-            _projectShare != 0 &&
-            _projectShare < 71
+            _ambassador != address(0) && _project != address(0) && 
+            _ambShare != 0 && _ambShare < 21 && 
+            _projectShare != 0 && _projectShare < 71
         ) { 
             _splitterResolver(
                 _splitterSalt,
@@ -175,7 +167,6 @@ FactoryEventsAndErrorsBase,
         }
     }
 
-
     ////////////////////////////////////////////////////////////////
     //                           HELPERS                          //
     ////////////////////////////////////////////////////////////////
@@ -194,109 +185,14 @@ FactoryEventsAndErrorsBase,
     }
 
     /// @inheritdoc FactoryVerifier
-    function getColID(address _colAddress) external pure override(FactoryVerifier) returns (bytes32 colID) {
+    function getColID(address _colAddress) 
+    external 
+    pure 
+    override(FactoryVerifier) 
+    returns (bytes32 colID) 
+    {
         colID = _colAddress.fillLast12Bytes();
         
-    }
-
-
-
-    /// @dev Builds payees dynamic sized array buffer for `splitterCheck` cases.
-    function _payeesBuffer(
-        address amb, 
-        address project) 
-    internal 
-    view 
-    returns (address[] memory memOffset) 
-    {
-        assembly {
-            switch and(
-                    iszero(amb),
-                    iszero(project)
-                    )
-            case 1 {
-                memOffset := mload(0x40)
-                mstore(add(memOffset, 0x00), 1)
-                mstore(add(memOffset, 0x20), origin())
-                mstore(0x40, add(memOffset, 0x40))
-            }
-            case 0 {
-                switch iszero(project)
-                case 1 {
-                    memOffset := mload(0x40)
-                    mstore(add(memOffset, 0x00), 2)
-                    mstore(add(memOffset, 0x20), amb)
-                    mstore(add(memOffset, 0x40), origin())
-                    mstore(0x40, add(memOffset, 0x60))
-                }
-                case 0 {
-                    switch iszero(amb)
-                    case 1 {
-                        memOffset := mload(0x40)
-                        mstore(add(memOffset, 0x00), 2)
-                        mstore(add(memOffset, 0x20), project)
-                        mstore(add(memOffset, 0x40), origin())
-                        mstore(0x40, add(memOffset, 0x60))
-                    }
-                    case 0 {
-                        memOffset := mload(0x40)
-                        mstore(add(memOffset, 0x00), 3)
-                        mstore(add(memOffset, 0x20), amb)
-                        mstore(add(memOffset, 0x40), project)
-                        mstore(add(memOffset, 0x60), origin())
-                        mstore(0x40, add(memOffset, 0x80))
-                    }
-                }
-            }
-        }
-    }
-
-    /// @dev Builds shares dynamic sized array buffer for `splitterCheck` cases.
-    function _sharesBuffer(uint256 _ambShare, uint256 _projectShare) 
-    internal 
-    pure 
-    returns (uint256[] memory memOffset) 
-    {
-        assembly {
-            switch and(
-                    iszero(_ambShare),
-                    iszero(_projectShare)
-                    )
-            case 1 {
-                memOffset := mload(0x40)
-                mstore(add(memOffset, 0x00), 1) 
-                mstore(add(memOffset, 0x20), 100) 
-                mstore(0x40, add(memOffset, 0x40))
-            }
-            case 0 {
-                switch iszero(_projectShare)
-                case 1 {
-                    memOffset := mload(0x40)
-                    mstore(add(memOffset, 0x00), 2)
-                    mstore(add(memOffset, 0x20), _ambShare) 
-                    mstore(add(memOffset, 0x40), sub(100,_ambShare)) 
-                    mstore(0x40, add(memOffset, 0x60))
-                }
-                case 0 {
-                    switch iszero(_ambShare)
-                    case 1 {
-                        memOffset := mload(0x40)
-                        mstore(add(memOffset, 0x00), 2)
-                        mstore(add(memOffset, 0x20), _projectShare) 
-                        mstore(add(memOffset, 0x40), sub(100,_projectShare)) 
-                        mstore(0x40, add(memOffset, 0x60))
-                    }
-                    case 0 {
-                        memOffset := mload(0x40)
-                        mstore(add(memOffset, 0x00), 3)
-                        mstore(add(memOffset, 0x20), _ambShare) 
-                        mstore(add(memOffset, 0x40), _projectShare) 
-                        mstore(add(memOffset, 0x60), sub(100,add(_ambShare,_projectShare))) 
-                        mstore(0x40, add(memOffset, 0x80))
-                    }
-                }
-            }
-        }
     }
 
     function _splitterResolver(
@@ -309,10 +205,10 @@ FactoryEventsAndErrorsBase,
         ) internal 
     {
         address[] memory _payees = 
-            _payeesBuffer(_ambassador, _project);
+            BufferLib._payeesBuffer(_ambassador, _project);
 
         uint256[] memory _shares = 
-            _sharesBuffer(_ambShare,_projectShare);
+            BufferLib._sharesBuffer(_ambShare,_projectShare);
 
         (address splitter, bytes32 splitterSalt) = 
         _SplitterDeploy(
@@ -348,7 +244,7 @@ FactoryEventsAndErrorsBase,
         bytes32[] memory _extra
     ) internal returns (bytes32 tokenSalt, address deployed){
 
-        tokenSalt = keccak256(bytes(_tokenSalt));
+        tokenSalt = keccak256(abi.encode(msg.sender, bytes(_tokenSalt)));
 
         deployed = CREATE3.deploy(
             tokenSalt,
@@ -369,10 +265,12 @@ FactoryEventsAndErrorsBase,
         address[] memory _payees,
         uint256[] memory _shares
     ) internal returns (address deployed, bytes32 salt) {
-        salt = keccak256(bytes(_salt));
+        salt = keccak256(abi.encode(msg.sender, bytes(_salt)));
         deployed = CREATE3.deploy(
             salt,
-            abi.encodePacked(type(SplitterImpl).creationCode, abi.encode(_payees, _shares)),
+            abi.encodePacked(
+                type(SplitterImpl).creationCode, 
+                abi.encode(_payees, _shares)),
             0
         );
     }
@@ -387,99 +285,77 @@ FactoryEventsAndErrorsBase,
         _isMarket();
         if (!_userRender(_user)) { assembly { stdout := 0 } }
 
-        bytes32 buffer = 
-            _token.fillLast12Bytes();
-        bytes32[] memory digest = 
-            new bytes32[](userTokens[_user].length);
-        uint256 i;    
+        uint256 i;
+        bytes32 buffer = _token.fillLast12Bytes();
+        bytes32[] memory digest = new bytes32[](userTokens[_user].length);
         uint256 len = digest.length;
-        mapping(address => bytes32[]) storage usrTkns =
-            userTokens;
+        mapping(address => bytes32[]) storage usrTkns = userTokens;
         for (; i < len;) {
-            if(buffer == usrTkns[_user][i]) {
-                stdout = true;
-            } unchecked { ++i; } 
+            if(buffer == usrTkns[_user][i]) 
+            { stdout = true; } unchecked { ++i; } 
         }
     }
-
-
 
     /// @dev Stablishes sealed/safe callpath for `MADRouter` contract.
     /// @dev Function Sighash := 0xb4d30bec
     function _isRouter() internal view {
         // if (msg.sender != router) revert AccessDenied();
         assembly {
-            // let stdin := sload(router.slot)
-            // if eq(origin(), sload(router.slot)) {
-            if iszero(eq(caller(), sload(router.slot))) {
-                mstore(
-                    0x00, 
-                    0x4ca88867FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-                )
-                revert(0, 4) // (offset, length)
-            }
+            if iszero(eq(caller(), sload(router.slot))) 
+
+            { mstore( 0x00, 0x4ca88867 ) revert(0x1c, 0x04) }
         } 
     }
 
-        function _royaltyLocker(uint96 _share) 
-    internal 
-    pure
+    /// @dev Reverts if provided share is greater  
+    /// than 1000 or does not fit the tick (i.e., 25).
+    /// @dev Function Sighash := 0xe04dc3ca
+    function _royaltyLocker(uint96 _share) 
+        internal 
+        pure
     {
         assembly {
             if or(
-                gt(_share,0x3E8),
-                iszero(iszero(mod(_share,0x19)))) {
-                    mstore(0x00, 0xe0e54ced)
-                    revert(0x1c, 0x04)
-                }
+                gt(_share, 0x3E8), 
+                iszero(iszero(mod(_share, 0x19))
+            ))
+
+            { mstore(0x00, 0xe0e54ced) revert(0x1c, 0x04) }
         }
     }
 
 
+    /// @dev Function Sighash := 0x485a1cff
     function _limiter(
         uint8 _tokenType,
         address _splitter
     ) internal view {
         bool val = splitterInfo[tx.origin][_splitter].valid;
         assembly {
-            mstore(0x00, _tokenType)
-            mstore(0x20, colTypes.slot)
-            if or(
-                // colType not allowed 
-                iszero(sload(keccak256(0x00,0x40))),
-                // invalid splitter
-                iszero(val)) 
-            {
-                mstore(
-                    0x00,
-                    0x4ca8886700000000000000000000000000000000000000000000000000000000
-                )
-                revert(0,4)
-            }
+            mstore(0, _tokenType) mstore(32, colTypes.slot)
+
+            // colType not allowed or invalid splitter 
+            if or(iszero(sload(keccak256(0, 64))), iszero(val)) 
+            
+            { mstore(0x00, 0x4ca88867) revert(0x1c, 0x04) }
         }
     }
 
     function _isZeroAddr(address _addr) private pure {
         assembly {
-            if iszero(_addr) { 
-                // Revert InvalidAddress()
-                mstore(0x00, 0xe6c4247b)
-                revert(0x1c, 0x04)
-            }
+            if iszero(_addr) 
+            // Revert InvalidAddress()
+            { mstore(0x00, 0xe6c4247b) revert(0x1c, 0x04) }
         }
     }
 
     /// @dev Stablishes sealed/safe callpath for `MADMarketplace` contract.
-    /// @dev Function Sighash := 
+    /// @dev Function Sighash := 0x4d922dcc
     function _isMarket() private view {
         assembly {
-            if iszero(eq(caller(), sload(market.slot))) {
-                mstore(
-                    0x00, 
-                    0x4ca88867FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-                )
-                revert(0, 4) // (offset, length)
-            }
+            if iszero(eq(caller(), sload(market.slot))) 
+
+            { mstore(0x00, 0x4ca88867) revert(0x1c, 0x04) }
         } 
     }
 
@@ -491,26 +367,24 @@ FactoryEventsAndErrorsBase,
     /// @return _stdout := 1 as boolean standard output.
     function _userRender(address _user) private view returns(bool _stdout){
         assembly {
-            let freeMemoryPointer := mload(0x40)
-            mstore(add(freeMemoryPointer, 32), userTokens.slot)
-            mstore(add(freeMemoryPointer, 64), _user) 
-            let hash := keccak256(freeMemoryPointer, 64)
+            let pointer := mload(0x40)
+            mstore(add(pointer, 32), userTokens.slot)
+            mstore(add(pointer, 64), _user) 
+            let hash := keccak256(pointer, 64)
             if iszero(sload(hash)) {
                 _stdout := false
             }
         }
     }
 
-    /// @dev External getter for deployed splitters.
-    /// @dev Function Sighash := 0xbc8b5838
-    function getDeployedAddr(string memory _salt)
+    /// @dev External getter for deployed splitters and collections.
+    /// @dev Function Sighash := 0x499945ef
+    function getDeployedAddr(string memory _salt, address _addr)
         external
         view
-        returns (
-            address
-        )
+        returns (address)
     {
-        bytes32 salt = keccak256(bytes(_salt));
+        bytes32 salt = keccak256(abi.encode(_addr, bytes(_salt)));
         return CREATE3.getDeployed(salt);
     }
 
@@ -522,8 +396,7 @@ FactoryEventsAndErrorsBase,
     /// @dev `MADMarketplace` instance setter.
     /// @dev Function Sighash := 0x6dcea85f
     function setMarket(address _market) public onlyOwner {
-        // require(_market != address(0), "Invalid address");
-        // market = _market;
+
         _isZeroAddr(_market);
         assembly {
             sstore(market.slot, _market)
@@ -535,8 +408,7 @@ FactoryEventsAndErrorsBase,
     /// @dev `MADRouter` instance setter.
     /// @dev Function Sighash := 0xc0d78655
     function setRouter(address _router) external onlyOwner {
-        // require(_router != address(0), "Invalid address");
-        // router = _router;
+
         _isZeroAddr(_router);
         assembly {
             sstore(router.slot, _router)
@@ -548,8 +420,7 @@ FactoryEventsAndErrorsBase,
     /// @dev Setter for EIP712 signer/validator instance.
     /// @dev Function Sighash := 0x6c19e783
     function setSigner(address _signer) public onlyOwner {
-        // require(_signer != address(0), "Invalid address");
-        // signer = _signer;
+
         _isZeroAddr(_signer);
         assembly {
             sstore(signer.slot, _signer)

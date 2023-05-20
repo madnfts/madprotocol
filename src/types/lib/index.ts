@@ -4,7 +4,6 @@
 
 /* eslint-disable */
 import type * as auth from "./auth";
-import type * as security from "./security";
 import type * as splitter from "./splitter";
 import type * as test from "./test";
 import type * as tokens from "./tokens";
@@ -12,8 +11,6 @@ import type * as uniswap from "./uniswap";
 import type * as utils from "./utils";
 
 export type { auth };
-
-export type { security };
 
 export type { splitter };
 

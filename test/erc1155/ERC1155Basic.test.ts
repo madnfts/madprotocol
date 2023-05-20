@@ -777,7 +777,10 @@ describe("ERC1155Basic", () => {
 
       await expect(
         basic.connect(acc01).withdraw(dead),
-      ).to.be.revertedWithCustomError(basic, BasicErrors.NotAuthorised);
+      ).to.be.revertedWithCustomError(
+        basic,
+        BasicErrors.NotAuthorised,
+      );
     });
     it("Should withdraw contract's ERC20s", async () => {
       const prevBal = BigNumber.from(2).pow(255);

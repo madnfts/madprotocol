@@ -126,20 +126,18 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
       );
       const basicAddr =
         await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155
-        .connect(acc02)
-        .createCollection(
-          1,
-          "BasicSalt",
-          // "1155Basic",
-          // "BASIC",
-          price,
-          1,
-          "cid/id.json",
-          splAddr,
-          750,
-          []
-        );
+      await f1155.connect(acc02).createCollection(
+        1,
+        "BasicSalt",
+        // "1155Basic",
+        // "BASIC",
+        price,
+        1,
+        "cid/id.json",
+        splAddr,
+        750,
+        [],
+      );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
         basicAddr,
@@ -213,20 +211,18 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
       );
       const basicAddr =
         await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155
-        .connect(acc02)
-        .createCollection(
-          1,
-          "BasicSalt",
-          // "1155Basic",
-          // "BASIC",
-          price,
-          1,
-          "cid/id.json",
-          splAddr,
-          1000,
-          []
-        );
+      await f1155.connect(acc02).createCollection(
+        1,
+        "BasicSalt",
+        // "1155Basic",
+        // "BASIC",
+        price,
+        1,
+        "cid/id.json",
+        splAddr,
+        1000,
+        [],
+      );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
         basicAddr,
@@ -367,20 +363,18 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
       );
       const basicAddr =
         await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155
-        .connect(acc02)
-        .createCollection(
-          1,
-          "BasicSalt",
-          // "1155Basic",
-          // "BASIC",
-          price,
-          1,
-          "cid/id.json",
-          splAddr,
-          750,
-          []
-        );
+      await f1155.connect(acc02).createCollection(
+        1,
+        "BasicSalt",
+        // "1155Basic",
+        // "BASIC",
+        price,
+        1,
+        "cid/id.json",
+        splAddr,
+        750,
+        [],
+      );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
         basicAddr,
@@ -453,20 +447,18 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
       );
       const basicAddr =
         await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155
-        .connect(acc02)
-        .createCollection(
-          1,
-          "BasicSalt",
-          // "1155Basic",
-          // "BASIC",
-          price,
-          1,
-          "cid/id.json",
-          splAddr,
-          1000,
-          []
-        );
+      await f1155.connect(acc02).createCollection(
+        1,
+        "BasicSalt",
+        // "1155Basic",
+        // "BASIC",
+        price,
+        1,
+        "cid/id.json",
+        splAddr,
+        1000,
+        [],
+      );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
         basicAddr,
@@ -640,20 +632,18 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
       );
       const basicAddr =
         await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155
-        .connect(acc02)
-        .createCollection(
-          1,
-          "BasicSalt",
-          // "1155Basic",
-          // "BASIC",
-          price,
-          1,
-          "cid/id.json",
-          splAddr,
-          1000,
-          []
-        );
+      await f1155.connect(acc02).createCollection(
+        1,
+        "BasicSalt",
+        // "1155Basic",
+        // "BASIC",
+        price,
+        1,
+        "cid/id.json",
+        splAddr,
+        1000,
+        [],
+      );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
         basicAddr,
@@ -845,20 +835,18 @@ describe("MADMarketplace1155 - ERC20 Payments", () => {
     const basicAddr = await f1155.callStatic.getDeployedAddr(
       "BasicSalt",
     );
-    await f1155
-      .connect(acc02)
-      .createCollection(
-        1,
-        "BasicSalt",
-        // "ERC1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        1000,
-        []
-      );
+    await f1155.connect(acc02).createCollection(
+      1,
+      "BasicSalt",
+      // "ERC1155Basic",
+      // "BASIC",
+      price,
+      1,
+      "cid/id.json",
+      splAddr,
+      1000,
+      [],
+    );
     const basic = await ethers.getContractAt(
       "ERC1155Basic",
       basicAddr,

@@ -133,7 +133,7 @@ async function _deployShared(
 
   // Library deployers
   // const SplitterDeployer = await ethers.getContractFactory(
-    // "SplitterDeployer",
+  // "SplitterDeployer",
   // );
   // const splDep = await SplitterDeployer.deploy();
 
@@ -151,11 +151,9 @@ async function _deployShared(
   const Factory = await ethers.getContractFactory(
     `MADFactory${contractType}`,
     // {
-      // libraries: lib,
+    // libraries: lib,
     // },
   );
-
-
 
   const allSigners = await ethers.getSigners();
   const owner = getSignerAddrs(1, allSigners);

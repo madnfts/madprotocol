@@ -105,11 +105,12 @@ FactoryEventsAndErrorsBase,
         external 
         isThisOg 
     {
+        bytes32 splitterSalt = keccak256(abi.encode(msg.sender, bytes(_splitterSalt)));
         if (
             _ambassador == address(0) && _project == address(0)
         ) {
             _splitterResolver(
-                _splitterSalt,
+                splitterSalt,
                 address(0), // _ambassador
                 address(0), // _project
                 0,          // _ambShare
@@ -122,7 +123,7 @@ FactoryEventsAndErrorsBase,
             _ambShare != 0 && _ambShare < 21 
         ) {
             _splitterResolver(
-                _splitterSalt,
+                splitterSalt,
                 _ambassador, // _ambassador
                 address(0),   // _project
                 _ambShare,   // _ambShare
@@ -135,7 +136,7 @@ FactoryEventsAndErrorsBase,
             _projectShare != 0 && _projectShare < 91
         ) {
             _splitterResolver(
-                _splitterSalt,
+                splitterSalt,
                 address(0),     // _ambassador
                 _project,      // _project
                 0,              // _ambShare
@@ -149,7 +150,7 @@ FactoryEventsAndErrorsBase,
             _projectShare != 0 && _projectShare < 71
         ) { 
             _splitterResolver(
-                _splitterSalt,
+                splitterSalt,
                 _ambassador,   // _ambassador
                 _project,      // _project
                 _ambShare,     // _ambShare
@@ -196,7 +197,7 @@ FactoryEventsAndErrorsBase,
     }
 
     function _splitterResolver(
-        string memory _splitterSalt,
+        bytes32 _splitterSalt,
         address _ambassador,
         address _project,
         uint256 _ambShare,
@@ -210,8 +211,7 @@ FactoryEventsAndErrorsBase,
         uint256[] memory _shares = 
             BufferLib._sharesBuffer(_ambShare,_projectShare);
 
-        (address splitter, bytes32 splitterSalt) = 
-        _SplitterDeploy(
+        address splitter = _splitterDeploy(
             _splitterSalt,
             _payees,
             _shares
@@ -220,7 +220,7 @@ FactoryEventsAndErrorsBase,
         splitterInfo[tx.origin][splitter] = Types
         .SplitterConfig(
             splitter,
-            splitterSalt,
+            _splitterSalt,
             _ambassador,
             _project,
             _ambShare,
@@ -260,14 +260,13 @@ FactoryEventsAndErrorsBase,
         );
     }
 
-    function _SplitterDeploy(
-        string memory _salt,
+    function _splitterDeploy(
+        bytes32 _salt,
         address[] memory _payees,
         uint256[] memory _shares
-    ) internal returns (address deployed, bytes32 salt) {
-        salt = keccak256(abi.encode(msg.sender, bytes(_salt)));
+    ) internal returns (address deployed) {
         deployed = CREATE3.deploy(
-            salt,
+            _salt,
             abi.encodePacked(
                 type(SplitterImpl).creationCode, 
                 abi.encode(_payees, _shares)),

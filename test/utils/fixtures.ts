@@ -11,12 +11,10 @@ import keccak256 from "keccak256";
 import { MerkleTree } from "merkletreejs";
 
 import {
-  ERC721Basic,
-  // ERC721Lazy,
+  ERC721Basic, // ERC721Lazy,
   // ERC721Minimal,
   // ERC721Whitelist,
-  ERC1155Basic,
-  // ERC1155Lazy,
+  ERC1155Basic, // ERC1155Lazy,
   // ERC1155Minimal,
   // ERC1155Whitelist,
   MockERC20,
@@ -24,9 +22,9 @@ import {
   SplitterImpl,
 } from "../../src/types";
 import {
-  ColArgs,
   BasicFixture721,
   BasicFixture1155,
+  ColArgs,
   ERC20Fixture,
   LazyFixture721,
   LazyFixture1155,
@@ -227,7 +225,7 @@ export async function basicFixture721(): Promise<SplitterAndBasic721> {
     "ERC721Basic",
   );
 
-  const args:ColArgs = {
+  const args: ColArgs = {
     _name: "721Basic",
     _symbol: "BASIC",
     _baseURI: "ipfs://cid/",
@@ -239,10 +237,7 @@ export async function basicFixture721(): Promise<SplitterAndBasic721> {
     _erc20: ethers.constants.AddressZero,
   };
 
-  const basic = (await Basic.deploy(
-    args,
-    []
-  )) as ERC721Basic;
+  const basic = (await Basic.deploy(args, [])) as ERC721Basic;
   return { basic, splitter };
 }
 
@@ -268,7 +263,7 @@ export async function basicFixture721ERC20(): Promise<SplitterAndBasic721ERC20> 
     "ERC721Basic",
   );
 
-  const args:ColArgs = {
+  const args: ColArgs = {
     _name: "721Basic",
     _symbol: "BASIC",
     _baseURI: "ipfs://cid/",
@@ -280,10 +275,7 @@ export async function basicFixture721ERC20(): Promise<SplitterAndBasic721ERC20> 
     _erc20: erc20.address,
   };
 
-  const basic = (await Basic.deploy(
-    args,
-    []
-    )) as ERC721Basic;
+  const basic = (await Basic.deploy(args, [])) as ERC721Basic;
   return { basic, splitter, erc20 };
 }
 
@@ -855,7 +847,7 @@ export async function basicFixture1155(): Promise<SplitterAndBasic1155> {
     "ERC1155Basic",
   );
 
-  const args:ColArgs = {
+  const args: ColArgs = {
     _name: "",
     _symbol: "",
     _baseURI: "ipfs://cid/",
@@ -869,8 +861,8 @@ export async function basicFixture1155(): Promise<SplitterAndBasic1155> {
 
   const basic = (await Basic.deploy(
     args,
-    []
-    )) as ERC1155Basic;
+    [],
+  )) as ERC1155Basic;
   return { basic, splitter };
 }
 
@@ -896,7 +888,7 @@ export async function basicFixture1155ERC20(): Promise<SplitterAndBasic1155ERC20
     "ERC1155Basic",
   );
 
-  const args:ColArgs = {
+  const args: ColArgs = {
     _name: "",
     _symbol: "",
     _baseURI: "ipfs://cid/",
@@ -906,12 +898,12 @@ export async function basicFixture1155ERC20(): Promise<SplitterAndBasic1155ERC20
     _fraction: ethers.BigNumber.from(750),
     _router: owner.address,
     _erc20: erc20.address,
-  }
+  };
 
   const basic = (await Basic.deploy(
     args,
-    []
-    )) as ERC1155Basic;
+    [],
+  )) as ERC1155Basic;
   return { basic, splitter, erc20 };
 }
 

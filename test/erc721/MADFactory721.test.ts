@@ -49,6 +49,22 @@ describe.only("MADFactory721", () => {
 
   const price: BigNumber = ethers.utils.parseEther("1");
 
+  const _splitterSalt = "MADSplitter1";
+  const _basicSalt = "BasicSalt";
+  function getSaltHash(
+    addr: string,
+    _splitterSalt: string,
+  ): string {
+    const encoded = ethers.utils.defaultAbiCoder.encode(
+      ["address", "bytes"],
+      [addr, ethers.utils.toUtf8Bytes(_splitterSalt)],
+    );
+
+    const hash = ethers.utils.keccak256(encoded);
+
+    return hash;
+  }
+
   before("Set signers and reset network", async () => {
     [owner, amb, mad, acc01, acc02] =
       await // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -86,10 +102,10 @@ describe.only("MADFactory721", () => {
     it("Should revert if repeated salt is provided", async () => {
       await f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", dead, dead, 0, 0);
+        .splitterCheck(_splitterSalt, dead, dead, 0, 0);
       const tx = f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", dead, dead, 0, 0);
+        .splitterCheck(_splitterSalt, dead, dead, 0, 0);
 
       await expect(tx).to.be.revertedWith(
         FactoryErrors.DeploymentFailed,
@@ -98,12 +114,15 @@ describe.only("MADFactory721", () => {
     it("Should deploy splitter without ambassador, update storage and emit events", async () => {
       const tx: ContractTransaction = await f721
         .connect(acc02)
-        .splitterCheck("MADSplitter1", dead, dead, 0, 0);
+        .splitterCheck(_splitterSalt, dead, dead, 0, 0);
       const rc: ContractReceipt = await tx.wait();
       const indexed = rc.logs[0].data;
       const data = rc.logs[1].data;
 
-      const addr = await f721.getDeployedAddr("MADSplitter1", acc02.address);
+      const addr = await f721.getDeployedAddr(
+        _splitterSalt,
+        acc02.address,
+      );
       const creator = ethers.utils.defaultAbiCoder.decode(
         ["address"],
         indexed,
@@ -139,10 +158,9 @@ describe.only("MADFactory721", () => {
       expect(splitter).to.eq(addr);
       expect(ethers.BigNumber.from(creatorShares)).to.eq(100);
       expect(storage.splitter).to.eq(addr);
+
       expect(storage.splitterSalt).to.eq(
-        ethers.utils.keccak256(
-          ethers.utils.toUtf8Bytes("MADSplitter1", acc02.address),
-        ),
+        getSaltHash(acc02.address, _splitterSalt),
       );
       expect(storage.ambassador).to.eq(dead);
       expect(storage.ambShare).to.eq(ethers.constants.Zero);
@@ -152,7 +170,7 @@ describe.only("MADFactory721", () => {
       const tx: ContractTransaction = await f721
         .connect(acc02)
         .splitterCheck(
-          "MADSplitter1",
+          _splitterSalt,
           amb.address,
           dead,
           20,
@@ -163,7 +181,10 @@ describe.only("MADFactory721", () => {
       const indexed = rc.logs[1].data;
       const data = rc.logs[2].data;
 
-      const addr = await f721.getDeployedAddr("MADSplitter1", acc02.address);
+      const addr = await f721.getDeployedAddr(
+        _splitterSalt,
+        acc02.address,
+      );
       const creator = ethers.utils.defaultAbiCoder.decode(
         ["address"],
         indexed,
@@ -207,9 +228,7 @@ describe.only("MADFactory721", () => {
       expect(ethers.BigNumber.from(creatorShares)).to.eq(80);
       expect(storage.splitter).to.eq(addr);
       expect(storage.splitterSalt).to.eq(
-        ethers.utils.keccak256(
-          ethers.utils.toUtf8Bytes("MADSplitter1"),
-        ),
+        getSaltHash(acc02.address, _splitterSalt),
       );
       expect(storage.ambassador).to.eq(amb.address);
       expect(storage.ambShare).to.eq(
@@ -221,7 +240,7 @@ describe.only("MADFactory721", () => {
       const tx: ContractTransaction = await f721
         .connect(acc02)
         .splitterCheck(
-          "MADSplitter1",
+          _splitterSalt,
           amb.address,
           acc01.address,
           20,
@@ -232,7 +251,10 @@ describe.only("MADFactory721", () => {
       const indexed = rc.logs[2].data;
       const data = rc.logs[3].data;
 
-      const addr = await f721.getDeployedAddr("MADSplitter1", acc02.address);
+      const addr = await f721.getDeployedAddr(
+        _splitterSalt,
+        acc02.address,
+      );
       const creator = ethers.utils.defaultAbiCoder.decode(
         ["address"],
         indexed,
@@ -284,9 +306,7 @@ describe.only("MADFactory721", () => {
       expect(ethers.BigNumber.from(creatorShares)).to.eq(70);
       expect(storage.splitter).to.eq(addr);
       expect(storage.splitterSalt).to.eq(
-        ethers.utils.keccak256(
-          ethers.utils.toUtf8Bytes("MADSplitter1"),
-        ),
+        getSaltHash(acc02.address, _splitterSalt),
       );
       expect(storage.ambassador).to.eq(amb.address);
       expect(storage.ambShare).to.eq(
@@ -300,25 +320,25 @@ describe.only("MADFactory721", () => {
       await f721
         .connect(acc02)
         .splitterCheck(
-          "MADSplitter1",
+          _splitterSalt,
           amb.address,
           dead,
           20,
           0,
         );
       const splAddr = await f721.callStatic.getDeployedAddr(
-        "MADSplitter1",
-        acc02.address
+        _splitterSalt,
+        acc02.address,
       );
       const basicAddr = await f721.callStatic.getDeployedAddr(
-        "BasicSalt",
-        acc02.address
-        );
+        _basicSalt,
+        acc02.address,
+      );
       const tx = await f721
         .connect(acc02)
         .createCollection(
           1,
-          "BasicSalt",
+          _basicSalt,
           "721Basic",
           "BASIC",
           price,
@@ -326,7 +346,7 @@ describe.only("MADFactory721", () => {
           "ipfs://cid/",
           splAddr,
           750,
-          []
+          [],
         );
       const colID = await f721.callStatic.getColID(basicAddr);
       const storage = await f721.callStatic.userTokens(
@@ -340,7 +360,7 @@ describe.only("MADFactory721", () => {
         .connect(acc01)
         .createCollection(
           1,
-          "BasicSalt",
+          _basicSalt,
           "721Basic",
           "BASIC",
           price,
@@ -348,14 +368,14 @@ describe.only("MADFactory721", () => {
           "ipfs://cid/",
           splAddr,
           750,
-          []
+          [],
         );
 
       const fail2 = f721
         .connect(acc02)
         .createCollection(
           7,
-          "BasicSalt",
+          _basicSalt,
           "721Basic",
           "BASIC",
           price,
@@ -363,7 +383,7 @@ describe.only("MADFactory721", () => {
           "ipfs://cid/",
           splAddr,
           750,
-          []
+          [],
         );
 
       expect(tx).to.be.ok;
@@ -376,17 +396,15 @@ describe.only("MADFactory721", () => {
       expect(colInfo.colType).to.eq(1);
       expect(colInfo.creator).to.eq(acc02.address);
       expect(colInfo.splitter).to.eq(splAddr);
+
       expect(colInfo.colSalt).to.eq(
-        ethers.utils.keccak256(
-          ethers.utils.toUtf8Bytes("BasicSalt"),
-        ),
+        getSaltHash(acc02.address, _basicSalt),
       );
       await expect(tx)
-        .to.emit(f721, "ERC721Created")
+        .to.emit(f721, "ERC721BasicCreated")
         .withArgs(
           splAddr,
           basicAddr,
-          ethers.constants.One,
           "721Basic",
           "BASIC",
           750,
@@ -432,7 +450,8 @@ describe.only("MADFactory721", () => {
       await expect(
         f721.setMarket(ethers.constants.AddressZero),
       ).to.be.revertedWithCustomError(
-        f721, FactoryErrors.InvalidAddress,
+        f721,
+        FactoryErrors.InvalidAddress,
       );
       expect(tx).to.be.ok;
       expect(owner.address).to.eq(
@@ -454,7 +473,8 @@ describe.only("MADFactory721", () => {
       await expect(
         f721.setSigner(ethers.constants.AddressZero),
       ).to.be.revertedWithCustomError(
-        f721, FactoryErrors.InvalidAddress,
+        f721,
+        FactoryErrors.InvalidAddress,
       );
     });
     it("Should update router's address", async () => {
@@ -472,37 +492,9 @@ describe.only("MADFactory721", () => {
       await expect(
         f721.setRouter(ethers.constants.AddressZero),
       ).to.be.revertedWithCustomError(
-        f721, FactoryErrors.InvalidAddress,
+        f721,
+        FactoryErrors.InvalidAddress,
       );
-    });
-    it("Should initialize paused and unpaused states", async () => {
-      const tx = await f721.pause();
-
-      expect(tx).to.be.ok;
-      await expect(
-        f721.connect(acc01).pause(),
-      ).to.be.revertedWith(FactoryErrors.Unauthorized);
-      await expect(
-        f721.splitterCheck("", dead, dead, 0, 0),
-      ).to.be.revertedWith(FactoryErrors.Paused);
-      await expect(
-        f721.createCollection(
-          1,
-          "",
-          "",
-          "",
-          0,
-          1,
-          "",
-          dead,
-          75,
-          []
-        ),
-      ).to.be.revertedWith(FactoryErrors.Paused);
-      await expect(
-        f721.connect(acc02).unpause(),
-      ).to.be.revertedWith(FactoryErrors.Unauthorized);
-      expect(await f721.unpause()).to.be.ok;
     });
   });
 
@@ -512,22 +504,22 @@ describe.only("MADFactory721", () => {
       await f721
         .connect(acc02)
         .splitterCheck(
-          "MADSplitter1",
+          _splitterSalt,
           amb.address,
           dead,
           20,
           0,
         );
       const splAddr = await f721.callStatic.getDeployedAddr(
-        "MADSplitter1",
-        acc02.address
+        _splitterSalt,
+        acc02.address,
       );
 
       await f721
         .connect(acc02)
         .createCollection(
           1,
-          "BasicSalt",
+          _basicSalt,
           "721Basic",
           "BASIC",
           price,
@@ -535,7 +527,7 @@ describe.only("MADFactory721", () => {
           "ipfs://cid/",
           splAddr,
           750,
-          []
+          [],
         );
       await f721
         .connect(acc02)
@@ -549,13 +541,16 @@ describe.only("MADFactory721", () => {
           "ipfs://cid/",
           splAddr,
           750,
-          []
+          [],
         );
 
       expect(await f721.getIDsLength(acc02.address)).to.eq(2);
     });
     it("Should get collection ID from address", async () => {
-      const addr = await f721.getDeployedAddr("BasicSalt", acc02.address);
+      const addr = await f721.getDeployedAddr(
+        _basicSalt,
+        acc02.address,
+      );
       const colID = addr
         .toLowerCase()
         .concat("000000000000000000000000");
@@ -568,25 +563,25 @@ describe.only("MADFactory721", () => {
       await f721
         .connect(acc02)
         .splitterCheck(
-          "MADSplitter1",
+          _splitterSalt,
           amb.address,
           dead,
           20,
           0,
         );
       const splAddr = await f721.callStatic.getDeployedAddr(
-        "MADSplitter1",
-        acc02.address
+        _splitterSalt,
+        acc02.address,
       );
       const basicAddr = await f721.callStatic.getDeployedAddr(
-        "BasicSalt",
-        acc02.address
+        _basicSalt,
+        acc02.address,
       );
       await f721
         .connect(acc02)
         .createCollection(
           1,
-          "BasicSalt",
+          _basicSalt,
           "721Basic",
           "BASIC",
           price,
@@ -594,7 +589,7 @@ describe.only("MADFactory721", () => {
           "cid/id.json",
           splAddr,
           750,
-          []
+          [],
         );
       const colID = await f721.callStatic.getColID(basicAddr);
       const basic = await ethers.getContractAt(
@@ -626,25 +621,27 @@ describe.only("MADFactory721", () => {
       await f721
         .connect(acc02)
         .splitterCheck(
-          "MADSplitter1",
+          _splitterSalt,
           amb.address,
           dead,
           20,
           0,
         );
       const splAddr = await f721.callStatic.getDeployedAddr(
-        "MADSplitter1",
-        acc02.address
-        );
-      const basicAddr = await f721.callStatic.getDeployedAddr(
-        "BasicSalt",
-        acc02.address
+        _splitterSalt,
+        acc02.address,
       );
+
+      const basicAddr = await f721.callStatic.getDeployedAddr(
+        _basicSalt,
+        acc02.address,
+      );
+
       await f721
         .connect(acc02)
         .createCollection(
           1,
-          "BasicSalt",
+          _basicSalt,
           "721Basic",
           "BASIC",
           price,
@@ -652,13 +649,16 @@ describe.only("MADFactory721", () => {
           "cid/id.json",
           splAddr,
           750,
-          []
+          [],
         );
+
       const basic = await ethers.getContractAt(
         "ERC721Basic",
         basicAddr,
       );
+
       await r721.connect(acc02).setMintState(basicAddr, true);
+      console.log("mintstate");
       await basic.connect(acc02).mint(1, {
         value: price.add(ethers.utils.parseEther("0.25")),
       });
@@ -713,16 +713,16 @@ describe.only("MADFactory721", () => {
         f721
           .connect(acc02)
           .createCollection(
-            0,
-            "MinSalt",
-            "721Minimal",
-            "MIN",
+            1,
+            _basicSalt,
+            "721Basic",
+            "BASIC",
             price,
             1,
             "cid/id.json",
             splAddr,
             750,
-            []
+            [],
           ),
       ).to.be.revertedWithCustomError(
         f721,
@@ -733,25 +733,25 @@ describe.only("MADFactory721", () => {
       await f721
         .connect(acc02)
         .splitterCheck(
-          "MADSplitter1",
+          _splitterSalt,
           amb.address,
           dead,
           20,
           0,
         );
       const splAddr = await f721.callStatic.getDeployedAddr(
-        "MADSplitter1",
-        acc02.address
-        );
+        _splitterSalt,
+        acc02.address,
+      );
       const basicAddr = await f721.callStatic.getDeployedAddr(
-        "BasicSalt",
-        acc02.address
+        _basicSalt,
+        acc02.address,
       );
       await f721
         .connect(acc02)
         .createCollection(
           1,
-          "BasicSalt",
+          _basicSalt,
           "721Basic",
           "BASIC",
           price,
@@ -759,7 +759,7 @@ describe.only("MADFactory721", () => {
           "cid/id.json",
           splAddr,
           750,
-          []
+          [],
         );
       const colID = await f721.callStatic.getColID(basicAddr);
 

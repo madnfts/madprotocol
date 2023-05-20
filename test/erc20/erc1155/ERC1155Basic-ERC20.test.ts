@@ -826,7 +826,10 @@ describe("ERC1155Basic", () => {
             erc20.address,
             ethers.constants.AddressZero,
           ),
-      ).to.be.revertedWithCustomError(basic, BasicErrors.NotAuthorised);
+      ).to.be.revertedWithCustomError(
+        basic,
+        BasicErrors.NotAuthorised,
+      );
     });
 
     it("Should withdraw contract's ERC20s", async () => {

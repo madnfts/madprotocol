@@ -63,7 +63,10 @@ const main = async () => {
   );
   console.log(`ERC721 Factory address: ${f721.address}`);
 
-  await f721.addColType(ethers.constants.One, ERC721Basic.bytecode);
+  await f721.addColType(
+    ethers.constants.One,
+    ERC721Basic.bytecode,
+  );
   const MADRouter721 = await ethers.getContractFactory(
     "MADRouter721",
   );
@@ -100,7 +103,10 @@ const main = async () => {
   );
   console.log(`ERC1155 Factory address: ${f1155.address}`);
 
-  await f1155.addColType(ethers.constants.One, ERC1155Basic.bytecode);
+  await f1155.addColType(
+    ethers.constants.One,
+    ERC1155Basic.bytecode,
+  );
 
   const MADRouter1155 = await ethers.getContractFactory(
     "MADRouter1155",

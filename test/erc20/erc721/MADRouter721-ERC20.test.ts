@@ -109,7 +109,7 @@ describe("MADRouter721 - ERC20", () => {
           "ipfs://cid/",
           splAddr,
           750,
-          []
+          [],
         );
       const colID = await f721.callStatic.getColID(basicAddr);
       const basic = await ethers.getContractAt(
@@ -171,7 +171,7 @@ describe("MADRouter721 - ERC20", () => {
           "cid/id.json",
           splAddr,
           750,
-          []
+          [],
         );
       const basic = await ethers.getContractAt(
         "ERC721Basic",
@@ -239,7 +239,7 @@ describe("MADRouter721 - ERC20", () => {
           "ipfs://cid/",
           splAddr,
           750,
-          []
+          [],
         );
       const basic = await ethers.getContractAt(
         "ERC721Basic",
@@ -318,7 +318,7 @@ describe("MADRouter721 - ERC20", () => {
           "ipfs://cid/",
           splAddr,
           750,
-          []
+          [],
         );
       const basic = await ethers.getContractAt(
         "ERC721Basic",
@@ -381,7 +381,7 @@ describe("MADRouter721 - ERC20", () => {
             "ipfs://cid/",
             madSpl,
             750,
-            []
+            [],
           );
         const basic = await ethers.getContractAt(
           "ERC721Basic",
@@ -486,7 +486,7 @@ describe("MADRouter721 - ERC20", () => {
             "ipfs://cid/",
             madSpl,
             1000,
-            []
+            [],
           );
         const basic = await ethers.getContractAt(
           "ERC721Basic",
@@ -622,7 +622,7 @@ describe("MADRouter721 - ERC20", () => {
             "ipfs://cid/",
             splAddr,
             750,
-            []
+            [],
           );
         await r721.setFees(
           ethers.utils.parseEther("2.5"),

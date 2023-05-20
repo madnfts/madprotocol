@@ -1,9 +1,8 @@
-
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.16;
 
 import "forge-std/Test.sol";
-import {TwoFactorNFT, MADRouter721} from "./mocks/twoFactorNFT.sol";
+import { TwoFactorNFT, MADRouter721 } from "./mocks/twoFactorNFT.sol";
 
 contract TwoFactorNFTTest is Test {
     TwoFactorNFT public twoFactorNFT;
@@ -34,9 +33,7 @@ contract TwoFactorNFTTest is Test {
 
         // try to withdraw via the router
         madRouter721.withdraw();
-
     }
-
 }
 
 // Logs:

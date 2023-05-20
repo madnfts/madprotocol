@@ -232,20 +232,18 @@ describe("MADFactory1155", () => {
       );
       const basicAddr =
         await f1155.callStatic.getDeployedAddr("BasicSalt");
-      const tx = await f1155
-        .connect(acc02)
-        .createCollection(
-          1,
-          "BasicSalt",
-          // "1155Basic",
-          // "BASIC",
-          price,
-          1000,
-          "ipfs://cid/",
-          splAddr,
-          750,
-          []
-        );
+      const tx = await f1155.connect(acc02).createCollection(
+        1,
+        "BasicSalt",
+        // "1155Basic",
+        // "BASIC",
+        price,
+        1000,
+        "ipfs://cid/",
+        splAddr,
+        750,
+        [],
+      );
       const colID = await f1155.callStatic.getColID(
         basicAddr,
       );
@@ -256,35 +254,31 @@ describe("MADFactory1155", () => {
       const colInfo: Collection =
         await f1155.callStatic.colInfo(colID);
 
-      const fail1 = f1155
-        .connect(acc01)
-        .createCollection(
-          1,
-          "BasicSalt",
-          // "1155Basic",
-          // "BASIC",
-          price,
-          1000,
-          "ipfs://cid/",
-          splAddr,
-          750,
-          []
-        );
+      const fail1 = f1155.connect(acc01).createCollection(
+        1,
+        "BasicSalt",
+        // "1155Basic",
+        // "BASIC",
+        price,
+        1000,
+        "ipfs://cid/",
+        splAddr,
+        750,
+        [],
+      );
 
-      const fail2 = f1155
-        .connect(acc02)
-        .createCollection(
-          7,
-          "BasicSalt",
-          // "1155Basic",
-          // "BASIC",
-          price,
-          1000,
-          "ipfs://cid/",
-          splAddr,
-          750,
-          []
-        );
+      const fail2 = f1155.connect(acc02).createCollection(
+        7,
+        "BasicSalt",
+        // "1155Basic",
+        // "BASIC",
+        price,
+        1000,
+        "ipfs://cid/",
+        splAddr,
+        750,
+        [],
+      );
 
       expect(tx).to.be.ok;
       expect(storage).to.eq(colID);
@@ -353,7 +347,8 @@ describe("MADFactory1155", () => {
       await expect(
         f1155.setMarket(ethers.constants.AddressZero),
       ).to.be.revertedWithCustomError(
-        f1155, FactoryErrors.InvalidAddress,
+        f1155,
+        FactoryErrors.InvalidAddress,
       );
       expect(tx).to.be.ok;
       expect(owner.address).to.eq(
@@ -375,7 +370,8 @@ describe("MADFactory1155", () => {
       await expect(
         f1155.setSigner(ethers.constants.AddressZero),
       ).to.be.revertedWithCustomError(
-        f1155, FactoryErrors.InvalidAddress,
+        f1155,
+        FactoryErrors.InvalidAddress,
       );
     });
     it("Should update router's address", async () => {
@@ -393,7 +389,8 @@ describe("MADFactory1155", () => {
       await expect(
         f1155.setRouter(ethers.constants.AddressZero),
       ).to.be.revertedWithCustomError(
-        f1155, FactoryErrors.InvalidAddress,
+        f1155,
+        FactoryErrors.InvalidAddress,
       );
     });
     it("Should initialize paused and unpaused states", async () => {
@@ -415,7 +412,7 @@ describe("MADFactory1155", () => {
           "",
           dead,
           750,
-          []
+          [],
         ),
       ).to.be.revertedWith(FactoryErrors.Paused);
       await expect(
@@ -441,20 +438,18 @@ describe("MADFactory1155", () => {
         "MADSplitter1",
       );
 
-      await f1155
-        .connect(acc02)
-        .createCollection(
-          1,
-          "BasicSalt",
-          // "1155Basic",
-          // "BASIC",
-          price,
-          1000,
-          "ipfs://cid/",
-          splAddr,
-          750,
-          []
-        );
+      await f1155.connect(acc02).createCollection(
+        1,
+        "BasicSalt",
+        // "1155Basic",
+        // "BASIC",
+        price,
+        1000,
+        "ipfs://cid/",
+        splAddr,
+        750,
+        [],
+      );
 
       expect(await f1155.getIDsLength(acc02.address)).to.eq(
         1,
@@ -485,20 +480,18 @@ describe("MADFactory1155", () => {
       );
       const basicAddr =
         await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155
-        .connect(acc02)
-        .createCollection(
-          1,
-          "BasicSalt",
-          // "1155Basic",
-          // "BASIC",
-          price,
-          10,
-          "cid/id.json",
-          splAddr,
-          750,
-          []
-        );
+      await f1155.connect(acc02).createCollection(
+        1,
+        "BasicSalt",
+        // "1155Basic",
+        // "BASIC",
+        price,
+        10,
+        "cid/id.json",
+        splAddr,
+        750,
+        [],
+      );
       const colID = await f1155.callStatic.getColID(
         basicAddr,
       );
@@ -543,39 +536,35 @@ describe("MADFactory1155", () => {
       const basicAddr =
         await f1155.callStatic.getDeployedAddr("BasicSalt");
       await expect(
-        f1155
-          .connect(acc02)
-          .createCollection(
-            0,
-            "MinSalt",
-            // "1155Min",
-            // "MIN",
-            price,
-            1,
-            "cid/id.json",
-            splAddr,
-            750,
-            []
-          ),
+        f1155.connect(acc02).createCollection(
+          0,
+          "MinSalt",
+          // "1155Min",
+          // "MIN",
+          price,
+          1,
+          "cid/id.json",
+          splAddr,
+          750,
+          [],
+        ),
       ).to.be.revertedWithCustomError(
         f1155,
         FactoryErrors.AccessDenied,
       );
 
-      await f1155
-        .connect(acc02)
-        .createCollection(
-          1,
-          "BasicSalt",
-          // "1155Basic",
-          // "BASIC",
-          price,
-          10,
-          "cid/id.json",
-          splAddr,
-          750,
-          []
-        );
+      await f1155.connect(acc02).createCollection(
+        1,
+        "BasicSalt",
+        // "1155Basic",
+        // "BASIC",
+        price,
+        10,
+        "cid/id.json",
+        splAddr,
+        750,
+        [],
+      );
 
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -655,20 +644,18 @@ describe("MADFactory1155", () => {
       );
       const basicAddr =
         await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155
-        .connect(acc02)
-        .createCollection(
-          1,
-          "BasicSalt",
-          // "1155Basic",
-          // "BASIC",
-          price,
-          1,
-          "cid/id.json",
-          splAddr,
-          750,
-          []
-        );
+      await f1155.connect(acc02).createCollection(
+        1,
+        "BasicSalt",
+        // "1155Basic",
+        // "BASIC",
+        price,
+        1,
+        "cid/id.json",
+        splAddr,
+        750,
+        [],
+      );
       const colID = await f1155.callStatic.getColID(
         basicAddr,
       );

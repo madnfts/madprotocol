@@ -29,11 +29,14 @@ contract MockERC2981 is ERC2981, Owned(msg.sender) {
     //     emit RoyaltyFeeSet(_royaltyFee);
     // }
 
-    function royaltyInfo(
-        uint256,
-        uint256 salePrice
-    ) public view virtual override(ERC2981) returns (address receiver, uint256 royaltyAmount) {
+    function royaltyInfo(uint256, uint256 salePrice)
+        public
+        view
+        virtual
+        override(ERC2981)
+        returns (address receiver, uint256 royaltyAmount)
+    {
         receiver = payable(_royaltyRecipient);
-        royaltyAmount = (salePrice * _royaltyFee) / 10000;
+        royaltyAmount = (salePrice * _royaltyFee) / 10_000;
     }
 }

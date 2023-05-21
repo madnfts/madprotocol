@@ -11,11 +11,7 @@ interface IERC1155 {
     /// @dev Equivalent to multiple {TransferSingle} events, where `operator`, `from`
     /// and `to` are the same for all transfers.
     event TransferBatch(
-        address indexed operator,
-        address indexed from,
-        address indexed to,
-        uint256[] ids,
-        uint256[] values
+        address indexed operator, address indexed from, address indexed to, uint256[] ids, uint256[] values
     );
 
     /// @dev Emitted when `account` grants or revokes permission to `operator` to
@@ -26,10 +22,10 @@ interface IERC1155 {
     function balanceOf(address account, uint256 id) external view returns (uint256);
 
     /// @dev Batched version of {balanceOf}.
-    function balanceOfBatch(
-        address[] calldata accounts,
-        uint256[] calldata ids
-    ) external view returns (uint256[] memory);
+    function balanceOfBatch(address[] calldata accounts, uint256[] calldata ids)
+        external
+        view
+        returns (uint256[] memory);
 
     /// @notice Transfers `amount` tokens of token type `id` from `from` to `to`,
     /// making sure the recipient can receive the tokens.
@@ -55,10 +51,10 @@ interface IERC1155 {
     function isApprovedForAll(address account, address operator) external view returns (bool);
 
     /// @notice Queries EIP2981 royalty info for marketplace royalty payment enforcement.
-    function royaltyInfo(
-        uint256 tokenId,
-        uint256 salePrice
-    ) external view returns (address receiver, uint256 royaltyAmount);
+    function royaltyInfo(uint256 tokenId, uint256 salePrice)
+        external
+        view
+        returns (address receiver, uint256 royaltyAmount);
 
     /// @notice Queries for ERC165 introspection support.
     function supportsInterface(bytes4 interfaceId) external view returns (bool);

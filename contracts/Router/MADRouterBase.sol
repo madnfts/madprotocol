@@ -75,11 +75,7 @@ abstract contract MADRouterBase is MAD, MADBase, RouterEvents, FeeOracle {
     /// @param sigHash MINSAFEMINT | MINBURN
     function feeLookup(bytes4 sigHash) external view override(FeeOracle) returns (uint256 fee) {
         assembly {
-            for {
-
-            } 1 {
-
-            } {
+            for { } 1 { } {
                 if eq(MINSAFEMINT, sigHash) {
                     fee := sload(feeMint.slot)
                     break
@@ -162,5 +158,12 @@ abstract contract MADRouterBase is MAD, MADBase, RouterEvents, FeeOracle {
         }
 
         emit FeesUpdated(_feeMint, _feeBurn);
+    }
+
+    // MODIFIERS
+    function checkTokenType(uint256 tokenType) {
+        if (_tokenType != 1) {
+            revert("INVALID_TYPE");
+        }
     }
 }

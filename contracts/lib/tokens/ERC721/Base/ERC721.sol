@@ -5,7 +5,8 @@ pragma solidity 0.8.19;
 /// @notice Simple ERC721 implementation with storage hitchhiking.
 /// @author Solady (https://github.com/vectorized/solady/blob/main/src/tokens/ERC721.sol)
 /// @author Modified from Solmate (https://github.com/transmissions11/solmate/blob/main/src/tokens/ERC721.sol)
-/// @author Modified from OpenZeppelin (https://github.com/OpenZeppelin/openzeppelin-contracts/tree/master/contracts/token/ERC721/ERC721.sol)
+/// @author Modified from OpenZeppelin
+/// (https://github.com/OpenZeppelin/openzeppelin-contracts/tree/master/contracts/token/ERC721/ERC721.sol)
 abstract contract ERC721 {
     /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
     /*                         CONSTANTS                          */
@@ -264,9 +265,7 @@ abstract contract ERC721 {
                     }
                 }
                 // Delete the approved address if any.
-                if approvedAddress {
-                    sstore(add(1, ownershipSlot), 0)
-                }
+                if approvedAddress { sstore(add(1, ownershipSlot), 0) }
             }
             // Update with the new owner.
             sstore(ownershipSlot, xor(ownershipPacked, xor(from, to)))
@@ -530,9 +529,7 @@ abstract contract ERC721 {
                     }
                 }
                 // Delete the approved address if any.
-                if approvedAddress {
-                    sstore(add(1, ownershipSlot), 0)
-                }
+                if approvedAddress { sstore(add(1, ownershipSlot), 0) }
             }
             // Clear the owner.
             sstore(ownershipSlot, xor(ownershipPacked, owner))
@@ -575,9 +572,7 @@ abstract contract ERC721 {
             if iszero(eq(account, owner)) {
                 mstore(0x00, owner)
                 // Check if `account` is approved to
-                if iszero(sload(keccak256(0x0c, 0x30))) {
-                    result := eq(account, sload(add(1, ownershipSlot)))
-                }
+                if iszero(sload(keccak256(0x0c, 0x30))) { result := eq(account, sload(add(1, ownershipSlot))) }
             }
         }
     }
@@ -722,9 +717,7 @@ abstract contract ERC721 {
                     }
                 }
                 // Delete the approved address if any.
-                if approvedAddress {
-                    sstore(add(1, ownershipSlot), 0)
-                }
+                if approvedAddress { sstore(add(1, ownershipSlot), 0) }
             }
             // Update with the new owner.
             sstore(ownershipSlot, xor(ownershipPacked, xor(from, to)))
@@ -832,9 +825,7 @@ abstract contract ERC721 {
             mstore(add(m, 0x80), 0x80)
             let n := mload(data)
             mstore(add(m, 0xa0), n)
-            if n {
-                pop(staticcall(gas(), 4, add(data, 0x20), n, add(m, 0xc0), n))
-            }
+            if n { pop(staticcall(gas(), 4, add(data, 0x20), n, add(m, 0xc0), n)) }
             // Revert if the call reverts.
             if iszero(call(gas(), to, 0, add(m, 0x1c), add(n, 0xa4), m, 0x20)) {
                 if returndatasize() {

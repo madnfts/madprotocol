@@ -9,13 +9,11 @@ abstract contract ERC1155TokenReceiver {
         return ERC1155TokenReceiver.onERC1155Received.selector;
     }
 
-    function onERC1155BatchReceived(
-        address,
-        address,
-        uint256[] calldata,
-        uint256[] calldata,
-        bytes calldata
-    ) external virtual returns (bytes4) {
+    function onERC1155BatchReceived(address, address, uint256[] calldata, uint256[] calldata, bytes calldata)
+        external
+        virtual
+        returns (bytes4)
+    {
         return ERC1155TokenReceiver.onERC1155BatchReceived.selector;
     }
 }
@@ -25,23 +23,21 @@ abstract contract ERC1155TokenReceiver {
 contract ERC1155Holder is ERC1155TokenReceiver {
     /// @dev Implementation of the {ERC1155TokenReceiver} abstract contract
     /// that allows a contract to hold ERC1155 tokens.
-    function onERC1155Received(
-        address,
-        address,
-        uint256,
-        uint256,
-        bytes memory
-    ) public virtual override returns (bytes4) {
+    function onERC1155Received(address, address, uint256, uint256, bytes memory)
+        public
+        virtual
+        override
+        returns (bytes4)
+    {
         return this.onERC1155Received.selector;
     }
 
-    function onERC1155BatchReceived(
-        address,
-        address,
-        uint256[] memory,
-        uint256[] memory,
-        bytes memory
-    ) public virtual override returns (bytes4) {
+    function onERC1155BatchReceived(address, address, uint256[] memory, uint256[] memory, bytes memory)
+        public
+        virtual
+        override
+        returns (bytes4)
+    {
         return this.onERC1155BatchReceived.selector;
     }
 }

@@ -65,7 +65,7 @@ abstract contract MADMarketplaceBase is MAD, MADBase, MarketplaceEventsAndErrors
             300, // 5 min
             300, // 5 min
             20, // 5% (1/20th)
-            31536000 // 24 months
+            31_536_000 // 24 months
         );
 
         swapRouter = ISwapRouter(_swapRouter);
@@ -79,7 +79,7 @@ abstract contract MADMarketplaceBase is MAD, MADBase, MarketplaceEventsAndErrors
         }
     }
 
-    receive() external payable {}
+    receive() external payable { }
 
     ////////////////////////////////////////////////////////////////
     //                        INTERNAL FX                          //
@@ -315,11 +315,10 @@ abstract contract MADMarketplaceBase is MAD, MADBase, MarketplaceEventsAndErrors
         // C.3 & D.3 BlockHat Audit
         // Allow anything greater than 10 and less than the amount configured.
         require(
-            (_minAuctionIncrement >= 10 &&
-                _minOrderDuration >= 10 &&
-                _minAuctionIncrement <= minAuctionIncrementMAX &&
-                _minOrderDuration <= minOrderDurationtMAX &&
-                _minBidValue > 0) && _maxOrderDuration >= _minOrderDuration,
+            (
+                _minAuctionIncrement >= 10 && _minOrderDuration >= 10 && _minAuctionIncrement <= minAuctionIncrementMAX
+                    && _minOrderDuration <= minOrderDurationtMAX && _minBidValue > 0
+            ) && _maxOrderDuration >= _minOrderDuration,
             "Invalid Settings"
         );
 

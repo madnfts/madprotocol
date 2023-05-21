@@ -71,7 +71,8 @@ abstract contract MADFactoryBase is MAD, MADBase, FactoryEventsAndErrorsBase, Fa
 
     /// @notice Splitter deployment pusher.
     /// @dev Function Sighash := 0x9e5c4b70
-    /// @param _splitterSalt Nonce/Entropy factor used by CREATE3 method. Must be always different to avoid address collision.
+    /// @param _splitterSalt Nonce/Entropy factor used by CREATE3 method. Must be always different to avoid address
+    /// collision.
     /// to generate payment splitter deployment address.
     /// @param _ambassador User may choose from one of the whitelisted addresses to donate
     /// 1%-20% of secondary sales royalties (optional, will be disregarded if left empty(value == address(0)).

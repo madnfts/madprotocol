@@ -36,7 +36,7 @@ library SafeTransferLib {
     /// @dev Suggested gas stipend for contract receiving ETH to perform a few
     /// storage reads and writes, but low enough to prevent griefing.
     /// Multiply by a small constant (e.g. 2), if needed.
-    uint256 internal constant _GAS_STIPEND_NO_GRIEF = 100000;
+    uint256 internal constant _GAS_STIPEND_NO_GRIEF = 100_000;
 
     /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
     /*                       ETH OPERATIONS                       */
@@ -84,9 +84,7 @@ library SafeTransferLib {
                 // Compatible with `SENDALL`: https://eips.ethereum.org/EIPS/eip-4758
                 if iszero(create(amount, 0x0b, 0x16)) {
                     // For better gas estimation.
-                    if iszero(gt(gas(), 1000000)) {
-                        revert(0, 0)
-                    }
+                    if iszero(gt(gas(), 1000000)) { revert(0, 0) }
                 }
             }
         }
@@ -121,9 +119,7 @@ library SafeTransferLib {
                 // Compatible with `SENDALL`: https://eips.ethereum.org/EIPS/eip-4758
                 if iszero(create(amount, 0x0b, 0x16)) {
                     // For better gas estimation.
-                    if iszero(gt(gas(), 1000000)) {
-                        revert(0, 0)
-                    }
+                    if iszero(gt(gas(), 1000000)) { revert(0, 0) }
                 }
             }
         }
@@ -348,14 +344,15 @@ library SafeTransferLib {
             mstore(0x14, account) // Store the `account` argument.
             // Store the function selector of `balanceOf(address)`.
             mstore(0x00, 0x70a08231000000000000000000000000)
-            amount := mul(
-                mload(0x20),
-                and(
-                    // The arguments of `and` are evaluated from right to left.
-                    gt(returndatasize(), 0x1f), // At least 32 bytes returned.
-                    staticcall(gas(), token, 0x10, 0x24, 0x20, 0x20)
+            amount :=
+                mul(
+                    mload(0x20),
+                    and(
+                        // The arguments of `and` are evaluated from right to left.
+                        gt(returndatasize(), 0x1f), // At least 32 bytes returned.
+                        staticcall(gas(), token, 0x10, 0x24, 0x20, 0x20)
+                    )
                 )
-            )
         }
     }
 }

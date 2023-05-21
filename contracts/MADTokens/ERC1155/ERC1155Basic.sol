@@ -33,10 +33,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    constructor(
-        Types.ColArgs memory args,
-        bytes32[] memory _extra
-    )
+    constructor(Types.ColArgs memory args, bytes32[] memory _extra)
         /*  */
         ImplBase(args._baseURI, args._price, args._maxSupply, args._splitter, args._fraction, args._router, args._erc20)
     /*  */
@@ -79,12 +76,11 @@ contract ERC1155Basic is ERC1155, ImplBase {
     }
 
     /// @dev Transfer event emited by parent ERC1155 contract.
-    function mintBatchTo(
-        address to,
-        uint128[] memory ids,
-        uint128[] memory amounts,
-        address erc20Owner
-    ) external payable authorised {
+    function mintBatchTo(address to, uint128[] memory ids, uint128[] memory amounts, address erc20Owner)
+        external
+        payable
+        authorised
+    {
         uint256 len = ids.length;
         _hasReachedMax(len, maxSupply);
 
@@ -104,12 +100,11 @@ contract ERC1155Basic is ERC1155, ImplBase {
     }
 
     /// @dev Transfer events emited by parent ERC1155 contract.
-    function burn(
-        address[] memory from,
-        uint128[] memory ids,
-        uint128[] memory balances,
-        address erc20Owner
-    ) external payable authorised {
+    function burn(address[] memory from, uint128[] memory ids, uint128[] memory balances, address erc20Owner)
+        external
+        payable
+        authorised
+    {
         (uint256 fee, bool method) = _ownerFeeCheck(0x44df8e70, erc20Owner);
         _ownerFeeHandler(method, fee, erc20Owner);
 
@@ -124,7 +119,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
         }
 
         uint256 i;
-        for (i; i < len; ) {
+        for (i; i < len;) {
             _burn(from[i], uint256(ids[i]), uint256(balances[i]));
             unchecked {
                 ++i;
@@ -134,12 +129,11 @@ contract ERC1155Basic is ERC1155, ImplBase {
     }
 
     /// @dev Transfer event emited by parent ERC1155 contract.
-    function burnBatch(
-        address from,
-        uint128[] memory ids,
-        uint128[] memory amounts,
-        address erc20Owner
-    ) external payable authorised {
+    function burnBatch(address from, uint128[] memory ids, uint128[] memory amounts, address erc20Owner)
+        external
+        payable
+        authorised
+    {
         (uint256 fee, bool method) = _ownerFeeCheck(0x44df8e70, erc20Owner);
         _ownerFeeHandler(method, fee, erc20Owner);
 
@@ -209,9 +203,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
                 } {
                     result := add(result, calldataload(i))
                     i := add(i, 0x20)
-                    if iszero(lt(i, end)) {
-                        break
-                    }
+                    if iszero(lt(i, end)) { break }
                 }
             }
         }
@@ -294,9 +286,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
             }
             let iLoc := add(ids, 32)
             let aLoc := add(amounts, 32)
-            for {
-                let end := add(iLoc, shl(5, idsLen))
-            } iszero(eq(iLoc, end)) {
+            for { let end := add(iLoc, shl(5, idsLen)) } iszero(eq(iLoc, end)) {
                 iLoc := add(iLoc, 32)
                 aLoc := add(aLoc, 32)
             } {
@@ -341,9 +331,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
             }
             let iLoc := add(ids, 32)
             let aLoc := add(amounts, 32)
-            for {
-                let end := add(iLoc, shl(5, idsLen))
-            } iszero(eq(iLoc, end)) {
+            for { let end := add(iLoc, shl(5, idsLen)) } iszero(eq(iLoc, end)) {
                 iLoc := add(iLoc, 32)
                 aLoc := add(aLoc, 32)
             } {
@@ -364,13 +352,13 @@ contract ERC1155Basic is ERC1155, ImplBase {
 
     function supportsInterface(bytes4 interfaceId) public pure virtual override(ERC1155, ERC2981) returns (bool) {
         return
-            // ERC165 Interface ID for ERC165
-            interfaceId == 0x01ffc9a7 ||
-            // ERC165 Interface ID for ERC1155
-            interfaceId == 0xd9b67a26 ||
-            // ERC165 Interface ID for ERC1155MetadataURI
-            interfaceId == 0x0e89341c ||
-            // ERC165 Interface ID for ERC2981
-            interfaceId == 0x2a55205a;
+        // ERC165 Interface ID for ERC165
+        interfaceId == 0x01ffc9a7
+        // ERC165 Interface ID for ERC1155
+        || interfaceId == 0xd9b67a26
+        // ERC165 Interface ID for ERC1155MetadataURI
+        || interfaceId == 0x0e89341c
+        // ERC165 Interface ID for ERC2981
+        || interfaceId == 0x2a55205a;
     }
 }

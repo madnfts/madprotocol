@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.19;
 
-import {FactoryEventsAndErrors721} from "contracts/Shared/EventsAndErrors.sol";
+import { FactoryEventsAndErrors721 } from "contracts/Shared/EventsAndErrors.sol";
 import {
     MADFactoryBase,
     FactoryVerifier,
@@ -32,7 +32,7 @@ contract MADFactory721 is MADFactoryBase, FactoryEventsAndErrors721 {
 
     constructor(address _marketplace, address _signer, address _paymentTokenAddress)
         MADFactoryBase(_marketplace, _signer, _paymentTokenAddress)
-    {}
+    { }
 
     /// @notice Core public ERC721 token types deployment pusher.
     /// @dev Function Sighash := 0x73fd6808

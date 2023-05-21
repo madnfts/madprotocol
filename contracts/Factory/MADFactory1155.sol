@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.19;
 
-import {FactoryEventsAndErrors1155} from "contracts/Shared/EventsAndErrors.sol";
+import { FactoryEventsAndErrors1155 } from "contracts/Shared/EventsAndErrors.sol";
 import {
     MADFactoryBase,
     FactoryVerifier,

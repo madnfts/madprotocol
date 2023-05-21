@@ -6,7 +6,14 @@ import { ERC2981 } from "contracts/lib/tokens/common/ERC2981.sol";
 import { TwoFactor } from "contracts/lib/auth/TwoFactor.sol";
 import { Strings } from "contracts/lib/utils/Strings.sol";
 import { PaymentManager } from "contracts/MADTokens/common/PaymentManager.sol";
-import { ImplBaseEventsAndErrors, _BASE_URI_LOCKED, _PUBLIC_MINT_STATE_SET, _BASE_URI_SET, _ROYALTY_FEE_SET, _ROYALTY_RECIPIENT_SET } from "contracts/MADTokens/common/interfaces/ImplBaseEventsAndErrors.sol";
+import {
+    ImplBaseEventsAndErrors,
+    _BASE_URI_LOCKED,
+    _PUBLIC_MINT_STATE_SET,
+    _BASE_URI_SET,
+    _ROYALTY_FEE_SET,
+    _ROYALTY_RECIPIENT_SET
+} from "contracts/MADTokens/common/interfaces/ImplBaseEventsAndErrors.sol";
 
 abstract contract ImplBase is ERC2981, ImplBaseEventsAndErrors, TwoFactor, PaymentManager {
     bytes32 constant _BASE_URI_SLOT = /*  */ 0xdd05fcb58e4c0a1a429c1a9d6607c399731f1ef0b81be85c3f7701c0333c82fc;
@@ -138,12 +145,15 @@ abstract contract ImplBase is ERC2981, ImplBaseEventsAndErrors, TwoFactor, Payme
     //                           VIEW FX                          //
     ////////////////////////////////////////////////////////////////
 
-    function royaltyInfo(
-        uint256,
-        uint256 salePrice
-    ) public view virtual override(ERC2981) returns (address receiver, uint256 royaltyAmount) {
+    function royaltyInfo(uint256, uint256 salePrice)
+        public
+        view
+        virtual
+        override(ERC2981)
+        returns (address receiver, uint256 royaltyAmount)
+    {
         receiver = payable(splitter);
-        royaltyAmount = (salePrice * _royaltyFee) / 10000;
+        royaltyAmount = (salePrice * _royaltyFee) / 10_000;
     }
 
     function liveSupply() public view returns (uint256 _liveSupply) {
@@ -221,9 +231,7 @@ abstract contract ImplBase is ERC2981, ImplBaseEventsAndErrors, TwoFactor, Payme
 
     function _setStringCalldata(string calldata _string, bytes32 _slot) internal {
         assembly {
-            if lt(0x1f, _string.length) {
-                invalid()
-            }
+            if lt(0x1f, _string.length) { invalid() }
             sstore(_slot, or(calldataload(0x44), shl(0x01, calldataload(0x24))))
         }
     }
@@ -231,9 +239,7 @@ abstract contract ImplBase is ERC2981, ImplBaseEventsAndErrors, TwoFactor, Payme
     function _setStringMemory(string memory _string, bytes32 _slot) internal {
         assembly {
             let len := mload(_string)
-            if lt(0x1f, len) {
-                invalid()
-            }
+            if lt(0x1f, len) { invalid() }
             sstore(_slot, or(mload(add(_string, 0x20)), shl(0x01, len)))
         }
     }
@@ -265,9 +271,7 @@ abstract contract ImplBase is ERC2981, ImplBaseEventsAndErrors, TwoFactor, Payme
         assembly {
             let _router := shr(12, sload(router.slot))
             switch iszero(extcodesize(_router))
-            case 1 {
-                value := 0
-            }
+            case 1 { value := 0 }
             case 0 {
                 pop(staticcall(gas(), _router, add(c, 32), mload(c), 0, 32))
                 value := mload(0)

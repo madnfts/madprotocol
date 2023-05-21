@@ -47,7 +47,7 @@ abstract contract PaymentManager {
         uint256 _val = _dispatchFees(_recipient, ERC20(address(0)));
 
         // Transfer splitter funds to shareholders
-        for (uint256 i; i < len; ) {
+        for (uint256 i; i < len;) {
             address addr = splitter._payees(i);
             uint256 share = splitter._shares(addr);
             addrs[i] = addr;
@@ -75,7 +75,7 @@ abstract contract PaymentManager {
         uint256 _val = _dispatchFees(_recipient, _token);
 
         // Transfer splitter funds to shareholders
-        for (uint256 i; i < len; ) {
+        for (uint256 i; i < len;) {
             address addr = splitter._payees(i);
             uint256 share = splitter._shares(addr);
             addrs[i] = addr;
@@ -139,10 +139,11 @@ abstract contract PaymentManager {
     //                     INTERNAL HELPERS                       //
     ////////////////////////////////////////////////////////////////
 
-    function _publicMintPriceCheck(
-        uint256 _price,
-        uint256 _amount
-    ) internal view returns (uint256 _fee, uint256 _value, bool _method) {
+    function _publicMintPriceCheck(uint256 _price, uint256 _amount)
+        internal
+        view
+        returns (uint256 _fee, uint256 _value, bool _method)
+    {
         // if ((_price * _amount) + _fee != value)
         // revert WrongPrice();
 
@@ -197,5 +198,5 @@ abstract contract PaymentManager {
         }
     }
 
-    function _getFeeValue(bytes4 _method) internal view virtual returns (uint256 value) {}
+    function _getFeeValue(bytes4 _method) internal view virtual returns (uint256 value) { }
 }

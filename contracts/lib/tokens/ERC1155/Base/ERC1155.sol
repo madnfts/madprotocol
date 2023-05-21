@@ -5,7 +5,8 @@ pragma solidity 0.8.19;
 /// @notice Simple ERC1155 implementation.
 /// @author Modified from Solady (https://github.com/vectorized/solady/blob/main/src/tokens/ERC1155.sol)
 /// @author Modified from Solmate (https://github.com/transmissions11/solmate/blob/main/src/tokens/ERC1155.sol)
-/// @author Modified from OpenZeppelin (https://github.com/OpenZeppelin/openzeppelin-contracts/tree/master/contracts/token/ERC1155/ERC1155.sol)
+/// @author Modified from OpenZeppelin
+/// (https://github.com/OpenZeppelin/openzeppelin-contracts/tree/master/contracts/token/ERC1155/ERC1155.sol)
 abstract contract ERC1155 {
     /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
     /*                       CUSTOM ERRORS                        */
@@ -37,21 +38,13 @@ abstract contract ERC1155 {
     /// @dev Emitted when `amount` of token `id` is transferred
     /// from `from` to `to` by `operator`.
     event TransferSingle(
-        address indexed operator,
-        address indexed from,
-        address indexed to,
-        uint256 id,
-        uint256 amount
+        address indexed operator, address indexed from, address indexed to, uint256 id, uint256 amount
     );
 
     /// @dev Emitted when `amounts` of token `ids` are transferred
     /// from `from` to `to` by `operator`.
     event TransferBatch(
-        address indexed operator,
-        address indexed from,
-        address indexed to,
-        uint256[] ids,
-        uint256[] amounts
+        address indexed operator, address indexed from, address indexed to, uint256[] ids, uint256[] amounts
     );
 
     /// @dev Emitted when `owner` enables or disables `operator` to manage all of their tokens.
@@ -168,13 +161,10 @@ abstract contract ERC1155 {
     ///   {ERC1155-onERC1155Reveived}, which is called upon a batch transfer.
     ///
     /// Emits a {Transfer} event.
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 id,
-        uint256 amount,
-        bytes calldata data
-    ) public virtual {
+    function safeTransferFrom(address from, address to, uint256 id, uint256 amount, bytes calldata data)
+        public
+        virtual
+    {
         // if (_useBeforeTokenTransfer()) {
         //     _beforeTokenTransfer(from, to, _single(id), _single(amount), data);
         // }
@@ -313,11 +303,7 @@ abstract contract ERC1155 {
             // Loop through all the `ids` and update the balances.
             {
                 let end := shl(5, ids.length)
-                for {
-                    let i := 0
-                } iszero(eq(i, end)) {
-                    i := add(i, 0x20)
-                } {
+                for { let i := 0 } iszero(eq(i, end)) { i := add(i, 0x20) } {
                     let amount := calldataload(add(amounts.offset, i))
                     // Subtract and store the updated balance of `from`.
                     {
@@ -415,10 +401,12 @@ abstract contract ERC1155 {
     ///
     /// Requirements:
     /// - `owners` and `ids` must have the same length.
-    function balanceOfBatch(
-        address[] calldata owners,
-        uint256[] calldata ids
-    ) public view virtual returns (uint256[] memory balances) {
+    function balanceOfBatch(address[] calldata owners, uint256[] calldata ids)
+        public
+        view
+        virtual
+        returns (uint256[] memory balances)
+    {
         /// @solidity memory-safe-assembly
         assembly {
             if iszero(eq(ids.length, owners.length)) {
@@ -431,11 +419,7 @@ abstract contract ERC1155 {
             let end := shl(5, ids.length)
             mstore(0x40, add(end, o))
             // Loop through all the `ids` and load the balances.
-            for {
-                let i := 0
-            } iszero(eq(i, end)) {
-                i := add(i, 0x20)
-            } {
+            for { let i := 0 } iszero(eq(i, end)) { i := add(i, 0x20) } {
                 let owner := calldataload(add(owners.offset, i))
                 mstore(0x20, or(_ERC1155_MASTER_SLOT_SEED, shl(96, owner)))
                 mstore(0x00, calldataload(add(ids.offset, i)))
@@ -517,12 +501,10 @@ abstract contract ERC1155 {
     ///   {ERC1155-onERC1155BatchReveived}, which is called upon a batch transfer.
     ///
     /// Emits a {TransferBatch} event.
-    function _batchMint(
-        address to,
-        uint256[] memory ids,
-        uint256[] memory amounts,
-        bytes memory data
-    ) internal virtual {
+    function _batchMint(address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
+        internal
+        virtual
+    {
         // if (_useBeforeTokenTransfer()) {
         //     _beforeTokenTransfer(address(0), to, ids, amounts, data);
         // }
@@ -544,11 +526,7 @@ abstract contract ERC1155 {
             // Loop through all the `ids` and update the balances.
             {
                 let end := shl(5, mload(ids))
-                for {
-                    let i := 0
-                } iszero(eq(i, end)) {
-
-                } {
+                for { let i := 0 } iszero(eq(i, end)) { } {
                     i := add(i, 0x20)
                     let amount := mload(add(amounts, i))
                     // Increase and store the updated balance of `to`.
@@ -690,11 +668,7 @@ abstract contract ERC1155 {
             // Loop through all the `ids` and update the balances.
             {
                 let end := shl(5, mload(ids))
-                for {
-                    let i := 0
-                } iszero(eq(i, end)) {
-
-                } {
+                for { let i := 0 } iszero(eq(i, end)) { } {
                     i := add(i, 0x20)
                     let amount := mload(add(amounts, i))
                     // Increase and store the updated balance of `to`.
@@ -778,14 +752,10 @@ abstract contract ERC1155 {
     ///   {ERC1155-onERC1155Reveived}, which is called upon a batch transfer.
     ///
     /// Emits a {Transfer} event.
-    function _safeTransfer(
-        address by,
-        address from,
-        address to,
-        uint256 id,
-        uint256 amount,
-        bytes memory data
-    ) internal virtual {
+    function _safeTransfer(address by, address from, address to, uint256 id, uint256 amount, bytes memory data)
+        internal
+        virtual
+    {
         // if (_useBeforeTokenTransfer()) {
         //     _beforeTokenTransfer(from, to, _single(id), _single(amount), data);
         // }
@@ -911,11 +881,7 @@ abstract contract ERC1155 {
             // Loop through all the `ids` and update the balances.
             {
                 let end := shl(5, mload(ids))
-                for {
-                    let i := 0
-                } iszero(eq(i, end)) {
-
-                } {
+                for { let i := 0 } iszero(eq(i, end)) { } {
                     i := add(i, 0x20)
                     let amount := mload(add(amounts, i))
                     // Subtract and store the updated balance of `from`.
@@ -972,13 +938,13 @@ abstract contract ERC1155 {
     /*                    HOOKS FOR OVERRIDING                    */
     /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
 
-    function _beforeTokenMint(uint256 id, uint256 amount) internal virtual {}
+    function _beforeTokenMint(uint256 id, uint256 amount) internal virtual { }
 
-    function _beforeTokenBatchMint(uint256[] memory ids, uint256[] memory amounts) internal virtual {}
+    function _beforeTokenBatchMint(uint256[] memory ids, uint256[] memory amounts) internal virtual { }
 
-    function _beforeTokenBurn(uint256 id, uint256 amount) internal virtual {}
+    function _beforeTokenBurn(uint256 id, uint256 amount) internal virtual { }
 
-    function _beforeTokenBatchBurn(uint256[] memory ids, uint256[] memory amounts) internal virtual {}
+    function _beforeTokenBatchBurn(uint256[] memory ids, uint256[] memory amounts) internal virtual { }
 
     // /// @dev Override this function to return true if `_beforeTokenTransfer` is used.
     // /// The is to help the compiler avoid producing dead bytecode.
@@ -1060,9 +1026,7 @@ abstract contract ERC1155 {
             mstore(add(m, 0xa0), 0xa0)
             let n := mload(data)
             mstore(add(m, 0xc0), n)
-            if n {
-                pop(staticcall(gas(), 4, add(data, 0x20), n, add(m, 0xe0), n))
-            }
+            if n { pop(staticcall(gas(), 4, add(data, 0x20), n, add(m, 0xe0), n)) }
             // Revert if the call reverts.
             if iszero(call(gas(), to, 0, add(m, 0x1c), add(0xc4, n), m, 0x20)) {
                 if returndatasize() {

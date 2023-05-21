@@ -10,11 +10,9 @@ import { Types } from "contracts/Shared/Types.sol";
 contract MADMarketplace721 is MADMarketplaceBase, MarketplaceEventsAndErrors721, ERC721Holder {
     using Types for Types.Order721;
 
-    constructor(
-        address _recipient,
-        address _paymentTokenAddress,
-        address _swapRouter
-    ) MADMarketplaceBase(_recipient, _paymentTokenAddress, _swapRouter) {}
+    constructor(address _recipient, address _paymentTokenAddress, address _swapRouter)
+        MADMarketplaceBase(_recipient, _paymentTokenAddress, _swapRouter)
+    { }
 
     ////////////////////////////////////////////////////////////////
     //                           STORAGE                          //
@@ -41,13 +39,9 @@ contract MADMarketplace721 is MADMarketplaceBase, MarketplaceEventsAndErrors721,
 
     /// @notice Dutch Auction listing order public pusher.
     /// @dev Function Signature := 0x205e409c
-    function dutchAuction(
-        IERC721 _token,
-        uint256 _id,
-        uint256 _startPrice,
-        uint256 _endPrice,
-        uint256 _endTime
-    ) external {
+    function dutchAuction(IERC721 _token, uint256 _id, uint256 _startPrice, uint256 _endPrice, uint256 _endTime)
+        external
+    {
         _exceedsMaxEP(_startPrice, _endPrice);
         _makeOrder(1, _token, _id, _startPrice, _endPrice, _endTime);
     }
@@ -133,7 +127,7 @@ contract MADMarketplace721 is MADMarketplaceBase, MarketplaceEventsAndErrors721,
                     currentPrice,
                     _order,
                     msg.sender // ,
-                    //key
+                        //key
                 );
             }
             // case for external tokens without ERC2981 support
@@ -143,7 +137,7 @@ contract MADMarketplace721 is MADMarketplaceBase, MarketplaceEventsAndErrors721,
                     currentPrice,
                     _order,
                     msg.sender // ,
-                    // key
+                        // key
                 );
             }
         }
@@ -175,7 +169,7 @@ contract MADMarketplace721 is MADMarketplaceBase, MarketplaceEventsAndErrors721,
                     order.lastBidPrice,
                     _order,
                     order.lastBidder // ,
-                    // key
+                        // key
                 );
             }
             // case for external tokens without ERC2981 support
@@ -185,7 +179,7 @@ contract MADMarketplace721 is MADMarketplaceBase, MarketplaceEventsAndErrors721,
                     order.lastBidPrice,
                     _order,
                     order.lastBidder // ,
-                    // key
+                        // key
                 );
             }
         }
@@ -244,17 +238,7 @@ contract MADMarketplace721 is MADMarketplaceBase, MarketplaceEventsAndErrors721,
 
         bytes32 hash = _hash(_token, _id, msg.sender);
         orderInfo[hash] = Types.Order721(
-            _id,
-            _startPrice,
-            _endPrice,
-            block.timestamp,
-            _endTime,
-            0,
-            address(0),
-            _token,
-            msg.sender,
-            _orderType,
-            false
+            _id, _startPrice, _endPrice, block.timestamp, _endTime, 0, address(0), _token, msg.sender, _orderType, false
         );
         orderIdByToken[_token][_id].push(hash);
         orderIdBySeller[msg.sender].push(hash);
@@ -293,13 +277,9 @@ contract MADMarketplace721 is MADMarketplaceBase, MarketplaceEventsAndErrors721,
         return interfaceCheck(account, 0x01ffc9a7) && !interfaceCheck(account, 0xffffffff);
     }
 
-    function _intPath(
-        Types.Order721 storage _order,
-        uint256 _price,
-        bytes32 _orderId,
-        address _to,
-        uint256 key
-    ) internal {
+    function _intPath(Types.Order721 storage _order, uint256 _price, bytes32 _orderId, address _to, uint256 key)
+        internal
+    {
         // load royalty info query to mem
         uint16 feePercent = _feeResolver(key, _order.tokenId);
         // load royalty info query to mem
@@ -386,9 +366,7 @@ contract MADMarketplace721 is MADMarketplaceBase, MarketplaceEventsAndErrors721,
                 sstore(y, 1)
                 _feePercent := sload(royaltyFee.slot)
             }
-            case 1 {
-                _feePercent := sload(maxFee.slot)
-            }
+            case 1 { _feePercent := sload(maxFee.slot) }
         }
     }
 
@@ -407,9 +385,7 @@ contract MADMarketplace721 is MADMarketplaceBase, MarketplaceEventsAndErrors721,
             mstore(0x80, orderType)
             switch mload(0x80)
             // Fixed Price
-            case 0 {
-                price := and(sload(add(order.slot, 1)), shr(32, not(0)))
-            }
+            case 0 { price := and(sload(add(order.slot, 1)), shr(32, not(0))) }
             // Dutch Auction
             case 1 {
                 let _startPrice := and(sload(add(order.slot, 1)), shr(32, not(0)))
@@ -423,12 +399,8 @@ contract MADMarketplace721 is MADMarketplaceBase, MarketplaceEventsAndErrors721,
             case 2 {
                 let lastBidPrice := and(sload(add(order.slot, 5)), shr(32, not(0)))
                 switch iszero(lastBidPrice)
-                case 1 {
-                    price := and(sload(add(order.slot, 1)), shr(32, not(0)))
-                }
-                case 0 {
-                    price := lastBidPrice
-                }
+                case 1 { price := and(sload(add(order.slot, 1)), shr(32, not(0))) }
+                case 0 { price := lastBidPrice }
             }
         }
     }

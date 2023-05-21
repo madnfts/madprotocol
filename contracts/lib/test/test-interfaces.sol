@@ -7,10 +7,10 @@ interface IERC165 {
 }
 
 interface IERC2981 {
-    function royaltyInfo(
-        uint256 _tokenId,
-        uint256 _salePrice
-    ) external view returns (address receiver, uint256 royaltyAmount);
+    function royaltyInfo(uint256 _tokenId, uint256 _salePrice)
+        external
+        view
+        returns (address receiver, uint256 royaltyAmount);
 }
 
 interface IERC721Metadata {
@@ -47,18 +47,10 @@ interface IERC721 {
 
 interface IERC1155 {
     event TransferSingle(
-        address indexed _operator,
-        address indexed _from,
-        address indexed _to,
-        uint256 _id,
-        uint256 _value
+        address indexed _operator, address indexed _from, address indexed _to, uint256 _id, uint256 _value
     );
     event TransferBatch(
-        address indexed _operator,
-        address indexed _from,
-        address indexed _to,
-        uint256[] _ids,
-        uint256[] _values
+        address indexed _operator, address indexed _from, address indexed _to, uint256[] _ids, uint256[] _values
     );
     event ApprovalForAll(address indexed _owner, address indexed _operator, bool _approved);
     event URI(string _value, uint256 indexed _id);
@@ -75,10 +67,10 @@ interface IERC1155 {
 
     function balanceOf(address _owner, uint256 _id) external view returns (uint256);
 
-    function balanceOfBatch(
-        address[] calldata _owners,
-        uint256[] calldata _ids
-    ) external view returns (uint256[] memory);
+    function balanceOfBatch(address[] calldata _owners, uint256[] calldata _ids)
+        external
+        view
+        returns (uint256[] memory);
 
     function setApprovalForAll(address _operator, bool _approved) external;
 

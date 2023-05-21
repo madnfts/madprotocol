@@ -45,10 +45,11 @@ library SplitterBufferLib {
     }
 
     /// @dev Builds shares dynamic sized array buffer for `splitterCheck` cases.
-    function _sharesBuffer(
-        uint256 _ambShare,
-        uint256 _projectShare
-    ) internal pure returns (uint256[] memory memOffset) {
+    function _sharesBuffer(uint256 _ambShare, uint256 _projectShare)
+        internal
+        pure
+        returns (uint256[] memory memOffset)
+    {
         assembly {
             switch and(iszero(_ambShare), iszero(_projectShare))
             case 1 {

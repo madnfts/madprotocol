@@ -135,12 +135,7 @@ interface MarketplaceEventsAndErrors1155 is MarketplaceEventsAndErrorsBase {
     event MakeOrder(IERC1155 indexed token, uint256 id, uint256 amount, bytes32 indexed hash, address seller);
     event CancelOrder(IERC1155 indexed token, uint256 id, uint256 amount, bytes32 indexed hash, address seller);
     event Bid(
-        IERC1155 indexed token,
-        uint256 id,
-        uint256 amount,
-        bytes32 indexed hash,
-        address bidder,
-        uint256 bidPrice
+        IERC1155 indexed token, uint256 id, uint256 amount, bytes32 indexed hash, address bidder, uint256 bidPrice
     );
     event Claim(
         IERC1155 indexed token,

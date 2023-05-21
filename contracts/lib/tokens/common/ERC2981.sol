@@ -17,10 +17,11 @@ abstract contract ERC2981 {
     }
 
     // solhint-disable-line no-unused-vars
-    function royaltyInfo(
-        uint256,
-        uint256 salePrice
-    ) public view virtual returns (address receiver, uint256 royaltyAmount);
+    function royaltyInfo(uint256, uint256 salePrice)
+        public
+        view
+        virtual
+        returns (address receiver, uint256 royaltyAmount);
 
     // {
     // receiver = _royaltyRecipient;
@@ -28,8 +29,7 @@ abstract contract ERC2981 {
     // }
 
     function supportsInterface(bytes4 interfaceId) public pure virtual returns (bool) {
-        return
-            interfaceId == 0x01ffc9a7 || // ERC165 Interface ID for ERC165
-            interfaceId == 0x2a55205a; // ERC165 Interface ID for ERC2981
+        return interfaceId == 0x01ffc9a7 // ERC165 Interface ID for ERC165
+            || interfaceId == 0x2a55205a; // ERC165 Interface ID for ERC2981
     }
 }

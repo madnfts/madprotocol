@@ -32,54 +32,35 @@ export interface MADBaseInterface extends utils.Interface {
   functions: {
     "erc20()": FunctionFragment;
     "owner()": FunctionFragment;
-    "pause()": FunctionFragment;
-    "paused()": FunctionFragment;
     "setOwner(address)": FunctionFragment;
-    "unpause()": FunctionFragment;
   };
 
   getFunction(
-    nameOrSignatureOrTopic:
-      | "erc20"
-      | "owner"
-      | "pause"
-      | "paused"
-      | "setOwner"
-      | "unpause"
+    nameOrSignatureOrTopic: "erc20" | "owner" | "setOwner"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "erc20", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(functionFragment: "pause", values?: undefined): string;
-  encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "setOwner",
     values: [PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "erc20", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setOwner", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
 
   events: {
     "FeesUpdated(uint256,uint256)": EventFragment;
     "OwnerUpdated(address,address)": EventFragment;
-    "Paused(address)": EventFragment;
     "PaymentTokenUpdated(address)": EventFragment;
     "RecipientUpdated(address)": EventFragment;
-    "Unpaused(address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "FeesUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnerUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PaymentTokenUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RecipientUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
 }
 
 export interface FeesUpdatedEventObject {
@@ -104,13 +85,6 @@ export type OwnerUpdatedEvent = TypedEvent<
 
 export type OwnerUpdatedEventFilter = TypedEventFilter<OwnerUpdatedEvent>;
 
-export interface PausedEventObject {
-  account: string;
-}
-export type PausedEvent = TypedEvent<[string], PausedEventObject>;
-
-export type PausedEventFilter = TypedEventFilter<PausedEvent>;
-
 export interface PaymentTokenUpdatedEventObject {
   newPaymentToken: string;
 }
@@ -132,13 +106,6 @@ export type RecipientUpdatedEvent = TypedEvent<
 
 export type RecipientUpdatedEventFilter =
   TypedEventFilter<RecipientUpdatedEvent>;
-
-export interface UnpausedEventObject {
-  account: string;
-}
-export type UnpausedEvent = TypedEvent<[string], UnpausedEventObject>;
-
-export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
 
 export interface MADBase extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -171,18 +138,8 @@ export interface MADBase extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
-    pause(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    paused(overrides?: CallOverrides): Promise<[boolean]>;
-
     setOwner(
       newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    unpause(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
@@ -191,18 +148,8 @@ export interface MADBase extends BaseContract {
 
   owner(overrides?: CallOverrides): Promise<string>;
 
-  pause(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  paused(overrides?: CallOverrides): Promise<boolean>;
-
   setOwner(
     newOwner: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  unpause(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -211,16 +158,10 @@ export interface MADBase extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<string>;
 
-    pause(overrides?: CallOverrides): Promise<void>;
-
-    paused(overrides?: CallOverrides): Promise<boolean>;
-
     setOwner(
       newOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    unpause(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {
@@ -239,9 +180,6 @@ export interface MADBase extends BaseContract {
       newOwner?: PromiseOrValue<string> | null
     ): OwnerUpdatedEventFilter;
 
-    "Paused(address)"(account?: null): PausedEventFilter;
-    Paused(account?: null): PausedEventFilter;
-
     "PaymentTokenUpdated(address)"(
       newPaymentToken?: PromiseOrValue<string> | null
     ): PaymentTokenUpdatedEventFilter;
@@ -255,9 +193,6 @@ export interface MADBase extends BaseContract {
     RecipientUpdated(
       newRecipient?: PromiseOrValue<string> | null
     ): RecipientUpdatedEventFilter;
-
-    "Unpaused(address)"(account?: null): UnpausedEventFilter;
-    Unpaused(account?: null): UnpausedEventFilter;
   };
 
   estimateGas: {
@@ -265,18 +200,8 @@ export interface MADBase extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
-    pause(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    paused(overrides?: CallOverrides): Promise<BigNumber>;
-
     setOwner(
       newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    unpause(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
@@ -286,18 +211,8 @@ export interface MADBase extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    pause(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     setOwner(
       newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    unpause(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };

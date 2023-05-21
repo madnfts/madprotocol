@@ -25,14 +25,19 @@ import type {
 
 export interface ERC2981Interface extends utils.Interface {
   functions: {
+    "_royaltyFee()": FunctionFragment;
     "royaltyInfo(uint256,uint256)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
   };
 
   getFunction(
-    nameOrSignatureOrTopic: "royaltyInfo" | "supportsInterface"
+    nameOrSignatureOrTopic: "_royaltyFee" | "royaltyInfo" | "supportsInterface"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "_royaltyFee",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "royaltyInfo",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
@@ -42,6 +47,10 @@ export interface ERC2981Interface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "_royaltyFee",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "royaltyInfo",
     data: BytesLike
@@ -81,6 +90,8 @@ export interface ERC2981 extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    _royaltyFee(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     royaltyInfo(
       arg0: PromiseOrValue<BigNumberish>,
       salePrice: PromiseOrValue<BigNumberish>,
@@ -94,6 +105,8 @@ export interface ERC2981 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
   };
+
+  _royaltyFee(overrides?: CallOverrides): Promise<BigNumber>;
 
   royaltyInfo(
     arg0: PromiseOrValue<BigNumberish>,
@@ -109,6 +122,8 @@ export interface ERC2981 extends BaseContract {
   ): Promise<boolean>;
 
   callStatic: {
+    _royaltyFee(overrides?: CallOverrides): Promise<BigNumber>;
+
     royaltyInfo(
       arg0: PromiseOrValue<BigNumberish>,
       salePrice: PromiseOrValue<BigNumberish>,
@@ -126,6 +141,8 @@ export interface ERC2981 extends BaseContract {
   filters: {};
 
   estimateGas: {
+    _royaltyFee(overrides?: CallOverrides): Promise<BigNumber>;
+
     royaltyInfo(
       arg0: PromiseOrValue<BigNumberish>,
       salePrice: PromiseOrValue<BigNumberish>,
@@ -139,6 +156,8 @@ export interface ERC2981 extends BaseContract {
   };
 
   populateTransaction: {
+    _royaltyFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     royaltyInfo(
       arg0: PromiseOrValue<BigNumberish>,
       salePrice: PromiseOrValue<BigNumberish>,

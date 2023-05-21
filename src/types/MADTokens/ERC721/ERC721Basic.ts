@@ -68,23 +68,24 @@ export declare namespace Types {
 
 export interface ERC721BasicInterface extends utils.Interface {
   functions: {
+    "_royaltyFee()": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "baseURI()": FunctionFragment;
-    "burn(uint256[],address)": FunctionFragment;
+    "burn(uint128[],address)": FunctionFragment;
     "erc20()": FunctionFragment;
     "feeCount()": FunctionFragment;
+    "feeCountERC20()": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "getOwner()": FunctionFragment;
     "getRouter()": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "liveSupply()": FunctionFragment;
     "maxSupply()": FunctionFragment;
-    "mint(uint256)": FunctionFragment;
+    "mint(uint128)": FunctionFragment;
     "mintCount()": FunctionFragment;
-    "mintTo(address,uint256,address)": FunctionFragment;
+    "mintTo(address,uint128,address)": FunctionFragment;
     "name()": FunctionFragment;
-    "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
     "ownerOf(uint256)": FunctionFragment;
     "price()": FunctionFragment;
     "publicMintState()": FunctionFragment;
@@ -109,12 +110,14 @@ export interface ERC721BasicInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "_royaltyFee"
       | "approve"
       | "balanceOf"
       | "baseURI"
       | "burn"
       | "erc20"
       | "feeCount"
+      | "feeCountERC20"
       | "getApproved"
       | "getOwner"
       | "getRouter"
@@ -125,7 +128,6 @@ export interface ERC721BasicInterface extends utils.Interface {
       | "mintCount"
       | "mintTo"
       | "name"
-      | "onERC721Received"
       | "ownerOf"
       | "price"
       | "publicMintState"
@@ -149,6 +151,10 @@ export interface ERC721BasicInterface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(
+    functionFragment: "_royaltyFee",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "approve",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
@@ -163,6 +169,10 @@ export interface ERC721BasicInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "erc20", values?: undefined): string;
   encodeFunctionData(functionFragment: "feeCount", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "feeCountERC20",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "getApproved",
     values: [PromiseOrValue<BigNumberish>]
@@ -192,15 +202,6 @@ export interface ERC721BasicInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "onERC721Received",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BytesLike>
-    ]
-  ): string;
   encodeFunctionData(
     functionFragment: "ownerOf",
     values: [PromiseOrValue<BigNumberish>]
@@ -283,12 +284,20 @@ export interface ERC721BasicInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "_royaltyFee",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "baseURI", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "erc20", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "feeCount", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "feeCountERC20",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getApproved",
     data: BytesLike
@@ -305,10 +314,6 @@ export interface ERC721BasicInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "mintCount", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "mintTo", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "onERC721Received",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "ownerOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "price", data: BytesLike): Result;
   decodeFunctionResult(
@@ -369,7 +374,7 @@ export interface ERC721BasicInterface extends utils.Interface {
   events: {
     "Approval(address,address,uint256)": EventFragment;
     "ApprovalForAll(address,address,bool)": EventFragment;
-    "BaseURILocked(string)": EventFragment;
+    "BaseURILocked()": EventFragment;
     "BaseURISet(string)": EventFragment;
     "OwnerUpdated(address,address)": EventFragment;
     "PublicMintStateSet(bool)": EventFragment;
@@ -393,7 +398,7 @@ export interface ERC721BasicInterface extends utils.Interface {
 
 export interface ApprovalEventObject {
   owner: string;
-  spender: string;
+  account: string;
   id: BigNumber;
 }
 export type ApprovalEvent = TypedEvent<
@@ -406,7 +411,7 @@ export type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>;
 export interface ApprovalForAllEventObject {
   owner: string;
   operator: string;
-  approved: boolean;
+  isApproved: boolean;
 }
 export type ApprovalForAllEvent = TypedEvent<
   [string, string, boolean],
@@ -415,10 +420,8 @@ export type ApprovalForAllEvent = TypedEvent<
 
 export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
 
-export interface BaseURILockedEventObject {
-  baseURI: string;
-}
-export type BaseURILockedEvent = TypedEvent<[string], BaseURILockedEventObject>;
+export interface BaseURILockedEventObject {}
+export type BaseURILockedEvent = TypedEvent<[], BaseURILockedEventObject>;
 
 export type BaseURILockedEventFilter = TypedEventFilter<BaseURILockedEvent>;
 
@@ -518,16 +521,18 @@ export interface ERC721Basic extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    _royaltyFee(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     approve(
-      spender: PromiseOrValue<string>,
+      account: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     balanceOf(
       owner: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<[BigNumber] & { result: BigNumber }>;
 
     baseURI(overrides?: CallOverrides): Promise<[string]>;
 
@@ -541,24 +546,26 @@ export interface ERC721Basic extends BaseContract {
 
     feeCount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    feeCountERC20(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     getApproved(
-      arg0: PromiseOrValue<BigNumberish>,
+      id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[string]>;
+    ): Promise<[string] & { result: string }>;
 
     getOwner(overrides?: CallOverrides): Promise<[string]>;
 
     getRouter(overrides?: CallOverrides): Promise<[string]>;
 
     isApprovedForAll(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<string>,
+      owner: PromiseOrValue<string>,
+      operator: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    ): Promise<[boolean] & { result: boolean }>;
 
     liveSupply(
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { _val: BigNumber }>;
+    ): Promise<[BigNumber] & { _liveSupply: BigNumber }>;
 
     maxSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -567,7 +574,9 @@ export interface ERC721Basic extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    mintCount(overrides?: CallOverrides): Promise<[BigNumber]>;
+    mintCount(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { _mintCount: BigNumber }>;
 
     mintTo(
       to: PromiseOrValue<string>,
@@ -578,18 +587,10 @@ export interface ERC721Basic extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
-    onERC721Received(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<string>,
-      arg2: PromiseOrValue<BigNumberish>,
-      arg3: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     ownerOf(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[string] & { owner: string }>;
+    ): Promise<[string] & { result: string }>;
 
     price(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -607,7 +608,7 @@ export interface ERC721Basic extends BaseContract {
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     "safeTransferFrom(address,address,uint256,bytes)"(
@@ -615,12 +616,12 @@ export interface ERC721Basic extends BaseContract {
       to: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
       data: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setApprovalForAll(
       operator: PromiseOrValue<string>,
-      approved: PromiseOrValue<boolean>,
+      isApproved: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -663,7 +664,7 @@ export interface ERC721Basic extends BaseContract {
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     uriLock(overrides?: CallOverrides): Promise<[boolean]>;
@@ -674,16 +675,18 @@ export interface ERC721Basic extends BaseContract {
     ): Promise<ContractTransaction>;
 
     withdrawERC20(
-      _token: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
       recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
+  _royaltyFee(overrides?: CallOverrides): Promise<BigNumber>;
+
   approve(
-    spender: PromiseOrValue<string>,
+    account: PromiseOrValue<string>,
     id: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   balanceOf(
@@ -703,8 +706,10 @@ export interface ERC721Basic extends BaseContract {
 
   feeCount(overrides?: CallOverrides): Promise<BigNumber>;
 
+  feeCountERC20(overrides?: CallOverrides): Promise<BigNumber>;
+
   getApproved(
-    arg0: PromiseOrValue<BigNumberish>,
+    id: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string>;
 
@@ -713,8 +718,8 @@ export interface ERC721Basic extends BaseContract {
   getRouter(overrides?: CallOverrides): Promise<string>;
 
   isApprovedForAll(
-    arg0: PromiseOrValue<string>,
-    arg1: PromiseOrValue<string>,
+    owner: PromiseOrValue<string>,
+    operator: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
@@ -738,14 +743,6 @@ export interface ERC721Basic extends BaseContract {
 
   name(overrides?: CallOverrides): Promise<string>;
 
-  onERC721Received(
-    arg0: PromiseOrValue<string>,
-    arg1: PromiseOrValue<string>,
-    arg2: PromiseOrValue<BigNumberish>,
-    arg3: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   ownerOf(
     id: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -767,7 +764,7 @@ export interface ERC721Basic extends BaseContract {
     from: PromiseOrValue<string>,
     to: PromiseOrValue<string>,
     id: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   "safeTransferFrom(address,address,uint256,bytes)"(
@@ -775,12 +772,12 @@ export interface ERC721Basic extends BaseContract {
     to: PromiseOrValue<string>,
     id: PromiseOrValue<BigNumberish>,
     data: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setApprovalForAll(
     operator: PromiseOrValue<string>,
-    approved: PromiseOrValue<boolean>,
+    isApproved: PromiseOrValue<boolean>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -823,7 +820,7 @@ export interface ERC721Basic extends BaseContract {
     from: PromiseOrValue<string>,
     to: PromiseOrValue<string>,
     id: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   uriLock(overrides?: CallOverrides): Promise<boolean>;
@@ -834,14 +831,16 @@ export interface ERC721Basic extends BaseContract {
   ): Promise<ContractTransaction>;
 
   withdrawERC20(
-    _token: PromiseOrValue<string>,
+    token: PromiseOrValue<string>,
     recipient: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    _royaltyFee(overrides?: CallOverrides): Promise<BigNumber>;
+
     approve(
-      spender: PromiseOrValue<string>,
+      account: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -863,8 +862,10 @@ export interface ERC721Basic extends BaseContract {
 
     feeCount(overrides?: CallOverrides): Promise<BigNumber>;
 
+    feeCountERC20(overrides?: CallOverrides): Promise<BigNumber>;
+
     getApproved(
-      arg0: PromiseOrValue<BigNumberish>,
+      id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -873,8 +874,8 @@ export interface ERC721Basic extends BaseContract {
     getRouter(overrides?: CallOverrides): Promise<string>;
 
     isApprovedForAll(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<string>,
+      owner: PromiseOrValue<string>,
+      operator: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -897,14 +898,6 @@ export interface ERC721Basic extends BaseContract {
     ): Promise<void>;
 
     name(overrides?: CallOverrides): Promise<string>;
-
-    onERC721Received(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<string>,
-      arg2: PromiseOrValue<BigNumberish>,
-      arg3: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<string>;
 
     ownerOf(
       id: PromiseOrValue<BigNumberish>,
@@ -940,7 +933,7 @@ export interface ERC721Basic extends BaseContract {
 
     setApprovalForAll(
       operator: PromiseOrValue<string>,
-      approved: PromiseOrValue<boolean>,
+      isApproved: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -992,7 +985,7 @@ export interface ERC721Basic extends BaseContract {
     ): Promise<void>;
 
     withdrawERC20(
-      _token: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
       recipient: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1001,32 +994,28 @@ export interface ERC721Basic extends BaseContract {
   filters: {
     "Approval(address,address,uint256)"(
       owner?: PromiseOrValue<string> | null,
-      spender?: PromiseOrValue<string> | null,
+      account?: PromiseOrValue<string> | null,
       id?: PromiseOrValue<BigNumberish> | null
     ): ApprovalEventFilter;
     Approval(
       owner?: PromiseOrValue<string> | null,
-      spender?: PromiseOrValue<string> | null,
+      account?: PromiseOrValue<string> | null,
       id?: PromiseOrValue<BigNumberish> | null
     ): ApprovalEventFilter;
 
     "ApprovalForAll(address,address,bool)"(
       owner?: PromiseOrValue<string> | null,
       operator?: PromiseOrValue<string> | null,
-      approved?: null
+      isApproved?: null
     ): ApprovalForAllEventFilter;
     ApprovalForAll(
       owner?: PromiseOrValue<string> | null,
       operator?: PromiseOrValue<string> | null,
-      approved?: null
+      isApproved?: null
     ): ApprovalForAllEventFilter;
 
-    "BaseURILocked(string)"(
-      baseURI?: PromiseOrValue<string> | null
-    ): BaseURILockedEventFilter;
-    BaseURILocked(
-      baseURI?: PromiseOrValue<string> | null
-    ): BaseURILockedEventFilter;
+    "BaseURILocked()"(): BaseURILockedEventFilter;
+    BaseURILocked(): BaseURILockedEventFilter;
 
     "BaseURISet(string)"(
       newBaseURI?: PromiseOrValue<string> | null
@@ -1083,10 +1072,12 @@ export interface ERC721Basic extends BaseContract {
   };
 
   estimateGas: {
+    _royaltyFee(overrides?: CallOverrides): Promise<BigNumber>;
+
     approve(
-      spender: PromiseOrValue<string>,
+      account: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     balanceOf(
@@ -1106,8 +1097,10 @@ export interface ERC721Basic extends BaseContract {
 
     feeCount(overrides?: CallOverrides): Promise<BigNumber>;
 
+    feeCountERC20(overrides?: CallOverrides): Promise<BigNumber>;
+
     getApproved(
-      arg0: PromiseOrValue<BigNumberish>,
+      id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1116,8 +1109,8 @@ export interface ERC721Basic extends BaseContract {
     getRouter(overrides?: CallOverrides): Promise<BigNumber>;
 
     isApprovedForAll(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<string>,
+      owner: PromiseOrValue<string>,
+      operator: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1141,14 +1134,6 @@ export interface ERC721Basic extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
-    onERC721Received(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<string>,
-      arg2: PromiseOrValue<BigNumberish>,
-      arg3: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     ownerOf(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1168,7 +1153,7 @@ export interface ERC721Basic extends BaseContract {
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     "safeTransferFrom(address,address,uint256,bytes)"(
@@ -1176,12 +1161,12 @@ export interface ERC721Basic extends BaseContract {
       to: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
       data: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setApprovalForAll(
       operator: PromiseOrValue<string>,
-      approved: PromiseOrValue<boolean>,
+      isApproved: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1224,7 +1209,7 @@ export interface ERC721Basic extends BaseContract {
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     uriLock(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1235,17 +1220,19 @@ export interface ERC721Basic extends BaseContract {
     ): Promise<BigNumber>;
 
     withdrawERC20(
-      _token: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
       recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    _royaltyFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     approve(
-      spender: PromiseOrValue<string>,
+      account: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     balanceOf(
@@ -1265,8 +1252,10 @@ export interface ERC721Basic extends BaseContract {
 
     feeCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    feeCountERC20(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getApproved(
-      arg0: PromiseOrValue<BigNumberish>,
+      id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1275,8 +1264,8 @@ export interface ERC721Basic extends BaseContract {
     getRouter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     isApprovedForAll(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<string>,
+      owner: PromiseOrValue<string>,
+      operator: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1300,14 +1289,6 @@ export interface ERC721Basic extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    onERC721Received(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<string>,
-      arg2: PromiseOrValue<BigNumberish>,
-      arg3: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     ownerOf(
       id: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1327,7 +1308,7 @@ export interface ERC721Basic extends BaseContract {
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     "safeTransferFrom(address,address,uint256,bytes)"(
@@ -1335,12 +1316,12 @@ export interface ERC721Basic extends BaseContract {
       to: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
       data: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setApprovalForAll(
       operator: PromiseOrValue<string>,
-      approved: PromiseOrValue<boolean>,
+      isApproved: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1383,7 +1364,7 @@ export interface ERC721Basic extends BaseContract {
       from: PromiseOrValue<string>,
       to: PromiseOrValue<string>,
       id: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     uriLock(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1394,7 +1375,7 @@ export interface ERC721Basic extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     withdrawERC20(
-      _token: PromiseOrValue<string>,
+      token: PromiseOrValue<string>,
       recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

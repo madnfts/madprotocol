@@ -13,11 +13,9 @@ contract MADMarketplace1155 is MADMarketplaceBase, MarketplaceEventsAndErrors115
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
-    constructor(
-        address _recipient,
-        address _paymentTokenAddress,
-        address _swapRouter
-    ) MADMarketplaceBase(_recipient, _paymentTokenAddress, _swapRouter) {}
+    constructor(address _recipient, address _paymentTokenAddress, address _swapRouter)
+        MADMarketplaceBase(_recipient, _paymentTokenAddress, _swapRouter)
+    { }
 
     ////////////////////////////////////////////////////////////////
     //                           STORAGE                          //
@@ -38,13 +36,7 @@ contract MADMarketplace1155 is MADMarketplaceBase, MarketplaceEventsAndErrors115
 
     /// @notice Fixed Price listing order public pusher.
     /// @dev Function Signature := 0x40b78b0f
-    function fixedPrice(
-        IERC1155 _token,
-        uint256 _id,
-        uint256 _amount,
-        uint256 _price,
-        uint256 _endTime
-    ) external whenNotPaused {
+    function fixedPrice(IERC1155 _token, uint256 _id, uint256 _amount, uint256 _price, uint256 _endTime) external {
         _makeOrder(0, _token, _id, _amount, _price, 0, _endTime);
     }
 
@@ -57,20 +49,16 @@ contract MADMarketplace1155 is MADMarketplaceBase, MarketplaceEventsAndErrors115
         uint256 _startPrice,
         uint256 _endPrice,
         uint256 _endTime
-    ) external whenNotPaused {
+    ) external {
         _exceedsMaxEP(_startPrice, _endPrice);
         _makeOrder(1, _token, _id, _amount, _startPrice, _endPrice, _endTime);
     }
 
     /// @notice English Auction listing order public pusher.
     /// @dev Function Signature := 0x47c4be17
-    function englishAuction(
-        IERC1155 _token,
-        uint256 _id,
-        uint256 _amount,
-        uint256 _startPrice,
-        uint256 _endTime
-    ) external whenNotPaused {
+    function englishAuction(IERC1155 _token, uint256 _id, uint256 _amount, uint256 _startPrice, uint256 _endTime)
+        external
+    {
         _makeOrder(2, _token, _id, _amount, _startPrice, 0, _endTime);
     }
 
@@ -79,7 +67,7 @@ contract MADMarketplace1155 is MADMarketplaceBase, MarketplaceEventsAndErrors115
     /// @dev By default, bids must be at least 5% higher than the previous one.
     /// @dev By default, auction will be extended in 5 minutes if last bid is placed 5 minutes prior to auction's end.
     /// @dev 5 minutes eq to 300 mined blocks since block mining time is expected to take 1s in the harmony blockchain.
-    function bid(bytes32 _order) external payable whenNotPaused {
+    function bid(bytes32 _order) external payable {
         Types.Order1155 storage order = orderInfo[_order];
 
         uint256 lastBidPrice = order.lastBidPrice;
@@ -115,7 +103,7 @@ contract MADMarketplace1155 is MADMarketplaceBase, MarketplaceEventsAndErrors115
     /// @notice Enables user to buy an nft for both Fixed Price and Dutch Auction listings.
     /// @dev Price overrunning not accepted in fixed price and dutch auction.
     /// @dev Function Signature := 0x9c9a1061
-    function buy(bytes32 _order) external payable whenNotPaused {
+    function buy(bytes32 _order) external payable {
         Types.Order1155 storage order = orderInfo[_order];
 
         _buyChecks(order.endTime, order.orderType, order.isSold);
@@ -155,7 +143,7 @@ contract MADMarketplace1155 is MADMarketplaceBase, MarketplaceEventsAndErrors115
     /// @notice Pull method for NFT withdrawing in English Auction.
     /// @dev Function Signature := 0xbd66528a
     /// @dev Callable by both the seller and the auction winner.
-    function claim(bytes32 _order) external whenNotPaused {
+    function claim(bytes32 _order) external {
         Types.Order1155 storage order = orderInfo[_order];
 
         _isBidderOrSeller(order.lastBidder, order.seller);
@@ -167,8 +155,8 @@ contract MADMarketplace1155 is MADMarketplaceBase, MarketplaceEventsAndErrors115
 
         // path for inhouse minted tokens
         if (
-            !feeSelector[key][order.tokenId][order.amount] &&
-            MADFactory.creatorAuth(address(order.token), order.seller) == true
+            !feeSelector[key][order.tokenId][order.amount]
+                && MADFactory.creatorAuth(address(order.token), order.seller) == true
         ) {
             _intPath(order, order.lastBidPrice, _order, order.lastBidder, key);
         }
@@ -207,15 +195,13 @@ contract MADMarketplace1155 is MADMarketplaceBase, MarketplaceEventsAndErrors115
     //                         OWNER FX                           //
     ////////////////////////////////////////////////////////////////
 
-    /// @notice Delete order function only callabe by contract's owner, when contract is paused, as security measure.
+    /// @notice Delete order function only callabe by contract's owner,
+    /// as security measure.
     /// @dev Function Signature := 0x0c026db9
-    function delOrder(
-        bytes32 hash,
-        IERC1155 _token,
-        uint256 _id,
-        uint256 _amount,
-        address _seller
-    ) external onlyOwner whenPaused {
+    function delOrder(bytes32 hash, IERC1155 _token, uint256 _id, uint256 _amount, address _seller)
+        external
+        onlyOwner
+    {
         delete orderInfo[hash];
         delete orderIdByToken[_token][_id][_amount];
         delete orderIdBySeller[_seller];
@@ -295,13 +281,9 @@ contract MADMarketplace1155 is MADMarketplaceBase, MarketplaceEventsAndErrors115
         return interfaceCheck(account, 0x01ffc9a7) && !interfaceCheck(account, 0xffffffff);
     }
 
-    function _intPath(
-        Types.Order1155 storage _order,
-        uint256 _price,
-        bytes32 _orderId,
-        address _to,
-        uint256 key
-    ) internal {
+    function _intPath(Types.Order1155 storage _order, uint256 _price, bytes32 _orderId, address _to, uint256 key)
+        internal
+    {
         // load royalty info query to mem
         uint256 feePercent = _feeResolver(key, _order.tokenId, _order.amount);
         // load royalty info query to mem
@@ -401,9 +383,7 @@ contract MADMarketplace1155 is MADMarketplaceBase, MarketplaceEventsAndErrors115
                 sstore(y, 1)
                 _feePercent := sload(royaltyFee.slot)
             }
-            case 1 {
-                _feePercent := sload(maxFee.slot)
-            }
+            case 1 { _feePercent := sload(maxFee.slot) }
         }
     }
 
@@ -422,9 +402,7 @@ contract MADMarketplace1155 is MADMarketplaceBase, MarketplaceEventsAndErrors115
             mstore(0x80, orderType)
             switch mload(0x80)
             // Fixed Price
-            case 0 {
-                price := and(sload(add(order.slot, 2)), shr(32, not(0)))
-            }
+            case 0 { price := and(sload(add(order.slot, 2)), shr(32, not(0))) }
             // Dutch Auction
             case 1 {
                 let _startPrice := and(sload(add(order.slot, 2)), shr(32, not(0)))
@@ -438,12 +416,8 @@ contract MADMarketplace1155 is MADMarketplaceBase, MarketplaceEventsAndErrors115
             case 2 {
                 let lastBidPrice := and(sload(add(order.slot, 6)), shr(32, not(0)))
                 switch iszero(lastBidPrice)
-                case 1 {
-                    price := and(sload(add(order.slot, 2)), shr(32, not(0)))
-                }
-                case 0 {
-                    price := lastBidPrice
-                }
+                case 1 { price := and(sload(add(order.slot, 2)), shr(32, not(0))) }
+                case 0 { price := lastBidPrice }
             }
         }
     }

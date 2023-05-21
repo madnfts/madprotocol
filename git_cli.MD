@@ -30,10 +30,11 @@ git push origin release/1.0
 ## Merge the changes from the GitHub branch into the Bitbucket branch using the git merge command. For example:
 
 `git merge github/main`
+`git merge github/release/1.0`
 
 ## Push the merged changes to the Bitbucket repository using the git push command. For example:
 
-`git push origin release/pedroMerge`
+`git push origin release/1.0`
 
 
 # Merge Back to Github

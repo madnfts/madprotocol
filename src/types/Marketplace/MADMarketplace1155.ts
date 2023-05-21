@@ -63,8 +63,6 @@ export interface MADMarketplace1155Interface extends utils.Interface {
     "orderIdByToken(address,uint256,uint256,uint256)": FunctionFragment;
     "orderInfo(bytes32)": FunctionFragment;
     "owner()": FunctionFragment;
-    "pause()": FunctionFragment;
-    "paused()": FunctionFragment;
     "recipient()": FunctionFragment;
     "royaltyFee()": FunctionFragment;
     "sellerOrderLength(address)": FunctionFragment;
@@ -77,7 +75,6 @@ export interface MADMarketplace1155Interface extends utils.Interface {
     "swapRouter()": FunctionFragment;
     "tokenOrderLength(address,uint256,uint256)": FunctionFragment;
     "totalOutbid()": FunctionFragment;
-    "unpause()": FunctionFragment;
     "updateSettings(uint256,uint256,uint256,uint256)": FunctionFragment;
     "userOutbid(address)": FunctionFragment;
     "withdraw()": FunctionFragment;
@@ -119,8 +116,6 @@ export interface MADMarketplace1155Interface extends utils.Interface {
       | "orderIdByToken"
       | "orderInfo"
       | "owner"
-      | "pause"
-      | "paused"
       | "recipient"
       | "royaltyFee"
       | "sellerOrderLength"
@@ -133,7 +128,6 @@ export interface MADMarketplace1155Interface extends utils.Interface {
       | "swapRouter"
       | "tokenOrderLength"
       | "totalOutbid"
-      | "unpause"
       | "updateSettings"
       | "userOutbid"
       | "withdraw"
@@ -294,8 +288,6 @@ export interface MADMarketplace1155Interface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(functionFragment: "pause", values?: undefined): string;
-  encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(functionFragment: "recipient", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "royaltyFee",
@@ -345,7 +337,6 @@ export interface MADMarketplace1155Interface extends utils.Interface {
     functionFragment: "totalOutbid",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "updateSettings",
     values: [
@@ -462,8 +453,6 @@ export interface MADMarketplace1155Interface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "orderInfo", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "recipient", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "royaltyFee", data: BytesLike): Result;
   decodeFunctionResult(
@@ -494,7 +483,6 @@ export interface MADMarketplace1155Interface extends utils.Interface {
     functionFragment: "totalOutbid",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "updateSettings",
     data: BytesLike
@@ -523,10 +511,8 @@ export interface MADMarketplace1155Interface extends utils.Interface {
     "FeesUpdated(uint256,uint256)": EventFragment;
     "MakeOrder(address,uint256,uint256,bytes32,address)": EventFragment;
     "OwnerUpdated(address,address)": EventFragment;
-    "Paused(address)": EventFragment;
     "PaymentTokenUpdated(address)": EventFragment;
     "RecipientUpdated(address)": EventFragment;
-    "Unpaused(address)": EventFragment;
     "UserOutbid(address,address,uint256)": EventFragment;
     "WithdrawOutbid(address,address,uint256)": EventFragment;
   };
@@ -539,10 +525,8 @@ export interface MADMarketplace1155Interface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "FeesUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MakeOrder"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnerUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PaymentTokenUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RecipientUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "UserOutbid"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "WithdrawOutbid"): EventFragment;
 }
@@ -652,13 +636,6 @@ export type OwnerUpdatedEvent = TypedEvent<
 
 export type OwnerUpdatedEventFilter = TypedEventFilter<OwnerUpdatedEvent>;
 
-export interface PausedEventObject {
-  account: string;
-}
-export type PausedEvent = TypedEvent<[string], PausedEventObject>;
-
-export type PausedEventFilter = TypedEventFilter<PausedEvent>;
-
 export interface PaymentTokenUpdatedEventObject {
   newPaymentToken: string;
 }
@@ -680,13 +657,6 @@ export type RecipientUpdatedEvent = TypedEvent<
 
 export type RecipientUpdatedEventFilter =
   TypedEventFilter<RecipientUpdatedEvent>;
-
-export interface UnpausedEventObject {
-  account: string;
-}
-export type UnpausedEvent = TypedEvent<[string], UnpausedEventObject>;
-
-export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
 
 export interface UserOutbidEventObject {
   user: string;
@@ -907,12 +877,6 @@ export interface MADMarketplace1155 extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
-    pause(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    paused(overrides?: CallOverrides): Promise<[boolean]>;
-
     recipient(overrides?: CallOverrides): Promise<[string]>;
 
     royaltyFee(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -963,10 +927,6 @@ export interface MADMarketplace1155 extends BaseContract {
     ): Promise<[BigNumber]>;
 
     totalOutbid(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    unpause(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
 
     updateSettings(
       _minAuctionIncrement: PromiseOrValue<BigNumberish>,
@@ -1167,12 +1127,6 @@ export interface MADMarketplace1155 extends BaseContract {
 
   owner(overrides?: CallOverrides): Promise<string>;
 
-  pause(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  paused(overrides?: CallOverrides): Promise<boolean>;
-
   recipient(overrides?: CallOverrides): Promise<string>;
 
   royaltyFee(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1223,10 +1177,6 @@ export interface MADMarketplace1155 extends BaseContract {
   ): Promise<BigNumber>;
 
   totalOutbid(overrides?: CallOverrides): Promise<BigNumber>;
-
-  unpause(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
 
   updateSettings(
     _minAuctionIncrement: PromiseOrValue<BigNumberish>,
@@ -1427,10 +1377,6 @@ export interface MADMarketplace1155 extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<string>;
 
-    pause(overrides?: CallOverrides): Promise<void>;
-
-    paused(overrides?: CallOverrides): Promise<boolean>;
-
     recipient(overrides?: CallOverrides): Promise<string>;
 
     royaltyFee(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1481,8 +1427,6 @@ export interface MADMarketplace1155 extends BaseContract {
     ): Promise<BigNumber>;
 
     totalOutbid(overrides?: CallOverrides): Promise<BigNumber>;
-
-    unpause(overrides?: CallOverrides): Promise<void>;
 
     updateSettings(
       _minAuctionIncrement: PromiseOrValue<BigNumberish>,
@@ -1613,9 +1557,6 @@ export interface MADMarketplace1155 extends BaseContract {
       newOwner?: PromiseOrValue<string> | null
     ): OwnerUpdatedEventFilter;
 
-    "Paused(address)"(account?: null): PausedEventFilter;
-    Paused(account?: null): PausedEventFilter;
-
     "PaymentTokenUpdated(address)"(
       newPaymentToken?: PromiseOrValue<string> | null
     ): PaymentTokenUpdatedEventFilter;
@@ -1629,9 +1570,6 @@ export interface MADMarketplace1155 extends BaseContract {
     RecipientUpdated(
       newRecipient?: PromiseOrValue<string> | null
     ): RecipientUpdatedEventFilter;
-
-    "Unpaused(address)"(account?: null): UnpausedEventFilter;
-    Unpaused(account?: null): UnpausedEventFilter;
 
     "UserOutbid(address,address,uint256)"(
       user?: PromiseOrValue<string> | null,
@@ -1795,12 +1733,6 @@ export interface MADMarketplace1155 extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
-    pause(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    paused(overrides?: CallOverrides): Promise<BigNumber>;
-
     recipient(overrides?: CallOverrides): Promise<BigNumber>;
 
     royaltyFee(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1851,10 +1783,6 @@ export interface MADMarketplace1155 extends BaseContract {
     ): Promise<BigNumber>;
 
     totalOutbid(overrides?: CallOverrides): Promise<BigNumber>;
-
-    unpause(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
 
     updateSettings(
       _minAuctionIncrement: PromiseOrValue<BigNumberish>,
@@ -2034,12 +1962,6 @@ export interface MADMarketplace1155 extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    pause(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     recipient(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     royaltyFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -2090,10 +2012,6 @@ export interface MADMarketplace1155 extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     totalOutbid(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    unpause(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
 
     updateSettings(
       _minAuctionIncrement: PromiseOrValue<BigNumberish>,

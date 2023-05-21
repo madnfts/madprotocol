@@ -20,13 +20,13 @@ from constants import (
 
 
 def find_unlisted_contracts(
-    contracts_list: List[str], contracts_folder: str
+    contracts_list: List[str], contracts_folder: str, fileType: str = "*.sol"
 ) -> List[str]:
 
     contracts_folder = pathlib.Path(contracts_folder)
     unlisted_paths = []
 
-    for file_path in contracts_folder.rglob("*.sol"):
+    for file_path in contracts_folder.rglob(fileType):
         formatted_path = str(file_path)
         if formatted_path.startswith(IGNORED_DIR):
             continue
@@ -143,15 +143,36 @@ def delete_file(file_path: str) -> None:
 
 
 def generate_import_file(folder: str) -> None:
+    toml_template = "'{}' = ['{}'],\n"
+    toml_str = "contracts = {"
     gen = "// SPDX-License-Identifier: AGPL-3.0-only\n\npragma solidity 0.8.19;\n\n"
 
     for i in find_unlisted_contracts([], folder):
-        gen += f'import "{i}";\n'
+        contract_name = i.split("\\")[-1][:-4]
+        toml_str += toml_template.format(i, contract_name)
+        # print(sections)
+        print(i)
+        gen += f'import {{{contract_name}}} from "{i}";\n'
 
     gen += "\ncontract StaticAnalysis {}\n"
 
+    toml_str += "}"
+
+    print(toml_str)
+
     with open(os.path.join(folder, "static_analysis.sol"), "w") as file:
         file.write(gen)
+
+def get_test_files_hardhat(folder: str, fileType: str = "*.test.ts"
+) -> List[str]:
+    test_folder = pathlib.Path(folder)
+    files = []
+    for file_path in test_folder.rglob(fileType):
+        formatted_path = f'npx hardhat test {str(file_path)}'
+        files.append(formatted_path)
+        print(formatted_path)
+    
+    return files
 
 
 def main() -> None:
@@ -165,5 +186,6 @@ def main() -> None:
 
 if __name__ == "__main__":
     # main()
-    generate_import_file("contracts")
+    # generate_import_file("contracts")
     # delete_file("Audit/Analysis/Slither/results/slither.results.json")
+    get_test_files_hardhat('test')

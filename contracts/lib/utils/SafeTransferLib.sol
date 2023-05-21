@@ -1,7 +1,9 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+// SPDX-License-Identifier: AGPL-3.0-only
+
+pragma solidity 0.8.19;
 
 import { ERC20 } from "contracts/lib/tokens/ERC20.sol";
+
 /// @notice Safe ETH and ERC20 transfer library that gracefully handles missing return values.
 /// @author Solady (https://github.com/vectorized/solady/blob/main/src/utils/SafeTransferLib.sol)
 /// @author Modified from Solmate (https://github.com/transmissions11/solmate/blob/main/src/utils/SafeTransferLib.sol)
@@ -34,7 +36,7 @@ library SafeTransferLib {
     /// @dev Suggested gas stipend for contract receiving ETH to perform a few
     /// storage reads and writes, but low enough to prevent griefing.
     /// Multiply by a small constant (e.g. 2), if needed.
-    uint256 internal constant _GAS_STIPEND_NO_GRIEF = 100000;
+    uint256 internal constant _GAS_STIPEND_NO_GRIEF = 100_000;
 
     /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
     /*                       ETH OPERATIONS                       */
@@ -131,10 +133,7 @@ library SafeTransferLib {
     ///
     /// Note: Does NOT revert upon failure.
     /// Returns whether the transfer of ETH is successful instead.
-    function trySafeTransferETH(address to, uint256 amount, uint256 gasStipend)
-        internal
-        returns (bool success)
-    {
+    function trySafeTransferETH(address to, uint256 amount, uint256 gasStipend) internal returns (bool success) {
         /// @solidity memory-safe-assembly
         assembly {
             // Transfer the ETH and check if it succeeded or not.
@@ -163,7 +162,8 @@ library SafeTransferLib {
             mstore(0x0c, 0x23b872dd000000000000000000000000)
 
             if iszero(
-                and( // The arguments of `and` are evaluated from right to left.
+                and(
+                    // The arguments of `and` are evaluated from right to left.
                     // Set success to whether the call reverted, if not we check it either
                     // returned exactly 1 (can't just be non-zero data), or had no return data.
                     or(eq(mload(0x00), 1), iszero(returndatasize())),
@@ -186,10 +186,7 @@ library SafeTransferLib {
     ///
     /// The `from` account must have at least `amount` approved for
     /// the current contract to manage.
-    function safeTransferAllFrom(ERC20 token, address from, address to)
-        internal
-        returns (uint256 amount)
-    {
+    function safeTransferAllFrom(ERC20 token, address from, address to) internal returns (uint256 amount) {
         /// @solidity memory-safe-assembly
         assembly {
             let m := mload(0x40) // Cache the free memory pointer.
@@ -199,7 +196,8 @@ library SafeTransferLib {
             // Store the function selector of `balanceOf(address)`.
             mstore(0x0c, 0x70a08231000000000000000000000000)
             if iszero(
-                and( // The arguments of `and` are evaluated from right to left.
+                and(
+                    // The arguments of `and` are evaluated from right to left.
                     gt(returndatasize(), 0x1f), // At least 32 bytes returned.
                     staticcall(gas(), token, 0x1c, 0x24, 0x60, 0x20)
                 )
@@ -216,7 +214,8 @@ library SafeTransferLib {
             amount := mload(0x60)
 
             if iszero(
-                and( // The arguments of `and` are evaluated from right to left.
+                and(
+                    // The arguments of `and` are evaluated from right to left.
                     // Set success to whether the call reverted, if not we check it either
                     // returned exactly 1 (can't just be non-zero data), or had no return data.
                     or(eq(mload(0x00), 1), iszero(returndatasize())),
@@ -245,7 +244,8 @@ library SafeTransferLib {
             mstore(0x00, 0xa9059cbb000000000000000000000000)
 
             if iszero(
-                and( // The arguments of `and` are evaluated from right to left.
+                and(
+                    // The arguments of `and` are evaluated from right to left.
                     // Set success to whether the call reverted, if not we check it either
                     // returned exactly 1 (can't just be non-zero data), or had no return data.
                     or(eq(mload(0x00), 1), iszero(returndatasize())),
@@ -270,7 +270,8 @@ library SafeTransferLib {
             mstore(0x00, 0x70a08231) // Store the function selector of `balanceOf(address)`.
             mstore(0x20, address()) // Store the address of the current contract.
             if iszero(
-                and( // The arguments of `and` are evaluated from right to left.
+                and(
+                    // The arguments of `and` are evaluated from right to left.
                     gt(returndatasize(), 0x1f), // At least 32 bytes returned.
                     staticcall(gas(), token, 0x1c, 0x24, 0x34, 0x20)
                 )
@@ -288,7 +289,8 @@ library SafeTransferLib {
             mstore(0x00, 0xa9059cbb000000000000000000000000)
 
             if iszero(
-                and( // The arguments of `and` are evaluated from right to left.
+                and(
+                    // The arguments of `and` are evaluated from right to left.
                     // Set success to whether the call reverted, if not we check it either
                     // returned exactly 1 (can't just be non-zero data), or had no return data.
                     or(eq(mload(0x00), 1), iszero(returndatasize())),
@@ -316,7 +318,8 @@ library SafeTransferLib {
             mstore(0x00, 0x095ea7b3000000000000000000000000)
 
             if iszero(
-                and( // The arguments of `and` are evaluated from right to left.
+                and(
+                    // The arguments of `and` are evaluated from right to left.
                     // Set success to whether the call reverted, if not we check it either
                     // returned exactly 1 (can't just be non-zero data), or had no return data.
                     or(eq(mload(0x00), 1), iszero(returndatasize())),
@@ -344,7 +347,8 @@ library SafeTransferLib {
             amount :=
                 mul(
                     mload(0x20),
-                    and( // The arguments of `and` are evaluated from right to left.
+                    and(
+                        // The arguments of `and` are evaluated from right to left.
                         gt(returndatasize(), 0x1f), // At least 32 bytes returned.
                         staticcall(gas(), token, 0x10, 0x24, 0x20, 0x20)
                     )

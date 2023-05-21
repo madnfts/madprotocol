@@ -4,13 +4,43 @@
 
 /* eslint-disable */
 import type {
-  ERC1155B,
-  ERC1155BInterface,
-} from "../../../../../../lib/tokens/ERC1155/Base/ERC1155B.sol/ERC1155B";
+  ERC1155,
+  ERC1155Interface,
+} from "../../../../../lib/tokens/ERC1155/Base/ERC1155";
 import type { Provider } from "@ethersproject/providers";
 import { Contract, Signer, utils } from "ethers";
 
 const _abi = [
+  {
+    inputs: [],
+    name: "AccountBalanceOverflow",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "ArrayLengthsMismatch",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "InsufficientBalance",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "NotOwnerNorApproved",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "TransferToNonERC1155ReceiverImplementer",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "TransferToZeroAddress",
+    type: "error",
+  },
   {
     anonymous: false,
     inputs: [
@@ -29,7 +59,7 @@ const _abi = [
       {
         indexed: false,
         internalType: "bool",
-        name: "approved",
+        name: "isApproved",
         type: "bool",
       },
     ],
@@ -146,7 +176,7 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "bal",
+        name: "result",
         type: "uint256",
       },
     ],
@@ -181,12 +211,12 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "",
+        name: "owner",
         type: "address",
       },
       {
         internalType: "address",
-        name: "",
+        name: "operator",
         type: "address",
       },
     ],
@@ -194,32 +224,8 @@ const _abi = [
     outputs: [
       {
         internalType: "bool",
-        name: "",
+        name: "result",
         type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    name: "ownerOf",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -300,13 +306,32 @@ const _abi = [
       },
       {
         internalType: "bool",
-        name: "approved",
+        name: "isApproved",
         type: "bool",
       },
     ],
     name: "setApprovalForAll",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes4",
+        name: "interfaceId",
+        type: "bytes4",
+      },
+    ],
+    name: "supportsInterface",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "result",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -330,15 +355,15 @@ const _abi = [
   },
 ] as const;
 
-export class ERC1155B__factory {
+export class ERC1155__factory {
   static readonly abi = _abi;
-  static createInterface(): ERC1155BInterface {
-    return new utils.Interface(_abi) as ERC1155BInterface;
+  static createInterface(): ERC1155Interface {
+    return new utils.Interface(_abi) as ERC1155Interface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): ERC1155B {
-    return new Contract(address, _abi, signerOrProvider) as ERC1155B;
+  ): ERC1155 {
+    return new Contract(address, _abi, signerOrProvider) as ERC1155;
   }
 }

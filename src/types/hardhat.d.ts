@@ -37,9 +37,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.TwoFactor__factory>;
     getContractFactory(
-      name: "Pausable",
+      name: "DCPrevent",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Pausable__factory>;
+    ): Promise<Contracts.DCPrevent__factory>;
     getContractFactory(
       name: "SplitterEventsAndErrors",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -101,13 +101,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.FeeOracle__factory>;
     getContractFactory(
-      name: "ERC1155B",
+      name: "ERC1155",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC1155B__factory>;
-    getContractFactory(
-      name: "ERC1155TokenReceiver",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC1155TokenReceiver__factory>;
+    ): Promise<Contracts.ERC1155__factory>;
     getContractFactory(
       name: "IERC1155",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -117,6 +113,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC1155Holder__factory>;
     getContractFactory(
+      name: "ERC1155TokenReceiver",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC1155TokenReceiver__factory>;
+    getContractFactory(
       name: "ERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC20__factory>;
@@ -124,10 +124,6 @@ declare module "hardhat/types/runtime" {
       name: "ERC721",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC721__factory>;
-    getContractFactory(
-      name: "ERC721TokenReceiver",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC721TokenReceiver__factory>;
     getContractFactory(
       name: "IERC721",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -137,6 +133,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC721Holder__factory>;
     getContractFactory(
+      name: "ERC721TokenReceiver",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC721TokenReceiver__factory>;
+    getContractFactory(
       name: "ISwapRouter",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ISwapRouter__factory>;
@@ -144,10 +144,6 @@ declare module "hardhat/types/runtime" {
       name: "IUniswapV3SwapCallback",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IUniswapV3SwapCallback__factory>;
-    getContractFactory(
-      name: "Counters",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Counters__factory>;
     getContractFactory(
       name: "SafeTransferLib",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -164,6 +160,10 @@ declare module "hardhat/types/runtime" {
       name: "ImplBaseEventsAndErrors",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ImplBaseEventsAndErrors__factory>;
+    getContractFactory(
+      name: "PaymentManager",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.PaymentManager__factory>;
     getContractFactory(
       name: "ERC1155Basic",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -264,10 +264,10 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.TwoFactor>;
     getContractAt(
-      name: "Pausable",
+      name: "DCPrevent",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.Pausable>;
+    ): Promise<Contracts.DCPrevent>;
     getContractAt(
       name: "SplitterEventsAndErrors",
       address: string,
@@ -344,15 +344,10 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.FeeOracle>;
     getContractAt(
-      name: "ERC1155B",
+      name: "ERC1155",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.ERC1155B>;
-    getContractAt(
-      name: "ERC1155TokenReceiver",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ERC1155TokenReceiver>;
+    ): Promise<Contracts.ERC1155>;
     getContractAt(
       name: "IERC1155",
       address: string,
@@ -364,6 +359,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ERC1155Holder>;
     getContractAt(
+      name: "ERC1155TokenReceiver",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC1155TokenReceiver>;
+    getContractAt(
       name: "ERC20",
       address: string,
       signer?: ethers.Signer
@@ -373,11 +373,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC721>;
-    getContractAt(
-      name: "ERC721TokenReceiver",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ERC721TokenReceiver>;
     getContractAt(
       name: "IERC721",
       address: string,
@@ -389,6 +384,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ERC721Holder>;
     getContractAt(
+      name: "ERC721TokenReceiver",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC721TokenReceiver>;
+    getContractAt(
       name: "ISwapRouter",
       address: string,
       signer?: ethers.Signer
@@ -398,11 +398,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IUniswapV3SwapCallback>;
-    getContractAt(
-      name: "Counters",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Counters>;
     getContractAt(
       name: "SafeTransferLib",
       address: string,
@@ -423,6 +418,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ImplBaseEventsAndErrors>;
+    getContractAt(
+      name: "PaymentManager",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.PaymentManager>;
     getContractAt(
       name: "ERC1155Basic",
       address: string,

@@ -1,8 +1,15 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 pragma solidity 0.8.19;
+
 import { FactoryEventsAndErrors721 } from "contracts/Shared/EventsAndErrors.sol";
-import { MADFactoryBase, FactoryVerifier, Types, SplitterImpl, Bytes32AddressLib } from "contracts/Factory/MADFactoryBase.sol";
+import {
+    MADFactoryBase,
+    FactoryVerifier,
+    Types,
+    SplitterImpl,
+    Bytes32AddressLib
+} from "contracts/Factory/MADFactoryBase.sol";
 
 // import { ERC721BasicDeployer } from "contracts/lib/deployers/ERC721Deployer.sol";
 
@@ -23,11 +30,9 @@ contract MADFactory721 is MADFactoryBase, FactoryEventsAndErrors721 {
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    constructor(
-        address _marketplace,
-        address _signer,
-        address _paymentTokenAddress
-    ) MADFactoryBase(_marketplace, _signer, _paymentTokenAddress) {}
+    constructor(address _marketplace, address _signer, address _paymentTokenAddress)
+        MADFactoryBase(_marketplace, _signer, _paymentTokenAddress)
+    { }
 
     /// @notice Core public ERC721 token types deployment pusher.
     /// @dev Function Sighash := 0x73fd6808
@@ -58,61 +63,22 @@ contract MADFactory721 is MADFactoryBase, FactoryEventsAndErrors721 {
         address _splitter,
         uint96 _royalty,
         bytes32[] memory _extra
-    ) 
-        external 
-        nonReentrant 
-        isThisOg 
-        whenNotPaused 
-    {
+    ) external isThisOg {
         _limiter(_tokenType, _splitter);
         _royaltyLocker(_royalty);
 
-        Types.ColArgs memory args = Types.ColArgs(
-            _name, 
-            _symbol, 
-            _baseURI, 
-            _price, 
-            _maxSupply,
-            SplitterImpl(payable(_splitter)),
-            _royalty,
-            router,
-            erc20
-        );
+        Types.ColArgs memory args =
+            Types.ColArgs(_name, _symbol, _baseURI, _price, _maxSupply, _splitter, _royalty, router, address(erc20));
 
-        (bytes32 tokenSalt, address deployed) = 
-        _collectionDeploy(
-            _tokenType,
-            _tokenSalt,
-            args,
-            _extra
-        );
+        (bytes32 tokenSalt, address deployed) = _collectionDeploy(_tokenType, _tokenSalt, args, _extra);
 
         bytes32 colId = deployed.fillLast12Bytes();
         userTokens[tx.origin].push(colId);
 
-        colInfo[colId] = Types.Collection721(
-            tx.origin,
-            _tokenType,
-            tokenSalt,
-            block.number,
-            _splitter
-        );
+        colInfo[colId] = Types.Collection721(tx.origin, _tokenType, tokenSalt, block.number, _splitter);
 
-        emit ERC721Created(
-            _splitter, 
-            deployed,
-            _tokenType, 
-            _name, 
-            _symbol, 
-            _royalty, 
-            _maxSupply, 
-            _price
-        );
+        emit ERC721BasicCreated(_splitter, deployed, _name, _symbol, _royalty, _maxSupply, _price);
     }
-
-    ////////////////////////////////////////////////////////////////
-    //                         OWNER FX                           //
-    ////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////
     //                           HELPERS                          //
@@ -136,9 +102,12 @@ contract MADFactory721 is MADFactoryBase, FactoryEventsAndErrors721 {
     }
 
     /// @inheritdoc FactoryVerifier
-    function creatorCheck(
-        bytes32 _colID
-    ) external view override(FactoryVerifier) returns (address creator, bool check) {
+    function creatorCheck(bytes32 _colID)
+        external
+        view
+        override(FactoryVerifier)
+        returns (address creator, bool check)
+    {
         _isRouter();
         Types.Collection721 storage col = colInfo[_colID];
 
@@ -147,9 +116,7 @@ contract MADFactory721 is MADFactoryBase, FactoryEventsAndErrors721 {
             // bitmask to get the first 20 bytes of storage slot
             creator := and(x, 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
 
-            if eq(creator, origin()) {
-                check := true
-            }
+            if eq(creator, origin()) { check := true }
             // if(!check) revert AccessDenied();
             if iszero(check) {
                 mstore(0x00, 0x4ca88867)

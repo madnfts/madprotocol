@@ -42,13 +42,12 @@ interface FactoryEventsAndErrors721 is FactoryEventsAndErrorsBase {
     //                           EVENTS                           //
     ////////////////////////////////////////////////////////////////
 
-    event ERC721Created(
+    event ERC721BasicCreated(
         address indexed newSplitter,
         address indexed newCollection,
-        uint8 tokenType,
         string name,
         string symbol,
-        uint96 royalties,
+        uint256 royalties,
         uint256 maxSupply,
         uint256 mintPrice
     );
@@ -59,10 +58,11 @@ interface FactoryEventsAndErrors1155 is FactoryEventsAndErrorsBase {
     //                           EVENTS                           //
     ////////////////////////////////////////////////////////////////
 
-    event ERC1155Created(
+    event ERC1155BasicCreated(
         address indexed newSplitter,
         address indexed newCollection,
-        uint8 tokenType,
+        string name,
+        string symbol,
         uint256 royalties,
         uint256 maxSupply,
         uint256 mintPrice
@@ -135,12 +135,7 @@ interface MarketplaceEventsAndErrors1155 is MarketplaceEventsAndErrorsBase {
     event MakeOrder(IERC1155 indexed token, uint256 id, uint256 amount, bytes32 indexed hash, address seller);
     event CancelOrder(IERC1155 indexed token, uint256 id, uint256 amount, bytes32 indexed hash, address seller);
     event Bid(
-        IERC1155 indexed token,
-        uint256 id,
-        uint256 amount,
-        bytes32 indexed hash,
-        address bidder,
-        uint256 bidPrice
+        IERC1155 indexed token, uint256 id, uint256 amount, bytes32 indexed hash, address bidder, uint256 bidPrice
     );
     event Claim(
         IERC1155 indexed token,
@@ -172,4 +167,8 @@ interface RouterEvents is EventsAndErrorsBase {
 
     /// @dev 0xf7760f25
     error WrongPrice();
+    /// @dev 0x2d8768f9
+    error InvalidFees();
+    error InvalidType();
+    error NoFunds();
 }

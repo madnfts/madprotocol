@@ -13,6 +13,21 @@ import { Contract, Signer, utils } from "ethers";
 const _abi = [
   {
     inputs: [],
+    name: "InvalidFees",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "InvalidType",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "NoFunds",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "WrongPrice",
     type: "error",
   },
@@ -120,19 +135,6 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
-        indexed: false,
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-    ],
-    name: "Paused",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
         indexed: true,
         internalType: "address",
         name: "newPaymentToken",
@@ -203,19 +205,6 @@ const _abi = [
       },
     ],
     name: "TokenFundsWithdrawn",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-    ],
-    name: "Unpaused",
     type: "event",
   },
   {
@@ -368,26 +357,6 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "pause",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "paused",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
     name: "recipient",
     outputs: [
       {
@@ -452,13 +421,6 @@ const _abi = [
       },
     ],
     name: "setRecipient",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "unpause",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

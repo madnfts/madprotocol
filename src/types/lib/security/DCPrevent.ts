@@ -13,18 +13,18 @@ import type {
 import type { Listener, Provider } from "@ethersproject/providers";
 import type { BaseContract, Signer, utils } from "ethers";
 
-export interface CountersInterface extends utils.Interface {
+export interface DCPreventInterface extends utils.Interface {
   functions: {};
 
   events: {};
 }
 
-export interface Counters extends BaseContract {
+export interface DCPrevent extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: CountersInterface;
+  interface: DCPreventInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

@@ -6,12 +6,15 @@ import { ERC2981 } from "contracts/lib/tokens/common/ERC2981.sol";
 import { Owned } from "contracts/lib/auth/Owned.sol";
 
 contract MockERC2981 is ERC2981, Owned(msg.sender) {
+    address public _royaltyRecipient;
+
     event RoyaltyRecipientSet(address indexed newRecipient);
     event RoyaltyFeeSet(uint256 indexed newRoyaltyFee);
 
-    constructor(uint256 fee, address recipient) ERC2981() {
+    constructor(uint256 fee, address recipient) ERC2981(fee) {
         setRoyaltyRecipient(recipient);
-        setRoyaltyFee(fee);
+        // setRoyaltyFee(fee);
+        emit RoyaltyFeeSet(_royaltyFee);
     }
 
     function setRoyaltyRecipient(address recipient) public onlyOwner {
@@ -20,9 +23,20 @@ contract MockERC2981 is ERC2981, Owned(msg.sender) {
         emit RoyaltyRecipientSet(_royaltyRecipient);
     }
 
-    function setRoyaltyFee(uint256 fee) public onlyOwner {
-        _royaltyFee = fee;
+    // function setRoyaltyFee(uint256 fee) public onlyOwner {
+    //     _royaltyFee = fee;
 
-        emit RoyaltyFeeSet(_royaltyFee);
+    //     emit RoyaltyFeeSet(_royaltyFee);
+    // }
+
+    function royaltyInfo(uint256, uint256 salePrice)
+        public
+        view
+        virtual
+        override(ERC2981)
+        returns (address receiver, uint256 royaltyAmount)
+    {
+        receiver = payable(_royaltyRecipient);
+        royaltyAmount = (salePrice * _royaltyFee) / 10_000;
     }
 }

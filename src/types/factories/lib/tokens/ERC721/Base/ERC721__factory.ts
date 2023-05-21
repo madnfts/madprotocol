@@ -6,11 +6,51 @@
 import type {
   ERC721,
   ERC721Interface,
-} from "../../../../../../lib/tokens/ERC721/Base/ERC721.sol/ERC721";
+} from "../../../../../lib/tokens/ERC721/Base/ERC721";
 import type { Provider } from "@ethersproject/providers";
 import { Contract, Signer, utils } from "ethers";
 
 const _abi = [
+  {
+    inputs: [],
+    name: "AccountBalanceOverflow",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "BalanceQueryForZeroAddress",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "NotOwnerNorApproved",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "TokenAlreadyExists",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "TokenDoesNotExist",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "TransferFromIncorrectOwner",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "TransferToNonERC721ReceiverImplementer",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "TransferToZeroAddress",
+    type: "error",
+  },
   {
     anonymous: false,
     inputs: [
@@ -23,7 +63,7 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
-        name: "spender",
+        name: "account",
         type: "address",
       },
       {
@@ -54,7 +94,7 @@ const _abi = [
       {
         indexed: false,
         internalType: "bool",
-        name: "approved",
+        name: "isApproved",
         type: "bool",
       },
     ],
@@ -90,7 +130,7 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "spender",
+        name: "account",
         type: "address",
       },
       {
@@ -101,7 +141,7 @@ const _abi = [
     ],
     name: "approve",
     outputs: [],
-    stateMutability: "nonpayable",
+    stateMutability: "payable",
     type: "function",
   },
   {
@@ -116,7 +156,7 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "",
+        name: "result",
         type: "uint256",
       },
     ],
@@ -127,7 +167,7 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "",
+        name: "id",
         type: "uint256",
       },
     ],
@@ -135,7 +175,7 @@ const _abi = [
     outputs: [
       {
         internalType: "address",
-        name: "",
+        name: "result",
         type: "address",
       },
     ],
@@ -146,12 +186,12 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "",
+        name: "owner",
         type: "address",
       },
       {
         internalType: "address",
-        name: "",
+        name: "operator",
         type: "address",
       },
     ],
@@ -159,7 +199,7 @@ const _abi = [
     outputs: [
       {
         internalType: "bool",
-        name: "",
+        name: "result",
         type: "bool",
       },
     ],
@@ -191,7 +231,7 @@ const _abi = [
     outputs: [
       {
         internalType: "address",
-        name: "owner",
+        name: "result",
         type: "address",
       },
     ],
@@ -218,7 +258,7 @@ const _abi = [
     ],
     name: "safeTransferFrom",
     outputs: [],
-    stateMutability: "nonpayable",
+    stateMutability: "payable",
     type: "function",
   },
   {
@@ -246,7 +286,7 @@ const _abi = [
     ],
     name: "safeTransferFrom",
     outputs: [],
-    stateMutability: "nonpayable",
+    stateMutability: "payable",
     type: "function",
   },
   {
@@ -258,7 +298,7 @@ const _abi = [
       },
       {
         internalType: "bool",
-        name: "approved",
+        name: "isApproved",
         type: "bool",
       },
     ],
@@ -279,7 +319,7 @@ const _abi = [
     outputs: [
       {
         internalType: "bool",
-        name: "",
+        name: "result",
         type: "bool",
       },
     ],
@@ -338,7 +378,7 @@ const _abi = [
     ],
     name: "transferFrom",
     outputs: [],
-    stateMutability: "nonpayable",
+    stateMutability: "payable",
     type: "function",
   },
 ] as const;

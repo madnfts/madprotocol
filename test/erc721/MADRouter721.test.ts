@@ -77,11 +77,13 @@ describe("MADRouter721", () => {
         );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
+        acc02.address,
       );
 
       // Basic
       const basicAddr = await f721.callStatic.getDeployedAddr(
         "BasicSalt",
+        acc02.address,
       );
       await f721
         .connect(acc02)
@@ -95,7 +97,7 @@ describe("MADRouter721", () => {
           "ipfs://cid/id.json",
           splAddr,
           750,
-          []
+          [],
         );
       const basic = await ethers.getContractAt(
         "ERC721Basic",
@@ -128,9 +130,11 @@ describe("MADRouter721", () => {
         );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
+        acc02.address,
       );
       const basicAddr = await f721.callStatic.getDeployedAddr(
         "BasicSalt",
+        acc02.address,
       );
       await f721
         .connect(acc02)
@@ -144,7 +148,7 @@ describe("MADRouter721", () => {
           "ipfs://cid/",
           splAddr,
           750,
-          []
+          [],
         );
       const colID = await f721.callStatic.getColID(basicAddr);
       const basic = await ethers.getContractAt(
@@ -190,9 +194,11 @@ describe("MADRouter721", () => {
         );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
+        acc02.address,
       );
       const basicAddr = await f721.callStatic.getDeployedAddr(
         "BasicSalt",
+        acc02.address,
       );
       await f721
         .connect(acc02)
@@ -206,7 +212,7 @@ describe("MADRouter721", () => {
           "cid/id.json",
           splAddr,
           750,
-          []
+          [],
         );
       const basic = await ethers.getContractAt(
         "ERC721Basic",
@@ -255,9 +261,11 @@ describe("MADRouter721", () => {
         );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
+        acc02.address,
       );
       const basicAddr = await f721.callStatic.getDeployedAddr(
         "BasicSalt",
+        acc02.address,
       );
       await f721
         .connect(acc02)
@@ -271,7 +279,7 @@ describe("MADRouter721", () => {
           "ipfs://cid/",
           splAddr,
           750,
-          []
+          [],
         );
       const basic = await ethers.getContractAt(
         "ERC721Basic",
@@ -308,7 +316,10 @@ describe("MADRouter721", () => {
   });
   describe("Set MintState", async () => {
     it("Should revert for invalid stateType", async () => {
-      const addr = await f721.getDeployedAddr("salt");
+      const addr = await f721.getDeployedAddr(
+        "salt",
+        acc02.address,
+      );
       const tx = r721.setMintState(addr, true);
 
       await expect(tx).to.be.revertedWithCustomError(
@@ -328,9 +339,11 @@ describe("MADRouter721", () => {
         );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
+        acc02.address,
       );
       const basicAddr = await f721.callStatic.getDeployedAddr(
         "BasicSalt",
+        acc02.address,
       );
 
       await f721
@@ -345,7 +358,7 @@ describe("MADRouter721", () => {
           "ipfs://cid/",
           splAddr,
           750,
-          []
+          [],
         );
       const basic = await ethers.getContractAt(
         "ERC721Basic",
@@ -399,9 +412,11 @@ describe("MADRouter721", () => {
         );
       const splAddr = await f721.callStatic.getDeployedAddr(
         "MADSplitter1",
+        acc02.address,
       );
       const basicAddr = await f721.callStatic.getDeployedAddr(
         "BasicSalt",
+        acc02.address,
       );
       await f721
         .connect(acc02)
@@ -415,7 +430,7 @@ describe("MADRouter721", () => {
           "ipfs://cid/id.json",
           splAddr,
           750,
-          []
+          [],
         );
       const basic = await ethers.getContractAt(
         "ERC721Basic",
@@ -444,7 +459,10 @@ describe("MADRouter721", () => {
       const newBal2 = await erc20.balanceOf(acc02.address);
 
       const basicAddr2 =
-        await f721.callStatic.getDeployedAddr("salt");
+        await f721.callStatic.getDeployedAddr(
+          "salt",
+          mad.address,
+        );
       await f721
         .connect(mad)
         .splitterCheck(
@@ -456,6 +474,7 @@ describe("MADRouter721", () => {
         );
       const madSpl = await f721.callStatic.getDeployedAddr(
         "MADSplitter2",
+        mad.address,
       );
 
       await f721
@@ -470,7 +489,7 @@ describe("MADRouter721", () => {
           "ipfs://cid/",
           madSpl,
           750,
-          []
+          [],
         );
       const basic2 = await ethers.getContractAt(
         "ERC721Basic",
@@ -500,12 +519,14 @@ describe("MADRouter721", () => {
 
       const wlAddr = await f721.callStatic.getDeployedAddr(
         "WhiteSalt",
+        amb.address,
       );
       await f721
         .connect(amb)
         .splitterCheck("MADSplitter3", dead, dead, 0, 0);
       const ambSpl = await f721.callStatic.getDeployedAddr(
         "MADSplitter3",
+        amb.address,
       );
       await f721
         .connect(amb)
@@ -519,7 +540,7 @@ describe("MADRouter721", () => {
           "ipfs://cid/",
           ambSpl,
           750,
-          []
+          [],
         );
       const wl = await ethers.getContractAt(
         "ERC721Basic",
@@ -549,19 +570,21 @@ describe("MADRouter721", () => {
         10,
         await ethers.getSigners(),
       );
-      const newUser = userBffr[9];
+      const newUser = await ethers.getSigner(userBffr[9]);
 
       await f721
-        .connect(await ethers.getSigner(newUser))
+        .connect(newUser)
         .splitterCheck("MADSplitter4", dead, dead, 0, 0);
       const userSpl = await f721.callStatic.getDeployedAddr(
         "MADSplitter4",
+        newUser.address,
       );
       const lazyAddr = await f721.callStatic.getDeployedAddr(
         "LazySalt",
+        newUser.address,
       );
       await f721
-        .connect(await ethers.getSigner(newUser))
+        .connect(newUser)
         .createCollection(
           1,
           "LazySalt",
@@ -572,7 +595,7 @@ describe("MADRouter721", () => {
           "ipfs://cid/",
           userSpl,
           750,
-          []
+          [],
         );
       const lazy = await ethers.getContractAt(
         "ERC721Basic",
@@ -581,24 +604,26 @@ describe("MADRouter721", () => {
 
       await erc20.mint(lazy.address, price);
       await r721
-        .connect(await ethers.getSigner(newUser))
+        .connect(newUser)
         .setMintState(lazy.address, true);
       await lazy.connect(acc01).mint(1, {
         value: price.add(ethers.utils.parseEther("0.25")),
       });
 
-      const bal3 = await ethers.provider.getBalance(newUser);
-      const bal4 = await erc20.balanceOf(newUser);
+      const bal3 = await ethers.provider.getBalance(
+        newUser.address,
+      );
+      const bal4 = await erc20.balanceOf(newUser.address);
       const tx3 = await r721
-        .connect(await ethers.getSigner(newUser))
+        .connect(newUser)
         .withdraw(lazy.address, dead);
       const tx4 = await r721
-        .connect(await ethers.getSigner(newUser))
+        .connect(newUser)
         .withdraw(lazy.address, erc20.address);
       const newBal3 = await ethers.provider.getBalance(
-        newUser,
+        newUser.address,
       );
-      const newBal4 = await erc20.balanceOf(newUser);
+      const newBal4 = await erc20.balanceOf(newUser.address);
       const verArt = await artifacts.readArtifact(
         "FactoryVerifier",
       );
@@ -690,13 +715,11 @@ describe("MADRouter721", () => {
       );
       await expect(
         r721
-          .connect(await ethers.getSigner(newUser))
+          .connect(newUser)
           .withdraw(lazy.address, erc20.address),
       ).to.be.revertedWith(RouterErrors.NoFunds);
       await expect(
-        r721
-          .connect(await ethers.getSigner(newUser))
-          .withdraw(lazy.address, dead),
+        r721.connect(newUser).withdraw(lazy.address, dead),
       ).to.be.revertedWith(RouterErrors.NoFunds);
     });
     it("Should withdraw balance and distribute public mint fees for all colTypes", async () => {
@@ -719,6 +742,7 @@ describe("MADRouter721", () => {
         );
       const madSpl = await f721.callStatic.getDeployedAddr(
         "MADSplitter2",
+        mad.address,
       );
 
       // Set mint and burn fees
@@ -730,6 +754,7 @@ describe("MADRouter721", () => {
       // Deploy MINIMAL contracts and set public mint = true
       const basicAddr = await f721.callStatic.getDeployedAddr(
         "BasicSalt",
+        mad.address,
       );
       await f721
         .connect(mad)
@@ -743,7 +768,7 @@ describe("MADRouter721", () => {
           "ipfs://cid/id.json",
           madSpl,
           750,
-          []
+          [],
         );
       const basic = await ethers.getContractAt(
         "ERC721Basic",
@@ -819,7 +844,10 @@ describe("MADRouter721", () => {
 
       // Deploy BASIC contracts and set public mint = true
       const basicAddr2 =
-        await f721.callStatic.getDeployedAddr("salt");
+        await f721.callStatic.getDeployedAddr(
+          "salt",
+          mad.address,
+        );
       await f721
         .connect(mad)
         .createCollection(
@@ -832,7 +860,7 @@ describe("MADRouter721", () => {
           "ipfs://cid/",
           madSpl,
           1000,
-          []
+          [],
         );
       const basic2 = await ethers.getContractAt(
         "ERC721Basic",
@@ -924,6 +952,7 @@ describe("MADRouter721", () => {
     it("Should initialize paused and unpaused states", async () => {
       const addr = await f721.callStatic.getDeployedAddr(
         "salt",
+        acc02.address,
       );
       const tx = await r721.pause();
       expect(tx).to.be.ok;
@@ -985,9 +1014,13 @@ describe("MADRouter721", () => {
           );
         const splAddr = await f721.callStatic.getDeployedAddr(
           "MADSplitter1",
+          acc02.address,
         );
         const basicAddr =
-          await f721.callStatic.getDeployedAddr("BasicSalt");
+          await f721.callStatic.getDeployedAddr(
+            "BasicSalt",
+            acc02.address,
+          );
         await f721
           .connect(acc02)
           .createCollection(
@@ -1000,7 +1033,7 @@ describe("MADRouter721", () => {
             "ipfs://cid/",
             splAddr,
             750,
-            []
+            [],
           );
         await r721.setFees(
           ethers.utils.parseEther("2.5"),

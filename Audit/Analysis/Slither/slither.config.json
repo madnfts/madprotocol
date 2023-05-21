@@ -1,21 +1,19 @@
 {
-    
-    "exclude_informational": false,
-    "exclude_low": false,
-    "exclude_medium": false,
-    "exclude_high": false,
-    "json": "Slither/results/slither.results.json",
-    "disable_color": false,
-    "filter_paths": "(node_modules/|test/)",
-    "legacy_ast": false,
-    
-    "detectors_to_exclude": "pragma,solc-version,assembly,naming-convention,uninitialized-state",
-    "solc_remaps": "@=node_modules/@",
-    "hardhat_ignore_compile": false,
-    "hardhat_cache_directory": "~/Documents/GIT/MADNFT/madprotocol/cache/",
-    "hardhat_artifacts_directory": "~/Documents/GIT/MADNFT/madprotocol/artifacts/",
-    "foundry_ignore_compile": true,
-    "foundry_out_directory": "out",
-    "solc_args": "optimize"
-}
+  "exclude_informational": false,
+  "exclude_low": false,
+  "exclude_medium": false,
+  "exclude_high": false,
+  "json": "Slither/results/slither.results.json",
+  "disable_color": false,
+  "filter_paths": "(node_modules/|test/)",
+  "legacy_ast": false,
 
+  "detectors_to_exclude": "pragma,solc-version,assembly,naming-convention,uninitialized-state",
+  "solc_remaps": "@=node_modules/@",
+  "hardhat_ignore_compile": false,
+  "hardhat_cache_directory": "~/Documents/GIT/MADNFT/madprotocol/cache/",
+  "hardhat_artifacts_directory": "~/Documents/GIT/MADNFT/madprotocol/artifacts/",
+  "foundry_ignore_compile": true,
+  "foundry_out_directory": "out",
+  "solc_args": "optimize"
+}

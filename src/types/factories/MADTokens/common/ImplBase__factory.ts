@@ -13,6 +13,11 @@ import { Contract, Signer, utils } from "ethers";
 const _abi = [
   {
     inputs: [],
+    name: "DecOverflow",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "InvalidValue",
     type: "error",
   },
@@ -58,14 +63,7 @@ const _abi = [
   },
   {
     anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "string",
-        name: "baseURI",
-        type: "string",
-      },
-    ],
+    inputs: [],
     name: "BaseURILocked",
     type: "event",
   },
@@ -155,12 +153,12 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "baseURI",
+    name: "_royaltyFee",
     outputs: [
       {
-        internalType: "string",
+        internalType: "uint256",
         name: "",
-        type: "string",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -182,6 +180,19 @@ const _abi = [
   {
     inputs: [],
     name: "feeCount",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "feeCountERC20",
     outputs: [
       {
         internalType: "uint256",
@@ -224,7 +235,7 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "_val",
+        name: "_liveSupply",
         type: "uint256",
       },
     ],
@@ -236,9 +247,9 @@ const _abi = [
     name: "maxSupply",
     outputs: [
       {
-        internalType: "uint256",
+        internalType: "uint128",
         name: "",
-        type: "uint256",
+        type: "uint128",
       },
     ],
     stateMutability: "view",
@@ -250,7 +261,7 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "",
+        name: "_mintCount",
         type: "uint256",
       },
     ],
@@ -392,19 +403,6 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "totalSupply",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
     name: "uriLock",
     outputs: [
       {
@@ -432,8 +430,8 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "contract ERC20",
-        name: "_token",
+        internalType: "address",
+        name: "token",
         type: "address",
       },
       {

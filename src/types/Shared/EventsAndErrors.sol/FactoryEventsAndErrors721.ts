@@ -25,7 +25,7 @@ export interface FactoryEventsAndErrors721Interface extends utils.Interface {
 
   events: {
     "ColTypeUpdated(uint256)": EventFragment;
-    "ERC721Created(address,address,uint8,string,string,uint96,uint256,uint256)": EventFragment;
+    "ERC721BasicCreated(address,address,string,string,uint256,uint256,uint256)": EventFragment;
     "FeesUpdated(uint256,uint256)": EventFragment;
     "MarketplaceUpdated(address)": EventFragment;
     "PaymentTokenUpdated(address)": EventFragment;
@@ -36,7 +36,7 @@ export interface FactoryEventsAndErrors721Interface extends utils.Interface {
   };
 
   getEvent(nameOrSignatureOrTopic: "ColTypeUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ERC721Created"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ERC721BasicCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FeesUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MarketplaceUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PaymentTokenUpdated"): EventFragment;
@@ -56,22 +56,22 @@ export type ColTypeUpdatedEvent = TypedEvent<
 
 export type ColTypeUpdatedEventFilter = TypedEventFilter<ColTypeUpdatedEvent>;
 
-export interface ERC721CreatedEventObject {
+export interface ERC721BasicCreatedEventObject {
   newSplitter: string;
   newCollection: string;
-  tokenType: number;
   name: string;
   symbol: string;
   royalties: BigNumber;
   maxSupply: BigNumber;
   mintPrice: BigNumber;
 }
-export type ERC721CreatedEvent = TypedEvent<
-  [string, string, number, string, string, BigNumber, BigNumber, BigNumber],
-  ERC721CreatedEventObject
+export type ERC721BasicCreatedEvent = TypedEvent<
+  [string, string, string, string, BigNumber, BigNumber, BigNumber],
+  ERC721BasicCreatedEventObject
 >;
 
-export type ERC721CreatedEventFilter = TypedEventFilter<ERC721CreatedEvent>;
+export type ERC721BasicCreatedEventFilter =
+  TypedEventFilter<ERC721BasicCreatedEvent>;
 
 export interface FeesUpdatedEventObject {
   feeVal2: BigNumber;
@@ -183,26 +183,24 @@ export interface FactoryEventsAndErrors721 extends BaseContract {
       index?: PromiseOrValue<BigNumberish> | null
     ): ColTypeUpdatedEventFilter;
 
-    "ERC721Created(address,address,uint8,string,string,uint96,uint256,uint256)"(
+    "ERC721BasicCreated(address,address,string,string,uint256,uint256,uint256)"(
       newSplitter?: PromiseOrValue<string> | null,
       newCollection?: PromiseOrValue<string> | null,
-      tokenType?: null,
       name?: null,
       symbol?: null,
       royalties?: null,
       maxSupply?: null,
       mintPrice?: null
-    ): ERC721CreatedEventFilter;
-    ERC721Created(
+    ): ERC721BasicCreatedEventFilter;
+    ERC721BasicCreated(
       newSplitter?: PromiseOrValue<string> | null,
       newCollection?: PromiseOrValue<string> | null,
-      tokenType?: null,
       name?: null,
       symbol?: null,
       royalties?: null,
       maxSupply?: null,
       mintPrice?: null
-    ): ERC721CreatedEventFilter;
+    ): ERC721BasicCreatedEventFilter;
 
     "FeesUpdated(uint256,uint256)"(
       feeVal2?: null,

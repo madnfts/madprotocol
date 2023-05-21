@@ -30,19 +30,19 @@ abstract contract MADRouterBase is MAD, MADBase, RouterEvents, FeeOracle {
     bytes4 internal constant MINBURN = 0x44df8e70;
 
     /// @notice Mint fee store.
-    uint256 public feeMint = 0;
+    uint256 public feeMint; /* = 0 */
 
     /// @notice Burn fee store.
-    uint256 public feeBurn = 0;
+    uint256 public feeBurn; /* = 0 */
 
     /// @dev The recipient address used for public mint fees.
     address public recipient;
 
     /// @notice max fee that can be set for mint - B.1 remove from constructor
-    uint256 public maxFeeMint = 2.5 ether;
+    uint256 public constant maxFeeMint = 2.5 ether;
 
     /// @notice max fee that can be set for burn - B.1 remove from constructor
-    uint256 public maxFeeBurn = 0.5 ether;
+    uint256 public constant maxFeeBurn = 0.5 ether;
 
     /// @notice FactoryVerifier connecting the router to madFactory.
     FactoryVerifier public madFactory;
@@ -53,7 +53,7 @@ abstract contract MADRouterBase is MAD, MADBase, RouterEvents, FeeOracle {
 
     /// @notice Constructor requires a valid factory address and an optional erc20 payment token address.
     /// @param _paymentTokenAddress erc20 token address | address(0).
-    /// @param _recipient 721 factory address.
+    /// @param _recipient Public mint fee recipient address.
     // B.1 - Remove maxFeeMint &  maxFeeBurn from constructor
     constructor(FactoryVerifier _factory, address _paymentTokenAddress, address _recipient) {
         // B.3 BlockHat Audit
@@ -75,11 +75,7 @@ abstract contract MADRouterBase is MAD, MADBase, RouterEvents, FeeOracle {
     /// @param sigHash MINSAFEMINT | MINBURN
     function feeLookup(bytes4 sigHash) external view override(FeeOracle) returns (uint256 fee) {
         assembly {
-            for {
-
-            } 1 {
-
-            } {
+            for { } 1 { } {
                 if eq(MINSAFEMINT, sigHash) {
                     fee := sload(feeMint.slot)
                     break
@@ -97,20 +93,20 @@ abstract contract MADRouterBase is MAD, MADBase, RouterEvents, FeeOracle {
     // /// @notice Checks if native || erc20 payments are matche required fees
     /// @dev Envokes safeTransferFrom for erc20 payments.
     ///      Function Sighash := ?
-    /// @param sigHash MINSAFEMINT | MINBURN
-    function _paymentCheck(bytes4 sigHash) internal {
-        if (address(erc20) != address(0)) {
-            uint256 value = erc20.allowance(msg.sender, address(this));
-            uint256 _fee = FeeOracle(this).feeLookup(sigHash);
-            assembly {
-                if iszero(eq(value, _fee)) {
-                    mstore(0x00, 0xf7760f25)
-                    revert(0x1c, 0x04)
-                }
-            }
-            SafeTransferLib.safeTransferFrom(erc20, msg.sender, address(this), value);
-        }
-    }
+    // /// @param sigHash MINSAFEMINT | MINBURN
+    // function _paymentCheck(bytes4 sigHash) internal {
+    //     if (address(erc20) != address(0)) {
+    //         uint256 value = erc20.allowance(msg.sender, address(this));
+    //         uint256 _fee = FeeOracle(this).feeLookup(sigHash);
+    //         assembly {
+    //             if iszero(eq(value, _fee)) {
+    //                 mstore(0x00, 0xf7760f25)
+    //                 revert(0x1c, 0x04)
+    //             }
+    //         }
+    //         SafeTransferLib.safeTransferFrom(erc20, msg.sender, address(this), value);
+    //     }
+    // }
 
     ////////////////////////////////////////////////////////////////
     //                         OWNER FX                           //
@@ -130,11 +126,15 @@ abstract contract MADRouterBase is MAD, MADBase, RouterEvents, FeeOracle {
     }
 
     /// @dev Setter for public mint fee _recipient.
-    /// @dev Function Sighash := ?
+    /// @dev Function Sighash := 0x3bbed4a0
     function setRecipient(address _recipient) public onlyOwner {
-        require(_recipient != address(0), "Invalid address");
+        // require(_recipient != address(0), "Invalid address");
 
         assembly {
+            if iszero(_recipient) {
+                mstore(0x00, 0xd92e233d)
+                revert(0x1c, 0x04)
+            }
             sstore(recipient.slot, _recipient)
         }
 
@@ -147,12 +147,23 @@ abstract contract MADRouterBase is MAD, MADBase, RouterEvents, FeeOracle {
     /// @param _feeMint New mint fee.
     /// @param _feeBurn New burn fee.
     function setFees(uint256 _feeMint, uint256 _feeBurn) external onlyOwner {
-        require(_feeMint <= maxFeeMint && _feeBurn <= maxFeeBurn, "Invalid fee settings, beyond max");
+        // require(_feeMint <= maxFeeMint && _feeBurn <= maxFeeBurn, "Invalid fee settings, beyond max");
         assembly {
+            if or(gt(_feeMint, maxFeeMint), gt(_feeBurn, maxFeeBurn)) {
+                mstore(0x00, 0x2d8768f9)
+                revert(0x1c, 0x04)
+            }
             sstore(feeBurn.slot, _feeBurn)
             sstore(feeMint.slot, _feeMint)
         }
 
         emit FeesUpdated(_feeMint, _feeBurn);
+    }
+
+    // MODIFIERS
+    function checkTokenType(uint256 _tokenType) internal pure {
+        if (_tokenType != 1) {
+            revert InvalidType();
+        }
     }
 }

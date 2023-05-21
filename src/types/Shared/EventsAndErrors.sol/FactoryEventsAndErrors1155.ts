@@ -25,7 +25,7 @@ export interface FactoryEventsAndErrors1155Interface extends utils.Interface {
 
   events: {
     "ColTypeUpdated(uint256)": EventFragment;
-    "ERC1155Created(address,address,uint8,uint256,uint256,uint256)": EventFragment;
+    "ERC1155BasicCreated(address,address,string,string,uint256,uint256,uint256)": EventFragment;
     "FeesUpdated(uint256,uint256)": EventFragment;
     "MarketplaceUpdated(address)": EventFragment;
     "PaymentTokenUpdated(address)": EventFragment;
@@ -36,7 +36,7 @@ export interface FactoryEventsAndErrors1155Interface extends utils.Interface {
   };
 
   getEvent(nameOrSignatureOrTopic: "ColTypeUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ERC1155Created"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ERC1155BasicCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FeesUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MarketplaceUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PaymentTokenUpdated"): EventFragment;
@@ -56,20 +56,22 @@ export type ColTypeUpdatedEvent = TypedEvent<
 
 export type ColTypeUpdatedEventFilter = TypedEventFilter<ColTypeUpdatedEvent>;
 
-export interface ERC1155CreatedEventObject {
+export interface ERC1155BasicCreatedEventObject {
   newSplitter: string;
   newCollection: string;
-  tokenType: number;
+  name: string;
+  symbol: string;
   royalties: BigNumber;
   maxSupply: BigNumber;
   mintPrice: BigNumber;
 }
-export type ERC1155CreatedEvent = TypedEvent<
-  [string, string, number, BigNumber, BigNumber, BigNumber],
-  ERC1155CreatedEventObject
+export type ERC1155BasicCreatedEvent = TypedEvent<
+  [string, string, string, string, BigNumber, BigNumber, BigNumber],
+  ERC1155BasicCreatedEventObject
 >;
 
-export type ERC1155CreatedEventFilter = TypedEventFilter<ERC1155CreatedEvent>;
+export type ERC1155BasicCreatedEventFilter =
+  TypedEventFilter<ERC1155BasicCreatedEvent>;
 
 export interface FeesUpdatedEventObject {
   feeVal2: BigNumber;
@@ -181,22 +183,24 @@ export interface FactoryEventsAndErrors1155 extends BaseContract {
       index?: PromiseOrValue<BigNumberish> | null
     ): ColTypeUpdatedEventFilter;
 
-    "ERC1155Created(address,address,uint8,uint256,uint256,uint256)"(
+    "ERC1155BasicCreated(address,address,string,string,uint256,uint256,uint256)"(
       newSplitter?: PromiseOrValue<string> | null,
       newCollection?: PromiseOrValue<string> | null,
-      tokenType?: null,
+      name?: null,
+      symbol?: null,
       royalties?: null,
       maxSupply?: null,
       mintPrice?: null
-    ): ERC1155CreatedEventFilter;
-    ERC1155Created(
+    ): ERC1155BasicCreatedEventFilter;
+    ERC1155BasicCreated(
       newSplitter?: PromiseOrValue<string> | null,
       newCollection?: PromiseOrValue<string> | null,
-      tokenType?: null,
+      name?: null,
+      symbol?: null,
       royalties?: null,
       maxSupply?: null,
       mintPrice?: null
-    ): ERC1155CreatedEventFilter;
+    ): ERC1155BasicCreatedEventFilter;
 
     "FeesUpdated(uint256,uint256)"(
       feeVal2?: null,

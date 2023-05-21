@@ -3,12 +3,16 @@
 pragma solidity 0.8.19;
 
 import { FactoryEventsAndErrors1155 } from "contracts/Shared/EventsAndErrors.sol";
-import { MADFactoryBase, FactoryVerifier, Types, Bytes32AddressLib, SplitterImpl } from "contracts/Factory/MADFactoryBase.sol";
+import {
+    MADFactoryBase,
+    FactoryVerifier,
+    Types,
+    Bytes32AddressLib,
+    SplitterImpl
+} from "contracts/Factory/MADFactoryBase.sol";
 
 // prettier-ignore
-contract MADFactory1155 is MADFactoryBase,
-    FactoryEventsAndErrors1155
-{
+contract MADFactory1155 is MADFactoryBase, FactoryEventsAndErrors1155 {
     using Types for Types.Collection1155;
     using Bytes32AddressLib for address;
     using Bytes32AddressLib for bytes32;
@@ -21,23 +25,17 @@ contract MADFactory1155 is MADFactoryBase,
     /// @dev colID => colInfo(salt/type/addr/time/splitter)
     mapping(bytes32 => Types.Collection1155) public colInfo;
 
-
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    constructor
-    (
-        address _marketplace, 
-        address _signer,
-        address _paymentTokenAddress
-    ) MADFactoryBase(_marketplace, _signer, _paymentTokenAddress)
-    {}
+    constructor(address _marketplace, address _signer, address _paymentTokenAddress)
+        MADFactoryBase(_marketplace, _signer, _paymentTokenAddress)
+    { /*  */ }
 
     ////////////////////////////////////////////////////////////////
     //                           CORE FX                          //
     ////////////////////////////////////////////////////////////////
-
 
     /// @notice Core public ERC1155 token types deployment pusher.
     /// @dev Function Sighash := 0x73fd6808
@@ -58,95 +56,61 @@ contract MADFactory1155 is MADFactoryBase,
     function createCollection(
         uint8 _tokenType,
         string memory _tokenSalt,
+        string memory _name,
+        string memory _symbol,
         uint256 _price,
         uint256 _maxSupply,
         string memory _uri,
         address _splitter,
         uint96 _royalty,
         bytes32[] memory _extra
-    )
-        external
-        nonReentrant
-        isThisOg
-        whenNotPaused
-    {
+    ) external isThisOg {
         _limiter(_tokenType, _splitter);
         _royaltyLocker(_royalty);
 
-        Types.ColArgs memory args = Types.ColArgs(
-            "", 
-            "", 
-            _uri, 
-            _price, 
-            _maxSupply,
-            SplitterImpl(payable(_splitter)),
-            _royalty,
-            router,
-            erc20
-        );
+        Types.ColArgs memory args =
+            Types.ColArgs("", "", _uri, _price, _maxSupply, _splitter, _royalty, router, address(erc20));
 
-        (bytes32 tokenSalt, address deployed) = 
-        _collectionDeploy(
-            _tokenType,
-            _tokenSalt,
-            args,
-            _extra
-        );
+        (bytes32 tokenSalt, address deployed) = _collectionDeploy(_tokenType, _tokenSalt, args, _extra);
 
         bytes32 colId = deployed.fillLast12Bytes();
         userTokens[tx.origin].push(colId);
 
-        colInfo[colId] = Types.Collection1155(
-            tx.origin,
-            _tokenType,
-            tokenSalt,
-            block.number,
-            _splitter
-        );
+        colInfo[colId] = Types.Collection1155(tx.origin, _tokenType, tokenSalt, block.number, _splitter);
 
-        emit ERC1155Created(
-            _splitter,
-            deployed,
-            _tokenType,
-            _royalty,
-            _maxSupply,
-            _price
-        );
+        emit ERC1155BasicCreated(_splitter, deployed, _name, _symbol, _royalty, _maxSupply, _price);
     }
 
-        ////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////
     //                           HELPERS                          //
     ////////////////////////////////////////////////////////////////
 
     /// @inheritdoc FactoryVerifier
-    function typeChecker(bytes32 _colID) external override(FactoryVerifier) view returns(uint8 pointer) {
+    function typeChecker(bytes32 _colID) external view override(FactoryVerifier) returns (uint8 pointer) {
         _isRouter();
         Types.Collection1155 storage col = colInfo[_colID];
-        
+
         assembly {
             let x := sload(col.slot)
             pointer := shr(160, x)
         }
     }
 
-        /// @inheritdoc FactoryVerifier
-    function creatorCheck(bytes32 _colID) 
-    external
-    override(FactoryVerifier)
-    view
-    returns(address creator, bool check) 
+    /// @inheritdoc FactoryVerifier
+    function creatorCheck(bytes32 _colID)
+        external
+        view
+        override(FactoryVerifier)
+        returns (address creator, bool check)
     {
         _isRouter();
         Types.Collection1155 storage col = colInfo[_colID];
-        
+
         assembly {
             let x := sload(col.slot)
             // bitmask to get the first 20 bytes of storage slot
             creator := and(x, 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
-
-            if eq(creator, origin()) {
-                check := true
-            }
+            if eq(creator, origin()) { check := true }
             // if(!check) revert AccessDenied();
             if iszero(check) {
                 mstore(0x00, 0x4ca88867)
@@ -154,5 +118,4 @@ contract MADFactory1155 is MADFactoryBase,
             }
         }
     }
-
 }

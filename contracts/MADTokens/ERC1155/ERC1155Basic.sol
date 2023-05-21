@@ -37,17 +37,9 @@ contract ERC1155Basic is ERC1155, ImplBase {
         Types.ColArgs memory args,
         bytes32[] memory _extra
     )
-        ImplBase(
-            /*  */
-            args._baseURI,
-            args._price,
-            args._maxSupply,
-            args._splitter,
-            args._fraction,
-            args._router,
-            args._erc20
-            /*  */
-        )
+        /*  */
+        ImplBase(args._baseURI, args._price, args._maxSupply, args._splitter, args._fraction, args._router, args._erc20)
+    /*  */
     {
         _extraArgsCheck(_extra);
         maxIdBalance = uint128(uint256(bytes32(_extra[0])));
@@ -82,7 +74,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
         unchecked {
             do {
                 _mint(to, curId, uint256(balance), "");
-            } while (++curId != endId);
+            } while (curId++ != endId);
         }
     }
 
@@ -179,7 +171,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
         unchecked {
             do {
                 _mint(msg.sender, curId, uint256(balance), "");
-            } while (++curId != endId);
+            } while (curId++ != endId);
         }
     }
 

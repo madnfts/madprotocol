@@ -59,10 +59,10 @@ contract MADRouter1155 is MADRouterBase {
     ///      Function Sighash := 0xab9acd57
     /// @param _token 1155 token address.
     /// @param _state Set state to true or false.
-    /*     /// @param _stateType Values:
+    /// @param _stateType Values:
     ///      0 := PublicMintState (minimal, basic, whitelist);
     ///      1 := WhitelistMintState (whitelist);
-    ///      2 := FreeClaimState (whitelist). */
+    ///      2 := FreeClaimState (whitelist).
     function setMintState(address _token, bool _state) external {
         // require(_stateType < 3, "INVALID_TYPE");
         (bytes32 _colID, uint8 _tokenType) = _tokenRender(_token);

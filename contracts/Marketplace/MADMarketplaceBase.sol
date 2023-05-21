@@ -35,12 +35,12 @@ abstract contract MADMarketplaceBase is MAD, MADBase, MarketplaceEventsAndErrors
     /// @dev seller => orderID
     mapping(address => bytes32[]) public orderIdBySeller;
 
-    uint public minAuctionIncrementMAX = 1200;
-    uint public minOrderDurationtMAX = 600;
+    uint256 public minAuctionIncrementMAX = 1200;
+    uint256 public minOrderDurationtMAX = 600;
 
     // max fees, 15% for royalties, 5% for fees
-    uint public MAX_ROYALTY_FEE = 1.5e3;
-    uint public MAX_FEES = 5.0e2;
+    uint256 public MAX_ROYALTY_FEE = 1.5e3;
+    uint256 public MAX_FEES = 5.0e2;
 
     uint256 public minOrderDuration;
     uint256 public minAuctionIncrement;
@@ -261,12 +261,12 @@ abstract contract MADMarketplaceBase is MAD, MADBase, MarketplaceEventsAndErrors
     ////////////////////////////////////////////////////////////////
 
     // Setter for minAuctionIncrementMAX
-    function setMinAuctionIncrementMAX(uint _minAuctionIncrementMAX) public onlyOwner {
+    function setMinAuctionIncrementMAX(uint256 _minAuctionIncrementMAX) public onlyOwner {
         minAuctionIncrementMAX = _minAuctionIncrementMAX;
     }
 
     // Setter for minOrderDurationtMAX
-    function setMinOrderDurationtMAX(uint _minOrderDurationtMAX) public onlyOwner {
+    function setMinOrderDurationtMAX(uint256 _minOrderDurationtMAX) public onlyOwner {
         minOrderDurationtMAX = _minOrderDurationtMAX;
     }
 
@@ -349,7 +349,7 @@ abstract contract MADMarketplaceBase is MAD, MADBase, MarketplaceEventsAndErrors
     /// @dev Function Signature := 0x3ccfd60b
     function withdraw() external onlyOwner {
         // C.5 & D.5 BlockHat audit - remove whenPaused
-        uint withdrawAmount = address(this).balance;
+        uint256 withdrawAmount = address(this).balance;
         require(withdrawAmount - totalOutbid > 0, "No balance to withdraw");
         SafeTransferLib.safeTransferETH(msg.sender, withdrawAmount - totalOutbid);
     }
@@ -357,7 +357,7 @@ abstract contract MADMarketplaceBase is MAD, MADBase, MarketplaceEventsAndErrors
     function withdrawERC20() external onlyOwner {
         // C.2 & D.2 BlockHat audit - remove _token (It is immutable by design)
         // C.5 & D.5 BlockHat audit - remove whenPaused
-        uint withdrawAmount = erc20.balanceOf(address(this));
+        uint256 withdrawAmount = erc20.balanceOf(address(this));
 
         require(withdrawAmount - totalOutbid > 0, "No balance to withdraw");
         SafeTransferLib.safeTransfer(erc20, msg.sender, withdrawAmount - totalOutbid);

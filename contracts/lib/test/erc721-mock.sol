@@ -8,7 +8,7 @@ contract MockERC721 is ERC721 {
     string internal _name;
     string internal _symbol;
 
-    constructor(string memory __name, string memory __symbol) /* ERC721(_name, _symbol) */ {
+    constructor(string memory __name, string memory __symbol /* ERC721(_name, _symbol) */) {
         _name = __name;
         _symbol = __symbol;
     }

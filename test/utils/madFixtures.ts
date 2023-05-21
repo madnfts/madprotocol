@@ -194,6 +194,7 @@ async function createMadFixture721(
   const Basic = await ethers.getContractFactory(
     `ERC721Basic`,
   );
+
   const basicBytecode = await Basic.bytecode;
 
   await f721.setRouter(r721.address);
@@ -249,7 +250,7 @@ async function createMadFixture1155(
   return { f1155, m1155, r1155, erc20 };
 }
 
-export async function madFixture721A(): Promise<MADFixture721> {
+export async function madFixtureFactory721(): Promise<MADFixture721> {
   return createMadFixture721() as Promise<MADFixture721>;
 }
 

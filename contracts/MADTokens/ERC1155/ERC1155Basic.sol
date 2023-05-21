@@ -38,8 +38,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
         ImplBase(args._baseURI, args._price, args._maxSupply, args._splitter, args._fraction, args._router, args._erc20)
     /*  */
     {
-        _extraArgsCheck(_extra);
-        maxIdBalance = uint128(uint256(bytes32(_extra[0])));
+        maxIdBalance = uint128(uint256(bytes32(args._maxSupply)));
 
         emit URI(args._baseURI, 0x00);
     }
@@ -58,15 +57,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
         uint128 balance,
         address erc20Owner
     ) external payable authorised {
-        // require(amount < MAXSUPPLY_BOUND && balance < MAXSUPPLY_BOUND);
-
-        _hasReachedMax(uint256(amount), maxSupply);
-
-        (uint256 fee, bool method) = _ownerFeeCheck(0x40d097c3, erc20Owner);
-
-        _ownerFeeHandler(method, fee, erc20Owner);
-
-        (uint256 curId, uint256 endId) = _incrementCounter(uint256(amount));
+        (uint256 curId, uint256 endId) = _prepareOwnerMint(amount, erc20Owner);
 
         unchecked {
             do {
@@ -82,13 +73,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
         authorised
     {
         uint256 len = ids.length;
-        _hasReachedMax(len, maxSupply);
-
-        (uint256 fee, bool method) = _ownerFeeCheck(0x40d097c3, erc20Owner);
-
-        _ownerFeeHandler(method, fee, erc20Owner);
-
-        _incrementCounter(len);
+        _prepareOwnerMint(len, erc20Owner);
 
         uint256[] memory _ids;
         uint256[] memory _amounts;
@@ -155,13 +140,8 @@ contract ERC1155Basic is ERC1155, ImplBase {
 
     /// @dev Transfer events emited by parent ERC1155 contract.
     function mint(uint128 amount, uint128 balance) external payable {
-        _publicMintAccess();
-        _hasReachedMax(amount, maxSupply);
+        (uint256 curId, uint256 endId) = _preparePublicMint(uint256(amount), uint256(amount * balance));
 
-        (uint256 fee, uint256 value, bool method) = _publicMintPriceCheck(price, uint256(amount * balance));
-        _publicPaymentHandler(method, value, fee);
-
-        (uint256 curId, uint256 endId) = _incrementCounter(uint256(amount));
         unchecked {
             do {
                 _mint(msg.sender, curId, uint256(balance), "");
@@ -171,14 +151,9 @@ contract ERC1155Basic is ERC1155, ImplBase {
 
     /// @dev Transfer event emited by parent ERC1155 contract.
     function mintBatch(uint128[] memory ids, uint128[] calldata amounts) external payable {
-        _publicMintAccess();
         uint256 len = ids.length;
-        _hasReachedMax(len, maxSupply);
 
-        (uint256 fee, uint256 value, bool method) = _publicMintPriceCheck(price, uint256(len * _sumAmounts(amounts)));
-        _publicPaymentHandler(method, value, fee);
-
-        _incrementCounter(len);
+        _preparePublicMint(len, uint256(len * _sumAmounts(amounts)));
 
         uint128[] memory _amountsCasted = amounts;
         uint256[] memory _amounts;
@@ -243,16 +218,6 @@ contract ERC1155Basic is ERC1155, ImplBase {
     ////////////////////////////////////////////////////////////////
     //                     REQUIRED OVERRIDES                     //
     ////////////////////////////////////////////////////////////////
-
-    function _extraArgsCheck(bytes32[] memory _extra) internal pure virtual override(ImplBase) {
-        // if (_extra.length != 1) revert WrongArgsLength();
-        assembly {
-            if iszero(eq(mload(_extra), iszero(returndatasize()))) {
-                mstore(0, 0x7734d3ab)
-                revert(28, 4)
-            }
-        }
-    }
 
     function _beforeTokenMint(uint256 id, uint256 amount) internal virtual override(ERC1155) {
         uint128 maxBal = maxIdBalance;

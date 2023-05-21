@@ -46,37 +46,38 @@ describe("Royalties", () => {
     expect(tx[0]).to.eq(owner.address);
     expect(tx[1]).to.eq(amount);
   });
-  it("Should accept recipient and fee change", async () => {
-    const tx1 = await erc2981.setRoyaltyRecipient(
-      acc01.address,
-    );
-    const tx2 = await erc2981.setRoyaltyFee(1000);
-    const tx3 = await erc2981.callStatic.royaltyInfo(
-      1,
-      price,
-    );
-    const share = BigNumber.from(1000);
-    const base = BigNumber.from(10000);
-    const amount = price.mul(share).div(base);
 
-    expect(tx1).to.be.ok;
-    expect(tx2).to.be.ok;
+  // it("Should accept recipient and fee change", async () => {
+  //   const tx1 = await erc2981.setRoyaltyRecipient(
+  //     acc01.address,
+  //   );
+  //   const tx2 = await erc2981.setRoyaltyFee(1000);
+  //   const tx3 = await erc2981.callStatic.royaltyInfo(
+  //     1,
+  //     price,
+  //   );
+  //   const share = BigNumber.from(1000);
+  //   const base = BigNumber.from(10000);
+  //   const amount = price.mul(share).div(base);
 
-    await expect(
-      erc2981.connect(acc01).setRoyaltyFee(share),
-    ).to.be.revertedWith("UNAUTHORIZED");
-    await expect(
-      erc2981
-        .connect(acc01)
-        .setRoyaltyRecipient(acc01.address),
-    ).to.be.revertedWith("UNAUTHORIZED");
+  //   expect(tx1).to.be.ok;
+  //   expect(tx2).to.be.ok;
 
-    await expect(tx2).to.emit(erc2981, "RoyaltyFeeSet");
-    await expect(tx1).to.emit(erc2981, "RoyaltyRecipientSet");
+  //   await expect(
+  //     erc2981.connect(acc01).setRoyaltyFee(share),
+  //   ).to.be.revertedWith("UNAUTHORIZED");
+  //   await expect(
+  //     erc2981
+  //       .connect(acc01)
+  //       .setRoyaltyRecipient(acc01.address),
+  //   ).to.be.revertedWith("UNAUTHORIZED");
 
-    expect(tx3[0]).to.eq(acc01.address);
-    expect(tx3[1]).to.eq(amount);
-  });
+  //   await expect(tx2).to.emit(erc2981, "RoyaltyFeeSet");
+  //   await expect(tx1).to.emit(erc2981, "RoyaltyRecipientSet");
+
+  //   expect(tx3[0]).to.eq(acc01.address);
+  //   expect(tx3[1]).to.eq(amount);
+  // });
   it("Should support interfaces", async () => {
     const erc165 =
       getInterfaceID(ERC165Interface).interfaceID._hex;

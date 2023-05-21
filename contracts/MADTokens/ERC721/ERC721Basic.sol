@@ -24,8 +24,6 @@ contract ERC721Basic is ERC721, ImplBase {
     {
         _setStringMemory(args._name, _NAME_SLOT);
         _setStringMemory(args._symbol, _SYMBOL_SLOT);
-
-        _extraArgsCheck(_extra);
     }
 
     ////////////////////////////////////////////////////////////////

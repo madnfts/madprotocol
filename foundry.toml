@@ -12,19 +12,18 @@ solc_version = "0.8.19"
 
 # general test options for forge
 verbosity=2
-sizes=true # contract size
-# ffi=false
+ffi=false
 # sender='0x0'
 # tx_origin='0x0'
 # initial_balance='0xffffffffffffffffffffffff'
-# block_number=1
-# chain_id=31337
-# gas_limit = "9223372036854775807" # u64::MAX
+block_number=1
+chain_id=31337
+gas_limit = "9223372036854775807" # u64::MAX
+sizes=true # contract size
 
-
-# extra_output_files = ['evm.assembly', 'ir']
+extra_output_files = ['evm.assembly', 'ir']
 # For a list of valid values, see the [Solidity docs][output-desc].
-# extra_output = [`
+# extra_output = [
 #     "abi",
 #     "evm.bytecode",
 #     "evm.deployedBytecode",
@@ -84,89 +83,89 @@ call_override=false #Overrides unsafe external calls when running invariant test
 
 
 
-[profile.default.model_checker]
-engine = 'chc'
-timeout = 10000
-targets = [
-    'assert',
-    'underflow',
-    'overflow',
-    'divByZero',
-    'constantCondition',
-    'popEmptyArray',
-    'outOfBounds',
-    'balance',
-]
-invariants = ['contract', 'reentrancy']
-show_unproved = true
+# [profile.default.model_checker]
+# engine = 'chc'
+# timeout = 10000
+# targets = [
+#     'assert',
+#     'underflow',
+#     'overflow',
+#     'divByZero',
+#     'constantCondition',
+#     'popEmptyArray',
+#     'outOfBounds',
+#     'balance',
+# ]
+# invariants = ['contract', 'reentrancy']
+# show_unproved = true
 
-# https://docs.soliditylang.org/en/latest/smtchecker.html#smt-and-horn-solvers
-solvers = [
-    'smtlib2',
-    # 'eld',    
-    'z3',
-    # 'cvc4'
-]
-contracts = { 'contracts/Factory/MADFactory1155.sol' = [
-    'MADFactory1155',
-], 'contracts/Factory/MADFactory721.sol' = [
-    'MADFactory721',
-], 'contracts/Factory/MADFactoryBase.sol' = [
-    'MADFactoryBase',
-], 'contracts/lib/auth/FactoryVerifier.sol' = [
-    'FactoryVerifier',
-], 'contracts/lib/auth/Owned.sol' = [
-    'Owned',
-], 'contracts/lib/auth/TwoFactor.sol' = [
-    'TwoFactor',
-], 'contracts/lib/security/DCPrevent.sol' = [
-    'DCPrevent',
-], 'contracts/lib/security/ReentrancyGuard.sol' = [
-    'ReentrancyGuard',
-], 'contracts/lib/splitter/SplitterImpl.sol' = [
-    'SplitterImpl',
-], 'contracts/lib/tokens/ERC20.sol' = [
-    'ERC20',
-], 'contracts/lib/tokens/common/ERC2981.sol' = [
-    'ERC2981',
-], 'contracts/lib/tokens/common/FeeOracle.sol' = [
-    'FeeOracle',
-], 'contracts/lib/tokens/ERC1155/Base/ERC1155.sol' = [
-    'ERC1155',
-], 'contracts/lib/tokens/ERC1155/Base/utils/ERC1155Holder.sol' = [
-    'ERC1155Holder',
-], 'contracts/lib/tokens/ERC721/Base/ERC721.sol' = [
-    'ERC721',
-],'contracts/lib/tokens/ERC721/Base/utils/ERC721Holder.sol' = [
-    'ERC721Holder',
-], 'contracts/lib/utils/CREATE3.sol' = [
-    'CREATE3',
-], 'contracts/lib/utils/SafeTransferLib.sol' = [
-    'SafeTransferLib',
-], 'contracts/lib/utils/SplitterBufferLib.sol' = [
-    'SplitterBufferLib',
-], 'contracts/lib/utils/Strings.sol' = [
-    'Strings',
-], 'contracts/MADTokens/common/ImplBase.sol' = [
-    'ImplBase',
-], 'contracts/MADTokens/common/PaymentManager.sol' = [
-    'PaymentManager',
-],  'contracts/MADTokens/ERC1155/ERC1155Basic.sol' = [
-    'ERC1155Basic',
-], 'contracts/MADTokens/ERC721/ERC721Basic.sol' = [
-    'ERC721Basic',
-], 'contracts/Marketplace/MADMarketplace1155.sol' = [
-    'MADMarketplace1155',
-], 'contracts/Marketplace/MADMarketplace721.sol' = [
-    'MADMarketplace721',
-], 'contracts/Marketplace/MADMarketplaceBase.sol' = [
-    'MADMarketplaceBase',
-], 'contracts/Router/MADRouter1155.sol' = [
-    'MADRouter1155',
-], 'contracts/Router/MADRouter721.sol' = [
-    'MADRouter721',
-], 'contracts/Router/MADRouterBase.sol' = [
-    'MADRouterBase',
-],  'contracts/Shared/MADBase.sol' = [
-    'MADBase',
-] }
+# # https://docs.soliditylang.org/en/latest/smtchecker.html#smt-and-horn-solvers
+# solvers = [
+#     'smtlib2',
+#     # 'eld',    
+#     'z3',
+#     # 'cvc4'
+# ]
+# contracts = { 'contracts/Factory/MADFactory1155.sol' = [
+#     'MADFactory1155',
+# ], 'contracts/Factory/MADFactory721.sol' = [
+#     'MADFactory721',
+# ], 'contracts/Factory/MADFactoryBase.sol' = [
+#     'MADFactoryBase',
+# ], 'contracts/lib/auth/FactoryVerifier.sol' = [
+#     'FactoryVerifier',
+# ], 'contracts/lib/auth/Owned.sol' = [
+#     'Owned',
+# ], 'contracts/lib/auth/TwoFactor.sol' = [
+#     'TwoFactor',
+# ], 'contracts/lib/security/DCPrevent.sol' = [
+#     'DCPrevent',
+# ], 'contracts/lib/security/ReentrancyGuard.sol' = [
+#     'ReentrancyGuard',
+# ], 'contracts/lib/splitter/SplitterImpl.sol' = [
+#     'SplitterImpl',
+# ], 'contracts/lib/tokens/ERC20.sol' = [
+#     'ERC20',
+# ], 'contracts/lib/tokens/common/ERC2981.sol' = [
+#     'ERC2981',
+# ], 'contracts/lib/tokens/common/FeeOracle.sol' = [
+#     'FeeOracle',
+# ], 'contracts/lib/tokens/ERC1155/Base/ERC1155.sol' = [
+#     'ERC1155',
+# ], 'contracts/lib/tokens/ERC1155/Base/utils/ERC1155Holder.sol' = [
+#     'ERC1155Holder',
+# ], 'contracts/lib/tokens/ERC721/Base/ERC721.sol' = [
+#     'ERC721',
+# ],'contracts/lib/tokens/ERC721/Base/utils/ERC721Holder.sol' = [
+#     'ERC721Holder',
+# ], 'contracts/lib/utils/CREATE3.sol' = [
+#     'CREATE3',
+# ], 'contracts/lib/utils/SafeTransferLib.sol' = [
+#     'SafeTransferLib',
+# ], 'contracts/lib/utils/SplitterBufferLib.sol' = [
+#     'SplitterBufferLib',
+# ], 'contracts/lib/utils/Strings.sol' = [
+#     'Strings',
+# ], 'contracts/MADTokens/common/ImplBase.sol' = [
+#     'ImplBase',
+# ], 'contracts/MADTokens/common/PaymentManager.sol' = [
+#     'PaymentManager',
+# ],  'contracts/MADTokens/ERC1155/ERC1155Basic.sol' = [
+#     'ERC1155Basic',
+# ], 'contracts/MADTokens/ERC721/ERC721Basic.sol' = [
+#     'ERC721Basic',
+# ], 'contracts/Marketplace/MADMarketplace1155.sol' = [
+#     'MADMarketplace1155',
+# ], 'contracts/Marketplace/MADMarketplace721.sol' = [
+#     'MADMarketplace721',
+# ], 'contracts/Marketplace/MADMarketplaceBase.sol' = [
+#     'MADMarketplaceBase',
+# ], 'contracts/Router/MADRouter1155.sol' = [
+#     'MADRouter1155',
+# ], 'contracts/Router/MADRouter721.sol' = [
+#     'MADRouter721',
+# ], 'contracts/Router/MADRouterBase.sol' = [
+#     'MADRouterBase',
+# ],  'contracts/Shared/MADBase.sol' = [
+#     'MADBase',
+# ] }

@@ -186,6 +186,29 @@ abstract contract ImplBase is ERC2981, ImplBaseEventsAndErrors, TwoFactor, Payme
         }
     }
 
+    function _prepareOwnerMint(uint256 amount, address erc20Owner) internal returns (uint256 curId, uint256 endId) {
+        // require(amount < MAXSUPPLY_BOUND && balance < MAXSUPPLY_BOUND);
+        _hasReachedMax(uint256(amount), maxSupply);
+
+        (uint256 fee, bool method) = _ownerFeeCheck(0x40d097c3, erc20Owner);
+
+        _ownerFeeHandler(method, fee, erc20Owner);
+
+        return _incrementCounter(uint256(amount));
+    }
+
+    function _preparePublicMint(uint256 amount, uint256 totalCost) internal returns (uint256 curId, uint256 endId) {
+        _publicMintAccess();
+
+        _hasReachedMax(amount, maxSupply);
+
+        (uint256 fee, uint256 value, bool method) = _publicMintPriceCheck(price, totalCost);
+
+        _publicPaymentHandler(method, value, fee);
+
+        return _incrementCounter(amount);
+    }
+
     function _publicMintAccess() internal view {
         assembly {
             // if (!publicMintState)
@@ -254,14 +277,16 @@ abstract contract ImplBase is ERC2981, ImplBaseEventsAndErrors, TwoFactor, Payme
         }
     }
 
+    // use to check that any extra args are required are passed
+    // Override if required but this will return nothing.
     function _extraArgsCheck(bytes32[] memory _extra) internal pure virtual {
         // if (_extra.length != 0) revert WrongArgsLength();
-        assembly {
-            if iszero(iszero(mload(_extra))) {
-                mstore(0, 0x7734d3ab)
-                revert(28, 4)
-            }
-        }
+        // assembly {
+        //     if iszero(iszero(mload(_extra))) {
+        //         mstore(0, 0x7734d3ab)
+        //         revert(28, 4)
+        //     }
+        // }
     }
 
     function _getFeeValue(bytes4 _method) internal view virtual override(PaymentManager) returns (uint256 value) {

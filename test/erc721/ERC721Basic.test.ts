@@ -203,7 +203,7 @@ describe("ERC721Basic", () => {
       const amount = BigNumber.from(1000);
       await basic
         .connect(acc01)
-        .mint(1000, { value: price.mul(amount)});
+        .mint(1000, { value: price.mul(amount) });
       const tx = basic
         .connect(acc02)
         .mint(1, { value: price });

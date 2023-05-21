@@ -28,6 +28,8 @@ import {
 } from "../utils/interfaces";
 import { dead } from "../utils/madFixtures";
 
+type WalletWithAddress = Wallet & SignerWithAddress;
+
 const feePrice = "0.25";
 
 async function mintToken(
@@ -49,6 +51,58 @@ async function mintToken(
   });
 }
 
+async function mintAndCheck(
+  basic: ERC1155Basic,
+  user: WalletWithAddress,
+  ids: number[],
+  amounts: number[],
+  price: BigNumber,
+): Promise<void> {
+  await basic.setPublicMintState(true);
+  const dead = ethers.constants.AddressZero;
+  const one = ethers.constants.One;
+  const zero = ethers.constants.Zero;
+
+  const amount = amounts.length;
+  const totalPrice = amount * _sumAmounts(amounts);
+
+  // Minting operation
+  const tx = await basic
+    .connect(user)
+    .mintBatch(ids, amounts, {
+      value: price.mul(ethers.BigNumber.from(totalPrice)),
+    });
+
+  expect(tx).to.be.ok;
+
+  await expect(tx)
+    .to.emit(basic, "TransferBatch")
+    .withArgs(user.address, dead, user.address, ids, amounts);
+
+  // Balances checking
+  const balNull = await basic.callStatic.balanceOf(
+    user.address,
+    0,
+  );
+  expect(zero).to.eq(balNull);
+
+  for (let i = 0; i < ids.length; i++) {
+    const bal = await basic.callStatic.balanceOf(
+      user.address,
+      ids[i],
+    );
+    expect(amounts[i]).to.eq(bal);
+  }
+
+  await expect(tx)
+    .to.emit(basic, "TransferBatch")
+    .withArgs(user.address, dead, user.address, ids, amounts);
+}
+
+function _sumAmounts(amounts: number[]): number {
+  return amounts.reduce((a, b) => a + b, 0);
+}
+
 describe("ERC1155Basic", () => {
   /* 
   For the sake of solely testing the nft functionalities, we consider 
@@ -57,8 +111,6 @@ describe("ERC1155Basic", () => {
   would've been proxied through the marketplace address when the 
   other core contracts are taken into account.
   */
-
-  type WalletWithAddress = Wallet & SignerWithAddress;
 
   // contract deployer/admin
   let owner: WalletWithAddress;
@@ -273,6 +325,11 @@ describe("ERC1155Basic", () => {
           price,
         );
         expect(tx).to.be.ok;
+        const balA = await basic.callStatic.balanceOf(
+          acc02.address,
+          1,
+        );
+        expect(balA).to.eq(1);
       }
     });
   });
@@ -280,13 +337,13 @@ describe("ERC1155Basic", () => {
     it("Should revert if supply has reached max", async () => {
       await basic.setPublicMintState(true);
 
-      const ids = [24,34,567,765];
+      const ids = [24, 34, 567, 765];
       await mintToken(basic, acc01, 1, 500, price);
       await mintToken(basic, acc01, 1, 500, price);
 
       const tx = basic
         .connect(mad)
-        .mintBatch(ids, [1], { value: price });
+        .mintBatch(ids, [1, 1, 1, 1], { value: price });
 
       await expect(tx).to.be.revertedWithCustomError(
         basic,
@@ -317,157 +374,22 @@ describe("ERC1155Basic", () => {
         BasicErrors.WrongPrice,
       );
     });
+
     it("Should batch mint, update storage and emit events", async () => {
-      await basic.setPublicMintState(true);
-      const dead = ethers.constants.AddressZero;
-      const amount = 3;
-      const one = ethers.constants.One;
-      const zero = ethers.constants.Zero;
-      const ids = [1, 1, 1];
-      const amounts = [1, 1, 1];
-      const tx = basic.mintBatch(ids, [1, 1, 1], {
-        value: price
-          .mul(amount)
-          .add(ethers.utils.parseEther(feePrice)),
-      });
-      // const ownerOfNull = await basic.callStatic.ownerOf(1);
-      // const ownerOfA = await basic.callStatic.ownerOf(123);
-      // const ownerOfB = await basic.callStatic.ownerOf(14);
-      // const ownerOfC = await basic.callStatic.ownerOf(500);
-      const balNull = await basic.callStatic.balanceOf(
-        acc02.address,
-        1,
-      );
-      const balA = await basic.callStatic.balanceOf(
-        acc02.address,
-        123,
-      );
-      const balB = await basic.callStatic.balanceOf(
-        acc02.address,
-        14,
-      );
-      const balC = await basic.callStatic.balanceOf(
-        acc02.address,
-        500,
-      );
-
-      console.log(
-        balNull,
-        balA,
-        balB,
-        balC,
-        balNull === ethers.utils.parseEther("0"),
-      );
-
-      expect(tx).to.be.ok;
-      expect(zero).to.eq(balNull);
-      // expect(one).to.eq(balA);
-      // expect(one).to.eq(balB);
-      // expect(one).to.eq(balC);
-      // expect(dead).to.eq(ownerOfNull);
-      // expect(acc02.address).to.eq(ownerOfA);
-      // expect(acc02.address).to.eq(ownerOfB);
-      // expect(acc02.address).to.eq(ownerOfC);
-      await expect(tx)
-        .to.emit(basic, "TransferBatch")
-        .withArgs(
-          acc02.address,
-          dead,
-          acc02.address,
-          ids,
-          amounts,
-        );
+      const ids = [123, 14, 500];
+      const amounts = [12, 8, 10];
+      await mintAndCheck(basic, acc02, ids, amounts, price);
     });
     it("Should handle multiple batch mints", async () => {
-      await basic.setPublicMintState(true);
-      const dead = ethers.constants.AddressZero;
-      const amount = ethers.BigNumber.from(3);
-      const one = ethers.constants.One;
-      const zero = ethers.constants.Zero;
       const ids1 = [123, 14, 500];
       const ids2 = [566, 145, 1000];
-      const ids3 = [1, 33, 7];
-      const amounts = [one, one, one];
-      const tx1 = await basic
-        .connect(acc02)
-        .mintBatch(ids1, [1, 1, 1], {
-          value: price.mul(amount),
-        });
-      const tx2 = await basic
-        .connect(owner)
-        .mintBatch(ids2, [1, 1, 1], {
-          value: price.mul(amount),
-        });
-      const tx3 = await basic
-        .connect(amb)
-        .mintBatch(ids3, [1, 1, 1], {
-          value: price.mul(amount),
-        });
-      // const ownerOfNull = await basic.callStatic.ownerOf(0);
-      // const ownerOfA = await basic.callStatic.ownerOf(
-      //   ids1[0],
-      // );
-      // const ownerOfB = await basic.callStatic.ownerOf(
-      //   ids2[1],
-      // );
-      // const ownerOfC = await basic.callStatic.ownerOf(
-      //   ids3[2],
-      // );
-      const balNull = await basic.callStatic.balanceOf(
-        acc02.address,
-        0,
-      );
-      const balA = await basic.callStatic.balanceOf(
-        acc02.address,
-        ids1[2],
-      );
-      const balB = await basic.callStatic.balanceOf(
-        owner.address,
-        ids2[2],
-      );
-      const balC = await basic.callStatic.balanceOf(
-        amb.address,
-        ids3[0],
-      );
 
-      expect(tx1).to.be.ok;
-      expect(tx2).to.be.ok;
-      expect(tx3).to.be.ok;
-      expect(zero).to.eq(balNull);
-      expect(one).to.eq(balA);
-      expect(one).to.eq(balB);
-      expect(one).to.eq(balC);
-      // expect(dead).to.eq(ownerOfNull);
-      // expect(acc02.address).to.eq(ownerOfA);
-      // expect(owner.address).to.eq(ownerOfB);
-      // expect(amb.address).to.eq(ownerOfC);
-      await expect(tx1)
-        .to.emit(basic, "TransferBatch")
-        .withArgs(
-          acc02.address,
-          dead,
-          acc02.address,
-          ids1,
-          amounts,
-        );
-      await expect(tx2)
-        .to.emit(basic, "TransferBatch")
-        .withArgs(
-          owner.address,
-          dead,
-          owner.address,
-          ids2,
-          amounts,
-        );
-      await expect(tx3)
-        .to.emit(basic, "TransferBatch")
-        .withArgs(
-          amb.address,
-          dead,
-          amb.address,
-          ids3,
-          amounts,
-        );
+      const ids3 = [1, 33, 7];
+      const amounts = [42, 24, 4];
+
+      await mintAndCheck(basic, acc02, ids1, amounts, price);
+      await mintAndCheck(basic, acc02, ids2, amounts, price);
+      await mintAndCheck(basic, acc02, ids3, amounts, price);
     });
   });
 

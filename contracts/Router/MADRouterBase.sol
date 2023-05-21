@@ -161,9 +161,9 @@ abstract contract MADRouterBase is MAD, MADBase, RouterEvents, FeeOracle {
     }
 
     // MODIFIERS
-    function checkTokenType(uint256 tokenType) {
+    function checkTokenType(uint256 _tokenType) internal pure{
         if (_tokenType != 1) {
-            revert("INVALID_TYPE");
+            revert InvalidType();
         }
     }
 }

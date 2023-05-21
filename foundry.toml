@@ -10,14 +10,26 @@ optimizer_runs = 500
 via_ir = true
 solc_version = "0.8.19"
 
-extra_output_files = ['evm.assembly', 'ir']
+# general test options for forge
+verbosity=2
+sizes=true # contract size
+# ffi=false
+# sender='0x0'
+# tx_origin='0x0'
+# initial_balance='0xffffffffffffffffffffffff'
+# block_number=1
+# chain_id=31337
+# gas_limit = "9223372036854775807" # u64::MAX
+
+
+# extra_output_files = ['evm.assembly', 'ir']
 # For a list of valid values, see the [Solidity docs][output-desc].
-extra_output = [
-    "abi",
-    "evm.bytecode",
-    "evm.deployedBytecode",
-    "evm.methodIdentifiers",
-]
+# extra_output = [`
+#     "abi",
+#     "evm.bytecode",
+#     "evm.deployedBytecode",
+#     "evm.methodIdentifiers",
+# ]
 
 # Foundry will treat Solidity compiler warnings as errors,
 # deny_warnings=true
@@ -57,18 +69,6 @@ wrap_comments=true
 ignore = ["src/console.sol", "src/console2.sol"]
 
 
-# general test options for forge
-verbosity=2
-ffi=false
-sender='0x0'
-tx_origin='0x0'
-initial_balance='0xffffffffffffffffffffffff'
-block_number=1
-chain_id=31337
-gas_limit = "9223372036854775807" # u64::MAX
-sizes=true # contract size
-
-
 [profile.default.fuzz]
 runs=256
 max_test_rejects=65536
@@ -104,7 +104,7 @@ show_unproved = true
 solvers = [
     'smtlib2',
     # 'eld',    
-    # 'z3',
+    'z3',
     # 'cvc4'
 ]
 contracts = { 'contracts/Factory/MADFactory1155.sol' = [

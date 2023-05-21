@@ -159,7 +159,7 @@ contract MADRouter1155 is MADRouterBase {
         } else if (_token.balance != 0) {
             ERC1155Basic(_token).withdraw(recipient);
         } else {
-            revert("NO_FUNDS");
+            revert NoFunds();
         }
 
         emit TokenFundsWithdrawn(_colID, _tokenType, msg.sender);

@@ -5,6 +5,8 @@ pragma solidity 0.8.19;
 abstract contract DCPrevent {
     address private immutable og;
 
+    error BadCall();
+
     modifier isThisOg() {
         selfReferencePointer();
         _;
@@ -15,6 +17,6 @@ abstract contract DCPrevent {
     }
 
     function selfReferencePointer() private view {
-        if (address(this) != og) revert("BAD_CALL");
+        if (address(this) != og) revert BadCall();
     }
 }

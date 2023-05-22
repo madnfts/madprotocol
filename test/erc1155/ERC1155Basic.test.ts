@@ -117,7 +117,7 @@ function _sumAmounts(amounts: number[]): number {
   return amounts.reduce((a, b) => a + b, 0);
 }
 
-async function testBatchErrors(
+async function expectCustomError(
   basic: ERC1155Basic,
   customError: BasicErrors,
   tx: Promise<ContractTransaction>,
@@ -128,22 +128,20 @@ async function testBatchErrors(
   );
 }
 
-async function testMultipleBurnErrors(
+async function testBurnErrors(
   basic: ERC1155Basic,
   owner: WalletWithAddress,
   account: WalletWithAddress,
   customError: BasicErrors,
   burnParams: any[],
 ): Promise<void> {
-  for (let i = 0; i < burnParams.length; i++) {
-    const tx = basic
-      .connect(owner)
-      .burn(...burnParams[i], account.address);
-    await expect(tx).to.be.revertedWithCustomError(
-      basic,
-      customError,
-    );
-  }
+  const tx = basic
+    .connect(owner)
+    .burn(...burnParams, account.address);
+  await expect(tx).to.be.revertedWithCustomError(
+    basic,
+    customError,
+  );
 }
 
 describe("ERC1155Basic", () => {
@@ -402,7 +400,7 @@ describe("ERC1155Basic", () => {
         mintBatch(basic, acc01, ids, amounts, price),
       );
 
-      await testBatchErrors(
+      await expectCustomError(
         basic,
         BasicErrors.MaxSupplyReached,
         mintBatch(basic, acc02, ids, [1], price),
@@ -413,7 +411,7 @@ describe("ERC1155Basic", () => {
       const tx = basic
         .connect(acc01)
         .mint(id, [1], { value: price });
-      await testBatchErrors(
+      await expectCustomError(
         basic,
         BasicErrors.PublicMintClosed,
         tx,
@@ -423,7 +421,7 @@ describe("ERC1155Basic", () => {
       const amount = ethers.BigNumber.from(4);
       const ids = [23, 13, 400];
       const amounts = [1, 1, 1];
-      await testBatchErrors(
+      await expectCustomError(
         basic,
         BasicErrors.WrongPrice,
         mintBatch(basic, acc02, ids, amounts, price.add(100)),
@@ -472,18 +470,18 @@ describe("ERC1155Basic", () => {
 
   describe("Burn", async () => {
     it("Should revert if not owner", async () => {
-      await testMultipleBurnErrors(
+      await testBurnErrors(
         basic,
         acc02,
         acc02,
         BasicErrors.NotAuthorised,
-        [[[acc01.address], [1], [1]]],
+        [[acc01.address], [1], [1]],
       );
     });
 
     it("Should revert if id is already burnt/hasn't been minted", async () => {
       const ids = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-      const amounts = [1, 1, 1];
+      const amounts = [1, 1, 1, 1, 1, 1, 1, 1, 1];
       await checkBatch(
         basic,
         acc02,
@@ -508,6 +506,7 @@ describe("ERC1155Basic", () => {
           [acc02.address, acc02.address, acc02.address],
           ids,
           [2, 2, 2],
+          BasicErrors.DecrementOverflow,
         ], // Does not exist
         [
           [
@@ -518,46 +517,55 @@ describe("ERC1155Basic", () => {
           ],
           [1, 2, 3],
           [1, 1, 1],
+          BasicErrors.ArrayLengthsMismatch,
         ], // too many Addresses
         [
           [acc02.address, acc02.address],
           [1, 2, 3],
           [1, 1, 1],
+          BasicErrors.ArrayLengthsMismatch,
         ], //Too few Addresses
         [
           [acc02.address, acc02.address, acc02.address],
           [1, 2, 3, 4],
           [1, 1, 1],
+          BasicErrors.ArrayLengthsMismatch,
         ], // Too many Ids
         [
           [acc02.address, acc02.address],
           [1, 2],
           [1, 1, 1],
+          BasicErrors.ArrayLengthsMismatch,
         ], // Too few Ids
         [
           [acc02.address, acc02.address, acc02.address],
           [1, 2, 3],
           [1, 1, 1, 1],
+          BasicErrors.ArrayLengthsMismatch,
         ], // Too many amounts
         [
           [acc02.address, acc02.address],
           [1, 2, 3],
           [1, 1],
+          BasicErrors.ArrayLengthsMismatch,
         ], //Too few amounts
         [
           [acc02.address, acc02.address, acc02.address],
           [7, 8, 9],
           [1, 1, 1],
+          BasicErrors.DecrementOverflow,
         ], // Already Burnt
       ];
 
-      await testMultipleBurnErrors(
-        basic,
-        owner,
-        acc02,
-        BasicErrors.DecrementOverflow,
-        burnParams,
-      );
+      for (let i = 0; i < burnParams.length; i++) {
+        await testBurnErrors(
+          basic,
+          owner,
+          acc02,
+          burnParams[i][3],
+          burnParams[i].slice(0, 3),
+        );
+      }
     });
 
     it("Should mint, burn then mint again, update storage and emit event", async () => {
@@ -631,17 +639,16 @@ describe("ERC1155Basic", () => {
       const amount = 3;
       const ids = [1, 2, 3];
       await mintToken(basic, acc01, 1, amount, price);
-      await testMultipleBurnErrors(
+      await testBurnErrors(
         basic,
         acc02,
         acc02,
         BasicErrors.NotAuthorised,
+
         [
-          [
-            [owner.address, owner.address, owner.address],
-            ids,
-            [1, 1, 1],
-          ],
+          [owner.address, owner.address, owner.address],
+          ids,
+          [1, 1, 1],
         ],
       );
     });
@@ -656,17 +663,16 @@ describe("ERC1155Basic", () => {
         amounts,
         mintBatch(basic, acc02, ids, amounts, price),
       );
-      await testMultipleBurnErrors(
+      await testBurnErrors(
         basic,
         owner,
         acc02,
         BasicErrors.DecrementOverflow,
+
         [
-          [
-            [acc02.address, acc02.address, acc02.address],
-            ids,
-            [2, 2, 2],
-          ],
+          [acc02.address, acc02.address, acc02.address],
+          ids,
+          [2, 2, 2],
         ],
       );
     });

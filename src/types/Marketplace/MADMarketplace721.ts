@@ -40,7 +40,6 @@ export interface MADMarketplace721Interface extends utils.Interface {
     "buy(bytes32)": FunctionFragment;
     "cancelOrder(bytes32)": FunctionFragment;
     "claim(bytes32)": FunctionFragment;
-    "delOrder(bytes32,address,uint256,address)": FunctionFragment;
     "dutchAuction(address,uint256,uint256,uint256,uint256)": FunctionFragment;
     "englishAuction(address,uint256,uint256,uint256)": FunctionFragment;
     "erc20()": FunctionFragment;
@@ -92,7 +91,6 @@ export interface MADMarketplace721Interface extends utils.Interface {
       | "buy"
       | "cancelOrder"
       | "claim"
-      | "delOrder"
       | "dutchAuction"
       | "englishAuction"
       | "erc20"
@@ -162,15 +160,6 @@ export interface MADMarketplace721Interface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "claim",
     values: [PromiseOrValue<BytesLike>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "delOrder",
-    values: [
-      PromiseOrValue<BytesLike>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>
-    ]
   ): string;
   encodeFunctionData(
     functionFragment: "dutchAuction",
@@ -359,7 +348,6 @@ export interface MADMarketplace721Interface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "claim", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "delOrder", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "dutchAuction",
     data: BytesLike
@@ -703,14 +691,6 @@ export interface MADMarketplace721 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    delOrder(
-      hash: PromiseOrValue<BytesLike>,
-      _token: PromiseOrValue<string>,
-      _id: PromiseOrValue<BigNumberish>,
-      _seller: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     dutchAuction(
       _token: PromiseOrValue<string>,
       _id: PromiseOrValue<BigNumberish>,
@@ -936,14 +916,6 @@ export interface MADMarketplace721 extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  delOrder(
-    hash: PromiseOrValue<BytesLike>,
-    _token: PromiseOrValue<string>,
-    _id: PromiseOrValue<BigNumberish>,
-    _seller: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   dutchAuction(
     _token: PromiseOrValue<string>,
     _id: PromiseOrValue<BigNumberish>,
@@ -1164,14 +1136,6 @@ export interface MADMarketplace721 extends BaseContract {
 
     claim(
       _order: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    delOrder(
-      hash: PromiseOrValue<BytesLike>,
-      _token: PromiseOrValue<string>,
-      _id: PromiseOrValue<BigNumberish>,
-      _seller: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1524,14 +1488,6 @@ export interface MADMarketplace721 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    delOrder(
-      hash: PromiseOrValue<BytesLike>,
-      _token: PromiseOrValue<string>,
-      _id: PromiseOrValue<BigNumberish>,
-      _seller: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     dutchAuction(
       _token: PromiseOrValue<string>,
       _id: PromiseOrValue<BigNumberish>,
@@ -1727,14 +1683,6 @@ export interface MADMarketplace721 extends BaseContract {
 
     claim(
       _order: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    delOrder(
-      hash: PromiseOrValue<BytesLike>,
-      _token: PromiseOrValue<string>,
-      _id: PromiseOrValue<BigNumberish>,
-      _seller: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

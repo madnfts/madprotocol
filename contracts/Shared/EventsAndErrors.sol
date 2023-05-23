@@ -10,6 +10,11 @@ interface EventsAndErrorsBase {
     event RecipientUpdated(address indexed newRecipient);
     event FeesUpdated(uint256 feeVal2, uint256 feeVal3);
 
+    /// @dev Only the token owner or an approved account can manage the tokens.
+    error NotOwnerNorApproved();
+    /// @dev Insufficient balance.
+    error InsufficientBalance();
+
     // 0xd92e233d
     error ZeroAddress();
 }

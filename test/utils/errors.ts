@@ -19,7 +19,7 @@ export enum BasicErrors {
   NotMintedYet = "NotMintedYet",
   Reentrancy = "REENTRANCY",
   WrongPrice = "WrongPrice",
-  WrongFrom = "WRONG_FROM",
+  InsufficientBalance = "InsufficientBalance",
   NotMinted = "NOT_MINTED",
   InvalidAmount = "INVALID_AMOUNT",
   NotAuthorised = "NotAuthorised",
@@ -41,7 +41,7 @@ export enum WhitelistErrors {
   NotMintedYet = "NotMintedYet",
   WrongPrice = "WrongPrice",
   NotMinted = "NOT_MINTED",
-  WrongFrom = "WRONG_FROM",
+  InsufficientBalance = "InsufficientBalance",
   InvalidAmount = "INVALID_AMOUNT",
 }
 
@@ -52,7 +52,7 @@ export enum LazyErrors {
   Unauthorized = "UNAUTHORIZED",
   UsedVoucher = "UsedVoucher",
   WrongPrice = "WrongPrice",
-  WrongFrom = "WRONG_FROM",
+  InsufficientBalance = "InsufficientBalance",
   NotMinted = "NOT_MINTED",
   InvalidAmount = "INVALID_AMOUNT",
 }
@@ -69,7 +69,7 @@ export enum SplitterErrors {
 
 export enum MarketplaceErrors {
   TransferFailed = "TransferFailed",
-  NotAuthorized = "NOT_AUTHORIZED",
+  NotOwnerNorApproved = "NotOwnerNorApproved",
   CanceledOrder = "CanceledOrder",
   InvalidBidder = "InvalidBidder",
   Unauthorized = "UNAUTHORIZED",
@@ -78,7 +78,7 @@ export enum MarketplaceErrors {
   NeedMoreTime = "NeedMoreTime",
   WrongPrice = "WrongPrice",
   NotBuyable = "NotBuyable",
-  WrongFrom = "WRONG_FROM",
+  InsufficientBalance = "InsufficientBalance",
   SoldToken = "SoldToken",
   BidExists = "BidExists",
   Unpaused = "UNPAUSED",

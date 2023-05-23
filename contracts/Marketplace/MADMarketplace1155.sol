@@ -198,16 +198,17 @@ contract MADMarketplace1155 is MADMarketplaceBase, MarketplaceEventsAndErrors115
     /// @notice Delete order function only callabe by contract's owner,
     /// as security measure.
     /// @dev Function Signature := 0x0c026db9
-    function delOrder(bytes32 hash, IERC1155 _token, uint256 _id, uint256 _amount, address _seller)
-        external
-        onlyOwner
-    {
-        delete orderInfo[hash];
-        delete orderIdByToken[_token][_id][_amount];
-        delete orderIdBySeller[_seller];
+    /// @audit Owners cannot delete users orders.  Handle in the FE if required.
+    // function delOrder(bytes32 hash, IERC1155 _token, uint256 _id, uint256 _amount, address _seller)
+    //     external
+    //     onlyOwner
+    // {
+    //     delete orderInfo[hash];
+    //     delete orderIdByToken[_token][_id][_amount];
+    //     delete orderIdBySeller[_seller];
 
-        _token.safeTransferFrom(address(this), _seller, _id, _amount, "");
-    }
+    //     _token.safeTransferFrom(address(this), _seller, _id, _amount, "");
+    // }
 
     ////////////////////////////////////////////////////////////////
     //                        INTERNAL FX                         //

@@ -23,6 +23,7 @@ export enum BasicErrors {
   NotMinted = "NOT_MINTED",
   InvalidAmount = "INVALID_AMOUNT",
   NotAuthorised = "NotAuthorised",
+  ArrayLengthsMismatch = "ArrayLengthsMismatch",
 }
 
 export enum WhitelistErrors {

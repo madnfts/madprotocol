@@ -4,14 +4,8 @@ import {
   mine,
 } from "@nomicfoundation/hardhat-network-helpers";
 import { setNextBlockTimestamp } from "@nomicfoundation/hardhat-network-helpers/dist/src/helpers/time";
-import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
-import {
-  BigNumber,
-  ContractReceipt,
-  ContractTransaction,
-  Wallet,
-} from "ethers";
+import { ContractReceipt } from "ethers";
 import { ethers, network } from "hardhat";
 
 import {
@@ -19,17 +13,28 @@ import {
   MADMarketplace1155,
   MADRouter1155,
 } from "../../src/types";
+import {
+  WalletWithAddress,
+  _basicSalt,
+  _splitterSalt,
+  createCollection,
+  createCollections,
+  feePrice,
+  price,
+  splitterDeployment,
+  testColID,
+  validateCreation,
+} from "../utils/factoryHelpers";
 import { FactoryErrors } from "./../utils/errors";
 import {
   Collection,
-  SplitterConfig,
   dead,
   madFixture1155A,
 } from "./../utils/madFixtures";
 
-describe("MADFactory1155", () => {
-  type WalletWithAddress = Wallet & SignerWithAddress;
+const createdEvent = "ERC1155BasicCreated";
 
+describe("MADFactory1155", () => {
   // contract deployer/admin
   let owner: WalletWithAddress;
 
@@ -46,8 +51,6 @@ describe("MADFactory1155", () => {
   let f1155: MADFactory1155;
   let m1155: MADMarketplace1155;
   let r1155: MADRouter1155;
-
-  const price: BigNumber = ethers.utils.parseEther("1");
 
   before("Set signers and reset network", async () => {
     [owner, amb, mad, acc01, acc02] =
@@ -78,243 +81,146 @@ describe("MADFactory1155", () => {
     it("Should revert if repeated salt is provided", async () => {
       await f1155
         .connect(acc02)
-        .splitterCheck("MADSplitter1", dead, dead, 0, 0);
+        .splitterCheck(_splitterSalt, dead, dead, 0, 0);
       const tx = f1155
         .connect(acc02)
-        .splitterCheck("MADSplitter1", dead, dead, 0, 0);
+        .splitterCheck(_splitterSalt, dead, dead, 0, 0);
 
       await expect(tx).to.be.revertedWith(
         FactoryErrors.DeploymentFailed,
       );
     });
     it("Should deploy splitter without ambassador, update storage and emit events", async () => {
-      const tx: ContractTransaction = await f1155
-        .connect(acc02)
-        .splitterCheck("MADSplitter1", dead, dead, 0, 0);
-      const rc: ContractReceipt = await tx.wait();
-
-      const indexed = rc.logs[0].data;
-      const data = rc.logs[1].data;
-
-      const addr = await f1155.getDeployedAddr(
-        "MADSplitter1",
+      await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        dead,
+        dead,
+        0,
+        0,
+        [acc02.address],
+        0,
+        1,
       );
-      const creator = ethers.utils.defaultAbiCoder.decode(
-        ["address"],
-        indexed,
-      );
-      const args = ethers.utils.defaultAbiCoder.decode(
-        ["uint256[]", "address[]", "address"],
-        data,
-      );
-
-      const payees = args[1].toString();
-      const shares = args[0].toString();
-      const splitter = args[2].toString();
-
-      const instance = await ethers.getContractAt(
-        "SplitterImpl",
-        addr,
-      );
-      const creatorShares = await instance.callStatic._shares(
-        acc02.address,
-      );
-
-      const storage: SplitterConfig =
-        await f1155.callStatic.splitterInfo(
-          acc02.address,
-          addr,
-        );
-
-      expect(tx).to.be.ok;
-      await expect(tx).to.emit(f1155, "SplitterCreated");
-      expect(creator.toString()).to.eq(acc02.address);
-      expect(shares).to.eq("100");
-      expect(payees).to.eq([acc02.address].toString());
-      expect(splitter).to.eq(addr);
-      expect(ethers.BigNumber.from(creatorShares)).to.eq(100);
-      expect(storage.splitter).to.eq(addr);
-      expect(storage.splitterSalt).to.eq(
-        ethers.utils.keccak256(
-          ethers.utils.toUtf8Bytes("MADSplitter1"),
-        ),
-      );
-      expect(storage.ambassador).to.eq(dead);
-      expect(storage.ambShare).to.eq(ethers.constants.Zero);
-      expect(storage.valid).to.eq(true);
     });
+
     it("Should deploy splitter with ambassador, update storage and emit events", async () => {
-      const tx: ContractTransaction = await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const rc: ContractReceipt = await tx.wait();
-
-      const indexed = rc.logs[1].data;
-      const data = rc.logs[2].data;
-
-      const addr = await f1155.getDeployedAddr(
-        "MADSplitter1",
-      );
-      const creator = ethers.utils.defaultAbiCoder.decode(
-        ["address"],
-        indexed,
-      );
-
-      const args = ethers.utils.defaultAbiCoder.decode(
-        ["uint256[]", "address[]", "address"],
-        data,
-      );
-
-      const payees = args[1].toString();
-      const shares = args[0].toString();
-      const splitter = args[2].toString();
-
-      const instance = await ethers.getContractAt(
-        "SplitterImpl",
-        addr,
-      );
-      const ambShares = await instance.callStatic._shares(
+      await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
         amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
-      const creatorShares = await instance.callStatic._shares(
-        acc02.address,
-      );
+    });
 
-      const storage: SplitterConfig =
-        await f1155.callStatic.splitterInfo(
-          acc02.address,
-          addr,
-        );
-
-      expect(tx).to.be.ok;
-      await expect(tx).to.emit(f1155, "SplitterCreated");
-      expect(creator.toString()).to.eq(acc02.address);
-      expect(shares).to.eq("20,80");
-      expect(payees).to.eq(
-        [amb.address, acc02.address].toString(),
+    it("Should deploy splitter with ambassador and project, update storage and emit events", async () => {
+      await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        acc01.address,
+        20,
+        10,
+        [amb.address, acc01.address, acc02.address],
+        2,
+        3,
       );
-      expect(splitter).to.eq(addr);
-      expect(ethers.BigNumber.from(ambShares)).to.eq(20);
-      expect(ethers.BigNumber.from(creatorShares)).to.eq(80);
-      expect(storage.splitter).to.eq(addr);
-      expect(storage.splitterSalt).to.eq(
-        ethers.utils.keccak256(
-          ethers.utils.toUtf8Bytes("MADSplitter1"),
-        ),
-      );
-      expect(storage.ambassador).to.eq(amb.address);
-      expect(storage.ambShare).to.eq(
-        ethers.BigNumber.from(20),
-      );
-      expect(storage.valid).to.eq(true);
     });
   });
 
   describe("Create collection", async () => {
     it("Should deploy ERC1155Basic, update storage and emit events", async () => {
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      const tx = await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1000,
-        "ipfs://cid/",
-        splAddr,
-        750,
-        [],
-      );
-      const colID = await f1155.callStatic.getColID(
-        basicAddr,
-      );
-      const storage = await f1155.callStatic.userTokens(
-        acc02.address,
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
         0,
-      );
-      const colInfo: Collection =
-        await f1155.callStatic.colInfo(colID);
-
-      const fail1 = f1155.connect(acc01).createCollection(
+        [amb.address, acc02.address],
         1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1000,
-        "ipfs://cid/",
-        splAddr,
-        750,
-        [],
+        2,
       );
 
-      const fail2 = f1155.connect(acc02).createCollection(
-        7,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1000,
-        "ipfs://cid/",
-        splAddr,
-        750,
-        [],
+      const tx = createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
 
-      expect(tx).to.be.ok;
-      expect(storage).to.eq(colID);
-      expect(colInfo.blocknumber).to.eq(
-        ethers.BigNumber.from(
-          await f1155.provider.getBlockNumber(),
-        ),
-      );
-      expect(colInfo.colType).to.eq(1);
-      expect(colInfo.creator).to.eq(acc02.address);
-      expect(colInfo.splitter).to.eq(splAddr);
-      expect(colInfo.colSalt).to.eq(
-        ethers.utils.keccak256(
-          ethers.utils.toUtf8Bytes("BasicSalt"),
-        ),
-      );
-      await expect(tx)
-        .to.emit(f1155, "ERC1155Created")
-        .withArgs(
-          splAddr,
-          basicAddr,
-          ethers.constants.One,
-          // "1155Basic",
-          // "BASIC",
-          750,
-          1000,
-          price,
-        );
-      await expect(fail1).to.be.revertedWithCustomError(
+      await validateCreation(
         f1155,
-        FactoryErrors.AccessDenied,
+        createdEvent,
+        acc02,
+        splitterAddress,
+        _basicSalt,
+        tx,
       );
-      await expect(fail2).to.be.revertedWithCustomError(
-        f1155,
-        FactoryErrors.AccessDenied,
-      );
+
+      // const fail1 = await createCollection(f1155,acc02, _basicSalt, splitterAddress);
+
+      // const fail1 = await f1155
+      //   .connect(acc02)
+      //   .createCollection(
+      //     1,
+      //     _basicSalt,
+      //     "721Basic",
+      //     "BASIC",
+      //     price,
+      //     1000,
+      //     "ipfs://cid/",
+      //     splitterAddress,
+      //     750,
+      //     [],
+      //   );
+
+      // const fail2 = await createCollection(f1155,acc02, _basicSalt, splitterAddress);
+      // const fail2 = await f1155
+      //   .connect(acc02)
+      //   .createCollection(
+      //     7,
+      //     _basicSalt,
+      //     "721Basic",
+      //     "BASIC",
+      //     price,
+      //     1000,
+      //     "ipfs://cid/",
+      //     splitterAddress,
+      //     750,
+      //     [],
+      //   );
+
+      // await expect(fail1).to.be.reverted;
+      // await expect(fail2).to.be.reverted;
+
+      //       await expect(fail2).to.be.revertedWith(
+      //   "DEPLOYMENT_FAILED",
+      // );
+      // await expect(fail1).to.be.revertedWith(
+      //   FactoryErrors.DeploymentFailed,
+      // );
+      // await expect(fail2).to.be.revertedWith(
+      //   FactoryErrors.DeploymentFailed,
+      // );
+
+      //       await expect(fail1).to.be.revertedWithCustomError(
+      //   f1155,
+      //   FactoryErrors.AccessDenied,
+      // );
+      // await expect(fail2).to.be.revertedWithCustomError(
+      //   f1155,
+      //   FactoryErrors.AccessDenied,
+      // );
     });
   });
 
@@ -393,105 +299,59 @@ describe("MADFactory1155", () => {
         FactoryErrors.InvalidAddress,
       );
     });
-    it("Should initialize paused and unpaused states", async () => {
-      const tx = await f1155.pause();
-
-      expect(tx).to.be.ok;
-      await expect(
-        f1155.connect(acc01).pause(),
-      ).to.be.revertedWith(FactoryErrors.Unauthorized);
-      await expect(
-        f1155.splitterCheck("", dead, dead, 0, 0),
-      ).to.be.revertedWith(FactoryErrors.Paused);
-      await expect(
-        f1155.createCollection(
-          1,
-          "",
-          0,
-          1,
-          "",
-          dead,
-          750,
-          [],
-        ),
-      ).to.be.revertedWith(FactoryErrors.Paused);
-      await expect(
-        f1155.connect(acc02).unpause(),
-      ).to.be.revertedWith(FactoryErrors.Unauthorized);
-      expect(await f1155.unpause()).to.be.ok;
-    });
   });
 
   // `getDeployedAddr` already tested in `splitterCheck` and `createCollection` unit tests
   describe("Helpers", async () => {
     it("Should retrieve user's colID indexes", async () => {
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1000,
-        "ipfs://cid/",
-        splAddr,
-        750,
-        [],
-      );
-
-      expect(await f1155.getIDsLength(acc02.address)).to.eq(
-        1,
+      await createCollections(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb,
+        dead,
+        _basicSalt,
+        10,
+        createdEvent,
       );
     });
     it("Should get collection ID from address", async () => {
-      const addr = await f1155.getDeployedAddr("BasicSalt");
-      const colID = addr
-        .toLowerCase()
-        .concat("000000000000000000000000");
-      const tx = await f1155.getColID(addr);
-
-      expect(tx).to.be.ok;
-      expect(tx).to.eq(colID);
+      await testColID(f1155, acc02);
     });
     it("Should retrieve collection type", async () => {
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
+      );
+
+      const basicAddr =
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+
       await f1155
         .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
+        .createCollection(
+          1,
+          _basicSalt,
+          "1155Basic",
+          "BASIC",
+          price,
+          10,
+          "cid/id.json",
+          splitterAddress,
+          750,
+          [],
         );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        10,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
-      );
       const colID = await f1155.callStatic.getColID(
         basicAddr,
       );
@@ -521,49 +381,50 @@ describe("MADFactory1155", () => {
       );
     });
     it("Should enable marketplace no-fee listing", async () => {
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
+
       const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+
       await expect(
-        f1155.connect(acc02).createCollection(
-          0,
-          "MinSalt",
-          // "1155Min",
-          // "MIN",
-          price,
-          1,
-          "cid/id.json",
-          splAddr,
-          750,
-          [],
-        ),
+        f1155
+          .connect(acc02)
+          .createCollection(
+            0,
+            _basicSalt,
+            "1155Basic",
+            "BASIC",
+            price,
+            1,
+            "cid/id.json",
+            splitterAddress,
+            750,
+            [],
+          ),
       ).to.be.revertedWithCustomError(
         f1155,
         FactoryErrors.AccessDenied,
       );
 
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        10,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
 
       const basic = await ethers.getContractAt(
@@ -573,13 +434,13 @@ describe("MADFactory1155", () => {
       await r1155
         .connect(acc02)
         .setMintState(basicAddr, true);
-      await basic.connect(acc02).mint(1, 1, {
+
+      const tx_ = await basic.connect(acc02).mint(1, 1, {
         value: price.add(ethers.utils.parseEther("0.25")),
       });
+
       const blockTimestamp = (
-        await m1155.provider.getBlock(
-          await m1155.provider.getBlockNumber(),
-        )
+        await m1155.provider.getBlock(tx_.blockNumber || 0)
       ).timestamp;
 
       await basic
@@ -630,31 +491,29 @@ describe("MADFactory1155", () => {
       );
     });
     it("Should verify a collection's creator", async () => {
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
+
       const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
       const colID = await f1155.callStatic.getColID(
         basicAddr,

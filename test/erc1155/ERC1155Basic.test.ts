@@ -28,6 +28,8 @@ import {
 } from "../utils/interfaces";
 import { dead } from "../utils/madFixtures";
 
+type WalletWithAddress = Wallet & SignerWithAddress;
+
 const feePrice = "0.25";
 
 async function mintToken(
@@ -39,7 +41,8 @@ async function mintToken(
 ): Promise<ContractTransaction> {
   await basic.setPublicMintState(true);
   const mintPrice = price.mul(amountToMint);
-  const val = ethers.utils
+
+  const priceWithFee = ethers.utils
     .parseEther(feePrice)
     .add(mintPrice);
 
@@ -47,6 +50,98 @@ async function mintToken(
     value: mintPrice,
     gasLimit: ethers.utils.parseUnits("30000000", "wei"),
   });
+}
+
+async function mintBatch(
+  basic: ERC1155Basic,
+  user: WalletWithAddress,
+  ids: number[],
+  amounts: number[],
+  price: BigNumber,
+): Promise<ContractTransaction> {
+  await basic.setPublicMintState(true);
+
+  const amount = amounts.length;
+  const totalPrice = amount * _sumAmounts(amounts);
+
+  const mintPrice = price.mul(
+    ethers.BigNumber.from(totalPrice),
+  );
+
+  const priceWithFee = ethers.utils
+    .parseEther(feePrice)
+    .add(mintPrice);
+
+  // Minting operation
+  return basic.connect(user).mintBatch(ids, amounts, {
+    value: mintPrice,
+    gasLimit: ethers.utils.parseUnits("30000000", "wei"),
+  });
+}
+
+async function checkBatch(
+  basic: ERC1155Basic,
+  user: WalletWithAddress,
+  ids: number[],
+  amounts: number[],
+  tx: Promise<ContractTransaction>,
+): Promise<void> {
+  const dead = ethers.constants.AddressZero;
+  const one = ethers.constants.One;
+  const zero = ethers.constants.Zero;
+
+  expect(tx).to.be.ok;
+
+  await expect(tx)
+    .to.emit(basic, "TransferBatch")
+    .withArgs(user.address, dead, user.address, ids, amounts);
+
+  // Balances checking
+  const balNull = await basic.callStatic.balanceOf(
+    user.address,
+    95654,
+  );
+  expect(zero).to.eq(balNull);
+
+  for (let i = 0; i < ids.length; i++) {
+    const bal = await basic.callStatic.balanceOf(
+      user.address,
+      ids[i],
+    );
+    console.log(bal);
+    expect(amounts[i]).to.eq(bal);
+  }
+}
+
+function _sumAmounts(amounts: number[]): number {
+  return amounts.reduce((a, b) => a + b, 0);
+}
+
+async function expectCustomError(
+  basic: ERC1155Basic,
+  customError: BasicErrors,
+  tx: Promise<ContractTransaction>,
+): Promise<void> {
+  await expect(tx).to.be.revertedWithCustomError(
+    basic,
+    customError,
+  );
+}
+
+async function testBurnErrors(
+  basic: ERC1155Basic,
+  owner: WalletWithAddress,
+  account: WalletWithAddress,
+  customError: BasicErrors,
+  burnParams: any[],
+): Promise<void> {
+  const tx = basic
+    .connect(owner)
+    .burn(...burnParams, account.address);
+  await expect(tx).to.be.revertedWithCustomError(
+    basic,
+    customError,
+  );
 }
 
 describe("ERC1155Basic", () => {
@@ -57,8 +152,6 @@ describe("ERC1155Basic", () => {
   would've been proxied through the marketplace address when the 
   other core contracts are taken into account.
   */
-
-  type WalletWithAddress = Wallet & SignerWithAddress;
 
   // contract deployer/admin
   let owner: WalletWithAddress;
@@ -89,6 +182,19 @@ describe("ERC1155Basic", () => {
     [owner, amb, mad, acc01, acc02] =
       await // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (ethers as any).getSigners();
+
+    console.log(
+      "owner:",
+      owner.address,
+      "amb:",
+      amb.address,
+      "mad: ",
+      mad.address,
+      "acc01:",
+      acc01.address,
+      "acc02:",
+      acc02.address,
+    );
 
     await network.provider.send("hardhat_reset");
   });
@@ -273,24 +379,31 @@ describe("ERC1155Basic", () => {
           price,
         );
         expect(tx).to.be.ok;
+        const balA = await basic.callStatic.balanceOf(
+          acc02.address,
+          1,
+        );
+        expect(balA).to.eq(1);
       }
     });
   });
   describe("Batch mint", async () => {
     it("Should revert if supply has reached max", async () => {
-      await basic.setPublicMintState(true);
+      const ids = [24];
+      const amounts = [1000];
 
-      const ids = [24,34,567,765];
-      await mintToken(basic, acc01, 1, 500, price);
-      await mintToken(basic, acc01, 1, 500, price);
+      await checkBatch(
+        basic,
+        acc01,
+        ids,
+        amounts,
+        mintBatch(basic, acc01, ids, amounts, price),
+      );
 
-      const tx = basic
-        .connect(mad)
-        .mintBatch(ids, [1], { value: price });
-
-      await expect(tx).to.be.revertedWithCustomError(
+      await expectCustomError(
         basic,
         BasicErrors.MaxSupplyReached,
+        mintBatch(basic, acc02, ids, [1], price),
       );
     });
     it("Should revert if public mint is turned off", async () => {
@@ -298,222 +411,161 @@ describe("ERC1155Basic", () => {
       const tx = basic
         .connect(acc01)
         .mint(id, [1], { value: price });
-
-      await expect(tx).to.be.revertedWithCustomError(
+      await expectCustomError(
         basic,
         BasicErrors.PublicMintClosed,
+        tx,
       );
     });
     it("Should revert if price is wrong", async () => {
-      await basic.setPublicMintState(true);
       const amount = ethers.BigNumber.from(4);
       const ids = [23, 13, 400];
-      const tx = basic.mintBatch(ids, [1, 1, 1], {
-        value: price.mul(amount),
-      });
-
-      await expect(tx).to.be.revertedWithCustomError(
+      const amounts = [1, 1, 1];
+      await expectCustomError(
         basic,
         BasicErrors.WrongPrice,
+        mintBatch(basic, acc02, ids, amounts, price.add(100)),
       );
     });
+
     it("Should batch mint, update storage and emit events", async () => {
-      await basic.setPublicMintState(true);
-      const dead = ethers.constants.AddressZero;
-      const amount = 3;
-      const one = ethers.constants.One;
-      const zero = ethers.constants.Zero;
-      const ids = [1, 1, 1];
-      const amounts = [1, 1, 1];
-      const tx = basic.mintBatch(ids, [1, 1, 1], {
-        value: price
-          .mul(amount)
-          .add(ethers.utils.parseEther(feePrice)),
-      });
-      // const ownerOfNull = await basic.callStatic.ownerOf(1);
-      // const ownerOfA = await basic.callStatic.ownerOf(123);
-      // const ownerOfB = await basic.callStatic.ownerOf(14);
-      // const ownerOfC = await basic.callStatic.ownerOf(500);
-      const balNull = await basic.callStatic.balanceOf(
-        acc02.address,
-        1,
+      const ids = [123, 14, 500];
+      const amounts = [12, 8, 10];
+      await checkBatch(
+        basic,
+        acc02,
+        ids,
+        amounts,
+        mintBatch(basic, acc02, ids, amounts, price),
       );
-      const balA = await basic.callStatic.balanceOf(
-        acc02.address,
-        123,
-      );
-      const balB = await basic.callStatic.balanceOf(
-        acc02.address,
-        14,
-      );
-      const balC = await basic.callStatic.balanceOf(
-        acc02.address,
-        500,
-      );
-
-      console.log(
-        balNull,
-        balA,
-        balB,
-        balC,
-        balNull === ethers.utils.parseEther("0"),
-      );
-
-      expect(tx).to.be.ok;
-      expect(zero).to.eq(balNull);
-      // expect(one).to.eq(balA);
-      // expect(one).to.eq(balB);
-      // expect(one).to.eq(balC);
-      // expect(dead).to.eq(ownerOfNull);
-      // expect(acc02.address).to.eq(ownerOfA);
-      // expect(acc02.address).to.eq(ownerOfB);
-      // expect(acc02.address).to.eq(ownerOfC);
-      await expect(tx)
-        .to.emit(basic, "TransferBatch")
-        .withArgs(
-          acc02.address,
-          dead,
-          acc02.address,
-          ids,
-          amounts,
-        );
     });
     it("Should handle multiple batch mints", async () => {
-      await basic.setPublicMintState(true);
-      const dead = ethers.constants.AddressZero;
-      const amount = ethers.BigNumber.from(3);
-      const one = ethers.constants.One;
-      const zero = ethers.constants.Zero;
       const ids1 = [123, 14, 500];
       const ids2 = [566, 145, 1000];
       const ids3 = [1, 33, 7];
-      const amounts = [one, one, one];
-      const tx1 = await basic
-        .connect(acc02)
-        .mintBatch(ids1, [1, 1, 1], {
-          value: price.mul(amount),
-        });
-      const tx2 = await basic
-        .connect(owner)
-        .mintBatch(ids2, [1, 1, 1], {
-          value: price.mul(amount),
-        });
-      const tx3 = await basic
-        .connect(amb)
-        .mintBatch(ids3, [1, 1, 1], {
-          value: price.mul(amount),
-        });
-      // const ownerOfNull = await basic.callStatic.ownerOf(0);
-      // const ownerOfA = await basic.callStatic.ownerOf(
-      //   ids1[0],
-      // );
-      // const ownerOfB = await basic.callStatic.ownerOf(
-      //   ids2[1],
-      // );
-      // const ownerOfC = await basic.callStatic.ownerOf(
-      //   ids3[2],
-      // );
-      const balNull = await basic.callStatic.balanceOf(
-        acc02.address,
-        0,
+      const amounts = [42, 24, 4];
+      await checkBatch(
+        basic,
+        acc02,
+        ids1,
+        amounts,
+        mintBatch(basic, acc02, ids1, amounts, price),
       );
-      const balA = await basic.callStatic.balanceOf(
-        acc02.address,
-        ids1[2],
+      await checkBatch(
+        basic,
+        acc02,
+        ids2,
+        amounts,
+        mintBatch(basic, acc02, ids2, amounts, price),
       );
-      const balB = await basic.callStatic.balanceOf(
-        owner.address,
-        ids2[2],
+      await checkBatch(
+        basic,
+        acc02,
+        ids3,
+        amounts,
+        mintBatch(basic, acc02, ids3, amounts, price),
       );
-      const balC = await basic.callStatic.balanceOf(
-        amb.address,
-        ids3[0],
-      );
-
-      expect(tx1).to.be.ok;
-      expect(tx2).to.be.ok;
-      expect(tx3).to.be.ok;
-      expect(zero).to.eq(balNull);
-      expect(one).to.eq(balA);
-      expect(one).to.eq(balB);
-      expect(one).to.eq(balC);
-      // expect(dead).to.eq(ownerOfNull);
-      // expect(acc02.address).to.eq(ownerOfA);
-      // expect(owner.address).to.eq(ownerOfB);
-      // expect(amb.address).to.eq(ownerOfC);
-      await expect(tx1)
-        .to.emit(basic, "TransferBatch")
-        .withArgs(
-          acc02.address,
-          dead,
-          acc02.address,
-          ids1,
-          amounts,
-        );
-      await expect(tx2)
-        .to.emit(basic, "TransferBatch")
-        .withArgs(
-          owner.address,
-          dead,
-          owner.address,
-          ids2,
-          amounts,
-        );
-      await expect(tx3)
-        .to.emit(basic, "TransferBatch")
-        .withArgs(
-          amb.address,
-          dead,
-          amb.address,
-          ids3,
-          amounts,
-        );
     });
   });
 
   describe("Burn", async () => {
     it("Should revert if not owner", async () => {
-      const ids = [1];
-      const tx = basic
-        .connect(acc02)
-        .burn([acc01.address], ids, [1], acc02.address);
-
-      await expect(tx).to.be.revertedWithCustomError(
+      await testBurnErrors(
         basic,
+        acc02,
+        acc02,
         BasicErrors.NotAuthorised,
+        [[acc01.address], [1], [1]],
       );
     });
 
     it("Should revert if id is already burnt/hasn't been minted", async () => {
-      const amount = ethers.BigNumber.from(4);
-      const ids = [1, 2, 5];
-      await basic.setPublicMintState(true);
-      await basic
-        .connect(acc02)
-        .mint(4, 1, { value: price.mul(amount) });
-      const tx = basic
-        .connect(owner)
-        .burn(
+      const ids = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+      const amounts = [1, 1, 1, 1, 1, 1, 1, 1, 1];
+      await checkBatch(
+        basic,
+        acc02,
+        ids,
+        amounts,
+        mintBatch(basic, acc02, ids, amounts, price),
+      );
+
+      expect(
+        await basic
+          .connect(owner)
+          .burn(
+            [acc02.address, acc02.address, acc02.address],
+            [7, 8, 9],
+            [1, 1, 1],
+            owner.address,
+          ),
+      ).to.be.ok;
+
+      const burnParams = [
+        [
           [acc02.address, acc02.address, acc02.address],
           ids,
+          [2, 2, 2],
+          BasicErrors.DecrementOverflow,
+        ], // Does not exist
+        [
+          [
+            acc02.address,
+            acc02.address,
+            acc02.address,
+            acc02.address,
+          ],
+          [1, 2, 3],
           [1, 1, 1],
-          owner.address,
-        );
+          BasicErrors.ArrayLengthsMismatch,
+        ], // too many Addresses
+        [
+          [acc02.address, acc02.address],
+          [1, 2, 3],
+          [1, 1, 1],
+          BasicErrors.ArrayLengthsMismatch,
+        ], //Too few Addresses
+        [
+          [acc02.address, acc02.address, acc02.address],
+          [1, 2, 3, 4],
+          [1, 1, 1],
+          BasicErrors.ArrayLengthsMismatch,
+        ], // Too many Ids
+        [
+          [acc02.address, acc02.address],
+          [1, 2],
+          [1, 1, 1],
+          BasicErrors.ArrayLengthsMismatch,
+        ], // Too few Ids
+        [
+          [acc02.address, acc02.address, acc02.address],
+          [1, 2, 3],
+          [1, 1, 1, 1],
+          BasicErrors.ArrayLengthsMismatch,
+        ], // Too many amounts
+        [
+          [acc02.address, acc02.address],
+          [1, 2, 3],
+          [1, 1],
+          BasicErrors.ArrayLengthsMismatch,
+        ], //Too few amounts
+        [
+          [acc02.address, acc02.address, acc02.address],
+          [7, 8, 9],
+          [1, 1, 1],
+          BasicErrors.DecrementOverflow,
+        ], // Already Burnt
+      ];
 
-      await expect(tx).to.be.revertedWith(
-        BasicErrors.InvalidAmount,
-      );
-    });
-    it("Should revert if ids length is less than 2", async () => {
-      const counters = await ethers.getContractFactory(
-        "Counters",
-      );
-      await expect(
-        basic.burn([acc02.address], [1], [1], owner.address),
-      ).to.be.revertedWithCustomError(
-        counters,
-        BasicErrors.DecrementOverflow,
-      );
+      for (let i = 0; i < burnParams.length; i++) {
+        await testBurnErrors(
+          basic,
+          owner,
+          acc02,
+          burnParams[i][3],
+          burnParams[i].slice(0, 3),
+        );
+      }
     });
 
     it("Should mint, burn then mint again, update storage and emit event", async () => {
@@ -522,14 +574,12 @@ describe("ERC1155Basic", () => {
       //ID 1,2 will be burn in burn call
       //ID 5,6 will be minted in third mint call. so mintCounter will be 6 in last
       const amount = ethers.BigNumber.from(2);
-      await basic.setPublicMintState(true);
-      await basic
-        .connect(acc02)
-        .mint(2, 1, { value: price.mul(amount) }); // mintCount = 2
+      const dead = ethers.constants.AddressZero;
 
-      await basic
-        .connect(acc01)
-        .mint(2, 1, { value: price.mul(amount) }); // mintCount = 4
+      await mintToken(basic, acc02, 1, 2, price); // mintCount = 2
+      console.log(price);
+
+      await mintToken(basic, acc01, 1, 2, price); // mintCount = 4
 
       // this will not effect mintCount as we are not decrementing the counter, only the liveSupply is decrementing
       const tx = await basic.burn(
@@ -538,10 +588,10 @@ describe("ERC1155Basic", () => {
         [1, 1],
         owner.address,
       );
-      const dead = ethers.constants.AddressZero;
-      await basic
-        .connect(acc02)
-        .mint(2, 2, { value: price.mul(amount) }); // mintCount = 6
+
+      console.log(price);
+
+      await mintToken(basic, acc02, 1, 2, price); // mintCount = 6
 
       const bal1 = await basic.callStatic.balanceOf(
         acc01.address,
@@ -552,6 +602,7 @@ describe("ERC1155Basic", () => {
       expect(tx).to.be.ok;
       expect(bal1).to.eq(1);
       expect(mintCounter).to.eq(6);
+
       await expect(tx)
         .to.emit(basic, "TransferSingle")
         .withArgs(owner.address, acc02.address, dead, 1, 1);
@@ -582,46 +633,50 @@ describe("ERC1155Basic", () => {
         .withArgs(owner.address, acc01.address, dead, 4, 1);
     });
   });
+
   describe("Batch burn", async () => {
     it("Should revert if caller is not the owner", async () => {
-      const amount = ethers.BigNumber.from(3);
+      const amount = 3;
       const ids = [1, 2, 3];
-      await basic.setPublicMintState(true);
-      await basic.mint(3, 1, { value: price.mul(amount) });
-      const tx = basic
-        .connect(acc02)
-        .burnBatch(
-          owner.address,
-          ids,
-          [1, 1, 1],
-          acc02.address,
-        );
-
-      await expect(tx).to.be.revertedWithCustomError(
+      await mintToken(basic, acc01, 1, amount, price);
+      await testBurnErrors(
         basic,
+        acc02,
+        acc02,
         BasicErrors.NotAuthorised,
-      );
-    });
-    it("Should revert if id is already burnt/hasn't been minted", async () => {
-      const amount = ethers.BigNumber.from(4);
-      const ids = [1, 2, 5];
-      await basic.setPublicMintState(true);
-      await basic
-        .connect(acc02)
-        .mint(4, 1, { value: price.mul(amount) });
-      const tx = basic
-        .connect(owner)
-        .burnBatch(
-          acc02.address,
+
+        [
+          [owner.address, owner.address, owner.address],
           ids,
           [1, 1, 1],
-          owner.address,
-        );
-
-      await expect(tx).to.be.revertedWith(
-        BasicErrors.WrongFrom,
+        ],
       );
     });
+
+    it("Should revert if id is already burnt/hasn't been minted", async () => {
+      const ids = [1, 2, 5];
+      const amounts = [1, 1, 1];
+      await checkBatch(
+        basic,
+        acc02,
+        ids,
+        amounts,
+        mintBatch(basic, acc02, ids, amounts, price),
+      );
+      await testBurnErrors(
+        basic,
+        owner,
+        acc02,
+        BasicErrors.DecrementOverflow,
+
+        [
+          [acc02.address, acc02.address, acc02.address],
+          ids,
+          [2, 2, 2],
+        ],
+      );
+    });
+
     it("Should batch burn tokens, update storage and emit event", async () => {
       const dead = ethers.constants.AddressZero;
       const one = ethers.constants.One;

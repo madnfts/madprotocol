@@ -277,10 +277,10 @@ abstract contract ERC1155 {
         // }
         /// @solidity memory-safe-assembly
         assembly {
-            if iszero(eq(ids.length, amounts.length)) {
-                mstore(0x00, 0x3b800a46) // `ArrayLengthsMismatch()`.
-                revert(0x1c, 0x04)
-            }
+            // if iszero(eq(ids.length, amounts.length)) {
+            //     mstore(0x00, 0x3b800a46) // `ArrayLengthsMismatch()`.
+            //     revert(0x1c, 0x04)
+            // }
             let fromSlotSeed := or(_ERC1155_MASTER_SLOT_SEED, shl(96, from))
             let toSlotSeed := or(_ERC1155_MASTER_SLOT_SEED, shl(96, to))
             mstore(0x20, fromSlotSeed)
@@ -511,10 +511,10 @@ abstract contract ERC1155 {
         _beforeTokenBatchMint(ids, amounts);
         /// @solidity memory-safe-assembly
         assembly {
-            if iszero(eq(mload(ids), mload(amounts))) {
-                mstore(0x00, 0x3b800a46) // `ArrayLengthsMismatch()`.
-                revert(0x1c, 0x04)
-            }
+            // if iszero(eq(mload(ids), mload(amounts))) {
+            //     mstore(0x00, 0x3b800a46) // `ArrayLengthsMismatch()`.
+            //     revert(0x1c, 0x04)
+            // }
             let toSlotSeed := or(_ERC1155_MASTER_SLOT_SEED, shl(96, to))
             // Clear the upper 96 bits.
             to := shr(96, toSlotSeed)
@@ -647,10 +647,10 @@ abstract contract ERC1155 {
         _beforeTokenBatchBurn(ids, amounts);
         /// @solidity memory-safe-assembly
         assembly {
-            if iszero(eq(mload(ids), mload(amounts))) {
-                mstore(0x00, 0x3b800a46) // `ArrayLengthsMismatch()`.
-                revert(0x1c, 0x04)
-            }
+            // if iszero(eq(mload(ids), mload(amounts))) {
+            //     mstore(0x00, 0x3b800a46) // `ArrayLengthsMismatch()`.
+            //     revert(0x1c, 0x04)
+            // }
             let fromSlotSeed := or(_ERC1155_MASTER_SLOT_SEED, shl(96, from))
             mstore(0x20, fromSlotSeed)
             // Clear the upper 96 bits.

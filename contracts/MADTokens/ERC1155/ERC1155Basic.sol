@@ -89,7 +89,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
         external
         payable
         authorised
-    {   
+    {
         // @audit do we charge to burn?
         // (uint256 fee, bool method) = _ownerFeeCheck(0x44df8e70, erc20Owner);
         // _ownerFeeHandler(method, fee, erc20Owner);
@@ -119,7 +119,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
         external
         payable
         authorised
-    {   
+    {
         // @audit do we charge to burn?
         // (uint256 fee, bool method) = _ownerFeeCheck(0x44df8e70, erc20Owner);
         // _ownerFeeHandler(method, fee, erc20Owner);

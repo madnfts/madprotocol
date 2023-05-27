@@ -5740,6 +5740,7 @@ describe("MADMarketplace1155", () => {
           _basicSalt,
           acc02.address,
         );
+
       await createCollection(
         f1155,
         acc02,
@@ -5853,8 +5854,6 @@ describe("MADMarketplace1155", () => {
     it("Should fetch the length of orderIds for a seller", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
 
-
-
       await createCollections(
         f1155,
         acc02,
@@ -5867,25 +5866,32 @@ describe("MADMarketplace1155", () => {
       );
 
       const basicAddr =
-      await f1155.callStatic.getDeployedAddr(
-        _basicSalt,
-        acc02.address,
-      );
+        await f1155.callStatic.getDeployedAddr(
+          `BasicSaltNumber10`,
+          acc02.address,
+        );
+
+      console.log("\nbasicAddr", basicAddr);
 
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
         basicAddr,
       );
 
-      await r1155
-        .connect(acc02)
-        .basicMintTo(basicAddr, acc02.address, 1, [1, 1, 1], {
-          value: ethers.utils.parseEther("0.25"),
-        });
+      // console.log("\nbasic", basic);
+
+      for (let i = 1; i < 4; i++) {
+        await r1155
+          .connect(acc02)
+          .basicMintTo(basicAddr, acc02.address, i, [1], {
+            value: ethers.utils.parseEther("0.25"),
+          });
+      }
 
       const tx_ = await basic
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+
       const blockTimestamp = (
         await m1155.provider.getBlock(tx_.blockNumber || 0)
       ).timestamp;
@@ -5899,6 +5905,7 @@ describe("MADMarketplace1155", () => {
           price,
           blockTimestamp + 300,
         );
+
       const daTx = await m1155
         .connect(acc02)
         .dutchAuction(
@@ -5909,6 +5916,7 @@ describe("MADMarketplace1155", () => {
           0,
           blockTimestamp + 300,
         );
+
       const eaTx = await m1155
         .connect(acc02)
         .englishAuction(
@@ -5924,8 +5932,8 @@ describe("MADMarketplace1155", () => {
       );
 
       expect(fpTx).to.be.ok;
-      expect(eaTx).to.be.ok;
       expect(daTx).to.be.ok;
+      expect(eaTx).to.be.ok;
 
       expect(tx).to.be.ok.and.to.eq(3);
     });

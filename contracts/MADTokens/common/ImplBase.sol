@@ -15,8 +15,14 @@ import {
     _ROYALTY_RECIPIENT_SET
 } from "contracts/MADTokens/common/interfaces/ImplBaseEventsAndErrors.sol";
 
-abstract contract ImplBase is ERC2981, ImplBaseEventsAndErrors, TwoFactor, PaymentManager {
-    bytes32 constant _BASE_URI_SLOT = /*  */ 0xdd05fcb58e4c0a1a429c1a9d6607c399731f1ef0b81be85c3f7701c0333c82fc;
+abstract contract ImplBase is
+    ERC2981,
+    ImplBaseEventsAndErrors,
+    TwoFactor,
+    PaymentManager
+{
+    bytes32 constant _BASE_URI_SLOT = /*  */
+        0xdd05fcb58e4c0a1a429c1a9d6607c399731f1ef0b81be85c3f7701c0333c82fc;
 
     uint256 constant SR_UPPERBITS = (1 << 128) - 1;
     uint256 constant MAXSUPPLY_BOUND = 1 << 128;
@@ -105,7 +111,8 @@ abstract contract ImplBase is ERC2981, ImplBaseEventsAndErrors, TwoFactor, Payme
         _setStringCalldata(_baseURI, _BASE_URI_SLOT);
         emit BaseURISet(_baseURI);
 
-        // @audit Error in testing - hashes do not match - are we emitting the correct data?
+        // @audit Error in testing - hashes do not match - are we emitting the
+        // correct data?
         // assembly { log2(0, 0, _BASE_URI_SET, calldataload(0x44)) }
     }
 
@@ -137,7 +144,10 @@ abstract contract ImplBase is ERC2981, ImplBaseEventsAndErrors, TwoFactor, Payme
         _withdraw(recipient);
     }
 
-    function withdrawERC20(address token, address recipient) public authorised {
+    function withdrawERC20(address token, address recipient)
+        public
+        authorised
+    {
         _withdrawERC20(token, recipient);
     }
 
@@ -172,21 +182,31 @@ abstract contract ImplBase is ERC2981, ImplBaseEventsAndErrors, TwoFactor, Payme
     //                     INTERNAL FUNCTIONS                     //
     ////////////////////////////////////////////////////////////////
 
-    function _incrementCounter(uint256 _amount) internal returns (uint256 _nextId, uint256 _mintCount) {
+    function _incrementCounter(uint256 _amount)
+        internal
+        returns (uint256 _nextId, uint256 _mintCount)
+    {
         // liveSupply = liveSupply + amount;
         // mintCount = mintCount + amount;
         // uint256 curId = mintCount + 1;
         assembly {
             let _prev := shr(MINTCOUNT_BITPOS, sload(supplyRegistrar.slot))
-            let _liveSupply := add(and(SR_UPPERBITS, sload(supplyRegistrar.slot)), _amount)
+            let _liveSupply :=
+                add(and(SR_UPPERBITS, sload(supplyRegistrar.slot)), _amount)
             _nextId := add(_prev, 0x01)
             _mintCount := add(_prev, _amount)
 
-            sstore(supplyRegistrar.slot, or(_liveSupply, shl(MINTCOUNT_BITPOS, _mintCount)))
+            sstore(
+                supplyRegistrar.slot,
+                or(_liveSupply, shl(MINTCOUNT_BITPOS, _mintCount))
+            )
         }
     }
 
-    function _prepareOwnerMint(uint256 amount, address erc20Owner) internal returns (uint256 curId, uint256 endId) {
+    function _prepareOwnerMint(uint256 amount, address erc20Owner)
+        internal
+        returns (uint256 curId, uint256 endId)
+    {
         // require(amount < MAXSUPPLY_BOUND && balance < MAXSUPPLY_BOUND);
         _hasReachedMax(uint256(amount), maxSupply);
 
@@ -197,12 +217,16 @@ abstract contract ImplBase is ERC2981, ImplBaseEventsAndErrors, TwoFactor, Payme
         return _incrementCounter(uint256(amount));
     }
 
-    function _preparePublicMint(uint256 amount, uint256 totalCost) internal returns (uint256 curId, uint256 endId) {
+    function _preparePublicMint(uint256 amount, uint256 totalCost)
+        internal
+        returns (uint256 curId, uint256 endId)
+    {
         _publicMintAccess();
 
         _hasReachedMax(amount, maxSupply);
 
-        (uint256 fee, uint256 value, bool method) = _publicMintPriceCheck(price, totalCost);
+        (uint256 fee, uint256 value, bool method) =
+            _publicMintPriceCheck(price, totalCost);
 
         _publicPaymentHandler(method, value, fee);
 
@@ -220,10 +244,16 @@ abstract contract ImplBase is ERC2981, ImplBaseEventsAndErrors, TwoFactor, Payme
         }
     }
 
-    function _hasReachedMax(uint256 _amount, uint256 _maxSupply) internal view {
+    function _hasReachedMax(uint256 _amount, uint256 _maxSupply)
+        internal
+        view
+    {
         assembly {
             // if (mintCount + amount > maxSupply)
-            if gt(add(shr(MINTCOUNT_BITPOS, sload(supplyRegistrar.slot)), _amount), _maxSupply) {
+            if gt(
+                add(shr(MINTCOUNT_BITPOS, sload(supplyRegistrar.slot)), _amount),
+                _maxSupply
+            ) {
                 // revert MaxSupplyReached();
                 mstore(0, 0xd05cb609)
                 revert(28, 4)
@@ -234,7 +264,9 @@ abstract contract ImplBase is ERC2981, ImplBaseEventsAndErrors, TwoFactor, Payme
     function _decSupply(uint256 _amount) internal {
         assembly {
             let _liveSupply := and(SR_UPPERBITS, sload(supplyRegistrar.slot))
-            if or(iszero(_liveSupply), gt(sub(_liveSupply, _amount), _liveSupply)) {
+            if or(
+                iszero(_liveSupply), gt(sub(_liveSupply, _amount), _liveSupply)
+            ) {
                 // DecOverflow()
                 mstore(0x00, 0xce3a3d37)
                 revert(0x1c, 0x04)
@@ -243,7 +275,11 @@ abstract contract ImplBase is ERC2981, ImplBaseEventsAndErrors, TwoFactor, Payme
         supplyRegistrar = supplyRegistrar - _amount;
     }
 
-    function _readString(bytes32 _slot) internal view returns (string memory _string) {
+    function _readString(bytes32 _slot)
+        internal
+        view
+        returns (string memory _string)
+    {
         assembly {
             let len := sload(_slot)
             mstore(_string, shr(0x01, and(len, 0xFF)))
@@ -252,7 +288,9 @@ abstract contract ImplBase is ERC2981, ImplBaseEventsAndErrors, TwoFactor, Payme
         }
     }
 
-    function _setStringCalldata(string calldata _string, bytes32 _slot) internal {
+    function _setStringCalldata(string calldata _string, bytes32 _slot)
+        internal
+    {
         assembly {
             if lt(0x1f, _string.length) { invalid() }
             sstore(_slot, or(calldataload(0x44), shl(0x01, calldataload(0x24))))
@@ -289,7 +327,13 @@ abstract contract ImplBase is ERC2981, ImplBaseEventsAndErrors, TwoFactor, Payme
         // }
     }
 
-    function _getFeeValue(bytes4 _method) internal view virtual override(PaymentManager) returns (uint256 value) {
+    function _getFeeValue(bytes4 _method)
+        internal
+        view
+        virtual
+        override(PaymentManager)
+        returns (uint256 value)
+    {
         // value = _size == 0 ?
         // 0 : FeeOracle(_router).feeLookup(_method);
         bytes memory c = abi.encodeWithSelector(0xedc9e7a4, _method);

@@ -3788,11 +3788,9 @@ describe("MADMarketplace721", () => {
         await extToken
           .connect(acc02)
           .setPublicMintState(true);
-        await extToken
-          .connect(acc02)
-          .mint(2, {
-            value: price.mul(ethers.constants.Two),
-          });
+        await extToken.connect(acc02).mint(2, {
+          value: price.mul(ethers.constants.Two),
+        });
         await extToken
           .connect(acc02)
           .approve(m721.address, 1);
@@ -4201,11 +4199,9 @@ describe("MADMarketplace721", () => {
         await extToken
           .connect(acc02)
           .setPublicMintState(true);
-        await extToken
-          .connect(acc02)
-          .mint(2, {
-            value: price.mul(ethers.constants.Two),
-          });
+        await extToken.connect(acc02).mint(2, {
+          value: price.mul(ethers.constants.Two),
+        });
         await extToken
           .connect(acc02)
           .approve(m721.address, 1);
@@ -4619,11 +4615,9 @@ describe("MADMarketplace721", () => {
         await extToken
           .connect(acc02)
           .setPublicMintState(true);
-        await extToken
-          .connect(acc02)
-          .mint(2, {
-            value: price.mul(ethers.constants.Two),
-          });
+        await extToken.connect(acc02).mint(2, {
+          value: price.mul(ethers.constants.Two),
+        });
         await extToken
           .connect(acc02)
           .approve(m721.address, 1);

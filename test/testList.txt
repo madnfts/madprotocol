@@ -1,26 +1,23 @@
-npx hardhat test test\_.test.ts
 npx hardhat test test\common\Royalties.test.ts
 npx hardhat test test\common\Splitter.test.ts
-npx hardhat test test\common\_.test.ts
 npx hardhat test test\erc1155\ERC1155Basic.test.ts
 npx hardhat test test\erc1155\MADFactory1155.test.ts
+
+
 npx hardhat test test\erc1155\MADMarketplace1155.test.ts
+npx hardhat test test\erc721\MADMarketplace721.test.ts
+
+
 npx hardhat test test\erc1155\MADRouter1155.test.ts
-npx hardhat test test\erc1155\_.test.ts
 npx hardhat test test\erc20\erc1155\ERC1155Basic-ERC20.test.ts
 npx hardhat test test\erc20\erc1155\MADMarketplace1155-ERC20.test.ts
 npx hardhat test test\erc20\erc1155\MADRouter1155-ERC20.test.ts
-npx hardhat test test\erc20\erc1155\_.test.ts
 npx hardhat test test\erc20\erc721\ERC721Basic-ERC20.test.ts
 npx hardhat test test\erc20\erc721\MADMarketplace721-ERC20.test.ts
 npx hardhat test test\erc20\erc721\MADRouter721-ERC20.test.ts
-npx hardhat test test\erc20\erc721\_.test.ts
 npx hardhat test test\erc721\ERC721Basic.test.ts
 npx hardhat test test\erc721\MADFactory721.test.ts
 npx hardhat test test\erc721\MADMarketplace721.test.ts
 npx hardhat test test\erc721\MADRouter721.test.ts
-npx hardhat test test\erc721\_.test.ts
 npx hardhat test test\test-poly\erc20\erc1155\MADMarketplace1155-ERC20.test.ts
-npx hardhat test test\test-poly\erc20\erc1155\_.test.ts
 npx hardhat test test\test-poly\erc20\erc721\MADMarketplace721-ERC20.test.ts
-npx hardhat test test\test-poly\erc20\erc721\_.test.ts

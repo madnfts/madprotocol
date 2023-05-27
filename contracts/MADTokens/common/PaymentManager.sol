@@ -93,10 +93,16 @@ abstract contract PaymentManager {
         }
     }
 
-    function _dispatchFees(address _recipient, ERC20 _erc20) internal returns (uint256 _val) {
+    function _dispatchFees(address _recipient, ERC20 _erc20)
+        internal
+        returns (uint256 _val)
+    {
         if (address(_erc20) != address(0)) {
             uint256 _feeCountERC20 = feeCountERC20;
-            if (_feeCountERC20 != 0 && _erc20 == erc20 && _recipient != address(0)) {
+            if (
+                _feeCountERC20 != 0 && _erc20 == erc20
+                    && _recipient != address(0)
+            ) {
                 _val = erc20.balanceOf(address(this)) - _feeCountERC20;
                 SafeTransferLib.safeTransfer(erc20, _recipient, _feeCountERC20);
                 feeCountERC20 = 0;
@@ -117,19 +123,27 @@ abstract contract PaymentManager {
         }
     }
 
-    function _publicPaymentHandler(bool _method, uint256 _value, uint256 _fee) internal {
+    function _publicPaymentHandler(bool _method, uint256 _value, uint256 _fee)
+        internal
+    {
         if (_method == true) {
             feeCountERC20 = feeCountERC20 + _fee;
-            SafeTransferLib.safeTransferFrom(erc20, msg.sender, address(this), _value);
+            SafeTransferLib.safeTransferFrom(
+                erc20, msg.sender, address(this), _value
+            );
         } else {
             feeCount = feeCount + _fee;
         }
     }
 
-    function _ownerFeeHandler(bool _method, uint256 _fee, address _erc20Owner) internal {
+    function _ownerFeeHandler(bool _method, uint256 _fee, address _erc20Owner)
+        internal
+    {
         if (_method == true) {
             feeCountERC20 = feeCountERC20 + _fee;
-            SafeTransferLib.safeTransferFrom(erc20, _erc20Owner, address(this), _fee);
+            SafeTransferLib.safeTransferFrom(
+                erc20, _erc20Owner, address(this), _fee
+            );
         } else {
             feeCount = feeCount + _fee;
         }
@@ -158,7 +172,11 @@ abstract contract PaymentManager {
         }
     }
 
-    function _ownerFeeCheck(bytes4 _selector, address _erc20Owner) internal view returns (uint256 _fee, bool _method) {
+    function _ownerFeeCheck(bytes4 _selector, address _erc20Owner)
+        internal
+        view
+        returns (uint256 _fee, bool _method)
+    {
         _fee = _getFeeValue(_selector);
         uint256 _value;
         (_value, _method) = _getPriceValue(_erc20Owner, erc20);
@@ -172,7 +190,11 @@ abstract contract PaymentManager {
         }
     }
 
-    function _getPriceValue(address _buyer, ERC20 _erc20) internal view returns (uint256 _value, bool _method) {
+    function _getPriceValue(address _buyer, ERC20 _erc20)
+        internal
+        view
+        returns (uint256 _value, bool _method)
+    {
         // if (msg.value != 0) {
         //    _value = msg.value;
         //    _method = false;
@@ -198,5 +220,10 @@ abstract contract PaymentManager {
         }
     }
 
-    function _getFeeValue(bytes4 _method) internal view virtual returns (uint256 value) { }
+    function _getFeeValue(bytes4 _method)
+        internal
+        view
+        virtual
+        returns (uint256 value)
+    { }
 }

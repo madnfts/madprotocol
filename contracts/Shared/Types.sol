@@ -2,9 +2,12 @@
 
 pragma solidity 0.8.19;
 
-// import { SplitterImpl, ERC20 } from "contracts/lib/splitter/SplitterImpl.sol";
-import { IERC721 } from "contracts/lib/tokens/ERC721/Base/interfaces/IERC721.sol";
-import { IERC1155 } from "contracts/lib/tokens/ERC1155/Base/interfaces/IERC1155.sol";
+// import { SplitterImpl, ERC20 } from
+// "contracts/lib/splitter/SplitterImpl.sol";
+import { IERC721 } from
+    "contracts/lib/tokens/ERC721/Base/interfaces/IERC721.sol";
+import { IERC1155 } from
+    "contracts/lib/tokens/ERC1155/Base/interfaces/IERC1155.sol";
 
 // prettier-ignore
 library Types {

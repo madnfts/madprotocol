@@ -65,7 +65,7 @@ export async function splitterDeployment(
   const sharesOrZero = `${ambShare ? ambShare + "," : ""}${
     projShare ? projShare + "," : ""
   }`;
-  console.log(sharesOrZero);
+  // console.log('HELPERS:  sharesOrZero:', sharesOrZero);
 
   const rc: ContractReceipt = await tx.wait();
   const indexed = rc.logs[indexedLogIndex].data;
@@ -167,11 +167,13 @@ export async function validateCreation(
   );
 
   const colID = await factory.callStatic.getColID(basicAddr);
+  console.log("HELPERS: colID", colID);
   const storage = await factory.callStatic.userTokens(
     account.address,
     ethers.BigNumber.from(expectedColID),
   );
   const colInfo = await factory.callStatic.colInfo(colID);
+  console.log("HELPERS: colInfo", colInfo);
 
   expect(tx).to.be.ok;
 
@@ -227,9 +229,9 @@ export async function createCollections(
     2,
   );
 
-  for (let i = 0; i < numberOfCols; ++i) {
-    const salt = `${basicSalt} Number ${i}`;
-    console.log(salt);
+  for (let i = 0; i < numberOfCols; i++) {
+    const salt = `${basicSalt}Number${i + 1}`;
+    console.log("HELPERS: salt", salt);
     const tx = createCollection(
       factory,
       account,

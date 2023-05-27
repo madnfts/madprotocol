@@ -11,7 +11,8 @@ import {
     Bytes32AddressLib
 } from "contracts/Factory/MADFactoryBase.sol";
 
-// import { ERC721BasicDeployer } from "contracts/lib/deployers/ERC721Deployer.sol";
+// import { ERC721BasicDeployer } from
+// "contracts/lib/deployers/ERC721Deployer.sol";
 
 contract MADFactory721 is MADFactoryBase, FactoryEventsAndErrors721 {
     // using Types for Types.ERC721Type;
@@ -22,7 +23,8 @@ contract MADFactory721 is MADFactoryBase, FactoryEventsAndErrors721 {
     //                           STORAGE                          //
     ////////////////////////////////////////////////////////////////
 
-    /// @dev `colIDs` are derived from adding 12 bytes of zeros to an collection's address.
+    /// @dev `colIDs` are derived from adding 12 bytes of zeros to an
+    /// collection's address.
     /// @dev colID => colInfo(salt/type/addr/time/splitter)
     mapping(bytes32 => Types.Collection721) public colInfo;
 
@@ -30,28 +32,46 @@ contract MADFactory721 is MADFactoryBase, FactoryEventsAndErrors721 {
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    constructor(address _marketplace, address _signer, address _paymentTokenAddress)
-        MADFactoryBase(_marketplace, _signer, _paymentTokenAddress)
-    { }
+    constructor(
+        address _marketplace,
+        address _signer,
+        address _paymentTokenAddress
+    ) MADFactoryBase(_marketplace, _signer, _paymentTokenAddress) { }
 
     /// @notice Core public ERC721 token types deployment pusher.
     /// @dev Function Sighash := 0x73fd6808
-    /// @dev Args passed as params in this function serve as common denominator for all token types.
-    /// @dev Extra config options must be set directly by through token type specific functions in `MADRouter` contract.
-    /// @dev Frontend must attent that salt values must have common pattern so to not replicate same output.
+    /// @dev Args passed as params in this function serve as common denominator
+    /// for all token types.
+    /// @dev Extra config options must be set directly by through token type
+    /// specific functions in
+    /// `MADRouter` contract.
+    /// @dev Frontend must attent that salt values must have common pattern so
+    /// to not replicate same
+    /// output.
     /// @param _tokenType Values legend:
     /// 0=Minimal; 1=Basic; 2=Whitelist; 3=Lazy.
     /// @param _tokenSalt Nonce/Entropy factor used by CREATE3 method
-    /// to generate collection deployment address. Must be always different to avoid address collision.
+    /// to generate collection deployment address. Must be always different to
+    /// avoid address
+    /// collision.
     /// @param _name Name of the collection to be deployed.
     /// @param _symbol Symbol of the collection to be deployed.
     /// @param _price Public mint price of the collection to be deployed.
-    /// @param _maxSupply Maximum supply of tokens to be minted of the collection to be deployed
+    /// @param _maxSupply Maximum supply of tokens to be minted of the
+    /// collection to be deployed
     /// (Not used for ERC721Minimal token type, since it always equals to one).
-    /// @param _baseURI The URL + CID to be added the tokenID and suffix (.json) by the tokenURI function
-    /// in the collection to be deployed (baseURI used as tokenURI itself for the ERC721Minimal token type).
-    /// @param _splitter Previously deployed Splitter implementation so to validate and attach to collection.
-    /// @param _royalty Ranges in between 0%-10%, in percentage basis points, accepted (Min tick := 25).
+    /// @param _baseURI The URL + CID to be added the tokenID and suffix (.json)
+    /// by the tokenURI
+    /// function
+    /// in the collection to be deployed (baseURI used as tokenURI itself for
+    /// the ERC721Minimal
+    /// token type).
+    /// @param _splitter Previously deployed Splitter implementation so to
+    /// validate and attach to
+    /// collection.
+    /// @param _royalty Ranges in between 0%-10%, in percentage basis points,
+    /// accepted (Min tick :=
+    /// 25).
     function createCollection(
         uint8 _tokenType,
         string memory _tokenSalt,
@@ -67,17 +87,31 @@ contract MADFactory721 is MADFactoryBase, FactoryEventsAndErrors721 {
         _limiter(_tokenType, _splitter);
         _royaltyLocker(_royalty);
 
-        Types.ColArgs memory args =
-            Types.ColArgs(_name, _symbol, _baseURI, _price, _maxSupply, _splitter, _royalty, router, address(erc20));
+        Types.ColArgs memory args = Types.ColArgs(
+            _name,
+            _symbol,
+            _baseURI,
+            _price,
+            _maxSupply,
+            _splitter,
+            _royalty,
+            router,
+            address(erc20)
+        );
 
-        (bytes32 tokenSalt, address deployed) = _collectionDeploy(_tokenType, _tokenSalt, args, _extra);
+        (bytes32 tokenSalt, address deployed) =
+            _collectionDeploy(_tokenType, _tokenSalt, args, _extra);
 
         bytes32 colId = deployed.fillLast12Bytes();
         userTokens[tx.origin].push(colId);
 
-        colInfo[colId] = Types.Collection721(tx.origin, _tokenType, tokenSalt, block.number, _splitter);
+        colInfo[colId] = Types.Collection721(
+            tx.origin, _tokenType, tokenSalt, block.number, _splitter
+        );
 
-        emit ERC721BasicCreated(_splitter, deployed, _name, _symbol, _royalty, _maxSupply, _price);
+        emit ERC721BasicCreated(
+            _splitter, deployed, _name, _symbol, _royalty, _maxSupply, _price
+            );
     }
 
     ////////////////////////////////////////////////////////////////
@@ -91,7 +125,12 @@ contract MADFactory721 is MADFactoryBase, FactoryEventsAndErrors721 {
     /// @dev Function Sighash := 0x8691fe46
 
     /// @inheritdoc FactoryVerifier
-    function typeChecker(bytes32 _colID) external view override(FactoryVerifier) returns (uint8 pointer) {
+    function typeChecker(bytes32 _colID)
+        external
+        view
+        override(FactoryVerifier)
+        returns (uint8 pointer)
+    {
         _isRouter();
         Types.Collection721 storage col = colInfo[_colID];
 

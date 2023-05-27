@@ -4,15 +4,25 @@ pragma solidity 0.8.19;
 
 import { MAD } from "contracts/MAD.sol";
 import { MADBase, ERC20 } from "contracts/Shared/MADBase.sol";
-import { FactoryEventsAndErrorsBase, FactoryVerifier } from "contracts/Shared/EventsAndErrors.sol";
+import {
+    FactoryEventsAndErrorsBase,
+    FactoryVerifier
+} from "contracts/Shared/EventsAndErrors.sol";
 import { DCPrevent } from "contracts/lib/security/DCPrevent.sol";
 import { Types } from "contracts/Shared/Types.sol";
 import { SplitterImpl } from "contracts/lib/splitter/SplitterImpl.sol";
 import { CREATE3, Bytes32AddressLib } from "contracts/lib/utils/CREATE3.sol";
-import { SplitterBufferLib as BufferLib } from "contracts/lib/utils/SplitterBufferLib.sol";
+import { SplitterBufferLib as BufferLib } from
+    "contracts/lib/utils/SplitterBufferLib.sol";
 
 // prettier-ignore
-abstract contract MADFactoryBase is MAD, MADBase, FactoryEventsAndErrorsBase, FactoryVerifier, DCPrevent {
+abstract contract MADFactoryBase is
+    MAD,
+    MADBase,
+    FactoryEventsAndErrorsBase,
+    FactoryVerifier,
+    DCPrevent
+{
     using Types for Types.ColArgs;
     using Types for Types.SplitterConfig;
     using Bytes32AddressLib for address;
@@ -34,17 +44,21 @@ abstract contract MADFactoryBase is MAD, MADBase, FactoryEventsAndErrorsBase, Fa
     /// @dev Maps collection's index to its respective bytecode.
     mapping(uint256 => bytes) public colTypes;
 
-    /// @dev Maps an collection creator, of type address, to an array of `colIDs`.
+    /// @dev Maps an collection creator, of type address, to an array of
+    /// `colIDs`.
     mapping(address => bytes32[]) public userTokens;
 
     /// @dev Nested mapping that takes an collection creator as key of
     /// an hashmap of splitter contracts to its respective deployment configs.
-    mapping(address => mapping(address => Types.SplitterConfig)) public splitterInfo;
+    mapping(address => mapping(address => Types.SplitterConfig)) public
+        splitterInfo;
 
-    /// @dev Instance of `MADRouter` being passed as parameter of collection's constructor.
+    /// @dev Instance of `MADRouter` being passed as parameter of collection's
+    /// constructor.
     address public router;
 
-    /// @dev Instance of `MADMarketplace` being passed as parameter of `creatorAuth`.
+    /// @dev Instance of `MADMarketplace` being passed as parameter of
+    /// `creatorAuth`.
     address public market;
 
     /// @dev The signer address used for lazy minting voucher validation.
@@ -54,7 +68,11 @@ abstract contract MADFactoryBase is MAD, MADBase, FactoryEventsAndErrorsBase, Fa
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    constructor(address _marketplace, address _signer, address _paymentTokenAddress) {
+    constructor(
+        address _marketplace,
+        address _signer,
+        address _paymentTokenAddress
+    ) {
         // F.1 BlockHat Audit
         // `setSigner` and `setMarket`
         // already handle the zeroAddress case.
@@ -71,12 +89,19 @@ abstract contract MADFactoryBase is MAD, MADBase, FactoryEventsAndErrorsBase, Fa
 
     /// @notice Splitter deployment pusher.
     /// @dev Function Sighash := 0x9e5c4b70
-    /// @param _splitterSalt Nonce/Entropy factor used by CREATE3 method. Must be always different to avoid address
+    /// @param _splitterSalt Nonce/Entropy factor used by CREATE3 method. Must
+    /// be always different
+    /// to avoid address
     /// collision.
     /// to generate payment splitter deployment address.
-    /// @param _ambassador User may choose from one of the whitelisted addresses to donate
-    /// 1%-20% of secondary sales royalties (optional, will be disregarded if left empty(value == address(0)).
-    /// @param _ambShare Percentage (1%-20%) of secondary sales royalties to be donated to an ambassador
+    /// @param _ambassador User may choose from one of the whitelisted addresses
+    /// to donate
+    /// 1%-20% of secondary sales royalties (optional, will be disregarded if
+    /// left empty(value ==
+    /// address(0)).
+    /// @param _ambShare Percentage (1%-20%) of secondary sales royalties to be
+    /// donated to an
+    /// ambassador
     /// (optional, will be disregarded if left empty(value == 0)).
     function splitterCheck(
         string memory _splitterSalt,
@@ -85,7 +110,8 @@ abstract contract MADFactoryBase is MAD, MADBase, FactoryEventsAndErrorsBase, Fa
         uint256 _ambShare,
         uint256 _projectShare
     ) external isThisOg {
-        bytes32 splitterSalt = keccak256(abi.encode(msg.sender, bytes(_splitterSalt)));
+        bytes32 splitterSalt =
+            keccak256(abi.encode(msg.sender, bytes(_splitterSalt)));
         if (_ambassador == address(0) && _project == address(0)) {
             _splitterResolver(
                 splitterSalt,
@@ -95,7 +121,10 @@ abstract contract MADFactoryBase is MAD, MADBase, FactoryEventsAndErrorsBase, Fa
                 0, // _projectShare
                 0 // _flag := no project/ambassador
             );
-        } else if (_ambassador != address(0) && _project == address(0) && _ambShare != 0 && _ambShare < 21) {
+        } else if (
+            _ambassador != address(0) && _project == address(0)
+                && _ambShare != 0 && _ambShare < 21
+        ) {
             _splitterResolver(
                 splitterSalt,
                 _ambassador, // _ambassador
@@ -104,7 +133,10 @@ abstract contract MADFactoryBase is MAD, MADBase, FactoryEventsAndErrorsBase, Fa
                 0, // _projectShare
                 1 // _flag := ambassador only
             );
-        } else if (_project != address(0) && _ambassador == address(0) && _projectShare != 0 && _projectShare < 91) {
+        } else if (
+            _project != address(0) && _ambassador == address(0)
+                && _projectShare != 0 && _projectShare < 91
+        ) {
             _splitterResolver(
                 splitterSalt,
                 address(0), // _ambassador
@@ -114,8 +146,9 @@ abstract contract MADFactoryBase is MAD, MADBase, FactoryEventsAndErrorsBase, Fa
                 2 // _flag := project only
             );
         } else if (
-            _ambassador != address(0) && _project != address(0) && _ambShare != 0 && _ambShare < 21
-                && _projectShare != 0 && _projectShare < 71
+            _ambassador != address(0) && _project != address(0)
+                && _ambShare != 0 && _ambShare < 21 && _projectShare != 0
+                && _projectShare < 71
         ) {
             _splitterResolver(
                 splitterSalt,
@@ -148,7 +181,12 @@ abstract contract MADFactoryBase is MAD, MADBase, FactoryEventsAndErrorsBase, Fa
     }
 
     /// @inheritdoc FactoryVerifier
-    function getColID(address _colAddress) external pure override(FactoryVerifier) returns (bytes32 colID) {
+    function getColID(address _colAddress)
+        external
+        pure
+        override(FactoryVerifier)
+        returns (bytes32 colID)
+    {
         colID = _colAddress.fillLast12Bytes();
     }
 
@@ -160,14 +198,23 @@ abstract contract MADFactoryBase is MAD, MADBase, FactoryEventsAndErrorsBase, Fa
         uint256 _projectShare,
         uint256 _flag
     ) internal {
-        address[] memory _payees = BufferLib._payeesBuffer(_ambassador, _project);
+        address[] memory _payees =
+            BufferLib._payeesBuffer(_ambassador, _project);
 
-        uint256[] memory _shares = BufferLib._sharesBuffer(_ambShare, _projectShare);
+        uint256[] memory _shares =
+            BufferLib._sharesBuffer(_ambShare, _projectShare);
 
         address splitter = _splitterDeploy(_splitterSalt, _payees, _shares);
 
-        splitterInfo[tx.origin][splitter] =
-            Types.SplitterConfig(splitter, _splitterSalt, _ambassador, _project, _ambShare, _projectShare, true);
+        splitterInfo[tx.origin][splitter] = Types.SplitterConfig(
+            splitter,
+            _splitterSalt,
+            _ambassador,
+            _project,
+            _ambShare,
+            _projectShare,
+            true
+        );
 
         emit SplitterCreated(tx.origin, _shares, _payees, splitter, _flag);
     }
@@ -191,16 +238,27 @@ abstract contract MADFactoryBase is MAD, MADBase, FactoryEventsAndErrorsBase, Fa
         );
     }
 
-    function _splitterDeploy(bytes32 _salt, address[] memory _payees, uint256[] memory _shares)
-        internal
-        returns (address deployed)
-    {
-        deployed =
-            CREATE3.deploy(_salt, abi.encodePacked(type(SplitterImpl).creationCode, abi.encode(_payees, _shares)), 0);
+    function _splitterDeploy(
+        bytes32 _salt,
+        address[] memory _payees,
+        uint256[] memory _shares
+    ) internal returns (address deployed) {
+        deployed = CREATE3.deploy(
+            _salt,
+            abi.encodePacked(
+                type(SplitterImpl).creationCode, abi.encode(_payees, _shares)
+            ),
+            0
+        );
     }
 
     /// @inheritdoc FactoryVerifier
-    function creatorAuth(address _token, address _user) external view override(FactoryVerifier) returns (bool stdout) {
+    function creatorAuth(address _token, address _user)
+        external
+        view
+        override(FactoryVerifier)
+        returns (bool stdout)
+    {
         _isMarket();
         stdout = _userRender(_user);
 
@@ -279,7 +337,8 @@ abstract contract MADFactoryBase is MAD, MADBase, FactoryEventsAndErrorsBase, Fa
         }
     }
 
-    /// @notice Private view helper that checks an user against `userTokens` storage slot.
+    /// @notice Private view helper that checks an user against `userTokens`
+    /// storage slot.
     /// @dev Function Sighash := 0xbe749257
     /// @dev `creatorAuth` method extension.
     /// @return _stdout := 1 as boolean standard output.
@@ -295,7 +354,11 @@ abstract contract MADFactoryBase is MAD, MADBase, FactoryEventsAndErrorsBase, Fa
 
     /// @dev External getter for deployed splitters and collections.
     /// @dev Function Sighash := 0x499945ef
-    function getDeployedAddr(string memory _salt, address _addr) external view returns (address) {
+    function getDeployedAddr(string memory _salt, address _addr)
+        external
+        view
+        returns (address)
+    {
         bytes32 salt = keccak256(abi.encode(_addr, bytes(_salt)));
         return CREATE3.getDeployed(salt);
     }

@@ -4,7 +4,11 @@ pragma solidity 0.8.19;
 
 library SplitterBufferLib {
     /// @dev Builds payees dynamic sized array buffer for `splitterCheck` cases.
-    function _payeesBuffer(address amb, address project) internal view returns (address[] memory memOffset) {
+    function _payeesBuffer(address amb, address project)
+        internal
+        view
+        returns (address[] memory memOffset)
+    {
         assembly {
             switch and(iszero(amb), iszero(project))
             case 1 {
@@ -81,7 +85,10 @@ library SplitterBufferLib {
                         mstore(add(memOffset, 0x00), 3)
                         mstore(add(memOffset, 0x20), _ambShare)
                         mstore(add(memOffset, 0x40), _projectShare)
-                        mstore(add(memOffset, 0x60), sub(100, add(_ambShare, _projectShare)))
+                        mstore(
+                            add(memOffset, 0x60),
+                            sub(100, add(_ambShare, _projectShare))
+                        )
                         mstore(0x40, add(memOffset, 0x80))
                     }
                 }

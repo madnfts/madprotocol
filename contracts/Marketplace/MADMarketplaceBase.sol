@@ -4,11 +4,18 @@ pragma solidity 0.8.19;
 
 import { MAD } from "contracts/MAD.sol";
 import { MADBase, ERC20 } from "contracts/Shared/MADBase.sol";
-import { FactoryVerifier, MarketplaceEventsAndErrorsBase } from "contracts/Shared/EventsAndErrors.sol";
+import {
+    FactoryVerifier,
+    MarketplaceEventsAndErrorsBase
+} from "contracts/Shared/EventsAndErrors.sol";
 import { SafeTransferLib } from "contracts/lib/utils/SafeTransferLib.sol";
 import "contracts/lib/uniswap/ISwapRouter.sol";
 
-abstract contract MADMarketplaceBase is MAD, MADBase, MarketplaceEventsAndErrorsBase {
+abstract contract MADMarketplaceBase is
+    MAD,
+    MADBase,
+    MarketplaceEventsAndErrorsBase
+{
     /// @dev Function Signature := 0x06fdde03
     function name() external pure override(MAD) returns (string memory) {
         assembly {
@@ -29,7 +36,8 @@ abstract contract MADMarketplaceBase is MAD, MADBase, MarketplaceEventsAndErrors
 
     uint16 public constant basisPoints = 1.0e4;
 
-    /// @dev when user is outbid on an erc20, deposit here and let the user withdraw it
+    /// @dev when user is outbid on an erc20, deposit here and let the user
+    /// withdraw it
     mapping(address => uint256) public userOutbid;
 
     /// @dev seller => orderID
@@ -57,7 +65,11 @@ abstract contract MADMarketplaceBase is MAD, MADBase, MarketplaceEventsAndErrors
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    constructor(address _recipient, address _paymentTokenAddress, address _swapRouter) {
+    constructor(
+        address _recipient,
+        address _paymentTokenAddress,
+        address _swapRouter
+    ) {
         setRecipient(_recipient);
 
         // init settings
@@ -71,11 +83,16 @@ abstract contract MADMarketplaceBase is MAD, MADBase, MarketplaceEventsAndErrors
         swapRouter = ISwapRouter(_swapRouter);
 
         if (_paymentTokenAddress != address(0)) {
-            require(address(swapRouter) != address(0), "invalid swap router configuration");
+            require(
+                address(swapRouter) != address(0),
+                "invalid swap router configuration"
+            );
             _setPaymentToken(_paymentTokenAddress);
 
             // Approve the router to spend the ERC20 payment token.
-            SafeTransferLib.safeApprove(ERC20(_paymentTokenAddress), address(_swapRouter), 2 ** 256 - 1);
+            SafeTransferLib.safeApprove(
+                ERC20(_paymentTokenAddress), address(_swapRouter), 2 ** 256 - 1
+            );
         }
     }
 
@@ -85,17 +102,27 @@ abstract contract MADMarketplaceBase is MAD, MADBase, MarketplaceEventsAndErrors
     //                        INTERNAL FX                          //
     ////////////////////////////////////////////////////////////////
 
-    function _exceedsMaxEP(uint256 _startPrice, uint256 _endPrice) internal pure {
+    function _exceedsMaxEP(uint256 _startPrice, uint256 _endPrice)
+        internal
+        pure
+    {
         assembly {
             // ExceedsMaxEP()
-            if iszero(iszero(or(eq(_startPrice, _endPrice), lt(_startPrice, _endPrice)))) {
+            if iszero(
+                iszero(
+                    or(eq(_startPrice, _endPrice), lt(_startPrice, _endPrice))
+                )
+            ) {
                 mstore(0x00, 0x70f8f33a)
                 revert(0x1c, 0x04)
             }
         }
     }
 
-    function _isBidderOrSeller(address _bidder, address _seller) internal view {
+    function _isBidderOrSeller(address _bidder, address _seller)
+        internal
+        view
+    {
         assembly {
             // AccessDenied()
             if iszero(or(eq(caller(), _seller), eq(caller(), _bidder))) {
@@ -105,14 +132,20 @@ abstract contract MADMarketplaceBase is MAD, MADBase, MarketplaceEventsAndErrors
         }
     }
 
-    function _makeOrderChecks(uint256 _endTime, uint256 _startPrice) internal view {
+    function _makeOrderChecks(uint256 _endTime, uint256 _startPrice)
+        internal
+        view
+    {
         assembly {
             // NeedMoreTime()
             if iszero(
                 iszero(
                     or(
                         or(eq(timestamp(), _endTime), lt(_endTime, timestamp())),
-                        lt(sub(_endTime, timestamp()), sload(minOrderDuration.slot))
+                        lt(
+                            sub(_endTime, timestamp()),
+                            sload(minOrderDuration.slot)
+                        )
                     )
                 )
             ) {
@@ -120,7 +153,9 @@ abstract contract MADMarketplaceBase is MAD, MADBase, MarketplaceEventsAndErrors
                 revert(0x1c, 0x04)
             }
             // Exceeds max time - NeedMoreTime()
-            if iszero(lt(sub(_endTime, timestamp()), sload(maxOrderDuration.slot))) {
+            if iszero(
+                lt(sub(_endTime, timestamp()), sload(maxOrderDuration.slot))
+            ) {
                 mstore(0x00, 0x921dbfec)
                 revert(0x1c, 0x04)
             }
@@ -132,7 +167,11 @@ abstract contract MADMarketplaceBase is MAD, MADBase, MarketplaceEventsAndErrors
         }
     }
 
-    function _cancelOrderChecks(address _seller, bool _isSold, uint256 _lastBidPrice) internal view {
+    function _cancelOrderChecks(
+        address _seller,
+        bool _isSold,
+        uint256 _lastBidPrice
+    ) internal view {
         assembly {
             // AccessDenied()
             if iszero(eq(_seller, caller())) {
@@ -184,7 +223,13 @@ abstract contract MADMarketplaceBase is MAD, MADBase, MarketplaceEventsAndErrors
             // WrongPrice()
             switch iszero(_lastBidPrice)
             case 0 {
-                if lt(_bidValue, add(_lastBidPrice, div(_lastBidPrice, sload(minBidValue.slot)))) {
+                if lt(
+                    _bidValue,
+                    add(
+                        _lastBidPrice,
+                        div(_lastBidPrice, sload(minBidValue.slot))
+                    )
+                ) {
                     mstore(0x00, 0xf7760f25)
                     revert(0x1c, 0x04)
                 }
@@ -198,7 +243,10 @@ abstract contract MADMarketplaceBase is MAD, MADBase, MarketplaceEventsAndErrors
         }
     }
 
-    function _buyChecks(uint256 _endTime, uint8 _orderType, bool _isSold) internal view {
+    function _buyChecks(uint256 _endTime, uint8 _orderType, bool _isSold)
+        internal
+        view
+    {
         assembly {
             // CanceledOrder()
             if iszero(_endTime) {
@@ -223,7 +271,10 @@ abstract contract MADMarketplaceBase is MAD, MADBase, MarketplaceEventsAndErrors
         }
     }
 
-    function _claimChecks(bool _isSold, uint8 _orderType, uint256 _endTime) internal view {
+    function _claimChecks(bool _isSold, uint8 _orderType, uint256 _endTime)
+        internal
+        view
+    {
         assembly {
             // SoldToken()
             if iszero(iszero(_isSold)) {
@@ -252,7 +303,11 @@ abstract contract MADMarketplaceBase is MAD, MADBase, MarketplaceEventsAndErrors
     /// @dev This public getter serve as a hook to ease frontend
     /// fetching whilst estimating `orderIdBySeller` indexes by length.
     /// @dev Function Signature := 0x8aae982a
-    function sellerOrderLength(address _seller) external view returns (uint256) {
+    function sellerOrderLength(address _seller)
+        external
+        view
+        returns (uint256)
+    {
         return orderIdBySeller[_seller].length;
     }
 
@@ -261,12 +316,18 @@ abstract contract MADMarketplaceBase is MAD, MADBase, MarketplaceEventsAndErrors
     ////////////////////////////////////////////////////////////////
 
     // Setter for minAuctionIncrementMAX
-    function setMinAuctionIncrementMAX(uint256 _minAuctionIncrementMAX) public onlyOwner {
+    function setMinAuctionIncrementMAX(uint256 _minAuctionIncrementMAX)
+        public
+        onlyOwner
+    {
         minAuctionIncrementMAX = _minAuctionIncrementMAX;
     }
 
     // Setter for minOrderDurationtMAX
-    function setMinOrderDurationtMAX(uint256 _minOrderDurationtMAX) public onlyOwner {
+    function setMinOrderDurationtMAX(uint256 _minOrderDurationtMAX)
+        public
+        onlyOwner
+    {
         minOrderDurationtMAX = _minOrderDurationtMAX;
     }
 
@@ -284,7 +345,10 @@ abstract contract MADMarketplaceBase is MAD, MADBase, MarketplaceEventsAndErrors
     }
 
     function setFees(uint256 _royaltyFee, uint256 _maxFee) public onlyOwner {
-        require(_royaltyFee <= MAX_ROYALTY_FEE && _maxFee <= MAX_FEES, "Invalid Fees");
+        require(
+            _royaltyFee <= MAX_ROYALTY_FEE && _maxFee <= MAX_FEES,
+            "Invalid Fees"
+        );
 
         assembly {
             sstore(royaltyFee.slot, _royaltyFee)
@@ -316,7 +380,8 @@ abstract contract MADMarketplaceBase is MAD, MADBase, MarketplaceEventsAndErrors
         // Allow anything greater than 10 and less than the amount configured.
         require(
             (
-                _minAuctionIncrement >= 10 && _minOrderDuration >= 10 && _minAuctionIncrement <= minAuctionIncrementMAX
+                _minAuctionIncrement >= 10 && _minOrderDuration >= 10
+                    && _minAuctionIncrement <= minAuctionIncrementMAX
                     && _minOrderDuration <= minOrderDurationtMAX && _minBidValue > 0
             ) && _maxOrderDuration >= _minOrderDuration,
             "Invalid Settings"
@@ -329,7 +394,12 @@ abstract contract MADMarketplaceBase is MAD, MADBase, MarketplaceEventsAndErrors
             sstore(maxOrderDuration.slot, _maxOrderDuration)
         }
 
-        emit AuctionSettingsUpdated(_minOrderDuration, _minAuctionIncrement, _minBidValue, _maxOrderDuration);
+        emit AuctionSettingsUpdated(
+            _minOrderDuration,
+            _minAuctionIncrement,
+            _minBidValue,
+            _maxOrderDuration
+            );
     }
 
     /// @notice Enables the contract's owner to change recipient address.
@@ -350,7 +420,9 @@ abstract contract MADMarketplaceBase is MAD, MADBase, MarketplaceEventsAndErrors
         // C.5 & D.5 BlockHat audit - remove whenPaused
         uint256 withdrawAmount = address(this).balance;
         require(withdrawAmount - totalOutbid > 0, "No balance to withdraw");
-        SafeTransferLib.safeTransferETH(msg.sender, withdrawAmount - totalOutbid);
+        SafeTransferLib.safeTransferETH(
+            msg.sender, withdrawAmount - totalOutbid
+        );
     }
 
     function withdrawERC20() external onlyOwner {
@@ -359,7 +431,9 @@ abstract contract MADMarketplaceBase is MAD, MADBase, MarketplaceEventsAndErrors
         uint256 withdrawAmount = erc20.balanceOf(address(this));
 
         require(withdrawAmount - totalOutbid > 0, "No balance to withdraw");
-        SafeTransferLib.safeTransfer(erc20, msg.sender, withdrawAmount - totalOutbid);
+        SafeTransferLib.safeTransfer(
+            erc20, msg.sender, withdrawAmount - totalOutbid
+        );
     }
 
     /// @dev when outbid (eth) the user must withdraw manually.
@@ -371,17 +445,25 @@ abstract contract MADMarketplaceBase is MAD, MADBase, MarketplaceEventsAndErrors
         userOutbid[msg.sender] = 0;
         totalOutbid -= amountOut;
 
-        emit WithdrawOutbid(msg.sender, address(0), amountOut); // amount withdrawn
+        emit WithdrawOutbid(msg.sender, address(0), amountOut); // amount
+            // withdrawn
 
         SafeTransferLib.safeTransferETH(msg.sender, amountOut);
     }
 
-    function withdrawOutbid(ERC20 _token, uint256 minOut, uint160 priceLimit) external {
+    function withdrawOutbid(ERC20 _token, uint256 minOut, uint160 priceLimit)
+        external
+    {
         _withdrawOutbid(_token, minOut, priceLimit);
     }
 
-    function _withdrawOutbid(ERC20 _token, uint256 minOut, uint160 priceLimit) private {
-        require(address(erc20) != address(0) && address(_token) != address(0), "not erc20");
+    function _withdrawOutbid(ERC20 _token, uint256 minOut, uint160 priceLimit)
+        private
+    {
+        require(
+            address(erc20) != address(0) && address(_token) != address(0),
+            "not erc20"
+        );
         require(userOutbid[msg.sender] > 0, "nothing to withdraw");
 
         uint256 amountIn = userOutbid[msg.sender];
@@ -390,16 +472,20 @@ abstract contract MADMarketplaceBase is MAD, MADBase, MarketplaceEventsAndErrors
 
         if (_token == erc20) {
             SafeTransferLib.safeTransfer(_token, msg.sender, amountIn);
-            emit WithdrawOutbid(msg.sender, address(_token), amountIn); // amount withdrawn
+            emit WithdrawOutbid(msg.sender, address(_token), amountIn); // amount
+                // withdrawn
             return;
         }
 
-        // Note: To use this example, you should explicitly set slippage limits, omitting for simplicity
+        // Note: To use this example, you should explicitly set slippage limits,
+        // omitting for
+        // simplicity
         // uint256 minOut = /* Calculate min output */ 0;
         // uint160 priceLimit = /* Calculate price limit */ 0;
         // Create the params that will be used to execute the swap
 
-        ISwapRouter.ExactInputSingleParams memory params = ISwapRouter.ExactInputSingleParams({
+        ISwapRouter.ExactInputSingleParams memory params = ISwapRouter
+            .ExactInputSingleParams({
             tokenIn: address(erc20),
             tokenOut: address(_token),
             fee: feeTier,
@@ -411,7 +497,8 @@ abstract contract MADMarketplaceBase is MAD, MADBase, MarketplaceEventsAndErrors
         });
         // The call to `exactInputSingle` executes the swap.
         uint256 amountOut = swapRouter.exactInputSingle(params);
-        emit WithdrawOutbid(msg.sender, address(_token), amountOut); // amount withdrawn
+        emit WithdrawOutbid(msg.sender, address(_token), amountOut); // amount
+            // withdrawn
     }
 
     /// @dev retrieve how much balance

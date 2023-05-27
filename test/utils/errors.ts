@@ -11,6 +11,7 @@ export enum MinimalErrors {
 }
 
 export enum BasicErrors {
+  TransferFromIncorrectOwner = "TransferFromIncorrectOwner",
   DecrementOverflow = "DecOverflow",
   PublicMintClosed = "PublicMintClosed",
   MaxSupplyReached = "MaxSupplyReached",

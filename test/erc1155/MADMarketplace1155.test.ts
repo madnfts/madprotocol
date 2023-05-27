@@ -6,11 +6,7 @@ import {
 } from "@nomicfoundation/hardhat-network-helpers";
 import { setNextBlockTimestamp } from "@nomicfoundation/hardhat-network-helpers/dist/src/helpers/time";
 import { expect } from "chai";
-import {
-  BigNumber,
-  ContractReceipt,
-  ContractTransaction,
-} from "ethers";
+import { BigNumber, ContractReceipt } from "ethers";
 import { artifacts, ethers, network } from "hardhat";
 
 import {
@@ -61,6 +57,7 @@ describe("MADMarketplace1155", () => {
 
   const price: BigNumber = ethers.utils.parseEther("1");
   const zero = ethers.constants.Zero;
+
   const _null: OrderDetails1155 = {
     orderType: 0,
     seller: dead,

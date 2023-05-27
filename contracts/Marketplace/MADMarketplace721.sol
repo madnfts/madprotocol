@@ -131,7 +131,7 @@ contract MADMarketplace721 is
                 order.lastBidder,
                 address(erc20) != address(0) ? address(erc20) : address(0),
                 lastBidPrice
-                );
+            );
         }
 
         emit Bid(order.token, order.tokenId, _order, msg.sender, bidValue);
@@ -411,7 +411,7 @@ contract MADMarketplace721 is
         _order.token.safeTransferFrom(address(this), _to, _order.tokenId);
         emit Claim(
             _order.token, _order.tokenId, _orderId, _order.seller, _to, _price
-            );
+        );
     }
 
     function _extPath0(
@@ -452,7 +452,7 @@ contract MADMarketplace721 is
         _order.token.safeTransferFrom(address(this), _to, _order.tokenId);
         emit Claim(
             _order.token, _order.tokenId, _orderId, _order.seller, _to, _price
-            );
+        );
     }
 
     function _extPath1(
@@ -479,7 +479,7 @@ contract MADMarketplace721 is
         _order.token.safeTransferFrom(address(this), _to, _order.tokenId);
         emit Claim(
             _order.token, _order.tokenId, _orderId, _order.seller, _to, _price
-            );
+        );
     }
 
     function _feeResolver(uint256 _key, uint256 _tokenId)

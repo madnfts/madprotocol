@@ -105,7 +105,7 @@ contract MADFactory1155 is MADFactoryBase, FactoryEventsAndErrors1155 {
 
         emit ERC1155BasicCreated(
             _splitter, deployed, _name, _symbol, _royalty, _maxSupply, _price
-            );
+        );
     }
 
     ////////////////////////////////////////////////////////////////

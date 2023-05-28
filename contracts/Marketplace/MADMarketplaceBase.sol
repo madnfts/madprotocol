@@ -399,7 +399,7 @@ abstract contract MADMarketplaceBase is
             _minAuctionIncrement,
             _minBidValue,
             _maxOrderDuration
-        );
+            );
     }
 
     /// @notice Enables the contract's owner to change recipient address.

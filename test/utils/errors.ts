@@ -109,7 +109,7 @@ export enum RouterErrors {
   AccessDenied = "AccessDenied",
   InvalidType = "INVALID_TYPE",
   InvalidTypeBytes4 = "InvalidType",
-  NoFunds = "NO_FUNDS",
+  NoFunds = "NoFunds",
   Paused = "PAUSED",
   URILocked = "URILocked",
 }

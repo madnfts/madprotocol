@@ -102,7 +102,7 @@ contract MADRouter1155 is MADRouterBase {
         (, uint8 _tokenType) = _tokenRender(_token);
         checkTokenType(_tokenType);
         // _paymentCheck(0x40d097c3);
-        ERC1155Basic(_token).mintTo{ value: msg.value }(
+        ERC1155Basic(_token).mintTo{value: msg.value}(
             _to, _amount, _balance, msg.sender
         );
     }
@@ -122,7 +122,7 @@ contract MADRouter1155 is MADRouterBase {
         (, uint8 _tokenType) = _tokenRender(_token);
         checkTokenType(_tokenType);
         // _paymentCheck(0x40d097c3);
-        ERC1155Basic(_token).mintBatchTo{ value: msg.value }(
+        ERC1155Basic(_token).mintBatchTo{value: msg.value}(
             _to, _ids, _balances, msg.sender
         );
     }
@@ -143,7 +143,7 @@ contract MADRouter1155 is MADRouterBase {
         (, uint8 _tokenType) = _tokenRender(_token);
         // _paymentCheck(0x44df8e70);
         checkTokenType(_tokenType);
-        ERC1155Basic(_token).burn{ value: msg.value }(
+        ERC1155Basic(_token).burn{value: msg.value}(
             to, _ids, _amount, msg.sender
         );
     }
@@ -165,7 +165,7 @@ contract MADRouter1155 is MADRouterBase {
         (, uint8 _tokenType) = _tokenRender(_token);
 
         checkTokenType(_tokenType);
-        ERC1155Basic(_token).burnBatch{ value: msg.value }(
+        ERC1155Basic(_token).burnBatch{value: msg.value}(
             _from, _ids, _balances, msg.sender
         );
     }

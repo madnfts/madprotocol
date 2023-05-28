@@ -111,7 +111,7 @@ contract MADFactory721 is MADFactoryBase, FactoryEventsAndErrors721 {
 
         emit ERC721BasicCreated(
             _splitter, deployed, _name, _symbol, _royalty, _maxSupply, _price
-        );
+            );
     }
 
     ////////////////////////////////////////////////////////////////

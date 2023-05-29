@@ -82,18 +82,16 @@ abstract contract MADMarketplaceBase is
 
         swapRouter = ISwapRouter(_swapRouter);
 
-        if (_paymentTokenAddress != address(0)) {
-            require(
-                address(swapRouter) != address(0),
-                "invalid swap router configuration"
-            );
-            _setPaymentToken(_paymentTokenAddress);
+        _setPaymentToken(_paymentTokenAddress);
+        require(
+            address(swapRouter) != address(0),
+            "invalid swap router configuration"
+        );
 
-            // Approve the router to spend the ERC20 payment token.
-            SafeTransferLib.safeApprove(
-                ERC20(_paymentTokenAddress), address(_swapRouter), 2 ** 256 - 1
-            );
-        }
+        // Approve the router to spend the ERC20 payment token.
+        SafeTransferLib.safeApprove(
+            ERC20(_paymentTokenAddress), address(_swapRouter), 2 ** 256 - 1
+        );
     }
 
     receive() external payable { }

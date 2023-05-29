@@ -19,3 +19,15 @@ npx hardhat test test\erc20\erc721\MADMarketplace721-ERC20.test.ts
 npx hardhat test test\erc20\erc721\MADRouter721-ERC20.test.ts
 npx hardhat test test\test-poly\erc20\erc1155\MADMarketplace1155-ERC20.test.ts
 npx hardhat test test\test-poly\erc20\erc721\MADMarketplace721-ERC20.test.ts
+
+
+forge test --match-path test/SomeTest.t.sol --match-contract DeployERC721Factory  --match-test "testDeployZeroAddresses*" -vvvvv
+
+
+forge test  --match-contract DeployERC721Factory  --match-test "testDeployZeroAddresses*" -vvvvv
+
+forge test --match-path test\foundry\Deploy\deployer.t.sol
+forge test --match-path test\foundry\Factory\factoryDeploy.t.sol
+forge test --match-path test\foundry\Marketplace\marketplaceDeploy.t.sol
+forge test --match-path test\foundry\Router\routerDeploy.t.sol
+forge test --match-path test\foundry\Splitter\deploySplitter.t.sol

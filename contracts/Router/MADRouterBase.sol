@@ -67,9 +67,7 @@ abstract contract MADRouterBase is MAD, MADBase, RouterEvents, FeeOracle {
         // B.3 BlockHat Audit
         feeMint = 0.25 ether;
 
-        if (_paymentTokenAddress != address(0)) {
-            _setPaymentToken(_paymentTokenAddress);
-        }
+        _setPaymentToken(_paymentTokenAddress);
         setFactory(_factory);
         setRecipient(_recipient);
     }

@@ -225,15 +225,20 @@ abstract contract ERC20 {
 }
 
 contract MockERC20 is ERC20 {
-    constructor(uint256 amountToMint) ERC20("Mock", "MOCK", 18) {
+    constructor(
+        string memory _name,
+        string memory _symbol,
+        uint8 _decimals,
+        uint256 amountToMint
+    ) ERC20(_name, _symbol, _decimals) {
         mint(msg.sender, amountToMint);
     }
 
-    function mint(address to, uint256 value) public virtual {
+    function mint(address to, uint256 value) public {
         _mint(to, value);
     }
 
-    function burn(address from, uint256 value) public virtual {
+    function burn(address from, uint256 value) public {
         _burn(from, value);
     }
 }

@@ -10,10 +10,10 @@ pragma solidity 0.8.19;
 
 import { SplitterEventsAndErrors } from
     "contracts/lib/splitter/SplitterEventsAndErrors.sol";
-import "contracts/lib/utils/SafeTransferLib.sol";
+import { SafeTransferLib, ERC20 } from "contracts/lib/utils/SafeTransferLib.sol";
 
 // prettier-ignore
-//  {SafeTransferLib, ERC20} from
+//
 /// @notice The split can be in equal parts or in any other arbitrary
 /// proportion.
 /// The way this is specified is by assigning each account to a number of

@@ -76,11 +76,12 @@ abstract contract MADFactoryBase is
         // F.1 BlockHat Audit
         // `setSigner` and `setMarket`
         // already handle the zeroAddress case.
+        if (_paymentTokenAddress == address(0)) {
+            revert ZeroAddress();
+        }
         setMarket(_marketplace);
         setSigner(_signer);
-        if (_paymentTokenAddress != address(0)) {
-            _setPaymentToken(_paymentTokenAddress);
-        }
+        _setPaymentToken(_paymentTokenAddress);
     }
 
     ////////////////////////////////////////////////////////////////

@@ -27,15 +27,9 @@ contract BitMaskCheck is Test {
                 )
             _colID :=
                 and(sload(colID.slot), 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
+
             creatorFixLeft := shl(24, sload(colID.slot))
             creatorFixRight := shr(96, sload(colID.slot))
-
-            // if eq(creator, origin()) { check := true }
-            // // if(!check) revert AccessDenied();
-            // if iszero(check) {
-            //     mstore(0x00, 0x4ca88867)
-            //     revert(0x1c, 0x04)
-            // }
         }
 
         emit log_address(creatorEnd);

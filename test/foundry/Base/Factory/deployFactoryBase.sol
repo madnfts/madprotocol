@@ -18,12 +18,12 @@ contract DeployFactoryBase is Test, FactoryFactory {
     address[] factoryDefaultAddresses =
         [marketplaceAddressFactory, factorySigner, paymentTokenAddressFactory];
 
-    function deployFactoryDefault(uint8 factoryType)
+    function deployFactoryDefault(ercTypes ercType)
         public
         returns (IFactory newFactory)
     {
         newFactory = deployFactoryCustom(
-            factoryType,
+            ercType,
             factoryOwner,
             marketplaceAddressFactory,
             factorySigner,
@@ -32,7 +32,7 @@ contract DeployFactoryBase is Test, FactoryFactory {
     }
 
     function deployFactoryCustom(
-        uint8 factoryType,
+        ercTypes ercType,
         address _owner,
         address _marketplaceAddressFactory,
         address _factorySignerAddress,
@@ -41,7 +41,7 @@ contract DeployFactoryBase is Test, FactoryFactory {
         vm.prank(_owner);
 
         address factoryAddress = createFactory(
-            factoryType,
+            ercType,
             _marketplaceAddressFactory,
             _factorySignerAddress,
             _paymentTokenAddressFactory

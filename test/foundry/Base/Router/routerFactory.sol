@@ -5,14 +5,16 @@ import { MADRouter721 } from "contracts/Router/MADRouter721.sol";
 import { MADRouter1155 } from "contracts/Router/MADRouter1155.sol";
 import { FactoryVerifier } from "contracts/Shared/EventsAndErrors.sol";
 
-contract RouterFactory {
+import { Enums } from "test/foundry/utils/enums.sol";
+
+contract RouterFactory is Enums {
     function createRouter(
-        uint8 routerType,
+        ercTypes ercType,
         FactoryVerifier _factoryVerifier,
         address _paymentTokenAddressRouter,
         address _recipientRouter
     ) public returns (address newRouter) {
-        if (routerType == 1) {
+        if (ercType == ercTypes.ERC721) {
             return address(
                 new MADRouter721(
                     _factoryVerifier,
@@ -20,7 +22,7 @@ contract RouterFactory {
                     _recipientRouter
                 )
             );
-        } else if (routerType == 2) {
+        } else if (ercType == ercTypes.ERC1155) {
             return address(
                 new MADRouter1155(
                     _factoryVerifier,

@@ -7,6 +7,8 @@ import {
     IMarketplace
 } from "test/foundry/Base/Marketplace/deployMarketplaceBase.sol";
 
+import { Enums } from "test/foundry/utils/enums.sol";
+
 contract DeployERC721Marketplace is Test, DeployMarketplaceBase {
     function setUp() public {
         // vm.startPrank(marketplaceOwner);
@@ -14,27 +16,27 @@ contract DeployERC721Marketplace is Test, DeployMarketplaceBase {
     }
 
     function testDeployDefaultERC721Marketplace() public {
-        deployDefault(1);
+        deployDefault(ercTypes.ERC721);
     }
 
     function testDeployZeroAddressesERC721Marketplace() public {
-        deployZeroAddresses(1);
+        deployZeroAddresses(ercTypes.ERC721);
     }
 
     function testDeployDefaultERC1155Marketplace() public {
-        deployDefault(2);
+        deployDefault(ercTypes.ERC1155);
     }
 
     function testDeployZeroAddressesERC1155Marketplace() public {
-        deployZeroAddresses(2);
+        deployZeroAddresses(ercTypes.ERC1155);
     }
 
-    function deployDefault(uint8 _type) public {
-        IMarketplace mp = deployMarketplaceDefault(_type);
+    function deployDefault(ercTypes ercType) public {
+        IMarketplace mp = deployMarketplaceDefault(ercType);
         setFactory(mp, factoryVerifierMarketplace, marketplaceOwner);
     }
 
-    function deployZeroAddresses(uint8 _type) public {
+    function deployZeroAddresses(ercTypes ercType) public {
         address temp;
         uint256 len = marketplaceDefaultAddresses.length;
         address[] memory _addresses = marketplaceDefaultAddresses;
@@ -48,7 +50,7 @@ contract DeployERC721Marketplace is Test, DeployMarketplaceBase {
             vm.expectRevert();
 
             deployMarketplaceCustom(
-                _type,
+                ercType,
                 marketplaceOwner,
                 _addresses[0],
                 _addresses[1],

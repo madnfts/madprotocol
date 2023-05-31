@@ -2,24 +2,24 @@
 pragma solidity ^0.8.19;
 
 import "forge-std/src/Test.sol";
-import {
-    DeployERC20, MockERC20
-} from "test/foundry/Base/ERC20/deployMockERC20.sol";
+import { DeployERC20 } from "test/foundry/Base/ERC20/deployMockERC20.sol";
 
-import {
-    DeployMarketplaceBase,
-    IMarketplace
-} from "test/foundry/Base/Marketplace/deployMarketplaceBase.sol";
-import {
-    DeployFactoryBase,
-    IFactory
-} from "test/foundry/Base/Factory/deployFactoryBase.sol";
-import {
-    DeployRouterBase,
-    IRouter
-} from "test/foundry/Base/Router/deployRouterBase.sol";
+import { DeployMarketplaceBase } from
+    "test/foundry/Base/Marketplace/deployMarketplaceBase.sol";
+import { DeployFactoryBase } from
+    "test/foundry/Base/Factory/deployFactoryBase.sol";
+import { DeployRouterBase } from "test/foundry/Base/Router/deployRouterBase.sol";
 
-contract Deployer is Test {
+import { Enums } from "test/foundry/utils/enums.sol";
+import {
+    IDeployer,
+    IRouter,
+    IFactory,
+    IMarketplace,
+    MockERC20
+} from "test/foundry/Deploy/IDeployer.sol";
+
+contract Deployer is IDeployer, Enums, Test {
     MockERC20 public paymentToken;
     IMarketplace public marketplace;
     IFactory public factory;
@@ -44,24 +44,28 @@ contract Deployer is Test {
         vm.deal(owner, 1000 ether);
     }
 
+    function testFailDeployAll() public {
+        deployAll(ercTypes.None);
+    }
+
     function testDeployAllErc721() public {
-        deployAll(1);
+        deployAll(ercTypes.ERC721);
     }
 
     function testDeployAllErc1155() public {
-        deployAll(2);
+        deployAll(ercTypes.ERC1155);
     }
 
-    function deployAll(uint8 _type)
+    function deployAll(ercTypes ercType)
         public
-        returns (address[4] memory deployedContracts)
+        returns (DeployedContracts memory deployedContracts)
     {
         // First, deploy the ERC20 token contract
         paymentToken = erc20Deployer._deploy(owner);
 
         // Deploy Marketplace
         marketplace = marketplaceDeployer.deployMarketplaceCustom(
-            _type,
+            ercType,
             owner,
             recipientMarketplace,
             address(paymentToken),
@@ -70,7 +74,7 @@ contract Deployer is Test {
 
         // Deploy Factory
         factory = factoryDeployer.deployFactoryCustom(
-            _type,
+            ercType,
             owner,
             address(marketplace),
             factorySigner,
@@ -79,7 +83,7 @@ contract Deployer is Test {
 
         // Deploy Router
         router = routerDeployer.deployRouterCustom(
-            _type,
+            ercType,
             owner,
             recipientRouter,
             address(paymentToken),
@@ -90,11 +94,11 @@ contract Deployer is Test {
         factoryDeployer.setRouter(factory, address(router), owner);
 
         // Return the addresses of the deployed contracts in an array
-        deployedContracts = [
-            address(paymentToken),
-            address(marketplace),
-            address(factory),
-            address(router)
-        ];
+        deployedContracts = DeployedContracts({
+            paymentToken: paymentToken,
+            marketplace: marketplace,
+            factory: factory,
+            router: router
+        });
     }
 }

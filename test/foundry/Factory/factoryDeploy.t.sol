@@ -14,27 +14,27 @@ contract DeployFactory is Test, DeployFactoryBase {
     }
 
     function testERC721DeployFactoryDefault() public {
-        deployDefault(1);
+        deployDefault(ercTypes.ERC721);
     }
 
     function testERC1155DeployFactoryDefault() public {
-        deployDefault(2);
+        deployDefault(ercTypes.ERC1155);
     }
 
     function testERC721DeployFactoryZeroAddresses() public {
-        deployZeroAddresses(1);
+        deployZeroAddresses(ercTypes.ERC721);
     }
 
     function testERC1155DeployFactoryZeroAddresses() public {
-        deployZeroAddresses(2);
+        deployZeroAddresses(ercTypes.ERC1155);
     }
 
-    function deployDefault(uint8 _type) public {
-        IFactory factory = deployFactoryDefault(_type);
+    function deployDefault(ercTypes ercType) public {
+        IFactory factory = deployFactoryDefault(ercType);
         setRouter(factory, factoryRouterAddress, factoryOwner);
     }
 
-    function deployZeroAddresses(uint8 _type) public {
+    function deployZeroAddresses(ercTypes ercType) public {
         address temp;
         uint256 len = factoryDefaultAddresses.length;
         address[] memory _addresses = factoryDefaultAddresses;
@@ -47,7 +47,11 @@ contract DeployFactory is Test, DeployFactoryBase {
             vm.expectRevert();
 
             deployFactoryCustom(
-                _type, factoryOwner, _addresses[0], _addresses[1], _addresses[2]
+                ercType,
+                factoryOwner,
+                _addresses[0],
+                _addresses[1],
+                _addresses[2]
             );
             // reset the address back to original for next loop
             _addresses[i] = temp;

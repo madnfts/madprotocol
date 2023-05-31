@@ -43,6 +43,10 @@ contract DeploySplitterBase is Test {
         ISplitter.SplitterData memory splitterData,
         address splitterAddress
     ) private {
+        bytes32 splitterSalt = keccak256(
+            abi.encode(splitterData.deployer, bytes(splitterData.splitterSalt))
+        );
+
         Types.SplitterConfig memory config = splitterData.factory.splitterInfo(
             splitterData.deployer, splitterAddress
         );
@@ -66,10 +70,10 @@ contract DeploySplitterBase is Test {
             "Splitter address should match with storage splitter address."
         );
 
-        // assertTrue(
-        //     _splitterSalt == config.splitterSalt,
-        //     "Splitter salt should match with the stored splitter salt."
-        // );
+        assertTrue(
+            splitterSalt == config.splitterSalt,
+            "Splitter salt should match with the stored splitter salt."
+        );
 
         assertTrue(
             splitterData.ambassador == config.ambassador,
@@ -91,10 +95,7 @@ contract DeploySplitterBase is Test {
             "Project share should match with the stored project share."
         );
 
-        assertTrue(
-            true == config.valid,
-            "Valid field should match with the stored valid field."
-        );
+        assertTrue(true == config.valid, "Splitter must be valid.");
 
         assertTrue(
             _payeesExpectedLength == splitter.payeesLength(),

@@ -4,15 +4,16 @@ pragma solidity ^0.8.19;
 import { MADMarketplace721 } from "contracts/Marketplace/MADMarketplace721.sol";
 import { MADMarketplace1155 } from
     "contracts/Marketplace/MADMarketplace1155.sol";
+import { Enums } from "test/foundry/utils/enums.sol";
 
-contract MarketplaceFactory {
+contract MarketplaceFactory is Enums {
     function createMarketplace(
-        uint8 marketplaceType,
+        ercTypes ercType,
         address _recipientMarketplace,
         address _paymentTokenAddressMarket,
         address _swapRouter
     ) public returns (address newMarketplace) {
-        if (marketplaceType == 1) {
+        if (ercType == ercTypes.ERC721) {
             return address(
                 new MADMarketplace721(
                     _recipientMarketplace,
@@ -20,7 +21,7 @@ contract MarketplaceFactory {
                     _swapRouter
                 )
             );
-        } else if (marketplaceType == 2) {
+        } else if (ercType == ercTypes.ERC1155) {
             return address(
                 new MADMarketplace1155(
                     _recipientMarketplace,

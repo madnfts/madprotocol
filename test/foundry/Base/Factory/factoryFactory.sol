@@ -4,14 +4,16 @@ pragma solidity ^0.8.19;
 import { MADFactory721 } from "contracts/Factory/MADFactory721.sol";
 import { MADFactory1155 } from "contracts/Factory/MADFactory1155.sol";
 
-contract FactoryFactory {
+import { Enums } from "test/foundry/utils/enums.sol";
+
+contract FactoryFactory is Enums {
     function createFactory(
-        uint8 factoryType,
+        ercTypes ercType,
         address _marketplaceAddressFactory,
         address _factorySignerAddress,
         address _paymentTokenAddressFactory
     ) public returns (address newFactory) {
-        if (factoryType == 1) {
+        if (ercType == ercTypes.ERC721) {
             return address(
                 new MADFactory721(
                 _marketplaceAddressFactory,
@@ -19,7 +21,7 @@ contract FactoryFactory {
                 _paymentTokenAddressFactory
                 )
             );
-        } else if (factoryType == 2) {
+        } else if (ercType == ercTypes.ERC1155) {
             return address(
                 new MADFactory1155(
                 _marketplaceAddressFactory,

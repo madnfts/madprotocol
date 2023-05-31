@@ -18,12 +18,12 @@ contract DeployMarketplaceBase is Test, MarketplaceFactory {
     address[] marketplaceDefaultAddresses =
         [recipientMarketplace, paymentTokenAddressMarket, swapRouter];
 
-    function deployMarketplaceDefault(uint8 _marketplaceType)
+    function deployMarketplaceDefault(ercTypes _ercType)
         public
         returns (IMarketplace madMarketplace)
     {
         madMarketplace = deployMarketplaceCustom(
-            _marketplaceType,
+            _ercType,
             marketplaceOwner,
             recipientMarketplace,
             paymentTokenAddressMarket,
@@ -33,7 +33,7 @@ contract DeployMarketplaceBase is Test, MarketplaceFactory {
     //
 
     function deployMarketplaceCustom(
-        uint8 _marketplaceType,
+        ercTypes _ercType,
         address _owner,
         address _recipientMarketplace,
         address _paymentTokenAddressMarket,
@@ -42,7 +42,7 @@ contract DeployMarketplaceBase is Test, MarketplaceFactory {
         vm.prank(_owner);
         madMarketplace = IMarketplace(
             createMarketplace(
-                _marketplaceType,
+                _ercType,
                 _recipientMarketplace,
                 _paymentTokenAddressMarket,
                 _swapRouter

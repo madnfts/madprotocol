@@ -17,12 +17,12 @@ contract DeployRouterBase is Test, RouterFactory {
     address[] routerDefaultAddresses =
         [recipientRouter, paymentTokenAddressRouter, factoryVerifierRouter];
 
-    function deployRouterDefault(uint8 _routerType)
+    function deployRouterDefault(ercTypes _ercType)
         public
         returns (IRouter madRouter)
     {
         madRouter = deployRouterCustom(
-            _routerType,
+            _ercType,
             routerOwner,
             recipientRouter,
             paymentTokenAddressRouter,
@@ -31,7 +31,7 @@ contract DeployRouterBase is Test, RouterFactory {
     }
 
     function deployRouterCustom(
-        uint8 _routerType,
+        ercTypes _ercType,
         address _owner,
         address _recipientRouter,
         address _paymentTokenAddressRouter,
@@ -42,7 +42,7 @@ contract DeployRouterBase is Test, RouterFactory {
         vm.prank(_owner);
 
         address routerAddress = createRouter(
-            _routerType,
+            _ercType,
             _factoryVerifier,
             _paymentTokenAddressRouter,
             _recipientRouter

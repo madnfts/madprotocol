@@ -6,22 +6,23 @@ import { DeploySplitterBase } from
 
 import {
     Deployer,
+    IDeployer,
     MockERC20,
     IMarketplace,
     IFactory,
-    IRouter
+    IRouter,
+    Enums
 } from "test/foundry/Deploy/deployer.t.sol";
 
 import { ISplitter } from "test/foundry/Base/Splitter/ISplitter.sol";
 
-contract TestSplitterDeployment is Test {
+contract TestSplitterDeployment is Test, Enums {
     Deployer deployer;
-    MockERC20 public paymentToken;
-    IMarketplace public marketplace;
     IFactory public factory;
-    IRouter public router;
 
     DeploySplitterBase tester;
+
+    IFactory[] deployedContracts;
 
     // Define variables
     address acc = makeAddr("DeployerSplitter");
@@ -32,38 +33,38 @@ contract TestSplitterDeployment is Test {
     uint256 projectShare = 30;
 
     // Provide expected payees' addresses
-    address[] payeesExpected_All = [ambassador, project, acc];
-    address[] payeesExpected_noAmbassadorNoProject = [acc];
+    address[] payeesExpected_onlyCreator = [acc];
     address[] payeesExpected_ambassadorWithNoProject = [ambassador, acc];
     address[] payeesExpected_projectWithNoAmbassador = [project, acc];
+    address[] payeesExpected_All = [ambassador, project, acc];
 
     function setUp() public {
         // Instantiate TestSplitterDeployment contract
         tester = new DeploySplitterBase();
         // Instantiate deployer contracts
         deployer = new Deployer();
-        // Deploy all contracts
-        address[4] memory deployedContracts = deployer.deployAll(1);
 
-        factory = IFactory(deployedContracts[2]);
-        paymentToken = MockERC20(deployedContracts[0]);
-        marketplace = IMarketplace(deployedContracts[1]);
-        router = IRouter(deployedContracts[3]);
+        // Create array of addresses to cover both 721 & 1155 Factories
+        deployedContracts = [
+            deployer.deployAll(ercTypes.ERC721).factory,
+            deployer.deployAll(ercTypes.ERC1155).factory
+        ];
     }
 
     // @dev tests the condition:
     // (_ambassador == address(0) && _project == address(0))
-    function testSplitterDeployment_noAmbassadorNoProject() public {
+    function testSplitterDeployment_creatorOnly(uint8 x) public {
+        vm.assume(x == 0 || x == 1);
         _runSplitterDeploy(
             ISplitter.SplitterData({
-                factory: factory,
+                factory: deployedContracts[x],
                 deployer: acc,
                 splitterSalt: splitterSalt,
                 ambassador: address(0),
                 project: address(0),
                 ambassadorShare: 0,
                 projectShare: 0,
-                payeesExpected: payeesExpected_noAmbassadorNoProject
+                payeesExpected: payeesExpected_onlyCreator
             })
         );
     }
@@ -71,16 +72,21 @@ contract TestSplitterDeployment is Test {
     /// @dev tests the condition:
     /// _ambassador != address(0) && _project == address(0)
     ///             && _ambShare != 0 && _ambShare < 21
-    function testSplitterDeployment_ambassadorWithNoProject() public {
+    function testSplitterDeploymentFuzzy_ambassadorWithNoProject(
+        uint256 _ambassadorShare,
+        uint8 x
+    ) public {
+        vm.assume(_ambassadorShare > 0 && _ambassadorShare < 21);
+        vm.assume(x == 0 || x == 1);
         _runSplitterDeploy(
             ISplitter.SplitterData({
-                factory: factory,
+                factory: deployedContracts[x],
                 deployer: acc,
                 splitterSalt: splitterSalt,
                 ambassador: ambassador,
                 project: address(0),
-                ambassadorShare: ambassadorShare,
-                projectShare: projectShare,
+                ambassadorShare: _ambassadorShare,
+                projectShare: 0,
                 payeesExpected: payeesExpected_ambassadorWithNoProject
             })
         );
@@ -89,16 +95,21 @@ contract TestSplitterDeployment is Test {
     /// @dev tests the condition:
     /// _project != address(0) && _ambassador == address(0)
     /// && _projectShare != 0 && _projectShare < 91
-    function testSplitterDeployment_projectWithNoAmbassador() public {
+    function testSplitterDeploymentFuzzy_projectWithNoAmbassador(
+        uint256 _projectShare,
+        uint8 x
+    ) public {
+        vm.assume(_projectShare > 0 && _projectShare < 91);
+        vm.assume(x == 0 || x == 1);
         _runSplitterDeploy(
             ISplitter.SplitterData({
-                factory: factory,
+                factory: deployedContracts[x],
                 deployer: acc,
                 splitterSalt: splitterSalt,
                 ambassador: address(0),
                 project: project,
-                ambassadorShare: ambassadorShare,
-                projectShare: 90,
+                ambassadorShare: 0,
+                projectShare: _projectShare,
                 payeesExpected: payeesExpected_projectWithNoAmbassador
             })
         );
@@ -108,35 +119,17 @@ contract TestSplitterDeployment is Test {
     /// _ambassador != address(0) && _project != address(0)
     ///            && _ambShare != 0 && _ambShare < 21 && _projectShare != 0
     ///             && _projectShare < 71
-    function testSplitterDeployment_projectAll() public {
-        _runSplitterDeploy(
-            ISplitter.SplitterData({
-                factory: factory,
-                deployer: acc,
-                splitterSalt: splitterSalt,
-                ambassador: ambassador,
-                project: project,
-                ambassadorShare: ambassadorShare,
-                projectShare: projectShare,
-                payeesExpected: payeesExpected_All
-            })
-        );
-    }
-
-    function testFuzzSplitterAll(
-        // address _acc,
-        // string memory _splitterSalt,
-        // address _ambassador,
-        // address _project,
+    function testSplitterDeploymentFuzzy_All(
         uint256 _ambassadorShare,
-        uint256 _projectShare
+        uint256 _projectShare,
+        uint8 x
     ) public {
         vm.assume(_ambassadorShare > 0 && _ambassadorShare < 21);
         vm.assume(_projectShare > 0 && _projectShare < 71);
-
+        vm.assume(x == 0 || x == 1);
         _runSplitterDeploy(
             ISplitter.SplitterData({
-                factory: factory,
+                factory: deployedContracts[x],
                 deployer: acc,
                 splitterSalt: splitterSalt,
                 ambassador: ambassador,

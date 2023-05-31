@@ -54,34 +54,36 @@ contract TestSplitterDeployment is Test {
     // @dev tests the condition:
     // (_ambassador == address(0) && _project == address(0))
     function testSplitterDeployment_noAmbassadorNoProject() public {
-        ISplitter.SplitterData memory splitterData = ISplitter.SplitterData({
-            factory: factory,
-            deployer: acc,
-            splitterSalt: splitterSalt,
-            ambassador: address(0),
-            project: address(0),
-            ambassadorShare: 0,
-            projectShare: 0,
-            payeesExpected: payeesExpected_noAmbassadorNoProject
-        });
-        _runSplitterDeploy(splitterData);
+        _runSplitterDeploy(
+            ISplitter.SplitterData({
+                factory: factory,
+                deployer: acc,
+                splitterSalt: splitterSalt,
+                ambassador: address(0),
+                project: address(0),
+                ambassadorShare: 0,
+                projectShare: 0,
+                payeesExpected: payeesExpected_noAmbassadorNoProject
+            })
+        );
     }
 
     /// @dev tests the condition:
     /// _ambassador != address(0) && _project == address(0)
     ///             && _ambShare != 0 && _ambShare < 21
     function testSplitterDeployment_ambassadorWithNoProject() public {
-        ISplitter.SplitterData memory splitterData = ISplitter.SplitterData({
-            factory: factory,
-            deployer: acc,
-            splitterSalt: splitterSalt,
-            ambassador: ambassador,
-            project: address(0),
-            ambassadorShare: ambassadorShare,
-            projectShare: projectShare,
-            payeesExpected: payeesExpected_ambassadorWithNoProject
-        });
-        _runSplitterDeploy(splitterData);
+        _runSplitterDeploy(
+            ISplitter.SplitterData({
+                factory: factory,
+                deployer: acc,
+                splitterSalt: splitterSalt,
+                ambassador: ambassador,
+                project: address(0),
+                ambassadorShare: ambassadorShare,
+                projectShare: projectShare,
+                payeesExpected: payeesExpected_ambassadorWithNoProject
+            })
+        );
     }
 
     /// @dev tests the condition:
@@ -121,7 +123,7 @@ contract TestSplitterDeployment is Test {
         );
     }
 
-    function testFuzzSplitter(
+    function testFuzzSplitterAll(
         // address _acc,
         // string memory _splitterSalt,
         // address _ambassador,
@@ -131,11 +133,6 @@ contract TestSplitterDeployment is Test {
     ) public {
         vm.assume(_ambassadorShare > 0 && _ambassadorShare < 21);
         vm.assume(_projectShare > 0 && _projectShare < 71);
-
-        // address[] memory _payeesExpected;
-        // _payeesExpected[0] = _ambassador;
-        // _payeesExpected[1] = _project;
-        // _payeesExpected[2] = _acc;
 
         _runSplitterDeploy(
             ISplitter.SplitterData({

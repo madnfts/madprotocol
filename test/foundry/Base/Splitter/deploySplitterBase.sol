@@ -53,8 +53,8 @@ contract DeploySplitterBase is Test {
         uint256 sharesOrZero = totalShares - splitterData.ambassadorShare
             - splitterData.projectShare;
 
-        ISplitter instance = ISplitter(splitterAddress);
-        uint256 creatorShares = instance._shares(splitterData.deployer);
+        ISplitter splitter = ISplitter(splitterAddress);
+        uint256 creatorShares = splitter._shares(splitterData.deployer);
 
         assertTrue(
             splitterAddress != address(0),
@@ -97,7 +97,7 @@ contract DeploySplitterBase is Test {
         );
 
         assertTrue(
-            _payeesExpectedLength == instance.payeesLength(),
+            _payeesExpectedLength == splitter.payeesLength(),
             "Payees Lengths should match expected"
         );
 
@@ -107,36 +107,13 @@ contract DeploySplitterBase is Test {
 
         // Assuming payees are returned in the order [ambassador, project,
         // deployer]
-        address[] memory payees;
-        for (uint256 i = 0; i < _payeesExpectedLength; i++) {
-            address payee = instance._payees(i);
+        emit log_array(splitterData.payeesExpected);
+        for (uint256 i = 0; i < _payeesExpectedLength; ++i) {
+            address payee = splitter._payees(i);
             assertTrue(
                 payee == splitterData.payeesExpected[i],
                 "Payees addresses should match."
             );
-            payees[i] = payee;
         }
-
-        assertTrue(
-            compareAddressArray(payees, splitterData.payeesExpected),
-            "Payees addresses should match."
-        );
-    }
-
-    // Helper function to compare two address arrays
-    function compareAddressArray(
-        address[] memory array1,
-        address[] memory array2
-    ) private pure returns (bool) {
-        uint256 len = array1.length;
-        if (len != array2.length) {
-            return false;
-        }
-        for (uint256 i = 0; i < len; i++) {
-            if (array1[i] != array2[i]) {
-                return false;
-            }
-        }
-        return true;
     }
 }

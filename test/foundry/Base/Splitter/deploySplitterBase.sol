@@ -27,13 +27,13 @@ contract DeploySplitterBase is Test {
             splitterData.projectShare
         );
 
-        emit log_named_address("sD: deployer", splitterData.deployer);
+        // emit log_named_address("sD: deployer", splitterData.deployer);
 
         splitterAddress = splitterData.factory.getDeployedAddr(
             splitterData.splitterSalt, splitterData.deployer
         );
 
-        emit log_named_address("sD: splitterAddress", splitterAddress);
+        // emit log_named_address("sD: splitterAddress", splitterAddress);
 
         validateDeployment(splitterData, splitterAddress);
     }

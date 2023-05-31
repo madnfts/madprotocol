@@ -148,6 +148,6 @@ contract TestSplitterDeployment is Test, Enums {
         assertTrue(
             splitter != address(0), "Splitter address should not be zero."
         );
-        emit log_named_address("Splitter", splitter);
+        // emit log_named_address("Splitter", splitter);
     }
 }

@@ -32,9 +32,9 @@ contract BitMaskCheck is Test {
             creatorFixRight := shr(96, sload(colID.slot))
         }
 
-        emit log_address(creatorEnd);
-        emit log_address(_colID);
-        emit log_address(creatorFixLeft);
-        emit log_address(creatorFixRight);
+        // emit log_address(creatorEnd);
+        // emit log_address(_colID);
+        // emit log_address(creatorFixLeft);
+        // emit log_address(creatorFixRight);
     }
 }

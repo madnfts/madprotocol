@@ -48,9 +48,9 @@ contract DeployMarketplaceBase is Test, MarketplaceFactory {
                 _swapRouter
             )
         );
-        emit log_named_address("marketplaceAddress", address(madMarketplace));
-        emit log_named_address("owner", _owner);
-        emit log_named_address("msg.sender", msg.sender);
+        // emit log_named_address("marketplaceAddress", address(madMarketplace));
+        // emit log_named_address("owner", _owner);
+        // emit log_named_address("msg.sender", msg.sender);
 
         if (address(madMarketplace) != address(1)) {
             assert(madMarketplace.owner() == _owner);

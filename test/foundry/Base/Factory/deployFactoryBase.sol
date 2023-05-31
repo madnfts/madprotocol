@@ -49,9 +49,9 @@ contract DeployFactoryBase is Test, FactoryFactory {
 
         newFactory = IFactory(factoryAddress);
 
-        emit log_named_address("factoryAddress", address(newFactory));
-        emit log_named_address("factoryOwner", _owner);
-        emit log_named_address("address(this)", address(this));
+        // emit log_named_address("factoryAddress", address(newFactory));
+        // emit log_named_address("factoryOwner", _owner);
+        // emit log_named_address("address(this)", address(this));
 
         if (address(newFactory) != address(1)) {
             assertEq(newFactory.owner(), _owner);
@@ -67,7 +67,7 @@ contract DeployFactoryBase is Test, FactoryFactory {
         address _owner
     ) public {
         // Set Router
-        emit log_named_address("factoryRouterAddress", _routerAddress);
+        // emit log_named_address("factoryRouterAddress", _routerAddress);
 
         vm.expectRevert();
         _factory.setRouter(address(0));

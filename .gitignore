@@ -294,5 +294,4 @@ docs/
 # Dotenv file
 .env
 
-forge-std/
 forge-cache/

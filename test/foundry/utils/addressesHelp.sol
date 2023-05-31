@@ -33,13 +33,4 @@ abstract contract AddressesHelp is Test {
         return true;
     }
 
-    // function testMintPublicNfts(uint x) public {
-    //     vm.assume(x > 100 && x < 1000, "x must be between 100 and 1000");
-    //     address[] minters = createManyAddresses(100, "NftMinter");
-
-    //     for (uint i = 0; i < 100; i++) {
-    //         uint amount = x;
-    //         mint(amount);
-    //         assert(nft.balanceof == amount);
-    //             }
 }

@@ -9,6 +9,11 @@ pragma solidity 0.8.19;
 /// (https://github.com/transmissions11/solmate/blob/main/src/tokens/ERC721.sol)
 /// @author Modified from OpenZeppelin
 /// (https://github.com/OpenZeppelin/openzeppelin-contracts/tree/master/contracts/token/ERC721/ERC721.sol)
+
+/// Note:
+/// The ERC721 standard allows for self-approvals.
+/// For performance, this implementation WILL NOT revert for such actions.
+/// Please add any checks with overrides if desired.
 abstract contract ERC721 {
     /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
     /*                         CONSTANTS                          */
@@ -983,7 +988,7 @@ abstract contract ERC721 {
             // Revert if the call reverts.
             if iszero(call(gas(), to, 0, add(m, 0x1c), add(n, 0xa4), m, 0x20)) {
                 if returndatasize() {
-                    // Bubble up the revert if the delegatecall reverts.
+                    // Bubble up the revert if the call reverts.
                     returndatacopy(0x00, 0x00, returndatasize())
                     revert(0x00, returndatasize())
                 }

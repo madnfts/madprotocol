@@ -17,7 +17,7 @@ interface IFactory {
         address project,
         uint256 ambShare,
         uint256 projShare
-    ) external returns (bytes32);
+    ) external;
 
     // Storage
     function colTypes(uint256 index) external view returns (bytes memory);
@@ -25,6 +25,7 @@ interface IFactory {
         external
         view
         returns (bytes32[] memory);
+
     function splitterInfo(address creator, address splitterContract)
         external
         view

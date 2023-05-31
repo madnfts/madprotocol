@@ -105,14 +105,15 @@ abstract contract MADFactoryBase is
     /// ambassador
     /// (optional, will be disregarded if left empty(value == 0)).
     function splitterCheck(
-        string memory _splitterSalt,
+        string calldata _splitterSalt,
         address _ambassador,
         address _project,
         uint256 _ambShare,
         uint256 _projectShare
-    ) external isThisOg {
+    ) public isThisOg {
         bytes32 splitterSalt =
             keccak256(abi.encode(msg.sender, bytes(_splitterSalt)));
+
         if (_ambassador == address(0) && _project == address(0)) {
             _splitterResolver(
                 splitterSalt,
@@ -356,7 +357,7 @@ abstract contract MADFactoryBase is
     /// @dev External getter for deployed splitters and collections.
     /// @dev Function Sighash := 0x499945ef
     function getDeployedAddr(string memory _salt, address _addr)
-        external
+        public
         view
         returns (address)
     {

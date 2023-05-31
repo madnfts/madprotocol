@@ -32,7 +32,7 @@ sizes=true # contract size
 
 # Foundry will treat Solidity compiler warnings as errors,
 # deny_warnings=true
-# evm_version="paris"
+# evm_version="london"
 # broadcast='path/to/broadcast'
 
 # https://docs.soliditylang.org/en/latest/using-the-compiler.html#compiler-input-and-output-json-description

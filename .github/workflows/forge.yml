@@ -15,6 +15,13 @@ on: [push, pull_request]
 
 name: Forge Tests
 
+# https://github.com/Rubilmax/foundry-gas-diff
+env:
+  # make fuzzing semi-deterministic to avoid noisy gas cost estimation
+  # due to non-deterministic fuzzing (but still use pseudo-random fuzzing seeds)
+  FOUNDRY_FUZZ_SEED: 0x${{ github.event.pull_request.base.sha || github.sha }}
+
+
 jobs:
   check:
     name: Foundry project
@@ -33,12 +40,7 @@ jobs:
       - name: Run snapshot
         run: forge snapshot
 
-      # https://github.com/Rubilmax/foundry-gas-diff
-      env:
-          # make fuzzing semi-deterministic to avoid noisy gas cost estimation
-          # due to non-deterministic fuzzing (but still use pseudo-random fuzzing seeds)
-          FOUNDRY_FUZZ_SEED: 0x${{ github.event.pull_request.base.sha || github.sha }}
-
+      
       - name: Compare gas reports
         uses: Rubilmax/foundry-gas-diff@v3.14
         with:

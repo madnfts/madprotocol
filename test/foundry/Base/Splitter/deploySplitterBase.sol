@@ -51,14 +51,14 @@ contract DeploySplitterBase is Test {
             splitterData.deployer, splitterAddress
         );
 
-        uint256 _payeesExpectedLength = splitterData.payeesExpected.length;
-
-        uint256 totalShares = 100;
-        uint256 sharesOrZero = totalShares - splitterData.ambassadorShare
-            - splitterData.projectShare;
-
         ISplitter splitter = ISplitter(splitterAddress);
         uint256 creatorShares = splitter._shares(splitterData.deployer);
+
+        uint256 _payeesExpectedLength = splitterData.payeesExpected.length;
+
+        uint256 totalShares = splitter.totalShares();
+        uint256 sharesOrZero = totalShares - splitterData.ambassadorShare
+            - splitterData.projectShare;
 
         assertTrue(
             splitterAddress != address(0),
@@ -105,6 +105,18 @@ contract DeploySplitterBase is Test {
         assertTrue(
             sharesOrZero == creatorShares, "Creator shares should match."
         );
+        assertTrue(totalShares == 100, "Shares should add up to 100");
+
+        assertTrue(splitter.totalReleased() == 0, "Total released should be 0");
+
+        assertTrue(
+            splitter.totalReleased() == 0,
+            "Total released for specific token should be 0"
+        );
+
+        assertZeroBalance(splitter, splitterData.deployer);
+        assertZeroBalance(splitter, splitterData.ambassador);
+        assertZeroBalance(splitter, splitterData.project);
 
         // Assuming payees are returned in the order [ambassador, project,
         // deployer]
@@ -116,5 +128,29 @@ contract DeploySplitterBase is Test {
                 "Payees addresses should match."
             );
         }
+    }
+
+    function assertZeroBalance(ISplitter splitter, address account) private {
+        assertTrue(
+            splitter.released(account) == 0,
+            "Released amount for specific account should be 0"
+        );
+        assertTrue(
+            splitter.releasable(account) == 0,
+            "Releasable amount for specific account should be 0"
+        );
+
+        // ERC20
+        // assertTrue(
+        //     splitter.released(yourERC20TokenInstance, yourAccountAddress) ==
+        // 0,
+        //     "Released amount for specific token and account should be 0"
+        // );
+
+        // assertTrue(
+        //     splitter.releasable(yourERC20TokenInstance, yourAccountAddress)
+        // == 0,
+        //     "Releasable amount for specific token and account should be 0"
+        // );
     }
 }

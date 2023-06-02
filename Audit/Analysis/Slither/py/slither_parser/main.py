@@ -164,7 +164,8 @@ def generate_import_file(folder: str) -> None:
         file.write(gen)
 
 
-def get_test_files_paths(folder: str, template: str, fileType: str = "*.t.sol"
+def get_test_files_paths(
+    folder: str, template: str, fileType: str = "*.t.sol"
 ) -> List[str]:
     test_folder = pathlib.Path(folder)
     files = []
@@ -172,7 +173,7 @@ def get_test_files_paths(folder: str, template: str, fileType: str = "*.t.sol"
         formatted_path = template.format(str(file_path))
         files.append(formatted_path)
         print(formatted_path)
-    
+
     return files
 
 
@@ -190,4 +191,4 @@ if __name__ == "__main__":
     # generate_import_file("contracts")
     # delete_file("Audit/Analysis/Slither/results/slither.results.json")
     # get_test_files_paths('test', 'npx hardhat test {}', fileType='*.test.ts' )
-    get_test_files_paths('test/foundry/', 'forge test --match-path {}')
+    get_test_files_paths("test/foundry/", "forge test --match-path {}")

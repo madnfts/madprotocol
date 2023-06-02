@@ -46,7 +46,7 @@ abstract contract MADFactoryBase is
 
     /// @dev Maps an collection creator, of type address, to an array of
     /// `colIDs`.
-    mapping(address => bytes32[]) public userTokens;
+    mapping(address => bytes32[]) public userTokens; 
 
     /// @dev Nested mapping that takes an collection creator as key of
     /// an hashmap of splitter contracts to its respective deployment configs.

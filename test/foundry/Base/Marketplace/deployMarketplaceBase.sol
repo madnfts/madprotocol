@@ -48,17 +48,20 @@ contract DeployMarketplaceBase is Test, MarketplaceFactory {
                 _swapRouter
             )
         );
-        // emit log_named_address("marketplaceAddress", address(madMarketplace));
+        // emit log_named_address("marketplaceAddress",
+        // address(madMarketplace));
         // emit log_named_address("owner", _owner);
         // emit log_named_address("msg.sender", msg.sender);
 
         if (address(madMarketplace) != address(1)) {
-            assert(madMarketplace.owner() == _owner);
-            assert(madMarketplace.swapRouter() == _swapRouter);
-            assert(madMarketplace.recipient() == _recipientMarketplace);
-            assert(
+            assertTrue(madMarketplace.owner() == _owner);
+            assertTrue(madMarketplace.swapRouter() == _swapRouter);
+            assertTrue(madMarketplace.recipient() == _recipientMarketplace);
+            assertTrue(
                 address(madMarketplace.erc20()) == _paymentTokenAddressMarket
             );
+        } else {
+            emit log_string("Deployment Failed");
         }
     }
 
@@ -76,6 +79,6 @@ contract DeployMarketplaceBase is Test, MarketplaceFactory {
 
         vm.prank(_owner);
         _marketplace.setFactory(_factoryVerifierMarketplace);
-        assert(_marketplace.MADFactory() == _factoryVerifierMarketplace);
+        assertTrue(_marketplace.MADFactory() == _factoryVerifierMarketplace);
     }
 }

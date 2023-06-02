@@ -66,9 +66,8 @@ contract SplitterImpl is SplitterEventsAndErrors {
     /// by factory parameters.
     constructor(address[] memory payees, uint256[] memory shares_) payable {
         uint256 pLen = payees.length;
-        uint256 sLen = shares_.length;
 
-        if (pLen != sLen) {
+        if (pLen != shares_.length) {
             revert LengthMismatch();
         }
         if (pLen == 0) {

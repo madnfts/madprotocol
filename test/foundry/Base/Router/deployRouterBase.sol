@@ -51,10 +51,12 @@ contract DeployRouterBase is Test, RouterFactory {
         madRouter = IRouter(routerAddress);
 
         if (routerAddress != address(1)) {
-            assert(madRouter.owner() == _owner);
-            assert(madRouter.madFactory() == _factoryVerifier);
-            assert(madRouter.recipient() == _recipientRouter);
-            assert(address(madRouter.erc20()) == _paymentTokenAddressRouter);
+            assertTrue(madRouter.owner() == _owner);
+            assertTrue(madRouter.madFactory() == _factoryVerifier);
+            assertTrue(madRouter.recipient() == _recipientRouter);
+            assertTrue(address(madRouter.erc20()) == _paymentTokenAddressRouter);
+        } else {
+            emit log_string("Deployment Failed");
         }
     }
 }

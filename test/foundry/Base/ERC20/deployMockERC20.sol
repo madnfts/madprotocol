@@ -31,7 +31,7 @@ contract DeployERC20 is Test, AddressesHelp {
         _mockERC20 = _deploy(erc20Owner);
         for (uint256 i = 0; i < numHolders; i++) {
             _mockERC20.mint(holders[i], amountToMint);
-            assert(_mockERC20.balanceOf(holders[i]) == amountToMint);
+            assertTrue(_mockERC20.balanceOf(holders[i]) == amountToMint);
         }
     }
 

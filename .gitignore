@@ -1,4 +1,7 @@
 # directories
+abi2json/
+src/
+
 .yarn/*
 !.yarn/patches
 !.yarn/releases

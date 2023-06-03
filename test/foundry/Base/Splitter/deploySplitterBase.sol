@@ -140,7 +140,7 @@ contract DeploySplitterBase is Test {
             "Releasable amount for specific account should be 0"
         );
 
-        // ERC20
+        // TODO: ERC20
         // assertTrue(
         //     splitter.released(yourERC20TokenInstance, yourAccountAddress) ==
         // 0,

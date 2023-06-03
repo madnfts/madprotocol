@@ -44,7 +44,7 @@ contract TestSplitterDeployment is Test, Enums {
         // Instantiate deployer contracts
         deployer = new Deployer();
 
-        // Create array of addresses to cover both 721 & 1155 Factories
+        // Create array of Factory instances to cover both 721 & 1155 Factories
         deployedContracts = [
             deployer.deployAll(ercTypes.ERC721).factory,
             deployer.deployAll(ercTypes.ERC1155).factory

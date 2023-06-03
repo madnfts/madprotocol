@@ -43,9 +43,9 @@ sizes=true # contract size
 # cse = true
 # constantOptimizer = true
 
-# [profile.optimizer_details.yul_details]
-# stack_allocation = true
-# # optimizer_steps=''
+[profile.optimizer_details.yul_details]
+stack_allocation = true
+optimizer_steps=''
 
 # [profile.default.rpc_endpoints]
 # # The RPC URLs are modified versions of the default for testing initialization.

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.19;
+pragma solidity 0.8.19;
 
 import { Types } from "contracts/Shared/Types.sol";
 
@@ -33,6 +33,19 @@ interface IFactory {
         uint96 _royalty,
         bytes32[] memory _extra
     ) external;
+
+    struct CollectionParams {
+        uint8 tokenType;
+        string tokenSalt;
+        string name;
+        string symbol;
+        uint256 price;
+        uint256 maxSupply;
+        string uri;
+        address splitter;
+        uint96 royalty;
+        bytes32[] extra;
+    }
 
     // Storage
     function colInfo(bytes32)
@@ -77,6 +90,7 @@ interface IFactory {
         external
         pure
         returns (bytes32 colID);
+
     function getDeployedAddr(string memory _salt, address _addr)
         external
         view

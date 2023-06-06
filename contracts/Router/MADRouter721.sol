@@ -142,23 +142,4 @@ contract MADRouter721 is MADRouterBase {
 
         emit TokenFundsWithdrawn(_colID, _tokenType, msg.sender);
     }
-
-    ////////////////////////////////////////////////////////////////
-    //                         HELPERS                            //
-    ////////////////////////////////////////////////////////////////
-
-    /// @notice Private auth-check mechanism that verifies `MADFactory` storage.
-    /// @dev Retrieves both `colID` (bytes32) and collection type (uint8)
-    ///      for valid token and approved user.
-    ///      Function Sighash := 0xdbf62b2e
-    /// @param _token 721 token address.
-    function _tokenRender(address _token)
-        private
-        view
-        returns (bytes32 colID, uint8 tokenType)
-    {
-        colID = madFactory.getColID(_token);
-        madFactory.creatorCheck(colID);
-        tokenType = madFactory.typeChecker(colID);
-    }
 }

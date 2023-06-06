@@ -23,15 +23,7 @@ library Types {
         address _erc20;
     }
 
-    struct Collection721 {
-        address creator;
-        uint8 colType;
-        bytes32 colSalt;
-        uint256 blocknumber;
-        address splitter;
-    }
-
-    struct Collection1155 {
+    struct Collection {
         address creator;
         uint8 colType;
         bytes32 colSalt;
@@ -164,7 +156,7 @@ library Types {
     │  │        └─ name: ERC1155Lazy
     │  ├─ 2
     │  │  ├─ type: StructDefinition
-    │  │  ├─ name: Collection721
+    │  │  ├─ name: Collection
     │  │  └─ members
     │  │     ├─ 0
     │  │     │  ├─ type: VariableDeclaration
@@ -237,7 +229,7 @@ library Types {
     │  │        └─ expression
     │  ├─ 3
     │  │  ├─ type: StructDefinition
-    │  │  ├─ name: Collection1155
+    │  │  ├─ name: Collection
     │  │  └─ members
     │  │     ├─ 0
     │  │     │  ├─ type: VariableDeclaration

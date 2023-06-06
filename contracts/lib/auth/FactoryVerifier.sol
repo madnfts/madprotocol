@@ -6,8 +6,6 @@ pragma solidity 0.8.19;
 /// @notice Core contract binding interface that connect both
 /// `MADMarketplace` and `MADRouter` storage verifications made to `MADFactory`.
 interface FactoryVerifier {
-    // using Types for Types.ERC721Type;
-
     /// @dev 0x4ca88867
     error AccessDenied();
 

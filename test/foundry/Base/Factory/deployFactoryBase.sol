@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.19;
+pragma solidity 0.8.19;
 
 import "forge-std/src/Test.sol";
 import { IFactory } from "test/foundry/Base/Factory/IFactory.sol";
@@ -147,6 +147,25 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
         } else {
             emit log_string("Deployment Failed");
         }
+    }
+
+    function setTokenType(
+        IFactory _factory,
+        address _owner,
+        uint256 index,
+        bytes memory _tokenType
+    ) public {
+        // Set Token Types
+        // emit log_named_address("factoryOwner", _owner);
+
+        vm.startPrank(makeAddr("NotOwner"));
+        vm.expectRevert();
+        _factory.addColType(index, _tokenType);
+        vm.stopPrank();
+
+        vm.prank(_owner);
+        _factory.addColType(index, _tokenType);
+        assertEq(_factory.colTypes(index), _tokenType);
     }
 
     function setRouter(

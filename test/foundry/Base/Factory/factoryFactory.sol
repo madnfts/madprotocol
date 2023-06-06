@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.19;
+pragma solidity 0.8.19;
 
 import { MADFactory721 } from "contracts/Factory/MADFactory721.sol";
 import { MADFactory1155 } from "contracts/Factory/MADFactory1155.sol";

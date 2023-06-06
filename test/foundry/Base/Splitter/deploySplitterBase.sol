@@ -1,14 +1,32 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.19;
+pragma solidity 0.8.19;
 
-import "forge-std/src/Test.sol";
 import { IFactory } from "test/foundry/Base/Factory/IFactory.sol";
 import { ISplitter } from "test/foundry/Base/Splitter/ISplitter.sol";
 import { SplitterImpl } from "contracts/lib/splitter/SplitterImpl.sol";
 import { Types } from "contracts/Shared/Types.sol";
+import { Deployer } from "test/foundry/Deploy/deployer.t.sol";
 
-contract DeploySplitterBase is Test {
+import {
+    IDeployer,
+    IFactory,
+    Enums
+} from "test/foundry/Base/Deploy/deployerBase.sol";
+
+import { SettersToggle } from "test/foundry/utils/setterToggle.sol";
+import { SplitterHelpers } from "test/foundry/Base/Splitter/splitterHelpers.sol";
+
+contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
     using Types for Types.SplitterConfig;
+
+    string splitterSalt = "SplitterSalt";
+
+    // Define default variables
+    uint256 public ambassadorShare = 20;
+    uint256 public projectShare = 30;
+
+    address public ambassador = makeAddr("AmbassadorAddress");
+    address public project = makeAddr("ProjectAddress");
 
     // Test the deployment
     function splitterDeployment(ISplitter.SplitterData memory splitterData)
@@ -27,7 +45,7 @@ contract DeploySplitterBase is Test {
             splitterData.projectShare
         );
 
-        // emit log_named_address("sD: deployer", splitterData.deployer);
+        // emit log_named_address("sD: currentSigner", splitterData.deployer);
 
         splitterAddress = splitterData.factory.getDeployedAddr(
             splitterData.splitterSalt, splitterData.deployer
@@ -42,8 +60,8 @@ contract DeploySplitterBase is Test {
     function validateDeployment(
         ISplitter.SplitterData memory splitterData,
         address splitterAddress
-    ) private {
-        bytes32 splitterSalt = keccak256(
+    ) public {
+        bytes32 _splitterSalt = keccak256(
             abi.encode(splitterData.deployer, bytes(splitterData.splitterSalt))
         );
 
@@ -71,7 +89,7 @@ contract DeploySplitterBase is Test {
         );
 
         assertTrue(
-            splitterSalt == config.splitterSalt,
+            _splitterSalt == config.splitterSalt,
             "Splitter salt should match with the stored splitter salt."
         );
 
@@ -119,7 +137,7 @@ contract DeploySplitterBase is Test {
         assertZeroBalance(splitter, splitterData.project);
 
         // Assuming payees are returned in the order [ambassador, project,
-        // deployer]
+        // currentSigner]
         emit log_array(splitterData.payeesExpected);
         for (uint256 i = 0; i < _payeesExpectedLength; ++i) {
             address payee = splitter._payees(i);
@@ -130,27 +148,123 @@ contract DeploySplitterBase is Test {
         }
     }
 
-    function assertZeroBalance(ISplitter splitter, address account) private {
+    function assertZeroBalance(ISplitter splitter, address _currentSigner)
+        public
+    {
         assertTrue(
-            splitter.released(account) == 0,
-            "Released amount for specific account should be 0"
+            splitter.released(_currentSigner) == 0,
+            "Released amount for specific _currentSigner should be 0"
         );
         assertTrue(
-            splitter.releasable(account) == 0,
-            "Releasable amount for specific account should be 0"
+            splitter.releasable(_currentSigner) == 0,
+            "Releasable amount for specific _currentSigner should be 0"
         );
 
         // TODO: ERC20
         // assertTrue(
         //     splitter.released(yourERC20TokenInstance, yourAccountAddress) ==
         // 0,
-        //     "Released amount for specific token and account should be 0"
+        //     "Released amount for specific token and _currentSigner should be
+        // 0"
         // );
 
         // assertTrue(
         //     splitter.releasable(yourERC20TokenInstance, yourAccountAddress)
         // == 0,
-        //     "Releasable amount for specific token and account should be 0"
+        //     "Releasable amount for specific token and _currentSigner should
+        // be 0"
         // );
+    }
+
+    function _runSplitterDeploy_creatorOnly(IFactory factory)
+        public
+        returns (address splitter)
+    {
+        return _runSplitterDeploy(
+            ISplitter.SplitterData({
+                factory: factory,
+                deployer: currentSigner,
+                splitterSalt: splitterSalt,
+                ambassador: address(0),
+                project: address(0),
+                ambassadorShare: 0,
+                projectShare: 0,
+                payeesExpected: SplitterHelpers.getExpectedSplitterAddresses(
+                    currentSigner, address(0), address(0)
+                    )
+            })
+        );
+    }
+
+    function _runSplitterDeploy_ambassadorWithNoProject(
+        IFactory factory,
+        uint256 _ambassadorShare
+    ) public returns (address splitter) {
+        return _runSplitterDeploy(
+            ISplitter.SplitterData({
+                factory: factory,
+                deployer: currentSigner,
+                splitterSalt: splitterSalt,
+                ambassador: ambassador,
+                project: address(0),
+                ambassadorShare: _ambassadorShare,
+                projectShare: 0,
+                payeesExpected: SplitterHelpers.getExpectedSplitterAddresses(
+                    currentSigner, ambassador, address(0)
+                    )
+            })
+        );
+    }
+
+    function _runSplitterDeploy_projectWithNoAmbassador(
+        IFactory factory,
+        uint256 _projectShare
+    ) public returns (address splitter) {
+        return _runSplitterDeploy(
+            ISplitter.SplitterData({
+                factory: factory,
+                deployer: currentSigner,
+                splitterSalt: splitterSalt,
+                ambassador: address(0),
+                project: project,
+                ambassadorShare: 0,
+                projectShare: _projectShare,
+                payeesExpected: SplitterHelpers.getExpectedSplitterAddresses(
+                    currentSigner, address(0), project
+                    )
+            })
+        );
+    }
+
+    function _runSplitterDeploy_All(
+        IFactory factory,
+        uint256 _ambassadorShare,
+        uint256 _projectShare
+    ) public returns (address splitter) {
+        return _runSplitterDeploy(
+            ISplitter.SplitterData({
+                factory: factory,
+                deployer: currentSigner,
+                splitterSalt: splitterSalt,
+                ambassador: ambassador,
+                project: project,
+                ambassadorShare: _ambassadorShare,
+                projectShare: _projectShare,
+                payeesExpected: SplitterHelpers.getExpectedSplitterAddresses(
+                    currentSigner, ambassador, project
+                    )
+            })
+        );
+    }
+
+    function _runSplitterDeploy(ISplitter.SplitterData memory splitterData)
+        internal
+        returns (address splitter)
+    {
+        splitter = splitterDeployment(splitterData);
+        assertTrue(
+            splitter != address(0), "Splitter address should not be zero."
+        );
+        // emit log_named_address("Splitter", splitter);
     }
 }

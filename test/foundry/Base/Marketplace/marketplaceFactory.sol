@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.19;
+pragma solidity 0.8.19;
 
 import { MADMarketplace721 } from "contracts/Marketplace/MADMarketplace721.sol";
 import { MADMarketplace1155 } from

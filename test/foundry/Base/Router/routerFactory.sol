@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.19;
+pragma solidity 0.8.19;
 
 import { MADRouter721 } from "contracts/Router/MADRouter721.sol";
 import { MADRouter1155 } from "contracts/Router/MADRouter1155.sol";

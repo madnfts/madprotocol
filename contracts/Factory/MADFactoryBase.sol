@@ -139,7 +139,7 @@ abstract contract MADFactoryBase is
         address _splitter,
         uint96 _royalty,
         bytes32[] memory _extra
-    ) internal isThisOg returns(address deployed) {
+    ) internal isThisOg returns (address deployed) {
         _limiter(_tokenType, _splitter);
         _royaltyLocker(_royalty);
 
@@ -379,9 +379,8 @@ abstract contract MADFactoryBase is
     /// @dev Function Sighash := 0xe04dc3ca
     function _royaltyLocker(uint96 _share) internal pure {
         assembly {
-            if or(
-                gt(_share, 0x3E8), 
-                iszero(iszero(mod(_share, 0x19)))) {
+            // (_share > 1000) || (_share % 25 != 0)
+            if or(gt(_share, 0x3E8), iszero(iszero(mod(_share, 0x19)))) {
                 mstore(0x00, 0xe0e54ced)
                 revert(0x1c, 0x04)
             }

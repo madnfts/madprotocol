@@ -152,7 +152,7 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
     function setTokenType(
         IFactory _factory,
         address _owner,
-        uint256 index,
+        uint8 collectionType,
         bytes memory _tokenType
     ) public {
         // Set Token Types
@@ -160,12 +160,12 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
 
         vm.startPrank(makeAddr("NotOwner"));
         vm.expectRevert();
-        _factory.addColType(index, _tokenType);
+        _factory.addColType(collectionType, _tokenType);
         vm.stopPrank();
 
         vm.prank(_owner);
-        _factory.addColType(index, _tokenType);
-        assertEq(_factory.colTypes(index), _tokenType);
+        _factory.addColType(collectionType, _tokenType);
+        assertEq(_factory.colTypes(collectionType), _tokenType);
     }
 
     function setRouter(

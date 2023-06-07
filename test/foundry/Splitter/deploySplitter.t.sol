@@ -26,7 +26,7 @@ contract TestSplitterDeployment is DeploySplitterBase {
     // @dev tests the condition:
     // (_ambassador == address(0) && _project == address(0))
     function testSplitterDeployment_creatorOnly(uint8 x) public {
-        vm.assume(x == 0 || x == 1);
+        vm.assume(x < 2);
         _runSplitterDeploy_creatorOnly(deployedContracts[x]);
     }
 
@@ -38,7 +38,7 @@ contract TestSplitterDeployment is DeploySplitterBase {
         uint8 x
     ) public {
         vm.assume(_ambassadorShare > 0 && _ambassadorShare < 21);
-        vm.assume(x == 0 || x == 1);
+        vm.assume(x < 2);
         _runSplitterDeploy_ambassadorWithNoProject(
             deployedContracts[x], _ambassadorShare
         );
@@ -52,7 +52,7 @@ contract TestSplitterDeployment is DeploySplitterBase {
         uint8 x
     ) public {
         vm.assume(_projectShare > 0 && _projectShare < 91);
-        vm.assume(x == 0 || x == 1);
+        vm.assume(x < 2);
         _runSplitterDeploy_projectWithNoAmbassador(
             deployedContracts[x], _projectShare
         );
@@ -69,7 +69,7 @@ contract TestSplitterDeployment is DeploySplitterBase {
     ) public {
         vm.assume(_ambassadorShare > 0 && _ambassadorShare < 21);
         vm.assume(_projectShare > 0 && _projectShare < 71);
-        vm.assume(x == 0 || x == 1);
+        vm.assume(x < 2);
         _runSplitterDeploy_All(
             deployedContracts[x], _ambassadorShare, _projectShare
         );

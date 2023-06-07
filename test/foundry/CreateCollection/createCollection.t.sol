@@ -8,8 +8,10 @@ import {
     Deployer
 } from "test/foundry/Base/Splitter/deploySplitterBase.sol";
 
-import { CreateCollectionBase } from
-    "test/foundry/Base/Factory/createCollectionBase.sol";
+import {
+    CreateCollectionBase,
+    CreateCollectionParams
+} from "test/foundry/Base/Factory/createCollectionBase.sol";
 
 import { Enums } from "test/foundry/utils/enums.sol";
 
@@ -32,8 +34,8 @@ contract TestCreateCollection is CreateCollectionBase, Enums {
         ];
     }
 
-    function testCreateCollectionDefault(uint8 x) public {
-        vm.assume(x == 0 || x == 1);
+    function testCreateCollectionDefaultFuzzy(uint8 x) public {
+        vm.assume(x < 2);
         vm.deal(currentSigner, 1000 ether);
         splitterDeployer.setCurrentSigner(currentSigner);
         address splitter = splitterDeployer._runSplitterDeploy_creatorOnly(
@@ -42,16 +44,36 @@ contract TestCreateCollection is CreateCollectionBase, Enums {
         createCollectionDefault(deployedContracts[x], splitter);
     }
 
-    // function testCreateCollectionCustom(uint8 x) public {
-    //     vm.assume(x == 0 || x == 1);
-    //     vm.deal(defaultCollectionOwner, 1000 ether);
-    //     address splitter =
-    // _runSplitterDeploy_creatorOnly(deployedContracts[x]);
-    //     createCollectionCustom(
-    //         deployedContracts[x],
-    //         splitter,
-    //         CreateCollectionParams.defaultCollectionParams(),
-    //         defaultCollectionOwner
-    //     );
-    // }
+    function testCreateCollectionCustomFuzzy(
+        uint8 x,
+        uint256 _price,
+        uint128 _maxSupply,
+        uint96 _royalty
+    ) public {
+        vm.assume(x < 2);
+        vm.assume(_price < type(uint256).max);
+        vm.assume(_maxSupply < type(uint256).max);
+        vm.assume(_royalty < 1001 && _royalty % 25 == 0);
+
+        vm.deal(currentSigner, 1000 ether);
+        splitterDeployer.setCurrentSigner(currentSigner);
+        address splitter = splitterDeployer._runSplitterDeploy_creatorOnly(
+            deployedContracts[x]
+        );
+
+        createCollectionCustom(
+            deployedContracts[x],
+            splitter,
+            CreateCollectionParams.generateCollectionParams(
+                1,
+                _price,
+                _maxSupply,
+                "https://test.com",
+                splitter,
+                _royalty,
+                new bytes32[](0)
+            ),
+            currentSigner
+        );
+    }
 }

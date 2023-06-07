@@ -22,7 +22,7 @@ library CreateCollectionParams {
         string memory symbol = BASE_SYMBOL;
 
         return IFactory.CollectionParams({
-            tokenType: _tokenType,
+            tokenType: uint8(_tokenType),
             tokenSalt: salt,
             name: name,
             symbol: symbol,

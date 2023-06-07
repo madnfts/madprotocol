@@ -6,4 +6,9 @@ interface Enums {
         ERC721,
         ERC1155
     }
+
+    enum collectionTypes {
+        None,
+        Basic
+    }
 }

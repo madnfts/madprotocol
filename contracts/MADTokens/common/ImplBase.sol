@@ -85,7 +85,7 @@ abstract contract ImplBase is
         PaymentManager(_splitter, _erc20)
         ERC2981(uint256(_fraction))
     {
-        require(_maxSupply < MAXSUPPLY_BOUND);
+        require(_maxSupply < MAXSUPPLY_BOUND, "MAXSUPPLY_BOUND_EXCEEDED");
 
         // immutable
         price = _price;

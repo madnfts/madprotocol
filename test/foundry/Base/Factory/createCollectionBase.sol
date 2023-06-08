@@ -35,7 +35,7 @@ abstract contract CreateCollectionBase is
         address _splitter,
         IFactory.CreateCollectionParams memory params,
         address collectionOwner
-    ) public returns(address collectionAddress) {
+    ) public returns (address collectionAddress) {
         vm.prank(collectionOwner, collectionOwner);
         factory.createCollection(
             params.tokenType,

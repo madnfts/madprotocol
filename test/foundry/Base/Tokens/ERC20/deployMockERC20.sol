@@ -40,9 +40,9 @@ contract DeployERC20 is Test, AddressesHelp {
         _mockERC20 = new MockERC20(name, symbol, decimals, amountToMint);
         _mockERC20.mint(ercHolder, amountToMint);
 
-        emit log_named_address("erc20Owner", erc20Owner);
-        emit log_named_address("ercHolder", ercHolder);
-        emit log_named_address("owner", owner);
+        // emit log_named_address("erc20Owner", erc20Owner);
+        // emit log_named_address("ercHolder", ercHolder);
+        // emit log_named_address("owner", owner);
 
         assert(_mockERC20.balanceOf(ercHolder) == amountToMint);
         assert(_mockERC20.balanceOf(owner) == amountToMint);

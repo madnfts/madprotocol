@@ -34,7 +34,7 @@ interface IFactory {
         bytes32[] memory _extra
     ) external;
 
-    struct CollectionParams {
+    struct CreateCollectionParams {
         uint8 tokenType;
         string tokenSalt;
         string name;
@@ -47,29 +47,42 @@ interface IFactory {
         bytes32[] extra;
     }
 
+    struct CollectionParams {
+        address collectionOwner;
+        uint8 collectionType;
+        bytes32 collectionSalt;
+        uint256 blocknumber;
+        address splitter;
+    }
+
     // Storage
-    function colInfo(bytes32)
+    function collectionInfo(bytes32)
         external
         view
         returns (
             address creator,
-            uint8 colType,
-            bytes32 colSalt,
+            uint8 collectionType,
+            bytes32 collectionSalt,
             uint256 blocknumber,
             address splitter
         );
 
-    function colTypes(uint256 index) external view returns (bytes memory);
+    function collectionTypes(uint256 index)
+        external
+        view
+        returns (bytes memory);
 
     function creatorAuth(address _token, address _user)
         external
         view
         returns (bool stdout);
-    function creatorCheck(bytes32 _colID)
+
+    function creatorCheck(bytes32 _collectionId)
         external
         view
         returns (address creator, bool check);
-    function typeChecker(bytes32 _colID)
+
+    function typeChecker(bytes32 _collectionId)
         external
         view
         returns (uint8 pointer);
@@ -86,12 +99,12 @@ interface IFactory {
 
     // Helpers
     function getIDsLength(address _user) external view returns (uint256);
-    function getColID(address _colAddress)
+    function getCollectionId(address _colAddress)
         external
         pure
-        returns (bytes32 colID);
+        returns (bytes32 collectionId);
 
-    function getDeployedAddr(string memory _salt, address _addr)
+    function getDeployedAddress(string memory _salt, address _addr)
         external
         view
         returns (address);

@@ -4,7 +4,7 @@ pragma solidity ^0.8.16;
 import "forge-std/src/Test.sol";
 
 contract BitMaskCheck is Test {
-    bytes32 colID =
+    bytes32 collectionId =
         0x27b72c5e04929c8f06a5f959b6d2ccaf3b171706000000000000000000000000;
     bytes32 zeroEndingAddress =
         0x00000000000000000000000027b72c5e04929c8f06a5f959b6d2ccaf3b171706;
@@ -17,7 +17,7 @@ contract BitMaskCheck is Test {
         address creatorEnd;
         address creatorFixRight;
         address creatorFixLeft;
-        address _colID;
+        address _collectionId;
         assembly {
             // bitmask to get the first 20 bytes of storage slot
             creatorEnd :=
@@ -25,15 +25,18 @@ contract BitMaskCheck is Test {
                     sload(zeroEndingAddress.slot),
                     0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
                 )
-            _colID :=
-                and(sload(colID.slot), 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
+            _collectionId :=
+                and(
+                    sload(collectionId.slot),
+                    0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+                )
 
-            creatorFixLeft := shl(24, sload(colID.slot))
-            creatorFixRight := shr(96, sload(colID.slot))
+            creatorFixLeft := shl(24, sload(collectionId.slot))
+            creatorFixRight := shr(96, sload(collectionId.slot))
         }
 
         // emit log_address(creatorEnd);
-        // emit log_address(_colID);
+        // emit log_address(_collectionId);
         // emit log_address(creatorFixLeft);
         // emit log_address(creatorFixRight);
     }

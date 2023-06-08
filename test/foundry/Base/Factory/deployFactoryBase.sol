@@ -96,10 +96,11 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
                 "ERC20 token address should match the provided _paymentTokenAddressFactory"
             );
 
-            // Check that colTypes for the given index returns empty bytes
+            // Check that collectionTypes for the given index returns empty
+            // bytes
             assertTrue(
-                newFactory.colTypes(0).length == 0,
-                "colTypes should return an empty bytes array"
+                newFactory.collectionTypes(0).length == 0,
+                "collectionTypes should return an empty bytes array"
             );
 
             // At this point, _owner is the only user that has interacted with
@@ -126,8 +127,11 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
             // Test addColType function
             newFactory.addColType(5, bytecode);
 
-            // Check that colTypes for the given index returns the correct bytes
-            assertTrue(keccak256(newFactory.colTypes(5)) == keccak256(bytecode));
+            // Check that collectionTypes for the given index returns the
+            // correct bytes
+            assertTrue(
+                keccak256(newFactory.collectionTypes(5)) == keccak256(bytecode)
+            );
 
             // Probe they work..
 
@@ -165,7 +169,7 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
 
         vm.prank(_owner);
         _factory.addColType(collectionType, _tokenType);
-        assertEq(_factory.colTypes(collectionType), _tokenType);
+        assertEq(_factory.collectionTypes(collectionType), _tokenType);
     }
 
     function setRouter(

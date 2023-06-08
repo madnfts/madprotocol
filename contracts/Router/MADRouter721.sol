@@ -40,13 +40,13 @@ contract MADRouter721 is MADRouterBase {
     /// @param _token 721 token address.
     /// @param _baseURI New base URI string.
     function setBase(address _token, string memory _baseURI) external {
-        (bytes32 _colID, uint8 _tokenType) = _tokenRender(_token);
+        (bytes32 _collectionId, uint8 _tokenType) = _tokenRender(_token);
 
         checkTokenType(_tokenType);
 
         ERC721Basic(_token).setBaseURI(_baseURI);
 
-        emit BaseURISet(_colID, _baseURI);
+        emit BaseURISet(_collectionId, _baseURI);
     }
 
     /// @notice Collection baseURI locker preventing URI updates when set.
@@ -75,12 +75,12 @@ contract MADRouter721 is MADRouterBase {
     ///      1 := WhitelistMintState (whitelist);
     ///      2 := FreeClaimState (whitelist).
     function setMintState(address _token, bool _state) external {
-        (bytes32 _colID, uint8 _tokenType) = _tokenRender(_token);
+        (bytes32 _collectionId, uint8 _tokenType) = _tokenRender(_token);
 
         checkTokenType(_tokenType);
         ERC721Basic(_token).setPublicMintState(_state);
 
-        emit PublicMintState(_colID, _tokenType, _state);
+        emit PublicMintState(_collectionId, _tokenType, _state);
     }
 
     ////////////////////////////////////////////////////////////////
@@ -129,7 +129,7 @@ contract MADRouter721 is MADRouterBase {
     /// @param _erc20 ERC20 token address.
     // A.2 BlockHat Audit  -remove whenPaused
     function withdraw(address _token, ERC20 _erc20) external {
-        (bytes32 _colID, uint8 _tokenType) = _tokenRender(_token);
+        (bytes32 _collectionId, uint8 _tokenType) = _tokenRender(_token);
         checkTokenType(_tokenType);
 
         if (address(_erc20) != address(0) && _erc20.balanceOf(_token) != 0) {
@@ -140,6 +140,6 @@ contract MADRouter721 is MADRouterBase {
             revert NoFunds();
         }
 
-        emit TokenFundsWithdrawn(_colID, _tokenType, msg.sender);
+        emit TokenFundsWithdrawn(_collectionId, _tokenType, msg.sender);
     }
 }

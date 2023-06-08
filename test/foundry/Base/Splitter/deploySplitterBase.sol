@@ -47,7 +47,7 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
 
         // emit log_named_address("sD: currentSigner", splitterData.deployer);
 
-        splitterAddress = splitterData.factory.getDeployedAddr(
+        splitterAddress = splitterData.factory.getDeployedAddress(
             splitterData.splitterSalt, splitterData.deployer
         );
 

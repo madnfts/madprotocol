@@ -152,14 +152,6 @@ contract ERC721Basic is ERC721, ImplBase {
         return _readString(_SYMBOL_SLOT);
     }
 
-    function baseURI() public view returns (string memory) {
-        return _readString(_BASE_URI_SLOT);
-    }
-
-    function totalSupply() public view returns (uint256) {
-        return liveSupply();
-    }
-
     ////////////////////////////////////////////////////////////////
     //                     REQUIRED OVERRIDES                     //
     ////////////////////////////////////////////////////////////////

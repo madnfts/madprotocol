@@ -25,8 +25,8 @@ library Types {
 
     struct Collection {
         address creator;
-        uint8 colType;
-        bytes32 colSalt;
+        uint8 collectionType;
+        bytes32 collectionSalt;
         uint256 blocknumber;
         address splitter;
     }
@@ -177,10 +177,10 @@ library Types {
     │  │     │  ├─ typeName
     │  │     │  │  ├─ type: UserDefinedTypeName
     │  │     │  │  └─ namePath: Types.ERC721Type
-    │  │     │  ├─ name: colType
+    │  │     │  ├─ name: collectionType
     │  │     │  ├─ identifier
     │  │     │  │  ├─ type: Identifier
-    │  │     │  │  └─ name: colType
+    │  │     │  │  └─ name: collectionType
     │  │     │  ├─ storageLocation
     │  │     │  ├─ isStateVar: false
     │  │     │  ├─ isIndexed: false
@@ -191,10 +191,10 @@ library Types {
     │  │     │  │  ├─ type: ElementaryTypeName
     │  │     │  │  ├─ name: bytes32
     │  │     │  │  └─ stateMutability
-    │  │     │  ├─ name: colSalt
+    │  │     │  ├─ name: collectionSalt
     │  │     │  ├─ identifier
     │  │     │  │  ├─ type: Identifier
-    │  │     │  │  └─ name: colSalt
+    │  │     │  │  └─ name: collectionSalt
     │  │     │  ├─ storageLocation
     │  │     │  ├─ isStateVar: false
     │  │     │  ├─ isIndexed: false
@@ -250,10 +250,10 @@ library Types {
     │  │     │  ├─ typeName
     │  │     │  │  ├─ type: UserDefinedTypeName
     │  │     │  │  └─ namePath: Types.ERC1155Type
-    │  │     │  ├─ name: colType
+    │  │     │  ├─ name: collectionType
     │  │     │  ├─ identifier
     │  │     │  │  ├─ type: Identifier
-    │  │     │  │  └─ name: colType
+    │  │     │  │  └─ name: collectionType
     │  │     │  ├─ storageLocation
     │  │     │  ├─ isStateVar: false
     │  │     │  ├─ isIndexed: false
@@ -264,10 +264,10 @@ library Types {
     │  │     │  │  ├─ type: ElementaryTypeName
     │  │     │  │  ├─ name: bytes32
     │  │     │  │  └─ stateMutability
-    │  │     │  ├─ name: colSalt
+    │  │     │  ├─ name: collectionSalt
     │  │     │  ├─ identifier
     │  │     │  │  ├─ type: Identifier
-    │  │     │  │  └─ name: colSalt
+    │  │     │  │  └─ name: collectionSalt
     │  │     │  ├─ storageLocation
     │  │     │  ├─ isStateVar: false
     │  │     │  ├─ isIndexed: false

@@ -155,6 +155,14 @@ abstract contract ImplBase is
     //                           VIEW FX                          //
     ////////////////////////////////////////////////////////////////
 
+    function baseURI() public view returns (string memory) {
+        return _readString(_BASE_URI_SLOT);
+    }
+
+    function totalSupply() public view returns (uint256) {
+        return liveSupply();
+    }
+
     function royaltyInfo(uint256, uint256 salePrice)
         public
         view

@@ -33,10 +33,10 @@ abstract contract MADFactoryBase is
     //                           STORAGE                          //
     ////////////////////////////////////////////////////////////////
 
-    /// @dev `colIDs` are derived from adding 12 bytes of zeros to an
+    /// @dev `collectionIds` are derived from adding 12 bytes of zeros to an
     /// collection's address.
-    /// @dev colID => colInfo(salt/type/addr/time/splitter)
-    mapping(bytes32 => Types.Collection) public colInfo;
+    /// @dev collectionId => collectionInfo(salt/type/addr/time/splitter)
+    mapping(bytes32 => Types.Collection) public collectionInfo;
 
     /// @dev Function SigHash: 0x06fdde03
     function name() external pure override(MAD) returns (string memory) {
@@ -52,10 +52,10 @@ abstract contract MADFactoryBase is
     ////////////////////////////////////////////////////////////////
 
     /// @dev Maps collection's index to its respective bytecode.
-    mapping(uint256 => bytes) public colTypes;
+    mapping(uint256 => bytes) public collectionTypes;
 
-    /// @dev Maps an collection creator, of type address, to an array of
-    /// `colIDs`.
+    /// @dev Maps a collection creator, of type address, to an array of
+    /// `collectionIds`.
     mapping(address => bytes32[]) public userTokens;
 
     /// @dev Nested mapping that takes an collection creator as key of
@@ -158,10 +158,10 @@ abstract contract MADFactoryBase is
         (bytes32 tokenSalt, address deployed) =
             _collectionDeploy(_tokenType, _tokenSalt, args, _extra);
 
-        bytes32 colId = deployed.fillLast12Bytes();
-        userTokens[msg.sender].push(colId);
+        bytes32 collectionId = deployed.fillLast12Bytes();
+        userTokens[msg.sender].push(collectionId);
 
-        colInfo[colId] = Types.Collection(
+        collectionInfo[collectionId] = Types.Collection(
             msg.sender, _tokenType, tokenSalt, block.number, _splitter
         );
     }
@@ -258,7 +258,7 @@ abstract contract MADFactoryBase is
     /// @notice Everything in storage can be fetch through the
     /// getters natively provided by all public mappings.
     /// @dev This public getter serve as a hook to ease frontend
-    /// fetching whilst estimating user's colID indexes.
+    /// fetching whilst estimating user's collectionId indexes.
 
     /// @dev Function Sighash := 0x8691fe46
     function getIDsLength(address _user) external view returns (uint256) {
@@ -266,13 +266,13 @@ abstract contract MADFactoryBase is
     }
 
     /// @inheritdoc FactoryVerifier
-    function getColID(address _colAddress)
+    function getCollectionId(address _colAddress)
         external
         pure
         override(FactoryVerifier)
-        returns (bytes32 colID)
+        returns (bytes32 collectionId)
     {
-        colID = _colAddress.fillLast12Bytes();
+        collectionId = _colAddress.fillLast12Bytes();
     }
 
     function _splitterResolver(
@@ -316,7 +316,7 @@ abstract contract MADFactoryBase is
             tokenSalt,
             abi.encodePacked(
                 // implementation
-                colTypes[uint256(_tokenType)],
+                collectionTypes[uint256(_tokenType)],
                 abi.encode(_args, _extra)
             ),
             0
@@ -392,9 +392,9 @@ abstract contract MADFactoryBase is
         bool val = splitterInfo[msg.sender][_splitter].valid;
         assembly {
             mstore(0, _tokenType)
-            mstore(32, colTypes.slot)
+            mstore(32, collectionTypes.slot)
 
-            // colType not allowed or invalid splitter
+            // collectionType not allowed or invalid splitter
             if or(iszero(sload(keccak256(0, 64))), iszero(val)) {
                 mstore(0x00, 0x4ca88867)
                 revert(0x1c, 0x04)
@@ -440,7 +440,7 @@ abstract contract MADFactoryBase is
 
     /// @dev External getter for deployed splitters and collections.
     /// @dev Function Sighash := 0x499945ef
-    function getDeployedAddr(string memory _salt, address _addr)
+    function getDeployedAddress(string memory _salt, address _addr)
         public
         view
         returns (address)
@@ -491,7 +491,7 @@ abstract contract MADFactoryBase is
     /// so its slot can be reset to default value.
     /// @dev Function Sighash := 0x7ebbf770
     function addColType(uint256 index, bytes calldata impl) public onlyOwner {
-        colTypes[index] = impl;
+        collectionTypes[index] = impl;
 
         emit ColTypeUpdated(index);
     }
@@ -503,37 +503,37 @@ abstract contract MADFactoryBase is
     /// @notice Everything in storage can be fetch through the
     /// getters natively provided by all public mappings.
     /// @dev This public getter serve as a hook to ease frontend
-    /// fetching whilst estimating user's colID indexes.
+    /// fetching whilst estimating user's collectionId indexes.
     /// @dev Function Sighash := 0x8691fe46
 
     /// @inheritdoc FactoryVerifier
-    function typeChecker(bytes32 _colID)
+    function typeChecker(bytes32 _collectionId)
         external
         view
         override(FactoryVerifier)
         returns (uint8 pointer)
     {
         _isRouter();
-        Types.Collection storage col = colInfo[_colID];
+        Types.Collection storage collection = collectionInfo[_collectionId];
 
         assembly {
-            let x := sload(col.slot)
+            let x := sload(collection.slot)
             pointer := shr(160, x)
         }
     }
 
     /// @inheritdoc FactoryVerifier
-    function creatorCheck(bytes32 _colID)
+    function creatorCheck(bytes32 _collectionId)
         external
         view
         override(FactoryVerifier)
         returns (address creator, bool check)
     {
         _isRouter();
-        Types.Collection storage col = colInfo[_colID];
+        Types.Collection storage collection = collectionInfo[_collectionId];
 
         assembly {
-            let x := sload(col.slot)
+            let x := sload(collection.slot)
             // bitmask to get the first 20 bytes of storage slot
             creator := and(x, 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
 

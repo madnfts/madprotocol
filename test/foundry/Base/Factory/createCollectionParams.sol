@@ -16,12 +16,12 @@ library CreateCollectionParams {
         address _splitter,
         uint96 _royalty,
         bytes32[] memory _extra
-    ) public returns (IFactory.CollectionParams memory) {
+    ) public returns (IFactory.CreateCollectionParams memory) {
         string memory salt = "createCollectionSalt";
         string memory name = BASE_NAME;
         string memory symbol = BASE_SYMBOL;
 
-        return IFactory.CollectionParams({
+        return IFactory.CreateCollectionParams({
             tokenType: uint8(_tokenType),
             tokenSalt: salt,
             name: name,
@@ -37,7 +37,7 @@ library CreateCollectionParams {
 
     function defaultCollectionParams(address defaultSplitterAddress)
         public
-        returns (IFactory.CollectionParams memory)
+        returns (IFactory.CreateCollectionParams memory)
     {
         return generateCollectionParams(
             1, //  tokenType

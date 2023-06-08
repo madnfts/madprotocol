@@ -139,7 +139,7 @@ abstract contract MADFactoryBase is
         address _splitter,
         uint96 _royalty,
         bytes32[] memory _extra
-    ) internal isThisOg returns (address deployed) {
+    ) internal isThisOg returns (address) {
         _limiter(_tokenType, _splitter);
         _royaltyLocker(_royalty);
 
@@ -164,6 +164,7 @@ abstract contract MADFactoryBase is
         collectionInfo[collectionId] = Types.Collection(
             msg.sender, _tokenType, tokenSalt, block.number, _splitter
         );
+        return deployed;
     }
 
     ////////////////////////////////////////////////////////////////

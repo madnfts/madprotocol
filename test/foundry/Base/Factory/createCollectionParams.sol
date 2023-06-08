@@ -10,6 +10,7 @@ library CreateCollectionParams {
 
     function generateCollectionParams(
         uint8 _tokenType,
+        string memory salt,
         uint256 _price,
         uint256 _maxSupply,
         string memory _uri,
@@ -17,7 +18,6 @@ library CreateCollectionParams {
         uint96 _royalty,
         bytes32[] memory _extra
     ) public returns (IFactory.CreateCollectionParams memory) {
-        string memory salt = "createCollectionSalt";
         string memory name = BASE_NAME;
         string memory symbol = BASE_SYMBOL;
 
@@ -39,8 +39,10 @@ library CreateCollectionParams {
         public
         returns (IFactory.CreateCollectionParams memory)
     {
+        string memory salt = "createCollectionSalt";
         return generateCollectionParams(
             1, //  tokenType
+            salt, //salt
             100 ether, // price,
             1000, //  maxSupply
             "https://example.com", //  URI

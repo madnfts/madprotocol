@@ -41,10 +41,12 @@ contract TestCreateCollection is CreateCollectionBase, Enums {
         address splitter = splitterDeployer._runSplitterDeploy_creatorOnly(
             deployedContracts[x]
         );
-        createCollectionDefault(deployedContracts[x], splitter);
+        address collectionAddress =
+            createCollectionDefault(deployedContracts[x], splitter);
+        assertTrue(collectionAddress != address(0));
     }
 
-    function testCreateCollectionCustomFuzzy(
+    function testCreateCollectionCustomSingleFuzzy(
         uint8 x,
         uint256 _price,
         uint128 _maxSupply,
@@ -52,20 +54,22 @@ contract TestCreateCollection is CreateCollectionBase, Enums {
     ) public {
         vm.assume(x < 2);
         vm.assume(_price < type(uint256).max);
-        vm.assume(_maxSupply < type(uint256).max);
+        vm.assume(_maxSupply > 0 && _maxSupply < type(uint256).max);
         vm.assume(_royalty < 1001 && _royalty % 25 == 0);
 
         vm.deal(currentSigner, 1000 ether);
+
         splitterDeployer.setCurrentSigner(currentSigner);
         address splitter = splitterDeployer._runSplitterDeploy_creatorOnly(
             deployedContracts[x]
         );
 
-        createCollectionCustom(
+        address collectionAddress = createCollectionCustom(
             deployedContracts[x],
             splitter,
             CreateCollectionParams.generateCollectionParams(
                 1,
+                "createCollectionSalt",
                 _price,
                 _maxSupply,
                 "https://test.com",
@@ -75,5 +79,47 @@ contract TestCreateCollection is CreateCollectionBase, Enums {
             ),
             currentSigner
         );
+
+        assertTrue(collectionAddress != address(0));
+    }
+
+    function testCreateMultipleCollectionsWithSameSplitterFuzzy(
+        uint8 x,
+        uint256 _price,
+        uint128 _maxSupply,
+        uint96 _royalty
+    ) public {
+        vm.assume(x < 2);
+        vm.assume(_price < type(uint256).max);
+        vm.assume(_maxSupply > 0 && _maxSupply < type(uint256).max);
+        vm.assume(_royalty < 1001 && _royalty % 25 == 0);
+
+        vm.deal(currentSigner, 1000 ether);
+
+        splitterDeployer.setCurrentSigner(currentSigner);
+        address splitter = splitterDeployer._runSplitterDeploy_creatorOnly(
+            deployedContracts[x]
+        );
+
+        for (uint256 i = 0; i < 10; i++) {
+            string memory salt = string(abi.encodePacked("createCollectionSalt", i, block.timestamp));
+            address collectionAddress = createCollectionCustom(
+                deployedContracts[x],
+                splitter,
+                CreateCollectionParams.generateCollectionParams(
+                    1,
+                    salt,
+                    _price,
+                    _maxSupply,
+                    "https://test.com",
+                    splitter,
+                    _royalty,
+                    new bytes32[](0)
+                ),
+                currentSigner
+            );
+
+            assertTrue(collectionAddress != address(0));
+        }
     }
 }

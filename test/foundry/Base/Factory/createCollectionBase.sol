@@ -20,8 +20,9 @@ abstract contract CreateCollectionBase is
 {
     function createCollectionDefault(IFactory factory, address _splitter)
         public
+        returns (address collectionAddress)
     {
-        createCollectionCustom(
+        collectionAddress = createCollectionCustom(
             factory,
             _splitter,
             CreateCollectionParams.defaultCollectionParams(_splitter),
@@ -34,7 +35,7 @@ abstract contract CreateCollectionBase is
         address _splitter,
         IFactory.CreateCollectionParams memory params,
         address collectionOwner
-    ) public {
+    ) public returns(address collectionAddress) {
         vm.prank(collectionOwner, collectionOwner);
         factory.createCollection(
             params.tokenType,
@@ -49,7 +50,7 @@ abstract contract CreateCollectionBase is
             params.extra
         );
         params.splitter = _splitter;
-        address collectionAddress =
+        collectionAddress =
             factory.getDeployedAddress(params.tokenSalt, collectionOwner);
 
         _verifyCollectionFactory(

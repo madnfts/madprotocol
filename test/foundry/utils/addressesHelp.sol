@@ -35,7 +35,6 @@ abstract contract AddressesHelp is Test {
                 vm.stopPrank();
                 vm.prank(newAddress);
                 setAddressFunc(originalAddress);
-
                 vm.startPrank(originalAddress);
             } else {
                 setAddressFunc(originalAddress);

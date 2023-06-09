@@ -623,7 +623,7 @@ describe("ERC1155Basic", () => {
         );
 
       await expect(tx).to.be.revertedWith(
-        BasicErrors.WrongFrom,
+        BasicErrors.InsufficientBalance,
       );
     });
 

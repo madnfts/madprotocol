@@ -6,7 +6,7 @@ libs = ['node_modules', 'lib']
 test = 'test/foundry'
 cache_path = 'forge-cache'
 optimizer = true
-optimizer_runs = 500
+optimizer_runs = 100
 via_ir = true
 solc_version = "0.8.19"
 
@@ -21,7 +21,7 @@ chain_id=31337
 gas_limit = "9223372036854775807" # u64::MAX
 sizes=true # contract size
 
-extra_output_files = ['evm.assembly', 'ir']
+# extra_output_files = ['evm.assembly', 'ir']
 # For a list of valid values, see the [Solidity docs][output-desc].
 # extra_output = [
 #     "abi",
@@ -36,27 +36,27 @@ extra_output_files = ['evm.assembly', 'ir']
 # broadcast='path/to/broadcast'
 
 # https://docs.soliditylang.org/en/latest/using-the-compiler.html#compiler-input-and-output-json-description
-[profile.optimizer_details]
-deduplicate = true
-yul = true
-orderLiterals = true
-cse = true
-constantOptimizer = true
+# [profile.optimizer_details]
+# deduplicate = true
+# yul = true
+# orderLiterals = true
+# cse = true
+# constantOptimizer = true
 
 [profile.optimizer_details.yul_details]
 stack_allocation = true
-# optimizer_steps=''
+optimizer_steps=''
 
-[profile.default.rpc_endpoints]
-# The RPC URLs are modified versions of the default for testing initialization.
-mainnet = "https://mainnet.infura.io/v3/b1d3925804e74152b316ca7da97060d3" # Different API key.
-optimism_goerli = "https://goerli.optimism.io/"                           # Adds a trailing slash.
-arbitrum_one_goerli = "https://goerli-rollup.arbitrum.io/rpc/"            # Adds a trailing slash.
-needs_undefined_env_var = "${UNDEFINED_RPC_URL_PLACEHOLDER}"
+# [profile.default.rpc_endpoints]
+# # The RPC URLs are modified versions of the default for testing initialization.
+# mainnet = "https://mainnet.infura.io/v3/b1d3925804e74152b316ca7da97060d3" # Different API key.
+# optimism_goerli = "https://goerli.optimism.io/"                           # Adds a trailing slash.
+# arbitrum_one_goerli = "https://goerli-rollup.arbitrum.io/rpc/"            # Adds a trailing slash.
+# needs_undefined_env_var = "${UNDEFINED_RPC_URL_PLACEHOLDER}"
 
 [profile.default.fmt]
 # These are all the `forge fmt` defaults.
-line_length = 120
+line_length = 80
 tab_width = 4
 bracket_spacing = true
 int_types = 'long'

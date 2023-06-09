@@ -2,9 +2,12 @@
 
 pragma solidity 0.8.19;
 
-// import { SplitterImpl, ERC20 } from "contracts/lib/splitter/SplitterImpl.sol";
-import { IERC721 } from "contracts/lib/tokens/ERC721/Base/interfaces/IERC721.sol";
-import { IERC1155 } from "contracts/lib/tokens/ERC1155/Base/interfaces/IERC1155.sol";
+// import { SplitterImpl, ERC20 } from
+// "contracts/lib/splitter/SplitterImpl.sol";
+import { IERC721 } from
+    "contracts/lib/tokens/ERC721/Base/interfaces/IERC721.sol";
+import { IERC1155 } from
+    "contracts/lib/tokens/ERC1155/Base/interfaces/IERC1155.sol";
 
 // prettier-ignore
 library Types {
@@ -20,18 +23,10 @@ library Types {
         address _erc20;
     }
 
-    struct Collection721 {
+    struct Collection {
         address creator;
-        uint8 colType;
-        bytes32 colSalt;
-        uint256 blocknumber;
-        address splitter;
-    }
-
-    struct Collection1155 {
-        address creator;
-        uint8 colType;
-        bytes32 colSalt;
+        uint8 collectionType;
+        bytes32 collectionSalt;
         uint256 blocknumber;
         address splitter;
     }
@@ -161,7 +156,7 @@ library Types {
     │  │        └─ name: ERC1155Lazy
     │  ├─ 2
     │  │  ├─ type: StructDefinition
-    │  │  ├─ name: Collection721
+    │  │  ├─ name: Collection
     │  │  └─ members
     │  │     ├─ 0
     │  │     │  ├─ type: VariableDeclaration
@@ -182,10 +177,10 @@ library Types {
     │  │     │  ├─ typeName
     │  │     │  │  ├─ type: UserDefinedTypeName
     │  │     │  │  └─ namePath: Types.ERC721Type
-    │  │     │  ├─ name: colType
+    │  │     │  ├─ name: collectionType
     │  │     │  ├─ identifier
     │  │     │  │  ├─ type: Identifier
-    │  │     │  │  └─ name: colType
+    │  │     │  │  └─ name: collectionType
     │  │     │  ├─ storageLocation
     │  │     │  ├─ isStateVar: false
     │  │     │  ├─ isIndexed: false
@@ -196,10 +191,10 @@ library Types {
     │  │     │  │  ├─ type: ElementaryTypeName
     │  │     │  │  ├─ name: bytes32
     │  │     │  │  └─ stateMutability
-    │  │     │  ├─ name: colSalt
+    │  │     │  ├─ name: collectionSalt
     │  │     │  ├─ identifier
     │  │     │  │  ├─ type: Identifier
-    │  │     │  │  └─ name: colSalt
+    │  │     │  │  └─ name: collectionSalt
     │  │     │  ├─ storageLocation
     │  │     │  ├─ isStateVar: false
     │  │     │  ├─ isIndexed: false
@@ -234,7 +229,7 @@ library Types {
     │  │        └─ expression
     │  ├─ 3
     │  │  ├─ type: StructDefinition
-    │  │  ├─ name: Collection1155
+    │  │  ├─ name: Collection
     │  │  └─ members
     │  │     ├─ 0
     │  │     │  ├─ type: VariableDeclaration
@@ -255,10 +250,10 @@ library Types {
     │  │     │  ├─ typeName
     │  │     │  │  ├─ type: UserDefinedTypeName
     │  │     │  │  └─ namePath: Types.ERC1155Type
-    │  │     │  ├─ name: colType
+    │  │     │  ├─ name: collectionType
     │  │     │  ├─ identifier
     │  │     │  │  ├─ type: Identifier
-    │  │     │  │  └─ name: colType
+    │  │     │  │  └─ name: collectionType
     │  │     │  ├─ storageLocation
     │  │     │  ├─ isStateVar: false
     │  │     │  ├─ isIndexed: false
@@ -269,10 +264,10 @@ library Types {
     │  │     │  │  ├─ type: ElementaryTypeName
     │  │     │  │  ├─ name: bytes32
     │  │     │  │  └─ stateMutability
-    │  │     │  ├─ name: colSalt
+    │  │     │  ├─ name: collectionSalt
     │  │     │  ├─ identifier
     │  │     │  │  ├─ type: Identifier
-    │  │     │  │  └─ name: colSalt
+    │  │     │  │  └─ name: collectionSalt
     │  │     │  ├─ storageLocation
     │  │     │  ├─ isStateVar: false
     │  │     │  ├─ isIndexed: false

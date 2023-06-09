@@ -4,7 +4,9 @@ pragma solidity 0.8.19;
 
 import { MAD } from "contracts/MAD.sol";
 import { MADBase, ERC20 } from "contracts/Shared/MADBase.sol";
-import { RouterEvents, FactoryVerifier } from "contracts/Shared/EventsAndErrors.sol";
+import {
+    RouterEvents, FactoryVerifier
+} from "contracts/Shared/EventsAndErrors.sol";
 import { SafeTransferLib } from "contracts/lib/utils/SafeTransferLib.sol";
 import { FeeOracle } from "contracts/lib/tokens/common/FeeOracle.sol";
 
@@ -51,17 +53,21 @@ abstract contract MADRouterBase is MAD, MADBase, RouterEvents, FeeOracle {
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    /// @notice Constructor requires a valid factory address and an optional erc20 payment token address.
+    /// @notice Constructor requires a valid factory address and an optional
+    /// erc20 payment token
+    /// address.
     /// @param _paymentTokenAddress erc20 token address | address(0).
     /// @param _recipient Public mint fee recipient address.
     // B.1 - Remove maxFeeMint &  maxFeeBurn from constructor
-    constructor(FactoryVerifier _factory, address _paymentTokenAddress, address _recipient) {
+    constructor(
+        FactoryVerifier _factory,
+        address _paymentTokenAddress,
+        address _recipient
+    ) {
         // B.3 BlockHat Audit
         feeMint = 0.25 ether;
 
-        if (_paymentTokenAddress != address(0)) {
-            _setPaymentToken(_paymentTokenAddress);
-        }
+        _setPaymentToken(_paymentTokenAddress);
         setFactory(_factory);
         setRecipient(_recipient);
     }
@@ -73,7 +79,12 @@ abstract contract MADRouterBase is MAD, MADBase, RouterEvents, FeeOracle {
     /// @notice Mint and burn fee lookup.
     /// @dev Function Sighash := 0xedc9e7a4
     /// @param sigHash MINSAFEMINT | MINBURN
-    function feeLookup(bytes4 sigHash) external view override(FeeOracle) returns (uint256 fee) {
+    function feeLookup(bytes4 sigHash)
+        external
+        view
+        override(FeeOracle)
+        returns (uint256 fee)
+    {
         assembly {
             for { } 1 { } {
                 if eq(MINSAFEMINT, sigHash) {
@@ -90,7 +101,7 @@ abstract contract MADRouterBase is MAD, MADBase, RouterEvents, FeeOracle {
         }
     }
 
-    // /// @notice Checks if native || erc20 payments are matche required fees
+    // /// @notice Checks if native || erc20 payments are matched required fees
     /// @dev Envokes safeTransferFrom for erc20 payments.
     ///      Function Sighash := ?
     // /// @param sigHash MINSAFEMINT | MINBURN
@@ -104,7 +115,8 @@ abstract contract MADRouterBase is MAD, MADBase, RouterEvents, FeeOracle {
     //                 revert(0x1c, 0x04)
     //             }
     //         }
-    //         SafeTransferLib.safeTransferFrom(erc20, msg.sender, address(this), value);
+    //         SafeTransferLib.safeTransferFrom(erc20, msg.sender,
+    // address(this), value);
     //     }
     // }
 
@@ -147,7 +159,9 @@ abstract contract MADRouterBase is MAD, MADBase, RouterEvents, FeeOracle {
     /// @param _feeMint New mint fee.
     /// @param _feeBurn New burn fee.
     function setFees(uint256 _feeMint, uint256 _feeBurn) external onlyOwner {
-        // require(_feeMint <= maxFeeMint && _feeBurn <= maxFeeBurn, "Invalid fee settings, beyond max");
+        // require(_feeMint <= maxFeeMint && _feeBurn <= maxFeeBurn, "Invalid
+        // fee settings, beyond
+        // max");
         assembly {
             if or(gt(_feeMint, maxFeeMint), gt(_feeBurn, maxFeeBurn)) {
                 mstore(0x00, 0x2d8768f9)
@@ -158,6 +172,25 @@ abstract contract MADRouterBase is MAD, MADBase, RouterEvents, FeeOracle {
         }
 
         emit FeesUpdated(_feeMint, _feeBurn);
+    }
+
+    ////////////////////////////////////////////////////////////////
+    //                         HELPERS                            //
+    ////////////////////////////////////////////////////////////////
+
+    /// @notice Private auth-check mechanism that verifies `MADFactory` storage.
+    /// @dev Retrieves both `collectionId` (bytes32) and collection type (uint8)
+    ///      for valid token and approved user.
+    ///      Function Sighash := 0xdbf62b2e
+    /// @param _token 721 / 1155 token address.
+    function _tokenRender(address _token)
+        internal
+        view
+        returns (bytes32 collectionId, uint8 tokenType)
+    {
+        collectionId = madFactory.getCollectionId(_token);
+        madFactory.creatorCheck(collectionId);
+        tokenType = madFactory.typeChecker(collectionId);
     }
 
     // MODIFIERS

@@ -2,10 +2,16 @@
 
 pragma solidity 0.8.19;
 
-/// @notice A generic interface for a contract which properly accepts ERC721 tokens.
-/// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/tokens/ERC721.sol)
+/// @notice A generic interface for a contract which properly accepts ERC721
+/// tokens.
+/// @author Solmate
+/// (https://github.com/Rari-Capital/solmate/blob/main/src/tokens/ERC721.sol)
 abstract contract ERC721TokenReceiver {
-    function onERC721Received(address, address, uint256, bytes calldata) external virtual returns (bytes4) {
+    function onERC721Received(address, address, uint256, bytes calldata)
+        external
+        virtual
+        returns (bytes4)
+    {
         return ERC721TokenReceiver.onERC721Received.selector;
     }
 }
@@ -16,8 +22,14 @@ contract ERC721Holder is ERC721TokenReceiver {
     /// @dev Implementation of the {ERC721Receiver} abstract contract.
     /// Accepts all token transfers.
     /// Make sure the contract is able to use its token with
-    /// {IERC721-safeTransferFrom}, {IERC721-approve} or {IERC721-setApprovalForAll}.
-    function onERC721Received(address, address, uint256, bytes memory) public virtual override returns (bytes4) {
+    /// {IERC721-safeTransferFrom}, {IERC721-approve} or
+    /// {IERC721-setApprovalForAll}.
+    function onERC721Received(address, address, uint256, bytes memory)
+        public
+        virtual
+        override
+        returns (bytes4)
+    {
         return this.onERC721Received.selector;
     }
 }

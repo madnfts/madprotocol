@@ -84,7 +84,7 @@ const main = async () => {
     "MADMarketplace1155",
   );
   const m1155 = await MADMarketplace1155.deploy(
-    deployer.address, // recipient addr
+    deployer.address, // addr
     erc20Address, // ERC20 payment token addr
     uniswapRouterAddress, // uniswapRouterAddress
   );

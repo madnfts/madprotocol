@@ -3,7 +3,8 @@
 pragma solidity 0.8.19;
 
 /// @notice Simple single owner authorization mixin.
-/// @author Modified from Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/auth/Owned.sol)
+/// @author Modified from Solmate
+/// (https://github.com/Rari-Capital/solmate/blob/main/src/auth/Owned.sol)
 
 abstract contract Owned {
     /*//////////////////////////////////////////////////////////////
@@ -43,7 +44,11 @@ abstract contract Owned {
                              OWNERSHIP LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function setOwner(address newOwner) public onlyOwner notZeroAddress(newOwner) {
+    function setOwner(address newOwner)
+        public
+        onlyOwner
+        notZeroAddress(newOwner)
+    {
         assembly {
             sstore(owner.slot, newOwner)
         }

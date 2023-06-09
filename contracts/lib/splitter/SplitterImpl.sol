@@ -1,28 +1,40 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-/// @title Payment splitter base contract that allows to split Ether payments among a group of accounts.
+/// @title Payment splitter base contract that allows to split Ether payments
+/// among a group of
+/// accounts.
 /// @author Modified from OpenZeppelin Contracts
 /// (https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/finance/PaymentSplitter.sol)
 
 pragma solidity 0.8.19;
 
-import { SplitterEventsAndErrors } from "contracts/lib/splitter/SplitterEventsAndErrors.sol";
-import "contracts/lib/utils/SafeTransferLib.sol";
+import { SplitterEventsAndErrors } from
+    "contracts/lib/splitter/SplitterEventsAndErrors.sol";
+import { SafeTransferLib, ERC20 } from "contracts/lib/utils/SafeTransferLib.sol";
 
 // prettier-ignore
-//  {SafeTransferLib, ERC20} from
-/// @notice The split can be in equal parts or in any other arbitrary proportion.
-/// The way this is specified is by assigning each account to a number of shares.
-/// Of all the Ether that this contract receives, each account will then be able to claim
+//
+/// @notice The split can be in equal parts or in any other arbitrary
+/// proportion.
+/// The way this is specified is by assigning each account to a number of
+/// shares.
+/// Of all the Ether that this contract receives, each account will then be able
+/// to claim
 /// an amount proportional to the percentage of total shares they were assigned.
 
-/// @dev `PaymentSplitter` follows a _pull payment_ model. This means that payments are not
-/// automatically forwarded to the accounts but kept in this contract, and the actual transfer
+/// @dev `PaymentSplitter` follows a _pull payment_ model. This means that
+/// payments are not
+/// automatically forwarded to the accounts but kept in this contract, and the
+/// actual transfer
 /// is triggered asa separate step by calling the {release} function.
 
-/// @dev This contract assumes that ERC20 tokens will behave similarly to native tokens (Ether).
-/// Rebasing tokens, and tokens that apply fees during transfers, are likely to not be supported
-/// as expected. If in doubt, we encourage you to run tests before sending real value to this contract.
+/// @dev This contract assumes that ERC20 tokens will behave similarly to native
+/// tokens (Ether).
+/// Rebasing tokens, and tokens that apply fees during transfers, are likely to
+/// not be supported
+/// as expected. If in doubt, we encourage you to run tests before sending real
+/// value to this
+/// contract.
 
 contract SplitterImpl is SplitterEventsAndErrors {
     ////////////////////////////////////////////////////////////////
@@ -54,9 +66,8 @@ contract SplitterImpl is SplitterEventsAndErrors {
     /// by factory parameters.
     constructor(address[] memory payees, uint256[] memory shares_) payable {
         uint256 pLen = payees.length;
-        uint256 sLen = shares_.length;
 
-        if (pLen != sLen) {
+        if (pLen != shares_.length) {
             revert LengthMismatch();
         }
         if (pLen == 0) {
@@ -132,7 +143,8 @@ contract SplitterImpl is SplitterEventsAndErrors {
 
     /// @dev Triggers a transfer to `account` of the amount of `token` tokens
     /// they are owed, according to their percentage of the total shares and
-    /// their previous withdrawals. `token` must be the address of an ERC20 contract.
+    /// their previous withdrawals. `token` must be the address of an ERC20
+    /// contract.
     function release(ERC20 token, address account) public {
         if (_shares[account] == 0) {
             revert NoShares();
@@ -157,12 +169,13 @@ contract SplitterImpl is SplitterEventsAndErrors {
     /// @dev internal logic for computing the pending payment of
     /// an `account`, given the token historical balances and
     /// already released amounts.
-    function _pendingPayment(address account, uint256 totalReceived, uint256 alreadyReleased)
-        private
-        view
-        returns (uint256)
-    {
-        return (totalReceived * _shares[account]) / _totalShares - alreadyReleased;
+    function _pendingPayment(
+        address account,
+        uint256 totalReceived,
+        uint256 alreadyReleased
+    ) private view returns (uint256) {
+        return
+            (totalReceived * _shares[account]) / _totalShares - alreadyReleased;
     }
 
     /// @dev Add a new payee to the contract.
@@ -221,7 +234,11 @@ contract SplitterImpl is SplitterEventsAndErrors {
     /// @dev Getter for the amount of `token` tokens already
     /// released to a payee.
     /// @dev `token` should be the address of an ERC20 contract.
-    function released(ERC20 token, address account) public view returns (uint256) {
+    function released(ERC20 token, address account)
+        public
+        view
+        returns (uint256)
+    {
         return _erc20Released[token][account];
     }
 
@@ -234,8 +251,13 @@ contract SplitterImpl is SplitterEventsAndErrors {
     /// @dev Getter for the amount of payee's releasable
     /// `token` tokens.
     /// @dev `token` should be the address of an ERC20 contract.
-    function releasable(ERC20 token, address account) public view returns (uint256) {
-        uint256 totalReceived = token.balanceOf(address(this)) + totalReleased(token);
+    function releasable(ERC20 token, address account)
+        public
+        view
+        returns (uint256)
+    {
+        uint256 totalReceived =
+            token.balanceOf(address(this)) + totalReleased(token);
         return _pendingPayment(account, totalReceived, released(token, account));
     }
 }

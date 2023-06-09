@@ -5,14 +5,8 @@ import {
   mineUpTo,
 } from "@nomicfoundation/hardhat-network-helpers";
 import { setNextBlockTimestamp } from "@nomicfoundation/hardhat-network-helpers/dist/src/helpers/time";
-import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
-import {
-  BigNumber,
-  ContractReceipt,
-  ContractTransaction,
-  Wallet,
-} from "ethers";
+import { BigNumber, ContractReceipt } from "ethers";
 import { artifacts, ethers, network } from "hardhat";
 
 import {
@@ -20,6 +14,18 @@ import {
   MADMarketplace1155,
   MADRouter1155,
 } from "../../src/types";
+import {
+  WalletWithAddress,
+  _basicSalt,
+  _splitterSalt,
+  createCollection,
+  createCollections,
+  feePrice,
+  price,
+  splitterDeployment,
+  testColID,
+  validateCreation,
+} from "../utils/factoryHelpers";
 import { MarketplaceErrors } from "./../utils/errors";
 import { ColArgs } from "./../utils/interfaces";
 import {
@@ -29,9 +35,9 @@ import {
   madFixture1155C,
 } from "./../utils/madFixtures";
 
-describe("MADMarketplace1155", () => {
-  type WalletWithAddress = Wallet & SignerWithAddress;
+const createdEvent = "ERC1155BasicCreated";
 
+describe("MADMarketplace1155", () => {
   // contract deployer/admin
   let owner: WalletWithAddress;
 
@@ -50,6 +56,22 @@ describe("MADMarketplace1155", () => {
   let r1155: MADRouter1155;
 
   const price: BigNumber = ethers.utils.parseEther("1");
+  const zero = ethers.constants.Zero;
+
+  const _null: OrderDetails1155 = {
+    orderType: 0,
+    seller: dead,
+    token: dead,
+    tokenId: zero,
+    amount: zero,
+    startPrice: zero,
+    endPrice: zero,
+    startTime: zero,
+    endTime: zero,
+    lastBidPrice: zero,
+    lastBidder: dead,
+    isSold: false,
+  };
 
   before("Set signers and reset network", async () => {
     [owner, amb, mad, acc01, acc02] =
@@ -99,6 +121,7 @@ describe("MADMarketplace1155", () => {
         MarketplaceErrors.ZeroAddress,
       );
     });
+
     it("Should update marketplace settings", async () => {
       const tx = await m1155.updateSettings(
         600,
@@ -117,46 +140,7 @@ describe("MADMarketplace1155", () => {
           .updateSettings(300, 100, 40, 31536000),
       ).to.be.revertedWith(MarketplaceErrors.Unauthorized);
     });
-    it("Should initialize paused and unpaused states", async () => {
-      const orderId = ethers.utils.keccak256(
-        ethers.utils.toUtf8Bytes("hash"),
-      );
-      const addr = await f1155.callStatic.getDeployedAddr(
-        "salt",
-      );
-      const tx = await m1155.pause();
 
-      expect(tx).to.be.ok;
-      await expect(m1155.withdraw()).to.be.ok;
-      await expect(
-        m1155.connect(acc01).pause(),
-      ).to.be.revertedWith(MarketplaceErrors.Unauthorized);
-      await expect(
-        m1155.fixedPrice(addr, 1, 1, price, 1),
-      ).to.be.revertedWith(MarketplaceErrors.Paused);
-      await expect(
-        m1155.dutchAuction(addr, 1, 1, price, price, 1),
-      ).to.be.revertedWith(MarketplaceErrors.Paused);
-      await expect(
-        m1155.englishAuction(addr, 1, 1, price, 1),
-      ).to.be.revertedWith(MarketplaceErrors.Paused);
-      await expect(m1155.bid(orderId)).to.be.revertedWith(
-        MarketplaceErrors.Paused,
-      );
-      await expect(m1155.buy(orderId)).to.be.revertedWith(
-        MarketplaceErrors.Paused,
-      );
-      await expect(m1155.claim(orderId)).to.be.revertedWith(
-        MarketplaceErrors.Paused,
-      );
-      await expect(m1155.bid(orderId)).to.be.revertedWith(
-        MarketplaceErrors.Paused,
-      );
-      await expect(
-        m1155.connect(acc02).unpause(),
-      ).to.be.revertedWith(MarketplaceErrors.Unauthorized);
-      expect(await m1155.unpause()).to.be.ok;
-    });
     it("Should update recipient", async () => {
       const tx = await m1155.setRecipient(mad.address);
 
@@ -200,183 +184,43 @@ describe("MADMarketplace1155", () => {
         MarketplaceErrors.NoBalanceToWithdraw,
       );
     });
-
-    it("Should delete order", async () => {
-      await m1155.updateSettings(300, 10, 20, 31536000);
-      const zero = ethers.constants.Zero;
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
-      );
-      const basic = await ethers.getContractAt(
-        "ERC1155Basic",
-        basicAddr,
-      );
-      const tx_ = await r1155
-        .connect(acc02)
-        .setMintState(basicAddr, true);
-
-      const blockTimestamp = (
-        await m1155.provider.getBlock(tx_.blockNumber || 0)
-      ).timestamp;
-      await r1155
-        .connect(acc02)
-        .basicMintTo(basicAddr, acc02.address, 1, [1], {
-          value: ethers.utils.parseEther("0.25"),
-        });
-      await basic
-        .connect(acc02)
-        .setApprovalForAll(m1155.address, true);
-      const fixepPrice: ContractTransaction = await m1155
-        .connect(acc02)
-        .fixedPrice(
-          basic.address,
-          1,
-          1,
-          price,
-          blockTimestamp + 100,
-        );
-      const rc: ContractReceipt = await fixepPrice.wait();
-      const bn = rc.blockNumber;
-      const orderId = getOrderId1155(
-        bn,
-        basicAddr,
-        1,
-        1,
-        acc02.address,
-      );
-
-      const cBal1 = await basic.callStatic.balanceOf(
-        acc02.address,
-        1,
-      );
-
-      await m1155.pause();
-
-      const tx = await m1155.delOrder(
-        orderId,
-        basicAddr,
-        1,
-        1,
-        acc02.address,
-      );
-      await m1155.unpause();
-
-      const cBal2 = await basic.callStatic.balanceOf(
-        acc02.address,
-        1,
-      );
-
-      const _null: OrderDetails1155 = {
-        orderType: 0,
-        seller: dead,
-        token: dead,
-        tokenId: zero,
-        amount: zero,
-        startPrice: zero,
-        endPrice: zero,
-        startTime: zero,
-        endTime: zero,
-        lastBidPrice: zero,
-        lastBidder: dead,
-        isSold: false,
-      };
-
-      const orderInfo: OrderDetails1155 =
-        await m1155.callStatic.orderInfo(orderId);
-
-      expect(tx).to.be.ok;
-      expect(cBal1).to.eq(0);
-      expect(cBal2).to.eq(1);
-      await expect(
-        m1155.callStatic.orderIdBySeller(acc02.address, 0),
-      ).to.be.reverted;
-      await expect(
-        m1155.callStatic.orderIdByToken(
-          basic.address,
-          1,
-          1,
-          0,
-        ),
-      ).to.be.revertedWithoutReason;
-      expect(orderInfo.orderType).to.eq(_null.orderType);
-      expect(orderInfo.seller).to.eq(_null.seller);
-      expect(orderInfo.token).to.eq(_null.token);
-      expect(orderInfo.tokenId).to.eq(_null.tokenId);
-      expect(orderInfo.amount).to.eq(_null.amount);
-      expect(orderInfo.startPrice).to.eq(_null.startPrice);
-      expect(orderInfo.endPrice).to.eq(_null.endPrice);
-      expect(orderInfo.startTime).to.eq(_null.startTime);
-      expect(orderInfo.endTime).to.eq(_null.endTime);
-      expect(orderInfo.lastBidPrice).to.eq(
-        _null.lastBidPrice,
-      );
-      expect(orderInfo.lastBidder).to.eq(_null.lastBidder);
-      expect(orderInfo.isSold).to.eq(_null.isSold);
-
-      await expect(
-        m1155.delOrder(
-          orderId,
-          basicAddr,
-          1,
-          1,
-          acc02.address,
-        ),
-      ).to.be.revertedWith(MarketplaceErrors.Unpaused);
-    });
   });
   describe("Fixed Price Listing", async () => {
     it("Should revert if transaction approval hasn't been set", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
 
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
+      );
+
+      const basicAddr =
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
       await f1155
         .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
+        .createCollection(
+          1,
+          "BasicSalt",
+          "1155Basic",
+          "BASIC",
+          price,
+          1,
+          "cid/id.json",
+          splitterAddress,
+          750,
+          [],
         );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
-      );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
         basicAddr,
@@ -394,17 +238,21 @@ describe("MADMarketplace1155", () => {
         )
       ).timestamp;
 
-      await expect(
-        m1155
-          .connect(acc01)
-          .fixedPrice(
-            basic.address,
-            1,
-            1,
-            price,
-            blockTimestamp + 300,
-          ),
-      ).to.be.revertedWith(MarketplaceErrors.NotAuthorized);
+      const tx = m1155
+        .connect(acc01)
+        .fixedPrice(
+          basic.address,
+          1,
+          1,
+          price,
+          blockTimestamp + 300,
+        );
+
+      await expect(tx).to.be.revertedWithCustomError(
+        m1155,
+        MarketplaceErrors.NotOwnerNorApproved,
+      );
+
       await expect(
         m1155
           .connect(acc02)
@@ -415,35 +263,43 @@ describe("MADMarketplace1155", () => {
             price,
             blockTimestamp + 300,
           ),
-      ).to.be.revertedWith(MarketplaceErrors.NotAuthorized);
+      ).to.be.revertedWithCustomError(
+        m1155,
+        MarketplaceErrors.NotOwnerNorApproved,
+      );
     });
     it("Should revert if duration is less than min allowed", async () => {
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
       const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
-      );
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await f1155
+        .connect(acc02)
+        .createCollection(
+          1,
+          "BasicSalt",
+          "1155Basic",
+          "BASIC",
+          price,
+          1,
+          "cid/id.json",
+          splitterAddress,
+          750,
+          [],
+        );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
         basicAddr,
@@ -485,32 +341,37 @@ describe("MADMarketplace1155", () => {
       );
     });
     it("Should revert if duration is greater than max allowed", async () => {
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
       const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
-      );
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await f1155
+        .connect(acc02)
+        .createCollection(
+          1,
+          "BasicSalt",
+          "1155Basic",
+          "BASIC",
+          price,
+          1,
+          "cid/id.json",
+          splitterAddress,
+          750,
+          [],
+        );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
         basicAddr,
@@ -554,32 +415,37 @@ describe("MADMarketplace1155", () => {
     it("Should revert if price is invalid", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
 
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
       const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
-      );
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await f1155
+        .connect(acc02)
+        .createCollection(
+          1,
+          "BasicSalt",
+          "1155Basic",
+          "BASIC",
+          price,
+          1,
+          "cid/id.json",
+          splitterAddress,
+          750,
+          [],
+        );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
         basicAddr,
@@ -615,32 +481,37 @@ describe("MADMarketplace1155", () => {
     it("Should list fixed price order, update storage and emit event", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
 
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
       const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
-      );
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await f1155
+        .connect(acc02)
+        .createCollection(
+          1,
+          "BasicSalt",
+          "1155Basic",
+          "BASIC",
+          price,
+          1,
+          "cid/id.json",
+          splitterAddress,
+          750,
+          [],
+        );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
         basicAddr,
@@ -745,65 +616,42 @@ describe("MADMarketplace1155", () => {
     it("Should handle multiple fixed price orders", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
 
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      await f1155.connect(acc02).createCollection(
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
         1,
-        "salt",
-        // "min",
-        // "min",
-        price,
-        1000,
-        "ipfs://cid/",
-        splAddr,
-        750,
-        [],
+        2,
       );
 
-      const wlAddr = await f1155.callStatic.getDeployedAddr(
-        "salt",
+      const basicAddr =
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
 
-      const whitelist = await ethers.getContractAt(
+      const basic = await ethers.getContractAt(
         "ERC1155Basic",
-        wlAddr,
+        basicAddr,
       );
 
-      // const root = ethers.utils.keccak256(
-      // ethers.utils.toUtf8Bytes("root"),
-      // );
+      await r1155
+        .connect(acc02)
+        .setMintState(basicAddr, true);
 
-      // await r1155
-      // .connect(acc02)
-      // .freeSettings(wlAddr, 1, 10, root);
-
-      // await r1155
-      // .connect(acc02)
-      // .gift(
-      // wlAddr,
-      // [
-      // mad.address,
-      // acc01.address,
-      // acc02.address,
-      // owner.address,
-      // amb.address,
-      // ],
-      // [1, 1, 1, 1, 1],
-      // 5,
-      // { value: ethers.utils.parseEther("0.25") },
-      // );
-
-      const wlOwners = [
+      const owners = [
         mad.address,
         acc01.address,
         acc02.address,
@@ -811,27 +659,27 @@ describe("MADMarketplace1155", () => {
         amb.address,
       ].reduce((acc, curr) => ({ ...acc, [curr]: true }), {});
 
-      for (const wlOwner of Object.keys(wlOwners)) {
+      for (const mpOwner of Object.keys(owners)) {
         await r1155
           .connect(acc02)
-          .basicMintTo(whitelist.address, wlOwner, 1, [1], {
+          .basicMintTo(basic.address, mpOwner, 1, [1], {
             value: ethers.utils.parseEther("0.25"),
           });
       }
 
-      await whitelist
+      await basic
         .connect(mad)
         .setApprovalForAll(m1155.address, true);
-      await whitelist
+      await basic
         .connect(acc01)
         .setApprovalForAll(m1155.address, true);
-      await whitelist
+      await basic
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
-      await whitelist
+      await basic
         .connect(owner)
         .setApprovalForAll(m1155.address, true);
-      const tx_ = await whitelist
+      const tx_ = await basic
         .connect(amb)
         .setApprovalForAll(m1155.address, true);
 
@@ -842,7 +690,7 @@ describe("MADMarketplace1155", () => {
       const fpTx1 = await m1155
         .connect(mad)
         .fixedPrice(
-          whitelist.address,
+          basic.address,
           1,
           1,
           price,
@@ -854,7 +702,7 @@ describe("MADMarketplace1155", () => {
       const fpTx2 = await m1155
         .connect(acc01)
         .fixedPrice(
-          whitelist.address,
+          basic.address,
           2,
           1,
           price,
@@ -866,7 +714,7 @@ describe("MADMarketplace1155", () => {
       const fpTx3 = await m1155
         .connect(acc02)
         .fixedPrice(
-          whitelist.address,
+          basic.address,
           3,
           1,
           price,
@@ -878,7 +726,7 @@ describe("MADMarketplace1155", () => {
       const fpTx4 = await m1155
         .connect(owner)
         .fixedPrice(
-          whitelist.address,
+          basic.address,
           4,
           1,
           price,
@@ -890,7 +738,7 @@ describe("MADMarketplace1155", () => {
       const fpTx5 = await m1155
         .connect(amb)
         .fixedPrice(
-          whitelist.address,
+          basic.address,
           5,
           1,
           price,
@@ -901,92 +749,92 @@ describe("MADMarketplace1155", () => {
 
       const fpOrderId1 = getOrderId1155(
         fpBn1,
-        whitelist.address,
+        basic.address,
         1,
         1,
         mad.address,
       );
       const fpOrderId2 = getOrderId1155(
         fpBn2,
-        whitelist.address,
+        basic.address,
         2,
         1,
         acc01.address,
       );
       const fpOrderId3 = getOrderId1155(
         fpBn3,
-        whitelist.address,
+        basic.address,
         3,
         1,
         acc02.address,
       );
       const fpOrderId4 = getOrderId1155(
         fpBn4,
-        whitelist.address,
+        basic.address,
         4,
         1,
         owner.address,
       );
       const fpOrderId5 = getOrderId1155(
         fpBn5,
-        whitelist.address,
+        basic.address,
         5,
         1,
         amb.address,
       );
 
       const tx1 = await m1155.callStatic.tokenOrderLength(
-        whitelist.address,
+        basic.address,
         1,
         1,
       );
       const tx2 = await m1155.callStatic.tokenOrderLength(
-        whitelist.address,
+        basic.address,
         2,
         1,
       );
       const tx3 = await m1155.callStatic.tokenOrderLength(
-        whitelist.address,
+        basic.address,
         3,
         1,
       );
       const tx4 = await m1155.callStatic.tokenOrderLength(
-        whitelist.address,
+        basic.address,
         4,
         1,
       );
       const tx5 = await m1155.callStatic.tokenOrderLength(
-        whitelist.address,
+        basic.address,
         5,
         1,
       );
 
       const txA = await m1155.callStatic.orderIdByToken(
-        whitelist.address,
+        basic.address,
         1,
         1,
         0,
       );
       const txB = await m1155.callStatic.orderIdByToken(
-        whitelist.address,
+        basic.address,
         2,
         1,
         0,
       );
       const txC = await m1155.callStatic.orderIdByToken(
-        whitelist.address,
+        basic.address,
         3,
         1,
         0,
       );
       const txD = await m1155.callStatic.orderIdByToken(
-        whitelist.address,
+        basic.address,
         4,
         1,
         0,
       );
       const txE = await m1155.callStatic.orderIdByToken(
-        whitelist.address,
+        basic.address,
         5,
         1,
         0,
@@ -1029,11 +877,11 @@ describe("MADMarketplace1155", () => {
         amb.address,
       );
 
-      // const owner1 = await whitelist.callStatic.ownerOf(1);
-      // const owner2 = await whitelist.callStatic.ownerOf(2);
-      // const owner3 = await whitelist.callStatic.ownerOf(3);
-      // const owner4 = await whitelist.callStatic.ownerOf(4);
-      // const owner5 = await whitelist.callStatic.ownerOf(5);
+      // const owner1 = await basic.callStatic.ownerOf(1);
+      // const owner2 = await basic.callStatic.ownerOf(2);
+      // const owner3 = await basic.callStatic.ownerOf(3);
+      // const owner4 = await basic.callStatic.ownerOf(4);
+      // const owner5 = await basic.callStatic.ownerOf(5);
 
       expect(fpTx1).to.be.ok;
       expect(fpTx2).to.be.ok;
@@ -1073,51 +921,57 @@ describe("MADMarketplace1155", () => {
 
       await expect(fpTx1)
         .to.emit(m1155, "MakeOrder")
-        .withArgs(wlAddr, 1, 1, fpOrderId1, mad.address);
+        .withArgs(basicAddr, 1, 1, fpOrderId1, mad.address);
       await expect(fpTx2)
         .to.emit(m1155, "MakeOrder")
-        .withArgs(wlAddr, 2, 1, fpOrderId2, acc01.address);
+        .withArgs(basicAddr, 2, 1, fpOrderId2, acc01.address);
       await expect(fpTx3)
         .to.emit(m1155, "MakeOrder")
-        .withArgs(wlAddr, 3, 1, fpOrderId3, acc02.address);
+        .withArgs(basicAddr, 3, 1, fpOrderId3, acc02.address);
       await expect(fpTx4)
         .to.emit(m1155, "MakeOrder")
-        .withArgs(wlAddr, 4, 1, fpOrderId4, owner.address);
+        .withArgs(basicAddr, 4, 1, fpOrderId4, owner.address);
       await expect(fpTx5)
         .to.emit(m1155, "MakeOrder")
-        .withArgs(wlAddr, 5, 1, fpOrderId5, amb.address);
+        .withArgs(basicAddr, 5, 1, fpOrderId5, amb.address);
     });
   });
   describe("Dutch Auction Listing", async () => {
     it("Should revert if transaction approval hasn't been set", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
 
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
+      );
+
+      const basicAddr =
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
       await f1155
         .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
+        .createCollection(
+          1,
+          "BasicSalt",
+          "1155Basic",
+          "BASIC",
+          price,
+          1,
+          "cid/id.json",
+          splitterAddress,
+          750,
+          [],
         );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
-      );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
         basicAddr,
@@ -1144,7 +998,10 @@ describe("MADMarketplace1155", () => {
             0,
             blockTimestamp + 300,
           ),
-      ).to.be.revertedWith(MarketplaceErrors.NotAuthorized);
+      ).to.be.revertedWithCustomError(
+        m1155,
+        MarketplaceErrors.NotOwnerNorApproved,
+      );
       await expect(
         m1155
           .connect(acc02)
@@ -1156,35 +1013,44 @@ describe("MADMarketplace1155", () => {
             0,
             blockTimestamp + 300,
           ),
-      ).to.be.revertedWith(MarketplaceErrors.NotAuthorized);
+      ).to.be.revertedWithCustomError(
+        m1155,
+        MarketplaceErrors.NotOwnerNorApproved,
+      );
     });
     it("Should revert if duration is less than min allowed", async () => {
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
+      );
+
+      const basicAddr =
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
       await f1155
         .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
+        .createCollection(
+          1,
+          "BasicSalt",
+          "1155Basic",
+          "BASIC",
+          price,
+          1,
+          "cid/id.json",
+          splitterAddress,
+          750,
+          [],
         );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
-      );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
         basicAddr,
@@ -1233,32 +1099,38 @@ describe("MADMarketplace1155", () => {
       );
     });
     it("Should revert if duration is greater than max allowed", async () => {
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
+      );
+
+      const basicAddr =
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
       await f1155
         .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
+        .createCollection(
+          1,
+          "BasicSalt",
+          "1155Basic",
+          "BASIC",
+          price,
+          1,
+          "cid/id.json",
+          splitterAddress,
+          750,
+          [],
         );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
-      );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
         basicAddr,
@@ -1308,33 +1180,38 @@ describe("MADMarketplace1155", () => {
     });
     it("Should revert if startPrice is invalid", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
+      );
 
+      const basicAddr =
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
       await f1155
         .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
+        .createCollection(
+          1,
+          "BasicSalt",
+          "1155Basic",
+          "BASIC",
+          price,
+          1,
+          "cid/id.json",
+          splitterAddress,
+          750,
+          [],
         );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
-      );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
         basicAddr,
@@ -1385,33 +1262,38 @@ describe("MADMarketplace1155", () => {
     });
     it("Should list dutch auction order, update storage and emit event", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
+      );
 
+      const basicAddr =
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
       await f1155
         .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
+        .createCollection(
+          1,
+          "BasicSalt",
+          "1155Basic",
+          "BASIC",
+          price,
+          1,
+          "cid/id.json",
+          splitterAddress,
+          750,
+          [],
         );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
-      );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
         basicAddr,
@@ -1515,66 +1397,37 @@ describe("MADMarketplace1155", () => {
     });
     it("Should handle multiple dutch auction orders", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
-
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      await f1155.connect(acc02).createCollection(
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
         1,
-        "salt",
-        // "",
-        // "",
-        price,
-        1000,
-        "ipfs://cid/",
-        splAddr,
-        750,
-        [],
+        2,
       );
 
-      const wlAddr = await f1155.callStatic.getDeployedAddr(
-        "salt",
+      const basicAddr =
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
 
-      const whitelist = await ethers.getContractAt(
+      const basic = await ethers.getContractAt(
         "ERC1155Basic",
-        wlAddr,
+        basicAddr,
       );
 
-      // const root = ethers.utils.keccak256(
-      //   ethers.utils.toUtf8Bytes("root"),
-      // );
-
-      // await r1155
-      //   .connect(acc02)
-      //   .freeSettings(wlAddr, 1, 10, root);
-
-      // await r1155
-      //   .connect(acc02)
-      //   .gift(
-      //     wlAddr,
-      //     [
-      //       mad.address,
-      //       acc01.address,
-      //       acc02.address,
-      //       owner.address,
-      //       amb.address,
-      //     ],
-      //     [1, 1, 1, 1, 1],
-      //     5,
-      //     { value: ethers.utils.parseEther("0.25") },
-      //   );
-
-      const wlOwners = [
+      const owners = [
         mad.address,
         acc01.address,
         acc02.address,
@@ -1582,27 +1435,27 @@ describe("MADMarketplace1155", () => {
         amb.address,
       ].reduce((acc, curr) => ({ ...acc, [curr]: true }), {});
 
-      for (const wlOwner of Object.keys(wlOwners)) {
+      for (const mpOwner of Object.keys(owners)) {
         await r1155
           .connect(acc02)
-          .basicMintTo(whitelist.address, wlOwner, 1, [1], {
+          .basicMintTo(basic.address, mpOwner, 1, [1], {
             value: ethers.utils.parseEther("0.25"),
           });
       }
 
-      await whitelist
+      await basic
         .connect(mad)
         .setApprovalForAll(m1155.address, true);
-      await whitelist
+      await basic
         .connect(acc01)
         .setApprovalForAll(m1155.address, true);
-      await whitelist
+      await basic
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
-      await whitelist
+      await basic
         .connect(owner)
         .setApprovalForAll(m1155.address, true);
-      const tx_ = await whitelist
+      const tx_ = await basic
         .connect(amb)
         .setApprovalForAll(m1155.address, true);
 
@@ -1613,7 +1466,7 @@ describe("MADMarketplace1155", () => {
       const daTx1 = await m1155
         .connect(mad)
         .dutchAuction(
-          whitelist.address,
+          basic.address,
           1,
           1,
           price,
@@ -1626,7 +1479,7 @@ describe("MADMarketplace1155", () => {
       const daTx2 = await m1155
         .connect(acc01)
         .dutchAuction(
-          whitelist.address,
+          basic.address,
           2,
           1,
           price,
@@ -1639,7 +1492,7 @@ describe("MADMarketplace1155", () => {
       const daTx3 = await m1155
         .connect(acc02)
         .dutchAuction(
-          whitelist.address,
+          basic.address,
           3,
           1,
           price,
@@ -1652,7 +1505,7 @@ describe("MADMarketplace1155", () => {
       const daTx4 = await m1155
         .connect(owner)
         .dutchAuction(
-          whitelist.address,
+          basic.address,
           4,
           1,
           price,
@@ -1665,7 +1518,7 @@ describe("MADMarketplace1155", () => {
       const daTx5 = await m1155
         .connect(amb)
         .dutchAuction(
-          whitelist.address,
+          basic.address,
           5,
           1,
           price,
@@ -1677,92 +1530,92 @@ describe("MADMarketplace1155", () => {
 
       const daOrderId1 = getOrderId1155(
         daBn1,
-        whitelist.address,
+        basic.address,
         1,
         1,
         mad.address,
       );
       const daOrderId2 = getOrderId1155(
         daBn2,
-        whitelist.address,
+        basic.address,
         2,
         1,
         acc01.address,
       );
       const daOrderId3 = getOrderId1155(
         daBn3,
-        whitelist.address,
+        basic.address,
         3,
         1,
         acc02.address,
       );
       const daOrderId4 = getOrderId1155(
         daBn4,
-        whitelist.address,
+        basic.address,
         4,
         1,
         owner.address,
       );
       const daOrderId5 = getOrderId1155(
         daBn5,
-        whitelist.address,
+        basic.address,
         5,
         1,
         amb.address,
       );
 
       const tx1 = await m1155.callStatic.tokenOrderLength(
-        whitelist.address,
+        basic.address,
         1,
         1,
       );
       const tx2 = await m1155.callStatic.tokenOrderLength(
-        whitelist.address,
+        basic.address,
         2,
         1,
       );
       const tx3 = await m1155.callStatic.tokenOrderLength(
-        whitelist.address,
+        basic.address,
         3,
         1,
       );
       const tx4 = await m1155.callStatic.tokenOrderLength(
-        whitelist.address,
+        basic.address,
         4,
         1,
       );
       const tx5 = await m1155.callStatic.tokenOrderLength(
-        whitelist.address,
+        basic.address,
         5,
         1,
       );
 
       const txA = await m1155.callStatic.orderIdByToken(
-        whitelist.address,
+        basic.address,
         1,
         1,
         0,
       );
       const txB = await m1155.callStatic.orderIdByToken(
-        whitelist.address,
+        basic.address,
         2,
         1,
         0,
       );
       const txC = await m1155.callStatic.orderIdByToken(
-        whitelist.address,
+        basic.address,
         3,
         1,
         0,
       );
       const txD = await m1155.callStatic.orderIdByToken(
-        whitelist.address,
+        basic.address,
         4,
         1,
         0,
       );
       const txE = await m1155.callStatic.orderIdByToken(
-        whitelist.address,
+        basic.address,
         5,
         1,
         0,
@@ -1805,11 +1658,11 @@ describe("MADMarketplace1155", () => {
         amb.address,
       );
 
-      // const owner1 = await whitelist.callStatic.ownerOf(1);
-      // const owner2 = await whitelist.callStatic.ownerOf(2);
-      // const owner3 = await whitelist.callStatic.ownerOf(3);
-      // const owner4 = await whitelist.callStatic.ownerOf(4);
-      // const owner5 = await whitelist.callStatic.ownerOf(5);
+      // const owner1 = await basic.callStatic.ownerOf(1);
+      // const owner2 = await basic.callStatic.ownerOf(2);
+      // const owner3 = await basic.callStatic.ownerOf(3);
+      // const owner4 = await basic.callStatic.ownerOf(4);
+      // const owner5 = await basic.callStatic.ownerOf(5);
 
       expect(daTx1).to.be.ok;
       expect(daTx2).to.be.ok;
@@ -1849,51 +1702,50 @@ describe("MADMarketplace1155", () => {
 
       await expect(daTx1)
         .to.emit(m1155, "MakeOrder")
-        .withArgs(wlAddr, 1, 1, daOrderId1, mad.address);
+        .withArgs(basicAddr, 1, 1, daOrderId1, mad.address);
       await expect(daTx2)
         .to.emit(m1155, "MakeOrder")
-        .withArgs(wlAddr, 2, 1, daOrderId2, acc01.address);
+        .withArgs(basicAddr, 2, 1, daOrderId2, acc01.address);
       await expect(daTx3)
         .to.emit(m1155, "MakeOrder")
-        .withArgs(wlAddr, 3, 1, daOrderId3, acc02.address);
+        .withArgs(basicAddr, 3, 1, daOrderId3, acc02.address);
       await expect(daTx4)
         .to.emit(m1155, "MakeOrder")
-        .withArgs(wlAddr, 4, 1, daOrderId4, owner.address);
+        .withArgs(basicAddr, 4, 1, daOrderId4, owner.address);
       await expect(daTx5)
         .to.emit(m1155, "MakeOrder")
-        .withArgs(wlAddr, 5, 1, daOrderId5, amb.address);
+        .withArgs(basicAddr, 5, 1, daOrderId5, amb.address);
     });
   });
   describe("English Auction Listing", async () => {
     it("Should revert if transaction approval hasn't been set", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
 
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
+
       const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
+
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
         basicAddr,
@@ -1918,7 +1770,10 @@ describe("MADMarketplace1155", () => {
             price,
             blockTimestamp + 300,
           ),
-      ).to.be.revertedWith(MarketplaceErrors.NotAuthorized);
+      ).to.be.revertedWithCustomError(
+        m1155,
+        MarketplaceErrors.NotOwnerNorApproved,
+      );
       await expect(
         m1155
           .connect(acc02)
@@ -1929,34 +1784,35 @@ describe("MADMarketplace1155", () => {
             price,
             blockTimestamp + 300,
           ),
-      ).to.be.revertedWith(MarketplaceErrors.NotAuthorized);
+      ).to.be.revertedWithCustomError(
+        m1155,
+        MarketplaceErrors.NotOwnerNorApproved,
+      );
     });
     it("Should revert if duration is less than min allowed", async () => {
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
+
       const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -2004,32 +1860,31 @@ describe("MADMarketplace1155", () => {
       );
     });
     it("Should revert if duration is greater than max allowed", async () => {
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
+
       const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
+
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
         basicAddr,
@@ -2077,32 +1932,29 @@ describe("MADMarketplace1155", () => {
     });
     it("Should revert if startPrice is invalid", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
-
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
+
       const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -2138,32 +1990,29 @@ describe("MADMarketplace1155", () => {
     });
     it("Should list english auction order, update storage and emit event", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
-
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
+
       const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -2267,38 +2116,34 @@ describe("MADMarketplace1155", () => {
     it("Should handle multiple english auction orders", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
 
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      await f1155.connect(acc02).createCollection(
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
         1,
-        "salt",
-        // "",
-        // "",
-        price,
-        1000,
-        "ipfs://cid/",
-        splAddr,
-        750,
-        [],
+        2,
       );
 
-      const wlAddr = await f1155.callStatic.getDeployedAddr(
-        "salt",
+      const basicAddr =
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
 
-      const whitelist = await ethers.getContractAt(
+      const basic = await ethers.getContractAt(
         "ERC1155Basic",
-        wlAddr,
+        basicAddr,
       );
 
       // const root = ethers.utils.keccak256(
@@ -2307,12 +2152,12 @@ describe("MADMarketplace1155", () => {
 
       // await r1155
       //   .connect(acc02)
-      //   .freeSettings(wlAddr, 1, 10, root);
+      //   .freeSettings(basicAddr, 1, 10, root);
 
       // await r1155
       //   .connect(acc02)
       //   .gift(
-      //     wlAddr,
+      //     basicAddr,
       //     [
       //       mad.address,
       //       acc01.address,
@@ -2325,7 +2170,7 @@ describe("MADMarketplace1155", () => {
       //     { value: ethers.utils.parseEther("0.25") },
       //   );
 
-      const wlOwners = [
+      const owners = [
         mad.address,
         acc01.address,
         acc02.address,
@@ -2333,27 +2178,27 @@ describe("MADMarketplace1155", () => {
         amb.address,
       ].reduce((acc, curr) => ({ ...acc, [curr]: true }), {});
 
-      for (const wlOwner of Object.keys(wlOwners)) {
+      for (const mpOwner of Object.keys(owners)) {
         await r1155
           .connect(acc02)
-          .basicMintTo(whitelist.address, wlOwner, 1, [1], {
+          .basicMintTo(basic.address, mpOwner, 1, [1], {
             value: ethers.utils.parseEther("0.25"),
           });
       }
 
-      await whitelist
+      await basic
         .connect(mad)
         .setApprovalForAll(m1155.address, true);
-      await whitelist
+      await basic
         .connect(acc01)
         .setApprovalForAll(m1155.address, true);
-      await whitelist
+      await basic
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
-      await whitelist
+      await basic
         .connect(owner)
         .setApprovalForAll(m1155.address, true);
-      const tx_ = await whitelist
+      const tx_ = await basic
         .connect(amb)
         .setApprovalForAll(m1155.address, true);
 
@@ -2364,7 +2209,7 @@ describe("MADMarketplace1155", () => {
       const eaTx1 = await m1155
         .connect(mad)
         .englishAuction(
-          whitelist.address,
+          basic.address,
           1,
           1,
           price,
@@ -2376,7 +2221,7 @@ describe("MADMarketplace1155", () => {
       const eaTx2 = await m1155
         .connect(acc01)
         .englishAuction(
-          whitelist.address,
+          basic.address,
           2,
           1,
           price,
@@ -2388,7 +2233,7 @@ describe("MADMarketplace1155", () => {
       const eaTx3 = await m1155
         .connect(acc02)
         .englishAuction(
-          whitelist.address,
+          basic.address,
           3,
           1,
           price,
@@ -2400,7 +2245,7 @@ describe("MADMarketplace1155", () => {
       const eaTx4 = await m1155
         .connect(owner)
         .englishAuction(
-          whitelist.address,
+          basic.address,
           4,
           1,
           price,
@@ -2412,7 +2257,7 @@ describe("MADMarketplace1155", () => {
       const eaTx5 = await m1155
         .connect(amb)
         .englishAuction(
-          whitelist.address,
+          basic.address,
           5,
           1,
           price,
@@ -2423,92 +2268,92 @@ describe("MADMarketplace1155", () => {
 
       const eaOrderId1 = getOrderId1155(
         eaBn1,
-        whitelist.address,
+        basic.address,
         1,
         1,
         mad.address,
       );
       const eaOrderId2 = getOrderId1155(
         eaBn2,
-        whitelist.address,
+        basic.address,
         2,
         1,
         acc01.address,
       );
       const eaOrderId3 = getOrderId1155(
         eaBn3,
-        whitelist.address,
+        basic.address,
         3,
         1,
         acc02.address,
       );
       const eaOrderId4 = getOrderId1155(
         eaBn4,
-        whitelist.address,
+        basic.address,
         4,
         1,
         owner.address,
       );
       const eaOrderId5 = getOrderId1155(
         eaBn5,
-        whitelist.address,
+        basic.address,
         5,
         1,
         amb.address,
       );
 
       const tx1 = await m1155.callStatic.tokenOrderLength(
-        whitelist.address,
+        basic.address,
         1,
         1,
       );
       const tx2 = await m1155.callStatic.tokenOrderLength(
-        whitelist.address,
+        basic.address,
         2,
         1,
       );
       const tx3 = await m1155.callStatic.tokenOrderLength(
-        whitelist.address,
+        basic.address,
         3,
         1,
       );
       const tx4 = await m1155.callStatic.tokenOrderLength(
-        whitelist.address,
+        basic.address,
         4,
         1,
       );
       const tx5 = await m1155.callStatic.tokenOrderLength(
-        whitelist.address,
+        basic.address,
         5,
         1,
       );
 
       const txA = await m1155.callStatic.orderIdByToken(
-        whitelist.address,
+        basic.address,
         1,
         1,
         0,
       );
       const txB = await m1155.callStatic.orderIdByToken(
-        whitelist.address,
+        basic.address,
         2,
         1,
         0,
       );
       const txC = await m1155.callStatic.orderIdByToken(
-        whitelist.address,
+        basic.address,
         3,
         1,
         0,
       );
       const txD = await m1155.callStatic.orderIdByToken(
-        whitelist.address,
+        basic.address,
         4,
         1,
         0,
       );
       const txE = await m1155.callStatic.orderIdByToken(
-        whitelist.address,
+        basic.address,
         5,
         1,
         0,
@@ -2551,11 +2396,11 @@ describe("MADMarketplace1155", () => {
         amb.address,
       );
 
-      // const owner1 = await whitelist.callStatic.ownerOf(1);
-      // const owner2 = await whitelist.callStatic.ownerOf(2);
-      // const owner3 = await whitelist.callStatic.ownerOf(3);
-      // const owner4 = await whitelist.callStatic.ownerOf(4);
-      // const owner5 = await whitelist.callStatic.ownerOf(5);
+      // const owner1 = await basic.callStatic.ownerOf(1);
+      // const owner2 = await basic.callStatic.ownerOf(2);
+      // const owner3 = await basic.callStatic.ownerOf(3);
+      // const owner4 = await basic.callStatic.ownerOf(4);
+      // const owner5 = await basic.callStatic.ownerOf(5);
 
       expect(eaTx1).to.be.ok;
       expect(eaTx2).to.be.ok;
@@ -2595,50 +2440,48 @@ describe("MADMarketplace1155", () => {
 
       await expect(eaTx1)
         .to.emit(m1155, "MakeOrder")
-        .withArgs(wlAddr, 1, 1, eaOrderId1, mad.address);
+        .withArgs(basicAddr, 1, 1, eaOrderId1, mad.address);
       await expect(eaTx2)
         .to.emit(m1155, "MakeOrder")
-        .withArgs(wlAddr, 2, 1, eaOrderId2, acc01.address);
+        .withArgs(basicAddr, 2, 1, eaOrderId2, acc01.address);
       await expect(eaTx3)
         .to.emit(m1155, "MakeOrder")
-        .withArgs(wlAddr, 3, 1, eaOrderId3, acc02.address);
+        .withArgs(basicAddr, 3, 1, eaOrderId3, acc02.address);
       await expect(eaTx4)
         .to.emit(m1155, "MakeOrder")
-        .withArgs(wlAddr, 4, 1, eaOrderId4, owner.address);
+        .withArgs(basicAddr, 4, 1, eaOrderId4, owner.address);
       await expect(eaTx5)
         .to.emit(m1155, "MakeOrder")
-        .withArgs(wlAddr, 5, 1, eaOrderId5, amb.address);
+        .withArgs(basicAddr, 5, 1, eaOrderId5, amb.address);
     });
   });
   describe("Bidding", async () => {
     it("Should revert if price is wrong", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
 
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
+
       const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -2700,31 +2543,29 @@ describe("MADMarketplace1155", () => {
     it("Should revert if not English Auction", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
 
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
+
       const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -2770,32 +2611,29 @@ describe("MADMarketplace1155", () => {
     });
     it("Should revert if order was canceled", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
-
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
+
       const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -2844,32 +2682,29 @@ describe("MADMarketplace1155", () => {
     });
     it("Should revert if order has timed out", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
-
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
+
       const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -2918,32 +2753,29 @@ describe("MADMarketplace1155", () => {
     });
     it("Should revert if bidder is the seller", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
-
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
+
       const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -2990,31 +2822,29 @@ describe("MADMarketplace1155", () => {
     it("Should bid, update storage and emit events", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
 
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
+
       const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -3098,31 +2928,29 @@ describe("MADMarketplace1155", () => {
     it("Should bid, update storage and emit events; check user is returned their bid amount (which must be withdrawn)", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
 
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
+
       const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -3231,32 +3059,29 @@ describe("MADMarketplace1155", () => {
   describe("Buying", async () => {
     it("Should revert if price is wrong", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
-
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
+
       const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -3302,32 +3127,29 @@ describe("MADMarketplace1155", () => {
     });
     it("Should revert if order is an English Auction", async () => {
       await m1155.updateSettings(20, 10, 20, 31536000);
-
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
+
       const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -3374,31 +3196,29 @@ describe("MADMarketplace1155", () => {
     it("Should revert if order was canceled", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
 
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
+
       const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -3448,31 +3268,29 @@ describe("MADMarketplace1155", () => {
     it("Should revert if order has timed out", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
 
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
+
       const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -3521,32 +3339,29 @@ describe("MADMarketplace1155", () => {
     });
     it("Should revert if token has already been sold", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
-
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
+
       const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -3597,32 +3412,29 @@ describe("MADMarketplace1155", () => {
     it("Should buy inhouse minted tokens, update storage and emit events", async () => {
       // fixed price order
       await m1155.updateSettings(300, 10, 20, 31536000);
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
 
       const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -3665,19 +3477,24 @@ describe("MADMarketplace1155", () => {
 
       // dutch auction order
       const basicAddr2 =
-        await f1155.callStatic.getDeployedAddr("BasicSalt2");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt2",
-        // "1155Basic2",
-        // "BASIC2",
-        price,
-        1,
-        "ipfs://cid/",
-        splAddr,
-        750,
-        [],
-      );
+        await f1155.callStatic.getDeployedAddr(
+          "BasicSalt2",
+          acc02.address,
+        );
+      await f1155
+        .connect(acc02)
+        .createCollection(
+          1,
+          "BasicSalt2",
+          "1155Basic2",
+          "BASIC2",
+          price,
+          1,
+          "ipfs://cid/",
+          splitterAddress,
+          750,
+          [],
+        );
       const basic2 = await ethers.getContractAt(
         "ERC1155Basic",
         basicAddr2,
@@ -3732,7 +3549,6 @@ describe("MADMarketplace1155", () => {
         .connect(acc01)
         .buy(daOrderId, { value: daPrice });
 
-      const zero = ethers.constants.Zero;
       const one = ethers.constants.One;
       const cBal1 = await basic.callStatic.balanceOf(
         acc01.address,
@@ -3873,35 +3689,29 @@ describe("MADMarketplace1155", () => {
     });
     it("Should verify inhouse minted tokens balance changes", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
-      // const splitter = await ethers.getContractAt(
-      //   "SplitterImpl",
-      //   splAddr,
-      // );
+
       const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -3955,19 +3765,24 @@ describe("MADMarketplace1155", () => {
 
       // dutch auction order
       const basicAddr2 =
-        await f1155.callStatic.getDeployedAddr("BasicSalt2");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt2",
-        // "1155Basic2",
-        // "BASIC2",
-        price,
-        1,
-        "ipfs://cid/",
-        splAddr,
-        750,
-        [],
-      );
+        await f1155.callStatic.getDeployedAddr(
+          "BasicSalt2",
+          acc02.address,
+        );
+      await f1155
+        .connect(acc02)
+        .createCollection(
+          1,
+          "BasicSalt2",
+          "1155Basic2",
+          "BASIC2",
+          price,
+          1,
+          "ipfs://cid/",
+          splitterAddress,
+          750,
+          [],
+        );
       const basic2 = await ethers.getContractAt(
         "ERC1155Basic",
         basicAddr2,
@@ -4263,35 +4078,29 @@ describe("MADMarketplace1155", () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
       await m1155.setFees(1.5e3, 5.0e2);
 
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      // const splitter = await ethers.getContractAt(
-      //   "SplitterImpl",
-      //   splAddr,
-      // );
-      const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
         1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        10,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
+        2,
+      );
+
+      const basicAddr =
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -4348,19 +4157,24 @@ describe("MADMarketplace1155", () => {
 
       // dutch auction order
       const basicAddr2 =
-        await f1155.callStatic.getDeployedAddr("BasicSalt2");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt2",
-        // "1155Basic2",
-        // "BASIC2",
-        price,
-        10,
-        "ipfs://cid/",
-        splAddr,
-        750,
-        [],
-      );
+        await f1155.callStatic.getDeployedAddr(
+          "BasicSalt2",
+          acc02.address,
+        );
+      await f1155
+        .connect(acc02)
+        .createCollection(
+          1,
+          "BasicSalt2",
+          "1155Basic2",
+          "BASIC2",
+          price,
+          10,
+          "ipfs://cid/",
+          splitterAddress,
+          750,
+          [],
+        );
       const basic2 = await ethers.getContractAt(
         "ERC1155Basic",
         basicAddr2,
@@ -4660,31 +4474,29 @@ describe("MADMarketplace1155", () => {
     it("Should revert if caller is seller or bidder", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
 
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
+
       const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -4748,31 +4560,29 @@ describe("MADMarketplace1155", () => {
     it("Should revert if token has already been claimed", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
 
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
+
       const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -4894,31 +4704,29 @@ describe("MADMarketplace1155", () => {
     it("Should revert if auction hasn't ended", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
 
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
+
       const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -4967,32 +4775,29 @@ describe("MADMarketplace1155", () => {
     });
     it("Should claim inhouse minted tokens, update storage and emit events", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
-
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
+
       const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -5051,7 +4856,6 @@ describe("MADMarketplace1155", () => {
       const eaOrderInfo: OrderDetails1155 =
         await m1155.callStatic.orderInfo(orderId);
 
-      const zero = ethers.constants.Zero;
       const one = ethers.constants.One;
       const cBal1 = await basic.callStatic.balanceOf(
         acc01.address,
@@ -5123,32 +4927,29 @@ describe("MADMarketplace1155", () => {
     it("Should verify inhouse minted tokens balance changes", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
 
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
-      const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
 
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
+      const basicAddr =
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -5156,7 +4957,7 @@ describe("MADMarketplace1155", () => {
       );
       const splitter = await ethers.getContractAt(
         "SplitterImpl",
-        splAddr,
+        splitterAddress,
       );
       await r1155
         .connect(acc02)
@@ -5359,31 +5160,29 @@ describe("MADMarketplace1155", () => {
     it("Should revert due to already sold fixed price order", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
 
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
+
       const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -5433,31 +5232,29 @@ describe("MADMarketplace1155", () => {
     });
     it("Should revert due to already sold dutch auction order", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
+
       const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -5526,31 +5323,29 @@ describe("MADMarketplace1155", () => {
     it("Should revert due to already sold english auction order", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
 
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
+
       const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -5620,31 +5415,29 @@ describe("MADMarketplace1155", () => {
     it("Should cancel fixed price order", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
 
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
+
       const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -5715,36 +5508,36 @@ describe("MADMarketplace1155", () => {
       // );
       await expect(
         m1155.connect(acc02).cancelOrder(orderId),
-      ).to.be.revertedWith(MarketplaceErrors.WrongFrom);
+      ).to.be.revertedWithCustomError(
+        m1155,
+        MarketplaceErrors.InsufficientBalance,
+      );
     });
     it("Should cancel dutch auction order", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
-
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
+
       const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -5816,36 +5609,36 @@ describe("MADMarketplace1155", () => {
       // );
       await expect(
         m1155.connect(acc02).cancelOrder(orderId),
-      ).to.be.revertedWith(MarketplaceErrors.WrongFrom);
+      ).to.be.revertedWithCustomError(
+        m1155,
+        MarketplaceErrors.InsufficientBalance,
+      );
     });
     it("Should cancel english auction order", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
-
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
+
       const basicAddr =
-        await f1155.callStatic.getDeployedAddr("BasicSalt");
-      await f1155.connect(acc02).createCollection(
-        1,
-        "BasicSalt",
-        // "1155Basic",
-        // "BASIC",
-        price,
-        1,
-        "cid/id.json",
-        splAddr,
-        750,
-        [],
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
       );
       const basic = await ethers.getContractAt(
         "ERC1155Basic",
@@ -5916,45 +5709,44 @@ describe("MADMarketplace1155", () => {
       // );
       await expect(
         m1155.connect(acc02).cancelOrder(orderId),
-      ).to.be.revertedWith(MarketplaceErrors.WrongFrom);
+      ).to.be.revertedWithCustomError(
+        m1155,
+        MarketplaceErrors.InsufficientBalance,
+      );
     });
   });
   describe("Public Helpers", async () => {
     it("Should fetch the length of orderIds for a token", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
 
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      await f1155
-        .connect(acc02)
-        .createCollection(
-          1,
-          "salt",
-          price,
-          1000,
-          "ipfs://cid/",
-          splAddr,
-          750,
-          [],
-        );
-
-      const wlAddr = await f1155.callStatic.getDeployedAddr(
-        "salt",
+      const splitterAddress = await splitterDeployment(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
 
-      const whitelist = await ethers.getContractAt(
+      const basicAddr =
+        await f1155.callStatic.getDeployedAddr(
+          _basicSalt,
+          acc02.address,
+        );
+
+      await createCollection(
+        f1155,
+        acc02,
+        _basicSalt,
+        splitterAddress,
+      );
+      const basic = await ethers.getContractAt(
         "ERC1155Basic",
-        wlAddr,
+        basicAddr,
       );
 
       // const root = ethers.utils.keccak256(
@@ -5963,39 +5755,39 @@ describe("MADMarketplace1155", () => {
 
       // await r1155
       //   .connect(acc02)
-      //   .freeSettings(wlAddr, 1, 10, root);
+      //   .freeSettings(basicAddr, 1, 10, root);
 
       // await r1155
       //   .connect(acc02)
       //   .gift(
-      //     wlAddr,
+      //     basicAddr,
       //     [mad.address, acc01.address, acc02.address],
       //     [1, 1, 1],
       //     3,
       //     { value: ethers.utils.parseEther("0.25") },
       //   );
 
-      const wlOwners = [
+      const owners = [
         mad.address,
         acc01.address,
         acc02.address,
       ].reduce((acc, curr) => ({ ...acc, [curr]: true }), {});
 
-      for (const wlOwner of Object.keys(wlOwners)) {
+      for (const mpOwner of Object.keys(owners)) {
         await r1155
           .connect(acc02)
-          .basicMintTo(whitelist.address, wlOwner, 1, [1], {
+          .basicMintTo(basic.address, mpOwner, 1, [1], {
             value: ethers.utils.parseEther("0.25"),
           });
       }
 
-      await whitelist
+      await basic
         .connect(mad)
         .setApprovalForAll(m1155.address, true);
-      await whitelist
+      await basic
         .connect(acc01)
         .setApprovalForAll(m1155.address, true);
-      const tx_ = await whitelist
+      const tx_ = await basic
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
 
@@ -6006,7 +5798,7 @@ describe("MADMarketplace1155", () => {
       const fpTx = await m1155
         .connect(mad)
         .fixedPrice(
-          whitelist.address,
+          basic.address,
           1,
           1,
           price,
@@ -6015,7 +5807,7 @@ describe("MADMarketplace1155", () => {
       const daTx = await m1155
         .connect(acc01)
         .dutchAuction(
-          whitelist.address,
+          basic.address,
           2,
           1,
           price,
@@ -6025,7 +5817,7 @@ describe("MADMarketplace1155", () => {
       const eaTx = await m1155
         .connect(acc02)
         .englishAuction(
-          whitelist.address,
+          basic.address,
           3,
           1,
           price,
@@ -6033,17 +5825,17 @@ describe("MADMarketplace1155", () => {
         );
 
       const tx1 = await m1155.callStatic.tokenOrderLength(
-        whitelist.address,
+        basic.address,
         1,
         1,
       );
       const tx2 = await m1155.callStatic.tokenOrderLength(
-        whitelist.address,
+        basic.address,
         2,
         1,
       );
       const tx3 = await m1155.callStatic.tokenOrderLength(
-        whitelist.address,
+        basic.address,
         3,
         1,
       );
@@ -6059,63 +5851,44 @@ describe("MADMarketplace1155", () => {
     it("Should fetch the length of orderIds for a seller", async () => {
       await m1155.updateSettings(300, 10, 20, 31536000);
 
-      await f1155
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f1155.callStatic.getDeployedAddr(
-        "MADSplitter1",
-      );
-      await f1155
-        .connect(acc02)
-        .createCollection(
-          1,
-          "salt",
-          price,
-          1000,
-          "ipfs://cid/",
-          splAddr,
-          750,
-          [],
-        );
-
-      const wlAddr = await f1155.callStatic.getDeployedAddr(
-        "salt",
+      await createCollections(
+        f1155,
+        acc02,
+        _splitterSalt,
+        amb,
+        dead,
+        _basicSalt,
+        10,
+        createdEvent,
       );
 
-      const whitelist = await ethers.getContractAt(
+      const basicAddr =
+        await f1155.callStatic.getDeployedAddr(
+          `BasicSaltNumber10`,
+          acc02.address,
+        );
+
+      console.log("\nbasicAddr", basicAddr);
+
+      const basic = await ethers.getContractAt(
         "ERC1155Basic",
-        wlAddr,
+        basicAddr,
       );
 
-      // const root = ethers.utils.keccak256(
-      //   ethers.utils.toUtf8Bytes("root"),
-      // );
+      // console.log("\nbasic", basic);
 
-      // await r1155
-      //   .connect(acc02)
-      //   .freeSettings(wlAddr, 1, 10, root);
+      for (let i = 1; i < 4; i++) {
+        await r1155
+          .connect(acc02)
+          .basicMintTo(basicAddr, acc02.address, i, [1], {
+            value: ethers.utils.parseEther("0.25"),
+          });
+      }
 
-      // await r1155
-      //   .connect(acc02)
-      //   .creatorMint(wlAddr, 3, [1, 1, 1], 3, {
-      //     value: ethers.utils.parseEther("0.25"),
-      //   });
-
-      await r1155
-        .connect(acc02)
-        .basicMintTo(wlAddr, acc02.address, 3, [1, 1, 1], {
-          value: ethers.utils.parseEther("0.25"),
-        });
-
-      const tx_ = await whitelist
+      const tx_ = await basic
         .connect(acc02)
         .setApprovalForAll(m1155.address, true);
+
       const blockTimestamp = (
         await m1155.provider.getBlock(tx_.blockNumber || 0)
       ).timestamp;
@@ -6123,26 +5896,28 @@ describe("MADMarketplace1155", () => {
       const fpTx = await m1155
         .connect(acc02)
         .fixedPrice(
-          whitelist.address,
+          basic.address,
           1,
           1,
           price,
           blockTimestamp + 300,
         );
+
       const daTx = await m1155
         .connect(acc02)
         .dutchAuction(
-          whitelist.address,
+          basic.address,
           2,
           1,
           price,
           0,
           blockTimestamp + 300,
         );
+
       const eaTx = await m1155
         .connect(acc02)
         .englishAuction(
-          whitelist.address,
+          basic.address,
           3,
           1,
           price,
@@ -6154,8 +5929,8 @@ describe("MADMarketplace1155", () => {
       );
 
       expect(fpTx).to.be.ok;
-      expect(eaTx).to.be.ok;
       expect(daTx).to.be.ok;
+      expect(eaTx).to.be.ok;
 
       expect(tx).to.be.ok.and.to.eq(3);
     });

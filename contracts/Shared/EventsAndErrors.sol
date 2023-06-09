@@ -10,6 +10,11 @@ interface EventsAndErrorsBase {
     event RecipientUpdated(address indexed newRecipient);
     event FeesUpdated(uint256 feeVal2, uint256 feeVal3);
 
+    /// @dev Only the token owner or an approved account can manage the tokens.
+    error NotOwnerNorApproved();
+    /// @dev Insufficient balance.
+    error InsufficientBalance();
+
     // 0xd92e233d
     error ZeroAddress();
 }
@@ -23,7 +28,13 @@ interface FactoryEventsAndErrorsBase is EventsAndErrorsBase {
     event RouterUpdated(address indexed newRouter);
     event SignerUpdated(address indexed newSigner);
     event ColTypeUpdated(uint256 indexed index);
-    event SplitterCreated(address indexed creator, uint256[] shares, address[] payees, address splitter, uint256 flag);
+    event SplitterCreated(
+        address indexed creator,
+        uint256[] shares,
+        address[] payees,
+        address splitter,
+        uint256 flag
+    );
 
     ////////////////////////////////////////////////////////////////
     //                           ERRORS                           //
@@ -121,10 +132,27 @@ interface MarketplaceEventsAndErrors721 is MarketplaceEventsAndErrorsBase {
     //                           EVENTS                           //
     ////////////////////////////////////////////////////////////////
 
-    event MakeOrder(IERC721 indexed token, uint256 id, bytes32 indexed hash, address seller);
-    event CancelOrder(IERC721 indexed token, uint256 id, bytes32 indexed hash, address seller);
-    event Bid(IERC721 indexed token, uint256 id, bytes32 indexed hash, address bidder, uint256 bidPrice);
-    event Claim(IERC721 indexed token, uint256 id, bytes32 indexed hash, address seller, address taker, uint256 price);
+    event MakeOrder(
+        IERC721 indexed token, uint256 id, bytes32 indexed hash, address seller
+    );
+    event CancelOrder(
+        IERC721 indexed token, uint256 id, bytes32 indexed hash, address seller
+    );
+    event Bid(
+        IERC721 indexed token,
+        uint256 id,
+        bytes32 indexed hash,
+        address bidder,
+        uint256 bidPrice
+    );
+    event Claim(
+        IERC721 indexed token,
+        uint256 id,
+        bytes32 indexed hash,
+        address seller,
+        address taker,
+        uint256 price
+    );
 }
 
 interface MarketplaceEventsAndErrors1155 is MarketplaceEventsAndErrorsBase {
@@ -132,10 +160,27 @@ interface MarketplaceEventsAndErrors1155 is MarketplaceEventsAndErrorsBase {
     //                           EVENTS                           //
     ////////////////////////////////////////////////////////////////
 
-    event MakeOrder(IERC1155 indexed token, uint256 id, uint256 amount, bytes32 indexed hash, address seller);
-    event CancelOrder(IERC1155 indexed token, uint256 id, uint256 amount, bytes32 indexed hash, address seller);
+    event MakeOrder(
+        IERC1155 indexed token,
+        uint256 id,
+        uint256 amount,
+        bytes32 indexed hash,
+        address seller
+    );
+    event CancelOrder(
+        IERC1155 indexed token,
+        uint256 id,
+        uint256 amount,
+        bytes32 indexed hash,
+        address seller
+    );
     event Bid(
-        IERC1155 indexed token, uint256 id, uint256 amount, bytes32 indexed hash, address bidder, uint256 bidPrice
+        IERC1155 indexed token,
+        uint256 id,
+        uint256 amount,
+        bytes32 indexed hash,
+        address bidder,
+        uint256 bidPrice
     );
     event Claim(
         IERC1155 indexed token,
@@ -153,13 +198,21 @@ interface RouterEvents is EventsAndErrorsBase {
     //                           EVENTS                           //
     ////////////////////////////////////////////////////////////////
 
-    event TokenFundsWithdrawn(bytes32 indexed _id, uint8 indexed _type, address indexed _payee);
+    event TokenFundsWithdrawn(
+        bytes32 indexed _id, uint8 indexed _type, address indexed _payee
+    );
 
-    event PublicMintState(bytes32 indexed _id, uint8 indexed _type, bool indexed _state);
+    event PublicMintState(
+        bytes32 indexed _id, uint8 indexed _type, bool indexed _state
+    );
 
-    event WhitelistMintState(bytes32 indexed _id, uint8 indexed _type, bool indexed _state);
+    event WhitelistMintState(
+        bytes32 indexed _id, uint8 indexed _type, bool indexed _state
+    );
 
-    event FreeClaimState(bytes32 indexed _id, uint8 indexed _type, bool indexed _state);
+    event FreeClaimState(
+        bytes32 indexed _id, uint8 indexed _type, bool indexed _state
+    );
 
     event BaseURISet(bytes32 indexed _id, string indexed _baseURI);
 

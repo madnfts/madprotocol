@@ -163,15 +163,17 @@ def generate_import_file(folder: str) -> None:
     with open(os.path.join(folder, "static_analysis.sol"), "w") as file:
         file.write(gen)
 
-def get_test_files_hardhat(folder: str, fileType: str = "*.test.ts"
+
+def get_test_files_paths(
+    folder: str, template: str, fileType: str = "*.t.sol"
 ) -> List[str]:
     test_folder = pathlib.Path(folder)
     files = []
     for file_path in test_folder.rglob(fileType):
-        formatted_path = f'npx hardhat test {str(file_path)}'
+        formatted_path = template.format(str(file_path))
         files.append(formatted_path)
         print(formatted_path)
-    
+
     return files
 
 
@@ -188,4 +190,5 @@ if __name__ == "__main__":
     # main()
     # generate_import_file("contracts")
     # delete_file("Audit/Analysis/Slither/results/slither.results.json")
-    get_test_files_hardhat('test')
+    # get_test_files_paths('test', 'npx hardhat test {}', fileType='*.test.ts' )
+    get_test_files_paths("test/foundry/", "forge test --match-path {}")

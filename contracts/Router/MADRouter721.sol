@@ -2,7 +2,11 @@
 
 pragma solidity 0.8.19;
 
-import { MADRouterBase, ERC20, FactoryVerifier } from "contracts/Router/MADRouterBase.sol";
+import {
+    MADRouterBase,
+    ERC20,
+    FactoryVerifier
+} from "contracts/Router/MADRouterBase.sol";
 
 import { ERC721Basic } from "contracts/MADTokens/ERC721/ERC721Basic.sol";
 
@@ -11,38 +15,44 @@ contract MADRouter721 is MADRouterBase {
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    /// @notice Constructor requires a valid factory address and an optional erc20 payment token address.
+    /// @notice Constructor requires a valid factory address and an optional
+    /// erc20 payment token
+    /// address.
     /// @param _factory 721 factory address.
     /// @param _paymentTokenAddress erc20 token address | address(0).
     /// @param _recipient 721 factory address.
     // A.1 - Remove maxFeeMint &  maxFeeBurn from constructor
-    constructor(FactoryVerifier _factory, address _paymentTokenAddress, address _recipient)
-        MADRouterBase(_factory, _paymentTokenAddress, _recipient)
-    { }
+    constructor(
+        FactoryVerifier _factory,
+        address _paymentTokenAddress,
+        address _recipient
+    ) MADRouterBase(_factory, _paymentTokenAddress, _recipient) { }
 
     ////////////////////////////////////////////////////////////////
     //                       CREATOR SETTINGS                     //
     ////////////////////////////////////////////////////////////////
 
     /// @notice Collection baseURI setter.
-    /// @dev Only available for Basic, Whitelist and Lazy token types. Events logged
+    /// @dev Only available for Basic, Whitelist and Lazy token types. Events
+    /// logged
     ///      by each tokens' BaseURISet functions.
     ///      Function Sighash := 0x4328bd00
     /// @param _token 721 token address.
     /// @param _baseURI New base URI string.
     function setBase(address _token, string memory _baseURI) external {
-        (bytes32 _colID, uint8 _tokenType) = _tokenRender(_token);
+        (bytes32 _collectionId, uint8 _tokenType) = _tokenRender(_token);
 
         checkTokenType(_tokenType);
 
         ERC721Basic(_token).setBaseURI(_baseURI);
 
-        emit BaseURISet(_colID, _baseURI);
+        emit BaseURISet(_collectionId, _baseURI);
     }
 
     /// @notice Collection baseURI locker preventing URI updates when set.
     ///      Cannot be unset!
-    /// @dev Only available for Basic, Whitelist and Lazy token types. Events logged
+    /// @dev Only available for Basic, Whitelist and Lazy token types. Events
+    /// logged
     ///      by each tokens' setBaseURILock functions.
     ///      Function Sighash := ?
     /// @param _token 721 token address.
@@ -54,7 +64,8 @@ contract MADRouter721 is MADRouterBase {
     }
 
     /// @notice Global MintState setter/controller
-    /// @dev Switch cases/control flow handling conditioned by both `_stateType` and `_tokenType`.
+    /// @dev Switch cases/control flow handling conditioned by both `_stateType`
+    /// and `_tokenType`.
     ///      Events logged by each tokens' `setState` functions.
     ///      Function Sighash := 0xab9acd57
     /// @param _token 721 token address.
@@ -64,12 +75,12 @@ contract MADRouter721 is MADRouterBase {
     ///      1 := WhitelistMintState (whitelist);
     ///      2 := FreeClaimState (whitelist).
     function setMintState(address _token, bool _state) external {
-        (bytes32 _colID, uint8 _tokenType) = _tokenRender(_token);
+        (bytes32 _collectionId, uint8 _tokenType) = _tokenRender(_token);
 
         checkTokenType(_tokenType);
         ERC721Basic(_token).setPublicMintState(_state);
 
-        emit PublicMintState(_colID, _tokenType, _state);
+        emit PublicMintState(_collectionId, _tokenType, _state);
     }
 
     ////////////////////////////////////////////////////////////////
@@ -81,11 +92,14 @@ contract MADRouter721 is MADRouterBase {
     /// @param _token 721 token address.
     /// @param _to Receiver token address.
     /// @param _amount Num tokens to mint and send.
-    function basicMintTo(address _token, address _to, uint128 _amount) external payable {
+    function basicMintTo(address _token, address _to, uint128 _amount)
+        external
+        payable
+    {
         (, uint8 _tokenType) = _tokenRender(_token);
         checkTokenType(_tokenType);
         // _paymentCheck(0x40d097c3);
-        ERC721Basic(_token).mintTo{ value: msg.value }(_to, _amount, msg.sender);
+        ERC721Basic(_token).mintTo{value: msg.value}(_to, _amount, msg.sender);
     }
 
     /// @notice Global token burn controller/single pusher for all token types.
@@ -98,7 +112,7 @@ contract MADRouter721 is MADRouterBase {
         // _paymentCheck(0x44df8e70);
 
         checkTokenType(_tokenType);
-        ERC721Basic(_token).burn{ value: msg.value }(_ids, msg.sender);
+        ERC721Basic(_token).burn{value: msg.value}(_ids, msg.sender);
     }
 
     ////////////////////////////////////////////////////////////////
@@ -106,14 +120,16 @@ contract MADRouter721 is MADRouterBase {
     ////////////////////////////////////////////////////////////////
 
     /// @notice Withdraw both ERC20 and ONE from ERC721 contract's balance.
-    /// @dev Leave `_token` param empty for withdrawing eth only. No withdraw min needs to be passed as params, since
+    /// @dev Leave `_token` param empty for withdrawing eth only. No withdraw
+    /// min needs to be passed
+    /// as params, since
     ///      all balance from the token's contract is emptied.
     ///      Function Sighash := 0xf940e385
     /// @param _token 721 token address.
     /// @param _erc20 ERC20 token address.
     // A.2 BlockHat Audit  -remove whenPaused
     function withdraw(address _token, ERC20 _erc20) external {
-        (bytes32 _colID, uint8 _tokenType) = _tokenRender(_token);
+        (bytes32 _collectionId, uint8 _tokenType) = _tokenRender(_token);
         checkTokenType(_tokenType);
 
         if (address(_erc20) != address(0) && _erc20.balanceOf(_token) != 0) {
@@ -124,21 +140,6 @@ contract MADRouter721 is MADRouterBase {
             revert NoFunds();
         }
 
-        emit TokenFundsWithdrawn(_colID, _tokenType, msg.sender);
-    }
-
-    ////////////////////////////////////////////////////////////////
-    //                         HELPERS                            //
-    ////////////////////////////////////////////////////////////////
-
-    /// @notice Private auth-check mechanism that verifies `MADFactory` storage.
-    /// @dev Retrieves both `colID` (bytes32) and collection type (uint8)
-    ///      for valid token and approved user.
-    ///      Function Sighash := 0xdbf62b2e
-    /// @param _token 721 token address.
-    function _tokenRender(address _token) private view returns (bytes32 colID, uint8 tokenType) {
-        colID = madFactory.getColID(_token);
-        madFactory.creatorCheck(colID);
-        tokenType = madFactory.typeChecker(colID);
+        emit TokenFundsWithdrawn(_collectionId, _tokenType, msg.sender);
     }
 }

@@ -20,8 +20,10 @@ abstract contract TwoFactor {
     //                           EVENTS                           //
     ////////////////////////////////////////////////////////////////
 
-    uint256 constant _OWNER_UPDATED = 0xb9312e2100469bd44e3f762c248f4dcc8d7788906fabf34f79db45920c37e269;
-    uint256 constant _ROUTER_SET = 0xc6b438e6a8a59579ce6a4406cbd203b740e0d47b458aae6596339bcd40c40d15;
+    uint256 constant _OWNER_UPDATED =
+        0xb9312e2100469bd44e3f762c248f4dcc8d7788906fabf34f79db45920c37e269;
+    uint256 constant _ROUTER_SET =
+        0xc6b438e6a8a59579ce6a4406cbd203b740e0d47b458aae6596339bcd40c40d15;
 
     event OwnerUpdated(address indexed user, address indexed newOwner);
 
@@ -41,7 +43,12 @@ abstract contract TwoFactor {
     modifier authorised() {
         assembly {
             let _caller := shl(12, caller())
-            if iszero(or(eq(_caller, sload(router.slot)), eq(_caller, sload(owner.slot)))) {
+            if iszero(
+                or(
+                    eq(_caller, sload(router.slot)),
+                    eq(_caller, sload(owner.slot))
+                )
+            ) {
                 // revert NotAuthorised
                 mstore(0, _NOT_AUTHORISED)
                 revert(28, 4)
@@ -65,7 +72,10 @@ abstract contract TwoFactor {
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    constructor(address _router, address _owner) noZeroAddr(_router) noZeroAddr(_owner) {
+    constructor(address _router, address _owner)
+        noZeroAddr(_router)
+        noZeroAddr(_owner)
+    {
         assembly {
             sstore(router.slot, shl(12, _router))
             sstore(owner.slot, shl(12, _owner))
@@ -82,7 +92,11 @@ abstract contract TwoFactor {
     ////////////////////////////////////////////////////////////////
 
     /// @dev Function Signature := 0xa7016023
-    function setOwnership(address _owner) public authorised noZeroAddr(_owner) {
+    function setOwnership(address _owner)
+        public
+        authorised
+        noZeroAddr(_owner)
+    {
         assembly {
             sstore(owner.slot, shl(12, _owner))
 

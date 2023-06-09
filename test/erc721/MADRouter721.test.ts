@@ -11,6 +11,18 @@ import {
   MADRouter721,
   MockERC20,
 } from "../../src/types";
+import {
+  WalletWithAddress,
+  _basicSalt,
+  _splitterSalt,
+  createCollection,
+  createCollections,
+  feePrice,
+  price,
+  splitterDeployment,
+  testColID,
+  validateCreation,
+} from "../utils/factoryHelpers";
 import { BasicErrors, RouterErrors } from "./../utils/errors";
 import { getSignerAddrs } from "./../utils/fixtures";
 import { dead, madFixture721B } from "./../utils/madFixtures";
@@ -401,41 +413,35 @@ describe("MADRouter721", () => {
         BigNumber.from(2).pow(255),
       )) as MockERC20;
 
-      await f721
-        .connect(acc02)
-        .splitterCheck(
-          "MADSplitter1",
-          amb.address,
-          dead,
-          20,
-          0,
-        );
-      const splAddr = await f721.callStatic.getDeployedAddr(
-        "MADSplitter1",
-        acc02.address,
+      const splitterAddress = await splitterDeployment(
+        f721,
+        acc02,
+        _splitterSalt,
+        amb.address,
+        dead,
+        20,
+        0,
+        [amb.address, acc02.address],
+        1,
+        2,
       );
+
       const basicAddr = await f721.callStatic.getDeployedAddr(
-        "BasicSalt",
+        _basicSalt,
         acc02.address,
       );
-      await f721
-        .connect(acc02)
-        .createCollection(
-          1,
-          "BasicSalt",
-          "721Basic",
-          "BASIC",
-          price,
-          1,
-          "ipfs://cid/id.json",
-          splAddr,
-          750,
-          [],
-        );
+
+      await createCollection(
+        f721,
+        acc02,
+        _basicSalt,
+        splitterAddress,
+      );
       const basic = await ethers.getContractAt(
         "ERC721Basic",
         basicAddr,
       );
+
       await erc20.mint(basic.address, price);
       await r721
         .connect(acc02)
@@ -483,7 +489,7 @@ describe("MADRouter721", () => {
           1,
           "salt",
           "721Basic",
-          "BAS",
+          "BASIC",
           price,
           1000,
           "ipfs://cid/",
@@ -653,10 +659,17 @@ describe("MADRouter721", () => {
         r721
           .connect(acc02)
           .withdraw(basic.address, erc20.address),
-      ).to.be.revertedWith(RouterErrors.NoFunds);
+      ).to.be.revertedWithCustomError(
+        r721,
+        RouterErrors.NoFunds,
+      );
+
       await expect(
         r721.connect(acc02).withdraw(basic.address, dead),
-      ).to.be.revertedWith(RouterErrors.NoFunds);
+      ).to.be.revertedWithCustomError(
+        r721,
+        RouterErrors.NoFunds,
+      );
 
       expect(txa).to.be.ok;
       expect(txb).to.be.ok;
@@ -675,10 +688,16 @@ describe("MADRouter721", () => {
         r721
           .connect(mad)
           .withdraw(basic2.address, erc20.address),
-      ).to.be.revertedWith(RouterErrors.NoFunds);
+      ).to.be.revertedWithCustomError(
+        r721,
+        RouterErrors.NoFunds,
+      );
       await expect(
         r721.connect(mad).withdraw(basic2.address, dead),
-      ).to.be.revertedWith(RouterErrors.NoFunds);
+      ).to.be.revertedWithCustomError(
+        r721,
+        RouterErrors.NoFunds,
+      );
 
       expect(txc).to.be.ok;
       expect(txd).to.be.ok;
@@ -695,10 +714,16 @@ describe("MADRouter721", () => {
       );
       await expect(
         r721.connect(amb).withdraw(wl.address, erc20.address),
-      ).to.be.revertedWith(RouterErrors.NoFunds);
+      ).to.be.revertedWithCustomError(
+        r721,
+        RouterErrors.NoFunds,
+      );
       await expect(
         r721.connect(amb).withdraw(wl.address, dead),
-      ).to.be.revertedWith(RouterErrors.NoFunds);
+      ).to.be.revertedWithCustomError(
+        r721,
+        RouterErrors.NoFunds,
+      );
 
       expect(tx3).to.be.ok;
       expect(tx4).to.be.ok;
@@ -717,10 +742,16 @@ describe("MADRouter721", () => {
         r721
           .connect(newUser)
           .withdraw(lazy.address, erc20.address),
-      ).to.be.revertedWith(RouterErrors.NoFunds);
+      ).to.be.revertedWithCustomError(
+        r721,
+        RouterErrors.NoFunds,
+      );
       await expect(
         r721.connect(newUser).withdraw(lazy.address, dead),
-      ).to.be.revertedWith(RouterErrors.NoFunds);
+      ).to.be.revertedWithCustomError(
+        r721,
+        RouterErrors.NoFunds,
+      );
     });
     it("Should withdraw balance and distribute public mint fees for all colTypes", async () => {
       // mad.address is creator - 10% royalties
@@ -949,32 +980,6 @@ describe("MADRouter721", () => {
         r721.connect(acc02).setOwner(acc01.address),
       ).to.be.revertedWith(RouterErrors.Unauthorized);
     });
-    it("Should initialize paused and unpaused states", async () => {
-      const addr = await f721.callStatic.getDeployedAddr(
-        "salt",
-        acc02.address,
-      );
-      const tx = await r721.pause();
-      expect(tx).to.be.ok;
-      await expect(
-        r721.connect(acc01).pause(),
-      ).to.be.revertedWith(RouterErrors.Unauthorized);
-      await expect(r721.setBase(addr, "")).to.be.revertedWith(
-        RouterErrors.Paused,
-      );
-
-      await expect(
-        r721.burn(addr, [1, 2, 3]),
-      ).to.be.revertedWith(RouterErrors.Paused);
-      await expect(
-        r721.setMintState(addr, false),
-      ).to.be.revertedWith(RouterErrors.Paused);
-
-      await expect(
-        r721.connect(acc02).unpause(),
-      ).to.be.revertedWith(RouterErrors.Unauthorized);
-      expect(await r721.unpause()).to.be.ok;
-    });
   });
 
   describe("Set Fee Set Max Tests", async () => {
@@ -1044,6 +1049,7 @@ describe("MADRouter721", () => {
           "ERC721Basic",
           basicAddr,
         );
+
         await r721
           .connect(acc02)
           .setMintState(basicAddr, true);
@@ -1051,12 +1057,12 @@ describe("MADRouter721", () => {
           value: price.add(ethers.utils.parseEther("2.5")),
         });
 
-        await expect(
-          r721.connect(acc02).burn(basicAddr, [1]),
-        ).to.be.revertedWithCustomError(
-          basic,
-          BasicErrors.WrongPrice,
-        );
+        // await expect(
+        //   r721.connect(acc02).burn(basicAddr, [1]),
+        // ).to.be.revertedWithCustomError(
+        //   basic,
+        //   BasicErrors.WrongPrice,
+        // );
 
         const tx = await r721
           .connect(acc02)

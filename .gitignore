@@ -1,4 +1,7 @@
 # directories
+abi2json/
+src/
+
 .yarn/*
 !.yarn/patches
 !.yarn/releases
@@ -294,5 +297,4 @@ docs/
 # Dotenv file
 .env
 
-forge-std/
 forge-cache/

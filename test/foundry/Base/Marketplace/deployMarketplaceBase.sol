@@ -17,6 +17,19 @@ contract DeployMarketplaceBase is MarketplaceFactory, AddressesHelp {
     address swapRouter = makeAddr("SwapRouter");
     address factoryVerifierMarketplace = makeAddr("MarketplaceFactory");
 
+    uint256 maxFees = 500;
+    uint256 maxRoyaltyFee = 1500;
+    uint16 basisPoints = 10_000;
+    uint24 feeTier = 3000;
+    uint256 maxFee = 250;
+    uint256 maxOrderDuration = 31_536_000;
+    uint256 minAuctionIncrement = 300;
+    uint256 minAuctionIncrementMAX = 1200;
+    uint256 minBidValue = 20;
+    uint256 minOrderDuration = 300;
+    uint256 minOrderDurationtMAX = 600;
+    uint256 royaltyFee = 1000;
+
     address[] marketplaceDefaultAddresses =
         [recipientMarketplace, paymentTokenAddressMarket, swapRouter];
 
@@ -76,6 +89,7 @@ contract DeployMarketplaceBase is MarketplaceFactory, AddressesHelp {
         address _swapRouter
     ) public {
         vm.startPrank(_owner);
+
         // Addresses
         assertTrue(_marketplace.owner() == _owner, "Incorrect owner");
         assertTrue(
@@ -107,45 +121,52 @@ contract DeployMarketplaceBase is MarketplaceFactory, AddressesHelp {
             address(_marketplace.erc20()) != address(0),
             "Payment token address cannot be address(0)"
         );
+        setAndCheckAddress(_marketplace.setOwner, _marketplace.owner);
+        setAndCheckAddress(_marketplace.setRecipient, _marketplace.recipient);
 
         // Fees
-        assertTrue(_marketplace.MAX_FEES() == 500, "Incorrect MAX_FEES value");
         assertTrue(
-            _marketplace.MAX_ROYALTY_FEE() == 1500,
+            _marketplace.MAX_FEES() == maxFees, "Incorrect MAX_FEES value"
+        );
+        assertTrue(
+            _marketplace.MAX_ROYALTY_FEE() == maxRoyaltyFee,
             "Incorrect MAX_ROYALTY_FEE value"
         );
         assertTrue(
-            _marketplace.basisPoints() == 10_000, "Incorrect basisPoints value"
+            _marketplace.basisPoints() == basisPoints,
+            "Incorrect basisPoints value"
         );
-        assertTrue(_marketplace.feeTier() == 3000, "Incorrect feeTier value");
-        assertTrue(_marketplace.maxFee() == 250, "Incorrect maxFee value");
+        assertTrue(_marketplace.feeTier() == feeTier, "Incorrect feeTier value");
+        assertTrue(_marketplace.maxFee() == maxFee, "Incorrect maxFee value");
 
         // Order
         assertTrue(
-            _marketplace.maxOrderDuration() == 31_536_000,
+            _marketplace.maxOrderDuration() == maxOrderDuration,
             "Incorrect maxOrderDuration value"
         );
         assertTrue(
-            _marketplace.minAuctionIncrement() == 300,
+            _marketplace.minAuctionIncrement() == minAuctionIncrement,
             "Incorrect minAuctionIncrement value"
         );
         assertTrue(
-            _marketplace.minAuctionIncrementMAX() == 1200,
+            _marketplace.minAuctionIncrementMAX() == minAuctionIncrementMAX,
             "Incorrect minAuctionIncrementMAX value"
         );
         assertTrue(
-            _marketplace.minBidValue() == 20, "Incorrect minBidValue value"
+            _marketplace.minBidValue() == minBidValue,
+            "Incorrect minBidValue value"
         );
         assertTrue(
-            _marketplace.minOrderDuration() == 300,
+            _marketplace.minOrderDuration() == minOrderDuration,
             "Incorrect minOrderDuration value"
         );
         assertTrue(
-            _marketplace.minOrderDurationtMAX() == 600,
+            _marketplace.minOrderDurationtMAX() == minOrderDurationtMAX,
             "Incorrect minOrderDurationtMAX value"
         );
         assertTrue(
-            _marketplace.royaltyFee() == 1000, "Incorrect royaltyFee value"
+            _marketplace.royaltyFee() == royaltyFee,
+            "Incorrect royaltyFee value"
         );
 
         // Verify mappings
@@ -153,7 +174,7 @@ contract DeployMarketplaceBase is MarketplaceFactory, AddressesHelp {
             _marketplace.totalOutbid() == 0, "Incorrect totalOutbid value"
         );
 
-        // TODO: add in higher level\
+        // TODO: add in higher level
         // Verify contract initialization
         // assertTrue(
         //     MockERC20(_paymentTokenAddressMarket).allowance(
@@ -161,9 +182,6 @@ contract DeployMarketplaceBase is MarketplaceFactory, AddressesHelp {
         //     ) == type(uint256).max,
         //     "Invalid payment token allowance"
         // );
-
-        setAndCheckAddress(_marketplace.setOwner, _marketplace.owner);
-        setAndCheckAddress(_marketplace.setRecipient, _marketplace.recipient);
 
         // setAndCheckAddress(
         //     _marketplace.setFactory, _marketplace.MADFactory

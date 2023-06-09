@@ -2,17 +2,24 @@
 pragma solidity 0.8.19;
 
 import "forge-std/src/Test.sol";
-import { IRouter } from "test/foundry/Base/Router/IRouter.sol";
+import { IRouter } from "test/foundry/Base/Router/interfaces/IRouter.sol";
 import {
     RouterFactory,
     FactoryVerifier
 } from "test/foundry/Base/Router/routerFactory.sol";
 
-contract DeployRouterBase is Test, RouterFactory {
+import { AddressesHelp } from "test/foundry/utils/addressesHelp.sol";
+
+contract DeployRouterBase is AddressesHelp, RouterFactory {
     address routerOwner = makeAddr("RouterOwner");
     address paymentTokenAddressRouter = makeAddr("paymentTokenAddressRouter");
     address recipientRouter = makeAddr("RecipientRouter");
     address factoryVerifierRouter = makeAddr("RouterFactory");
+
+    uint256 feeBurn = 0;
+    uint256 feeMint = 0.25 ether;
+    uint256 maxFeeBurn = 0.5 ether;
+    uint256 maxFeeMint = 2.5 ether;
 
     address[] routerDefaultAddresses =
         [recipientRouter, paymentTokenAddressRouter, factoryVerifierRouter];
@@ -50,11 +57,69 @@ contract DeployRouterBase is Test, RouterFactory {
 
         madRouter = IRouter(routerAddress);
 
-        if (routerAddress != address(1)) {
-            assertTrue(madRouter.owner() == _owner);
-            assertTrue(madRouter.madFactory() == _factoryVerifier);
-            assertTrue(madRouter.recipient() == _recipientRouter);
-            assertTrue(address(madRouter.erc20()) == _paymentTokenAddressRouter);
+        verifyRouter(
+            madRouter,
+            _owner,
+            _recipientRouter,
+            _paymentTokenAddressRouter,
+            _factoryVerifier
+        );
+    }
+
+    function verifyRouter(
+        IRouter _router,
+        address _owner,
+        address _recipientRouter,
+        address _paymentTokenAddressRouter,
+        FactoryVerifier _factoryVerifier
+    ) public {
+        if (address(_router) != address(1)) {
+            vm.startPrank(_owner);
+            // Verify owner
+            assertTrue(_router.owner() == _owner, "Incorrect owner");
+            assertTrue(
+                _router.owner() != address(0), "Owner cannot be address(0)"
+            );
+            setAndCheckAddress(_router.setOwner, _router.owner);
+
+            // Verify MADFactory
+            assertTrue(
+                _router.madFactory() == _factoryVerifier, "Incorrect MADFactory"
+            );
+            assertTrue(
+                address(_factoryVerifier) != address(0),
+                "MADFactory cannot be address(0)"
+            );
+
+            // Verify recipient
+            assertTrue(
+                _router.recipient() == _recipientRouter, "Incorrect recipient"
+            );
+            assertTrue(
+                _router.recipient() != address(0),
+                "Recipient router cannot be address(0)"
+            );
+
+            // Verify erc20
+            assertTrue(
+                address(_router.erc20()) == _paymentTokenAddressRouter,
+                "Incorrect payment token address"
+            );
+            assertTrue(
+                address(_router.erc20()) != address(0),
+                "Payment token address cannot be address(0)"
+            );
+
+            assertTrue(_router.feeBurn() == feeBurn, "Incorrect feeBurn value");
+            assertTrue(_router.feeMint() == feeMint, "Incorrect feeMint value");
+            assertTrue(
+                _router.maxFeeBurn() == maxFeeBurn, "Incorrect maxFeeBurn value"
+            );
+            assertTrue(
+                _router.maxFeeMint() == maxFeeMint, "Incorrect maxFeeMint value"
+            );
+
+            vm.stopPrank();
         } else {
             emit log_string("Deployment Failed");
         }

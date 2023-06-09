@@ -1,21 +1,28 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.16;
 
-import "forge-std/src/Test.sol";
-import { DeployRouterBase } from "test/foundry/Base/Router/deployRouterBase.sol";
+import {
+    DeployRouterBase,
+    IRouter
+} from "test/foundry/Base/Router/deployRouterBase.sol";
 
-contract DeployERC1155Router is Test, DeployRouterBase {
+import { RouterBaseFunctions } from
+    "test/foundry/Base/Router/routerBaseFunctions.sol";
+
+contract DeployERC1155Router is DeployRouterBase, RouterBaseFunctions {
     function setUp() public {
         // vm.startPrank(routerOwner);
         vm.deal(routerOwner, 1000 ether);
     }
 
     function testDeployDefaultERC1155Router() public {
-        deployRouterDefault(ercTypes.ERC1155);
+        address router = deployRouterDefault(ercTypes.ERC1155);
+        _setRouterFees(routerOwner, IRouter(router), 1.0 ether, 0.25 ether);
     }
 
     function testDeployDefaultERC721Router() public {
-        deployRouterDefault(ercTypes.ERC721);
+        address router = deployRouterDefault(ercTypes.ERC721);
+        _setRouterFees(routerOwner, IRouter(router), 1.0 ether, 0.25 ether);
     }
 
     function testDeployZeroAddressesERC1155Router() public {
@@ -37,6 +44,7 @@ contract DeployERC1155Router is Test, DeployRouterBase {
     }
 
     function deployDefault(ercTypes ercType) public {
-        deployRouterDefault(ercType);
+        IRouter router = IRouter(deployRouterDefault(ercType));
+        _setRouterFees(routerOwner, router, 1.0 ether, 0.25 ether);
     }
 }

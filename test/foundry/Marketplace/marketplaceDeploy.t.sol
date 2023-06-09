@@ -8,8 +8,9 @@ import {
 } from "test/foundry/Base/Marketplace/deployMarketplaceBase.sol";
 
 import { Enums } from "test/foundry/utils/enums.sol";
+import { AddressesHelp } from "test/foundry/utils/addressesHelp.sol";
 
-contract DeployERC721Marketplace is Test, DeployMarketplaceBase {
+contract DeployERC721Marketplace is AddressesHelp, DeployMarketplaceBase {
     function setUp() public {
         // vm.startPrank(marketplaceOwner);
         vm.deal(marketplaceOwner, 1000 ether);
@@ -20,7 +21,12 @@ contract DeployERC721Marketplace is Test, DeployMarketplaceBase {
     }
 
     function testDeployZeroAddressesERC721Marketplace() public {
-        deployZeroAddresses(ercTypes.ERC721);
+        deployZeroAddresses(
+            ercTypes.ERC721,
+            marketplaceDefaultAddresses,
+            marketplaceOwner,
+            _deployMarketplaceCustomInternal
+        );
     }
 
     function testDeployDefaultERC1155Marketplace() public {
@@ -28,36 +34,18 @@ contract DeployERC721Marketplace is Test, DeployMarketplaceBase {
     }
 
     function testDeployZeroAddressesERC1155Marketplace() public {
-        deployZeroAddresses(ercTypes.ERC1155);
+        deployZeroAddresses(
+            ercTypes.ERC1155,
+            marketplaceDefaultAddresses,
+            marketplaceOwner,
+            _deployMarketplaceCustomInternal
+        );
     }
 
     function deployDefault(ercTypes ercType) public {
-        IMarketplace mp = deployMarketplaceDefault(ercType);
-        setFactory(mp, factoryVerifierMarketplace, marketplaceOwner);
-    }
-
-    function deployZeroAddresses(ercTypes ercType) public {
-        address temp;
-        uint256 len = marketplaceDefaultAddresses.length;
-        address[] memory _addresses = marketplaceDefaultAddresses;
-        // iterate over the marketplaceDefaultAddresses array, each time setting
-        // one
-        // to address(0)
-        for (uint256 i = 0; i < len; i++) {
-            temp = _addresses[i];
-            _addresses[i] = address(0);
-
-            vm.expectRevert();
-
-            deployMarketplaceCustom(
-                ercType,
-                marketplaceOwner,
-                _addresses[0],
-                _addresses[1],
-                _addresses[2]
-            );
-            // reset the address back to original for next loop
-            _addresses[i] = temp;
-        }
+        address mp = deployMarketplaceDefault(ercType);
+        setFactory(
+            IMarketplace(mp), factoryVerifierMarketplace, marketplaceOwner
+        );
     }
 }

@@ -7,7 +7,9 @@ import {
     IFactory
 } from "test/foundry/Base/Factory/deployFactoryBase.sol";
 
-contract DeployFactory is Test, DeployFactoryBase {
+import { AddressesHelp } from "test/foundry/utils/addressesHelp.sol";
+
+contract DeployFactory is AddressesHelp, DeployFactoryBase {
     function setUp() public {
         // vm.startPrank(factoryOwner);
         vm.deal(factoryOwner, 1000 ether);
@@ -22,39 +24,25 @@ contract DeployFactory is Test, DeployFactoryBase {
     }
 
     function testERC721DeployFactoryZeroAddresses() public {
-        deployZeroAddresses(ercTypes.ERC721);
+        deployZeroAddresses(
+            ercTypes.ERC721,
+            factoryDefaultAddresses,
+            factoryOwner,
+            _deployFactoryCustomInternal
+        );
     }
 
     function testERC1155DeployFactoryZeroAddresses() public {
-        deployZeroAddresses(ercTypes.ERC1155);
+        deployZeroAddresses(
+            ercTypes.ERC1155,
+            factoryDefaultAddresses,
+            factoryOwner,
+            _deployFactoryCustomInternal
+        );
     }
 
     function deployDefault(ercTypes ercType) public {
-        IFactory factory = deployFactoryDefault(ercType);
-        setRouter(factory, factoryRouterAddress, factoryOwner);
-    }
-
-    function deployZeroAddresses(ercTypes ercType) public {
-        address temp;
-        uint256 len = factoryDefaultAddresses.length;
-        address[] memory _addresses = factoryDefaultAddresses;
-        // iterate over the factoryDefaultAddresses array, each time setting one
-        // to address(0)
-        for (uint256 i = 0; i < len; i++) {
-            temp = _addresses[i];
-            _addresses[i] = address(0);
-
-            vm.expectRevert();
-
-            deployFactoryCustom(
-                ercType,
-                factoryOwner,
-                _addresses[0],
-                _addresses[1],
-                _addresses[2]
-            );
-            // reset the address back to original for next loop
-            _addresses[i] = temp;
-        }
+        address factory = deployFactoryDefault(ercType);
+        setRouter(IFactory(factory), factoryRouterAddress, factoryOwner);
     }
 }

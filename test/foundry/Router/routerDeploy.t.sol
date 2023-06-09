@@ -19,38 +19,24 @@ contract DeployERC1155Router is Test, DeployRouterBase {
     }
 
     function testDeployZeroAddressesERC1155Router() public {
-        deployZeroAddresses(ercTypes.ERC1155);
+        deployZeroAddresses(
+            ercTypes.ERC1155,
+            routerDefaultAddresses,
+            routerOwner,
+            _deployRouterCustomInternal
+        );
     }
 
     function testDeployZeroAddressesERC721Router() public {
-        deployZeroAddresses(ercTypes.ERC721);
+        deployZeroAddresses(
+            ercTypes.ERC721,
+            routerDefaultAddresses,
+            routerOwner,
+            _deployRouterCustomInternal
+        );
     }
 
     function deployDefault(ercTypes ercType) public {
         deployRouterDefault(ercType);
-    }
-
-    function deployZeroAddresses(ercTypes ercType) public {
-        address temp;
-        uint256 len = routerDefaultAddresses.length;
-        address[] memory _addresses = routerDefaultAddresses;
-        // iterate over the RouterDefaultAddresses array, each time setting one
-        // to address(0)
-        for (uint256 i = 0; i < len; i++) {
-            temp = _addresses[i];
-            _addresses[i] = address(0);
-
-            vm.expectRevert();
-
-            deployRouterCustom(
-                ercType,
-                routerOwner,
-                _addresses[0],
-                _addresses[1],
-                _addresses[2]
-            );
-            // reset the address back to original for next loop
-            _addresses[i] = temp;
-        }
     }
 }

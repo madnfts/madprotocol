@@ -65,7 +65,6 @@ abstract contract MADRouterBase is MAD, MADBase, RouterEvents, FeeOracle {
         address _paymentTokenAddress,
         address _recipient
     ) {
-
         _setPaymentToken(_paymentTokenAddress);
         setFactory(_factory);
         setRecipient(_recipient);

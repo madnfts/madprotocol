@@ -22,14 +22,34 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
 
     function deployFactoryDefault(ercTypes ercType)
         public
-        returns (IFactory newFactory)
+        returns (address factoryAddress)
     {
-        newFactory = deployFactoryCustom(
-            ercType,
-            factoryOwner,
-            marketplaceAddressFactory,
-            factorySigner,
-            paymentTokenAddressFactory
+        factoryAddress = address(
+            deployFactoryCustom(
+                ercType,
+                factoryOwner,
+                marketplaceAddressFactory,
+                factorySigner,
+                paymentTokenAddressFactory
+            )
+        );
+    }
+
+    function _deployFactoryCustomInternal(
+        ercTypes ercType,
+        address _owner,
+        address _marketplaceAddressFactory,
+        address _factorySignerAddress,
+        address _paymentTokenAddressFactory
+    ) internal returns (address factoryAddress) {
+        factoryAddress = address(
+            deployFactoryCustom(
+                ercType,
+                _owner,
+                _marketplaceAddressFactory,
+                _factorySignerAddress,
+                _paymentTokenAddressFactory
+            )
         );
     }
 
@@ -39,16 +59,16 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
         address _marketplaceAddressFactory,
         address _factorySignerAddress,
         address _paymentTokenAddressFactory
-    ) public returns (IFactory newFactory) {
+    ) public returns (address factoryAddress) {
         vm.prank(_owner);
-        address factoryAddress = createFactory(
+        factoryAddress = createFactory(
             ercType,
             _marketplaceAddressFactory,
             _factorySignerAddress,
             _paymentTokenAddressFactory
         );
 
-        newFactory = IFactory(factoryAddress);
+        IFactory newFactory = IFactory(factoryAddress);
 
         // emit log_named_address("factoryAddress", address(newFactory));
         // emit log_named_address("factoryOwner", _owner);

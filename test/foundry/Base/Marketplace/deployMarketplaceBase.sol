@@ -35,9 +35,9 @@ contract DeployMarketplaceBase is MarketplaceFactory, AddressesHelp {
 
     function deployMarketplaceDefault(ercTypes _ercType)
         public
-        returns (IMarketplace madMarketplace)
+        returns (address marketplaceAddress)
     {
-        madMarketplace = deployMarketplaceCustom(
+        marketplaceAddress = deployMarketplaceCustom(
             _ercType,
             marketplaceOwner,
             recipientMarketplace,
@@ -47,15 +47,31 @@ contract DeployMarketplaceBase is MarketplaceFactory, AddressesHelp {
     }
     //
 
+    function _deployMarketplaceCustomInternal(
+        ercTypes _ercType,
+        address _owner,
+        address _recipientMarketplace,
+        address _paymentTokenAddressMarket,
+        address _swapRouter
+    ) internal returns (address marketplaceAddress) {
+        marketplaceAddress = deployMarketplaceCustom(
+            _ercType,
+            _owner,
+            _recipientMarketplace,
+            _paymentTokenAddressMarket,
+            _swapRouter
+        );
+    }
+
     function deployMarketplaceCustom(
         ercTypes _ercType,
         address _owner,
         address _recipientMarketplace,
         address _paymentTokenAddressMarket,
         address _swapRouter
-    ) public returns (IMarketplace madMarketplace) {
+    ) public returns (address marketplaceAddress) {
         vm.prank(_owner);
-        madMarketplace = IMarketplace(
+        IMarketplace madMarketplace = IMarketplace(
             createMarketplace(
                 _ercType,
                 _recipientMarketplace,
@@ -63,12 +79,14 @@ contract DeployMarketplaceBase is MarketplaceFactory, AddressesHelp {
                 _swapRouter
             )
         );
+
+        marketplaceAddress = address(madMarketplace);
         // emit log_named_address("marketplaceAddress",
         // address(madMarketplace));
         // emit log_named_address("owner", _owner);
         // emit log_named_address("msg.sender", msg.sender);
 
-        if (address(madMarketplace) != address(1)) {
+        if (marketplaceAddress != address(1)) {
             verifyMarketplace(
                 madMarketplace,
                 _owner,

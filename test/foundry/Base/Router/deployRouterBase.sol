@@ -26,7 +26,7 @@ contract DeployRouterBase is AddressesHelp, RouterFactory {
 
     function deployRouterDefault(ercTypes _ercType)
         public
-        returns (IRouter madRouter)
+        returns (address madRouter)
     {
         madRouter = deployRouterCustom(
             _ercType,
@@ -37,25 +37,41 @@ contract DeployRouterBase is AddressesHelp, RouterFactory {
         );
     }
 
+    function _deployRouterCustomInternal(
+        ercTypes _ercType,
+        address _owner,
+        address _recipientRouter,
+        address _paymentTokenAddressRouter,
+        address factory
+    ) internal returns (address routerAddress) {
+        routerAddress = deployRouterCustom(
+            _ercType,
+            _owner,
+            _recipientRouter,
+            _paymentTokenAddressRouter,
+            factory
+        );
+    }
+
     function deployRouterCustom(
         ercTypes _ercType,
         address _owner,
         address _recipientRouter,
         address _paymentTokenAddressRouter,
         address factory
-    ) public returns (IRouter madRouter) {
+    ) public returns (address routerAddress) {
         FactoryVerifier _factoryVerifier = FactoryVerifier(factory);
 
         vm.prank(_owner);
 
-        address routerAddress = createRouter(
+        routerAddress = createRouter(
             _ercType,
             _factoryVerifier,
             _paymentTokenAddressRouter,
             _recipientRouter
         );
 
-        madRouter = IRouter(routerAddress);
+        IRouter madRouter = IRouter(routerAddress);
 
         verifyRouter(
             madRouter,

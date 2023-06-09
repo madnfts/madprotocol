@@ -36,5 +36,6 @@ interface ISplitter {
         uint256 ambassadorShare;
         uint256 projectShare;
         address[] payeesExpected;
+        address paymentToken;
     }
 }

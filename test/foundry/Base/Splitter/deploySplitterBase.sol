@@ -2,7 +2,7 @@
 pragma solidity 0.8.19;
 
 import { IFactory } from "test/foundry/Base/Factory/IFactory.sol";
-import { ISplitter } from "test/foundry/Base/Splitter/ISplitter.sol";
+import { ISplitter, ERC20 } from "test/foundry/Base/Splitter/ISplitter.sol";
 import { SplitterImpl } from "contracts/lib/splitter/SplitterImpl.sol";
 import { Types } from "contracts/Shared/Types.sol";
 import { Deployer } from "test/foundry/Deploy/deployer.t.sol";
@@ -132,9 +132,15 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
             "Total released for specific token should be 0"
         );
 
-        assertZeroBalance(splitter, splitterData.deployer);
-        assertZeroBalance(splitter, splitterData.ambassador);
-        assertZeroBalance(splitter, splitterData.project);
+        assertZeroBalanceRelease(
+            splitter, splitterData.deployer, splitterData.paymentToken
+        );
+        assertZeroBalanceRelease(
+            splitter, splitterData.ambassador, splitterData.paymentToken
+        );
+        assertZeroBalanceRelease(
+            splitter, splitterData.project, splitterData.paymentToken
+        );
 
         // Assuming payees are returned in the order [ambassador, project,
         // currentSigner]
@@ -148,9 +154,11 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
         }
     }
 
-    function assertZeroBalance(ISplitter splitter, address _currentSigner)
-        public
-    {
+    function assertZeroBalanceRelease(
+        ISplitter splitter,
+        address _currentSigner,
+        address _paymentToken
+    ) public {
         assertTrue(
             splitter.released(_currentSigner) == 0,
             "Released amount for specific _currentSigner should be 0"
@@ -160,20 +168,16 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
             "Releasable amount for specific _currentSigner should be 0"
         );
 
-        // TODO: ERC20
-        // assertTrue(
-        //     splitter.released(yourERC20TokenInstance, yourAccountAddress) ==
-        // 0,
-        //     "Released amount for specific token and _currentSigner should be
-        // 0"
-        // );
+        // ERC20
+        assertTrue(
+            splitter.released(ERC20(_paymentToken), _currentSigner) == 0,
+            "Released amount for specific token and _currentSigner should be 0"
+        );
 
-        // assertTrue(
-        //     splitter.releasable(yourERC20TokenInstance, yourAccountAddress)
-        // == 0,
-        //     "Releasable amount for specific token and _currentSigner should
-        // be 0"
-        // );
+        assertTrue(
+            splitter.releasable(ERC20(_paymentToken), _currentSigner) == 0,
+            "Releasable amount for specific token and _currentSigner should be 0"
+        );
     }
 
     function _runSplitterDeploy_creatorOnly(IFactory factory)
@@ -191,7 +195,8 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
                 projectShare: 0,
                 payeesExpected: SplitterHelpers.getExpectedSplitterAddresses(
                     currentSigner, address(0), address(0)
-                    )
+                    ),
+                paymentToken: factory.erc20()
             })
         );
     }
@@ -211,7 +216,8 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
                 projectShare: 0,
                 payeesExpected: SplitterHelpers.getExpectedSplitterAddresses(
                     currentSigner, ambassador, address(0)
-                    )
+                    ),
+                paymentToken: factory.erc20()
             })
         );
     }
@@ -231,7 +237,8 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
                 projectShare: _projectShare,
                 payeesExpected: SplitterHelpers.getExpectedSplitterAddresses(
                     currentSigner, address(0), project
-                    )
+                    ),
+                paymentToken: factory.erc20()
             })
         );
     }
@@ -252,7 +259,8 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
                 projectShare: _projectShare,
                 payeesExpected: SplitterHelpers.getExpectedSplitterAddresses(
                     currentSigner, ambassador, project
-                    )
+                    ),
+                paymentToken: factory.erc20()
             })
         );
     }

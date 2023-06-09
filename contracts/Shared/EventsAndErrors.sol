@@ -46,6 +46,8 @@ interface FactoryEventsAndErrorsBase is EventsAndErrorsBase {
     error InvalidRoyalty();
     /// @dev 0xe6c4247b
     error InvalidAddress();
+
+    error ZeroMaxSupply();
 }
 
 interface FactoryEventsAndErrors721 is FactoryEventsAndErrorsBase {

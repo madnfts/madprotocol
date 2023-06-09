@@ -105,7 +105,7 @@ abstract contract MADFactoryBase is
     /// to not replicate same
     /// output.
     /// @param _tokenType Values legend:
-    /// 0=Minimal; 1=Basic; 2=Whitelist; 3=Lazy.
+    /// 0=None; 1=Basic;
     /// @param _tokenSalt Nonce/Entropy factor used by CREATE3 method
     /// to generate collection deployment address. Must be always different to
     /// avoid address
@@ -119,9 +119,7 @@ abstract contract MADFactoryBase is
     /// @param _baseURI The URL + CID to be added the tokenID and suffix (.json)
     /// by the tokenURI
     /// function
-    /// in the collection to be deployed (baseURI used as tokenURI itself for
-    /// the ERC721Minimal
-    /// token type).
+    /// in the collection to be deployed (
     /// @param _splitter Previously deployed Splitter implementation so to
     /// validate and attach to
     /// collection.
@@ -154,6 +152,10 @@ abstract contract MADFactoryBase is
             router,
             address(erc20)
         );
+
+        if (_maxSupply == 0) {
+            revert ZeroMaxSupply();
+        }
 
         (bytes32 tokenSalt, address deployed) =
             _collectionDeploy(_tokenType, _tokenSalt, args, _extra);

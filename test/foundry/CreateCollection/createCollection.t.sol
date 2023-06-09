@@ -96,35 +96,25 @@ contract TestCreateCollection is CreateCollectionBase, Enums {
         _createCollectionCustom(x, _price, _maxSupply, _royalty, 10);
     }
 
-    // function testFailZeroMaxSupplyCreateCollectionCustomSingleFuzzy(
-    //     uint8 x,
-    //     uint256 _price,
-    //     uint128 _maxSupply,
-    //     uint96 _royalty
-    // ) public {
-    //     // createCollectionAssumptions(x, _price, _maxSupply, _royalty);
-    //     vm.assume(x < 2);
-    //     vm.assume(_price < type(uint256).max);
-    //     vm.assume(_maxSupply == 0);
-    //     vm.assume(_royalty < 1001 && _royalty % 25 == 0);
+    function testFailZeroMaxSupplyCreateCollectionCustomSingleFuzzy(
+        uint8 x,
+        uint256 _price,
+        uint128 _maxSupply,
+        uint96 _royalty
+    ) public {
+        createCollectionAssumptions(x, _price, _maxSupply, _royalty);
+        _createCollectionCustom(x, _price, 0, _royalty, 1);
+    }
 
-    //     _createCollectionCustom(x, _price, _maxSupply, _royalty, 1);
-    // }
-
-    // function testFailZeroMaxSupplyCreateMultipleCollectionsWithSameSplitterFuzzy(
-    //     uint8 x,
-    //     uint256 _price,
-    //     uint128 _maxSupply,
-    //     uint96 _royalty
-    // ) public {
-    //     // createCollectionAssumptions(x, _price, _maxSupply, _royalty);
-    //     vm.assume(x < 2);
-    //     vm.assume(_price < type(uint256).max);
-    //     vm.assume(_maxSupply == 0);
-    //     vm.assume(_royalty < 1001 && _royalty % 25 == 0);
-
-    //     _createCollectionCustom(x, _price, _maxSupply, _royalty, 10);
-    // }
+    function testFailZeroMaxSupplyCreateMultipleCollectionsWithSameSplitterFuzzy(
+        uint8 x,
+        uint256 _price,
+        uint128 _maxSupply,
+        uint96 _royalty
+    ) public {
+        createCollectionAssumptions(x, _price, _maxSupply, _royalty);
+        _createCollectionCustom(x, _price, 0, _royalty, 10);
+    }
 
     function _createCollectionCustom(
         uint8 x,

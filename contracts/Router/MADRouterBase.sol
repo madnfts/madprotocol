@@ -32,7 +32,8 @@ abstract contract MADRouterBase is MAD, MADBase, RouterEvents, FeeOracle {
     bytes4 internal constant MINBURN = 0x44df8e70;
 
     /// @notice Mint fee store.
-    uint256 public feeMint; /* = 0 */
+    // B.3 BlockHat Audit
+    uint256 public feeMint = 0.25 ether; /* = 0 */
 
     /// @notice Burn fee store.
     uint256 public feeBurn; /* = 0 */
@@ -64,9 +65,6 @@ abstract contract MADRouterBase is MAD, MADBase, RouterEvents, FeeOracle {
         address _paymentTokenAddress,
         address _recipient
     ) {
-        // B.3 BlockHat Audit
-        feeMint = 0.25 ether;
-
         _setPaymentToken(_paymentTokenAddress);
         setFactory(_factory);
         setRecipient(_recipient);

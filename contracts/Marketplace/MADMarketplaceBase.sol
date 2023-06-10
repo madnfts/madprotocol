@@ -50,10 +50,10 @@ abstract contract MADMarketplaceBase is
     uint256 public MAX_ROYALTY_FEE = 1.5e3;
     uint256 public MAX_FEES = 5.0e2;
 
-    uint256 public minOrderDuration;
-    uint256 public minAuctionIncrement;
-    uint256 public minBidValue;
-    uint256 public maxOrderDuration;
+    uint256 public minAuctionIncrement = 300;
+    uint256 public minOrderDuration = 300;
+    uint256 public minBidValue = 20;
+    uint256 public maxOrderDuration = 31_536_000;
 
     address public recipient;
 
@@ -72,13 +72,13 @@ abstract contract MADMarketplaceBase is
     ) {
         setRecipient(_recipient);
 
-        // init settings
-        updateSettings(
-            300, // 5 min
-            300, // 5 min
-            20, // 5% (1/20th)
-            31_536_000 // 24 months
-        );
+        // // init settings
+        // updateSettings(
+        //     300, // 5 min _minAuctionIncrement
+        //     300, // 5 min _minOrderDuration
+        //     20, // 5% (1/20th) _minBidValue
+        //     31_536_000 // 24 months _maxOrderDuration
+        // );
 
         swapRouter = ISwapRouter(_swapRouter);
 

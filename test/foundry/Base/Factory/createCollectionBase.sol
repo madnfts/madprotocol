@@ -62,13 +62,15 @@ abstract contract CreateCollectionBase is
             IImplBase(collectionAddress), params, factory, collectionOwner
         );
 
-        // Find Collection Type..
+        // Find Collection Type and verify..
         if (IERC721Basic(collectionAddress).supportsInterface(0x80ac58cd)) {
             _verifyCollectionERC721(collectionAddress, params, collectionOwner);
         } else if (
             IERC1155Basic(collectionAddress).supportsInterface(0xd9b67a26)
         ) {
             _verifyCollectionERC1155(collectionAddress, params, collectionOwner);
+        } else {
+            revert("Invalid collection type");
         }
     }
 

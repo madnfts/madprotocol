@@ -56,30 +56,36 @@ abstract contract DeployerBase is
         paymentToken = erc20Deployer._deploy(currentSigner);
 
         // Deploy Marketplace
-        marketplace = marketplaceDeployer.deployMarketplaceCustom(
-            ercType,
-            currentSigner,
-            recipientMarketplace,
-            address(paymentToken),
-            swapRouter
+        marketplace = IMarketplace(
+            marketplaceDeployer.deployMarketplaceCustom(
+                ercType,
+                currentSigner,
+                recipientMarketplace,
+                address(paymentToken),
+                swapRouter
+            )
         );
 
         // Deploy Factory
-        factory = factoryDeployer.deployFactoryCustom(
-            ercType,
-            currentSigner,
-            address(marketplace),
-            factorySigner,
-            address(paymentToken)
+        factory = IFactory(
+            factoryDeployer.deployFactoryCustom(
+                ercType,
+                currentSigner,
+                address(marketplace),
+                factorySigner,
+                address(paymentToken)
+            )
         );
 
         // Deploy Router
-        router = routerDeployer.deployRouterCustom(
-            ercType,
-            currentSigner,
-            recipientRouter,
-            address(paymentToken),
-            address(factory)
+        router = IRouter(
+            routerDeployer.deployRouterCustom(
+                ercType,
+                currentSigner,
+                recipientRouter,
+                address(paymentToken),
+                address(factory)
+            )
         );
 
         marketplaceDeployer.setFactory(

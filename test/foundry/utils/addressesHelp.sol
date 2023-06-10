@@ -2,8 +2,9 @@
 pragma solidity 0.8.19;
 
 import "forge-std/src/Test.sol";
+import { Enums } from "test/foundry/utils/enums.sol";
 
-abstract contract AddressesHelp is Test {
+abstract contract AddressesHelp is Test, Enums {
     function setAndCheckAddress(
         function(address) external setAddressFunc,
         function() view external returns (address) expectedAddressFunction
@@ -35,7 +36,6 @@ abstract contract AddressesHelp is Test {
                 vm.stopPrank();
                 vm.prank(newAddress);
                 setAddressFunc(originalAddress);
-
                 vm.startPrank(originalAddress);
             } else {
                 setAddressFunc(originalAddress);
@@ -73,5 +73,30 @@ abstract contract AddressesHelp is Test {
             }
         }
         return true;
+    }
+
+    function deployZeroAddresses(
+        ercTypes ercType,
+        address[] memory addresses,
+        address owner,
+        function(ercTypes, address, address, address, address) internal returns(address)
+            deployFunction
+    ) internal {
+        address temp;
+        uint256 len = addresses.length;
+        address[] memory _addresses = addresses;
+        // iterate over the addresses array, each time setting one to address(0)
+        for (uint256 i = 0; i < len; i++) {
+            temp = _addresses[i];
+            _addresses[i] = address(0);
+
+            vm.expectRevert();
+
+            deployFunction(
+                ercType, owner, _addresses[0], _addresses[1], _addresses[2]
+            );
+            // reset the address back to original for the next loop
+            _addresses[i] = temp;
+        }
     }
 }

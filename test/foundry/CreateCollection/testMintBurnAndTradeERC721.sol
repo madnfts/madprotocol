@@ -52,6 +52,16 @@ contract testMintBurnAndTradeERC721 is CreateCollectionHelpers, Enums {
         _mintToSingle(nftMinter, nftReceiver, _nftMintFee);
     }
 
+    function testFailMintToUnAuthorised() public {
+        (address _collectionAddress, address _splitterAddress) =
+            _mintToSingle(nftMinter, nftReceiver, nftMintFee);
+        // Mint to nftReceiver
+        address prankster = makeAddr("prankster");
+        vm.prank(prankster);
+        IERC721Basic collection = IERC721Basic(_collectionAddress);
+        collection.mintTo{value: nftMintFee}(nftReceiver, 1, nftReceiver);
+    }
+
     function _mintToSingle(
         address _nftMinter,
         address _nftReceiver,

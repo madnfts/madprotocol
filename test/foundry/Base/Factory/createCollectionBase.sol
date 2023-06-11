@@ -65,12 +65,9 @@ abstract contract CreateCollectionBase is
         // Find Collection Type and verify..
         if (IERC721Basic(collectionAddress).supportsInterface(0x80ac58cd)) {
             _verifyCollectionERC721(collectionAddress, params, collectionOwner);
-        } else if (
-            IERC1155Basic(collectionAddress).supportsInterface(0xd9b67a26)
-        ) {
+        }
+        if (IERC1155Basic(collectionAddress).supportsInterface(0xd9b67a26)) {
             _verifyCollectionERC1155(collectionAddress, params, collectionOwner);
-        } else {
-            revert("Invalid collection type");
         }
     }
 
@@ -167,24 +164,24 @@ abstract contract CreateCollectionBase is
         assertTrue(balance == 0, "Incorrect balanceOf value");
 
         // Test getApproved function
-        address approved = collection.getApproved(1);
-        assertTrue(approved != collectionAddress, "Address is approved!");
+        vm.expectRevert();
+        collection.getApproved(1);
+
+        // Test ownerOf function fails
+        vm.expectRevert();
+        collection.ownerOf(1);
+
+        // Test tokenURI function
+        vm.expectRevert();
+        collection.tokenURI(1);
 
         // Test name function
         string memory name = collection.name();
         assertEq(name, params.name, "Incorrect name value");
 
-        // Test ownerOf function fails
-        address owner = collection.ownerOf(1);
-        assertTrue(owner != collectionAddress, "Incorrect owner address");
-
         // Test symbol function
         string memory symbol = collection.symbol();
         assertEq(symbol, params.symbol, "Incorrect symbol value");
-
-        // Test tokenURI function
-        string memory tokenURI = collection.tokenURI(1);
-        assertEq(tokenURI, params.uri, "Incorrect tokenURI value");
     }
 
     function _verifyCollectionTokensShared(

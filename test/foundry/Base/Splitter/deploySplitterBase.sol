@@ -19,7 +19,11 @@ import { SplitterHelpers } from "test/foundry/Base/Splitter/splitterHelpers.sol"
 contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
     using Types for Types.SplitterConfig;
 
-    string splitterSalt = "SplitterSalt";
+    string public splitterSalt = "SplitterSalt";
+
+    function updateSplitterSalt(string memory _splitterSalt) public {
+        splitterSalt = _splitterSalt;
+    }
 
     // Define default variables
     uint256 public ambassadorShare = 20;
@@ -34,7 +38,7 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
         returns (address splitterAddress)
     {
         // Prank tx.origin as well here otherwise the splitter will be owned by
-        // the calling contract
+        // the calling test contract
         vm.prank(splitterData.deployer, splitterData.deployer);
 
         splitterData.factory.splitterCheck(
@@ -243,7 +247,7 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
         );
     }
 
-    function _runSplitterDeploy_All(
+    function _runSplitterDeploy_BothAmbassadorAndProject(
         IFactory factory,
         uint256 _ambassadorShare,
         uint256 _projectShare

@@ -72,10 +72,9 @@ contract ERC721Basic is ERC721, ImplBase {
         payable
         authorised
     {
-        // @audit Are we charging a fee to burn?
-        // (uint256 fee, bool method) =
-        // _ownerFeeCheck(0x44df8e70, erc20Owner);
-        // _ownerFeeHandler(method, fee, erc20Owner);
+        // @audit do we charge to burn?
+        (uint256 fee, bool method) = _ownerFeeCheck(0x44df8e70, erc20Owner);
+        _ownerFeeHandler(method, fee, erc20Owner);
 
         uint256 len = ids.length;
         _decSupply(len);

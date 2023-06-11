@@ -34,12 +34,6 @@ abstract contract ImplBase is
     //                          IMMUTABLE                         //
     ////////////////////////////////////////////////////////////////
 
-    // /// @notice Splitter address relationship.
-    // SplitterImpl public immutable splitter;
-
-    // /// @notice ERC20 payment token address.
-    // ERC20 public immutable erc20;
-
     /// @notice Public mint price.
     uint256 public immutable price;
 

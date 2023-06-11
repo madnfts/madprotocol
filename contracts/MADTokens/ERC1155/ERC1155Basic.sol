@@ -103,8 +103,8 @@ contract ERC1155Basic is ERC1155, ImplBase {
         address erc20Owner
     ) external payable authorised {
         // @audit do we charge to burn?
-        // (uint256 fee, bool method) = _ownerFeeCheck(0x44df8e70, erc20Owner);
-        // _ownerFeeHandler(method, fee, erc20Owner);
+        (uint256 fee, bool method) = _ownerFeeCheck(0x44df8e70, erc20Owner);
+        _ownerFeeHandler(method, fee, erc20Owner);
 
         uint256 len = ids.length;
         _decSupply(len);
@@ -134,8 +134,8 @@ contract ERC1155Basic is ERC1155, ImplBase {
         address erc20Owner
     ) external payable authorised {
         // @audit do we charge to burn?
-        // (uint256 fee, bool method) = _ownerFeeCheck(0x44df8e70, erc20Owner);
-        // _ownerFeeHandler(method, fee, erc20Owner);
+        (uint256 fee, bool method) = _ownerFeeCheck(0x44df8e70, erc20Owner);
+        _ownerFeeHandler(method, fee, erc20Owner);
 
         _decSupply(ids.length);
 

@@ -43,7 +43,7 @@ library CreateCollectionParams {
         return generateCollectionParams(
             1, //  tokenType
             salt, //salt
-            100 ether, // price,
+            1 ether, // price,
             1000, //  maxSupply
             "https://example.com", //  URI
             defaultSplitterAddress,

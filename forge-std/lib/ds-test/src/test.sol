@@ -33,6 +33,7 @@ contract DSTest {
     event log_named_int(string key, int val);
     event log_named_uint(string key, uint val);
     event log_named_bytes(string key, bytes val);
+    event log_named_bytes4(string key, bytes4 val);
     event log_named_string(string key, string val);
 
     bool public IS_TEST = true;

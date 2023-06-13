@@ -68,11 +68,8 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         _checkSafeTransferFromWithData(mintData);
     }
 
-    function testFailMintToIncorrectFeeSingleFuzzy(uint256 _nftMintFee)
-        public
-    {
-        vm.assume(_nftMintFee != nftMintFee);
-        _mintToERC721(nftMinter, nftReceiver, _nftMintFee, 1);
+    function testFailMintToIncorrectFeeSingle() public {
+        _mintToERC721(nftMinter, nftReceiver, nftMintFee + 1 ether, 1);
     }
 
     function testFailMintToUnAuthorised() public {

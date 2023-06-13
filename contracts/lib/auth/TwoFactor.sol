@@ -9,12 +9,12 @@ abstract contract TwoFactor {
     ////////////////////////////////////////////////////////////////
 
     uint256 constant _NOT_AUTHORISED = 0x1648fd01;
-    uint256 constant _INVALID_VALUE = 0xaa7feadc;
+    uint256 constant _ZERO_ADDRESS = 0xaa7feadc;
 
     /// @dev 0x1648fd01
     error NotAuthorised();
-    /// @dev 0xaa7feadc
-    error InvalidValue();
+    /// @dev 0xd92e233d
+    error ZeroAddress();
 
     ////////////////////////////////////////////////////////////////
     //                           EVENTS                           //
@@ -49,7 +49,7 @@ abstract contract TwoFactor {
                     eq(_caller, sload(owner.slot))
                 )
             ) {
-                // revert NotAuthorised
+                // revert NotAuthorised()
                 mstore(0, _NOT_AUTHORISED)
                 revert(28, 4)
             }
@@ -60,8 +60,8 @@ abstract contract TwoFactor {
     modifier noZeroAddr(address _addr) {
         assembly {
             if iszero(_addr) {
-                // revert InvalidValue
-                mstore(0, _INVALID_VALUE)
+                // revert ZeroAddress()
+                mstore(0, _ZERO_ADDRESS)
                 revert(28, 4)
             }
         }

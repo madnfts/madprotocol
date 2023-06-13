@@ -17,7 +17,7 @@ abstract contract AddressesHelp is Test, Enums {
 
         // Attempt to set the address to address(0) and expect
         // the transaction to revert.
-        vm.expectRevert();
+        vm.expectRevert(0xd92e233d); //  error ZeroAddress();
         setAddressFunc(address(0));
 
         // Set the address using the provided function
@@ -90,7 +90,7 @@ abstract contract AddressesHelp is Test, Enums {
             temp = _addresses[i];
             _addresses[i] = address(0);
 
-            vm.expectRevert();
+            vm.expectRevert(0xd92e233d); // error ZeroAddress();
 
             deployFunction(
                 ercType, owner, _addresses[0], _addresses[1], _addresses[2]

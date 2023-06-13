@@ -42,7 +42,7 @@ abstract contract MADRouterBase is MAD, MADBase, RouterEvents, FeeOracle {
     address public recipient;
 
     /// @notice max fee that can be set for mint - B.1 remove from constructor
-    uint256 public constant maxFeeMint = 2.5 ether;
+    uint256 public constant maxFeeMint = 2.5 ether; // 0.0003 ether
 
     /// @notice max fee that can be set for burn - B.1 remove from constructor
     uint256 public constant maxFeeBurn = 0.5 ether;

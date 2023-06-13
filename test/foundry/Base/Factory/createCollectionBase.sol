@@ -164,15 +164,15 @@ abstract contract CreateCollectionBase is
         assertTrue(balance == 0, "Incorrect balanceOf value");
 
         // Test getApproved function
-        vm.expectRevert();
+        vm.expectRevert(0xceea21b6); // `TokenDoesNotExist()`.
         collection.getApproved(1);
 
         // Test ownerOf function fails
-        vm.expectRevert();
+        vm.expectRevert(0xceea21b6); // `TokenDoesNotExist()`.
         collection.ownerOf(1);
 
         // Test tokenURI function
-        vm.expectRevert();
+        vm.expectRevert(0xbad086ea); // NotMintedYet()
         collection.tokenURI(1);
 
         // Test name function

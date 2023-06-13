@@ -216,7 +216,7 @@ contract DeployMarketplaceBase is MarketplaceFactory, AddressesHelp {
             FactoryVerifier(_factoryAddress);
 
         // Set Factory
-        vm.expectRevert();
+        vm.expectRevert(0x1648fd01); // error NotAuthorised();
         _marketplace.setFactory(FactoryVerifier(address(0)));
 
         vm.prank(_owner);

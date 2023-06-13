@@ -183,11 +183,9 @@ abstract contract MADFactoryBase is
     /// @param _ambassador User may choose from one of the whitelisted addresses
     /// to donate
     /// 1%-20% of secondary sales royalties (optional, will be disregarded if
-    /// left empty(value ==
-    /// address(0)).
+    /// left empty(value == address(0)).
     /// @param _ambShare Percentage (1%-20%) of secondary sales royalties to be
-    /// donated to an
-    /// ambassador
+    /// donated to an ambassador
     /// (optional, will be disregarded if left empty(value == 0)).
     function splitterCheck(
         string calldata _splitterSalt,
@@ -222,7 +220,7 @@ abstract contract MADFactoryBase is
             );
         } else if (
             _project != address(0) && _ambassador == address(0)
-                && _projectShare != 0 && _projectShare < 91
+                && _projectShare != 0 && _projectShare < 101
         ) {
             _splitterResolver(
                 splitterSalt,
@@ -235,7 +233,7 @@ abstract contract MADFactoryBase is
         } else if (
             _ambassador != address(0) && _project != address(0)
                 && _ambShare != 0 && _ambShare < 21 && _projectShare != 0
-                && _projectShare < 71
+                && _projectShare < 81
         ) {
             _splitterResolver(
                 splitterSalt,
@@ -408,8 +406,8 @@ abstract contract MADFactoryBase is
     function _isZeroAddr(address _addr) private pure {
         assembly {
             if iszero(_addr) {
-                // Revert InvalidAddress()
-                mstore(0x00, 0xe6c4247b)
+                // Revert ZeroAddress()
+                mstore(0x00, 0xd92e233d)
                 revert(0x1c, 0x04)
             }
         }

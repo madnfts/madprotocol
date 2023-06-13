@@ -83,10 +83,7 @@ abstract contract MADMarketplaceBase is
         swapRouter = ISwapRouter(_swapRouter);
 
         _setPaymentToken(_paymentTokenAddress);
-        require(
-            address(swapRouter) != address(0),
-            "invalid swap router configuration"
-        );
+        if (address(swapRouter) == address(0)) revert ZeroAddress();
 
         // Approve the router to spend the ERC20 payment token.
         SafeTransferLib.safeApprove(
@@ -296,16 +293,12 @@ abstract contract MADMarketplaceBase is
     //                   PUBLIC/EXTERNAL GETTERS                  //
     ////////////////////////////////////////////////////////////////
 
-    /// @notice Everything in storage can be fetch through the
+    /// @notice Everything in storage can be fetched through the
     /// getters natively provided by all public mappings.
-    /// @dev This public getter serve as a hook to ease frontend
+    /// @dev This public getter serves as a hook to ease frontend
     /// fetching whilst estimating `orderIdBySeller` indexes by length.
     /// @dev Function Signature := 0x8aae982a
-    function sellerOrderLength(address _seller)
-        external
-        view
-        returns (uint256)
-    {
+    function sellerOrderLength(address _seller) public view returns (uint256) {
         return orderIdBySeller[_seller].length;
     }
 
@@ -403,7 +396,7 @@ abstract contract MADMarketplaceBase is
     /// @notice Enables the contract's owner to change recipient address.
     /// @dev Function Signature := 0x3bbed4a0
     function setRecipient(address _recipient) public onlyOwner {
-        require(_recipient != address(0), "Invalid recipient");
+        if (_recipient == address(0)) revert ZeroAddress();
 
         // recipient = _recipient;
         assembly {

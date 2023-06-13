@@ -243,7 +243,7 @@ abstract contract MADMarketplaceBase is
         view
     {
         assembly {
-            // CanceledOrder()
+            // CancelledOrder()
             if iszero(_endTime) {
                 mstore(0x00, 0xdf9428da)
                 revert(0x1c, 0x04)

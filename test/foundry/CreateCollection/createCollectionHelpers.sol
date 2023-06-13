@@ -1,6 +1,5 @@
 pragma solidity 0.8.19;
 
-import "forge-std/src/Test.sol";
 import {
     DeploySplitterBase,
     IFactory,
@@ -12,7 +11,16 @@ import { CreateCollectionBase } from
 
 import { Strings } from "contracts/MADTokens/common/ImplBase.sol";
 
-contract CreateCollectionHelpers is CreateCollectionBase {
+import {
+    ERC721TransferFunctions,
+    ICollection
+} from "test/foundry/CreateCollection/_transferFunctionsERC721.sol";
+
+contract CreateCollectionHelpers is
+    CreateCollectionBase,
+    ERC721TransferFunctions,
+    ICollection
+{
     function _createCollectionDefault(
         IFactory _factory,
         DeploySplitterBase splitterDeployer,

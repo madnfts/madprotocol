@@ -57,11 +57,12 @@ abstract contract ERC721TransferFunctions is Test {
             friend, mintData.nftReceiver, mintData.amountToMint
         );
 
-        // Check that nftReceiver has the token
+        // Check that nftReceiver has the tokens
         assertTrue(
             collection.balanceOf(mintData.nftReceiver)
-                == mintData.balanceNftReceiverBefore
+                == mintData.balanceNftReceiverBefore + mintData.amountToMint
         );
+
         assertTrue(_checkOwnerOf(mintData.nftReceiver, mintData));
 
         // Check that friend  Does NOT have the token

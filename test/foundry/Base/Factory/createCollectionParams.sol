@@ -3,14 +3,27 @@ pragma solidity 0.8.19;
 
 import { IFactory } from "test/foundry/Base/Factory/IFactory.sol";
 
-library CreateCollectionParams {
+import { Strings } from "contracts/MADTokens/common/ImplBase.sol";
+
+abstract contract CreateCollectionParams {
     // string private nextSalt;
     string private constant BASE_NAME = "createCollection";
     string private constant BASE_SYMBOL = "CC";
 
+    string createCollectionSalt = "createCollectionSalt";
+    uint256 CreateCollectionSaltNonce;
+
+    function updateCreateCollectionSalt() public returns (string memory) {
+        return string(
+            abi.encodePacked(
+                createCollectionSalt,
+                Strings.toString(CreateCollectionSaltNonce++)
+            )
+        );
+    }
+
     function generateCollectionParams(
         uint8 _tokenType,
-        string memory salt,
         uint256 _price,
         uint256 _maxSupply,
         string memory _uri,
@@ -23,7 +36,7 @@ library CreateCollectionParams {
 
         return IFactory.CreateCollectionParams({
             tokenType: uint8(_tokenType),
-            tokenSalt: salt,
+            tokenSalt: updateCreateCollectionSalt(),
             name: name,
             symbol: symbol,
             price: _price,
@@ -39,10 +52,8 @@ library CreateCollectionParams {
         public
         returns (IFactory.CreateCollectionParams memory)
     {
-        string memory salt = "createCollectionSalt";
         return generateCollectionParams(
             1, //  tokenType
-            salt, //salt
             1 ether, // price,
             1000, //  maxSupply
             "https://example.com", //  URI

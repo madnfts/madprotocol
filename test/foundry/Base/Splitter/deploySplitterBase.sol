@@ -13,16 +13,22 @@ import {
     Enums
 } from "test/foundry/Base/Deploy/deployerBase.sol";
 
+import { Strings } from "contracts/MADTokens/common/ImplBase.sol";
 import { SettersToggle } from "test/foundry/utils/setterToggle.sol";
 import { SplitterHelpers } from "test/foundry/Base/Splitter/splitterHelpers.sol";
 
 contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
     using Types for Types.SplitterConfig;
 
-    string public splitterSalt = "SplitterSalt";
+    string splitterSalt = "SplitterSalt";
+    uint256 splitterSaltNonce;
 
-    function updateSplitterSalt(string memory _splitterSalt) public {
-        splitterSalt = _splitterSalt;
+    function updateSplitterSalt() public returns (string memory) {
+        return string(
+            abi.encodePacked(
+                splitterSalt, Strings.toString(splitterSaltNonce++)
+            )
+        );
     }
 
     // Define default variables
@@ -42,7 +48,7 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
         vm.prank(splitterData.deployer, splitterData.deployer);
 
         splitterData.factory.splitterCheck(
-            splitterData.splitterSalt,
+            updateSplitterSalt(),
             splitterData.ambassador,
             splitterData.project,
             splitterData.ambassadorShare,
@@ -52,7 +58,7 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
         // emit log_named_address("sD: currentSigner", splitterData.deployer);
 
         splitterAddress = splitterData.factory.getDeployedAddress(
-            splitterData.splitterSalt, splitterData.deployer
+            updateSplitterSalt(), splitterData.deployer
         );
 
         // emit log_named_address("sD: splitterAddress", splitterAddress);
@@ -66,7 +72,7 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
         address splitterAddress
     ) public {
         bytes32 _splitterSalt = keccak256(
-            abi.encode(splitterData.deployer, bytes(splitterData.splitterSalt))
+            abi.encode(splitterData.deployer, bytes(updateSplitterSalt()))
         );
 
         Types.SplitterConfig memory config = splitterData.factory.splitterInfo(

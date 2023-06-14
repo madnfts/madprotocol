@@ -4,7 +4,8 @@ pragma solidity 0.8.19;
 import "forge-std/src/Test.sol";
 import {
     IFactory,
-    CreateCollectionParams
+    CreateCollectionParams,
+    Strings
 } from "test/foundry/Base/Factory/createCollectionParams.sol";
 
 import { IERC1155Basic } from
@@ -16,7 +17,8 @@ import { IImplBase } from "test/foundry/Base/Tokens/common/IImplBase.sol";
 import { SettersToggle } from "test/foundry/utils/setterToggle.sol";
 
 abstract contract CreateCollectionBase is
-    SettersToggle("defaultCollectionOwner")
+    SettersToggle("defaultCollectionOwner"),
+    CreateCollectionParams
 {
     function createCollectionDefault(IFactory factory, address _splitter)
         public

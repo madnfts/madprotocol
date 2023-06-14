@@ -6,10 +6,10 @@ import {
     SplitterHelpers
 } from "test/foundry/Base/Splitter/deploySplitterBase.sol";
 
-import { CreateCollectionBase } from
-    "test/foundry/Base/Factory/createCollectionBase.sol";
-
-import { Strings } from "contracts/MADTokens/common/ImplBase.sol";
+import {
+    CreateCollectionBase,
+    Strings
+} from "test/foundry/Base/Factory/createCollectionBase.sol";
 
 import {
     ERC721TransferFunctions,
@@ -62,11 +62,6 @@ contract CreateCollectionHelpers is
         // Iterate over the function signatures and arguments
         uint256 funcSignaturesLength = 4;
         for (uint256 j = 0; j < funcSignaturesLength; j++) {
-            string memory splitterSalt =
-                string(abi.encodePacked("SplitterSalt", Strings.toString(j)));
-
-            _splitterDeployer.updateSplitterSalt(splitterSalt);
-
             address splitter = SplitterHelpers.callFunctionAndGetSplitter(
                 address(_splitterDeployer),
                 functionSignatures[j],
@@ -75,13 +70,6 @@ contract CreateCollectionHelpers is
 
             for (uint256 i = 0; i < _amountToMint; i++) {
                 emit log_named_uint("Block Number", block.number);
-                string memory salt = string(
-                    abi.encodePacked(
-                        "createCollectionSalt_",
-                        splitterSalt,
-                        Strings.toString(i)
-                    )
-                );
 
                 string memory BASE_NAME = string(
                     abi.encodePacked("createCollection_", Strings.toString(i))
@@ -95,7 +83,7 @@ contract CreateCollectionHelpers is
                     splitter,
                     IFactory.CreateCollectionParams(
                         1,
-                        salt,
+                        updateCreateCollectionSalt(),
                         BASE_NAME,
                         BASE_SYMBOL,
                         _price,

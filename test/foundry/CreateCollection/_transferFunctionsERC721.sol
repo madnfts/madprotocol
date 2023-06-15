@@ -2,7 +2,6 @@ pragma solidity 0.8.19;
 
 import "forge-std/src/Test.sol";
 import { IERC721Basic } from "test/foundry/Base/Tokens/ERC721/IERC721Basic.sol";
-
 import { ICollection } from "test/foundry/CreateCollection/ICollection.sol";
 
 abstract contract ERC721TransferFunctions is Test {
@@ -24,148 +23,114 @@ abstract contract ERC721TransferFunctions is Test {
         }
     }
 
-    function _checkTransferFrom(ICollection.MintData memory mintData)
-        internal
-    {
+    function _transferTokens(
+        address _from,
+        address _to,
+        ICollection.MintData memory mintData,
+        bytes memory data,
+        bool isSafe,
+        bool withData
+    ) internal {
+        vm.startPrank(_from);
         IERC721Basic collection = IERC721Basic(mintData.collectionAddress);
-        //send to friend and have it sent back using transferFrom.
+
+        for (
+            uint256 i = mintData.newTotalSupply;
+            i > mintData.totalSupplyBefore;
+            --i
+        ) {
+            if (isSafe) {
+                if (withData) {
+                    collection.safeTransferFrom(_from, _to, i, data);
+                } else {
+                    collection.safeTransferFrom(_from, _to, i);
+                }
+            } else {
+                collection.transferFrom(_from, _to, i);
+            }
+        }
+        vm.stopPrank();
+    }
+
+    function _checkBalancesAndOwnership(
+        ICollection.MintData memory mintData,
+        address receiver,
+        address friend,
+        uint256 expectedReceiverBalance,
+        uint256 expectedFriendBalance,
+        bool expectedReceiverOwnership
+    ) internal {
+        IERC721Basic collection = IERC721Basic(mintData.collectionAddress);
+
+        // Check that receiver has the expected balance
+        assertTrue(collection.balanceOf(receiver) == expectedReceiverBalance);
+        assertTrue(
+            _checkOwnerOf(receiver, mintData) == expectedReceiverOwnership
+        );
+
+        // Check that friend has the expected balance
+        assertTrue(collection.balanceOf(friend) == expectedFriendBalance);
+        assertTrue(_checkOwnerOf(friend, mintData) != expectedReceiverOwnership);
+
+        // Check the totalSupply of the collection has NOT increased
+        assertTrue(collection.totalSupply() == mintData.newTotalSupply);
+    }
+
+    function _transferCheck(
+        ICollection.MintData memory mintData,
+        bool isSafe,
+        bool withData,
+        bytes memory data
+    ) internal {
         address friend = makeAddr("friend");
         vm.deal(friend, 1000 ether);
 
-        vm.prank(mintData.nftReceiver);
-        collection.transferFrom(
-            mintData.nftReceiver, friend, mintData.amountToMint
+        // Send tokens to 'Friend'
+        _transferTokens(
+            mintData.nftReceiver, friend, mintData, data, isSafe, withData
         );
 
-        // Check that nftReceiver no longer has the token
-        assertTrue(
-            collection.balanceOf(mintData.nftReceiver)
-                == mintData.balanceNftReceiverBefore
+        
+        _checkBalancesAndOwnership(
+            mintData,
+            mintData.nftReceiver,
+            friend,
+            mintData.balanceNftReceiverBefore,
+            mintData.amountToMint,
+            false
         );
-        assertTrue(!_checkOwnerOf(mintData.nftReceiver, mintData));
-
-        // Check that friend  now has the token
-        assertTrue(collection.balanceOf(friend) == mintData.amountToMint);
-        assertTrue(_checkOwnerOf(friend, mintData));
-
-        // Check the totalSupply of the collection has NOT increased
-        assertTrue(collection.totalSupply() == mintData.newTotalSupply);
 
         // Send token back to nftReceiver
-        vm.prank(friend);
-        collection.transferFrom(
-            friend, mintData.nftReceiver, mintData.amountToMint
+        _transferTokens(
+            friend, mintData.nftReceiver, mintData, data, isSafe, withData
         );
 
-        // Check that nftReceiver has the tokens
-        assertTrue(
-            collection.balanceOf(mintData.nftReceiver)
-                == mintData.balanceNftReceiverBefore + mintData.amountToMint
+        _checkBalancesAndOwnership(
+            mintData,
+            mintData.nftReceiver,
+            friend,
+            mintData.balanceNftReceiverBefore + mintData.amountToMint,
+            0,
+            true
         );
+    }
 
-        assertTrue(_checkOwnerOf(mintData.nftReceiver, mintData));
-
-        // Check that friend  Does NOT have the token
-        assertTrue(collection.balanceOf(friend) == 0);
-        assertTrue(!_checkOwnerOf(friend, mintData));
-
-        // Check the totalSupply of the collection has NOT increased
-        assertTrue(collection.totalSupply() == mintData.newTotalSupply);
+    function _checkTransferFrom(ICollection.MintData memory mintData)
+        internal
+    {
+        _transferCheck(mintData, false, false, "");
     }
 
     function _checkSafeTransferFrom(ICollection.MintData memory mintData)
         internal
     {
-        IERC721Basic collection = IERC721Basic(mintData.collectionAddress);
-        address friend = makeAddr("friend");
-        vm.deal(friend, 1000 ether);
-
-        //------------------------------------------------------------
-        //send to friend and have it sent back using safeTransferFrom.
-        vm.prank(mintData.nftReceiver);
-        collection.safeTransferFrom(
-            mintData.nftReceiver, friend, mintData.amountToMint
-        );
-
-        // Check that nftReceiver no longer has the token
-        assertTrue(
-            collection.balanceOf(mintData.nftReceiver)
-                == mintData.balanceNftReceiverBefore
-        );
-        assertTrue(!_checkOwnerOf(mintData.nftReceiver, mintData));
-
-        // Check that friend  now has the token
-        assertTrue(collection.balanceOf(friend) == mintData.amountToMint);
-        assertTrue(_checkOwnerOf(friend, mintData));
-
-        // Check the totalSupply of the collection has NOT increased
-        assertTrue(collection.totalSupply() == mintData.newTotalSupply);
-
-        // Send token back to nftReceiver
-        vm.prank(friend);
-        collection.safeTransferFrom(
-            friend, mintData.nftReceiver, mintData.amountToMint
-        );
-
-        // Check that nftReceiver has the token
-        assertTrue(
-            collection.balanceOf(mintData.nftReceiver)
-                == mintData.balanceNftReceiverBefore + mintData.amountToMint
-        );
-        assertTrue(_checkOwnerOf(mintData.nftReceiver, mintData));
-
-        // Check that friend  Does NOT have the token
-        assertTrue(collection.balanceOf(friend) == 0);
-        assertTrue(!_checkOwnerOf(friend, mintData));
-
-        // Check the totalSupply of the collection has NOT increased
-        assertTrue(collection.totalSupply() == mintData.newTotalSupply);
+        _transferCheck(mintData, true, false, "");
     }
 
     function _checkSafeTransferFromWithData(
         ICollection.MintData memory mintData
     ) internal {
-        IERC721Basic collection = IERC721Basic(mintData.collectionAddress);
-        address friend = makeAddr("friend");
-        vm.deal(friend, 1000 ether);
-        //------------------------------------------------------------
-        //send to friend and have it sent back using safeTransferFrom with  data.
-
         bytes memory data = "SomeDataToSend";
-
-        vm.prank(mintData.nftReceiver);
-        collection.safeTransferFrom(mintData.nftReceiver, friend, 1, data);
-
-        // Check that nftReceiver no longer has the token
-        assertTrue(
-            collection.balanceOf(mintData.nftReceiver)
-                == mintData.balanceNftReceiverBefore
-        );
-        assertTrue(!_checkOwnerOf(mintData.nftReceiver, mintData));
-
-        // Check that friend  now has the token
-        assertTrue(collection.balanceOf(friend) == mintData.amountToMint);
-        assertTrue(_checkOwnerOf(friend, mintData));
-
-        // Check the totalSupply of the collection has NOT increased
-        assertTrue(collection.totalSupply() == mintData.newTotalSupply);
-
-        // Send token back to nftReceiver
-        vm.prank(friend);
-        collection.safeTransferFrom(friend, mintData.nftReceiver, 1, data);
-
-        // Check that nftReceiver has the token
-        assertTrue(
-            collection.balanceOf(mintData.nftReceiver)
-                == mintData.balanceNftReceiverBefore + mintData.amountToMint
-        );
-        assertTrue(_checkOwnerOf(mintData.nftReceiver, mintData));
-
-        // Check that friend  Does NOT have the token
-        assertTrue(collection.balanceOf(friend) == 0);
-        assertTrue(!_checkOwnerOf(friend, mintData));
-
-        // Check the totalSupply of the collection has NOT increased
-        assertTrue(collection.totalSupply() == mintData.newTotalSupply);
+        _transferCheck(mintData, true, true, data);
     }
 }

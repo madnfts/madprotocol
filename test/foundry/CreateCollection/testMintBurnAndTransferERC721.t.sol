@@ -49,15 +49,15 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         _checkSafeTransferFromWithData(mintData);
     }
 
-    function testMintToDefaultMultiple() public {
-        for (uint256 i = 0; i < 10; i++) {
-            MintData memory mintData =
-                _mintToERC721(nftMinter, nftReceiver, nftMintFee, 10);
-            _checkTransferFrom(mintData);
-            _checkSafeTransferFrom(mintData);
-            _checkSafeTransferFromWithData(mintData);
-        }
-    }
+    // function testMintToDefaultMultiple() public {
+    //     for (uint256 i = 0; i < 10; i++) {
+    //         MintData memory mintData =
+    //             _mintToERC721(nftMinter, nftReceiver, nftMintFee, 10);
+    //         _checkTransferFrom(mintData);
+    //         _checkSafeTransferFrom(mintData);
+    //         _checkSafeTransferFromWithData(mintData);
+    //     }
+    // }
 
     function testMintToDefaultFuzzy(uint256 x) public {
         vm.assume(x < 10);

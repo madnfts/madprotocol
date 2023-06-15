@@ -47,8 +47,11 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
         // the calling test contract
         vm.prank(splitterData.deployer, splitterData.deployer);
 
+        string memory _splitterSalt = updateSplitterSalt();
+        splitterData.splitterSalt = _splitterSalt;
+
         splitterData.factory.splitterCheck(
-            updateSplitterSalt(),
+            _splitterSalt,
             splitterData.ambassador,
             splitterData.project,
             splitterData.ambassadorShare,
@@ -58,7 +61,7 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
         // emit log_named_address("sD: currentSigner", splitterData.deployer);
 
         splitterAddress = splitterData.factory.getDeployedAddress(
-            updateSplitterSalt(), splitterData.deployer
+            _splitterSalt, splitterData.deployer
         );
 
         // emit log_named_address("sD: splitterAddress", splitterAddress);
@@ -72,7 +75,7 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
         address splitterAddress
     ) public {
         bytes32 _splitterSalt = keccak256(
-            abi.encode(splitterData.deployer, bytes(updateSplitterSalt()))
+            abi.encode(splitterData.deployer, bytes(splitterData.splitterSalt))
         );
 
         Types.SplitterConfig memory config = splitterData.factory.splitterInfo(

@@ -102,7 +102,7 @@ call_override=false #Overrides unsafe external calls when running invariant test
 # # https://docs.soliditylang.org/en/latest/smtchecker.html#smt-and-horn-solvers
 # solvers = [
 #     'smtlib2',
-#     # 'eld',    
+#     # 'eld',
 #     'z3',
 #     # 'cvc4'
 # ]

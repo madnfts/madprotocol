@@ -90,7 +90,6 @@ abstract contract ERC721TransferFunctions is Test {
             mintData.nftReceiver, friend, mintData, data, isSafe, withData
         );
 
-        
         _checkBalancesAndOwnership(
             mintData,
             mintData.nftReceiver,

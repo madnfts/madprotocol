@@ -31,7 +31,7 @@ contract CreateCollectionHelpers is
         _splitter = splitterDeployer._runSplitterDeploy_creatorOnly(_factory);
 
         setCurrentSigner(_currentSigner);
-        emit log_named_address("currentSigner", currentSigner);
+        // emit log_named_address("currentSigner", currentSigner);
 
         _collectionAddress = createCollectionDefault(_factory, _splitter);
 

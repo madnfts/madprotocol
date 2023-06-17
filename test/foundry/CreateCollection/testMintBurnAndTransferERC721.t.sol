@@ -68,8 +68,9 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         _checkSafeTransferFromWithData(mintData);
     }
 
-    function testFailMintToIncorrectFeeSingle() public {
-        _mintToERC721(nftMinter, nftReceiver, nftMintFee + 1 ether, 1);
+    function testFailMintToIncorrectFeeSingle(uint256 _mintFee) public {
+        vm.assume(_mintFee != nftMintFee);
+        _mintToERC721(nftMinter, nftReceiver, _mintFee, 1);
     }
 
     function testFailMintToUnAuthorised() public {
@@ -81,6 +82,67 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         IERC721Basic(mintData.collectionAddress).mintTo{value: nftMintFee}(
             nftReceiver, 1, nftReceiver
         );
+    }
+
+    function testFailMintToMaxSupply() public {
+        // Mint Max Supply
+        _mintToERC721(nftMinter, nftReceiver, nftMintFee, 10_000);
+
+        // Try and mint more..
+        _mintToERC721(nftMinter, nftReceiver, nftMintFee, 10_000);
+    }
+
+    function TestPublicMintDefault() public {
+        // Create Collection & Splitter
+        (address _collectionAddress, address _splitterAddress) =
+        _createCollectionDefault(
+            deployedContracts.factory, splitterDeployer, nftMinter
+        );
+
+        IERC721Basic collection = IERC721Basic(_collectionAddress);
+        // ISplitter splitter = ISplitter(_splitterAddress);
+
+        // Add Ether to Accounts
+        vm.deal(nftMinter, 1000 ether);
+
+        collection.setPublicMintState(true);
+
+        uint256 _totalSupplyBefore = collection.totalSupply();
+
+        // Mint to nftReceiver
+        vm.prank(nftMinter);
+        collection.mint{value: nftMintFee}(1);
+
+        // Check that nftReceiver has the token(s)
+        assertTrue(collection.balanceOf(nftMinter) == 1);
+
+        // Check the totalSupply of the collection has increased
+        assertTrue(collection.totalSupply() == _totalSupplyBefore + 1);
+
+        // Check that nftReceiver is the Owner
+        assertTrue(collection.ownerOf(1) == nftMinter);
+    }
+
+      function TestFailPublicMintDefault() public {
+        // Create Collection & Splitter
+        (address _collectionAddress, address _splitterAddress) =
+        _createCollectionDefault(
+            deployedContracts.factory, splitterDeployer, nftMinter
+        );
+
+        IERC721Basic collection = IERC721Basic(_collectionAddress);
+        // ISplitter splitter = ISplitter(_splitterAddress);
+
+        // Add Ether to Accounts
+        vm.deal(nftMinter, 1000 ether);
+
+        collection.setPublicMintState(false);
+
+        uint256 _totalSupplyBefore = collection.totalSupply();
+
+        // Mint to nftReceiver
+        vm.prank(nftMinter);
+        collection.mint{value: nftMintFee}(1);
     }
 
     function _mintToERC721(
@@ -119,6 +181,7 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
 
         // Mint to nftReceiver
         vm.prank(_nftMinter);
+
         collection.mintTo{value: _nftMintFee}(
             _nftReceiver, _amountToMint, _nftReceiver
         );

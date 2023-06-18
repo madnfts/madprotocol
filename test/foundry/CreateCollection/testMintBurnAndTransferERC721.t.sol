@@ -24,13 +24,15 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
     DeploySplitterBase splitterDeployer;
 
     uint256 nftMintFee = 0.25 ether; // default contract
-    uint256 nftBurnFee; // default contract
+    uint256 nftBurnFee = 0; // default contract
 
     // Create default addresses
     address nftReceiver = makeAddr("nftReceiverDefault");
     address nftMinter = makeAddr("nftMinterDefault");
+    address prankster = makeAddr("prankster");
 
     function setUp() public {
+        vm.deal(prankster, 20_000 ether);
         // Instantiate deployer contracts
         deployer = new Deployer();
 
@@ -41,117 +43,169 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         deployedContracts = deployer.deployAll(ercTypes.ERC721);
     }
 
-    function testMintToDefaultSingle() public {
+    function testMintTo_DefaultSingle() public {
+        uint128 _amountToMint = 1;
         MintData memory mintData =
-            _mintToERC721(nftMinter, nftReceiver, nftMintFee, 1);
-        _checkTransferFrom(mintData);
-        _checkSafeTransferFrom(mintData);
-        _checkSafeTransferFromWithData(mintData);
+            _setupMint(nftMinter, nftReceiver, nftMintFee, _amountToMint);
+        _doMintTo(mintData, 0);
+
+        _checkMint(mintData);
     }
 
-    function testMintToDefaultMultiple() public {
+    function TestPublicMint_DefaultSingle() public {
+        uint128 _amountToMint = 1;
+        MintData memory mintData =
+            _setupMint(nftMinter, nftReceiver, nftMintFee, _amountToMint);
+
+        _doPublicMint(mintData, true, 0);
+
+        _checkMint(mintData);
+    }
+
+    function testMintTo_DefaultMultiple() public {
         for (uint256 i = 0; i < 10; i++) {
+            uint128 _amountToMint = 10;
             MintData memory mintData =
-                _mintToERC721(nftMinter, nftReceiver, nftMintFee, 10);
-            _checkTransferFrom(mintData);
-            _checkSafeTransferFrom(mintData);
-            _checkSafeTransferFromWithData(mintData);
+                _setupMint(nftMinter, nftReceiver, nftMintFee, _amountToMint);
+            _doMintTo(mintData, 0);
+
+            _checkMint(mintData);
         }
     }
 
-    function testMintToDefaultFuzzy(uint256 x) public {
-        vm.assume(x < 10);
-        MintData memory mintData =
-            _mintToERC721(nftMinter, nftReceiver, nftMintFee, 1);
-        _checkTransferFrom(mintData);
-        _checkSafeTransferFrom(mintData);
-        _checkSafeTransferFromWithData(mintData);
+    function TestPublicMint_DefaultMultiple() public {
+        for (uint256 i = 0; i < 10; i++) {
+            uint128 _amountToMint = 10;
+            MintData memory mintData =
+                _setupMint(nftMinter, nftReceiver, nftMintFee, _amountToMint);
+
+            _doPublicMint(mintData, true, 0);
+
+            _checkMint(mintData);
+        }
     }
 
-    function testFailMintToIncorrectFeeSingle(uint256 _mintFee) public {
-        vm.assume(_mintFee != nftMintFee);
-        _mintToERC721(nftMinter, nftReceiver, _mintFee, 1);
+    function testMintTo_DefaultFuzzy(uint256 x) public {
+        uint128 _amountToMint = 10;
+        MintData memory mintData =
+            _setupMint(nftMinter, nftReceiver, nftMintFee, _amountToMint);
+        _doMintTo(mintData, 0);
+
+        _checkMint(mintData);
     }
 
-    function testFailMintToUnAuthorised() public {
+    function TestPublicMint_DefaultFuzzy(uint256 x) public {
+        uint128 _amountToMint = 10;
         MintData memory mintData =
-            _mintToERC721(nftMinter, nftReceiver, nftMintFee, 1);
-        // Mint to nftReceiver
-        address prankster = makeAddr("prankster");
-        vm.prank(prankster);
-        IERC721Basic(mintData.collectionAddress).mintTo{value: nftMintFee}(
-            nftReceiver, 1, nftReceiver
+            _setupMint(nftMinter, nftReceiver, nftMintFee, _amountToMint);
+
+        _doPublicMint(mintData, true, 0);
+
+        _checkMint(mintData);
+    }
+
+    function test_SetPublicMint_Unauthorised() public {
+        uint128 _amountToMint = 1;
+        MintData memory mintData =
+            _setupMint(nftMinter, nftReceiver, nftMintFee, _amountToMint);
+        IERC721Basic collection = IERC721Basic(mintData.collectionAddress);
+
+        vm.startPrank(prankster);
+        vm.deal(prankster, 20_000 ether);
+        vm.expectRevert(0x1648fd01); // error NotAuthorised();
+        collection.setPublicMintState(true);
+        vm.stopPrank();
+    }
+
+    function testPublicMint_PublicMintClosed() public {
+        uint128 _amountToMint = 1;
+        MintData memory mintData =
+            _setupMint(nftMinter, nftReceiver, nftMintFee, _amountToMint);
+
+        _doPublicMint(
+            mintData,
+            false,
+            0x2d0a3f8e // error PublicMintClosed();
         );
     }
 
-    function testFailMintToMaxSupply() public {
+    function testMintTo_IncorrectFeeSingleFuzzy(uint256 _mintFee) public {
+        vm.assume(_mintFee != nftMintFee && _mintFee <= 1 ether);
+        uint128 _amountToMint = 1;
+        MintData memory mintData =
+            _setupMint(nftMinter, nftReceiver, nftMintFee, _amountToMint);
+
+        // change mint fee
+        mintData.nftMintFee = _mintFee;
+        _doMintTo(
+            mintData,
+            0xf7760f25 // error WrongPrice();
+        );
+    }
+
+    function testMint_IncorrectFeeSingleFuzzy(uint256 _mintFee) public {
+        vm.assume(_mintFee != nftMintFee && _mintFee <= 1 ether);
+        uint128 _amountToMint = 1;
+        MintData memory mintData =
+            _setupMint(nftMinter, nftReceiver, nftMintFee, _amountToMint);
+
+        mintData.nftMintFee = _mintFee; // change mint fee
+
+        _doPublicMint(
+            mintData,
+            true,
+            0xf7760f25 // error WrongPrice();
+        );
+    }
+
+    function testMintTo_UnAuthorised() public {
+        uint128 _amountToMint = 1;
+        MintData memory mintData =
+            _setupMint(nftMinter, nftReceiver, nftMintFee, _amountToMint);
+
+        // Attempt to Mint to nftReceiver
+
+        vm.prank(prankster);
+
+        vm.expectRevert(0x1648fd01); // error NotAuthorised();
+        IERC721Basic(mintData.collectionAddress).mintTo{value: nftMintFee}(
+            prankster, 1, nftReceiver
+        );
+    }
+
+    function testMintTo_MaxSupply() public {
         // Mint Max Supply
-        _mintToERC721(nftMinter, nftReceiver, nftMintFee, 10_000);
+        uint128 _amountToMint = 10_000;
+        MintData memory mintData =
+            _setupMint(nftMinter, nftReceiver, nftMintFee, _amountToMint);
+        _doMintTo(mintData, 0);
 
         // Try and mint more..
-        _mintToERC721(nftMinter, nftReceiver, nftMintFee, 10_000);
+        vm.deal(nftMinter, 20_000 ether);
+
+        _doMintTo(mintData, 0xd05cb609); // error MaxSupplyReached();
     }
 
-    function TestPublicMintDefault() public {
-        // Create Collection & Splitter
-        (address _collectionAddress, address _splitterAddress) =
-        _createCollectionDefault(
-            deployedContracts.factory, splitterDeployer, nftMinter
-        );
+    function testMint_MaxSupply() public {
+        // Mint Max Supply
+        uint128 _amountToMint = 10_000;
+        MintData memory mintData =
+            _setupMint(nftMinter, nftReceiver, nftMintFee, _amountToMint);
+        _doPublicMint(mintData, true, 0);
 
-        IERC721Basic collection = IERC721Basic(_collectionAddress);
-        // ISplitter splitter = ISplitter(_splitterAddress);
-
-        // Add Ether to Accounts
-        vm.deal(nftMinter, 1000 ether);
-
-        collection.setPublicMintState(true);
-
-        uint256 _totalSupplyBefore = collection.totalSupply();
-
-        // Mint to nftReceiver
-        vm.prank(nftMinter);
-        collection.mint{value: nftMintFee}(1);
-
-        // Check that nftReceiver has the token(s)
-        assertTrue(collection.balanceOf(nftMinter) == 1);
-
-        // Check the totalSupply of the collection has increased
-        assertTrue(collection.totalSupply() == _totalSupplyBefore + 1);
-
-        // Check that nftReceiver is the Owner
-        assertTrue(collection.ownerOf(1) == nftMinter);
+        // Try and mint more..
+        vm.deal(nftMinter, 20_000 ether);
+        _doPublicMint(mintData, true, 0xd05cb609); // error MaxSupplyReached();
     }
 
-      function TestFailPublicMintDefault() public {
-        // Create Collection & Splitter
-        (address _collectionAddress, address _splitterAddress) =
-        _createCollectionDefault(
-            deployedContracts.factory, splitterDeployer, nftMinter
-        );
-
-        IERC721Basic collection = IERC721Basic(_collectionAddress);
-        // ISplitter splitter = ISplitter(_splitterAddress);
-
-        // Add Ether to Accounts
-        vm.deal(nftMinter, 1000 ether);
-
-        collection.setPublicMintState(false);
-
-        uint256 _totalSupplyBefore = collection.totalSupply();
-
-        // Mint to nftReceiver
-        vm.prank(nftMinter);
-        collection.mint{value: nftMintFee}(1);
-    }
-
-    function _mintToERC721(
+    function _setupMint(
         address _nftMinter,
         address _nftReceiver,
         uint256 _nftMintFee,
         uint128 _amountToMint
     ) internal returns (MintData memory mintData) {
         // Create Collection & Splitter
+        vm.prank(_nftMinter);
         (address _collectionAddress, address _splitterAddress) =
         _createCollectionDefault(
             deployedContracts.factory, splitterDeployer, _nftMinter
@@ -161,8 +215,8 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         // ISplitter splitter = ISplitter(_splitterAddress);
 
         // Add Ether to Accounts
-        vm.deal(_nftMinter, 1000 ether);
-        vm.deal(_nftReceiver, 1000 ether);
+        vm.deal(_nftMinter, 20_000 ether);
+        vm.deal(_nftReceiver, 20_000 ether);
 
         uint256 _totalSupplyBefore = collection.totalSupply();
 
@@ -178,23 +232,60 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
             balanceNftReceiverBefore: collection.balanceOf(_nftReceiver),
             balanceNftMinterBefore: collection.balanceOf(_nftMinter)
         });
+        return mintData;
+    }
 
-        // Mint to nftReceiver
-        vm.prank(_nftMinter);
+    function _doMintTo(MintData memory mintData, bytes4 _errorSelector)
+        internal
+    {
+        vm.startPrank(mintData.nftMinter);
+        IERC721Basic collection = IERC721Basic(mintData.collectionAddress);
 
-        collection.mintTo{value: _nftMintFee}(
-            _nftReceiver, _amountToMint, _nftReceiver
+        if (_errorSelector != 0x00000000) {
+            vm.expectRevert(_errorSelector);
+        }
+        collection.mintTo{value: mintData.nftMintFee}(
+            mintData.nftReceiver, mintData.amountToMint, mintData.nftReceiver
         );
+        vm.stopPrank();
+    }
+
+    function _doPublicMint(
+        MintData memory mintData,
+        bool _mintState,
+        bytes4 _errorSelector
+    ) internal {
+        IERC721Basic collection = IERC721Basic(mintData.collectionAddress);
+
+        vm.startPrank(mintData.nftMinter);
+        collection.setPublicMintState(_mintState);
+
+        if (_errorSelector != 0x00000000) {
+            vm.expectRevert(_errorSelector);
+        }
+
+        uint256 _value = mintData.nftMintFee + (1 ether * mintData.amountToMint);
+
+        collection.mint{value: _value}(mintData.amountToMint);
+        vm.stopPrank();
+    }
+
+    function _checkMint(MintData memory mintData) internal {
+        IERC721Basic collection = IERC721Basic(mintData.collectionAddress);
 
         // Check that nftReceiver has the token(s)
         assertTrue(
-            collection.balanceOf(_nftReceiver)
-                == mintData.balanceNftReceiverBefore + _amountToMint
+            collection.balanceOf(mintData.nftReceiver)
+                == mintData.balanceNftReceiverBefore + mintData.amountToMint
         );
 
         // Check the totalSupply of the collection has increased
         assertTrue(collection.totalSupply() == mintData.newTotalSupply);
 
-        assertTrue(_checkOwnerOf(_nftReceiver, mintData));
+        assertTrue(_checkOwnerOf(mintData.nftReceiver, mintData));
+
+        _checkTransferFrom(mintData);
+        _checkSafeTransferFrom(mintData);
+        _checkSafeTransferFromWithData(mintData);
     }
 }

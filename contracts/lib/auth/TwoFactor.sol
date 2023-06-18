@@ -8,8 +8,8 @@ abstract contract TwoFactor {
     //                           ERRORS                           //
     ////////////////////////////////////////////////////////////////
 
-    uint256 constant _NOT_AUTHORISED = 0x1648fd01;
-    uint256 constant _ZERO_ADDRESS = 0xaa7feadc;
+    uint256 internal constant _NOT_AUTHORISED = 0x1648fd01;
+    uint256 internal constant _ZERO_ADDRESS = 0xaa7feadc;
 
     /// @dev 0x1648fd01
     error NotAuthorised();
@@ -20,9 +20,9 @@ abstract contract TwoFactor {
     //                           EVENTS                           //
     ////////////////////////////////////////////////////////////////
 
-    uint256 constant _OWNER_UPDATED =
+    uint256 internal constant _OWNER_UPDATED =
         0xb9312e2100469bd44e3f762c248f4dcc8d7788906fabf34f79db45920c37e269;
-    uint256 constant _ROUTER_SET =
+    uint256 internal constant _ROUTER_SET =
         0xc6b438e6a8a59579ce6a4406cbd203b740e0d47b458aae6596339bcd40c40d15;
 
     event OwnerUpdated(address indexed user, address indexed newOwner);

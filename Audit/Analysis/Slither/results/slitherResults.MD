@@ -13,7 +13,7 @@ The following number of issues were found, categorized by their severity:
 
 
 # Excluded Detectors
- 
+
  - *pragma*
 
 - *solc-version*
@@ -23,7 +23,7 @@ The following number of issues were found, categorized by their severity:
 - *naming-convention*
 
 
-## Smart Contracts Analysed With Issues: 
+## Smart Contracts Analysed With Issues:
 - [contracts/Marketplace/MADMarketplaceBase.sol](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol)
 - [contracts/Router/MADRouterBase.sol](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Router/MADRouterBase.sol)
 - [contracts/Marketplace/MADMarketplace721.sol](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplace721.sol)
@@ -47,7 +47,7 @@ The following number of issues were found, categorized by their severity:
 - [contracts/lib/tokens/common/ERC2981.sol](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/tokens/common/ERC2981.sol)
 - [contracts/lib/auth/Owned.sol](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/auth/Owned.sol)
 
-## Smart Contracts Analysed With NO Issues: 
+## Smart Contracts Analysed With NO Issues:
 - [contracts/MAD.sol](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/MAD.sol)
 - [contracts/static_analysis.sol](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/static_analysis.sol)
 - [contracts/lib/auth/FactoryVerifier.sol](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/auth/FactoryVerifier.sol)
@@ -94,7 +94,7 @@ _Item 1 / 19_
 
 ## Description
 
-- L50: 
+- L50:
 
 - [MADMarketplaceBase.recipient](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L50) is never initialized. It is used in:
 	- [MADMarketplaceBase.setRecipient(address)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L338-L347)
@@ -122,9 +122,9 @@ _Item 2 / 19_
 
 ## Description
 
-- L54: 
+- L54:
 
-- [MADMarketplaceBase.MADFactory](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L54) is never initialized. It is used in:
+- [MADMarketplaceBase.madFactory](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L54) is never initialized. It is used in:
 	- [MADMarketplaceBase.setFactory(FactoryVerifier)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L275-L284)
 	- [MADMarketplace1155.buy(bytes32)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplace1155.sol#L118-L153)
 	- [MADMarketplace1155.claim(bytes32)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplace1155.sol#L158-L186)
@@ -149,7 +149,7 @@ _Item 3 / 19_
 
 ## Description
 
-- L48: 
+- L48:
 
 - [MADRouterBase.madFactory](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Router/MADRouterBase.sol#L48) is never initialized. It is used in:
 	- [MADRouterBase.setFactory(FactoryVerifier)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Router/MADRouterBase.sol#L121-L130)
@@ -175,7 +175,7 @@ _Item 4 / 19_
 
 ## Description
 
-- L30: 
+- L30:
 
 - [MADMarketplace721.feeSelector](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplace721.sol#L30) is never initialized. It is used in:
 	- [MADMarketplace721.buy(bytes32)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplace721.sol#L104-L150)
@@ -202,7 +202,7 @@ _Item 5 / 19_
 
 ## Description
 
-- L48: 
+- L48:
 
 - [MADRouterBase.madFactory](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Router/MADRouterBase.sol#L48) is never initialized. It is used in:
 	- [MADRouterBase.setFactory(FactoryVerifier)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Router/MADRouterBase.sol#L121-L130)
@@ -228,7 +228,7 @@ _Item 6 / 19_
 
 ## Description
 
-- L60: 
+- L60:
 
 - [MADFactoryBase.router](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Factory/MADFactoryBase.sol#L60) is never initialized. It is used in:
 	- [MADFactoryBase._isRouter()](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Factory/MADFactoryBase.sol#L378-L388)
@@ -255,7 +255,7 @@ _Item 7 / 19_
 
 ## Description
 
-- L47: 
+- L47:
 
 - [MADMarketplaceBase.minBidValue](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L47) is never initialized. It is used in:
 	- [MADMarketplaceBase._bidChecks(uint8,uint256,address,uint256,uint256,uint256)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L155-L199)
@@ -281,7 +281,7 @@ _Item 8 / 19_
 
 ## Description
 
-- L60: 
+- L60:
 
 - [MADFactoryBase.router](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Factory/MADFactoryBase.sol#L60) is never initialized. It is used in:
 	- [MADFactoryBase._isRouter()](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Factory/MADFactoryBase.sol#L378-L388)
@@ -308,7 +308,7 @@ _Item 9 / 19_
 
 ## Description
 
-- L48: 
+- L48:
 
 - [MADMarketplaceBase.maxOrderDuration](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L48) is never initialized. It is used in:
 	- [MADMarketplaceBase._makeOrderChecks(uint256,uint256)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L108-L133)
@@ -334,7 +334,7 @@ _Item 10 / 19_
 
 ## Description
 
-- L46: 
+- L46:
 
 - [MADMarketplaceBase.minAuctionIncrement](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L46) is never initialized. It is used in:
 	- [MADMarketplaceBase.updateSettings(uint256,uint256,uint256,uint256)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L304-L334)
@@ -360,7 +360,7 @@ _Item 11 / 19_
 
 ## Description
 
-- L45: 
+- L45:
 
 - [MADMarketplaceBase.minOrderDuration](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L45) is never initialized. It is used in:
 	- [MADMarketplaceBase._makeOrderChecks(uint256,uint256)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L108-L133)
@@ -386,7 +386,7 @@ _Item 12 / 19_
 
 ## Description
 
-- L39: 
+- L39:
 
 - [MADRouterBase.recipient](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Router/MADRouterBase.sol#L39) is never initialized. It is used in:
 	- [MADRouterBase.setRecipient(address)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Router/MADRouterBase.sol#L134-L142)
@@ -412,7 +412,7 @@ _Item 13 / 19_
 
 ## Description
 
-- L66: 
+- L66:
 
 - [MADFactoryBase.signer](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Factory/MADFactoryBase.sol#L66) is never initialized. It is used in:
 	- [MADFactoryBase.setSigner(address)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Factory/MADFactoryBase.sol#L495-L503)
@@ -437,7 +437,7 @@ _Item 14 / 19_
 
 ## Description
 
-- L46: 
+- L46:
 
 - [MADMarketplaceBase.minAuctionIncrement](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L46) is never initialized. It is used in:
 	- [MADMarketplaceBase.updateSettings(uint256,uint256,uint256,uint256)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L304-L334)
@@ -463,7 +463,7 @@ _Item 15 / 19_
 
 ## Description
 
-- L39: 
+- L39:
 
 - [MADRouterBase.recipient](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Router/MADRouterBase.sol#L39) is never initialized. It is used in:
 	- [MADRouterBase.setRecipient(address)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Router/MADRouterBase.sol#L134-L142)
@@ -489,7 +489,7 @@ _Item 16 / 19_
 
 ## Description
 
-- L63: 
+- L63:
 
 - [MADFactoryBase.market](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Factory/MADFactoryBase.sol#L63) is never initialized. It is used in:
 	- [MADFactoryBase._isMarket()](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Factory/MADFactoryBase.sol#L426-L433)
@@ -515,9 +515,9 @@ _Item 17 / 19_
 
 ## Description
 
-- L54: 
+- L54:
 
-- [MADMarketplaceBase.MADFactory](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L54) is never initialized. It is used in:
+- [MADMarketplaceBase.madFactory](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L54) is never initialized. It is used in:
 	- [MADMarketplaceBase.setFactory(FactoryVerifier)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L275-L284)
 	- [MADMarketplace721.buy(bytes32)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplace721.sol#L104-L150)
 	- [MADMarketplace721.claim(bytes32)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplace721.sol#L155-L192)
@@ -542,7 +542,7 @@ _Item 18 / 19_
 
 ## Description
 
-- L33: 
+- L33:
 
 - [MADMarketplace1155.feeSelector](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplace1155.sol#L33) is never initialized. It is used in:
 	- [MADMarketplace1155.buy(bytes32)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplace1155.sol#L118-L153)
@@ -569,7 +569,7 @@ _Item 19 / 19_
 
 ## Description
 
-- L50: 
+- L50:
 
 - [MADMarketplaceBase.recipient](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L50) is never initialized. It is used in:
 	- [MADMarketplaceBase.setRecipient(address)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L338-L347)
@@ -602,7 +602,7 @@ _Item 1 / 2_
 
 ## Description
 
-- L402-L434: 
+- L402-L434:
 
 - [MADMarketplace721.getCurrentPrice(bytes32)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplace721.sol#L402-L434) performs a multiplication on the result of a division:
 	- [_tick_getCurrentPrice_asm_0 = _startPrice_getCurrentPrice_asm_0 - _endPrice_getCurrentPrice_asm_0 / _endTime_getCurrentPrice_asm_0 - _startTime_getCurrentPrice_asm_0](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplace721.sol#L419)
@@ -628,7 +628,7 @@ _Item 2 / 2_
 
 ## Description
 
-- L417-L449: 
+- L417-L449:
 
 - [MADMarketplace1155.getCurrentPrice(bytes32)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplace1155.sol#L417-L449) performs a multiplication on the result of a division:
 	- [_tick_getCurrentPrice_asm_0 = _startPrice_getCurrentPrice_asm_0 - _endPrice_getCurrentPrice_asm_0 / _endTime_getCurrentPrice_asm_0 - _startTime_getCurrentPrice_asm_0](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplace1155.sol#L434)
@@ -659,7 +659,7 @@ _Item 1 / 1_
 
 ## Description
 
-- L147-L171: 
+- L147-L171:
 
 - [SplitterImpl.release(ERC20,address)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/splitter/SplitterImpl.sol#L147-L171) uses a dangerous strict equality:
 	- [payment == 0](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/splitter/SplitterImpl.sol#L154)
@@ -689,7 +689,7 @@ _Item 1 / 5_
 
 ## Description
 
-- L10-L459: 
+- L10-L459:
 
 - Contract locking ether found:
 	Contract [MADMarketplace1155](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplace1155.sol#L10-L459) has payable functions:
@@ -718,7 +718,7 @@ _Item 2 / 5_
 
 ## Description
 
-- L8-L247: 
+- L8-L247:
 
 - Contract locking ether found:
 	Contract [ERC1155Basic](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/MADTokens/ERC1155/ERC1155Basic.sol#L8-L247) has payable functions:
@@ -750,7 +750,7 @@ _Item 3 / 5_
 
 ## Description
 
-- L27-L297: 
+- L27-L297:
 
 - Contract locking ether found:
 	Contract [SplitterImpl](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/splitter/SplitterImpl.sol#L27-L297) has payable functions:
@@ -778,7 +778,7 @@ _Item 4 / 5_
 
 ## Description
 
-- L10-L444: 
+- L10-L444:
 
 - Contract locking ether found:
 	Contract [MADMarketplace721](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplace721.sol#L10-L444) has payable functions:
@@ -807,7 +807,7 @@ _Item 5 / 5_
 
 ## Description
 
-- L8-L142: 
+- L8-L142:
 
 - Contract locking ether found:
 	Contract [ERC721Basic](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/MADTokens/ERC721/ERC721Basic.sol#L8-L142) has payable functions:
@@ -841,7 +841,7 @@ _Item 1 / 2_
 
 ## Description
 
-- L130-L153: 
+- L130-L153:
 
 - [MADFactory1155.creatorCheck(bytes32)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Factory/MADFactory1155.sol#L130-L153) uses tx.origin for authorization: [creator == origin()()](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Factory/MADFactory1155.sol#L144-L146)
 
@@ -865,7 +865,7 @@ _Item 2 / 2_
 
 ## Description
 
-- L117-L137: 
+- L117-L137:
 
 - [MADFactory721.creatorCheck(bytes32)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Factory/MADFactory721.sol#L117-L137) uses tx.origin for authorization: [creator == origin()()](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Factory/MADFactory721.sol#L128-L130)
 
@@ -894,7 +894,7 @@ _Item 1 / 2_
 
 ## Description
 
-- L39-L49: 
+- L39-L49:
 
 - [Counters.decrement(Counters.Counter)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/utils/Counters.sol#L39-L49) contains a tautology or contradiction:
 	- [! _val_decrement_asm_0 | _val_decrement_asm_0 < 0x00](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/utils/Counters.sol#L42-L46)
@@ -919,7 +919,7 @@ _Item 2 / 2_
 
 ## Description
 
-- L51-L61: 
+- L51-L61:
 
 - [Counters.decrement(Counters.Counter,uint256)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/utils/Counters.sol#L51-L61) contains a tautology or contradiction:
 	- [! _val_decrement_asm_0 | _val_decrement_asm_0 < 0x00 | _val_decrement_asm_0 - amount < 0x00](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/utils/Counters.sol#L54-L58)
@@ -949,7 +949,7 @@ _Item 1 / 7_
 
 ## Description
 
-- L208: 
+- L208:
 
 - [ERC1155Basic._sumAmounts(uint256[]).i](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/MADTokens/ERC1155/ERC1155Basic.sol#L208) is a local variable never initialized
 
@@ -973,7 +973,7 @@ _Item 2 / 7_
 
 ## Description
 
-- L171: 
+- L171:
 
 - [ImplBase.withdrawERC20(ERC20,address).i](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/MADTokens/common/ImplBase.sol#L171) is a local variable never initialized
 
@@ -997,7 +997,7 @@ _Item 3 / 7_
 
 ## Description
 
-- L138: 
+- L138:
 
 - [ImplBase.withdraw(address).i](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/MADTokens/common/ImplBase.sol#L138) is a local variable never initialized
 
@@ -1021,7 +1021,7 @@ _Item 4 / 7_
 
 ## Description
 
-- L148: 
+- L148:
 
 - [ImplBase.withdraw(address).j](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/MADTokens/common/ImplBase.sol#L148) is a local variable never initialized
 
@@ -1045,7 +1045,7 @@ _Item 5 / 7_
 
 ## Description
 
-- L181: 
+- L181:
 
 - [ImplBase.withdrawERC20(ERC20,address).j](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/MADTokens/common/ImplBase.sol#L181) is a local variable never initialized
 
@@ -1069,7 +1069,7 @@ _Item 6 / 7_
 
 ## Description
 
-- L70: 
+- L70:
 
 - [SplitterImpl.constructor(address[],uint256[]).i](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/splitter/SplitterImpl.sol#L70) is a local variable never initialized
 
@@ -1093,7 +1093,7 @@ _Item 7 / 7_
 
 ## Description
 
-- L132: 
+- L132:
 
 - [SplitterImpl.releaseAll().i](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/splitter/SplitterImpl.sol#L132) is a local variable never initialized
 
@@ -1122,7 +1122,7 @@ _Item 1 / 2_
 
 ## Description
 
-- L144-L148: 
+- L144-L148:
 
 - [MADRouter721._tokenRender(address)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Router/MADRouter721.sol#L144-L148) ignores return value by [madFactory.creatorCheck(colID)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Router/MADRouter721.sol#L146)
 
@@ -1146,7 +1146,7 @@ _Item 2 / 2_
 
 ## Description
 
-- L197-L201: 
+- L197-L201:
 
 - [MADRouter1155._tokenRender(address)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Router/MADRouter1155.sol#L197-L201) ignores return value by [madFactory.creatorCheck(colID)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Router/MADRouter1155.sol#L199)
 
@@ -1175,7 +1175,7 @@ _Item 1 / 1_
 
 ## Description
 
-- L76: 
+- L76:
 
 - [MADRouterBase.feeLookup(bytes4).fee](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Router/MADRouterBase.sol#L76) is written in both
 	[fee = sload(uint256)(feeBurn)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Router/MADRouterBase.sol#L88)
@@ -1206,7 +1206,7 @@ _Item 1 / 6_
 
 ## Description
 
-- L167-L179: 
+- L167-L179:
 
 - [ERC1155B._mint(address,uint256,uint256,bytes)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/tokens/ERC1155/Base/ERC1155B.sol#L167-L179) has external calls inside a loop: [require(bool,string)(ERC1155TokenReceiver(to).onERC1155Received(msg.sender,address(0),id,amount,data) == ERC1155TokenReceiver.onERC1155Received.selector,UNSAFE_RECIPIENT)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/tokens/ERC1155/Base/ERC1155B.sol#L173-L177)
 
@@ -1230,7 +1230,7 @@ _Item 2 / 6_
 
 ## Description
 
-- L126-L155: 
+- L126-L155:
 
 - [ImplBase.withdraw(address)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/MADTokens/common/ImplBase.sol#L126-L155) has external calls inside a loop: [share = splitter._shares(addr)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/MADTokens/common/ImplBase.sol#L141)
 
@@ -1254,7 +1254,7 @@ _Item 3 / 6_
 
 ## Description
 
-- L126-L155: 
+- L126-L155:
 
 - [ImplBase.withdraw(address)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/MADTokens/common/ImplBase.sol#L126-L155) has external calls inside a loop: [addr = splitter._payees(i)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/MADTokens/common/ImplBase.sol#L140)
 
@@ -1278,7 +1278,7 @@ _Item 4 / 6_
 
 ## Description
 
-- L157-L188: 
+- L157-L188:
 
 - [ImplBase.withdrawERC20(ERC20,address)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/MADTokens/common/ImplBase.sol#L157-L188) has external calls inside a loop: [share = splitter._shares(addr)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/MADTokens/common/ImplBase.sol#L174)
 
@@ -1302,7 +1302,7 @@ _Item 5 / 6_
 
 ## Description
 
-- L181-L190: 
+- L181-L190:
 
 - [ERC721._safeMint(address,uint256)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/tokens/ERC721/Base/ERC721.sol#L181-L190) has external calls inside a loop: [require(bool,string)(to.code.length == 0 || ERC721TokenReceiver(to).onERC721Received(msg.sender,address(0),id,) == ERC721TokenReceiver.onERC721Received.selector,UNSAFE_RECIPIENT)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/tokens/ERC721/Base/ERC721.sol#L184-L189)
 
@@ -1326,7 +1326,7 @@ _Item 6 / 6_
 
 ## Description
 
-- L157-L188: 
+- L157-L188:
 
 - [ImplBase.withdrawERC20(ERC20,address)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/MADTokens/common/ImplBase.sol#L157-L188) has external calls inside a loop: [addr = splitter._payees(i)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/MADTokens/common/ImplBase.sol#L173)
 
@@ -1355,7 +1355,7 @@ _Item 1 / 3_
 
 ## Description
 
-- L50-L89: 
+- L50-L89:
 
 - Reentrancy in [MADFactory721.createCollection(uint8,string,string,string,uint256,uint256,string,address,uint256)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Factory/MADFactory721.sol#L50-L89):
 	External calls:
@@ -1384,7 +1384,7 @@ _Item 2 / 3_
 
 ## Description
 
-- L61-L112: 
+- L61-L112:
 
 - Reentrancy in [MADFactory1155.createCollection(uint8,string,string,string,uint256,uint256,string,address,uint256)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Factory/MADFactory1155.sol#L61-L112):
 	External calls:
@@ -1413,7 +1413,7 @@ _Item 3 / 3_
 
 ## Description
 
-- L307-L347: 
+- L307-L347:
 
 - Reentrancy in [MADFactoryBase._splitterResolver(string,address,address,uint256,uint256,uint256)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Factory/MADFactoryBase.sol#L307-L347):
 	External calls:
@@ -1446,7 +1446,7 @@ _Item 1 / 4_
 
 ## Description
 
-- L296-L329: 
+- L296-L329:
 
 - Reentrancy in [MADMarketplace721._intPath(Types.Order721,uint256,bytes32,address,uint256)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplace721.sol#L296-L329):
 	External calls:
@@ -1474,7 +1474,7 @@ _Item 2 / 4_
 
 ## Description
 
-- L360-L374: 
+- L360-L374:
 
 - Reentrancy in [MADMarketplace721._extPath1(Types.Order721,uint256,bytes32,address)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplace721.sol#L360-L374):
 	External calls:
@@ -1502,7 +1502,7 @@ _Item 3 / 4_
 
 ## Description
 
-- L384-L416: 
+- L384-L416:
 
 - Reentrancy in [MADMarketplaceBase._withdrawOutbid(ERC20,uint256,uint160)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L384-L416):
 	External calls:
@@ -1530,7 +1530,7 @@ _Item 4 / 4_
 
 ## Description
 
-- L331-L358: 
+- L331-L358:
 
 - Reentrancy in [MADMarketplace721._extPath0(Types.Order721,uint256,bytes32,address)](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplace721.sol#L331-L358):
 	External calls:
@@ -1563,9 +1563,9 @@ _Item 1 / 18_
 
 ## Description
 
-- L45: 
+- L45:
 
-- [MADRouterBase.maxFeeBurn](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Router/MADRouterBase.sol#L45) should be constant 
+- [MADRouterBase.maxFeeBurn](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Router/MADRouterBase.sol#L45) should be constant
 
 
 ## Example / POC
@@ -1587,9 +1587,9 @@ _Item 2 / 18_
 
 ## Description
 
-- L46: 
+- L46:
 
-- [MADMarketplaceBase.minAuctionIncrement](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L46) should be constant 
+- [MADMarketplaceBase.minAuctionIncrement](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L46) should be constant
 
 
 ## Example / POC
@@ -1611,9 +1611,9 @@ _Item 3 / 18_
 
 ## Description
 
-- L47: 
+- L47:
 
-- [MADMarketplaceBase.minBidValue](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L47) should be constant 
+- [MADMarketplaceBase.minBidValue](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L47) should be constant
 
 
 ## Example / POC
@@ -1635,9 +1635,9 @@ _Item 4 / 18_
 
 ## Description
 
-- L48: 
+- L48:
 
-- [MADRouterBase.madFactory](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Router/MADRouterBase.sol#L48) should be constant 
+- [MADRouterBase.madFactory](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Router/MADRouterBase.sol#L48) should be constant
 
 
 ## Example / POC
@@ -1659,9 +1659,9 @@ _Item 5 / 18_
 
 ## Description
 
-- L27: 
+- L27:
 
-- [MADMarketplaceBase.royaltyFee](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L27) should be constant 
+- [MADMarketplaceBase.royaltyFee](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L27) should be constant
 
 
 ## Example / POC
@@ -1683,9 +1683,9 @@ _Item 6 / 18_
 
 ## Description
 
-- L42: 
+- L42:
 
-- [MADRouterBase.maxFeeMint](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Router/MADRouterBase.sol#L42) should be constant 
+- [MADRouterBase.maxFeeMint](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Router/MADRouterBase.sol#L42) should be constant
 
 
 ## Example / POC
@@ -1707,9 +1707,9 @@ _Item 7 / 18_
 
 ## Description
 
-- L54: 
+- L54:
 
-- [MADMarketplaceBase.MADFactory](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L54) should be constant 
+- [MADMarketplaceBase.madFactory](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L54) should be constant
 
 
 ## Example / POC
@@ -1731,9 +1731,9 @@ _Item 8 / 18_
 
 ## Description
 
-- L39: 
+- L39:
 
-- [MADRouterBase.recipient](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Router/MADRouterBase.sol#L39) should be constant 
+- [MADRouterBase.recipient](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Router/MADRouterBase.sol#L39) should be constant
 
 
 ## Example / POC
@@ -1755,9 +1755,9 @@ _Item 9 / 18_
 
 ## Description
 
-- L28: 
+- L28:
 
-- [MADMarketplaceBase.maxFee](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L28) should be constant 
+- [MADMarketplaceBase.maxFee](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L28) should be constant
 
 
 ## Example / POC
@@ -1779,9 +1779,9 @@ _Item 10 / 18_
 
 ## Description
 
-- L63: 
+- L63:
 
-- [MADFactoryBase.market](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Factory/MADFactoryBase.sol#L63) should be constant 
+- [MADFactoryBase.market](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Factory/MADFactoryBase.sol#L63) should be constant
 
 
 ## Example / POC
@@ -1803,9 +1803,9 @@ _Item 11 / 18_
 
 ## Description
 
-- L42: 
+- L42:
 
-- [MADMarketplaceBase.MAX_ROYALTY_FEE](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L42) should be constant 
+- [MADMarketplaceBase.MAX_ROYALTY_FEE](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L42) should be constant
 
 
 ## Example / POC
@@ -1827,9 +1827,9 @@ _Item 12 / 18_
 
 ## Description
 
-- L36: 
+- L36:
 
-- [MADRouterBase.feeBurn](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Router/MADRouterBase.sol#L36) should be constant 
+- [MADRouterBase.feeBurn](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Router/MADRouterBase.sol#L36) should be constant
 
 
 ## Example / POC
@@ -1851,9 +1851,9 @@ _Item 13 / 18_
 
 ## Description
 
-- L50: 
+- L50:
 
-- [MADMarketplaceBase.recipient](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L50) should be constant 
+- [MADMarketplaceBase.recipient](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L50) should be constant
 
 
 ## Example / POC
@@ -1875,9 +1875,9 @@ _Item 14 / 18_
 
 ## Description
 
-- L60: 
+- L60:
 
-- [MADFactoryBase.router](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Factory/MADFactoryBase.sol#L60) should be constant 
+- [MADFactoryBase.router](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Factory/MADFactoryBase.sol#L60) should be constant
 
 
 ## Example / POC
@@ -1899,9 +1899,9 @@ _Item 15 / 18_
 
 ## Description
 
-- L43: 
+- L43:
 
-- [MADMarketplaceBase.MAX_FEES](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L43) should be constant 
+- [MADMarketplaceBase.MAX_FEES](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L43) should be constant
 
 
 ## Example / POC
@@ -1923,9 +1923,9 @@ _Item 16 / 18_
 
 ## Description
 
-- L45: 
+- L45:
 
-- [MADMarketplaceBase.minOrderDuration](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L45) should be constant 
+- [MADMarketplaceBase.minOrderDuration](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L45) should be constant
 
 
 ## Example / POC
@@ -1947,9 +1947,9 @@ _Item 17 / 18_
 
 ## Description
 
-- L66: 
+- L66:
 
-- [MADFactoryBase.signer](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Factory/MADFactoryBase.sol#L66) should be constant 
+- [MADFactoryBase.signer](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Factory/MADFactoryBase.sol#L66) should be constant
 
 
 ## Example / POC
@@ -1971,9 +1971,9 @@ _Item 18 / 18_
 
 ## Description
 
-- L48: 
+- L48:
 
-- [MADMarketplaceBase.maxOrderDuration](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L48) should be constant 
+- [MADMarketplaceBase.maxOrderDuration](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Marketplace/MADMarketplaceBase.sol#L48) should be constant
 
 
 ## Example / POC
@@ -2000,9 +2000,9 @@ _Item 1 / 8_
 
 ## Description
 
-- L49: 
+- L49:
 
-- [ImplBase.maxSupply](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/MADTokens/common/ImplBase.sol#L49) should be immutable 
+- [ImplBase.maxSupply](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/MADTokens/common/ImplBase.sol#L49) should be immutable
 
 
 ## Example / POC
@@ -2024,9 +2024,9 @@ _Item 2 / 8_
 
 ## Description
 
-- L10: 
+- L10:
 
-- [ERC2981._royaltyFee](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/tokens/common/ERC2981.sol#L10) should be immutable 
+- [ERC2981.royaltyFee](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/tokens/common/ERC2981.sol#L10) should be immutable
 
 
 ## Example / POC
@@ -2048,9 +2048,9 @@ _Item 3 / 8_
 
 ## Description
 
-- L33: 
+- L33:
 
-- [MADRouterBase.feeMint](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Router/MADRouterBase.sol#L33) should be immutable 
+- [MADRouterBase.feeMint](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/Router/MADRouterBase.sol#L33) should be immutable
 
 
 ## Example / POC
@@ -2072,9 +2072,9 @@ _Item 4 / 8_
 
 ## Description
 
-- L25: 
+- L25:
 
-- [ImplBase.splitter](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/MADTokens/common/ImplBase.sol#L25) should be immutable 
+- [ImplBase.splitter](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/MADTokens/common/ImplBase.sol#L25) should be immutable
 
 
 ## Example / POC
@@ -2096,9 +2096,9 @@ _Item 5 / 8_
 
 ## Description
 
-- L19: 
+- L19:
 
-- [Owned.owner](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/auth/Owned.sol#L19) should be immutable 
+- [Owned.owner](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/auth/Owned.sol#L19) should be immutable
 
 
 ## Example / POC
@@ -2120,9 +2120,9 @@ _Item 6 / 8_
 
 ## Description
 
-- L12: 
+- L12:
 
-- [ERC2981._royaltyRecipient](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/tokens/common/ERC2981.sol#L12) should be immutable 
+- [ERC2981._royaltyRecipient](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/lib/tokens/common/ERC2981.sol#L12) should be immutable
 
 
 ## Example / POC
@@ -2144,9 +2144,9 @@ _Item 7 / 8_
 
 ## Description
 
-- L28: 
+- L28:
 
-- [ImplBase.erc20](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/MADTokens/common/ImplBase.sol#L28) should be immutable 
+- [ImplBase.erc20](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/MADTokens/common/ImplBase.sol#L28) should be immutable
 
 
 ## Example / POC
@@ -2168,9 +2168,9 @@ _Item 8 / 8_
 
 ## Description
 
-- L46: 
+- L46:
 
-- [ImplBase.price](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/MADTokens/common/ImplBase.sol#L46) should be immutable 
+- [ImplBase.price](https://github.com/johnashu/madnfts-solidity-contracts/tree/main/contracts/MADTokens/common/ImplBase.sol#L46) should be immutable
 
 
 ## Example / POC
@@ -2234,7 +2234,7 @@ _Item 8 / 8_
 [✓] allowance(address,address) is present
         [✓] allowance(address,address) -> (uint256) (correct return type)
         [✓] allowance(address,address) is view
-        
+
 [ ] name() is missing (optional)
 [ ] symbol() is missing (optional)
 [ ] decimals() is missing (optional)

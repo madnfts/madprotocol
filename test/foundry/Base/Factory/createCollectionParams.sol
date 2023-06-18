@@ -7,7 +7,7 @@ import { Strings } from "contracts/MADTokens/common/ImplBase.sol";
 
 abstract contract CreateCollectionParams {
     uint256 public defaultPrice = 1 ether;
-    uint256 public defaultMaxSupply = 1000;
+    uint256 public defaultMaxSupply = 10_000;
     uint8 public defaultTokenType = 1;
     uint96 public defaultRoyalty = 0;
     string public defaultUri = "https://mad.network";

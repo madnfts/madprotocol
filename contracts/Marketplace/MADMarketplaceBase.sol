@@ -9,7 +9,7 @@ import {
     MarketplaceEventsAndErrorsBase
 } from "contracts/Shared/EventsAndErrors.sol";
 import { SafeTransferLib } from "contracts/lib/utils/SafeTransferLib.sol";
-import "contracts/lib/uniswap/ISwapRouter.sol";
+import { ISwapRouter } from "contracts/lib/uniswap/ISwapRouter.sol";
 
 abstract contract MADMarketplaceBase is
     MAD,
@@ -47,8 +47,8 @@ abstract contract MADMarketplaceBase is
     uint256 public minOrderDurationtMAX = 600;
 
     // max fees, 15% for royalties, 5% for fees
-    uint256 public MAX_ROYALTY_FEE = 1.5e3;
-    uint256 public MAX_FEES = 5.0e2;
+    uint256 public maxRoyaltyFee = 1.5e3;
+    uint256 public maxFeesAllowed = 5.0e2;
 
     uint256 public minAuctionIncrement = 300;
     uint256 public minOrderDuration = 300;
@@ -59,7 +59,7 @@ abstract contract MADMarketplaceBase is
 
     uint256 public totalOutbid;
 
-    FactoryVerifier public MADFactory;
+    FactoryVerifier public madFactory;
 
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
@@ -91,6 +91,7 @@ abstract contract MADMarketplaceBase is
         );
     }
 
+    // solhint-disable-next-line
     receive() external payable { }
 
     ////////////////////////////////////////////////////////////////
@@ -322,7 +323,7 @@ abstract contract MADMarketplaceBase is
         minOrderDurationtMAX = _minOrderDurationtMAX;
     }
 
-    /// @dev `MADFactory` instance setter.
+    /// @dev `madFactory` instance setter.
     /// @dev Function Signature := 0x612990fe
     function setFactory(FactoryVerifier _factory) public onlyOwner {
         assembly {
@@ -330,14 +331,14 @@ abstract contract MADMarketplaceBase is
                 mstore(0x00, 0xd92e233d)
                 revert(0x1c, 0x04)
             }
-            sstore(MADFactory.slot, _factory)
+            sstore(madFactory.slot, _factory)
         }
         emit FactoryUpdated(_factory);
     }
 
     function setFees(uint256 _royaltyFee, uint256 _maxFee) public onlyOwner {
         require(
-            _royaltyFee <= MAX_ROYALTY_FEE && _maxFee <= MAX_FEES,
+            _royaltyFee <= maxRoyaltyFee && _maxFee <= maxFeesAllowed,
             "Invalid Fees"
         );
 
@@ -390,7 +391,7 @@ abstract contract MADMarketplaceBase is
             _minAuctionIncrement,
             _minBidValue,
             _maxOrderDuration
-            );
+        );
     }
 
     /// @notice Enables the contract's owner to change recipient address.

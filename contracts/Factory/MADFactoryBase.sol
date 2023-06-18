@@ -3,7 +3,7 @@
 pragma solidity 0.8.19;
 
 import { MAD } from "contracts/MAD.sol";
-import { MADBase, ERC20 } from "contracts/Shared/MADBase.sol";
+import { MADBase } from "contracts/Shared/MADBase.sol";
 import {
     FactoryEventsAndErrorsBase,
     FactoryVerifier
@@ -284,11 +284,10 @@ abstract contract MADFactoryBase is
         uint256 _projectShare,
         uint256 _flag
     ) internal {
-        address[] memory _payees =
-            BufferLib._payeesBuffer(_ambassador, _project);
+        address[] memory _payees = BufferLib.payeesBuffer(_ambassador, _project);
 
         uint256[] memory _shares =
-            BufferLib._sharesBuffer(_ambShare, _projectShare);
+            BufferLib.sharesBuffer(_ambShare, _projectShare);
 
         address splitter = _splitterDeploy(_splitterSalt, _payees, _shares);
 

@@ -7,15 +7,17 @@ import { ERC1155 } from "contracts/lib/tokens/ERC1155/Base/ERC1155.sol";
 import { Owned } from "contracts/lib/auth/Owned.sol";
 
 contract MockERC1155 is ERC1155, Owned(msg.sender) {
-    constructor() { }
+    string private _uri = "Hello/World";
 
     function uri(uint256)
         public
-        pure
+        view
         virtual
         override
         returns (string memory)
-    { }
+    {
+        return _uri;
+    }
 
     function mint(address to, uint256 id, uint256 total) public onlyOwner {
         _mint(to, id, total, "");

@@ -3,11 +3,7 @@
 pragma solidity 0.8.19;
 
 import { FactoryEventsAndErrors721 } from "contracts/Shared/EventsAndErrors.sol";
-import {
-    MADFactoryBase,
-    Types,
-    Bytes32AddressLib
-} from "contracts/Factory/MADFactoryBase.sol";
+import { MADFactoryBase } from "contracts/Factory/MADFactoryBase.sol";
 
 contract MADFactory721 is MADFactoryBase, FactoryEventsAndErrors721 {
     ////////////////////////////////////////////////////////////////
@@ -51,6 +47,6 @@ contract MADFactory721 is MADFactoryBase, FactoryEventsAndErrors721 {
             _royalty,
             _maxSupply,
             _price
-            );
+        );
     }
 }

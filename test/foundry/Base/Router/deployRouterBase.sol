@@ -98,13 +98,13 @@ contract DeployRouterBase is AddressesHelp, RouterFactory {
             );
             setAndCheckAddress(_router.setOwner, _router.owner);
 
-            // Verify MADFactory
+            // Verify madFactory
             assertTrue(
-                _router.madFactory() == _factoryVerifier, "Incorrect MADFactory"
+                _router.madFactory() == _factoryVerifier, "Incorrect madFactory"
             );
             assertTrue(
                 address(_factoryVerifier) != address(0),
-                "MADFactory cannot be address(0)"
+                "madFactory cannot be address(0)"
             );
 
             // Verify recipient

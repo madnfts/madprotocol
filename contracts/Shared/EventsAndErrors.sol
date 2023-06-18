@@ -208,14 +208,6 @@ interface RouterEvents is EventsAndErrorsBase {
         bytes32 indexed _id, uint8 indexed _type, bool indexed _state
     );
 
-    event WhitelistMintState(
-        bytes32 indexed _id, uint8 indexed _type, bool indexed _state
-    );
-
-    event FreeClaimState(
-        bytes32 indexed _id, uint8 indexed _type, bool indexed _state
-    );
-
     event BaseURISet(bytes32 indexed _id, string indexed _baseURI);
 
     event FactoryUpdated(FactoryVerifier indexed newFactory);

@@ -4,11 +4,7 @@ pragma solidity 0.8.19;
 
 import { FactoryEventsAndErrors1155 } from
     "contracts/Shared/EventsAndErrors.sol";
-import {
-    MADFactoryBase,
-    Types,
-    Bytes32AddressLib
-} from "contracts/Factory/MADFactoryBase.sol";
+import { MADFactoryBase } from "contracts/Factory/MADFactoryBase.sol";
 
 // prettier-ignore
 contract MADFactory1155 is MADFactoryBase, FactoryEventsAndErrors1155 {
@@ -53,6 +49,6 @@ contract MADFactory1155 is MADFactoryBase, FactoryEventsAndErrors1155 {
             _royalty,
             _maxSupply,
             _price
-            );
+        );
     }
 }

@@ -7,6 +7,7 @@ import { ERC721 } from "contracts/lib/tokens/ERC721/Base/ERC721.sol";
 contract MockERC721 is ERC721 {
     string internal _name;
     string internal _symbol;
+    string internal _uri;
 
     constructor(
         string memory __name,
@@ -18,11 +19,13 @@ contract MockERC721 is ERC721 {
 
     function tokenURI(uint256)
         public
-        pure
+        view
         virtual
         override
         returns (string memory)
-    { }
+    {
+        return _uri;
+    }
 
     function mint(address to, uint256 tokenId) public {
         _mint(to, tokenId);

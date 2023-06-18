@@ -24,9 +24,9 @@ contract MockERC2981 is ERC2981, Owned(msg.sender) {
     }
 
     // function setRoyaltyFee(uint256 fee) public onlyOwner {
-    //     _royaltyFee = fee;
+    //     royaltyFee = fee;
 
-    //     emit RoyaltyFeeSet(_royaltyFee);
+    //     emit RoyaltyFeeSet(royaltyFee);
     // }
 
     function royaltyInfo(uint256, uint256 salePrice)

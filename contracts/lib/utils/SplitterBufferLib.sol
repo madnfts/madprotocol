@@ -4,7 +4,7 @@ pragma solidity 0.8.19;
 
 library SplitterBufferLib {
     /// @dev Builds payees dynamic sized array buffer for `splitterCheck` cases.
-    function _payeesBuffer(address amb, address project)
+    function payeesBuffer(address amb, address project)
         internal
         view
         returns (address[] memory memOffset)
@@ -49,7 +49,7 @@ library SplitterBufferLib {
     }
 
     /// @dev Builds shares dynamic sized array buffer for `splitterCheck` cases.
-    function _sharesBuffer(uint256 _ambShare, uint256 _projectShare)
+    function sharesBuffer(uint256 _ambShare, uint256 _projectShare)
         internal
         pure
         returns (uint256[] memory memOffset)

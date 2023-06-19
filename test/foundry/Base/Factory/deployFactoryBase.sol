@@ -129,6 +129,7 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
             // bytes32 array
 
             vm.expectRevert();
+            // vm.expectRevert(0x00adecf0);
             newFactory.userTokens(_owner);
 
             // Again, at this point, _owner is the only user that has interacted
@@ -183,7 +184,7 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
         // emit log_named_address("factoryOwner", _owner);
 
         vm.startPrank(makeAddr("NotOwner"));
-        vm.expectRevert();
+        vm.expectRevert(0x1648fd01); // error NotAuthorised();
         _factory.addColType(collectionType, _tokenType);
         vm.stopPrank();
 
@@ -200,7 +201,7 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
         // Set Router
         // emit log_named_address("factoryRouterAddress", _routerAddress);
 
-        vm.expectRevert();
+        vm.expectRevert(0x1648fd01); // error NotAuthorised();
         _factory.setRouter(address(0));
 
         vm.prank(_owner);

@@ -3,11 +3,12 @@
 pragma solidity 0.8.19;
 
 import { MAD } from "contracts/MAD.sol";
+
+// solhint-disable-next-line
 import { MADBase, ERC20 } from "contracts/Shared/MADBase.sol";
 import {
     RouterEvents, FactoryVerifier
 } from "contracts/Shared/EventsAndErrors.sol";
-import { SafeTransferLib } from "contracts/lib/utils/SafeTransferLib.sol";
 import { FeeOracle } from "contracts/lib/tokens/common/FeeOracle.sol";
 
 abstract contract MADRouterBase is MAD, MADBase, RouterEvents, FeeOracle {
@@ -26,10 +27,10 @@ abstract contract MADRouterBase is MAD, MADBase, RouterEvents, FeeOracle {
     ////////////////////////////////////////////////////////////////
 
     /// @notice Passed to feeLookup to return feeMint.
-    bytes4 internal constant MINSAFEMINT = 0x40d097c3;
+    bytes4 internal constant _MINSAFEMINT = 0x40d097c3;
 
     /// @notice Passed to feeLookup to return feeBurn.
-    bytes4 internal constant MINBURN = 0x44df8e70;
+    bytes4 internal constant _MINBURN = 0x44df8e70;
 
     /// @notice Mint fee store.
     // B.3 BlockHat Audit
@@ -42,7 +43,7 @@ abstract contract MADRouterBase is MAD, MADBase, RouterEvents, FeeOracle {
     address public recipient;
 
     /// @notice max fee that can be set for mint - B.1 remove from constructor
-    uint256 public constant maxFeeMint = 2.5 ether;
+    uint256 public constant maxFeeMint = 2.5 ether; // 0.0003 ether
 
     /// @notice max fee that can be set for burn - B.1 remove from constructor
     uint256 public constant maxFeeBurn = 0.5 ether;
@@ -76,7 +77,7 @@ abstract contract MADRouterBase is MAD, MADBase, RouterEvents, FeeOracle {
 
     /// @notice Mint and burn fee lookup.
     /// @dev Function Sighash := 0xedc9e7a4
-    /// @param sigHash MINSAFEMINT | MINBURN
+    /// @param sigHash _MINSAFEMINT | _MINBURN
     function feeLookup(bytes4 sigHash)
         external
         view
@@ -85,11 +86,11 @@ abstract contract MADRouterBase is MAD, MADBase, RouterEvents, FeeOracle {
     {
         assembly {
             for { } 1 { } {
-                if eq(MINSAFEMINT, sigHash) {
+                if eq(_MINSAFEMINT, sigHash) {
                     fee := sload(feeMint.slot)
                     break
                 }
-                if eq(MINBURN, sigHash) {
+                if eq(_MINBURN, sigHash) {
                     fee := sload(feeBurn.slot)
                     break
                 }
@@ -99,30 +100,11 @@ abstract contract MADRouterBase is MAD, MADBase, RouterEvents, FeeOracle {
         }
     }
 
-    // /// @notice Checks if native || erc20 payments are matched required fees
-    /// @dev Envokes safeTransferFrom for erc20 payments.
-    ///      Function Sighash := ?
-    // /// @param sigHash MINSAFEMINT | MINBURN
-    // function _paymentCheck(bytes4 sigHash) internal {
-    //     if (address(erc20) != address(0)) {
-    //         uint256 value = erc20.allowance(msg.sender, address(this));
-    //         uint256 _fee = FeeOracle(this).feeLookup(sigHash);
-    //         assembly {
-    //             if iszero(eq(value, _fee)) {
-    //                 mstore(0x00, 0xf7760f25)
-    //                 revert(0x1c, 0x04)
-    //             }
-    //         }
-    //         SafeTransferLib.safeTransferFrom(erc20, msg.sender,
-    // address(this), value);
-    //     }
-    // }
-
     ////////////////////////////////////////////////////////////////
     //                         OWNER FX                           //
     ////////////////////////////////////////////////////////////////
 
-    /// @dev `MADFactory` instance setter.
+    /// @dev `madFactory` instance setter.
     /// @dev Function Signature := 0x612990fe
     function setFactory(FactoryVerifier _factory) public onlyOwner {
         assembly {
@@ -176,7 +158,7 @@ abstract contract MADRouterBase is MAD, MADBase, RouterEvents, FeeOracle {
     //                         HELPERS                            //
     ////////////////////////////////////////////////////////////////
 
-    /// @notice Private auth-check mechanism that verifies `MADFactory` storage.
+    /// @notice Private auth-check mechanism that verifies `madFactory` storage.
     /// @dev Retrieves both `collectionId` (bytes32) and collection type (uint8)
     ///      for valid token and approved user.
     ///      Function Sighash := 0xdbf62b2e
@@ -192,7 +174,7 @@ abstract contract MADRouterBase is MAD, MADBase, RouterEvents, FeeOracle {
     }
 
     // MODIFIERS
-    function checkTokenType(uint256 _tokenType) internal pure {
+    function _checkTokenType(uint256 _tokenType) internal pure {
         if (_tokenType != 1) {
             revert InvalidType();
         }

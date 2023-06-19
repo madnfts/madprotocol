@@ -9,7 +9,6 @@ import {
 import { ERC721Holder } from
     "contracts/lib/tokens/ERC721/Base/utils/ERC721Holder.sol";
 import {
-    FactoryVerifier,
     MADMarketplaceBase,
     SafeTransferLib
 } from "contracts/Marketplace/MADMarketplaceBase.sol";
@@ -131,7 +130,7 @@ contract MADMarketplace721 is
                 order.lastBidder,
                 address(erc20) != address(0) ? address(erc20) : address(0),
                 lastBidPrice
-                );
+            );
         }
 
         emit Bid(order.token, order.tokenId, _order, msg.sender, bidValue);
@@ -165,7 +164,7 @@ contract MADMarketplace721 is
         // path for inhouse minted tokens
         if (
             !feeSelector[key][order.tokenId]
-                && MADFactory.creatorAuth(address(order.token), order.seller)
+                && madFactory.creatorAuth(address(order.token), order.seller)
                     == true
         ) {
             _intPath(order, currentPrice, _order, msg.sender, key);
@@ -174,8 +173,8 @@ contract MADMarketplace721 is
         else {
             // case for external tokens with ERC2981 support
             if (
-                ERC165Check(address(order.token))
-                    && interfaceCheck(address(order.token), 0x2a55205a) == true
+                _erc165Check(address(order.token))
+                    && _interfaceCheck(address(order.token), 0x2a55205a) == true
             ) {
                 _extPath0(
                     order,
@@ -214,7 +213,7 @@ contract MADMarketplace721 is
         // path for inhouse minted tokens
         if (
             !feeSelector[key][order.tokenId]
-                && MADFactory.creatorAuth(address(order.token), order.seller)
+                && madFactory.creatorAuth(address(order.token), order.seller)
                     == true
         ) {
             _intPath(order, order.lastBidPrice, _order, order.lastBidder, key);
@@ -223,8 +222,8 @@ contract MADMarketplace721 is
         else {
             // case for external tokens with ERC2981 support
             if (
-                ERC165Check(address(order.token))
-                    && interfaceCheck(address(order.token), 0x2a55205a) == true
+                _erc165Check(address(order.token))
+                    && _interfaceCheck(address(order.token), 0x2a55205a) == true
             ) {
                 _extPath0(
                     order,
@@ -337,7 +336,7 @@ contract MADMarketplace721 is
     /// @notice Modified from OpenZeppelin Contracts
     /// (v4.4.1 - utils/introspection/ERC165Checker.sol)
     /// (https://github.com/OpenZeppelin/openzeppelin-contracts)
-    function interfaceCheck(address account, bytes4 interfaceId)
+    function _interfaceCheck(address account, bytes4 interfaceId)
         internal
         view
         returns (bool)
@@ -367,9 +366,9 @@ contract MADMarketplace721 is
     /// @notice Modified from OpenZeppelin Contracts
     /// (v4.4.1 - utils/introspection/ERC165Checker.sol)
     /// (https://github.com/OpenZeppelin/openzeppelin-contracts)
-    function ERC165Check(address account) internal view returns (bool) {
-        return interfaceCheck(account, 0x01ffc9a7)
-            && !interfaceCheck(account, 0xffffffff);
+    function _erc165Check(address account) internal view returns (bool) {
+        return _interfaceCheck(account, 0x01ffc9a7)
+            && !_interfaceCheck(account, 0xffffffff);
     }
 
     function _intPath(
@@ -411,7 +410,7 @@ contract MADMarketplace721 is
         _order.token.safeTransferFrom(address(this), _to, _order.tokenId);
         emit Claim(
             _order.token, _order.tokenId, _orderId, _order.seller, _to, _price
-            );
+        );
     }
 
     function _extPath0(
@@ -452,7 +451,7 @@ contract MADMarketplace721 is
         _order.token.safeTransferFrom(address(this), _to, _order.tokenId);
         emit Claim(
             _order.token, _order.tokenId, _orderId, _order.seller, _to, _price
-            );
+        );
     }
 
     function _extPath1(
@@ -479,7 +478,7 @@ contract MADMarketplace721 is
         _order.token.safeTransferFrom(address(this), _to, _order.tokenId);
         emit Claim(
             _order.token, _order.tokenId, _orderId, _order.seller, _to, _price
-            );
+        );
     }
 
     function _feeResolver(uint256 _key, uint256 _tokenId)

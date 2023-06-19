@@ -144,11 +144,12 @@ contract DeployMarketplaceBase is MarketplaceFactory, AddressesHelp {
 
         // Fees
         assertTrue(
-            _marketplace.MAX_FEES() == maxFees, "Incorrect MAX_FEES value"
+            _marketplace.maxFeesAllowed() == maxFees,
+            "Incorrect maxFeesAllowed value"
         );
         assertTrue(
-            _marketplace.MAX_ROYALTY_FEE() == maxRoyaltyFee,
-            "Incorrect MAX_ROYALTY_FEE value"
+            _marketplace.maxRoyaltyFee() == maxRoyaltyFee,
+            "Incorrect maxRoyaltyFee value"
         );
         assertTrue(
             _marketplace.basisPoints() == basisPoints,
@@ -202,7 +203,7 @@ contract DeployMarketplaceBase is MarketplaceFactory, AddressesHelp {
         // );
 
         // setAndCheckAddress(
-        //     _marketplace.setFactory, _marketplace.MADFactory
+        //     _marketplace.setFactory, _marketplace.madFactory
         // );
         vm.stopPrank();
     }
@@ -216,11 +217,11 @@ contract DeployMarketplaceBase is MarketplaceFactory, AddressesHelp {
             FactoryVerifier(_factoryAddress);
 
         // Set Factory
-        vm.expectRevert();
+        vm.expectRevert(0x1648fd01); // error NotAuthorised();
         _marketplace.setFactory(FactoryVerifier(address(0)));
 
         vm.prank(_owner);
         _marketplace.setFactory(_factoryVerifierMarketplace);
-        assertTrue(_marketplace.MADFactory() == _factoryVerifierMarketplace);
+        assertTrue(_marketplace.madFactory() == _factoryVerifierMarketplace);
     }
 }

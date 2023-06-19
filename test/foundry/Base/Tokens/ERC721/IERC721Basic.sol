@@ -17,9 +17,11 @@ interface IERC721Basic is IImplBase {
 
     // Other Functions
     function approve(address account, uint256 id) external;
-    function burn(uint128[] memory ids, address erc20Owner) external;
-    function mint(uint128 amount) external;
-    function mintTo(address to, uint128 amount, address erc20Owner) external;
+    function burn(uint128[] memory ids, address erc20Owner) external payable;
+    function mint(uint128 amount) external payable;
+    function mintTo(address to, uint128 amount, address erc20Owner)
+        external
+        payable;
     function safeTransferFrom(address from, address to, uint256 id) external;
     function safeTransferFrom(
         address from,

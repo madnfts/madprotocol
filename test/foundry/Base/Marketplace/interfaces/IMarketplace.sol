@@ -9,10 +9,10 @@ interface IMarketplace {
     function swapRouter() external view returns (address);
     function recipient() external view returns (address);
     function erc20() external view returns (address);
-    function MADFactory() external view returns (FactoryVerifier);
+    function madFactory() external view returns (FactoryVerifier);
 
-    function MAX_FEES() external view returns (uint256);
-    function MAX_ROYALTY_FEE() external view returns (uint256);
+    function maxFeesAllowed() external view returns (uint256);
+    function maxRoyaltyFee() external view returns (uint256);
     function basisPoints() external view returns (uint16);
     function feeTier() external view returns (uint24);
 

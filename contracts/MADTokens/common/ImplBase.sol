@@ -6,6 +6,7 @@ import { ERC2981 } from "contracts/lib/tokens/common/ERC2981.sol";
 import { TwoFactor } from "contracts/lib/auth/TwoFactor.sol";
 import { Strings } from "contracts/lib/utils/Strings.sol";
 import { PaymentManager } from "contracts/MADTokens/common/PaymentManager.sol";
+// solhint-disable-next-line
 import {
     ImplBaseEventsAndErrors,
     _BASE_URI_LOCKED,
@@ -21,24 +22,18 @@ abstract contract ImplBase is
     TwoFactor,
     PaymentManager
 {
-    bytes32 constant _BASE_URI_SLOT = /*  */
+    bytes32 internal constant _BASE_URI_SLOT = /*  */
         0xdd05fcb58e4c0a1a429c1a9d6607c399731f1ef0b81be85c3f7701c0333c82fc;
 
-    uint256 constant SR_UPPERBITS = (1 << 128) - 1;
-    uint256 constant MAXSUPPLY_BOUND = 1 << 128;
-    uint256 constant MINTCOUNT_BITPOS = 128;
+    uint256 internal constant _SR_UPPERBITS = (1 << 128) - 1;
+    uint256 internal constant _MAXSUPPLY_BOUND = 1 << 128;
+    uint256 internal constant _MINTCOUNT_BITPOS = 128;
 
     using Strings for uint256;
 
     ////////////////////////////////////////////////////////////////
     //                          IMMUTABLE                         //
     ////////////////////////////////////////////////////////////////
-
-    // /// @notice Splitter address relationship.
-    // SplitterImpl public immutable splitter;
-
-    // /// @notice ERC20 payment token address.
-    // ERC20 public immutable erc20;
 
     /// @notice Public mint price.
     uint256 public immutable price;
@@ -50,12 +45,12 @@ abstract contract ImplBase is
     //                           STORAGE                          //
     ////////////////////////////////////////////////////////////////
 
-    /// @notice `supplyRegistrar` bits layout.
+    /// @notice `_supplyRegistrar` bits layout.
     /// @dev Live supply counter, excludes burned tokens.
     /// `uint128`  [0...127]   := liveSupply
     /// @dev Mint counter, includes burnt count.
     /// `uint128`  [128...255] := mintCount
-    uint256 internal supplyRegistrar;
+    uint256 internal _supplyRegistrar;
 
     // /// @notice total amount of fees accumulated.
     // uint256 public feeCount;
@@ -75,7 +70,7 @@ abstract contract ImplBase is
         uint256 _price,
         uint256 _maxSupply,
         address _splitter,
-        uint96 _fraction,
+        uint96 _royaltyPercentage,
         address _router,
         address _erc20
     )
@@ -83,9 +78,9 @@ abstract contract ImplBase is
         /*  */
         TwoFactor(_router, tx.origin)
         PaymentManager(_splitter, _erc20)
-        ERC2981(uint256(_fraction))
+        ERC2981(uint256(_royaltyPercentage))
     {
-        require(_maxSupply < MAXSUPPLY_BOUND, "MAXSUPPLY_BOUND_EXCEEDED");
+        require(_maxSupply < _MAXSUPPLY_BOUND, "MAXSUPPLY_BOUND_EXCEEDED");
 
         // immutable
         price = _price;
@@ -94,8 +89,8 @@ abstract contract ImplBase is
         _setStringMemory(_baseURI, _BASE_URI_SLOT);
 
         assembly {
-            // emit RoyaltyFeeSet(uint256(_fraction));
-            log2(0, 0, _ROYALTY_FEE_SET, _fraction)
+            // emit RoyaltyFeeSet(uint256(_royaltyPercentage));
+            log2(0, 0, _ROYALTY_FEE_SET, _royaltyPercentage)
             // emit RoyaltyRecipientSet(payable(_splitter));
             log2(0, 0, _ROYALTY_RECIPIENT_SET, _splitter)
         }
@@ -176,13 +171,13 @@ abstract contract ImplBase is
 
     function liveSupply() public view returns (uint256 _liveSupply) {
         assembly {
-            _liveSupply := and(SR_UPPERBITS, sload(supplyRegistrar.slot))
+            _liveSupply := and(_SR_UPPERBITS, sload(_supplyRegistrar.slot))
         }
     }
 
     function mintCount() public view returns (uint256 _mintCount) {
         assembly {
-            _mintCount := shr(MINTCOUNT_BITPOS, sload(supplyRegistrar.slot))
+            _mintCount := shr(_MINTCOUNT_BITPOS, sload(_supplyRegistrar.slot))
         }
     }
 
@@ -198,15 +193,15 @@ abstract contract ImplBase is
         // mintCount = mintCount + amount;
         // uint256 curId = mintCount + 1;
         assembly {
-            let _prev := shr(MINTCOUNT_BITPOS, sload(supplyRegistrar.slot))
+            let _prev := shr(_MINTCOUNT_BITPOS, sload(_supplyRegistrar.slot))
             let _liveSupply :=
-                add(and(SR_UPPERBITS, sload(supplyRegistrar.slot)), _amount)
+                add(and(_SR_UPPERBITS, sload(_supplyRegistrar.slot)), _amount)
             _nextId := add(_prev, 0x01)
             _mintCount := add(_prev, _amount)
 
             sstore(
-                supplyRegistrar.slot,
-                or(_liveSupply, shl(MINTCOUNT_BITPOS, _mintCount))
+                _supplyRegistrar.slot,
+                or(_liveSupply, shl(_MINTCOUNT_BITPOS, _mintCount))
             )
         }
     }
@@ -215,7 +210,7 @@ abstract contract ImplBase is
         internal
         returns (uint256 curId, uint256 endId)
     {
-        // require(amount < MAXSUPPLY_BOUND && balance < MAXSUPPLY_BOUND);
+        // require(amount < _MAXSUPPLY_BOUND && balance < _MAXSUPPLY_BOUND);
         _hasReachedMax(uint256(amount), maxSupply);
 
         (uint256 fee, bool method) = _ownerFeeCheck(0x40d097c3, erc20Owner);
@@ -243,9 +238,7 @@ abstract contract ImplBase is
 
     function _publicMintAccess() internal view {
         assembly {
-            // if (!publicMintState)
-            if iszero(and(0x01, shr(0x08, sload(publicMintState.slot)))) {
-                // revert PublicMintClosed();
+            if iszero(sload(publicMintState.slot)) {
                 mstore(0, 0x2d0a3f8e)
                 revert(28, 4)
             }
@@ -259,7 +252,10 @@ abstract contract ImplBase is
         assembly {
             // if (mintCount + amount > maxSupply)
             if gt(
-                add(shr(MINTCOUNT_BITPOS, sload(supplyRegistrar.slot)), _amount),
+                add(
+                    shr(_MINTCOUNT_BITPOS, sload(_supplyRegistrar.slot)),
+                    _amount
+                ),
                 _maxSupply
             ) {
                 // revert MaxSupplyReached();
@@ -271,7 +267,7 @@ abstract contract ImplBase is
 
     function _decSupply(uint256 _amount) internal {
         assembly {
-            let _liveSupply := and(SR_UPPERBITS, sload(supplyRegistrar.slot))
+            let _liveSupply := and(_SR_UPPERBITS, sload(_supplyRegistrar.slot))
             if or(
                 iszero(_liveSupply), gt(sub(_liveSupply, _amount), _liveSupply)
             ) {
@@ -280,7 +276,7 @@ abstract contract ImplBase is
                 revert(0x1c, 0x04)
             }
         }
-        supplyRegistrar = supplyRegistrar - _amount;
+        _supplyRegistrar = _supplyRegistrar - _amount;
     }
 
     function _readString(bytes32 _slot)

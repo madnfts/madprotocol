@@ -93,12 +93,18 @@ abstract contract DeployerBase is
         );
         factoryDeployer.setRouter(factory, address(router), currentSigner);
 
-        factoryDeployer.setTokenType(
-            factory, currentSigner, 1, type(ERC721Basic).creationCode
-        );
-        factoryDeployer.setTokenType(
-            factory, currentSigner, 1, type(ERC1155Basic).creationCode
-        );
+        // Set the token type for the factory
+        if (ercType == ercTypes.ERC721) {
+            factoryDeployer.setTokenType(
+                factory, currentSigner, 1, type(ERC721Basic).creationCode
+            );
+        } else if (ercType == ercTypes.ERC1155) {
+            factoryDeployer.setTokenType(
+                factory, currentSigner, 1, type(ERC1155Basic).creationCode
+            );
+        } else {
+            revert("Invalid token type");
+        }
 
         // Return the addresses of the deployed contracts in an array
         deployedContracts = DeployedContracts({

@@ -9,7 +9,6 @@ import {
 import { ERC1155Holder } from
     "contracts/lib/tokens/ERC1155/Base/utils/ERC1155Holder.sol";
 import {
-    FactoryVerifier,
     MADMarketplaceBase,
     SafeTransferLib
 } from "contracts/Marketplace/MADMarketplaceBase.sol";
@@ -139,7 +138,7 @@ contract MADMarketplace1155 is
                 order.lastBidder,
                 address(erc20) != address(0) ? address(erc20) : address(0),
                 lastBidPrice
-                );
+            );
         }
 
         emit Bid(
@@ -149,7 +148,7 @@ contract MADMarketplace1155 is
             _order,
             msg.sender,
             bidValue
-            );
+        );
     }
 
     /// @notice Enables user to buy an nft for both Fixed Price and Dutch
@@ -181,7 +180,7 @@ contract MADMarketplace1155 is
         // path for inhouse minted tokens
         if (
             !feeSelector[key][order.tokenId][order.amount]
-                && MADFactory.creatorAuth(address(order.token), order.seller)
+                && madFactory.creatorAuth(address(order.token), order.seller)
         ) {
             _intPath(order, currentPrice, _order, msg.sender, key);
         }
@@ -189,8 +188,8 @@ contract MADMarketplace1155 is
         else {
             // case for external tokens with ERC2981 support
             if (
-                ERC165Check(address(order.token))
-                    && interfaceCheck(address(order.token), 0x2a55205a) == true
+                _erc165Check(address(order.token))
+                    && _interfaceCheck(address(order.token), 0x2a55205a) == true
             ) {
                 _extPath0(order, currentPrice, _order, msg.sender);
             }
@@ -217,7 +216,7 @@ contract MADMarketplace1155 is
         // path for inhouse minted tokens
         if (
             !feeSelector[key][order.tokenId][order.amount]
-                && MADFactory.creatorAuth(address(order.token), order.seller)
+                && madFactory.creatorAuth(address(order.token), order.seller)
                     == true
         ) {
             _intPath(order, order.lastBidPrice, _order, order.lastBidder, key);
@@ -226,8 +225,8 @@ contract MADMarketplace1155 is
         else {
             // case for external tokens with ERC2981 support
             if (
-                ERC165Check(address(order.token))
-                    && interfaceCheck(address(order.token), 0x2a55205a) == true
+                _erc165Check(address(order.token))
+                    && _interfaceCheck(address(order.token), 0x2a55205a) == true
             ) {
                 _extPath0(order, order.lastBidPrice, _order, order.lastBidder);
             }
@@ -336,7 +335,7 @@ contract MADMarketplace1155 is
     /// @notice Modified from OpenZeppelin Contracts
     /// (v4.4.1 - utils/introspection/ERC165Checker.sol)
     /// (https://github.com/OpenZeppelin/openzeppelin-contracts)
-    function interfaceCheck(address account, bytes4 interfaceId)
+    function _interfaceCheck(address account, bytes4 interfaceId)
         internal
         view
         returns (bool)
@@ -366,9 +365,9 @@ contract MADMarketplace1155 is
     /// @notice Modified from OpenZeppelin Contracts
     /// (v4.4.1 - utils/introspection/ERC165Checker.sol)
     /// (https://github.com/OpenZeppelin/openzeppelin-contracts)
-    function ERC165Check(address account) internal view returns (bool) {
-        return interfaceCheck(account, 0x01ffc9a7)
-            && !interfaceCheck(account, 0xffffffff);
+    function _erc165Check(address account) internal view returns (bool) {
+        return _interfaceCheck(account, 0x01ffc9a7)
+            && !_interfaceCheck(account, 0xffffffff);
     }
 
     function _intPath(
@@ -414,7 +413,7 @@ contract MADMarketplace1155 is
             _order.seller,
             _to,
             _price
-            );
+        );
         // transfer token and emit event
         _order.token.safeTransferFrom(
             address(this), _to, _order.tokenId, _order.amount, ""
@@ -468,7 +467,7 @@ contract MADMarketplace1155 is
             _order.seller,
             _to,
             _price
-            );
+        );
 
         // transfer token and emit event
         _order.token.safeTransferFrom(
@@ -508,7 +507,7 @@ contract MADMarketplace1155 is
             _order.seller,
             _to,
             _price
-            );
+        );
         // transfer token and emit event
         _order.token.safeTransferFrom(
             address(this), _to, _order.tokenId, _order.amount, ""

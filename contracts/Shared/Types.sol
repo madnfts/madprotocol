@@ -18,7 +18,7 @@ library Types {
         uint256 _price;
         uint256 _maxSupply;
         address _splitter;
-        uint96 _fraction;
+        uint96 _royaltyPercentage;
         address _router;
         address _erc20;
     }
@@ -118,7 +118,7 @@ library Types {
     /// shr(168,sload(add(order.slot, 9)))
 }
 
-/* 
+/*
 ├─ name: Types
     ├─ baseContracts
     ├─ subNodes

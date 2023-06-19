@@ -8,7 +8,10 @@ import {
     IFactory
 } from "test/foundry/Base/Splitter/deploySplitterBase.sol";
 
-contract TestSplitterDeployment is DeploySplitterBase {
+import { SplitterModifiers } from
+    "test/foundry/Base/Splitter/splitterModifiers.sol";
+
+contract TestSplitterDeployment is DeploySplitterBase, SplitterModifiers {
     IFactory[] deployedContracts;
     Deployer deployer;
 
@@ -36,8 +39,7 @@ contract TestSplitterDeployment is DeploySplitterBase {
     function testSplitterDeploymentFuzzy_ambassadorWithNoProject(
         uint256 _ambassadorShare,
         uint8 x
-    ) public {
-        vm.assume(_ambassadorShare > 0 && _ambassadorShare < 21);
+    ) public ambassadorWithNoProjectAssumptions(_ambassadorShare) {
         vm.assume(x < 2);
         _runSplitterDeploy_ambassadorWithNoProject(
             deployedContracts[x], _ambassadorShare
@@ -50,8 +52,7 @@ contract TestSplitterDeployment is DeploySplitterBase {
     function testSplitterDeploymentFuzzy_projectWithNoAmbassador(
         uint256 _projectShare,
         uint8 x
-    ) public {
-        vm.assume(_projectShare > 0 && _projectShare < 91);
+    ) public projectWithNoAmbassadorAssumptions(_projectShare) {
         vm.assume(x < 2);
         _runSplitterDeploy_projectWithNoAmbassador(
             deployedContracts[x], _projectShare
@@ -66,11 +67,12 @@ contract TestSplitterDeployment is DeploySplitterBase {
         uint256 _ambassadorShare,
         uint256 _projectShare,
         uint8 x
-    ) public {
-        vm.assume(_ambassadorShare > 0 && _ambassadorShare < 21);
-        vm.assume(_projectShare > 0 && _projectShare < 71);
+    )
+        public
+        bothAmbassadorAndProjectAssumptions(_ambassadorShare, _projectShare)
+    {
         vm.assume(x < 2);
-        _runSplitterDeploy_All(
+        _runSplitterDeploy_BothAmbassadorAndProject(
             deployedContracts[x], _ambassadorShare, _projectShare
         );
     }

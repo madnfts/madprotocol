@@ -161,11 +161,12 @@ abstract contract PaymentManager {
         // if ((_price * _amount) + _fee != value)
         // revert WrongPrice();
 
-        _fee = _getFeeValue(0x40d097c3);
+        _fee = _getFeeValue(0x40d097c3); // _MINSAFEMINT
         (_value, _method) = _getPriceValue(msg.sender, erc20);
 
         assembly {
             if iszero(eq(add(mul(_price, _amount), _fee), _value)) {
+                // revert WrongPrice();
                 mstore(0, 0xf7760f25)
                 revert(28, 4)
             }

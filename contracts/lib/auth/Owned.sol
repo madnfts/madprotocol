@@ -11,6 +11,9 @@ abstract contract Owned {
                                  EVENTS
     //////////////////////////////////////////////////////////////*/
 
+    /// @dev 0x1648fd01
+    error NotAuthorised();
+
     event OwnerUpdated(address indexed user, address indexed newOwner);
 
     /*//////////////////////////////////////////////////////////////
@@ -20,13 +23,18 @@ abstract contract Owned {
     address public owner;
 
     modifier onlyOwner() virtual {
-        require(msg.sender == owner, "UNAUTHORIZED");
-
+        if (msg.sender != owner) revert NotAuthorised();
         _;
     }
 
     modifier notZeroAddress(address _owner) {
-        require(_owner != address(0), "Invalid owner");
+        assembly {
+            if iszero(_owner) {
+                // Revert ZeroAddress()
+                mstore(0x00, 0xd92e233d)
+                revert(0x1c, 0x04)
+            }
+        }
         _;
     }
 

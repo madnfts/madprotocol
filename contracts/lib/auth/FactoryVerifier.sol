@@ -4,7 +4,7 @@ pragma solidity 0.8.19;
 
 /// @title Factory Verifier
 /// @notice Core contract binding interface that connect both
-/// `MADMarketplace` and `MADRouter` storage verifications made to `MADFactory`.
+/// `MADMarketplace` and `MADRouter` storage verifications made to `madFactory`.
 interface FactoryVerifier {
     /// @dev 0x4ca88867
     error AccessDenied();

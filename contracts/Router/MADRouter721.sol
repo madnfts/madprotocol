@@ -42,7 +42,7 @@ contract MADRouter721 is MADRouterBase {
     function setBase(address _token, string memory _baseURI) external {
         (bytes32 _collectionId, uint8 _tokenType) = _tokenRender(_token);
 
-        checkTokenType(_tokenType);
+        _checkTokenType(_tokenType);
 
         ERC721Basic(_token).setBaseURI(_baseURI);
 
@@ -59,7 +59,7 @@ contract MADRouter721 is MADRouterBase {
     function setBaseLock(address _token) external {
         (, uint8 _tokenType) = _tokenRender(_token);
 
-        checkTokenType(_tokenType);
+        _checkTokenType(_tokenType);
         ERC721Basic(_token).setBaseURILock();
     }
 
@@ -72,12 +72,10 @@ contract MADRouter721 is MADRouterBase {
     /// @param _state Set state to true or false.
     /// @dev _stateType Values:
     ///      0 := PublicMintState (minimal, basic, whitelist);
-    ///      1 := WhitelistMintState (whitelist);
-    ///      2 := FreeClaimState (whitelist).
     function setMintState(address _token, bool _state) external {
         (bytes32 _collectionId, uint8 _tokenType) = _tokenRender(_token);
 
-        checkTokenType(_tokenType);
+        _checkTokenType(_tokenType);
         ERC721Basic(_token).setPublicMintState(_state);
 
         emit PublicMintState(_collectionId, _tokenType, _state);
@@ -97,9 +95,9 @@ contract MADRouter721 is MADRouterBase {
         payable
     {
         (, uint8 _tokenType) = _tokenRender(_token);
-        checkTokenType(_tokenType);
+        _checkTokenType(_tokenType);
         // _paymentCheck(0x40d097c3);
-        ERC721Basic(_token).mintTo{value: msg.value}(_to, _amount, msg.sender);
+        ERC721Basic(_token).mintTo{ value: msg.value }(_to, _amount, msg.sender);
     }
 
     /// @notice Global token burn controller/single pusher for all token types.
@@ -111,8 +109,8 @@ contract MADRouter721 is MADRouterBase {
         (, uint8 _tokenType) = _tokenRender(_token);
         // _paymentCheck(0x44df8e70);
 
-        checkTokenType(_tokenType);
-        ERC721Basic(_token).burn{value: msg.value}(_ids, msg.sender);
+        _checkTokenType(_tokenType);
+        ERC721Basic(_token).burn{ value: msg.value }(_ids, msg.sender);
     }
 
     ////////////////////////////////////////////////////////////////
@@ -130,7 +128,7 @@ contract MADRouter721 is MADRouterBase {
     // A.2 BlockHat Audit  -remove whenPaused
     function withdraw(address _token, ERC20 _erc20) external {
         (bytes32 _collectionId, uint8 _tokenType) = _tokenRender(_token);
-        checkTokenType(_tokenType);
+        _checkTokenType(_tokenType);
 
         if (address(_erc20) != address(0) && _erc20.balanceOf(_token) != 0) {
             ERC721Basic(_token).withdrawERC20(address(_erc20), recipient);

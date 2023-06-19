@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 pragma solidity 0.8.19;
+// solhint-disable-next-line
 
 import {
     ImplBase, ERC2981, Strings
@@ -23,13 +24,13 @@ contract ERC1155Basic is ERC1155, ImplBase {
     //                           STORAGE                          //
     ////////////////////////////////////////////////////////////////
 
-    /// @notice `balanceRegistrar` bits layout.
+    /// @notice `_balanceRegistrar` bits layout.
     /// @dev Live supply counter for each id's balance, excludes burned tokens.
     /// @dev Mint counter for each id's balance, includes burnt count.
     /// `uint128`  [0...127]   := liveBalance
     /// `uint128`  [128...255] := balanceCount
-    /// (id) => (balanceRegistrar{`uint128`,`uint128`})
-    mapping(uint256 => uint256) internal balanceRegistrar;
+    /// (id) => (_balanceRegistrar{`uint128`,`uint128`})
+    mapping(uint256 => uint256) internal _balanceRegistrar;
 
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
@@ -42,7 +43,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
             args._price,
             args._maxSupply,
             args._splitter,
-            args._fraction,
+            args._royaltyPercentage,
             args._router,
             args._erc20
         )
@@ -103,8 +104,8 @@ contract ERC1155Basic is ERC1155, ImplBase {
         address erc20Owner
     ) external payable authorised {
         // @audit do we charge to burn?
-        // (uint256 fee, bool method) = _ownerFeeCheck(0x44df8e70, erc20Owner);
-        // _ownerFeeHandler(method, fee, erc20Owner);
+        (uint256 fee, bool method) = _ownerFeeCheck(0x44df8e70, erc20Owner);
+        _ownerFeeHandler(method, fee, erc20Owner);
 
         uint256 len = ids.length;
         _decSupply(len);
@@ -134,8 +135,8 @@ contract ERC1155Basic is ERC1155, ImplBase {
         address erc20Owner
     ) external payable authorised {
         // @audit do we charge to burn?
-        // (uint256 fee, bool method) = _ownerFeeCheck(0x44df8e70, erc20Owner);
-        // _ownerFeeHandler(method, fee, erc20Owner);
+        (uint256 fee, bool method) = _ownerFeeCheck(0x44df8e70, erc20Owner);
+        _ownerFeeHandler(method, fee, erc20Owner);
 
         _decSupply(ids.length);
 
@@ -230,11 +231,11 @@ contract ERC1155Basic is ERC1155, ImplBase {
     }
 
     function liveBalance(uint256 id) public view returns (uint256) {
-        return balanceRegistrar[id] & SR_UPPERBITS;
+        return _balanceRegistrar[id] & _SR_UPPERBITS;
     }
 
     function balanceCount(uint256 id) public view returns (uint256) {
-        return balanceRegistrar[id] >> MINTCOUNT_BITPOS;
+        return _balanceRegistrar[id] >> _MINTCOUNT_BITPOS;
     }
 
     ////////////////////////////////////////////////////////////////
@@ -248,14 +249,14 @@ contract ERC1155Basic is ERC1155, ImplBase {
     {
         uint128 maxBal = maxIdBalance;
         assembly {
-            mstore(32, balanceRegistrar.slot)
+            mstore(32, _balanceRegistrar.slot)
             mstore(0, id)
 
             let sLoc := keccak256(0, 64)
 
             let rawBal := sload(sLoc)
 
-            let newBal := add(amount, shr(MINTCOUNT_BITPOS, rawBal))
+            let newBal := add(amount, shr(_MINTCOUNT_BITPOS, rawBal))
 
             if gt(newBal, maxBal) {
                 // MaxSupplyReached()
@@ -265,8 +266,8 @@ contract ERC1155Basic is ERC1155, ImplBase {
             sstore(
                 sLoc,
                 or(
-                    add(and(SR_UPPERBITS, rawBal), amount),
-                    shl(MINTCOUNT_BITPOS, newBal)
+                    add(and(_SR_UPPERBITS, rawBal), amount),
+                    shl(_MINTCOUNT_BITPOS, newBal)
                 )
             )
         }
@@ -290,11 +291,11 @@ contract ERC1155Basic is ERC1155, ImplBase {
                 iLoc := add(iLoc, 32)
                 aLoc := add(aLoc, 32)
             } {
-                mstore(32, balanceRegistrar.slot)
+                mstore(32, _balanceRegistrar.slot)
                 mstore(0, mload(iLoc))
                 let sLoc := keccak256(0, 64)
                 let rawBal := sload(sLoc)
-                let newBal := add(mload(aLoc), shr(MINTCOUNT_BITPOS, rawBal))
+                let newBal := add(mload(aLoc), shr(_MINTCOUNT_BITPOS, rawBal))
                 if gt(newBal, maxBal) {
                     // MaxSupplyReached()
                     mstore(0, 0xd05cb609)
@@ -303,8 +304,8 @@ contract ERC1155Basic is ERC1155, ImplBase {
                 sstore(
                     sLoc,
                     or(
-                        add(and(SR_UPPERBITS, rawBal), mload(aLoc)),
-                        shl(MINTCOUNT_BITPOS, newBal)
+                        add(and(_SR_UPPERBITS, rawBal), mload(aLoc)),
+                        shl(_MINTCOUNT_BITPOS, newBal)
                     )
                 )
             }
@@ -317,10 +318,10 @@ contract ERC1155Basic is ERC1155, ImplBase {
         override(ERC1155)
     {
         assembly {
-            mstore(32, balanceRegistrar.slot)
+            mstore(32, _balanceRegistrar.slot)
             mstore(0, id)
             let sLoc := keccak256(0, 64)
-            let _liveBalance := and(SR_UPPERBITS, sload(sLoc))
+            let _liveBalance := and(_SR_UPPERBITS, sload(sLoc))
             let _newBalance := sub(_liveBalance, amount)
             if or(iszero(_liveBalance), gt(_newBalance, _liveBalance)) {
                 // DecOverflow()
@@ -348,10 +349,10 @@ contract ERC1155Basic is ERC1155, ImplBase {
                 iLoc := add(iLoc, 32)
                 aLoc := add(aLoc, 32)
             } {
-                mstore(32, balanceRegistrar.slot)
+                mstore(32, _balanceRegistrar.slot)
                 mstore(0, mload(iLoc))
                 let sLoc := keccak256(0, 64)
-                let _liveBalance := and(SR_UPPERBITS, sload(sLoc))
+                let _liveBalance := and(_SR_UPPERBITS, sload(sLoc))
                 let _newBalance := sub(_liveBalance, mload(aLoc))
                 if or(iszero(_liveBalance), gt(_newBalance, _liveBalance)) {
                     // DecOverflow()

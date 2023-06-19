@@ -26,7 +26,7 @@ abstract contract ERC2981 {
 
     // {
     // receiver = _royaltyRecipient;
-    // royaltyAmount = (salePrice * _royaltyFee) / 10000;
+    // royaltyAmount = (salePrice * royaltyFee) / 10000;
     // }
 
     function supportsInterface(bytes4 interfaceId)

@@ -2,20 +2,20 @@ pragma solidity 0.8.19;
 
 import "forge-std/src/Test.sol";
 import {
-    DeploySplitterBase,
     ISplitter,
-    IFactory,
     Deployer
 } from "test/foundry/Base/Splitter/deploySplitterBase.sol";
 
-import {
-    CreateCollectionBase,
-    CreateCollectionParams
-} from "test/foundry/Base/Factory/createCollectionBase.sol";
-
 import { Enums } from "test/foundry/utils/enums.sol";
 
-contract TestCreateCollection is CreateCollectionBase, Enums {
+import {
+    CreateCollectionHelpers,
+    DeploySplitterBase,
+    IFactory,
+    SplitterHelpers
+} from "test/foundry/CreateCollection/createCollectionHelpers.sol";
+
+contract TestCreateCollection is CreateCollectionHelpers, Enums {
     IFactory[] deployedContracts;
     Deployer deployer;
     DeploySplitterBase splitterDeployer;
@@ -37,13 +37,10 @@ contract TestCreateCollection is CreateCollectionBase, Enums {
     function testCreateCollectionDefaultFuzzy(uint8 x) public {
         vm.assume(x < 2);
         vm.deal(currentSigner, 1000 ether);
-        splitterDeployer.setCurrentSigner(currentSigner);
-        address splitter = splitterDeployer._runSplitterDeploy_creatorOnly(
-            deployedContracts[x]
+
+        _createCollectionDefault(
+            deployedContracts[x], splitterDeployer, currentSigner
         );
-        address collectionAddress =
-            createCollectionDefault(deployedContracts[x], splitter);
-        assertTrue(collectionAddress != address(0));
     }
 
     function testCreateCollectionCustomSingleFuzzy(
@@ -56,7 +53,7 @@ contract TestCreateCollection is CreateCollectionBase, Enums {
         _createCollectionCustom(x, _price, _maxSupply, _royalty, 1);
     }
 
-    function testCreateMultipleCollectionsWithSameSplitterFuzzy(
+    function testCreateMultipleCollectionsWithSplitterFuzzy(
         uint8 x,
         uint256 _price,
         uint128 _maxSupply,
@@ -64,56 +61,6 @@ contract TestCreateCollection is CreateCollectionBase, Enums {
     ) public {
         createCollectionAssumptions(x, _price, _maxSupply, _royalty);
         _createCollectionCustom(x, _price, _maxSupply, _royalty, 10);
-    }
-
-    function testFailRoyaltyCreateCollectionCustomSingleFuzzy(
-        uint8 x,
-        uint256 _price,
-        uint128 _maxSupply,
-        uint96 _royalty
-    ) public {
-        // createCollectionAssumptions(x, _price, _maxSupply, _royalty);
-        vm.assume(x < 2);
-        vm.assume(_price < type(uint256).max);
-        vm.assume(_maxSupply == 0);
-        vm.assume(_royalty > 1001 || _royalty % 25 != 0);
-
-        _createCollectionCustom(x, _price, _maxSupply, _royalty, 1);
-    }
-
-    function testFailRoyaltyCreateMultipleCollectionsWithSameSplitterFuzzy(
-        uint8 x,
-        uint256 _price,
-        uint128 _maxSupply,
-        uint96 _royalty
-    ) public {
-        // createCollectionAssumptions(x, _price, _maxSupply, _royalty);
-        vm.assume(x < 2);
-        vm.assume(_price < type(uint256).max);
-        vm.assume(_maxSupply == 0);
-        vm.assume(_royalty > 1001 || _royalty % 25 != 0);
-
-        _createCollectionCustom(x, _price, _maxSupply, _royalty, 10);
-    }
-
-    function testFailZeroMaxSupplyCreateCollectionCustomSingleFuzzy(
-        uint8 x,
-        uint256 _price,
-        uint128 _maxSupply,
-        uint96 _royalty
-    ) public {
-        createCollectionAssumptions(x, _price, _maxSupply, _royalty);
-        _createCollectionCustom(x, _price, 0, _royalty, 1);
-    }
-
-    function testFailZeroMaxSupplyCreateMultipleCollectionsWithSameSplitterFuzzy(
-        uint8 x,
-        uint256 _price,
-        uint128 _maxSupply,
-        uint96 _royalty
-    ) public {
-        createCollectionAssumptions(x, _price, _maxSupply, _royalty);
-        _createCollectionCustom(x, _price, 0, _royalty, 10);
     }
 
     function _createCollectionCustom(
@@ -124,45 +71,18 @@ contract TestCreateCollection is CreateCollectionBase, Enums {
         uint256 _amountToMint
     ) internal {
         vm.deal(currentSigner, 1000 ether);
-
-        splitterDeployer.setCurrentSigner(currentSigner);
-        address splitter = splitterDeployer._runSplitterDeploy_creatorOnly(
-            deployedContracts[x]
+        IFactory factory = deployedContracts[x];
+        _createCollectionsWithAllSplitterCombosCustom(
+            currentSigner,
+            splitterDeployer,
+            _price,
+            _maxSupply,
+            _royalty,
+            _amountToMint,
+            address(factory),
+            10,
+            10,
+            "https://example.com"
         );
-
-        for (uint256 i = 0; i < _amountToMint; i++) {
-            string memory salt = string(
-                abi.encodePacked("createCollectionSalt", i, block.timestamp)
-            );
-            address collectionAddress = createCollectionCustom(
-                deployedContracts[x],
-                splitter,
-                CreateCollectionParams.generateCollectionParams(
-                    1,
-                    salt,
-                    _price,
-                    _maxSupply,
-                    "https://test.com",
-                    splitter,
-                    _royalty,
-                    new bytes32[](0)
-                ),
-                currentSigner
-            );
-
-            assertTrue(collectionAddress != address(0));
-        }
-    }
-
-    function createCollectionAssumptions(
-        uint8 x,
-        uint256 _price,
-        uint128 _maxSupply,
-        uint96 _royalty
-    ) internal {
-        vm.assume(x < 2);
-        vm.assume(_price < type(uint256).max);
-        vm.assume(_maxSupply > 0 && _maxSupply < type(uint256).max);
-        vm.assume(_royalty < 1001 && _royalty % 25 == 0);
     }
 }

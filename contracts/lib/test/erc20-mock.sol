@@ -44,9 +44,9 @@ abstract contract ERC20 {
                             EIP-2612 STORAGE
     //////////////////////////////////////////////////////////////*/
 
-    uint256 internal immutable INITIAL_CHAIN_ID;
+    uint256 internal immutable _INITIAL_CHAIN_ID;
 
-    bytes32 internal immutable INITIAL_DOMAIN_SEPARATOR;
+    bytes32 internal immutable _INITIAL__DOMAIN_SEPARATOR;
 
     mapping(address => uint256) public nonces;
 
@@ -59,8 +59,8 @@ abstract contract ERC20 {
         symbol = _symbol;
         decimals = _decimals;
 
-        INITIAL_CHAIN_ID = block.chainid;
-        INITIAL_DOMAIN_SEPARATOR = computeDomainSeparator();
+        _INITIAL_CHAIN_ID = block.chainid;
+        _INITIAL__DOMAIN_SEPARATOR = computeDomainSeparator();
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -144,7 +144,7 @@ abstract contract ERC20 {
                 keccak256(
                     abi.encodePacked(
                         "\x19\x01",
-                        DOMAIN_SEPARATOR(),
+                        _DOMAIN_SEPARATOR(),
                         keccak256(
                             abi.encode(
                                 keccak256(
@@ -175,9 +175,9 @@ abstract contract ERC20 {
         emit Approval(owner, spender, value);
     }
 
-    function DOMAIN_SEPARATOR() public view virtual returns (bytes32) {
-        return block.chainid == INITIAL_CHAIN_ID
-            ? INITIAL_DOMAIN_SEPARATOR
+    function _DOMAIN_SEPARATOR() public view virtual returns (bytes32) {
+        return block.chainid == _INITIAL_CHAIN_ID
+            ? _INITIAL__DOMAIN_SEPARATOR
             : computeDomainSeparator();
     }
 

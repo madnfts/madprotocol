@@ -7,6 +7,7 @@ import { ICollection } from "test/foundry/CreateCollection/ICollection.sol";
 abstract contract ERC721TransferFunctions is Test {
     function _checkOwnerOf(address _owner, ICollection.MintData memory mintData)
         internal
+        view
         returns (bool ownsAll)
     {
         ownsAll = true;

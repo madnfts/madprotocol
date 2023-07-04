@@ -8,7 +8,7 @@ import { Strings } from "contracts/MADTokens/common/ImplBase.sol";
 abstract contract CreateCollectionParams {
     uint256 public defaultPrice = 1 ether;
     uint256 public defaultMaxSupply = 10_000;
-    uint8 public defaultTokenType = 1;
+    uint8 public defaultTokenType = 1; // ERC721Basic
     uint96 public defaultRoyalty = 0;
     string public defaultUri = "https://mad.network";
     bytes32[] public defaultExtra;
@@ -17,16 +17,11 @@ abstract contract CreateCollectionParams {
     string private constant BASE_NAME = "createCollection";
     string private constant BASE_SYMBOL = "CC";
 
-    string createCollectionSalt = "createCollectionSalt";
-    uint256 CreateCollectionSaltNonce;
+    uint256 public CreateCollectionSaltNonce = 12_345_678_912_346_589;
 
-    function updateCreateCollectionSalt() public returns (string memory) {
-        return string(
-            abi.encodePacked(
-                createCollectionSalt,
-                Strings.toString(CreateCollectionSaltNonce++)
-            )
-        );
+    function updateCreateCollectionSalt() public returns (bytes32) {
+        CreateCollectionSaltNonce++;
+        return bytes32(abi.encodePacked(CreateCollectionSaltNonce));
     }
 
     function generateCollectionParams(

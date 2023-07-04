@@ -16,14 +16,14 @@ contract ERC721Basic is ERC721, ImplBase {
     bytes32 private constant _SYMBOL_SLOT = /*  */
         0x30ec9400a6906cefbe2888cc908b6b5efeceee7bcd5438fa93fc189e1bbe64ac;
 
-    using Types for Types.ColArgs;
+    using Types for Types.CollectionArgs;
     using Strings for uint256;
 
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    constructor(Types.ColArgs memory args, bytes32[] memory _extra)
+    constructor(Types.CollectionArgs memory args, bytes32[] memory _extra)
         ImplBase(
             args._baseURI,
             args._price,

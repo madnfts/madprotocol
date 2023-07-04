@@ -8,35 +8,25 @@ interface IFactory {
 
     // Deployment
     function owner() external view returns (address);
-    function market() external view returns (address);
-    function signer() external view returns (address);
     function erc20() external view returns (address);
     function router() external view returns (address);
 
-    function splitterCheck(
-        string calldata _splitterSalt,
-        address ambassador,
-        address project,
-        uint256 ambShare,
-        uint256 projShare
-    ) external;
+    function createSplitter(CreateSplitterParams calldata params) external;
 
-    function createCollection(
-        uint8 _tokenType,
-        string memory _tokenSalt,
-        string memory _name,
-        string memory _symbol,
-        uint256 _price,
-        uint256 _maxSupply,
-        string memory _uri,
-        address _splitter,
-        uint96 _royalty,
-        bytes32[] memory _extra
-    ) external;
+    function createCollection(CreateCollectionParams calldata params)
+        external;
+
+    struct CreateSplitterParams {
+        bytes32 splitterSalt;
+        address ambassador;
+        address project;
+        uint256 ambassadorShare;
+        uint256 projectShare;
+    }
 
     struct CreateCollectionParams {
         uint8 tokenType;
-        string tokenSalt;
+        bytes32 tokenSalt;
         string name;
         string symbol;
         uint256 price;
@@ -56,7 +46,7 @@ interface IFactory {
     }
 
     // Storage
-    function collectionInfo(bytes32)
+    function collectionInfo(address)
         external
         view
         returns (
@@ -77,12 +67,12 @@ interface IFactory {
         view
         returns (bool stdout);
 
-    function creatorCheck(bytes32 _collectionId)
+    function creatorCheck(address _collectionId)
         external
         view
         returns (address creator, bool check);
 
-    function typeChecker(bytes32 _collectionId)
+    function typeChecker(address _collectionId)
         external
         view
         returns (uint8 pointer);
@@ -99,20 +89,15 @@ interface IFactory {
 
     // Helpers
     function getIDsLength(address _user) external view returns (uint256);
-    function getCollectionId(address _colAddress)
-        external
-        pure
-        returns (bytes32 collectionId);
 
-    function getDeployedAddress(string memory _salt, address _addr)
+    function getDeployedAddress(bytes32 _salt, address _addr)
         external
         view
         returns (address);
 
     // Owner functions
-    function addColType(uint256 index, bytes memory impl) external;
-    function setMarket(address _market) external;
+    function addCollectionType(uint256 index, bytes memory impl) external;
+    // function setMarket(address _market) external;
     function setOwner(address newOwner) external;
     function setRouter(address _router) external;
-    function setSigner(address _signer) external;
 }

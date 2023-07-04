@@ -26,7 +26,6 @@ interface FactoryEventsAndErrorsBase is EventsAndErrorsBase {
 
     event MarketplaceUpdated(address indexed newMarket);
     event RouterUpdated(address indexed newRouter);
-    event SignerUpdated(address indexed newSigner);
     event ColTypeUpdated(uint256 indexed index);
     event SplitterCreated(
         address indexed creator,
@@ -48,30 +47,29 @@ interface FactoryEventsAndErrorsBase is EventsAndErrorsBase {
     error InvalidAddress();
 
     error ZeroMaxSupply();
-}
 
-interface FactoryEventsAndErrors721 is FactoryEventsAndErrorsBase {
-    ////////////////////////////////////////////////////////////////
-    //                           EVENTS                           //
-    ////////////////////////////////////////////////////////////////
+    struct CreateCollectionParams {
+        uint8 tokenType;
+        bytes32 tokenSalt;
+        string name;
+        string symbol;
+        uint256 price;
+        uint256 maxSupply;
+        string uri;
+        address splitter;
+        uint96 royalty;
+        bytes32[] extra;
+    }
 
-    event ERC721BasicCreated(
-        address indexed newSplitter,
-        address indexed newCollection,
-        string name,
-        string symbol,
-        uint256 royalties,
-        uint256 maxSupply,
-        uint256 mintPrice
-    );
-}
+    struct CreateSplitterParams {
+        bytes32 splitterSalt;
+        address ambassador;
+        address project;
+        uint256 ambassadorShare;
+        uint256 projectShare;
+    }
 
-interface FactoryEventsAndErrors1155 is FactoryEventsAndErrorsBase {
-    ////////////////////////////////////////////////////////////////
-    //                           EVENTS                           //
-    ////////////////////////////////////////////////////////////////
-
-    event ERC1155BasicCreated(
+    event CollectionCreated(
         address indexed newSplitter,
         address indexed newCollection,
         string name,
@@ -201,14 +199,14 @@ interface RouterEvents is EventsAndErrorsBase {
     ////////////////////////////////////////////////////////////////
 
     event TokenFundsWithdrawn(
-        bytes32 indexed _id, uint8 indexed _type, address indexed _payee
+        address indexed _id, uint8 indexed _type, address indexed _payee
     );
 
     event PublicMintState(
-        bytes32 indexed _id, uint8 indexed _type, bool indexed _state
+        address indexed _id, uint8 indexed _type, bool indexed _state
     );
 
-    event BaseURISet(bytes32 indexed _id, string indexed _baseURI);
+    event BaseURISet(address indexed _id, string indexed _baseURI);
 
     event FactoryUpdated(FactoryVerifier indexed newFactory);
 

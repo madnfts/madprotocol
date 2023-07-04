@@ -30,11 +30,7 @@ interface ISplitter {
     struct SplitterData {
         IFactory factory;
         address deployer;
-        string splitterSalt;
-        address ambassador;
-        address project;
-        uint256 ambassadorShare;
-        uint256 projectShare;
+        IFactory.CreateSplitterParams createSplitterParams;
         address[] payeesExpected;
         address paymentToken;
     }

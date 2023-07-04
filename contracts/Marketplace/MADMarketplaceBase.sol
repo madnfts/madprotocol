@@ -122,7 +122,7 @@ abstract contract MADMarketplaceBase is
         assembly {
             // AccessDenied()
             if iszero(or(eq(caller(), _seller), eq(caller(), _bidder))) {
-                mstore(0x00, 0x4ca88867)
+                mstore(0x00, 0x4ca88867) // AccessDenied()
                 revert(0x1c, 0x04)
             }
         }
@@ -171,7 +171,7 @@ abstract contract MADMarketplaceBase is
         assembly {
             // AccessDenied()
             if iszero(eq(_seller, caller())) {
-                mstore(0x00, 0x4ca88867)
+                mstore(0x00, 0x4ca88867) // AccessDenied()
                 revert(0x1c, 0x04)
             }
             // SoldToken()

@@ -10,7 +10,7 @@ import { ERC1155 } from "contracts/lib/tokens/ERC1155/Base/ERC1155.sol";
 import { Types } from "contracts/Shared/Types.sol";
 
 contract ERC1155Basic is ERC1155, ImplBase {
-    using Types for Types.ColArgs;
+    using Types for Types.CollectionArgs;
     using Strings for uint256;
 
     ////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    constructor(Types.ColArgs memory args, bytes32[] memory _extra)
+    constructor(Types.CollectionArgs memory args, bytes32[] memory _extra)
         /*  */
         ImplBase(
             args._baseURI,

@@ -420,6 +420,7 @@ abstract contract StdCheatsSafe {
     // creates a labeled address
     function makeAddr(string memory name) internal virtual returns (address addr) {
         (addr, ) = makeAddrAndKey(name);
+        vm.label(addr, name);
     }
 
     // creates a struct containing both a labeled address and the corresponding private key

@@ -20,15 +20,11 @@ import { SplitterHelpers } from "test/foundry/Base/Splitter/splitterHelpers.sol"
 contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
     using Types for Types.SplitterConfig;
 
-    string splitterSalt = "SplitterSalt";
-    uint256 splitterSaltNonce;
+    uint256 public splitterSaltNonce = 67_891_012_456_894_561;
 
-    function updateSplitterSalt() public returns (string memory) {
-        return string(
-            abi.encodePacked(
-                splitterSalt, Strings.toString(splitterSaltNonce++)
-            )
-        );
+    function updateSplitterSalt() public returns (bytes32) {
+        splitterSaltNonce++;
+        return bytes32(abi.encodePacked(splitterSaltNonce));
     }
 
     // Define default variables
@@ -43,25 +39,18 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
         public
         returns (address splitterAddress)
     {
-        // Prank tx.origin as well here otherwise the splitter will be owned by
+        // Prank tx.origin as well here, otherwise the splitter will be owned by
         // the calling test contract
         vm.prank(splitterData.deployer, splitterData.deployer);
 
-        string memory _splitterSalt = updateSplitterSalt();
-        splitterData.splitterSalt = _splitterSalt;
+        splitterData.factory.createSplitter(splitterData.createSplitterParams);
 
-        splitterData.factory.splitterCheck(
-            _splitterSalt,
-            splitterData.ambassador,
-            splitterData.project,
-            splitterData.ambassadorShare,
-            splitterData.projectShare
-        );
-
-        // emit log_named_address("sD: currentSigner", splitterData.deployer);
+        // emit log_named_address("sD: currentSigner",
+        // splitterData.deployer);
 
         splitterAddress = splitterData.factory.getDeployedAddress(
-            _splitterSalt, splitterData.deployer
+            splitterData.createSplitterParams.splitterSalt,
+            splitterData.deployer
         );
 
         // emit log_named_address("sD: splitterAddress", splitterAddress);
@@ -75,7 +64,10 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
         address splitterAddress
     ) public {
         bytes32 _splitterSalt = keccak256(
-            abi.encode(splitterData.deployer, bytes(splitterData.splitterSalt))
+            abi.encode(
+                splitterData.deployer,
+                splitterData.createSplitterParams.splitterSalt
+            )
         );
 
         Types.SplitterConfig memory config = splitterData.factory.splitterInfo(
@@ -88,8 +80,9 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
         uint256 _payeesExpectedLength = splitterData.payeesExpected.length;
 
         uint256 totalShares = splitter.totalShares();
-        uint256 sharesOrZero = totalShares - splitterData.ambassadorShare
-            - splitterData.projectShare;
+        uint256 sharesOrZero = totalShares
+            - splitterData.createSplitterParams.ambassadorShare
+            - splitterData.createSplitterParams.projectShare;
 
         assertTrue(
             splitterAddress != address(0),
@@ -107,22 +100,24 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
         );
 
         assertTrue(
-            splitterData.ambassador == config.ambassador,
+            splitterData.createSplitterParams.ambassador == config.ambassador,
             "Ambassador address should match with the stored ambassador address."
         );
 
         assertTrue(
-            splitterData.project == config.project,
+            splitterData.createSplitterParams.project == config.project,
             "Project address should match with the stored project address."
         );
 
         assertTrue(
-            splitterData.ambassadorShare == config.ambShare,
+            splitterData.createSplitterParams.ambassadorShare
+                == config.ambassadorShare,
             "Ambassador share should match with the stored ambassador share."
         );
 
         assertTrue(
-            splitterData.projectShare == config.projectShare,
+            splitterData.createSplitterParams.projectShare
+                == config.projectShare,
             "Project share should match with the stored project share."
         );
 
@@ -149,10 +144,14 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
             splitter, splitterData.deployer, splitterData.paymentToken
         );
         assertZeroBalanceRelease(
-            splitter, splitterData.ambassador, splitterData.paymentToken
+            splitter,
+            splitterData.createSplitterParams.ambassador,
+            splitterData.paymentToken
         );
         assertZeroBalanceRelease(
-            splitter, splitterData.project, splitterData.paymentToken
+            splitter,
+            splitterData.createSplitterParams.project,
+            splitterData.paymentToken
         );
 
         // Assuming payees are returned in the order [ambassador, project,
@@ -201,11 +200,13 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
             ISplitter.SplitterData({
                 factory: factory,
                 deployer: currentSigner,
-                splitterSalt: splitterSalt,
-                ambassador: address(0),
-                project: address(0),
-                ambassadorShare: 0,
-                projectShare: 0,
+                createSplitterParams: IFactory.CreateSplitterParams({
+                    splitterSalt: updateSplitterSalt(),
+                    ambassador: address(0),
+                    project: address(0),
+                    ambassadorShare: 0,
+                    projectShare: 0
+                }),
                 payeesExpected: SplitterHelpers.getExpectedSplitterAddresses(
                     currentSigner, address(0), address(0)
                     ),
@@ -222,11 +223,13 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
             ISplitter.SplitterData({
                 factory: factory,
                 deployer: currentSigner,
-                splitterSalt: splitterSalt,
-                ambassador: ambassador,
-                project: address(0),
-                ambassadorShare: _ambassadorShare,
-                projectShare: 0,
+                createSplitterParams: IFactory.CreateSplitterParams({
+                    splitterSalt: updateSplitterSalt(),
+                    ambassador: ambassador,
+                    project: address(0),
+                    ambassadorShare: _ambassadorShare,
+                    projectShare: 0
+                }),
                 payeesExpected: SplitterHelpers.getExpectedSplitterAddresses(
                     currentSigner, ambassador, address(0)
                     ),
@@ -243,11 +246,13 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
             ISplitter.SplitterData({
                 factory: factory,
                 deployer: currentSigner,
-                splitterSalt: splitterSalt,
-                ambassador: address(0),
-                project: project,
-                ambassadorShare: 0,
-                projectShare: _projectShare,
+                createSplitterParams: IFactory.CreateSplitterParams({
+                    splitterSalt: updateSplitterSalt(),
+                    ambassador: address(0),
+                    project: project,
+                    ambassadorShare: 0,
+                    projectShare: _projectShare
+                }),
                 payeesExpected: SplitterHelpers.getExpectedSplitterAddresses(
                     currentSigner, address(0), project
                     ),
@@ -265,11 +270,13 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
             ISplitter.SplitterData({
                 factory: factory,
                 deployer: currentSigner,
-                splitterSalt: splitterSalt,
-                ambassador: ambassador,
-                project: project,
-                ambassadorShare: _ambassadorShare,
-                projectShare: _projectShare,
+                createSplitterParams: IFactory.CreateSplitterParams({
+                    splitterSalt: updateSplitterSalt(),
+                    ambassador: ambassador,
+                    project: project,
+                    ambassadorShare: _ambassadorShare,
+                    projectShare: _projectShare
+                }),
                 payeesExpected: SplitterHelpers.getExpectedSplitterAddresses(
                     currentSigner, ambassador, project
                     ),

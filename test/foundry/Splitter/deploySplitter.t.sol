@@ -29,18 +29,18 @@ contract TestSplitterDeployment is DeploySplitterBase, SplitterModifiers {
     // @dev tests the condition:
     // (_ambassador == address(0) && _project == address(0))
     function testSplitterDeployment_creatorOnly(uint8 x) public {
-        vm.assume(x < 2);
+        vm.assume(x < deployedContracts.length);
         _runSplitterDeploy_creatorOnly(deployedContracts[x]);
     }
 
     /// @dev tests the condition:
     /// _ambassador != address(0) && _project == address(0)
-    ///             && _ambShare != 0 && _ambShare < 21
+    ///             && _ambassadorShare != 0 && _ambassadorShare < 21
     function testSplitterDeploymentFuzzy_ambassadorWithNoProject(
         uint256 _ambassadorShare,
         uint8 x
     ) public ambassadorWithNoProjectAssumptions(_ambassadorShare) {
-        vm.assume(x < 2);
+        vm.assume(x < deployedContracts.length);
         _runSplitterDeploy_ambassadorWithNoProject(
             deployedContracts[x], _ambassadorShare
         );
@@ -53,7 +53,7 @@ contract TestSplitterDeployment is DeploySplitterBase, SplitterModifiers {
         uint256 _projectShare,
         uint8 x
     ) public projectWithNoAmbassadorAssumptions(_projectShare) {
-        vm.assume(x < 2);
+        vm.assume(x < deployedContracts.length);
         _runSplitterDeploy_projectWithNoAmbassador(
             deployedContracts[x], _projectShare
         );
@@ -61,7 +61,8 @@ contract TestSplitterDeployment is DeploySplitterBase, SplitterModifiers {
 
     /// @dev tests the condition:
     /// _ambassador != address(0) && _project != address(0)
-    ///            && _ambShare != 0 && _ambShare < 21 && _projectShare != 0
+    ///            && _ambassadorShare != 0 && _ambassadorShare < 21 &&
+    /// _projectShare != 0
     ///             && _projectShare < 71
     function testSplitterDeploymentFuzzy_All(
         uint256 _ambassadorShare,
@@ -71,7 +72,7 @@ contract TestSplitterDeployment is DeploySplitterBase, SplitterModifiers {
         public
         bothAmbassadorAndProjectAssumptions(_ambassadorShare, _projectShare)
     {
-        vm.assume(x < 2);
+        vm.assume(x < deployedContracts.length);
         _runSplitterDeploy_BothAmbassadorAndProject(
             deployedContracts[x], _ambassadorShare, _projectShare
         );

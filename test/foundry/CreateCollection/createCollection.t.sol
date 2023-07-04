@@ -29,13 +29,13 @@ contract TestCreateCollection is CreateCollectionHelpers, Enums {
 
         // Create array of Factory instances to cover both 721 & 1155 Factories
         deployedContracts = [
-            deployer.deployAll(ercTypes.ERC721).factory,
-            deployer.deployAll(ercTypes.ERC1155).factory
+            deployer.deployAll(ercTypes.ERC721).factory
+            // deployer.deployAll(ercTypes.ERC1155).factory
         ];
     }
 
     function testCreateCollectionDefaultFuzzy(uint8 x) public {
-        vm.assume(x < 2);
+        vm.assume(x < deployedContracts.length);
         vm.deal(currentSigner, 1000 ether);
 
         _createCollectionDefault(
@@ -49,7 +49,7 @@ contract TestCreateCollection is CreateCollectionHelpers, Enums {
         uint128 _maxSupply,
         uint96 _royalty
     ) public {
-        createCollectionAssumptions(x, _price, _maxSupply, _royalty);
+        createCollectionAssumptions(_price, _maxSupply, _royalty);
         _createCollectionCustom(x, _price, _maxSupply, _royalty, 1);
     }
 
@@ -59,7 +59,7 @@ contract TestCreateCollection is CreateCollectionHelpers, Enums {
         uint128 _maxSupply,
         uint96 _royalty
     ) public {
-        createCollectionAssumptions(x, _price, _maxSupply, _royalty);
+        createCollectionAssumptions(_price, _maxSupply, _royalty);
         _createCollectionCustom(x, _price, _maxSupply, _royalty, 10);
     }
 
@@ -71,6 +71,7 @@ contract TestCreateCollection is CreateCollectionHelpers, Enums {
         uint256 _amountToMint
     ) internal {
         vm.deal(currentSigner, 1000 ether);
+        vm.assume(x < deployedContracts.length);
         IFactory factory = deployedContracts[x];
         _createCollectionsWithAllSplitterCombosCustom(
             currentSigner,

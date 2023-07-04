@@ -5,7 +5,7 @@ import "forge-std/src/Test.sol";
 
 abstract contract SplitterModifiers is Test {
     /// _ambassador != address(0) && _project == address(0)
-    ///             && _ambShare != 0 && _ambShare < 21
+    ///             && _ambassadorShare != 0 && _ambassadorShare < 21
     modifier ambassadorWithNoProjectAssumptions(uint256 _ambassadorShare) {
         vm.assume(_ambassadorShare > 0 && _ambassadorShare < 21);
         _;
@@ -19,7 +19,8 @@ abstract contract SplitterModifiers is Test {
     }
 
     /// _ambassador != address(0) && _project != address(0)
-    ///            && _ambShare != 0 && _ambShare < 21 && _projectShare != 0
+    ///            && _ambassadorShare != 0 && _ambassadorShare < 21 &&
+    /// _projectShare != 0
     ///             && _projectShare < 71
     modifier bothAmbassadorAndProjectAssumptions(
         uint256 _ambassadorShare,

@@ -39,19 +39,10 @@ abstract contract CreateCollectionBase is
         address collectionOwner
     ) public returns (address collectionAddress) {
         vm.prank(collectionOwner, collectionOwner);
-        factory.createCollection(
-            params.tokenType,
-            params.tokenSalt,
-            params.name,
-            params.symbol,
-            params.price,
-            params.maxSupply,
-            params.uri,
-            _splitter,
-            params.royalty,
-            params.extra
-        );
+
         params.splitter = _splitter;
+        factory.createCollection(params);
+
         collectionAddress =
             factory.getDeployedAddress(params.tokenSalt, collectionOwner);
 
@@ -77,12 +68,11 @@ abstract contract CreateCollectionBase is
         IFactory factory,
         IFactory.CreateCollectionParams memory params,
         address collectionOwner,
-        address collectionAddress
+        address collectionId
     ) private {
         // Perform verification checks
         uint256 expectedBlockNumber = block.number; // Get current block number
 
-        bytes32 collectionId = factory.getCollectionId(collectionAddress);
         (
             address creator,
             uint8 collectionType,
@@ -91,15 +81,10 @@ abstract contract CreateCollectionBase is
             address splitter
         ) = factory.collectionInfo(collectionId);
 
-        vm.prank(factory.market(), factory.market());
+        vm.prank(collectionOwner, collectionOwner);
         assertTrue(
-            factory.creatorAuth(collectionAddress, collectionOwner),
+            factory.creatorAuth(collectionId, collectionOwner),
             "Invalid creator auth"
-        );
-
-        assertTrue(
-            collectionId == bytes32(bytes20(collectionAddress)),
-            "Invalid collection id"
         );
 
         vm.prank(factory.router(), collectionOwner);
@@ -120,7 +105,7 @@ abstract contract CreateCollectionBase is
 
         assertTrue(
             collectionSalt
-                == keccak256(abi.encode(collectionOwner, bytes(params.tokenSalt))),
+                == keccak256(abi.encode(collectionOwner, params.tokenSalt)),
             "Invalid collection salt"
         );
 

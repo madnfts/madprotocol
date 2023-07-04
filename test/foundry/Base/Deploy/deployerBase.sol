@@ -69,11 +69,7 @@ abstract contract DeployerBase is
         // Deploy Factory
         factory = IFactory(
             factoryDeployer.deployFactoryCustom(
-                ercType,
-                currentSigner,
-                address(marketplace),
-                factorySigner,
-                address(paymentToken)
+                ercType, currentSigner, factorySigner, address(paymentToken)
             )
         );
 
@@ -91,6 +87,7 @@ abstract contract DeployerBase is
         marketplaceDeployer.setFactory(
             marketplace, address(factory), currentSigner
         );
+
         factoryDeployer.setRouter(factory, address(router), currentSigner);
 
         // Set the token type for the factory
@@ -100,7 +97,7 @@ abstract contract DeployerBase is
             );
         } else if (ercType == ercTypes.ERC1155) {
             factoryDeployer.setTokenType(
-                factory, currentSigner, 1, type(ERC1155Basic).creationCode
+                factory, currentSigner, 2, type(ERC1155Basic).creationCode
             );
         } else {
             revert("Invalid token type");

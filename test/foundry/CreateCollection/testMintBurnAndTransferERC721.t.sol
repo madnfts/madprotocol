@@ -168,7 +168,7 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         vm.prank(prankster);
 
         vm.expectRevert(0x1648fd01); // error NotAuthorised();
-        IERC721Basic(mintData.collectionAddress).mintTo{value: nftMintFee}(
+        IERC721Basic(mintData.collectionAddress).mintTo{ value: nftMintFee }(
             prankster, 1, nftReceiver
         );
     }
@@ -244,7 +244,7 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         if (_errorSelector != 0x00000000) {
             vm.expectRevert(_errorSelector);
         }
-        collection.mintTo{value: mintData.nftMintFee}(
+        collection.mintTo{ value: mintData.nftMintFee }(
             mintData.nftReceiver, mintData.amountToMint, mintData.nftReceiver
         );
         vm.stopPrank();
@@ -266,7 +266,7 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
 
         uint256 _value = mintData.nftMintFee + (1 ether * mintData.amountToMint);
 
-        collection.mint{value: _value}(mintData.amountToMint);
+        collection.mint{ value: _value }(mintData.amountToMint);
         vm.stopPrank();
     }
 

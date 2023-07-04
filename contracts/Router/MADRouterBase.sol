@@ -162,13 +162,12 @@ abstract contract MADRouterBase is MAD, MADBase, RouterEvents, FeeOracle {
     /// @dev Retrieves both `collectionId` (bytes32) and collection type (uint8)
     ///      for valid token and approved user.
     ///      Function Sighash := 0xdbf62b2e
-    /// @param _token 721 / 1155 token address.
-    function _tokenRender(address _token)
+    /// @param collectionId 721 / 1155 token address.
+    function _tokenRender(address collectionId)
         internal
         view
-        returns (bytes32 collectionId, uint8 tokenType)
+        returns (uint8 tokenType)
     {
-        collectionId = madFactory.getCollectionId(_token);
         madFactory.creatorCheck(collectionId);
         tokenType = madFactory.typeChecker(collectionId);
     }

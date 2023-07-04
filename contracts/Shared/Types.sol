@@ -11,7 +11,7 @@ import { IERC1155 } from
 
 // prettier-ignore
 library Types {
-    struct ColArgs {
+    struct CollectionArgs {
         string _name;
         string _symbol;
         string _baseURI;
@@ -36,7 +36,7 @@ library Types {
         bytes32 splitterSalt;
         address ambassador;
         address project;
-        uint256 ambShare;
+        uint256 ambassadorShare;
         uint256 projectShare;
         bool valid;
     }
@@ -352,10 +352,10 @@ library Types {
     │  │     │  │  ├─ type: ElementaryTypeName
     │  │     │  │  ├─ name: uint256
     │  │     │  │  └─ stateMutability
-    │  │     │  ├─ name: ambShare
+    │  │     │  ├─ name: ambassadorShare
     │  │     │  ├─ identifier
     │  │     │  │  ├─ type: Identifier
-    │  │     │  │  └─ name: ambShare
+    │  │     │  │  └─ name: ambassadorShare
     │  │     │  ├─ storageLocation
     │  │     │  ├─ isStateVar: false
     │  │     │  ├─ isIndexed: false

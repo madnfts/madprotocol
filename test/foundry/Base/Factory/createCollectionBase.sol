@@ -95,7 +95,7 @@ abstract contract CreateCollectionBase is
 
         vm.prank(factory.router(), collectionOwner);
         assertTrue(
-            factory.typeChecker(collectionId) == params.tokenType,
+            factory.collectionTypeChecker(collectionId) == params.tokenType,
             "Invalid type checker"
         );
 
@@ -231,10 +231,13 @@ abstract contract CreateCollectionBase is
         assertTrue(collection.publicMintState() == false);
 
         // royaltyInfo(uint256, uint256)
-        // (address receiver, uint256 royaltyAmount) = collection.royaltyInfo(0,
-        // 0);
-        // assertTrue(receiver != address(0) && royaltyAmount ==
-        // params.royalty);
+        (address receiver, uint256 royaltyAmount) =
+            collection.royaltyInfo(0, 1 ether);
+        uint256 _royaltyAmount = (1 ether * params.royalty) / 10_000;
+
+        assertTrue(
+            receiver == params.splitter && royaltyAmount == _royaltyAmount
+        );
 
         // uriLock()
         assertTrue(collection.uriLock() == false);

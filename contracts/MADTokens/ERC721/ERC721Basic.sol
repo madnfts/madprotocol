@@ -45,12 +45,8 @@ contract ERC721Basic is ERC721, ImplBase {
     /// @dev Transfer event emitted by parent ERC721 contract.
     /// @dev Function Sighash := 0x438b1b4b
     /// @dev Loop runs out of gas before overflowing.
-    function mintTo(address to, uint128 amount, address erc20Owner)
-        external
-        payable
-        authorised
-    {
-        (uint256 curId, uint256 endId) = _prepareOwnerMint(amount, erc20Owner);
+    function mintTo(address to, uint128 amount) external payable authorised {
+        (uint256 curId, uint256 endId) = _prepareOwnerMint(amount);
 
         unchecked {
             do {
@@ -61,15 +57,7 @@ contract ERC721Basic is ERC721, ImplBase {
 
     /// @dev Transfer event emitted by parent ERC721 contract.
     /// @dev Function Sighash := 0x362c0cb5
-    function burn(uint128[] calldata ids, address erc20Owner)
-        external
-        payable
-        authorised
-    {
-        // @audit do we charge to burn?
-        (uint256 fee, bool method) = _ownerFeeCheck(0x44df8e70, erc20Owner);
-        _ownerFeeHandler(method, fee, erc20Owner);
-
+    function burn(uint128[] calldata ids) external payable authorised {
         uint256 len = ids.length;
         _decSupply(len);
 

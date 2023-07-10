@@ -9,7 +9,7 @@ abstract contract CreateCollectionParams {
     uint256 public defaultPrice = 1 ether;
     uint256 public defaultMaxSupply = 10_000;
     uint8 public defaultTokenType = 1; // ERC721Basic
-    uint96 public defaultRoyalty = 0;
+    uint96 public defaultRoyalty = 1000; // 10% (max)
     string public defaultUri = "https://mad.network";
     bytes32[] public defaultExtra;
 

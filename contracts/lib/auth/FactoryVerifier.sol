@@ -25,7 +25,7 @@ interface FactoryVerifier {
     /// withdraw functions.
     /// @dev Function Sighash := 0xb64bd5eb
     /// @param _collectionId address collection ID value.
-    /// @return creator bb
+    /// @return creator address of the collection creator.
     /// @return check Boolean output to either approve or reject call's
     /// `tx.origin` function access.
     function creatorCheck(address _collectionId)
@@ -36,7 +36,7 @@ interface FactoryVerifier {
     /// @dev Returns the collection type uint8 value in case token and user are
     /// authorized.
     /// @dev Function Sighash := 0xd93cb8fd
-    function typeChecker(address _collectionId)
+    function collectionTypeChecker(address _collectionId)
         external
         view
         returns (uint8 pointer);

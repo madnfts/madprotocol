@@ -12,7 +12,7 @@ import { ERC721Basic } from "contracts/MADTokens/ERC721/ERC721Basic.sol";
 
 contract MADRouter721 is MADRouterBase {
     ////////////////////////////////////////////////////////////////
-    //                         CONSTRUCTOR                        //
+    //                          CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
     /// @notice Constructor requires a valid factory address and an optional
@@ -97,7 +97,7 @@ contract MADRouter721 is MADRouterBase {
         uint8 _tokenType = _tokenRender(_token);
         _checkTokenType(_tokenType);
         // _paymentCheck(0x40d097c3);
-        ERC721Basic(_token).mintTo{ value: msg.value }(_to, _amount, msg.sender);
+        ERC721Basic(_token).mintTo{ value: msg.value }(_to, _amount);
     }
 
     /// @notice Global token burn controller/single pusher for all token types.
@@ -110,7 +110,7 @@ contract MADRouter721 is MADRouterBase {
         // _paymentCheck(0x44df8e70);
 
         _checkTokenType(_tokenType);
-        ERC721Basic(_token).burn{ value: msg.value }(_ids, msg.sender);
+        ERC721Basic(_token).burn{ value: msg.value }(_ids);
     }
 
     ////////////////////////////////////////////////////////////////

@@ -23,8 +23,7 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
     Deployer deployer;
     DeploySplitterBase splitterDeployer;
 
-    uint256 nftMintFee = 0.25 ether; // default contract
-    uint256 nftBurnFee = 0; // default contract
+    uint256 nftPublicMintPrice = 1 ether;
 
     // Create default addresses
     address nftReceiver = makeAddr("nftReceiverDefault");
@@ -46,7 +45,7 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
     function testMintTo_DefaultSingle() public {
         uint128 _amountToMint = 1;
         MintData memory mintData =
-            _setupMint(nftMinter, nftReceiver, nftMintFee, _amountToMint);
+            _setupMint(nftMinter, nftReceiver, 0, _amountToMint);
         _doMintTo(mintData, 0);
 
         _checkMint(mintData);
@@ -54,8 +53,9 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
 
     function TestPublicMint_DefaultSingle() public {
         uint128 _amountToMint = 1;
-        MintData memory mintData =
-            _setupMint(nftMinter, nftReceiver, nftMintFee, _amountToMint);
+        MintData memory mintData = _setupMint(
+            nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
+        );
 
         _doPublicMint(mintData, true, 0);
 
@@ -66,7 +66,7 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         for (uint256 i = 0; i < 10; i++) {
             uint128 _amountToMint = 10;
             MintData memory mintData =
-                _setupMint(nftMinter, nftReceiver, nftMintFee, _amountToMint);
+                _setupMint(nftMinter, nftReceiver, 0, _amountToMint);
             _doMintTo(mintData, 0);
 
             _checkMint(mintData);
@@ -76,8 +76,9 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
     function TestPublicMint_DefaultMultiple() public {
         for (uint256 i = 0; i < 10; i++) {
             uint128 _amountToMint = 10;
-            MintData memory mintData =
-                _setupMint(nftMinter, nftReceiver, nftMintFee, _amountToMint);
+            MintData memory mintData = _setupMint(
+                nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
+            );
 
             _doPublicMint(mintData, true, 0);
 
@@ -88,7 +89,7 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
     function testMintTo_DefaultFuzzy(uint256 x) public {
         uint128 _amountToMint = 10;
         MintData memory mintData =
-            _setupMint(nftMinter, nftReceiver, nftMintFee, _amountToMint);
+            _setupMint(nftMinter, nftReceiver, 0, _amountToMint);
         _doMintTo(mintData, 0);
 
         _checkMint(mintData);
@@ -96,8 +97,9 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
 
     function TestPublicMint_DefaultFuzzy(uint256 x) public {
         uint128 _amountToMint = 10;
-        MintData memory mintData =
-            _setupMint(nftMinter, nftReceiver, nftMintFee, _amountToMint);
+        MintData memory mintData = _setupMint(
+            nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
+        );
 
         _doPublicMint(mintData, true, 0);
 
@@ -106,8 +108,9 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
 
     function test_SetPublicMint_Unauthorised() public {
         uint128 _amountToMint = 1;
-        MintData memory mintData =
-            _setupMint(nftMinter, nftReceiver, nftMintFee, _amountToMint);
+        MintData memory mintData = _setupMint(
+            nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
+        );
         IERC721Basic collection = IERC721Basic(mintData.collectionAddress);
 
         vm.startPrank(prankster);
@@ -119,8 +122,9 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
 
     function testPublicMint_PublicMintClosed() public {
         uint128 _amountToMint = 1;
-        MintData memory mintData =
-            _setupMint(nftMinter, nftReceiver, nftMintFee, _amountToMint);
+        MintData memory mintData = _setupMint(
+            nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
+        );
 
         _doPublicMint(
             mintData,
@@ -129,27 +133,19 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         );
     }
 
-    function testMintTo_IncorrectFeeSingleFuzzy(uint256 _mintFee) public {
-        vm.assume(_mintFee != nftMintFee && _mintFee <= 1 ether);
-        uint128 _amountToMint = 1;
-        MintData memory mintData =
-            _setupMint(nftMinter, nftReceiver, nftMintFee, _amountToMint);
-
-        // change mint fee
-        mintData.nftMintFee = _mintFee;
-        _doMintTo(
-            mintData,
-            0xf7760f25 // error WrongPrice();
+    function testMint_IncorrectFeeSingleFuzzy(uint256 _nftPublicMintPrice)
+        public
+    {
+        vm.assume(
+            _nftPublicMintPrice != nftPublicMintPrice
+                && _nftPublicMintPrice <= 1 ether
         );
-    }
-
-    function testMint_IncorrectFeeSingleFuzzy(uint256 _mintFee) public {
-        vm.assume(_mintFee != nftMintFee && _mintFee <= 1 ether);
         uint128 _amountToMint = 1;
-        MintData memory mintData =
-            _setupMint(nftMinter, nftReceiver, nftMintFee, _amountToMint);
+        MintData memory mintData = _setupMint(
+            nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
+        );
 
-        mintData.nftMintFee = _mintFee; // change mint fee
+        mintData.nftPublicMintPrice = _nftPublicMintPrice; // change mint fee
 
         _doPublicMint(
             mintData,
@@ -160,24 +156,23 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
 
     function testMintTo_UnAuthorised() public {
         uint128 _amountToMint = 1;
-        MintData memory mintData =
-            _setupMint(nftMinter, nftReceiver, nftMintFee, _amountToMint);
+        MintData memory mintData = _setupMint(
+            nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
+        );
 
         // Attempt to Mint to nftReceiver
 
         vm.prank(prankster);
 
         vm.expectRevert(0x1648fd01); // error NotAuthorised();
-        IERC721Basic(mintData.collectionAddress).mintTo{ value: nftMintFee }(
-            prankster, 1, nftReceiver
-        );
+        IERC721Basic(mintData.collectionAddress).mintTo(prankster, 1);
     }
 
     function testMintTo_MaxSupply() public {
         // Mint Max Supply
         uint128 _amountToMint = 10_000;
         MintData memory mintData =
-            _setupMint(nftMinter, nftReceiver, nftMintFee, _amountToMint);
+            _setupMint(nftMinter, nftReceiver, 0, _amountToMint);
         _doMintTo(mintData, 0);
 
         // Try and mint more..
@@ -189,8 +184,9 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
     function testMint_MaxSupply() public {
         // Mint Max Supply
         uint128 _amountToMint = 10_000;
-        MintData memory mintData =
-            _setupMint(nftMinter, nftReceiver, nftMintFee, _amountToMint);
+        MintData memory mintData = _setupMint(
+            nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
+        );
         _doPublicMint(mintData, true, 0);
 
         // Try and mint more..
@@ -201,7 +197,7 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
     function _setupMint(
         address _nftMinter,
         address _nftReceiver,
-        uint256 _nftMintFee,
+        uint256 _nftPublicMintPrice,
         uint128 _amountToMint
     ) internal returns (MintData memory mintData) {
         // Create Collection & Splitter
@@ -223,7 +219,7 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         mintData = MintData({
             nftMinter: _nftMinter,
             nftReceiver: _nftReceiver,
-            nftMintFee: _nftMintFee,
+            nftPublicMintPrice: _nftPublicMintPrice,
             amountToMint: _amountToMint,
             collectionAddress: _collectionAddress,
             splitterAddress: _splitterAddress,
@@ -238,17 +234,17 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
     function _doMintTo(MintData memory mintData, bytes4 _errorSelector)
         internal
     {
-        vm.startPrank(mintData.nftMinter);
+        vm.startPrank(mintData.nftMinter, mintData.nftMinter);
         IERC721Basic collection = IERC721Basic(mintData.collectionAddress);
 
         if (_errorSelector != 0x00000000) {
             vm.expectRevert(_errorSelector);
         }
-        collection.mintTo{ value: mintData.nftMintFee }(
-            mintData.nftReceiver, mintData.amountToMint, mintData.nftReceiver
-        );
+        collection.mintTo(mintData.nftReceiver, mintData.amountToMint);
         vm.stopPrank();
     }
+
+    event log_named_bool(string key, bool val);
 
     function _doPublicMint(
         MintData memory mintData,
@@ -257,17 +253,18 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
     ) internal {
         IERC721Basic collection = IERC721Basic(mintData.collectionAddress);
 
-        vm.startPrank(mintData.nftMinter);
+        vm.prank(mintData.nftMinter, mintData.nftMinter);
         collection.setPublicMintState(_mintState);
 
         if (_errorSelector != 0x00000000) {
             vm.expectRevert(_errorSelector);
         }
 
-        uint256 _value = mintData.nftMintFee + (1 ether * mintData.amountToMint);
+        uint256 _nftPublicMintPrice =
+            mintData.nftPublicMintPrice * mintData.amountToMint;
 
-        collection.mint{ value: _value }(mintData.amountToMint);
-        vm.stopPrank();
+        vm.prank(mintData.nftReceiver);
+        collection.mint{ value: _nftPublicMintPrice }(mintData.amountToMint);
     }
 
     function _checkMint(MintData memory mintData) internal {

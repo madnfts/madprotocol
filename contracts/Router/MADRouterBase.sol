@@ -2,8 +2,6 @@
 
 pragma solidity 0.8.19;
 
-import { MAD } from "contracts/MAD.sol";
-
 // solhint-disable-next-line
 import { MADBase, ERC20 } from "contracts/Shared/MADBase.sol";
 import {
@@ -11,10 +9,10 @@ import {
 } from "contracts/Shared/EventsAndErrors.sol";
 import { FeeOracle } from "contracts/lib/tokens/common/FeeOracle.sol";
 
-abstract contract MADRouterBase is MAD, MADBase, RouterEvents, FeeOracle {
+abstract contract MADRouterBase is MADBase, RouterEvents, FeeOracle {
     /// @notice Contract name.
     /// @dev Function Sighash := 0x06fdde03
-    function name() external pure override(MAD) returns (string memory) {
+    function name() public pure returns (string memory) {
         assembly {
             mstore(0x20, 0x20)
             mstore(0x46, 0x6726F75746572)
@@ -82,21 +80,14 @@ abstract contract MADRouterBase is MAD, MADBase, RouterEvents, FeeOracle {
         external
         view
         override(FeeOracle)
-        returns (uint256 fee)
+        returns (uint256)
     {
-        assembly {
-            for { } 1 { } {
-                if eq(_MINSAFEMINT, sigHash) {
-                    fee := sload(feeMint.slot)
-                    break
-                }
-                if eq(_MINBURN, sigHash) {
-                    fee := sload(feeBurn.slot)
-                    break
-                }
-                fee := 0x00
-                break
-            }
+        if (sigHash == _MINSAFEMINT) {
+            return feeMint;
+        } else if (sigHash == _MINBURN) {
+            return feeBurn;
+        } else {
+            return 0;
         }
     }
 
@@ -169,7 +160,7 @@ abstract contract MADRouterBase is MAD, MADBase, RouterEvents, FeeOracle {
         returns (uint8 tokenType)
     {
         madFactory.creatorCheck(collectionId);
-        tokenType = madFactory.typeChecker(collectionId);
+        tokenType = madFactory.collectionTypeChecker(collectionId);
     }
 
     // MODIFIERS

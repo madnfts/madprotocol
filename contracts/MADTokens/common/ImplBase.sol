@@ -35,9 +35,6 @@ abstract contract ImplBase is
     //                          IMMUTABLE                         //
     ////////////////////////////////////////////////////////////////
 
-    /// @notice Public mint price.
-    uint256 public immutable price;
-
     /// @notice Capped max supply.
     uint128 public immutable maxSupply;
 
@@ -51,9 +48,6 @@ abstract contract ImplBase is
     /// @dev Mint counter, includes burnt count.
     /// `uint128`  [128...255] := mintCount
     uint256 internal _supplyRegistrar;
-
-    // /// @notice total amount of fees accumulated.
-    // uint256 public feeCount;
 
     /// @notice Lock the URI (default := false).
     /// @dev The URI can't be unlocked.
@@ -77,13 +71,12 @@ abstract contract ImplBase is
         payable
         /*  */
         TwoFactor(_router, tx.origin)
-        PaymentManager(_splitter, _erc20)
+        PaymentManager(_splitter, _erc20, _price)
         ERC2981(uint256(_royaltyPercentage))
     {
         require(_maxSupply < _MAXSUPPLY_BOUND, "MAXSUPPLY_BOUND_EXCEEDED");
 
         // immutable
-        price = _price;
         maxSupply = uint128(_maxSupply);
 
         _setStringMemory(_baseURI, _BASE_URI_SLOT);
@@ -121,8 +114,12 @@ abstract contract ImplBase is
         }
     }
 
+    /// @notice Public mint state setter.
+    /// @dev sigHah := 879fbedf
     /// @dev `uriLock` and `publicMintState` already
     /// packed in the same slot of storage.
+    /// @param _publicMintState Public mint state.
+    ///
     function setPublicMintState(bool _publicMintState) public authorised {
         publicMintState = _publicMintState;
         assembly {
@@ -206,17 +203,12 @@ abstract contract ImplBase is
         }
     }
 
-    function _prepareOwnerMint(uint256 amount, address erc20Owner)
+    function _prepareOwnerMint(uint256 amount)
         internal
         returns (uint256 curId, uint256 endId)
     {
         // require(amount < _MAXSUPPLY_BOUND && balance < _MAXSUPPLY_BOUND);
         _hasReachedMax(uint256(amount), maxSupply);
-
-        (uint256 fee, bool method) = _ownerFeeCheck(0x40d097c3, erc20Owner);
-
-        _ownerFeeHandler(method, fee, erc20Owner);
-
         return _incrementCounter(uint256(amount));
     }
 
@@ -228,10 +220,9 @@ abstract contract ImplBase is
 
         _hasReachedMax(amount, maxSupply);
 
-        (uint256 fee, uint256 value, bool method) =
-            _publicMintPriceCheck(price, totalCost);
+        uint256 value = _publicMintPriceCheck(totalCost);
 
-        _publicPaymentHandler(method, value, fee);
+        _publicPaymentHandler(value);
 
         return _incrementCounter(amount);
     }
@@ -329,26 +320,5 @@ abstract contract ImplBase is
         //         revert(28, 4)
         //     }
         // }
-    }
-
-    function _getFeeValue(bytes4 _method)
-        internal
-        view
-        virtual
-        override(PaymentManager)
-        returns (uint256 value)
-    {
-        // value = _size == 0 ?
-        // 0 : FeeOracle(_router).feeLookup(_method);
-        bytes memory c = abi.encodeWithSelector(0xedc9e7a4, _method);
-        assembly {
-            let _router := shr(12, sload(router.slot))
-            switch iszero(extcodesize(_router))
-            case 1 { value := 0 }
-            case 0 {
-                pop(staticcall(gas(), _router, add(c, 32), mload(c), 0, 32))
-                value := mload(0)
-            }
-        }
     }
 }

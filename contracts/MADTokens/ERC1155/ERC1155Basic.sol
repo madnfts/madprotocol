@@ -65,10 +65,9 @@ contract ERC1155Basic is ERC1155, ImplBase {
         address to,
         uint128 amount,
         /// @todo FE must be adapted here.
-        uint128 balance,
-        address erc20Owner
+        uint128 balance
     ) external payable authorised {
-        (uint256 curId, uint256 endId) = _prepareOwnerMint(amount, erc20Owner);
+        (uint256 curId, uint256 endId) = _prepareOwnerMint(amount);
 
         unchecked {
             do {
@@ -81,11 +80,10 @@ contract ERC1155Basic is ERC1155, ImplBase {
     function mintBatchTo(
         address to,
         uint128[] memory ids,
-        uint128[] memory amounts,
-        address erc20Owner
+        uint128[] memory amounts
     ) external payable authorised {
         uint256 len = ids.length;
-        _prepareOwnerMint(len, erc20Owner);
+        _prepareOwnerMint(len);
 
         uint256[] memory _ids;
         uint256[] memory _amounts;
@@ -100,13 +98,8 @@ contract ERC1155Basic is ERC1155, ImplBase {
     function burn(
         address[] memory from,
         uint128[] memory ids,
-        uint128[] memory balances,
-        address erc20Owner
+        uint128[] memory balances
     ) external payable authorised {
-        // @audit do we charge to burn?
-        (uint256 fee, bool method) = _ownerFeeCheck(0x44df8e70, erc20Owner);
-        _ownerFeeHandler(method, fee, erc20Owner);
-
         uint256 len = ids.length;
         _decSupply(len);
 
@@ -131,13 +124,8 @@ contract ERC1155Basic is ERC1155, ImplBase {
     function burnBatch(
         address from,
         uint128[] memory ids,
-        uint128[] memory amounts,
-        address erc20Owner
+        uint128[] memory amounts
     ) external payable authorised {
-        // @audit do we charge to burn?
-        (uint256 fee, bool method) = _ownerFeeCheck(0x44df8e70, erc20Owner);
-        _ownerFeeHandler(method, fee, erc20Owner);
-
         _decSupply(ids.length);
 
         uint256[] memory _ids;

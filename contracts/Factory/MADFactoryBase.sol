@@ -2,7 +2,6 @@
 
 pragma solidity 0.8.19;
 
-import { MAD } from "contracts/MAD.sol";
 import { MADBase } from "contracts/Shared/MADBase.sol";
 import {
     FactoryEventsAndErrorsBase,
@@ -17,7 +16,6 @@ import { SplitterBufferLib as BufferLib } from
 
 // prettier-ignore
 abstract contract MADFactoryBase is
-    MAD,
     MADBase,
     FactoryEventsAndErrorsBase,
     FactoryVerifier,
@@ -34,7 +32,7 @@ abstract contract MADFactoryBase is
     ////////////////////////////////////////////////////////////////
 
     /// @dev Function SigHash: 0x06fdde03
-    function name() external pure override(MAD) returns (string memory) {
+    function name() public pure returns (string memory) {
         assembly {
             mstore(0x20, 0x20)
             mstore(0x47, 0x07666163746F7279)
@@ -67,9 +65,6 @@ abstract contract MADFactoryBase is
     /// constructor.
     address public router;
 
-    /// @dev The signer address used for lazy minting voucher validation.
-    address public signer;
-
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
@@ -83,6 +78,7 @@ abstract contract MADFactoryBase is
         isThisOg
         returns (address)
     {
+        _isZeroAddr(router);
         _limiter(params.tokenType, params.splitter);
         _royaltyLocker(params.royalty);
 
@@ -315,8 +311,8 @@ abstract contract MADFactoryBase is
     /// @dev Function Sighash := 0x8691fe46
 
     /// @inheritdoc FactoryVerifier
-    function typeChecker(address _collectionId)
-        external
+    function collectionTypeChecker(address _collectionId)
+        public
         view
         override(FactoryVerifier)
         returns (uint8 pointer)
@@ -330,6 +326,12 @@ abstract contract MADFactoryBase is
     }
 
     /// @inheritdoc FactoryVerifier
+    /// @notice This function is used by `MADRouter` to check if a  collection
+    /// creator is the same as the caller.
+    /// @dev Function Sighash := 5033270c
+    /// @param _collectionId address of the collection.
+    /// @return creator address of the collection creator.
+    /// @return check Boolean output to either approve or reject call's
     function creatorCheck(address _collectionId)
         external
         view

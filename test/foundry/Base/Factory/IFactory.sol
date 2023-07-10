@@ -72,7 +72,7 @@ interface IFactory {
         view
         returns (address creator, bool check);
 
-    function typeChecker(address _collectionId)
+    function collectionTypeChecker(address _collectionId)
         external
         view
         returns (uint8 pointer);

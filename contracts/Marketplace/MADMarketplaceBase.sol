@@ -2,7 +2,6 @@
 
 pragma solidity 0.8.19;
 
-import { MAD } from "contracts/MAD.sol";
 import { MADBase, ERC20 } from "contracts/Shared/MADBase.sol";
 import {
     FactoryVerifier,
@@ -12,12 +11,11 @@ import { SafeTransferLib } from "contracts/lib/utils/SafeTransferLib.sol";
 import { ISwapRouter } from "contracts/lib/uniswap/ISwapRouter.sol";
 
 abstract contract MADMarketplaceBase is
-    MAD,
     MADBase,
     MarketplaceEventsAndErrorsBase
 {
     /// @dev Function Signature := 0x06fdde03
-    function name() external pure override(MAD) returns (string memory) {
+    function name() public pure returns (string memory) {
         assembly {
             mstore(0x20, 0x20)
             mstore(0x46, 0x066D61726B6574)

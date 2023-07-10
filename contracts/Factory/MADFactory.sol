@@ -51,7 +51,7 @@ contract MADFactory is MADFactoryBase {
             params.royalty,
             params.maxSupply,
             params.price
-        );
+            );
     }
 
     /// @notice Splitter deployment pusher.

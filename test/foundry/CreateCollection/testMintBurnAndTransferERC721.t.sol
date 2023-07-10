@@ -133,7 +133,7 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         );
     }
 
-    function testMint_IncorrectFeeSingleFuzzy(uint256 _nftPublicMintPrice)
+    function testPublicMint_IncorrectFeeSingleFuzzy(uint256 _nftPublicMintPrice)
         public
     {
         vm.assume(
@@ -244,8 +244,6 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         vm.stopPrank();
     }
 
-    event log_named_bool(string key, bool val);
-
     function _doPublicMint(
         MintData memory mintData,
         bool _mintState,
@@ -264,7 +262,7 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
             mintData.nftPublicMintPrice * mintData.amountToMint;
 
         vm.prank(mintData.nftReceiver);
-        collection.mint{ value: _nftPublicMintPrice }(mintData.amountToMint);
+        collection.mint{value: _nftPublicMintPrice}(mintData.amountToMint);
     }
 
     function _checkMint(MintData memory mintData) internal {

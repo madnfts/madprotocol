@@ -55,23 +55,6 @@ contract ERC721Basic is ERC721, ImplBase {
         }
     }
 
-    /// @dev Transfer event emitted by parent ERC721 contract.
-    /// @dev Function Sighash := 0x362c0cb5
-    function burn(uint128[] calldata ids) external payable authorised {
-        uint256 len = ids.length;
-        _decSupply(len);
-
-        uint256 i;
-        for (i; i < len;) {
-            _burn(uint256(ids[i]));
-            unchecked {
-                ++i;
-            }
-        }
-
-        _loopOverflow(i, len);
-    }
-
     ////////////////////////////////////////////////////////////////
     //                          PUBLIC FX                         //
     ////////////////////////////////////////////////////////////////
@@ -86,6 +69,23 @@ contract ERC721Basic is ERC721, ImplBase {
                 _mint(msg.sender, curId);
             } while (curId++ != endId);
         }
+    }
+
+    /// @dev Transfer event emitted by parent ERC721 contract.
+    /// @dev Function Sighash := 0x362c0cb5
+    function burn(uint128[] calldata ids) external payable {
+        uint256 len = ids.length;
+        _decSupply(len);
+
+        uint256 i;
+        for (i; i < len;) {
+            _burn(uint256(ids[i]));
+            unchecked {
+                ++i;
+            }
+        }
+
+        _loopOverflow(i, len);
     }
 
     ////////////////////////////////////////////////////////////////

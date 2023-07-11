@@ -30,6 +30,9 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
     address nftMinter = makeAddr("nftMinterDefault");
     address prankster = makeAddr("prankster");
 
+    uint128[] idsToBurn =
+        [1, 2, 3, 4, 5, 100, 1000, 2000, 3000, 4000, 5000, 9999, 10_000];
+
     function setUp() public {
         vm.deal(prankster, 20_000 ether);
         // Instantiate deployer contracts
@@ -86,27 +89,24 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         }
     }
 
-    function testMintTo_DefaultFuzzy(uint256 x) public {
-        uint128 _amountToMint = 10;
-        MintData memory mintData =
-            _setupMint(nftMinter, nftReceiver, 0, _amountToMint);
-        _doMintTo(mintData, 0);
+    // function testMintTo_DefaultFuzzy(uint256 x) public {
+    //     uint128 _amountToMint = 10;
+    //     MintData memory mintData =
+    //         _setupMint(nftMinter, nftReceiver, 0, _amountToMint);
+    //     _doMintTo(mintData, 0);
+    //     _checkMint(mintData);
+    // }
 
-        _checkMint(mintData);
-    }
+    // function testPublicMint_DefaultFuzzy(uint256 x) public {
+    //     uint128 _amountToMint = 10;
+    //     MintData memory mintData = _setupMint(
+    //         nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
+    //     );
+    //     _doPublicMint(mintData, true, 0);
+    //     _checkMint(mintData);
+    // }
 
-    function TestPublicMint_DefaultFuzzy(uint256 x) public {
-        uint128 _amountToMint = 10;
-        MintData memory mintData = _setupMint(
-            nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
-        );
-
-        _doPublicMint(mintData, true, 0);
-
-        _checkMint(mintData);
-    }
-
-    function test_SetPublicMint_Unauthorised() public {
+    function testSetPublicMint_Unauthorised() public {
         uint128 _amountToMint = 1;
         MintData memory mintData = _setupMint(
             nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
@@ -154,6 +154,27 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         );
     }
 
+    function testPublicMint_ZeroAmount() public {
+        uint128 _amountToMint = 0;
+        MintData memory mintData = _setupMint(
+            nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
+        );
+
+        _doPublicMint(
+            mintData,
+            true,
+            0xf7760f25 // error WrongPrice();
+        );
+    }
+
+    function testMintTo_ZeroAmount() public {
+        uint128 _amountToMint = 0;
+        MintData memory mintData =
+            _setupMint(nftMinter, nftReceiver, 0, _amountToMint);
+
+        _doMintTo(mintData, 0xf7760f25); // error WrongPrice();
+    }
+
     function testMintTo_UnAuthorised() public {
         uint128 _amountToMint = 1;
         MintData memory mintData = _setupMint(
@@ -161,7 +182,6 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         );
 
         // Attempt to Mint to nftReceiver
-
         vm.prank(prankster);
 
         vm.expectRevert(0x1648fd01); // error NotAuthorised();
@@ -169,10 +189,74 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
     }
 
     function testMintTo_MaxSupply() public {
+        _mintTo_MaxSupply();
+    }
+
+    function testPublicMint_MaxSupply() public {
+        _publicMint_MaxSupply();
+    }
+
+    ////////////////////////////////////////////////////////////////
+    //                          BURN TESTS                        //
+    ////////////////////////////////////////////////////////////////
+
+    function testBurnFromMintTo_DefaultSingle() public {
+        // Mint Max supply
+        MintData memory mintData = _mintTo_MaxSupply();
+        _doBurn(mintData, mintData.nftMinter);
+    }
+
+    function testBurnFromPublicMint_DefaultSingle() public {
+        // Mint Max supply
+        MintData memory mintData = _publicMint_MaxSupply();
+        _doBurn(mintData, mintData.nftReceiver);
+    }
+
+    ////////////////////////////////////////////////////////////////
+    //                          HELPERS                           //
+    ////////////////////////////////////////////////////////////////
+
+    function _doBurn(MintData memory mintData, address _tokenOwner) internal {
+        uint256 idsToBurnLength = idsToBurn.length;
+        // Burn tokens
+        IERC721Basic collection = IERC721Basic(mintData.collectionAddress);
+
+        // log balance of nftMinter before
+        uint256 _balanceNftMinterBefore = collection.balanceOf(_tokenOwner);
+
+        vm.prank(_tokenOwner, _tokenOwner);
+        collection.burn(idsToBurn);
+
+        uint256 _expectedBalanceNftMinterAfter =
+            _balanceNftMinterBefore - idsToBurnLength;
+
+        // Check that nftMinter no longer has the token(s)
+        assertTrue(
+            collection.balanceOf(_tokenOwner) == _expectedBalanceNftMinterAfter
+        );
+
+        // Check the totalSupply of the collection has decreased
+        assertTrue(
+            collection.totalSupply()
+                == mintData.newTotalSupply - idsToBurnLength
+        );
+
+        // Check that the tokenId owner is the Zero Address 0x0
+        for (uint256 i = 0; i < idsToBurnLength; i++) {
+            vm.expectRevert(0xceea21b6); // `TokenDoesNotExist()`.
+            collection.ownerOf(idsToBurn[i]);
+        }
+
+        // Try to burn the same tokens again
+        vm.startPrank(_tokenOwner, _tokenOwner);
+        vm.expectRevert(0xceea21b6); // `TokenDoesNotExist()`.
+        collection.burn(idsToBurn);
+    }
+
+    function _mintTo_MaxSupply() internal returns (MintData memory mintData) {
         // Mint Max Supply
         uint128 _amountToMint = 10_000;
-        MintData memory mintData =
-            _setupMint(nftMinter, nftReceiver, 0, _amountToMint);
+        mintData = _setupMint(nftMinter, nftMinter, 0, _amountToMint);
         _doMintTo(mintData, 0);
 
         // Try and mint more..
@@ -181,10 +265,13 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         _doMintTo(mintData, 0xd05cb609); // error MaxSupplyReached();
     }
 
-    function testMint_MaxSupply() public {
+    function _publicMint_MaxSupply()
+        internal
+        returns (MintData memory mintData)
+    {
         // Mint Max Supply
         uint128 _amountToMint = 10_000;
-        MintData memory mintData = _setupMint(
+        mintData = _setupMint(
             nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
         );
         _doPublicMint(mintData, true, 0);

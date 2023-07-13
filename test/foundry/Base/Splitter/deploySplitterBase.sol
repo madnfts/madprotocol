@@ -63,13 +63,6 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
         ISplitter.SplitterData memory splitterData,
         address splitterAddress
     ) public {
-        bytes32 _splitterSalt = keccak256(
-            abi.encode(
-                splitterData.deployer,
-                splitterData.createSplitterParams.splitterSalt
-            )
-        );
-
         Types.SplitterConfig memory config = splitterData.factory.splitterInfo(
             splitterData.deployer, splitterAddress
         );
@@ -95,7 +88,8 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
         );
 
         assertTrue(
-            _splitterSalt == config.splitterSalt,
+            splitterData.createSplitterParams.splitterSalt
+                == config.splitterSalt,
             "Splitter salt should match with the stored splitter salt."
         );
 

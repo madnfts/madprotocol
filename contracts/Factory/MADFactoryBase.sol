@@ -85,10 +85,9 @@ abstract contract MADFactoryBase is
         if (params.maxSupply == 0) {
             revert ZeroMaxSupply();
         }
-        bytes32 _salt = keccak256(abi.encode(msg.sender, params.tokenSalt));
         address deployedCollection = _collectionDeploy(
             params.tokenType,
-            _salt,
+            params.tokenSalt,
             Types.CollectionArgs(
                 params.name,
                 params.symbol,
@@ -106,7 +105,11 @@ abstract contract MADFactoryBase is
         userTokens[msg.sender].push(deployedCollection);
 
         collectionInfo[deployedCollection] = Types.Collection(
-            msg.sender, params.tokenType, _salt, block.number, params.splitter
+            msg.sender,
+            params.tokenType,
+            params.tokenSalt,
+            block.number,
+            params.splitter
         );
         return deployedCollection;
     }
@@ -126,27 +129,25 @@ abstract contract MADFactoryBase is
     }
 
     function _splitterResolver(
-        bytes32 _splitterSalt,
-        address _ambassador,
-        address _project,
-        uint256 _ambassadorShare,
-        uint256 _projectShare,
+        CreateSplitterParams calldata params,
         uint256 _flag
     ) internal {
-        address[] memory _payees = BufferLib.payeesBuffer(_ambassador, _project);
+        address[] memory _payees =
+            BufferLib.payeesBuffer(params.ambassador, params.project);
 
         uint256[] memory _shares =
-            BufferLib.sharesBuffer(_ambassadorShare, _projectShare);
+            BufferLib.sharesBuffer(params.ambassadorShare, params.projectShare);
 
-        address splitter = _splitterDeploy(_splitterSalt, _payees, _shares);
+        address splitter =
+            _splitterDeploy(params.splitterSalt, _payees, _shares);
 
         splitterInfo[msg.sender][splitter] = Types.SplitterConfig(
             splitter,
-            _splitterSalt,
-            _ambassador,
-            _project,
-            _ambassadorShare,
-            _projectShare,
+            params.splitterSalt,
+            params.ambassador,
+            params.project,
+            params.ambassadorShare,
+            params.projectShare,
             true
         );
 
@@ -160,7 +161,7 @@ abstract contract MADFactoryBase is
         bytes32[] memory _extra
     ) internal returns (address deployed) {
         deployed = CREATE3.deploy(
-            _tokenSalt,
+            keccak256(abi.encode(msg.sender, _tokenSalt)),
             abi.encodePacked(
                 // implementation
                 collectionTypes[uint256(_tokenType)],
@@ -176,7 +177,7 @@ abstract contract MADFactoryBase is
         uint256[] memory _shares
     ) internal returns (address deployed) {
         deployed = CREATE3.deploy(
-            _salt,
+            keccak256(abi.encode(msg.sender, _salt)),
             abi.encodePacked(
                 type(SplitterImpl).creationCode, abi.encode(_payees, _shares)
             ),

@@ -62,11 +62,19 @@ contract ERC721Basic is ERC721, ImplBase {
     /// @dev Transfer event emitted by parent ERC721 contract.
     /// @dev Function Sighash := 0xa0712d68
     function mint(uint128 amount) external payable {
+        _publicMint(msg.sender, amount);
+    }
+
+    function mint(address to, uint128 amount) external payable {
+        _publicMint(to, amount);
+    }
+
+    function _publicMint(address to, uint128 amount) private {
         (uint256 curId, uint256 endId) =
             _preparePublicMint(uint256(amount), uint256(amount));
         unchecked {
             do {
-                _mint(msg.sender, curId);
+                _mint(to, curId);
             } while (curId++ != endId);
         }
     }

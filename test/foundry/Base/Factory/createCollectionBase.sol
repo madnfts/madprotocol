@@ -104,9 +104,7 @@ abstract contract CreateCollectionBase is
         assertTrue(splitter == params.splitter, "Invalid splitter address");
 
         assertTrue(
-            collectionSalt
-                == keccak256(abi.encode(collectionOwner, params.tokenSalt)),
-            "Invalid collection salt"
+            collectionSalt == params.tokenSalt, "Invalid collection salt"
         );
 
         assertTrue(blocknumber == expectedBlockNumber, "Invalid block number");

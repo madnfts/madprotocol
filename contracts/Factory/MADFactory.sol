@@ -51,7 +51,7 @@ contract MADFactory is MADFactoryBase {
             params.royalty,
             params.maxSupply,
             params.price
-            );
+        );
     }
 
     /// @notice Splitter deployment pusher.
@@ -77,16 +77,9 @@ contract MADFactory is MADFactoryBase {
         public
         isThisOg
     {
-        bytes32 splitterSalt =
-            keccak256(abi.encode(msg.sender, params.splitterSalt));
-
         if (params.ambassador == address(0) && params.project == address(0)) {
             _splitterResolver(
-                splitterSalt,
-                address(0), // _ambassador
-                address(0), // _project
-                0, // _ambassadorShare
-                0, // _projectShare
+                params,
                 0 // _flag := no project/ambassador
             );
         } else if (
@@ -94,11 +87,7 @@ contract MADFactory is MADFactoryBase {
                 && params.ambassadorShare != 0 && params.ambassadorShare < 21
         ) {
             _splitterResolver(
-                splitterSalt,
-                params.ambassador, // _ambassador
-                address(0), // _project
-                params.ambassadorShare, // _ambassadorShare
-                0, // _projectShare
+                params,
                 1 // _flag := ambassador only
             );
         } else if (
@@ -106,11 +95,7 @@ contract MADFactory is MADFactoryBase {
                 && params.projectShare != 0 && params.projectShare < 101
         ) {
             _splitterResolver(
-                splitterSalt,
-                address(0), // _ambassador
-                params.project, // _project
-                0, // _ambassadorShare
-                params.projectShare, // _projectShare
+                params,
                 2 // _flag := project only
             );
         } else if (
@@ -119,11 +104,7 @@ contract MADFactory is MADFactoryBase {
                 && params.projectShare != 0 && params.projectShare < 81
         ) {
             _splitterResolver(
-                splitterSalt,
-                params.ambassador, // _ambassador
-                params.project, // _project
-                params.ambassadorShare, // _ambassadorShare
-                params.projectShare, // _projectShare
+                params,
                 3 // _flag := ambassador and project
             );
         } else {

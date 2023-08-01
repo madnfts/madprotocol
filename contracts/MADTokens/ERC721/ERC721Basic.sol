@@ -3,10 +3,12 @@ pragma solidity 0.8.19;
 
 // solhint-disable-next-line
 import {
-    ImplBase, ERC2981, Strings
+    ImplBase,
+    ERC2981,
+    Strings,
+    Types
 } from "contracts/MADTokens/common/ImplBase.sol";
 import { ERC721 } from "contracts/lib/tokens/ERC721/Base/ERC721.sol";
-import { Types } from "contracts/Shared/Types.sol";
 
 //prettier-ignore
 contract ERC721Basic is ERC721, ImplBase {
@@ -23,17 +25,7 @@ contract ERC721Basic is ERC721, ImplBase {
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    constructor(Types.CollectionArgs memory args)
-        ImplBase(
-            args._baseURI,
-            args._price,
-            args._maxSupply,
-            args._splitter,
-            args._royaltyPercentage,
-            args._router,
-            args._erc20
-        )
-    {
+    constructor(Types.CollectionArgs memory args) ImplBase(args) {
         _setStringMemory(args._name, _NAME_SLOT);
         _setStringMemory(args._symbol, _SYMBOL_SLOT);
     }

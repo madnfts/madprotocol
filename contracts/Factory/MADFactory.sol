@@ -42,7 +42,9 @@ contract MADFactory is MADFactoryBase {
     ///     validate and attach to collection.
     ///   - royalty: Ranges in between 0%-10%, in percentage basis points,
     ///     accepted (Min tick := 25).
-    function createCollection(Types.CreateCollectionParams calldata params) public {
+    function createCollection(Types.CreateCollectionParams calldata params)
+        public
+    {
         emit CollectionCreated(
             params.splitter,
             _createCollection(params),
@@ -51,7 +53,7 @@ contract MADFactory is MADFactoryBase {
             params.royalty,
             params.maxSupply,
             params.price
-        );
+            );
     }
 
     /// @notice Splitter deployment pusher.

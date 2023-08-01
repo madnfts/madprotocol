@@ -4,10 +4,12 @@ pragma solidity 0.8.19;
 // solhint-disable-next-line
 
 import {
-    ImplBase, ERC2981, Strings
+    ImplBase,
+    ERC2981,
+    Strings,
+    Types
 } from "contracts/MADTokens/common/ImplBase.sol";
 import { ERC1155 } from "contracts/lib/tokens/ERC1155/Base/ERC1155.sol";
-import { Types } from "contracts/Shared/Types.sol";
 
 contract ERC1155Basic is ERC1155, ImplBase {
     using Types for Types.CollectionArgs;
@@ -38,15 +40,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
 
     constructor(Types.CollectionArgs memory args)
         /*  */
-        ImplBase(
-            args._baseURI,
-            args._price,
-            args._maxSupply,
-            args._splitter,
-            args._royaltyPercentage,
-            args._router,
-            args._erc20
-        )
+        ImplBase(args)
     /*  */
     {
         maxIdBalance = uint128(uint256(bytes32(args._maxSupply)));

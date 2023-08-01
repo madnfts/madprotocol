@@ -11,8 +11,7 @@ import { IERC1155 } from
 
 // prettier-ignore
 library Types {
-
-        struct CreateCollectionParams {
+    struct CreateCollectionParams {
         uint8 tokenType;
         bytes32 tokenSalt;
         string name;

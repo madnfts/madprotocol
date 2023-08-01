@@ -5,6 +5,7 @@ pragma solidity 0.8.19;
 import { ERC2981 } from "contracts/lib/tokens/common/ERC2981.sol";
 import { TwoFactor } from "contracts/lib/auth/TwoFactor.sol";
 import { Strings } from "contracts/lib/utils/Strings.sol";
+import { Types } from "contracts/Shared/Types.sol";
 import { PaymentManager } from "contracts/MADTokens/common/PaymentManager.sol";
 // solhint-disable-next-line
 import {
@@ -59,34 +60,29 @@ abstract contract ImplBase is
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    constructor(
-        string memory _baseURI,
-        uint256 _price,
-        uint256 _maxSupply,
-        address _splitter,
-        uint96 _royaltyPercentage,
-        address _router,
-        address _erc20
-    )
+    constructor(Types.CollectionArgs memory args)
         payable
         /*  */
-        TwoFactor(_router, tx.origin)
-        PaymentManager(_splitter, _erc20, _price)
-        ERC2981(uint256(_royaltyPercentage))
+        TwoFactor(args._router, tx.origin)
+        PaymentManager(args._splitter, args._erc20, args._price)
+        ERC2981(uint256(args._royaltyPercentage))
     {
-        require(_maxSupply < _MAXSUPPLY_BOUND, "MAXSUPPLY_BOUND_EXCEEDED");
+        require(args._maxSupply < _MAXSUPPLY_BOUND, "MAXSUPPLY_BOUND_EXCEEDED");
 
         // immutable
-        maxSupply = uint128(_maxSupply);
+        maxSupply = uint128(args._maxSupply);
 
-        _setStringMemory(_baseURI, _BASE_URI_SLOT);
+        _setStringMemory(args._baseURI, _BASE_URI_SLOT);
 
-        assembly {
-            // emit RoyaltyFeeSet(uint256(_royaltyPercentage));
-            log2(0, 0, _ROYALTY_FEE_SET, _royaltyPercentage)
-            // emit RoyaltyRecipientSet(payable(_splitter));
-            log2(0, 0, _ROYALTY_RECIPIENT_SET, _splitter)
-        }
+        emit RoyaltyFeeSet(uint256(args._royaltyPercentage));
+        emit RoyaltyRecipientSet(payable(args._splitter));
+
+        // assembly {
+        //     // emit RoyaltyFeeSet(uint256(_royaltyPercentage));
+        //     log2(0, 0, _ROYALTY_FEE_SET, _royaltyPercentage)
+        //     // emit RoyaltyRecipientSet(payable(_splitter));
+        //     log2(0, 0, _ROYALTY_RECIPIENT_SET, _splitter)
+        // }
     }
 
     ////////////////////////////////////////////////////////////////
@@ -309,5 +305,4 @@ abstract contract ImplBase is
             }
         }
     }
-
 }

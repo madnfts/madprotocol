@@ -48,7 +48,6 @@ interface FactoryEventsAndErrorsBase is EventsAndErrorsBase {
 
     error ZeroMaxSupply();
 
-
     event CollectionCreated(
         address indexed newSplitter,
         address indexed newCollection,

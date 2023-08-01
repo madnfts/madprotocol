@@ -97,7 +97,7 @@ contract MADRouter721 is MADRouterBase {
         uint8 _tokenType = _tokenRender(_token);
         _checkTokenType(_tokenType);
         // _paymentCheck(0x40d097c3);
-        ERC721Basic(_token).mintTo{ value: msg.value }(_to, _amount);
+        ERC721Basic(_token).mintTo{value: msg.value}(_to, _amount);
     }
 
     /// @notice Global token burn controller/single pusher for all token types.
@@ -110,7 +110,7 @@ contract MADRouter721 is MADRouterBase {
         // _paymentCheck(0x44df8e70);
 
         _checkTokenType(_tokenType);
-        ERC721Basic(_token).burn{ value: msg.value }(_ids);
+        ERC721Basic(_token).burn{value: msg.value}(_ids);
     }
 
     ////////////////////////////////////////////////////////////////

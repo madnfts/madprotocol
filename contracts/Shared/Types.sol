@@ -41,6 +41,7 @@ library Types {
         uint96 _royaltyPercentage;
         address _router;
         address _erc20;
+        address _owner;
     }
 
     struct Collection {

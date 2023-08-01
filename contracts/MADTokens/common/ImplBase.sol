@@ -63,7 +63,7 @@ abstract contract ImplBase is
     constructor(Types.CollectionArgs memory args)
         payable
         /*  */
-        TwoFactor(args._router, tx.origin)
+        TwoFactor(args._router, args._owner)
         PaymentManager(args._splitter, args._erc20, args._price)
         ERC2981(uint256(args._royaltyPercentage))
     {

@@ -310,15 +310,4 @@ abstract contract ImplBase is
         }
     }
 
-    // use to check that any extra args are required are passed
-    // Override if required but this will return nothing.
-    function _extraArgsCheck(bytes32[] memory _extra) internal pure virtual {
-        // if (_extra.length != 0) revert WrongArgsLength();
-        // assembly {
-        //     if iszero(iszero(mload(_extra))) {
-        //         mstore(0, 0x7734d3ab)
-        //         revert(28, 4)
-        //     }
-        // }
-    }
 }

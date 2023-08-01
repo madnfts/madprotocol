@@ -23,7 +23,7 @@ contract ERC721Basic is ERC721, ImplBase {
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    constructor(Types.CollectionArgs memory args, bytes32[] memory _extra)
+    constructor(Types.CollectionArgs memory args)
         ImplBase(
             args._baseURI,
             args._price,

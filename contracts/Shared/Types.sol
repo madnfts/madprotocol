@@ -22,7 +22,6 @@ library Types {
         string uri;
         address splitter;
         uint96 royalty;
-        bytes32[] extra;
     }
 
     struct CreateSplitterParams {

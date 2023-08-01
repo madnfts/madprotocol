@@ -36,7 +36,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    constructor(Types.CollectionArgs memory args, bytes32[] memory _extra)
+    constructor(Types.CollectionArgs memory args)
         /*  */
         ImplBase(
             args._baseURI,

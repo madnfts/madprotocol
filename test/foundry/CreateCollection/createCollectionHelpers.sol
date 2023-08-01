@@ -90,8 +90,7 @@ contract CreateCollectionHelpers is
                         _maxSupply,
                         _baseURI,
                         splitter,
-                        _royalty,
-                        new bytes32[](0)
+                        _royalty
                     ),
                     _currentSigner
                 );

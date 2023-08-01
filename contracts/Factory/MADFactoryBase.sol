@@ -98,8 +98,7 @@ abstract contract MADFactoryBase is
                 params.royalty,
                 router,
                 address(erc20)
-            ),
-            params.extra
+            )
         );
 
         userTokens[msg.sender].push(deployedCollection);
@@ -157,15 +156,14 @@ abstract contract MADFactoryBase is
     function _collectionDeploy(
         uint8 _tokenType,
         bytes32 _tokenSalt,
-        Types.CollectionArgs memory _args,
-        bytes32[] memory _extra
+        Types.CollectionArgs memory _args
     ) internal returns (address deployed) {
         deployed = CREATE3.deploy(
             keccak256(abi.encode(msg.sender, _tokenSalt)),
             abi.encodePacked(
                 // implementation
                 collectionTypes[uint256(_tokenType)],
-                abi.encode(_args, _extra)
+                abi.encode(_args)
             ),
             0
         );

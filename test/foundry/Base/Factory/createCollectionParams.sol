@@ -11,7 +11,6 @@ abstract contract CreateCollectionParams {
     uint8 public defaultTokenType = 1; // ERC721Basic
     uint96 public defaultRoyalty = 1000; // 10% (max)
     string public defaultUri = "https://mad.network";
-    bytes32[] public defaultExtra;
 
     // string private nextSalt;
     string private constant BASE_NAME = "createCollection";
@@ -30,8 +29,7 @@ abstract contract CreateCollectionParams {
         uint256 _maxSupply,
         string memory _uri,
         address _splitter,
-        uint96 _royalty,
-        bytes32[] memory _extra
+        uint96 _royalty
     ) public returns (IFactory.CreateCollectionParams memory) {
         string memory name = BASE_NAME;
         string memory symbol = BASE_SYMBOL;
@@ -45,8 +43,7 @@ abstract contract CreateCollectionParams {
             maxSupply: _maxSupply,
             uri: _uri,
             splitter: _splitter,
-            royalty: _royalty,
-            extra: _extra
+            royalty: _royalty
         });
     }
 
@@ -60,8 +57,7 @@ abstract contract CreateCollectionParams {
             defaultMaxSupply,
             defaultUri,
             defaultSplitterAddress,
-            defaultRoyalty,
-            defaultExtra
+            defaultRoyalty
         );
     }
 }

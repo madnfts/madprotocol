@@ -34,7 +34,6 @@ interface IFactory {
         string uri;
         address splitter;
         uint96 royalty;
-        bytes32[] extra;
     }
 
     struct CollectionParams {

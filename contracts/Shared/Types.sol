@@ -11,6 +11,28 @@ import { IERC1155 } from
 
 // prettier-ignore
 library Types {
+
+        struct CreateCollectionParams {
+        uint8 tokenType;
+        bytes32 tokenSalt;
+        string name;
+        string symbol;
+        uint256 price;
+        uint256 maxSupply;
+        string uri;
+        address splitter;
+        uint96 royalty;
+        bytes32[] extra;
+    }
+
+    struct CreateSplitterParams {
+        bytes32 splitterSalt;
+        address ambassador;
+        address project;
+        uint256 ambassadorShare;
+        uint256 projectShare;
+    }
+
     struct CollectionArgs {
         string _name;
         string _symbol;

@@ -48,26 +48,6 @@ interface FactoryEventsAndErrorsBase is EventsAndErrorsBase {
 
     error ZeroMaxSupply();
 
-    struct CreateCollectionParams {
-        uint8 tokenType;
-        bytes32 tokenSalt;
-        string name;
-        string symbol;
-        uint256 price;
-        uint256 maxSupply;
-        string uri;
-        address splitter;
-        uint96 royalty;
-        bytes32[] extra;
-    }
-
-    struct CreateSplitterParams {
-        bytes32 splitterSalt;
-        address ambassador;
-        address project;
-        uint256 ambassadorShare;
-        uint256 projectShare;
-    }
 
     event CollectionCreated(
         address indexed newSplitter,

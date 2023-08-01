@@ -73,7 +73,7 @@ abstract contract MADFactoryBase is
         _setPaymentToken(_paymentTokenAddress);
     }
 
-    function _createCollection(CreateCollectionParams calldata params)
+    function _createCollection(Types.CreateCollectionParams calldata params)
         internal
         isThisOg
         returns (address)
@@ -129,7 +129,7 @@ abstract contract MADFactoryBase is
     }
 
     function _splitterResolver(
-        CreateSplitterParams calldata params,
+        Types.CreateSplitterParams calldata params,
         uint256 _flag
     ) internal {
         address[] memory _payees =

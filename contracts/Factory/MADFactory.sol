@@ -3,6 +3,7 @@
 pragma solidity 0.8.19;
 
 import { MADFactoryBase } from "contracts/Factory/MADFactoryBase.sol";
+import { Types } from "contracts/Shared/Types.sol";
 
 contract MADFactory is MADFactoryBase {
     ////////////////////////////////////////////////////////////////
@@ -41,8 +42,7 @@ contract MADFactory is MADFactoryBase {
     ///     validate and attach to collection.
     ///   - royalty: Ranges in between 0%-10%, in percentage basis points,
     ///     accepted (Min tick := 25).
-    ///   - extra: An array of bytes32 for additional parameters.
-    function createCollection(CreateCollectionParams calldata params) public {
+    function createCollection(Types.CreateCollectionParams calldata params) public {
         emit CollectionCreated(
             params.splitter,
             _createCollection(params),
@@ -73,7 +73,7 @@ contract MADFactory is MADFactoryBase {
     /// empty(value == 0)).
     ///   - projectShare: This is the percentage to be assigned to the project
     /// address. This is disregarded if left empty.
-    function createSplitter(CreateSplitterParams calldata params)
+    function createSplitter(Types.CreateSplitterParams calldata params)
         public
         isThisOg
     {

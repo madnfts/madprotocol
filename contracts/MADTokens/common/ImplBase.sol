@@ -89,7 +89,7 @@ abstract contract ImplBase is
     //                         OWNER FX                           //
     ////////////////////////////////////////////////////////////////
 
-    function setBaseURI(string calldata _baseURI) public authorised {
+    function setBaseURI(string calldata _baseURI) public onlyOwner {
         if (uriLock) revert URILocked();
         // bytes(_baseURI).length > 32 ? revert() : baseURI = _baseURI;
         _setStringCalldata(_baseURI, _BASE_URI_SLOT);
@@ -102,7 +102,7 @@ abstract contract ImplBase is
 
     /// @dev `uriLock` and `publicMintState` already
     /// packed in the same slot of storage.
-    function setBaseURILock() public authorised {
+    function setBaseURILock() public onlyOwner {
         uriLock = true;
         assembly {
             // emit BaseURILocked(baseURI);
@@ -116,7 +116,7 @@ abstract contract ImplBase is
     /// packed in the same slot of storage.
     /// @param _publicMintState Public mint state.
     ///
-    function setPublicMintState(bool _publicMintState) public authorised {
+    function setPublicMintState(bool _publicMintState) public onlyOwner {
         publicMintState = _publicMintState;
         assembly {
             // emit PublicMintStateSet(_publicMintState);
@@ -128,14 +128,11 @@ abstract contract ImplBase is
     //                       OWNER WITHDRAW                       //
     ////////////////////////////////////////////////////////////////
 
-    function withdraw(address recipient) public authorised {
+    function withdraw(address recipient) public onlyOwner {
         _withdraw(recipient);
     }
 
-    function withdrawERC20(address token, address recipient)
-        public
-        authorised
-    {
+    function withdrawERC20(address token, address recipient) public onlyOwner {
         _withdrawERC20(token, recipient);
     }
 

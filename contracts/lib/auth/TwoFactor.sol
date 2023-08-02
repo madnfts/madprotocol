@@ -36,6 +36,22 @@ abstract contract TwoFactor {
     uint256 internal router;
     uint256 internal owner;
 
+    /// @notice modifier to check if caller is the owner to call functions such
+    /// as withdraw.
+    ///     the router is not allowed access via this modifier.
+    /// @dev checks the caller against the owner storage slot
+    modifier onlyOwner() virtual {
+        // if (msg.sender != owner) revert NotAuthorised();
+        assembly {
+            if iszero(eq(shl(12, caller()), sload(owner.slot))) {
+                // revert NotAuthorised()
+                mstore(0, _NOT_AUTHORISED)
+                revert(28, 4)
+            }
+        }
+        _;
+    }
+
     /// @notice modifier to check if caller / origin combined is authorised to  call
     /// functions
     /// @dev checks the caller and origin against the router and owner storage

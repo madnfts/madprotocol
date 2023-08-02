@@ -62,7 +62,7 @@ abstract contract PaymentManager {
     }
 
     function _withdraw(address _recipient) internal _isZeroAddr(_recipient) {
-        _withdrawShared(_recipient, ERC20(address(0)));
+        _withdrawShared(_recipient, ERC20(address(0)), true);
     }
 
     function _withdrawERC20(address _erc20, address _recipient)
@@ -70,19 +70,19 @@ abstract contract PaymentManager {
         _isZeroAddr(_recipient)
     {
         ERC20 _token = ERC20(payable(_erc20));
-        _withdrawShared(_recipient, _token);
+        _withdrawShared(_recipient, _token, false);
     }
 
-    function _withdrawShared(address _recipient, ERC20 _token) private {
+    function _withdrawShared(address _recipient, ERC20 _token, bool isETH) private {
         uint256 len = splitter.payeesLength();
 
         // Transfer mint fees
-        uint256 _val = _dispatchFees(_recipient, _token);
+        uint256 _val = _dispatchFees(_recipient, _token, isETH);
 
         uint256 j;
         while (j < len) {
             address addr = splitter._payees(j);
-            if (address(_token) == address(0)) {
+            if (isETH) {
                 SafeTransferLib.safeTransferETH(
                     addr, ((_val * (splitter._shares(addr) * 1e2)) / 10_000)
                 );
@@ -99,11 +99,11 @@ abstract contract PaymentManager {
         }
     }
 
-    function _dispatchFees(address _recipient, ERC20 _erc20)
+    function _dispatchFees(address _recipient, ERC20 _erc20,  bool isETH)
         internal
         returns (uint256 _val)
     {
-        if (address(_erc20) != address(0)) {
+        if (!isETH) {
             uint256 _feeCountERC20 = feeCountERC20;
             if (_feeCountERC20 == 0) revert NothingToWithdraw();
             if (_erc20 != erc20) revert WrongToken();

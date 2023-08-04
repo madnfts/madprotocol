@@ -25,14 +25,12 @@ interface IERC1155Basic is IImplBase {
     function burn(
         address[] memory from,
         uint128[] memory ids,
-        uint128[] memory balances,
-        address erc20Owner
+        uint128[] memory balances
     ) external payable;
     function burnBatch(
         address from,
         uint128[] memory ids,
-        uint128[] memory amounts,
-        address erc20Owner
+        uint128[] memory amounts
     ) external payable;
     function mint(uint128 amount, uint128 balance) external payable;
     function mintBatch(uint128[] memory ids, uint128[] memory amounts)
@@ -41,15 +39,11 @@ interface IERC1155Basic is IImplBase {
     function mintBatchTo(
         address to,
         uint128[] memory ids,
-        uint128[] memory amounts,
-        address erc20Owner
+        uint128[] memory amounts
     ) external payable;
-    function mintTo(
-        address to,
-        uint128 amount,
-        uint128 balance,
-        address erc20Owner
-    ) external payable;
+    function mintTo(address to, uint128 amount, uint128 balance)
+        external
+        payable;
     function safeBatchTransferFrom(
         address from,
         address to,

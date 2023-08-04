@@ -5,28 +5,29 @@ import "forge-std/src/Test.sol";
 
 abstract contract SplitterModifiers is Test {
     /// _ambassador != address(0) && _project == address(0)
-    ///             && _ambShare != 0 && _ambShare < 21
-    modifier ambassadorWithNoProjectAssumptions(uint256 _ambassadorShare) {
-        vm.assume(_ambassadorShare > 0 && _ambassadorShare < 21);
+    ///             && _ambassadorShare > 99 && _ambassadorShare < 2001
+    modifier ambassadorWithNoProjectAssumptions(uint16 _ambassadorShare) {
+        vm.assume(_ambassadorShare > 99 && _ambassadorShare < 2001);
         _;
     }
 
     /// _project != address(0) && _ambassador == address(0)
-    /// && _projectShare != 0 && _projectShare < 101
-    modifier projectWithNoAmbassadorAssumptions(uint256 _projectShare) {
-        vm.assume(_projectShare > 0 && _projectShare < 101);
+    /// && _projectShare > 99 && _projectShare < 10001
+    modifier projectWithNoAmbassadorAssumptions(uint16 _projectShare) {
+        vm.assume(_projectShare > 99 && _projectShare < 10_001);
         _;
     }
 
     /// _ambassador != address(0) && _project != address(0)
-    ///            && _ambShare != 0 && _ambShare < 21 && _projectShare != 0
-    ///             && _projectShare < 71
+    ///            && _ambassadorShare > 99 && _ambassadorShare < 2001 &&
+    /// _projectShare > 99
+    ///             && _projectShare < 10001
     modifier bothAmbassadorAndProjectAssumptions(
-        uint256 _ambassadorShare,
-        uint256 _projectShare
+        uint16 _ambassadorShare,
+        uint16 _projectShare
     ) {
-        vm.assume(_ambassadorShare > 0 && _ambassadorShare < 21);
-        vm.assume(_projectShare > 0 && _projectShare < 81);
+        vm.assume(_ambassadorShare > 99 && _ambassadorShare < 2001);
+        vm.assume(_projectShare > 99 && _projectShare < 10_001);
         _;
     }
 }

@@ -2,7 +2,6 @@
 
 pragma solidity 0.8.19;
 
-import { MAD } from "contracts/MAD.sol";
 import { MADBase, ERC20 } from "contracts/Shared/MADBase.sol";
 import {
     FactoryVerifier,
@@ -12,12 +11,11 @@ import { SafeTransferLib } from "contracts/lib/utils/SafeTransferLib.sol";
 import { ISwapRouter } from "contracts/lib/uniswap/ISwapRouter.sol";
 
 abstract contract MADMarketplaceBase is
-    MAD,
     MADBase,
     MarketplaceEventsAndErrorsBase
 {
     /// @dev Function Signature := 0x06fdde03
-    function name() external pure override(MAD) returns (string memory) {
+    function name() public pure returns (string memory) {
         assembly {
             mstore(0x20, 0x20)
             mstore(0x46, 0x066D61726B6574)
@@ -122,7 +120,7 @@ abstract contract MADMarketplaceBase is
         assembly {
             // AccessDenied()
             if iszero(or(eq(caller(), _seller), eq(caller(), _bidder))) {
-                mstore(0x00, 0x4ca88867)
+                mstore(0x00, 0x4ca88867) // AccessDenied()
                 revert(0x1c, 0x04)
             }
         }
@@ -171,7 +169,7 @@ abstract contract MADMarketplaceBase is
         assembly {
             // AccessDenied()
             if iszero(eq(_seller, caller())) {
-                mstore(0x00, 0x4ca88867)
+                mstore(0x00, 0x4ca88867) // AccessDenied()
                 revert(0x1c, 0x04)
             }
             // SoldToken()

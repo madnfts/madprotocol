@@ -8,25 +8,19 @@ import { Strings } from "contracts/MADTokens/common/ImplBase.sol";
 abstract contract CreateCollectionParams {
     uint256 public defaultPrice = 1 ether;
     uint256 public defaultMaxSupply = 10_000;
-    uint8 public defaultTokenType = 1;
-    uint96 public defaultRoyalty = 0;
+    uint8 public defaultTokenType = 1; // ERC721Basic
+    uint96 public defaultRoyalty = 1000; // 10% (max)
     string public defaultUri = "https://mad.network";
-    bytes32[] public defaultExtra;
 
     // string private nextSalt;
     string private constant BASE_NAME = "createCollection";
     string private constant BASE_SYMBOL = "CC";
 
-    string createCollectionSalt = "createCollectionSalt";
-    uint256 CreateCollectionSaltNonce;
+    uint256 public CreateCollectionSaltNonce = 12_345_678_912_346_589;
 
-    function updateCreateCollectionSalt() public returns (string memory) {
-        return string(
-            abi.encodePacked(
-                createCollectionSalt,
-                Strings.toString(CreateCollectionSaltNonce++)
-            )
-        );
+    function updateCreateCollectionSalt() public returns (bytes32) {
+        CreateCollectionSaltNonce++;
+        return bytes32(abi.encodePacked(CreateCollectionSaltNonce));
     }
 
     function generateCollectionParams(
@@ -35,8 +29,7 @@ abstract contract CreateCollectionParams {
         uint256 _maxSupply,
         string memory _uri,
         address _splitter,
-        uint96 _royalty,
-        bytes32[] memory _extra
+        uint96 _royalty
     ) public returns (IFactory.CreateCollectionParams memory) {
         string memory name = BASE_NAME;
         string memory symbol = BASE_SYMBOL;
@@ -50,8 +43,7 @@ abstract contract CreateCollectionParams {
             maxSupply: _maxSupply,
             uri: _uri,
             splitter: _splitter,
-            royalty: _royalty,
-            extra: _extra
+            royalty: _royalty
         });
     }
 
@@ -65,8 +57,7 @@ abstract contract CreateCollectionParams {
             defaultMaxSupply,
             defaultUri,
             defaultSplitterAddress,
-            defaultRoyalty,
-            defaultExtra
+            defaultRoyalty
         );
     }
 }

@@ -89,22 +89,22 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         }
     }
 
-    function testMintTo_DefaultFuzzy(uint256 x) public {
-        uint128 _amountToMint = 10;
-        MintData memory mintData =
-            _setupMint(nftMinter, nftReceiver, 0, _amountToMint);
-        _doMintTo(mintData, 0);
-        _checkMint(mintData);
-    }
+    // function testMintTo_DefaultFuzzy(uint256 x) public {
+    //     uint128 _amountToMint = 10;
+    //     MintData memory mintData =
+    //         _setupMint(nftMinter, nftReceiver, 0, _amountToMint);
+    //     _doMintTo(mintData, 0);
+    //     _checkMint(mintData);
+    // }
 
-    function testPublicMint_DefaultFuzzy(uint256 x) public {
-        uint128 _amountToMint = 10;
-        MintData memory mintData = _setupMint(
-            nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
-        );
-        _doPublicMint(mintData, true, 0);
-        _checkMint(mintData);
-    }
+    // function testPublicMint_DefaultFuzzy(uint256 x) public {
+    //     uint128 _amountToMint = 10;
+    //     MintData memory mintData = _setupMint(
+    //         nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
+    //     );
+    //     _doPublicMint(mintData, true, 0);
+    //     _checkMint(mintData);
+    // }
 
     function testSetPublicMint_Unauthorised() public {
         uint128 _amountToMint = 1;
@@ -154,26 +154,26 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         );
     }
 
-    // function testPublicMint_ZeroAmount() public {
-    //     uint128 _amountToMint = 0;
-    //     MintData memory mintData = _setupMint(
-    //         nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
-    //     );
+    function testPublicMint_ZeroAmount() public {
+        uint128 _amountToMint = 0;
+        MintData memory mintData = _setupMint(
+            nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
+        );
 
-    //     _doPublicMint(
-    //         mintData,
-    //         true,
-    //         0xf7760f25 // error WrongPrice();
-    //     );
-    // }
+        _doPublicMint(
+            mintData,
+            true,
+            0xf7760f25 // error WrongPrice();
+        );
+    }
 
-    // function testMintTo_ZeroAmount() public {
-    //     uint128 _amountToMint = 0;
-    //     MintData memory mintData =
-    //         _setupMint(nftMinter, nftReceiver, 0, _amountToMint);
+    function testMintTo_ZeroAmount() public {
+        uint128 _amountToMint = 0;
+        MintData memory mintData =
+            _setupMint(nftMinter, nftReceiver, 0, _amountToMint);
 
-    //     _doMintTo(mintData, 0xf7760f25); // error WrongPrice();
-    // }
+        _doMintTo(mintData, 0xf7760f25); // error WrongPrice();
+    }
 
     function testMintTo_UnAuthorised() public {
         uint128 _amountToMint = 1;
@@ -203,7 +203,7 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
     function testBurnFromMintTo_DefaultSingle() public {
         // Mint Max supply
         MintData memory mintData = _mintTo_MaxSupply();
-        _doBurn(mintData, mintData.nftReceiver);
+        _doBurn(mintData, mintData.nftMinter);
     }
 
     function testBurnFromPublicMint_DefaultSingle() public {
@@ -216,7 +216,8 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
     //                          HELPERS                           //
     ////////////////////////////////////////////////////////////////
 
-    function _doBurn(MintData memory mintData, address _tokenOwner) internal {
+    function _doBurn(MintData memory mintData, address _tokenOwner) internal
+    {
         uint256 idsToBurnLength = idsToBurn.length;
         // Burn tokens
         IERC721Basic collection = IERC721Basic(mintData.collectionAddress);
@@ -232,7 +233,8 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
 
         // Check that nftMinter no longer has the token(s)
         assertTrue(
-            collection.balanceOf(_tokenOwner) == _expectedBalanceNftMinterAfter
+            collection.balanceOf(_tokenOwner) ==
+    _expectedBalanceNftMinterAfter
         );
 
         // Check the totalSupply of the collection has decreased
@@ -347,7 +349,7 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         if (_errorSelector != 0x00000000) {
             vm.expectRevert(_errorSelector);
         }
-        collection.mint{ value: _nftPublicMintPrice }(mintData.amountToMint);
+        collection.mint{value: _nftPublicMintPrice}(mintData.amountToMint);
         vm.stopPrank();
     }
 

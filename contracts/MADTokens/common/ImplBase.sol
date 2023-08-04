@@ -5,6 +5,7 @@ pragma solidity 0.8.19;
 import { ERC2981 } from "contracts/lib/tokens/common/ERC2981.sol";
 import { TwoFactor } from "contracts/lib/auth/TwoFactor.sol";
 import { Strings } from "contracts/lib/utils/Strings.sol";
+import { Types } from "contracts/Shared/Types.sol";
 import { PaymentManager } from "contracts/MADTokens/common/PaymentManager.sol";
 // solhint-disable-next-line
 import {
@@ -35,9 +36,6 @@ abstract contract ImplBase is
     //                          IMMUTABLE                         //
     ////////////////////////////////////////////////////////////////
 
-    /// @notice Public mint price.
-    uint256 public immutable price;
-
     /// @notice Capped max supply.
     uint128 public immutable maxSupply;
 
@@ -52,9 +50,6 @@ abstract contract ImplBase is
     /// `uint128`  [128...255] := mintCount
     uint256 internal _supplyRegistrar;
 
-    // /// @notice total amount of fees accumulated.
-    // uint256 public feeCount;
-
     /// @notice Lock the URI (default := false).
     /// @dev The URI can't be unlocked.
     bool public uriLock;
@@ -65,42 +60,36 @@ abstract contract ImplBase is
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    constructor(
-        string memory _baseURI,
-        uint256 _price,
-        uint256 _maxSupply,
-        address _splitter,
-        uint96 _royaltyPercentage,
-        address _router,
-        address _erc20
-    )
+    constructor(Types.CollectionArgs memory args)
         payable
         /*  */
-        TwoFactor(_router, tx.origin)
-        PaymentManager(_splitter, _erc20)
-        ERC2981(uint256(_royaltyPercentage))
+        TwoFactor(args._router, args._owner)
+        PaymentManager(args._splitter, args._erc20, args._price)
+        ERC2981(uint256(args._royaltyPercentage))
     {
-        require(_maxSupply < _MAXSUPPLY_BOUND, "MAXSUPPLY_BOUND_EXCEEDED");
+        require(args._maxSupply < _MAXSUPPLY_BOUND, "MAXSUPPLY_BOUND_EXCEEDED");
 
         // immutable
-        price = _price;
-        maxSupply = uint128(_maxSupply);
+        maxSupply = uint128(args._maxSupply);
 
-        _setStringMemory(_baseURI, _BASE_URI_SLOT);
+        _setStringMemory(args._baseURI, _BASE_URI_SLOT);
 
-        assembly {
-            // emit RoyaltyFeeSet(uint256(_royaltyPercentage));
-            log2(0, 0, _ROYALTY_FEE_SET, _royaltyPercentage)
-            // emit RoyaltyRecipientSet(payable(_splitter));
-            log2(0, 0, _ROYALTY_RECIPIENT_SET, _splitter)
-        }
+        emit RoyaltyFeeSet(uint256(args._royaltyPercentage));
+        emit RoyaltyRecipientSet(payable(args._splitter));
+
+        // assembly {
+        //     // emit RoyaltyFeeSet(uint256(_royaltyPercentage));
+        //     log2(0, 0, _ROYALTY_FEE_SET, _royaltyPercentage)
+        //     // emit RoyaltyRecipientSet(payable(_splitter));
+        //     log2(0, 0, _ROYALTY_RECIPIENT_SET, _splitter)
+        // }
     }
 
     ////////////////////////////////////////////////////////////////
     //                         OWNER FX                           //
     ////////////////////////////////////////////////////////////////
 
-    function setBaseURI(string calldata _baseURI) public authorised {
+    function setBaseURI(string calldata _baseURI) public onlyOwner {
         if (uriLock) revert URILocked();
         // bytes(_baseURI).length > 32 ? revert() : baseURI = _baseURI;
         _setStringCalldata(_baseURI, _BASE_URI_SLOT);
@@ -113,7 +102,7 @@ abstract contract ImplBase is
 
     /// @dev `uriLock` and `publicMintState` already
     /// packed in the same slot of storage.
-    function setBaseURILock() public authorised {
+    function setBaseURILock() public onlyOwner {
         uriLock = true;
         assembly {
             // emit BaseURILocked(baseURI);
@@ -121,9 +110,13 @@ abstract contract ImplBase is
         }
     }
 
+    /// @notice Public mint state setter.
+    /// @dev sigHah := 879fbedf
     /// @dev `uriLock` and `publicMintState` already
     /// packed in the same slot of storage.
-    function setPublicMintState(bool _publicMintState) public authorised {
+    /// @param _publicMintState Public mint state.
+    ///
+    function setPublicMintState(bool _publicMintState) public onlyOwner {
         publicMintState = _publicMintState;
         assembly {
             // emit PublicMintStateSet(_publicMintState);
@@ -135,14 +128,11 @@ abstract contract ImplBase is
     //                       OWNER WITHDRAW                       //
     ////////////////////////////////////////////////////////////////
 
-    function withdraw(address recipient) public authorised {
+    function withdraw(address recipient) public onlyOwner {
         _withdraw(recipient);
     }
 
-    function withdrawERC20(address token, address recipient)
-        public
-        authorised
-    {
+    function withdrawERC20(address token, address recipient) public onlyOwner {
         _withdrawERC20(token, recipient);
     }
 
@@ -206,17 +196,12 @@ abstract contract ImplBase is
         }
     }
 
-    function _prepareOwnerMint(uint256 amount, address erc20Owner)
+    function _prepareOwnerMint(uint256 amount)
         internal
         returns (uint256 curId, uint256 endId)
     {
         // require(amount < _MAXSUPPLY_BOUND && balance < _MAXSUPPLY_BOUND);
         _hasReachedMax(uint256(amount), maxSupply);
-
-        (uint256 fee, bool method) = _ownerFeeCheck(0x40d097c3, erc20Owner);
-
-        _ownerFeeHandler(method, fee, erc20Owner);
-
         return _incrementCounter(uint256(amount));
     }
 
@@ -228,10 +213,9 @@ abstract contract ImplBase is
 
         _hasReachedMax(amount, maxSupply);
 
-        (uint256 fee, uint256 value, bool method) =
-            _publicMintPriceCheck(price, totalCost);
+        uint256 value = _publicMintPriceCheck(totalCost);
 
-        _publicPaymentHandler(method, value, fee);
+        _publicPaymentHandler(value);
 
         return _incrementCounter(amount);
     }
@@ -315,39 +299,6 @@ abstract contract ImplBase is
                 // LoopOverflow()
                 mstore(0x00, 0xdfb035c9)
                 revert(0x1c, 0x04)
-            }
-        }
-    }
-
-    // use to check that any extra args are required are passed
-    // Override if required but this will return nothing.
-    function _extraArgsCheck(bytes32[] memory _extra) internal pure virtual {
-        // if (_extra.length != 0) revert WrongArgsLength();
-        // assembly {
-        //     if iszero(iszero(mload(_extra))) {
-        //         mstore(0, 0x7734d3ab)
-        //         revert(28, 4)
-        //     }
-        // }
-    }
-
-    function _getFeeValue(bytes4 _method)
-        internal
-        view
-        virtual
-        override(PaymentManager)
-        returns (uint256 value)
-    {
-        // value = _size == 0 ?
-        // 0 : FeeOracle(_router).feeLookup(_method);
-        bytes memory c = abi.encodeWithSelector(0xedc9e7a4, _method);
-        assembly {
-            let _router := shr(12, sload(router.slot))
-            switch iszero(extcodesize(_router))
-            case 1 { value := 0 }
-            case 0 {
-                pop(staticcall(gas(), _router, add(c, 32), mload(c), 0, 32))
-                value := mload(0)
             }
         }
     }

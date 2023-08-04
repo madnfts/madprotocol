@@ -90,8 +90,7 @@ contract CreateCollectionHelpers is
                         _maxSupply,
                         _baseURI,
                         splitter,
-                        _royalty,
-                        new bytes32[](0)
+                        _royalty
                     ),
                     _currentSigner
                 );
@@ -102,12 +101,10 @@ contract CreateCollectionHelpers is
     }
 
     function createCollectionAssumptions(
-        uint8 x,
         uint256 _price,
         uint128 _maxSupply,
         uint96 _royalty
-    ) internal {
-        vm.assume(x < 2);
+    ) internal pure {
         vm.assume(_price < type(uint256).max);
         vm.assume(_maxSupply > 0 && _maxSupply < type(uint128).max);
         vm.assume(_royalty < 1001 && _royalty % 25 == 0);

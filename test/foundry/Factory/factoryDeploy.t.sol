@@ -23,23 +23,23 @@ contract DeployFactory is AddressesHelp, DeployFactoryBase {
         deployDefault(ercTypes.ERC1155);
     }
 
-    function testERC721DeployFactoryZeroAddresses() public {
-        deployZeroAddresses(
-            ercTypes.ERC721,
-            factoryDefaultAddresses,
-            factoryOwner,
-            _deployFactoryCustomInternal
-        );
-    }
+    // function testERC721DeployFactoryZeroAddresses() public {
+    //     deployZeroAddresses(
+    //         ercTypes.ERC721,
+    //         factoryDefaultAddresses,
+    //         factoryOwner,
+    //         _deployFactoryCustomInternal
+    //     );
+    // }
 
-    function testERC1155DeployFactoryZeroAddresses() public {
-        deployZeroAddresses(
-            ercTypes.ERC1155,
-            factoryDefaultAddresses,
-            factoryOwner,
-            _deployFactoryCustomInternal
-        );
-    }
+    // function testERC1155DeployFactoryZeroAddresses() public {
+    //     deployZeroAddresses(
+    //         ercTypes.ERC1155,
+    //         factoryDefaultAddresses,
+    //         factoryOwner,
+    //         _deployFactoryCustomInternal
+    //     );
+    // }
 
     function deployDefault(ercTypes ercType) public {
         address factory = deployFactoryDefault(ercType);

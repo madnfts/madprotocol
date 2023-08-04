@@ -4,7 +4,7 @@ interface ICollection {
     struct MintData {
         address nftMinter;
         address nftReceiver;
-        uint256 nftMintFee;
+        uint256 nftPublicMintPrice;
         uint128 amountToMint;
         address collectionAddress;
         address splitterAddress;

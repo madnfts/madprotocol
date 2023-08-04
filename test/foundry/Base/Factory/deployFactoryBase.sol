@@ -18,7 +18,7 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
         makeAddr("marketplaceAddressFactory");
 
     address[] factoryDefaultAddresses =
-        [marketplaceAddressFactory, factorySigner, paymentTokenAddressFactory];
+        [marketplaceAddressFactory, paymentTokenAddressFactory];
 
     function deployFactoryDefault(ercTypes ercType)
         public
@@ -26,11 +26,7 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
     {
         factoryAddress = address(
             deployFactoryCustom(
-                ercType,
-                factoryOwner,
-                marketplaceAddressFactory,
-                factorySigner,
-                paymentTokenAddressFactory
+                ercType, factoryOwner, factorySigner, paymentTokenAddressFactory
             )
         );
     }
@@ -38,7 +34,6 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
     function _deployFactoryCustomInternal(
         ercTypes ercType,
         address _owner,
-        address _marketplaceAddressFactory,
         address _factorySignerAddress,
         address _paymentTokenAddressFactory
     ) internal returns (address factoryAddress) {
@@ -46,7 +41,6 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
             deployFactoryCustom(
                 ercType,
                 _owner,
-                _marketplaceAddressFactory,
                 _factorySignerAddress,
                 _paymentTokenAddressFactory
             )
@@ -56,17 +50,11 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
     function deployFactoryCustom(
         ercTypes ercType,
         address _owner,
-        address _marketplaceAddressFactory,
         address _factorySignerAddress,
         address _paymentTokenAddressFactory
     ) public returns (address factoryAddress) {
         vm.prank(_owner);
-        factoryAddress = createFactory(
-            ercType,
-            _marketplaceAddressFactory,
-            _factorySignerAddress,
-            _paymentTokenAddressFactory
-        );
+        factoryAddress = createFactory(ercType, _paymentTokenAddressFactory);
 
         IFactory newFactory = IFactory(factoryAddress);
 
@@ -77,7 +65,6 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
         verifyDeployment(
             newFactory,
             _owner,
-            _marketplaceAddressFactory,
             _factorySignerAddress,
             _paymentTokenAddressFactory
         );
@@ -86,7 +73,6 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
     function verifyDeployment(
         IFactory newFactory,
         address _owner,
-        address _marketplaceAddressFactory,
         address _factorySignerAddress,
         address _paymentTokenAddressFactory
     ) internal {
@@ -96,18 +82,6 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
             assertTrue(
                 newFactory.owner() == _owner,
                 "Owner should be the provided _owner"
-            );
-
-            // Check that newFactory's market address is as expected
-            assertTrue(
-                newFactory.market() == _marketplaceAddressFactory,
-                "Market address should match the provided _marketplaceAddressFactory"
-            );
-
-            // Check that newFactory's signer address is as expected
-            assertTrue(
-                newFactory.signer() == _factorySignerAddress,
-                "Signer address should match the provided _factorySignerAddress"
             );
 
             // Check that newFactory's ERC20 token address is as expected
@@ -140,13 +114,13 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
                 "getIDsLength should return 0"
             );
 
-            // Test addColType function
+            // Test addCollectionType function
             // Deploy abitrary contract code and check
             // Get the bytecode of the Helpers contract
             bytes memory bytecode = type(Helpers).creationCode;
 
-            // Test addColType function
-            newFactory.addColType(5, bytecode);
+            // Test addCollectionType function
+            newFactory.addCollectionType(5, bytecode);
 
             // Check that collectionTypes for the given index returns the
             // correct bytes
@@ -156,14 +130,8 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
 
             // Probe they work..
 
-            // Test setMarket function
-            setAndCheckAddress(newFactory.setMarket, newFactory.market);
-
             // Test setRouter function
             setAndCheckAddress(newFactory.setRouter, newFactory.router);
-
-            // Test setSigner function
-            setAndCheckAddress(newFactory.setSigner, newFactory.signer);
 
             // Test setOwner function
             setAndCheckAddress(newFactory.setOwner, newFactory.owner);
@@ -185,11 +153,11 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
 
         vm.startPrank(makeAddr("NotOwner"));
         vm.expectRevert(0x1648fd01); // error NotAuthorised();
-        _factory.addColType(collectionType, _tokenType);
+        _factory.addCollectionType(collectionType, _tokenType);
         vm.stopPrank();
 
         vm.prank(_owner);
-        _factory.addColType(collectionType, _tokenType);
+        _factory.addCollectionType(collectionType, _tokenType);
         assertEq(_factory.collectionTypes(collectionType), _tokenType);
     }
 

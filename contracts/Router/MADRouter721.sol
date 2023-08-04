@@ -12,7 +12,7 @@ import { ERC721Basic } from "contracts/MADTokens/ERC721/ERC721Basic.sol";
 
 contract MADRouter721 is MADRouterBase {
     ////////////////////////////////////////////////////////////////
-    //                         CONSTRUCTOR                        //
+    //                          CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
     /// @notice Constructor requires a valid factory address and an optional
@@ -37,14 +37,14 @@ contract MADRouter721 is MADRouterBase {
     /// logged
     ///      by each tokens' BaseURISet functions.
     ///      Function Sighash := 0x4328bd00
-    /// @param _token 721 token address.
+    /// @param _collectionId 721 token address.
     /// @param _baseURI New base URI string.
-    function setBase(address _token, string memory _baseURI) external {
-        (bytes32 _collectionId, uint8 _tokenType) = _tokenRender(_token);
+    function setBase(address _collectionId, string memory _baseURI) external {
+        uint8 _tokenType = _tokenRender(_collectionId);
 
         _checkTokenType(_tokenType);
 
-        ERC721Basic(_token).setBaseURI(_baseURI);
+        ERC721Basic(_collectionId).setBaseURI(_baseURI);
 
         emit BaseURISet(_collectionId, _baseURI);
     }
@@ -57,7 +57,7 @@ contract MADRouter721 is MADRouterBase {
     ///      Function Sighash := ?
     /// @param _token 721 token address.
     function setBaseLock(address _token) external {
-        (, uint8 _tokenType) = _tokenRender(_token);
+        uint8 _tokenType = _tokenRender(_token);
 
         _checkTokenType(_tokenType);
         ERC721Basic(_token).setBaseURILock();
@@ -73,12 +73,12 @@ contract MADRouter721 is MADRouterBase {
     /// @dev _stateType Values:
     ///      0 := PublicMintState (minimal, basic, whitelist);
     function setMintState(address _token, bool _state) external {
-        (bytes32 _collectionId, uint8 _tokenType) = _tokenRender(_token);
+        uint8 _tokenType = _tokenRender(_token);
 
         _checkTokenType(_tokenType);
         ERC721Basic(_token).setPublicMintState(_state);
 
-        emit PublicMintState(_collectionId, _tokenType, _state);
+        emit PublicMintState(_token, _tokenType, _state);
     }
 
     ////////////////////////////////////////////////////////////////
@@ -94,10 +94,10 @@ contract MADRouter721 is MADRouterBase {
         external
         payable
     {
-        (, uint8 _tokenType) = _tokenRender(_token);
+        uint8 _tokenType = _tokenRender(_token);
         _checkTokenType(_tokenType);
         // _paymentCheck(0x40d097c3);
-        ERC721Basic(_token).mintTo{ value: msg.value }(_to, _amount, msg.sender);
+        ERC721Basic(_token).mintTo{ value: msg.value }(_to, _amount);
     }
 
     /// @notice Global token burn controller/single pusher for all token types.
@@ -106,11 +106,11 @@ contract MADRouter721 is MADRouterBase {
     /// @param _ids The token IDs of each token to be burnt;
     ///        should be left empty for the `ERC721Minimal` type.
     function burn(address _token, uint128[] memory _ids) external payable {
-        (, uint8 _tokenType) = _tokenRender(_token);
+        uint8 _tokenType = _tokenRender(_token);
         // _paymentCheck(0x44df8e70);
 
         _checkTokenType(_tokenType);
-        ERC721Basic(_token).burn{ value: msg.value }(_ids, msg.sender);
+        ERC721Basic(_token).burn{ value: msg.value }(_ids);
     }
 
     ////////////////////////////////////////////////////////////////
@@ -127,7 +127,7 @@ contract MADRouter721 is MADRouterBase {
     /// @param _erc20 ERC20 token address.
     // A.2 BlockHat Audit  -remove whenPaused
     function withdraw(address _token, ERC20 _erc20) external {
-        (bytes32 _collectionId, uint8 _tokenType) = _tokenRender(_token);
+        uint8 _tokenType = _tokenRender(_token);
         _checkTokenType(_tokenType);
 
         if (address(_erc20) != address(0) && _erc20.balanceOf(_token) != 0) {
@@ -138,6 +138,6 @@ contract MADRouter721 is MADRouterBase {
             revert NoFunds();
         }
 
-        emit TokenFundsWithdrawn(_collectionId, _tokenType, msg.sender);
+        emit TokenFundsWithdrawn(_token, _tokenType, msg.sender);
     }
 }

@@ -1,3 +1,17 @@
+[profile.default.fmt]
+# These are all the `forge fmt` defaults.
+line_length = 80
+tab_width = 4
+bracket_spacing = true
+int_types = 'long'
+multiline_func_header = 'attributes_first'
+quote_style = 'double'
+number_underscore = 'thousands'
+single_line_statement_blocks = 'preserve'
+wrap_comments=true
+ignore = ["src/console.sol", "src/console2.sol"]
+
+
 # https://book.getfoundry.sh/reference/config/
 [profile.default]
 src = 'contracts'
@@ -9,10 +23,9 @@ gas_limit = "9223372036854775807" # u64::MAX
 via_ir = true
 optimizer_runs = 0xffffffff
 optimizer = true
-evm_version="london"
+# evm_version="london"
 
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config
-
 
 # [profile.default]
 # auto_detect_solc = false
@@ -77,18 +90,7 @@ evm_version="london"
 # arbitrum_one_goerli = "https://goerli-rollup.arbitrum.io/rpc/"            # Adds a trailing slash.
 # needs_undefined_env_var = "${UNDEFINED_RPC_URL_PLACEHOLDER}"
 
-[profile.default.fmt]
-# These are all the `forge fmt` defaults.
-line_length = 80
-tab_width = 4
-bracket_spacing = true
-int_types = 'long'
-multiline_func_header = 'attributes_first'
-quote_style = 'double'
-number_underscore = 'thousands'
-single_line_statement_blocks = 'preserve'
-wrap_comments=true
-ignore = ["src/console.sol", "src/console2.sol"]
+
 
 
 # [profile.default.fuzz]

@@ -11,7 +11,27 @@ import { IERC1155 } from
 
 // prettier-ignore
 library Types {
-    struct ColArgs {
+    struct CreateCollectionParams {
+        uint8 tokenType;
+        bytes32 tokenSalt;
+        string name;
+        string symbol;
+        uint256 price;
+        uint256 maxSupply;
+        string uri;
+        address splitter;
+        uint96 royalty;
+    }
+
+    struct CreateSplitterParams {
+        bytes32 splitterSalt;
+        address ambassador;
+        address project;
+        uint256 ambassadorShare;
+        uint256 projectShare;
+    }
+
+    struct CollectionArgs {
         string _name;
         string _symbol;
         string _baseURI;
@@ -21,6 +41,7 @@ library Types {
         uint96 _royaltyPercentage;
         address _router;
         address _erc20;
+        address _owner;
     }
 
     struct Collection {
@@ -36,7 +57,7 @@ library Types {
         bytes32 splitterSalt;
         address ambassador;
         address project;
-        uint256 ambShare;
+        uint256 ambassadorShare;
         uint256 projectShare;
         bool valid;
     }
@@ -352,10 +373,10 @@ library Types {
     │  │     │  │  ├─ type: ElementaryTypeName
     │  │     │  │  ├─ name: uint256
     │  │     │  │  └─ stateMutability
-    │  │     │  ├─ name: ambShare
+    │  │     │  ├─ name: ambassadorShare
     │  │     │  ├─ identifier
     │  │     │  │  ├─ type: Identifier
-    │  │     │  │  └─ name: ambShare
+    │  │     │  │  └─ name: ambassadorShare
     │  │     │  ├─ storageLocation
     │  │     │  ├─ isStateVar: false
     │  │     │  ├─ isIndexed: false

@@ -3,10 +3,12 @@ pragma solidity 0.8.19;
 
 // solhint-disable-next-line
 import {
-    ImplBase, ERC2981, Strings
+    ImplBase,
+    ERC2981,
+    Strings,
+    Types
 } from "contracts/MADTokens/common/ImplBase.sol";
 import { ERC721 } from "contracts/lib/tokens/ERC721/Base/ERC721.sol";
-import { Types } from "contracts/Shared/Types.sol";
 
 //prettier-ignore
 contract ERC721Basic is ERC721, ImplBase {
@@ -16,24 +18,14 @@ contract ERC721Basic is ERC721, ImplBase {
     bytes32 private constant _SYMBOL_SLOT = /*  */
         0x30ec9400a6906cefbe2888cc908b6b5efeceee7bcd5438fa93fc189e1bbe64ac;
 
-    using Types for Types.ColArgs;
+    using Types for Types.CollectionArgs;
     using Strings for uint256;
 
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    constructor(Types.ColArgs memory args, bytes32[] memory _extra)
-        ImplBase(
-            args._baseURI,
-            args._price,
-            args._maxSupply,
-            args._splitter,
-            args._royaltyPercentage,
-            args._router,
-            args._erc20
-        )
-    {
+    constructor(Types.CollectionArgs memory args) ImplBase(args) {
         _setStringMemory(args._name, _NAME_SLOT);
         _setStringMemory(args._symbol, _SYMBOL_SLOT);
     }
@@ -45,13 +37,33 @@ contract ERC721Basic is ERC721, ImplBase {
     /// @dev Transfer event emitted by parent ERC721 contract.
     /// @dev Function Sighash := 0x438b1b4b
     /// @dev Loop runs out of gas before overflowing.
-    function mintTo(address to, uint128 amount, address erc20Owner)
-        external
-        payable
-        authorised
-    {
-        (uint256 curId, uint256 endId) = _prepareOwnerMint(amount, erc20Owner);
+    function mintTo(address to, uint128 amount) external payable authorised {
+        (uint256 curId, uint256 endId) = _prepareOwnerMint(amount);
 
+        unchecked {
+            do {
+                _mint(to, curId);
+            } while (curId++ != endId);
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////
+    //                          PUBLIC FX                         //
+    ////////////////////////////////////////////////////////////////
+
+    /// @dev Transfer event emitted by parent ERC721 contract.
+    /// @dev Function Sighash := 0xa0712d68
+    function mint(uint128 amount) external payable {
+        _publicMint(msg.sender, amount);
+    }
+
+    function mint(address to, uint128 amount) external payable {
+        _publicMint(to, amount);
+    }
+
+    function _publicMint(address to, uint128 amount) private {
+        (uint256 curId, uint256 endId) =
+            _preparePublicMint(uint256(amount), uint256(amount));
         unchecked {
             do {
                 _mint(to, curId);
@@ -61,15 +73,7 @@ contract ERC721Basic is ERC721, ImplBase {
 
     /// @dev Transfer event emitted by parent ERC721 contract.
     /// @dev Function Sighash := 0x362c0cb5
-    function burn(uint128[] calldata ids, address erc20Owner)
-        external
-        payable
-        authorised
-    {
-        // @audit do we charge to burn?
-        (uint256 fee, bool method) = _ownerFeeCheck(0x44df8e70, erc20Owner);
-        _ownerFeeHandler(method, fee, erc20Owner);
-
+    function burn(uint128[] calldata ids) external payable {
         uint256 len = ids.length;
         _decSupply(len);
 
@@ -82,22 +86,6 @@ contract ERC721Basic is ERC721, ImplBase {
         }
 
         _loopOverflow(i, len);
-    }
-
-    ////////////////////////////////////////////////////////////////
-    //                          PUBLIC FX                         //
-    ////////////////////////////////////////////////////////////////
-
-    /// @dev Transfer event emitted by parent ERC721 contract.
-    /// @dev Function Sighash := 0xa0712d68
-    function mint(uint128 amount) external payable {
-        (uint256 curId, uint256 endId) =
-            _preparePublicMint(uint256(amount), uint256(amount));
-        unchecked {
-            do {
-                _mint(msg.sender, curId);
-            } while (curId++ != endId);
-        }
     }
 
     ////////////////////////////////////////////////////////////////

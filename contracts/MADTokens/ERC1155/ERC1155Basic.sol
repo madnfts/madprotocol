@@ -4,13 +4,15 @@ pragma solidity 0.8.19;
 // solhint-disable-next-line
 
 import {
-    ImplBase, ERC2981, Strings
+    ImplBase,
+    ERC2981,
+    Strings,
+    Types
 } from "contracts/MADTokens/common/ImplBase.sol";
 import { ERC1155 } from "contracts/lib/tokens/ERC1155/Base/ERC1155.sol";
-import { Types } from "contracts/Shared/Types.sol";
 
 contract ERC1155Basic is ERC1155, ImplBase {
-    using Types for Types.ColArgs;
+    using Types for Types.CollectionArgs;
     using Strings for uint256;
 
     ////////////////////////////////////////////////////////////////
@@ -36,17 +38,9 @@ contract ERC1155Basic is ERC1155, ImplBase {
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    constructor(Types.ColArgs memory args, bytes32[] memory _extra)
+    constructor(Types.CollectionArgs memory args)
         /*  */
-        ImplBase(
-            args._baseURI,
-            args._price,
-            args._maxSupply,
-            args._splitter,
-            args._royaltyPercentage,
-            args._router,
-            args._erc20
-        )
+        ImplBase(args)
     /*  */
     {
         maxIdBalance = uint128(uint256(bytes32(args._maxSupply)));
@@ -65,10 +59,9 @@ contract ERC1155Basic is ERC1155, ImplBase {
         address to,
         uint128 amount,
         /// @todo FE must be adapted here.
-        uint128 balance,
-        address erc20Owner
+        uint128 balance
     ) external payable authorised {
-        (uint256 curId, uint256 endId) = _prepareOwnerMint(amount, erc20Owner);
+        (uint256 curId, uint256 endId) = _prepareOwnerMint(amount);
 
         unchecked {
             do {
@@ -81,11 +74,10 @@ contract ERC1155Basic is ERC1155, ImplBase {
     function mintBatchTo(
         address to,
         uint128[] memory ids,
-        uint128[] memory amounts,
-        address erc20Owner
+        uint128[] memory amounts
     ) external payable authorised {
         uint256 len = ids.length;
-        _prepareOwnerMint(len, erc20Owner);
+        _prepareOwnerMint(len);
 
         uint256[] memory _ids;
         uint256[] memory _amounts;
@@ -100,13 +92,8 @@ contract ERC1155Basic is ERC1155, ImplBase {
     function burn(
         address[] memory from,
         uint128[] memory ids,
-        uint128[] memory balances,
-        address erc20Owner
+        uint128[] memory balances
     ) external payable authorised {
-        // @audit do we charge to burn?
-        (uint256 fee, bool method) = _ownerFeeCheck(0x44df8e70, erc20Owner);
-        _ownerFeeHandler(method, fee, erc20Owner);
-
         uint256 len = ids.length;
         _decSupply(len);
 
@@ -131,13 +118,8 @@ contract ERC1155Basic is ERC1155, ImplBase {
     function burnBatch(
         address from,
         uint128[] memory ids,
-        uint128[] memory amounts,
-        address erc20Owner
+        uint128[] memory amounts
     ) external payable authorised {
-        // @audit do we charge to burn?
-        (uint256 fee, bool method) = _ownerFeeCheck(0x44df8e70, erc20Owner);
-        _ownerFeeHandler(method, fee, erc20Owner);
-
         _decSupply(ids.length);
 
         uint256[] memory _ids;

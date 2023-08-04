@@ -36,22 +36,49 @@ abstract contract TwoFactor {
     uint256 internal router;
     uint256 internal owner;
 
-    /// @dev For the set `|{0,1}^2| = 4 = 2^2`
-    /// (i.e., { (0,0), (0,1), (1,0), (1,1) } )
-    /// we trap state (0,0) as our revert case
-    /// within the modifier's control flow.
-    modifier authorised() {
+    /// @notice modifier to check if caller is the owner to call functions such
+    /// as withdraw.
+    ///     the router is not allowed access via this modifier.
+    /// @dev checks the caller against the owner storage slot
+    modifier onlyOwner() virtual {
+        // if (msg.sender != owner) revert NotAuthorised();
         assembly {
-            let _caller := shl(12, caller())
-            if iszero(
-                or(
-                    eq(_caller, sload(router.slot)),
-                    eq(_caller, sload(owner.slot))
-                )
-            ) {
+            if iszero(eq(shl(12, caller()), sload(owner.slot))) {
                 // revert NotAuthorised()
                 mstore(0, _NOT_AUTHORISED)
                 revert(28, 4)
+            }
+        }
+        _;
+    }
+
+    /// @notice modifier to check if caller / origin combined is authorised to  call
+    /// functions
+    /// @dev checks the caller and origin against the router and owner storage
+    /// slots
+    /// Only 2 combinations are allowed.
+    // In both cases, the owner HAS to be involved
+    /// 1. msg.sender AND tx.origin == owner
+    /// 2. msg.sender == router AND tx.origin == owner
+    modifier authorised() {
+        bool isAuthorised;
+        assembly {
+            let _origin := shl(12, origin())
+            let _caller := shl(12, caller())
+            let _router := sload(router.slot)
+            let _owner := sload(owner.slot)
+            isAuthorised :=
+                xor(
+                    and(eq(_caller, _owner), eq(_origin, _owner)),
+                    and(eq(_caller, _router), eq(_origin, _owner))
+                )
+
+            if iszero(isAuthorised) {
+                {
+                    // revert NotAuthorised()
+                    mstore(0, _NOT_AUTHORISED)
+                    revert(28, 4)
+                }
             }
         }
         _;

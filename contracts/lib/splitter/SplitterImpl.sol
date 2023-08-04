@@ -126,10 +126,9 @@ contract SplitterImpl is SplitterEventsAndErrors {
 
     /// @dev Release all pending withdrawals.
     function releaseAll() public {
-        uint256 len = _payees.length;
         uint256 i;
-
-        for (i; i < len;) {
+        uint256 _payeesLength = _payees.length;
+        for (i; i < _payeesLength;) {
             address addr = _payees[i];
             uint256 rel = releasable(_payees[i]);
             if (rel != 0) {
@@ -160,6 +159,22 @@ contract SplitterImpl is SplitterEventsAndErrors {
         SafeTransferLib.safeTransfer(token, account, payment);
 
         emit ERC20PaymentReleased(address(token), account, payment);
+    }
+
+    /// @dev Release all pending withdrawals.
+    function releaseAll(ERC20 token) public {
+        uint256 i;
+        uint256 _payeesLength = _payees.length;
+        for (i; i < _payeesLength;) {
+            address addr = _payees[i];
+            uint256 rel = releasable(token, _payees[i]);
+            if (rel != 0) {
+                release(token, payable(addr));
+            }
+            unchecked {
+                ++i;
+            }
+        }
     }
 
     ////////////////////////////////////////////////////////////////

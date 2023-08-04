@@ -174,6 +174,15 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
 
     //     _doMintTo(mintData, 0xf7760f25); // error WrongPrice();
     // }
+    function testPublicMint_RouterAuthorisedRevert() public {
+        uint128 _amountToMint = 1;
+        MintData memory mintData = _setupMint(
+            nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
+        );
+
+        vm.expectRevert(0xf56dc29c); // error RouterIsEnabled();
+        IERC721Basic(mintData.collectionAddress).mint{ value: nftPublicMintPrice }(_amountToMint);
+    }
 
     function testMintTo_UnAuthorised() public {
         uint128 _amountToMint = 1;
@@ -339,6 +348,10 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
 
         vm.prank(mintData.nftMinter, mintData.nftMinter);
         collection.setPublicMintState(_mintState);
+
+        // Turn off router authority
+        vm.prank(mintData.nftMinter);
+        collection.setRouterHasAuthority(false);
 
         uint256 _nftPublicMintPrice =
             mintData.nftPublicMintPrice * mintData.amountToMint;

@@ -36,6 +36,8 @@ abstract contract TwoFactor {
     uint256 internal router;
     uint256 internal owner;
 
+    bool public routerHasAuthority;
+
     /// @notice modifier to check if caller is the owner to call functions such
     /// as withdraw.
     ///     the router is not allowed access via this modifier.
@@ -61,6 +63,7 @@ abstract contract TwoFactor {
     /// 1. msg.sender AND tx.origin == owner
     /// 2. msg.sender == router AND tx.origin == owner
     modifier authorised() {
+        routerAuthorised();
         bool isAuthorised;
         assembly {
             let _origin := shl(12, origin())
@@ -95,6 +98,16 @@ abstract contract TwoFactor {
         _;
     }
 
+    function routerAuthorised() internal view {
+        assembly {
+            if iszero(sload(routerHasAuthority.slot)) {
+                // revert NotAuthorised()
+                mstore(0, _NOT_AUTHORISED)
+                revert(28, 4)
+            }
+        }
+    }
+
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
@@ -106,6 +119,7 @@ abstract contract TwoFactor {
         assembly {
             sstore(router.slot, shl(12, _router))
             sstore(owner.slot, shl(12, _owner))
+            sstore(routerHasAuthority.slot, 1)
 
             // emit OwnerUpdated
             log3(0, 0, _OWNER_UPDATED, caller(), _owner)
@@ -129,6 +143,13 @@ abstract contract TwoFactor {
 
             // emit OwnerUpdated
             log3(0, 0, _OWNER_UPDATED, caller(), _owner)
+        }
+    }
+
+    ///@notice function to set the router has authority to access certain functions
+    function setRouterHasAuthority(bool _hasAuthority) public onlyOwner {
+        assembly {
+            sstore(routerHasAuthority.slot, _hasAuthority)
         }
     }
 

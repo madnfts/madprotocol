@@ -51,13 +51,27 @@ contract ERC721Basic is ERC721, ImplBase {
     //                          PUBLIC FX                         //
     ////////////////////////////////////////////////////////////////
 
+    /// @notice public mint function if madRouter is not authorised.
+    /// This will open up public minting to any contract or EOA if the owner has
+    /// disabled the authorisation for the router.
+    /// Otherwise, Mad Protocol will handle the public minting.
     /// @dev Transfer event emitted by parent ERC721 contract.
     /// @dev Function Sighash := 0xa0712d68
+    /// @param amount The amount of tokens to mint.
     function mint(uint128 amount) external payable {
+        if (routerHasAuthority) {
+            revert RouterIsEnabled();
+        }
+
         _publicMint(msg.sender, amount);
     }
 
-    function mint(address to, uint128 amount) external payable {
+    /// @notice public mint function if madRouter is authorised.
+    /// @dev Transfer event emitted by parent ERC721 contract.
+    /// @dev Function Sighash := 0xbe29184f
+    /// @param to The address to mint to.
+    /// @param amount The amount of tokens to mint.
+    function mint(address to, uint128 amount) external payable authorised {
         _publicMint(to, amount);
     }
 

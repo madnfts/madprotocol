@@ -72,6 +72,7 @@ contract TestCreateCollection is CreateCollectionHelpers, Enums {
         vm.deal(currentSigner, 1000 ether);
         vm.assume(x < deployedContracts.length);
         IFactory factory = deployedContracts[x];
+
         _createCollectionsWithAllSplitterCombosCustom(
             currentSigner,
             splitterDeployer,
@@ -80,8 +81,8 @@ contract TestCreateCollection is CreateCollectionHelpers, Enums {
             _royalty,
             _amountToMint,
             address(factory),
-            10,
-            10,
+            2000,
+            1000,
             "https://example.com"
         );
     }

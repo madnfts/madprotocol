@@ -59,22 +59,37 @@ contract MADFactory is MADFactoryBase {
     /// @notice Splitter deployment pusher.
     /// @dev Function Sighash := 0x9e5c4b70
     /// @param params A `CreateSplitterParams` structure containing:
+
     ///   - splitterSalt: Nonce/Entropy factor used by CREATE3 method
-    ///     to generate payment splitter deployment address. Must be always
-    /// different
-    ///     to avoid address collision.
+    ///         to generate payment splitter deployment address. Must be always
+    ///         different to avoid address collision.
+
     ///   - ambassador: User may choose from one of the whitelisted addresses
-    ///     to donate 1%-20% of secondary sales royalties (optional, will be
-    /// disregarded if
-    ///     left empty(value == address(0)).
+    ///             to donate 1%-20% of secondary sales royalties (optional,
+    /// will be disregarded if
+    ///             left empty(value == address(0)).
+
     ///   - project: This is another optional address for which the splitter
-    /// contract can set a share.
-    ///   - ambassadorShare: Percentage (1%-20%) of secondary sales royalties to
-    /// be
-    ///     donated to an ambassador (optional, will be disregarded if left
-    /// empty(value == 0)).
-    ///   - projectShare: This is the percentage to be assigned to the project
-    /// address. This is disregarded if left empty.
+    ///             contract can set a share.
+
+    ///   - ambassadorShare: Percentage (1%-20%) of  sales & royalties tobe
+    ///             assigned to an ambassador (optional, will be disregarded if
+    /// left
+    ///             empty(value == 0)).
+
+    ///   - projectShare: Percentage (1%-100% of creator shares (after
+    /// Ambassador))
+    ///             This is the percentage of  sales & royalties to be donated
+    /// to the project
+    ///             address. This is disregarded if left empty.
+    //
+
+    // Project Support
+    // Up to 100% of Creator Share after Ambassador share
+
+    // Ambassador
+    // Up to 20% of Creator Share before Project share
+
     function createSplitter(Types.CreateSplitterParams calldata params)
         public
         isThisOg
@@ -82,11 +97,11 @@ contract MADFactory is MADFactoryBase {
         if (params.ambassador == address(0) && params.project == address(0)) {
             _splitterResolver(
                 params,
-                0 // _flag := no project/ambassador
+                0 // _flag := no project/ no ambassador
             );
         } else if (
             params.ambassador != address(0) && params.project == address(0)
-                && params.ambassadorShare != 0 && params.ambassadorShare < 21
+                && params.ambassadorShare > 99 && params.ambassadorShare < 2001
         ) {
             _splitterResolver(
                 params,
@@ -94,7 +109,7 @@ contract MADFactory is MADFactoryBase {
             );
         } else if (
             params.project != address(0) && params.ambassador == address(0)
-                && params.projectShare != 0 && params.projectShare < 101
+                && params.projectShare > 99 && params.projectShare < 10_001
         ) {
             _splitterResolver(
                 params,
@@ -102,8 +117,8 @@ contract MADFactory is MADFactoryBase {
             );
         } else if (
             params.ambassador != address(0) && params.project != address(0)
-                && params.ambassadorShare != 0 && params.ambassadorShare < 21
-                && params.projectShare != 0 && params.projectShare < 81
+                && params.ambassadorShare > 99 && params.ambassadorShare < 2001
+                && params.projectShare > 99 && params.projectShare < 10_001
         ) {
             _splitterResolver(
                 params,

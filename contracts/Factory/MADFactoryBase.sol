@@ -132,11 +132,13 @@ abstract contract MADFactoryBase is
         Types.CreateSplitterParams calldata params,
         uint256 _flag
     ) internal {
+        uint256 projectShareParsed =
+            ((10_000 - params.ambassadorShare) * params.projectShare) / 10_000;
         address[] memory _payees =
             BufferLib.payeesBuffer(params.ambassador, params.project);
 
         uint256[] memory _shares =
-            BufferLib.sharesBuffer(params.ambassadorShare, params.projectShare);
+            BufferLib.sharesBuffer(params.ambassadorShare, projectShareParsed);
 
         address splitter =
             _splitterDeploy(params.splitterSalt, _payees, _shares);
@@ -147,7 +149,7 @@ abstract contract MADFactoryBase is
             params.ambassador,
             params.project,
             params.ambassadorShare,
-            params.projectShare,
+            projectShareParsed,
             true
         );
 

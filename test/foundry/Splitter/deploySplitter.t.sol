@@ -35,38 +35,38 @@ contract TestSplitterDeployment is DeploySplitterBase, SplitterModifiers {
 
     /// @dev tests the condition:
     /// _ambassador != address(0) && _project == address(0)
-    ///             && _ambassadorShare != 0 && _ambassadorShare < 21
+    ///             && _ambassadorShare > 99 && _ambassadorShare < 2001
     function testSplitterDeploymentFuzzy_ambassadorWithNoProject(
-        uint256 _ambassadorShare,
+        uint16 _ambassadorShare,
         uint8 x
     ) public ambassadorWithNoProjectAssumptions(_ambassadorShare) {
         vm.assume(x < deployedContracts.length);
         _runSplitterDeploy_ambassadorWithNoProject(
-            deployedContracts[x], _ambassadorShare
+            deployedContracts[x], uint256(_ambassadorShare)
         );
     }
 
     /// @dev tests the condition:
     /// _project != address(0) && _ambassador == address(0)
-    /// && _projectShare != 0 && _projectShare < 91
+    /// && _projectShare > 99 && _projectShare < 10001
     function testSplitterDeploymentFuzzy_projectWithNoAmbassador(
-        uint256 _projectShare,
+        uint16 _projectShare,
         uint8 x
     ) public projectWithNoAmbassadorAssumptions(_projectShare) {
         vm.assume(x < deployedContracts.length);
         _runSplitterDeploy_projectWithNoAmbassador(
-            deployedContracts[x], _projectShare
+            deployedContracts[x], uint256(_projectShare)
         );
     }
 
     /// @dev tests the condition:
     /// _ambassador != address(0) && _project != address(0)
-    ///            && _ambassadorShare != 0 && _ambassadorShare < 21 &&
-    /// _projectShare != 0
-    ///             && _projectShare < 71
+    ///            && _ambassadorShare > 99 && _ambassadorShare < 2001 &&
+    /// _projectShare > 99
+    ///             && _projectShare < 10001
     function testSplitterDeploymentFuzzy_All(
-        uint256 _ambassadorShare,
-        uint256 _projectShare,
+        uint16 _ambassadorShare,
+        uint16 _projectShare,
         uint8 x
     )
         public
@@ -74,7 +74,20 @@ contract TestSplitterDeployment is DeploySplitterBase, SplitterModifiers {
     {
         vm.assume(x < deployedContracts.length);
         _runSplitterDeploy_BothAmbassadorAndProject(
-            deployedContracts[x], _ambassadorShare, _projectShare
+            deployedContracts[x],
+            uint256(_ambassadorShare),
+            uint256(_projectShare)
+        );
+    }
+
+    /// @dev tests the condition:
+    /// _ambassador != address(0) && _project != address(0)
+    ///            && _ambassadorShare > 99 && _ambassadorShare < 2001 &&
+    /// _projectShare > 99
+    ///             && _projectShare < 10001
+    function testSplitterDeployment_All() public {
+        _runSplitterDeploy_BothAmbassadorAndProject(
+            deployedContracts[0], 2000, 2000
         );
     }
 }

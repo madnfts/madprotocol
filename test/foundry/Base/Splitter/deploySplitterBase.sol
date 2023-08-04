@@ -28,8 +28,8 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
     }
 
     // Define default variables
-    uint256 public ambassadorShare = 20;
-    uint256 public projectShare = 30;
+    uint256 public ambassadorShare = 2000;
+    uint256 public projectShare = 3000;
 
     address public ambassador = makeAddr("AmbassadorAddress");
     address public project = makeAddr("ProjectAddress");
@@ -73,9 +73,30 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
         uint256 _payeesExpectedLength = splitterData.payeesExpected.length;
 
         uint256 totalShares = splitter.totalShares();
+
+        uint256 splitterDataAmbassadorShare =
+            splitterData.createSplitterParams.ambassadorShare;
+
+        uint256 _splitterDataProjectShare =
+            splitterData.createSplitterParams.projectShare;
+
+        uint256 splitterDataProjectShare = (
+            (10_000 - splitterDataAmbassadorShare) * _splitterDataProjectShare
+        ) / 10_000;
+
         uint256 sharesOrZero = totalShares
-            - splitterData.createSplitterParams.ambassadorShare
-            - splitterData.createSplitterParams.projectShare;
+            - (splitterDataAmbassadorShare + splitterDataProjectShare);
+
+        emit log_named_uint("creatorShares", creatorShares);
+        emit log_named_uint("totalShares", totalShares);
+        emit log_named_uint(
+            "splitterDataAmbassadorShare", splitterDataAmbassadorShare
+        );
+        emit log_named_uint(
+            "splitterDataProjectShare", splitterDataProjectShare
+        );
+        emit log_named_uint("sharesOrZero", sharesOrZero);
+        emit log_named_uint("config.projectShare", config.projectShare);
 
         assertTrue(
             splitterAddress != address(0),
@@ -104,14 +125,12 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
         );
 
         assertTrue(
-            splitterData.createSplitterParams.ambassadorShare
-                == config.ambassadorShare,
+            splitterDataAmbassadorShare == config.ambassadorShare,
             "Ambassador share should match with the stored ambassador share."
         );
 
         assertTrue(
-            splitterData.createSplitterParams.projectShare
-                == config.projectShare,
+            splitterDataProjectShare == config.projectShare,
             "Project share should match with the stored project share."
         );
 
@@ -125,7 +144,7 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
         assertTrue(
             sharesOrZero == creatorShares, "Creator shares should match."
         );
-        assertTrue(totalShares == 100, "Shares should add up to 100");
+        assertTrue(totalShares == 10_000, "Shares should add up to 10_000");
 
         assertTrue(splitter.totalReleased() == 0, "Total released should be 0");
 

@@ -15,7 +15,7 @@ library SplitterBufferLib {
             case 1 {
                 memOffset := mload(0x40)
                 mstore(add(memOffset, 0x00), 1)
-                mstore(add(memOffset, 0x20), origin())
+                mstore(add(memOffset, 0x20), caller())
                 mstore(0x40, add(memOffset, 0x40))
             }
             case 0 {
@@ -24,7 +24,7 @@ library SplitterBufferLib {
                     memOffset := mload(0x40)
                     mstore(add(memOffset, 0x00), 2)
                     mstore(add(memOffset, 0x20), amb)
-                    mstore(add(memOffset, 0x40), origin())
+                    mstore(add(memOffset, 0x40), caller())
                     mstore(0x40, add(memOffset, 0x60))
                 }
                 case 0 {
@@ -33,7 +33,7 @@ library SplitterBufferLib {
                         memOffset := mload(0x40)
                         mstore(add(memOffset, 0x00), 2)
                         mstore(add(memOffset, 0x20), project)
-                        mstore(add(memOffset, 0x40), origin())
+                        mstore(add(memOffset, 0x40), caller())
                         mstore(0x40, add(memOffset, 0x60))
                     }
                     case 0 {
@@ -41,7 +41,7 @@ library SplitterBufferLib {
                         mstore(add(memOffset, 0x00), 3)
                         mstore(add(memOffset, 0x20), amb)
                         mstore(add(memOffset, 0x40), project)
-                        mstore(add(memOffset, 0x60), origin())
+                        mstore(add(memOffset, 0x60), caller())
                         mstore(0x40, add(memOffset, 0x80))
                     }
                 }
@@ -61,7 +61,7 @@ library SplitterBufferLib {
             case 1 {
                 memOffset := mload(0x40)
                 mstore(add(memOffset, 0x00), 1)
-                mstore(add(memOffset, 0x20), 100)
+                mstore(add(memOffset, 0x20), 10000)
                 mstore(0x40, add(memOffset, 0x40))
             }
             case 0 {
@@ -70,7 +70,7 @@ library SplitterBufferLib {
                     memOffset := mload(0x40)
                     mstore(add(memOffset, 0x00), 2)
                     mstore(add(memOffset, 0x20), _ambassadorShare)
-                    mstore(add(memOffset, 0x40), sub(100, _ambassadorShare))
+                    mstore(add(memOffset, 0x40), sub(10000, _ambassadorShare))
                     mstore(0x40, add(memOffset, 0x60))
                 }
                 case 0 {
@@ -79,7 +79,7 @@ library SplitterBufferLib {
                         memOffset := mload(0x40)
                         mstore(add(memOffset, 0x00), 2)
                         mstore(add(memOffset, 0x20), _projectShare)
-                        mstore(add(memOffset, 0x40), sub(100, _projectShare))
+                        mstore(add(memOffset, 0x40), sub(10000, _projectShare))
                         mstore(0x40, add(memOffset, 0x60))
                     }
                     case 0 {
@@ -89,7 +89,7 @@ library SplitterBufferLib {
                         mstore(add(memOffset, 0x40), _projectShare)
                         mstore(
                             add(memOffset, 0x60),
-                            sub(100, add(_ambassadorShare, _projectShare))
+                            sub(10000, add(_ambassadorShare, _projectShare))
                         )
                         mstore(0x40, add(memOffset, 0x80))
                     }

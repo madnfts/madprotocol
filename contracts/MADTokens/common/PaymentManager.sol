@@ -73,7 +73,9 @@ abstract contract PaymentManager {
         _withdrawShared(_recipient, _token, false);
     }
 
-    function _withdrawShared(address _recipient, ERC20 _token, bool isETH) private {
+    function _withdrawShared(address _recipient, ERC20 _token, bool isETH)
+        private
+    {
         uint256 len = splitter.payeesLength();
 
         // Transfer mint fees
@@ -84,13 +86,11 @@ abstract contract PaymentManager {
             address addr = splitter._payees(j);
             if (isETH) {
                 SafeTransferLib.safeTransferETH(
-                    addr, ((_val * (splitter._shares(addr) * 1e2)) / 10_000)
+                    addr, ((_val * splitter._shares(addr)) / 10_000)
                 );
             } else {
                 SafeTransferLib.safeTransfer(
-                    _token,
-                    addr,
-                    ((_val * (splitter._shares(addr) * 1e2)) / 10_000)
+                    _token, addr, ((_val * splitter._shares(addr)) / 10_000)
                 );
             }
             unchecked {
@@ -99,7 +99,7 @@ abstract contract PaymentManager {
         }
     }
 
-    function _dispatchFees(address _recipient, ERC20 _erc20,  bool isETH)
+    function _dispatchFees(address _recipient, ERC20 _erc20, bool isETH)
         internal
         returns (uint256 _val)
     {

@@ -2,7 +2,7 @@
 pragma solidity 0.8.19;
 
 import { IFactory } from "test/foundry/Base/Factory/IFactory.sol";
-import { ISplitter, ERC20 } from "test/foundry/Base/Splitter/ISplitter.sol";
+import { ISplitter, IERC20 } from "test/foundry/Base/Splitter/ISplitter.sol";
 import { SplitterImpl } from "contracts/lib/splitter/SplitterImpl.sol";
 import { Types } from "contracts/Shared/Types.sol";
 import { Deployer } from "test/foundry/Deploy/deployer.t.sol";
@@ -91,10 +91,10 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
         emit log_named_uint("totalShares", totalShares);
         emit log_named_uint(
             "splitterDataAmbassadorShare", splitterDataAmbassadorShare
-        );
+            );
         emit log_named_uint(
             "splitterDataProjectShare", splitterDataProjectShare
-        );
+            );
         emit log_named_uint("sharesOrZero", sharesOrZero);
         emit log_named_uint("config.projectShare", config.projectShare);
 
@@ -195,12 +195,12 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
 
         // ERC20
         assertTrue(
-            splitter.released(ERC20(_paymentToken), _currentSigner) == 0,
+            splitter.released(IERC20(_paymentToken), _currentSigner) == 0,
             "Released amount for specific token and _currentSigner should be 0"
         );
 
         assertTrue(
-            splitter.releasable(ERC20(_paymentToken), _currentSigner) == 0,
+            splitter.releasable(IERC20(_paymentToken), _currentSigner) == 0,
             "Releasable amount for specific token and _currentSigner should be 0"
         );
     }

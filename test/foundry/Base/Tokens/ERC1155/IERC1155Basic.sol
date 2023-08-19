@@ -59,4 +59,7 @@ interface IERC1155Basic is IImplBase {
         bytes memory data
     ) external;
     function setApprovalForAll(address operator, bool isApproved) external;
+
+    function withdraw() external payable;
+    function withdrawERC20(address erc20) external;
 }

@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.19;
 
-import { ERC20 } from "contracts/lib/tokens/ERC20.sol";
+import { IERC20 } from "contracts/lib/tokens/IERC20.sol";
 import { SplitterImpl } from "contracts/lib/splitter/SplitterImpl.sol";
 import { SafeTransferLib } from "contracts/lib/utils/SafeTransferLib.sol";
 
@@ -25,7 +25,7 @@ abstract contract PaymentManager {
     SplitterImpl public immutable splitter;
 
     /// @notice ERC20 payment token address.
-    ERC20 public immutable erc20;
+    IERC20 public immutable erc20;
 
     ////////////////////////////////////////////////////////////////
     //                           STORAGE                          //
@@ -42,7 +42,7 @@ abstract contract PaymentManager {
     ////////////////////////////////////////////////////////////////
     constructor(address _splitter, address _erc20, uint256 _price) {
         splitter = SplitterImpl(payable(_splitter));
-        erc20 = ERC20(_erc20);
+        erc20 = IERC20(_erc20);
         price = _price;
     }
 
@@ -66,21 +66,20 @@ abstract contract PaymentManager {
     ////////////////////////////////////////////////////////////////
 
     /// @notice Owner Withdraw ETH.
-    /// @dev If any Eth is trapped in the contract, owner can withdraw it to the splitter.
-    function withdraw() public _isZeroAddr(address(splitter)) {
-        SafeTransferLib.safeTransferETH(payable(address(splitter)), address(this).balance);
+    /// @dev If any Eth is trapped in the contract, owner can withdraw it to the
+    /// splitter.
+    function _withdraw() internal {
+        uint256 balance = address(this).balance;
+        SafeTransferLib.safeTransferETH(payable(address(splitter)), balance);
     }
 
     /// @notice Owner Withdraw ERC20 Tokens.
-    /// @dev If any ERC20 Tokens are trapped in the contract, owner can withdraw it to the splitter.
-    function withdrawERC20(address _erc20)
-        public
-        _isZeroAddr(address(splitter))
-    {
-        ERC20 _token = ERC20(_erc20);
-        SafeTransferLib.safeTransfer(
-                _token, address(splitter), _token.balanceOf(address(this))
-            );
+    /// @dev If any ERC20 Tokens are trapped in the contract, owner can withdraw
+    /// it to the splitter.
+    function _withdrawERC20(address _erc20) internal {
+        IERC20 _token = IERC20(_erc20);
+        uint256 balance = _token.balanceOf(address(this));
+        SafeTransferLib.safeTransfer(_token, address(splitter), balance);
     }
 
     function _publicPaymentHandler(uint256 _value) internal {
@@ -96,7 +95,6 @@ abstract contract PaymentManager {
             // Relay the msg.value to the splitter.
             // The receive function will trigger the releaseAll() from Splitter
             SafeTransferLib.safeTransferETH(address(splitter), _value);
-
         }
     }
 

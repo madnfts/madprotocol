@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.19;
 
-import { ERC20 } from "contracts/lib/tokens/ERC20.sol";
+import { IERC20 } from "contracts/lib/tokens/IERC20.sol";
 
 /// @notice Safe ETH and ERC20 transfer library that gracefully handles missing
 /// return values.
@@ -170,7 +170,7 @@ library SafeTransferLib {
     /// The `from` account must have at least `amount` approved for
     /// the current contract to manage.
     function safeTransferFrom(
-        ERC20 token,
+        IERC20 token,
         address from,
         address to,
         uint256 amount
@@ -213,7 +213,7 @@ library SafeTransferLib {
     ///
     /// The `from` account must have at least `amount` approved for
     /// the current contract to manage.
-    function safeTransferAllFrom(ERC20 token, address from, address to)
+    function safeTransferAllFrom(IERC20 token, address from, address to)
         internal
         returns (uint256 amount)
     {
@@ -269,7 +269,7 @@ library SafeTransferLib {
 
     /// @dev Sends `amount` of ERC20 `token` from the current contract to `to`.
     /// Reverts upon failure.
-    function safeTransfer(ERC20 token, address to, uint256 amount) internal {
+    function safeTransfer(IERC20 token, address to, uint256 amount) internal {
         /// @solidity memory-safe-assembly
         assembly {
             mstore(0x14, to) // Store the `to` argument.
@@ -300,7 +300,7 @@ library SafeTransferLib {
 
     /// @dev Sends all of ERC20 `token` from the current contract to `to`.
     /// Reverts upon failure.
-    function safeTransferAll(ERC20 token, address to)
+    function safeTransferAll(IERC20 token, address to)
         internal
         returns (uint256 amount)
     {
@@ -354,7 +354,7 @@ library SafeTransferLib {
     /// @dev Sets `amount` of ERC20 `token` for `to` to manage on behalf of the
     /// current contract.
     /// Reverts upon failure.
-    function safeApprove(ERC20 token, address to, uint256 amount) internal {
+    function safeApprove(IERC20 token, address to, uint256 amount) internal {
         /// @solidity memory-safe-assembly
         assembly {
             mstore(0x14, to) // Store the `to` argument.
@@ -385,7 +385,7 @@ library SafeTransferLib {
 
     /// @dev Returns the amount of ERC20 `token` owned by `account`.
     /// Returns zero if the `token` does not exist.
-    function balanceOf(ERC20 token, address account)
+    function balanceOf(IERC20 token, address account)
         internal
         view
         returns (uint256 amount)

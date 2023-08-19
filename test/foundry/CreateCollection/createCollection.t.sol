@@ -48,7 +48,7 @@ contract TestCreateCollection is CreateCollectionHelpers, Enums {
         uint128 _maxSupply,
         uint96 _royalty
     ) public {
-        createCollectionAssumptions(_price, _maxSupply, _royalty);
+        _createCollectionAssumptions(_price, _maxSupply, _royalty);
         _createCollectionCustom(x, _price, _maxSupply, _royalty, 1);
     }
 
@@ -58,7 +58,7 @@ contract TestCreateCollection is CreateCollectionHelpers, Enums {
         uint128 _maxSupply,
         uint96 _royalty
     ) public {
-        createCollectionAssumptions(_price, _maxSupply, _royalty);
+        _createCollectionAssumptions(_price, _maxSupply, _royalty);
         _createCollectionCustom(x, _price, _maxSupply, _royalty, 10);
     }
 

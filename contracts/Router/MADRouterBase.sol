@@ -3,7 +3,7 @@
 pragma solidity 0.8.19;
 
 // solhint-disable-next-line
-import { MADBase, ERC20 } from "contracts/Shared/MADBase.sol";
+import { MADBase, IERC20 } from "contracts/Shared/MADBase.sol";
 import {
     RouterEvents, FactoryVerifier
 } from "contracts/Shared/EventsAndErrors.sol";

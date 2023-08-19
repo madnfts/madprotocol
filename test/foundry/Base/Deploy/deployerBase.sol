@@ -111,4 +111,10 @@ abstract contract DeployerBase is
             router: router
         });
     }
+
+    function sendERC20(address to, uint256 amount) public {
+        vm.startPrank(currentSigner);
+        paymentToken.approve(to, amount);
+        paymentToken.transfer(to, amount);
+    }
 }

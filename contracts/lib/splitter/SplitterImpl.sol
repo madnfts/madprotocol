@@ -10,7 +10,9 @@ pragma solidity 0.8.19;
 
 import { SplitterEventsAndErrors } from
     "contracts/lib/splitter/SplitterEventsAndErrors.sol";
-import { SafeTransferLib, ERC20 } from "contracts/lib/utils/SafeTransferLib.sol";
+import {
+    SafeTransferLib, IERC20
+} from "contracts/lib/utils/SafeTransferLib.sol";
 
 // prettier-ignore
 //
@@ -45,8 +47,8 @@ contract SplitterImpl is SplitterEventsAndErrors {
     uint256 private _totalReleased;
 
     mapping(address => uint256) private _released;
-    mapping(ERC20 => uint256) private _erc20TotalReleased;
-    mapping(ERC20 => mapping(address => uint256)) private _erc20Released;
+    mapping(IERC20 => uint256) private _erc20TotalReleased;
+    mapping(IERC20 => mapping(address => uint256)) private _erc20Released;
 
     /// @dev Native public getters provided.
     mapping(address => uint256) public _shares;
@@ -144,7 +146,7 @@ contract SplitterImpl is SplitterEventsAndErrors {
     /// they are owed, according to their percentage of the total shares and
     /// their previous withdrawals. `token` must be the address of an ERC20
     /// contract.
-    function release(ERC20 token, address account) public {
+    function release(IERC20 token, address account) public {
         if (_shares[account] == 0) {
             revert NoShares();
         }
@@ -162,7 +164,7 @@ contract SplitterImpl is SplitterEventsAndErrors {
     }
 
     /// @dev Release all pending withdrawals.
-    function releaseAll(ERC20 token) public {
+    function releaseAll(IERC20 token) public {
         uint256 i;
         uint256 _payeesLength = _payees.length;
         for (i; i < _payeesLength;) {
@@ -236,7 +238,7 @@ contract SplitterImpl is SplitterEventsAndErrors {
     /// @dev Getter for the total amount of `token`
     /// already released.
     /// @dev `token` should be the address of an ERC20 contract.
-    function totalReleased(ERC20 token) public view returns (uint256) {
+    function totalReleased(IERC20 token) public view returns (uint256) {
         return _erc20TotalReleased[token];
     }
 
@@ -249,7 +251,7 @@ contract SplitterImpl is SplitterEventsAndErrors {
     /// @dev Getter for the amount of `token` tokens already
     /// released to a payee.
     /// @dev `token` should be the address of an ERC20 contract.
-    function released(ERC20 token, address account)
+    function released(IERC20 token, address account)
         public
         view
         returns (uint256)
@@ -266,7 +268,7 @@ contract SplitterImpl is SplitterEventsAndErrors {
     /// @dev Getter for the amount of payee's releasable
     /// `token` tokens.
     /// @dev `token` should be the address of an ERC20 contract.
-    function releasable(ERC20 token, address account)
+    function releasable(IERC20 token, address account)
         public
         view
         returns (uint256)

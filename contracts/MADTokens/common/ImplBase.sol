@@ -126,6 +126,24 @@ abstract contract ImplBase is
     }
 
     ////////////////////////////////////////////////////////////////
+    //                       OWNER WITHDRAW                       //
+    ////////////////////////////////////////////////////////////////
+
+    /// @notice Owner Withdraw ETH.
+    /// @dev If any Eth is trapped in the contract, owner can withdraw it to the
+    /// splitter.
+    function withdraw() public onlyOwner {
+        _withdraw();
+    }
+
+    /// @notice Owner Withdraw ERC20 Tokens.
+    /// @dev If any ERC20 Tokens are trapped in the contract, owner can withdraw
+    /// it to the splitter.
+    function withdrawERC20(address _erc20) public onlyOwner {
+        _withdrawERC20(_erc20);
+    }
+
+    ////////////////////////////////////////////////////////////////
     //                           VIEW FX                          //
     ////////////////////////////////////////////////////////////////
 

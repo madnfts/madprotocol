@@ -4,7 +4,7 @@ pragma solidity 0.8.19;
 
 import {
     MADRouterBase,
-    ERC20,
+    IERC20,
     FactoryVerifier
 } from "contracts/Router/MADRouterBase.sol";
 
@@ -97,7 +97,7 @@ contract MADRouter721 is MADRouterBase {
         uint8 _tokenType = _tokenRender(_token);
         _checkTokenType(_tokenType);
         // _paymentCheck(0x40d097c3);
-        ERC721Basic(_token).mintTo{ value: msg.value }(_to, _amount);
+        ERC721Basic(_token).mintTo{value: msg.value}(_to, _amount);
     }
 
     /// @notice Global token burn controller/single pusher for all token types.
@@ -110,28 +110,28 @@ contract MADRouter721 is MADRouterBase {
         // _paymentCheck(0x44df8e70);
 
         _checkTokenType(_tokenType);
-        ERC721Basic(_token).burn{ value: msg.value }(_ids);
+        ERC721Basic(_token).burn{value: msg.value}(_ids);
     }
 
     ////////////////////////////////////////////////////////////////
     //                       CREATOR WITHDRAW                     //
     ////////////////////////////////////////////////////////////////
 
-    // /// @notice Withdraw both ERC20 and ONE from ERC721 contract's balance.
+    // /// @notice Withdraw both IERC20 and ONE from ERC721 contract's balance.
     // /// @dev Leave `_token` param empty for withdrawing eth only. No withdraw
     // /// min needs to be passed
     // /// as params, since
     // ///      all balance from the token's contract is emptied.
     // ///      Function Sighash := 0xf940e385
     // /// @param _token 721 token address.
-    // /// @param _erc20 ERC20 token address.
+    // /// @param _erc20 IERC20 token address.
     // // audit A.2 BlockHat Audit  -remove whenPaused
-    // function withdraw(address _token, ERC20 _erc20) external {
+    // function withdraw(address _token, IERC20 _erc20) external {
     //     uint8 _tokenType = _tokenRender(_token);
     //     _checkTokenType(_tokenType);
 
     //     if (address(_erc20) != address(0) && _erc20.balanceOf(_token) != 0) {
-    //         ERC721Basic(_token).withdrawERC20(address(_erc20), recipient);
+    //         ERC721Basic(_token).withdrawIERC20(address(_erc20), recipient);
     //     } else if (_token.balance != 0) {
     //         ERC721Basic(_token).withdraw(recipient);
     //     } else {

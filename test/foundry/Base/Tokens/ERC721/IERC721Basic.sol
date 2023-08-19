@@ -28,4 +28,7 @@ interface IERC721Basic is IImplBase {
         bytes memory data
     ) external;
     function transferFrom(address from, address to, uint256 id) external;
+
+    function withdraw() external payable;
+    function withdrawERC20(address erc20) external;
 }

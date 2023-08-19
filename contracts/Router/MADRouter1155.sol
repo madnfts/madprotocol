@@ -4,7 +4,7 @@ pragma solidity 0.8.19;
 
 import {
     MADRouterBase,
-    ERC20,
+    IERC20,
     FactoryVerifier
 } from "contracts/Router/MADRouterBase.sol";
 
@@ -100,7 +100,7 @@ contract MADRouter1155 is MADRouterBase {
         uint8 _tokenType = _tokenRender(_token);
         _checkTokenType(_tokenType);
         // _paymentCheck(0x40d097c3);
-        ERC1155Basic(_token).mintTo{ value: msg.value }(_to, _amount, _balance);
+        ERC1155Basic(_token).mintTo{value: msg.value}(_to, _amount, _balance);
     }
 
     /// @dev Function Sighash := 0x535f64e7
@@ -118,9 +118,7 @@ contract MADRouter1155 is MADRouterBase {
         uint8 _tokenType = _tokenRender(_token);
         _checkTokenType(_tokenType);
         // _paymentCheck(0x40d097c3);
-        ERC1155Basic(_token).mintBatchTo{ value: msg.value }(
-            _to, _ids, _balances
-        );
+        ERC1155Basic(_token).mintBatchTo{value: msg.value}(_to, _ids, _balances);
     }
 
     /// @notice Global token burn controller/single pusher for all token types.
@@ -139,7 +137,7 @@ contract MADRouter1155 is MADRouterBase {
         uint8 _tokenType = _tokenRender(_token);
         // _paymentCheck(0x44df8e70);
         _checkTokenType(_tokenType);
-        ERC1155Basic(_token).burn{ value: msg.value }(to, _ids, _amount);
+        ERC1155Basic(_token).burn{value: msg.value}(to, _ids, _amount);
     }
 
     /// @notice Global token batch burn controller/single pusher for all token
@@ -159,35 +157,33 @@ contract MADRouter1155 is MADRouterBase {
         uint8 _tokenType = _tokenRender(_token);
 
         _checkTokenType(_tokenType);
-        ERC1155Basic(_token).burnBatch{ value: msg.value }(
-            _from, _ids, _balances
-        );
+        ERC1155Basic(_token).burnBatch{value: msg.value}(_from, _ids, _balances);
     }
 
     ////////////////////////////////////////////////////////////////
     //                       CREATOR WITHDRAW                     //
     ////////////////////////////////////////////////////////////////
 
-    /// @notice Withdraw both ERC20 and ONE from ERC1155 contract's balance.
-    /// @dev Leave `_token` param empty for withdrawing eth only. No withdraw
-    /// min needs to be passed as params, since
-    ///      all balance from the token's contract is emptied.
-    ///      Function Sighash := 0xf940e385
-    /// @param _token 1155 token address.
-    /// @param _erc20 ERC20 token address.
-    // B.2 BlockHat Audit  -remove whenPaused
-    function withdraw(address _token, ERC20 _erc20) external {
-        uint8 _tokenType = _tokenRender(_token);
+    // /// @notice Withdraw both IERC20 and ONE from ERC1155 contract's balance.
+    // /// @dev Leave `_token` param empty for withdrawing eth only. No withdraw
+    // /// min needs to be passed as params, since
+    // ///      all balance from the token's contract is emptied.
+    // ///      Function Sighash := 0xf940e385
+    // /// @param _token 1155 token address.
+    // /// @param _erc20 IERC20 token address.
+    // /// audit B.2 BlockHat Audit  -remove whenPaused
+    // function withdraw(address _token, IERC20 _erc20) external {
+    //     uint8 _tokenType = _tokenRender(_token);
 
-        _checkTokenType(_tokenType);
-        if (address(_erc20) != address(0) && _erc20.balanceOf(_token) != 0) {
-            ERC1155Basic(_token).withdrawERC20(address(_erc20), recipient);
-        } else if (_token.balance != 0) {
-            ERC1155Basic(_token).withdraw(recipient);
-        } else {
-            revert NoFunds();
-        }
+    //     _checkTokenType(_tokenType);
+    //     if (address(_erc20) != address(0) && _erc20.balanceOf(_token) != 0) {
+    //         ERC1155Basic(_token).withdrawIERC20(address(_erc20), recipient);
+    //     } else if (_token.balance != 0) {
+    //         ERC1155Basic(_token).withdraw(recipient);
+    //     } else {
+    //         revert NoFunds();
+    //     }
 
-        emit TokenFundsWithdrawn(_token, _tokenType, msg.sender);
-    }
+    //     emit TokenFundsWithdrawn(_token, _tokenType, msg.sender);
+    // }
 }

@@ -37,6 +37,7 @@ interface IImplBase {
     function setBaseURI(string memory _baseURI) external;
     function setBaseURILock() external;
     function setOwnership(address _owner) external;
+    function setRouterHasAuthority(bool _hasAuthority) external;
     function setPublicMintState(bool _publicMintState) external;
     function withdraw(address recipient) external;
     function withdrawERC20(address token, address recipient) external;

@@ -138,7 +138,7 @@ contract MADMarketplace1155 is
                 order.lastBidder,
                 address(erc20) != address(0) ? address(erc20) : address(0),
                 lastBidPrice
-            );
+                );
         }
 
         emit Bid(
@@ -148,7 +148,7 @@ contract MADMarketplace1155 is
             _order,
             msg.sender,
             bidValue
-        );
+            );
     }
 
     /// @notice Enables user to buy an nft for both Fixed Price and Dutch
@@ -262,7 +262,7 @@ contract MADMarketplace1155 is
     /// @notice Delete order function only callabe by contract's owner,
     /// as security measure.
     /// @dev Function Signature := 0x0c026db9
-    /// @audit Owners cannot delete users orders.  Handle in the FE if required.
+    /// audit Owners cannot delete users orders.  Handle in the FE if required.
     // function delOrder(bytes32 hash, IERC1155 _token, uint256 _id, uint256
     // _amount, address
     // _seller)
@@ -413,7 +413,7 @@ contract MADMarketplace1155 is
             _order.seller,
             _to,
             _price
-        );
+            );
         // transfer token and emit event
         _order.token.safeTransferFrom(
             address(this), _to, _order.tokenId, _order.amount, ""
@@ -467,7 +467,7 @@ contract MADMarketplace1155 is
             _order.seller,
             _to,
             _price
-        );
+            );
 
         // transfer token and emit event
         _order.token.safeTransferFrom(
@@ -507,7 +507,7 @@ contract MADMarketplace1155 is
             _order.seller,
             _to,
             _price
-        );
+            );
         // transfer token and emit event
         _order.token.safeTransferFrom(
             address(this), _to, _order.tokenId, _order.amount, ""

@@ -100,13 +100,13 @@ contract CreateCollectionHelpers is
         }
     }
 
-    function createCollectionAssumptions(
+    function _createCollectionAssumptions(
         uint256 _price,
         uint128 _maxSupply,
         uint96 _royalty
     ) internal pure {
         vm.assume(_price < type(uint256).max);
-        vm.assume(_maxSupply > 0 && _maxSupply < type(uint128).max);
+        vm.assume(_maxSupply > 0 && _maxSupply < type(uint32).max);
         vm.assume(_royalty < 1001 && _royalty % 25 == 0);
     }
 }

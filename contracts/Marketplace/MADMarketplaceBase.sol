@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.19;
 
-import { MADBase, ERC20 } from "contracts/Shared/MADBase.sol";
+import { MADBase, IERC20 } from "contracts/Shared/MADBase.sol";
 import {
     FactoryVerifier,
     MarketplaceEventsAndErrorsBase
@@ -85,7 +85,7 @@ abstract contract MADMarketplaceBase is
 
         // Approve the router to spend the ERC20 payment token.
         SafeTransferLib.safeApprove(
-            ERC20(_paymentTokenAddress), address(_swapRouter), 2 ** 256 - 1
+            IERC20(_paymentTokenAddress), address(_swapRouter), 2 ** 256 - 1
         );
     }
 
@@ -366,7 +366,7 @@ abstract contract MADMarketplaceBase is
         // minBidValue = _minBidValue;
         // maxOrderDuration = _maxOrderDuration;
 
-        // C.3 & D.3 BlockHat Audit
+        // audit C.3 & D.3 BlockHat Audit
         // Allow anything greater than 10 and less than the amount configured.
         require(
             (
@@ -389,7 +389,7 @@ abstract contract MADMarketplaceBase is
             _minAuctionIncrement,
             _minBidValue,
             _maxOrderDuration
-        );
+            );
     }
 
     /// @notice Enables the contract's owner to change recipient address.
@@ -416,8 +416,9 @@ abstract contract MADMarketplaceBase is
     }
 
     function withdrawERC20() external onlyOwner {
-        // C.2 & D.2 BlockHat audit - remove _token (It is immutable by design)
-        // C.5 & D.5 BlockHat audit - remove whenPaused
+        // audit  C.2 & D.2 BlockHat audit - remove _token (It is immutable by
+        // design)
+        // audit C.5 & D.5 BlockHat audit - remove whenPaused
         uint256 withdrawAmount = erc20.balanceOf(address(this));
 
         require(withdrawAmount - totalOutbid > 0, "No balance to withdraw");
@@ -441,13 +442,13 @@ abstract contract MADMarketplaceBase is
         SafeTransferLib.safeTransferETH(msg.sender, amountOut);
     }
 
-    function withdrawOutbid(ERC20 _token, uint256 minOut, uint160 priceLimit)
+    function withdrawOutbid(IERC20 _token, uint256 minOut, uint160 priceLimit)
         external
     {
         _withdrawOutbid(_token, minOut, priceLimit);
     }
 
-    function _withdrawOutbid(ERC20 _token, uint256 minOut, uint160 priceLimit)
+    function _withdrawOutbid(IERC20 _token, uint256 minOut, uint160 priceLimit)
         private
     {
         require(

@@ -26,8 +26,9 @@ abstract contract ImplBase is
     bytes32 internal constant _BASE_URI_SLOT = /*  */
         0xdd05fcb58e4c0a1a429c1a9d6607c399731f1ef0b81be85c3f7701c0333c82fc;
 
+    /// @dev An account can hold up to 4294967295 tokens.
     uint256 internal constant _SR_UPPERBITS = (1 << 128) - 1;
-    uint256 internal constant _MAXSUPPLY_BOUND = 1 << 128;
+    uint256 internal constant _MAXSUPPLY_BOUND = 1 << 32;
     uint256 internal constant _MINTCOUNT_BITPOS = 128;
 
     using Strings for uint256;
@@ -95,7 +96,7 @@ abstract contract ImplBase is
         _setStringCalldata(_baseURI, _BASE_URI_SLOT);
         emit BaseURISet(_baseURI);
 
-        // @audit Error in testing - hashes do not match - are we emitting the
+        // audit Error in testing - hashes do not match - are we emitting the
         // correct data?
         // assembly { log2(0, 0, _BASE_URI_SET, calldataload(0x44)) }
     }
@@ -128,12 +129,18 @@ abstract contract ImplBase is
     //                       OWNER WITHDRAW                       //
     ////////////////////////////////////////////////////////////////
 
-    function withdraw(address recipient) public onlyOwner {
-        _withdraw(recipient);
+    /// @notice Owner Withdraw ETH.
+    /// @dev If any Eth is trapped in the contract, owner can withdraw it to the
+    /// splitter.
+    function withdraw() public onlyOwner {
+        _withdraw();
     }
 
-    function withdrawERC20(address token, address recipient) public onlyOwner {
-        _withdrawERC20(token, recipient);
+    /// @notice Owner Withdraw ERC20 Tokens.
+    /// @dev If any ERC20 Tokens are trapped in the contract, owner can withdraw
+    /// it to the splitter.
+    function withdrawERC20(address _erc20) public onlyOwner {
+        _withdrawERC20(_erc20);
     }
 
     ////////////////////////////////////////////////////////////////

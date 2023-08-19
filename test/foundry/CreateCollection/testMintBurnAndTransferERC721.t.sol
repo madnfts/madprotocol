@@ -17,6 +17,7 @@ import {
 } from "test/foundry/CreateCollection/createCollectionHelpers.sol";
 
 import { IERC721Basic } from "test/foundry/Base/Tokens/ERC721/IERC721Basic.sol";
+import { MockERC20 } from "test/foundry/Base/Tokens/ERC20/deployMockERC20.sol";
 
 contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
     IDeployer.DeployedContracts deployedContracts;
@@ -175,6 +176,18 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
     //     _doMintTo(mintData, 0xf7760f25); // error WrongPrice();
     // }
 
+    function testPublicMint_RouterAuthorisedRevert() public {
+        uint128 _amountToMint = 1;
+        MintData memory mintData = _setupMint(
+            nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
+        );
+
+        vm.expectRevert(0xf56dc29c); // error RouterIsEnabled();
+        IERC721Basic(mintData.collectionAddress).mint{
+            value: nftPublicMintPrice
+        }(_amountToMint);
+    }
+
     function testMintTo_UnAuthorised() public {
         uint128 _amountToMint = 1;
         MintData memory mintData = _setupMint(
@@ -210,6 +223,79 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         // Mint Max supply
         MintData memory mintData = _publicMint_MaxSupply();
         _doBurn(mintData, mintData.nftReceiver);
+    }
+
+    ////////////////////////////////////////////////////////////////
+    //                          WIHDRAW TESTS                     //
+    ////////////////////////////////////////////////////////////////
+
+    function testWithdrawERC20() public {
+        uint128 amountToMint = 10;
+        uint256 _amountToSend = 10 ether;
+
+        MockERC20 erc20Token = deployedContracts.paymentToken;
+
+        // Create Collection & Splitter
+        MintData memory mintData =
+            _setupMint(nftMinter, nftReceiver, nftPublicMintPrice, amountToMint);
+
+        address _collectionAddress = mintData.collectionAddress;
+        address _splitterAddress = mintData.splitterAddress;
+
+        IERC721Basic collection = IERC721Basic(_collectionAddress);
+
+        uint256 balanceBeforeSplitter = erc20Token.balanceOf(_splitterAddress);
+        uint256 balanceBeforeCollection =
+            erc20Token.balanceOf(_collectionAddress);
+
+        // Send some ERC20 tokens to the CollectionAddress
+        deployer.sendERC20(_collectionAddress, _amountToSend);
+
+        uint256 expectedCollectionBalance =
+            balanceBeforeCollection + _amountToSend;
+
+        // Check balance of the collectionAddress
+        assertTrue(
+            erc20Token.balanceOf(_collectionAddress)
+                == expectedCollectionBalance
+        );
+
+        // Withdraw ERC20 to Splitter
+        vm.startPrank(mintData.nftMinter);
+        collection.withdrawERC20(address(erc20Token));
+
+        uint256 splitterBalance = erc20Token.balanceOf(_splitterAddress);
+
+        // Check that the ERC20 has been withdrawn
+        assertTrue(
+            splitterBalance == balanceBeforeSplitter + expectedCollectionBalance
+        );
+    }
+
+    function testWithdrawEth() public {
+        uint128 amountToMint = 10;
+        uint256 _amountToSend = 10 ether;
+
+        // Create Collection & Splitter
+        MintData memory mintData =
+            _setupMint(nftMinter, nftReceiver, nftPublicMintPrice, amountToMint);
+        address contractAddress = mintData.collectionAddress;
+
+        uint256 balanceBefore = mintData.nftMinter.balance;
+
+        IERC721Basic collection = IERC721Basic(contractAddress);
+
+        // Send some NAtive  tokens to the contractAddress
+        vm.deal(contractAddress, _amountToSend);
+
+        // Withdraw NAtive tokens
+        vm.startPrank(mintData.nftMinter);
+        collection.withdraw();
+
+        // Check that the ETH has been withdrawn to the splitter
+        // It should auto send to the splitter receivers and in this test case
+        // we have only the minter..
+        assertTrue(mintData.nftMinter.balance == _amountToSend + balanceBefore);
     }
 
     ////////////////////////////////////////////////////////////////
@@ -314,6 +400,7 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
             balanceNftReceiverBefore: collection.balanceOf(_nftReceiver),
             balanceNftMinterBefore: collection.balanceOf(_nftMinter)
         });
+
         return mintData;
     }
 
@@ -340,6 +427,10 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         vm.prank(mintData.nftMinter, mintData.nftMinter);
         collection.setPublicMintState(_mintState);
 
+        // Turn off router authority
+        vm.prank(mintData.nftMinter);
+        collection.setRouterHasAuthority(false);
+
         uint256 _nftPublicMintPrice =
             mintData.nftPublicMintPrice * mintData.amountToMint;
 
@@ -347,7 +438,7 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         if (_errorSelector != 0x00000000) {
             vm.expectRevert(_errorSelector);
         }
-        collection.mint{ value: _nftPublicMintPrice }(mintData.amountToMint);
+        collection.mint{value: _nftPublicMintPrice}(mintData.amountToMint);
         vm.stopPrank();
     }
 

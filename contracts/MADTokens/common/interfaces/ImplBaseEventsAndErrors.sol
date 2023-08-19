@@ -57,4 +57,6 @@ interface ImplBaseEventsAndErrors {
     error WrongArgsLength();
     /// @dev 0xce3a3d37
     error DecOverflow();
+    /// @dev 0xf56dc29c
+    error RouterIsEnabled();
 }

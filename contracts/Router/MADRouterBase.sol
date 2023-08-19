@@ -3,7 +3,7 @@
 pragma solidity 0.8.19;
 
 // solhint-disable-next-line
-import { MADBase, ERC20 } from "contracts/Shared/MADBase.sol";
+import { MADBase, IERC20 } from "contracts/Shared/MADBase.sol";
 import {
     RouterEvents, FactoryVerifier
 } from "contracts/Shared/EventsAndErrors.sol";
@@ -31,7 +31,7 @@ abstract contract MADRouterBase is MADBase, RouterEvents, FeeOracle {
     bytes4 internal constant _MINBURN = 0x44df8e70;
 
     /// @notice Mint fee store.
-    // B.3 BlockHat Audit
+    // audit B.3 BlockHat Audit
     uint256 public feeMint = 0.25 ether; /* = 0 */
 
     /// @notice Burn fee store.

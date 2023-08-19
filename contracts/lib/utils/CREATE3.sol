@@ -75,7 +75,7 @@ library CREATE3 {
         require(proxy != address(0), "DEPLOYMENT_FAILED");
 
         deployed = getDeployed(salt);
-        (bool success,) = proxy.call{value: value}(creationCode);
+        (bool success,) = proxy.call{ value: value }(creationCode);
         require(success && deployed.code.length != 0, "INITIALIZATION_FAILED");
     }
 

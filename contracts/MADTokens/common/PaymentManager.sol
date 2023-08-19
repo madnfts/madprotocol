@@ -66,24 +66,21 @@ abstract contract PaymentManager {
     ////////////////////////////////////////////////////////////////
 
     /// @notice Owner Withdraw ETH.
-    /// @dev If any Eth is trapped in the contract, owner can withdraw it to the
-    /// splitter.
+    /// @dev If any Eth is trapped in the contract, owner can withdraw it to the splitter.
     function withdraw() public _isZeroAddr(address(splitter)) {
-        SafeTransferLib.safeTransferETH(
-            payable(address(splitter)), address(this).balance
-        );
+        SafeTransferLib.safeTransferETH(payable(address(splitter)), address(this).balance);
     }
 
     /// @notice Owner Withdraw ERC20 Tokens.
-    /// @dev If any ERC20 Tokens are trapped in the contract, owner can withdraw
-    /// it to the splitter.
+    /// @dev If any ERC20 Tokens are trapped in the contract, owner can withdraw it to the splitter.
     function withdrawERC20(address _erc20)
         public
         _isZeroAddr(address(splitter))
     {
+        ERC20 _token = ERC20(_erc20);
         SafeTransferLib.safeTransfer(
-            ERC20(_erc20), address(splitter), _token.balanceOf(address(this))
-        );
+                _token, address(splitter), _token.balanceOf(address(this))
+            );
     }
 
     function _publicPaymentHandler(uint256 _value) internal {
@@ -99,6 +96,7 @@ abstract contract PaymentManager {
             // Relay the msg.value to the splitter.
             // The receive function will trigger the releaseAll() from Splitter
             SafeTransferLib.safeTransferETH(address(splitter), _value);
+
         }
     }
 

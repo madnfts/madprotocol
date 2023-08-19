@@ -146,7 +146,8 @@ abstract contract TwoFactor {
         }
     }
 
-    ///@notice function to set the router has authority to access certain functions
+    ///@notice function to set the router has authority to access certain
+    /// functions
     function setRouterHasAuthority(bool _hasAuthority) public onlyOwner {
         assembly {
             sstore(routerHasAuthority.slot, _hasAuthority)

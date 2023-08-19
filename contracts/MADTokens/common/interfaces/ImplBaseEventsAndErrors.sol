@@ -59,5 +59,4 @@ interface ImplBaseEventsAndErrors {
     error DecOverflow();
     /// @dev 0xf56dc29c
     error RouterIsEnabled();
-
 }

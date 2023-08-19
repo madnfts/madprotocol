@@ -62,7 +62,6 @@ contract ERC721Basic is ERC721, ImplBase {
         if (routerHasAuthority) {
             revert RouterIsEnabled();
         }
-
         _publicMint(msg.sender, amount);
     }
 

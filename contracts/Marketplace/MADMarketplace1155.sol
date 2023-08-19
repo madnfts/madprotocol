@@ -262,7 +262,7 @@ contract MADMarketplace1155 is
     /// @notice Delete order function only callabe by contract's owner,
     /// as security measure.
     /// @dev Function Signature := 0x0c026db9
-    /// @audit Owners cannot delete users orders.  Handle in the FE if required.
+    /// audit Owners cannot delete users orders.  Handle in the FE if required.
     // function delOrder(bytes32 hash, IERC1155 _token, uint256 _id, uint256
     // _amount, address
     // _seller)

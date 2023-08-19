@@ -181,7 +181,9 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         );
 
         vm.expectRevert(0xf56dc29c); // error RouterIsEnabled();
-        IERC721Basic(mintData.collectionAddress).mint{ value: nftPublicMintPrice }(_amountToMint);
+        IERC721Basic(mintData.collectionAddress).mint{
+            value: nftPublicMintPrice
+        }(_amountToMint);
     }
 
     function testMintTo_UnAuthorised() public {

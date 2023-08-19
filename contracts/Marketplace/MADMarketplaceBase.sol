@@ -366,7 +366,7 @@ abstract contract MADMarketplaceBase is
         // minBidValue = _minBidValue;
         // maxOrderDuration = _maxOrderDuration;
 
-        // C.3 & D.3 BlockHat Audit
+        // audit C.3 & D.3 BlockHat Audit
         // Allow anything greater than 10 and less than the amount configured.
         require(
             (
@@ -416,8 +416,9 @@ abstract contract MADMarketplaceBase is
     }
 
     function withdrawERC20() external onlyOwner {
-        // C.2 & D.2 BlockHat audit - remove _token (It is immutable by design)
-        // C.5 & D.5 BlockHat audit - remove whenPaused
+        // audit  C.2 & D.2 BlockHat audit - remove _token (It is immutable by
+        // design)
+        // audit C.5 & D.5 BlockHat audit - remove whenPaused
         uint256 withdrawAmount = erc20.balanceOf(address(this));
 
         require(withdrawAmount - totalOutbid > 0, "No balance to withdraw");

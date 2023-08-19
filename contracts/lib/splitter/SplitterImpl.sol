@@ -115,7 +115,7 @@ contract SplitterImpl is SplitterEventsAndErrors {
         if (payment < 1) {
             revert DeniedAccount();
         }
-        // Audit GAS
+        /// audit GAS
         _released[account] = _released[account] + payment;
         _totalReleased = _totalReleased + payment;
 

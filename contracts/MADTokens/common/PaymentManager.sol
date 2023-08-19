@@ -42,7 +42,7 @@ abstract contract PaymentManager {
     ////////////////////////////////////////////////////////////////
     constructor(address _splitter, address _erc20, uint256 _price) {
         splitter = SplitterImpl(payable(_splitter));
-        erc20 = ERC20(payable(_erc20));
+        erc20 = ERC20(_erc20);
         price = _price;
     }
 
@@ -61,80 +61,44 @@ abstract contract PaymentManager {
         _;
     }
 
-    function _withdraw(address _recipient) internal _isZeroAddr(_recipient) {
-        _withdrawShared(_recipient, ERC20(address(0)), true);
+    ////////////////////////////////////////////////////////////////
+    //                       OWNER WITHDRAW                       //
+    ////////////////////////////////////////////////////////////////
+
+    /// @notice Owner Withdraw ETH.
+    /// @dev If any Eth is trapped in the contract, owner can withdraw it to the
+    /// splitter.
+    function withdraw() public _isZeroAddr(address(splitter)) {
+        SafeTransferLib.safeTransferETH(
+            payable(address(splitter)), address(this).balance
+        );
     }
 
-    function _withdrawERC20(address _erc20, address _recipient)
-        internal
-        _isZeroAddr(_recipient)
+    /// @notice Owner Withdraw ERC20 Tokens.
+    /// @dev If any ERC20 Tokens are trapped in the contract, owner can withdraw
+    /// it to the splitter.
+    function withdrawERC20(address _erc20)
+        public
+        _isZeroAddr(address(splitter))
     {
-        ERC20 _token = ERC20(payable(_erc20));
-        _withdrawShared(_recipient, _token, false);
-    }
-
-    function _withdrawShared(address _recipient, ERC20 _token, bool isETH)
-        private
-    {
-        uint256 len = splitter.payeesLength();
-
-        // Transfer mint fees
-        uint256 _val = _dispatchFees(_recipient, _token, isETH);
-
-        uint256 j;
-        while (j < len) {
-            address addr = splitter._payees(j);
-            if (isETH) {
-                SafeTransferLib.safeTransferETH(
-                    addr, ((_val * splitter._shares(addr)) / 10_000)
-                );
-            } else {
-                SafeTransferLib.safeTransfer(
-                    _token, addr, ((_val * splitter._shares(addr)) / 10_000)
-                );
-            }
-            unchecked {
-                ++j;
-            }
-        }
-    }
-
-    function _dispatchFees(address _recipient, ERC20 _erc20, bool isETH)
-        internal
-        returns (uint256 _val)
-    {
-        if (!isETH) {
-            uint256 _feeCountERC20 = feeCountERC20;
-            if (_feeCountERC20 == 0) revert NothingToWithdraw();
-            if (_erc20 != erc20) revert WrongToken();
-
-            _val = erc20.balanceOf(address(this)) - _feeCountERC20;
-            feeCountERC20 = 0;
-
-            SafeTransferLib.safeTransfer(erc20, _recipient, _feeCountERC20);
-
-            return _val;
-        } else {
-            uint256 _feeCount = feeCount;
-            if (_feeCount == 0) revert NothingToWithdraw();
-
-            _val = address(this).balance - _feeCount;
-            feeCount = 0;
-
-            SafeTransferLib.safeTransferETH(payable(_recipient), _feeCount);
-
-            return _val;
-        }
+        SafeTransferLib.safeTransfer(
+            ERC20(_erc20), address(splitter), _token.balanceOf(address(this))
+        );
     }
 
     function _publicPaymentHandler(uint256 _value) internal {
         if (msg.value == 0) {
-            feeCountERC20 = feeCountERC20 + price;
+            feeCountERC20 = feeCountERC20 + _value;
             SafeTransferLib.safeTransferFrom(
-                erc20, msg.sender, address(this), _value
+                erc20, msg.sender, address(splitter), _value
             );
+            // Trigger release from address(splitter)
+            splitter.releaseAll(erc20);
         } else {
-            feeCount = feeCount + price;
+            feeCount = feeCount + _value;
+            // Relay the msg.value to the splitter.
+            // The receive function will trigger the releaseAll() from Splitter
+            SafeTransferLib.safeTransferETH(address(splitter), _value);
         }
     }
 
@@ -170,21 +134,12 @@ abstract contract PaymentManager {
         } else {
             _value = erc20.allowance(_buyer, address(this));
         }
-        // assembly {
-        //     switch callvalue()
-        //     case 0 {
-        //         mstore(20, _buyer)
-        //         mstore(52, address())
-        //         mstore(0, shl(96, 0xdd62ed3e))
-        //         pop(staticcall(gas(), _erc20, 16, 68, 0, 32))
-        //         _value := mload(0)
-        //         mstore(52, 0)
-        //         isERC20 := 1
-        //     }
-        //     default {
-        //         _value := callvalue()
-        //         isERC20 := 0
-        //     }
-        // }
     }
+
+    // // Receive function to receive ETH and forward to the splitter.
+    // receive() external payable {
+    //     // Relay the msg.value to the splitter.
+    //     // The receive function will trigger the releaseAll() from Splitter
+    //     SafeTransferLib.safeTransferETH(address(splitter), msg.value);
+    // }
 }

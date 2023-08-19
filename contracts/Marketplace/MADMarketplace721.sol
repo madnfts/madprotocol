@@ -271,7 +271,7 @@ contract MADMarketplace721 is
     /// as security measure.
     /// @dev Function Signature := 0x0c026db9
 
-    /// @audit Owners cannot delete users orders.  Handle in the FE if required.
+    /// audit Owners cannot delete users orders.  Handle in the FE if required.
     // function delOrder(bytes32 hash, IERC721 _token, uint256 _id, address
     // _seller) external
     // onlyOwner {

@@ -193,6 +193,7 @@ interface RouterEvents is EventsAndErrorsBase {
     error WrongPrice();
     /// @dev 0x2d8768f9
     error InvalidFees();
+
     error InvalidType();
     error NoFunds();
 }

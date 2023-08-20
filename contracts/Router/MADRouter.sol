@@ -39,13 +39,13 @@ contract MADRouter is MADRouterBase {
     /// @param _to Receiver token address.
     /// @param _amount Num tokens to mint and send.
     function basicMintTo(address _token, address _to, uint128 _amount)
-        external
+        public
         payable
     {
         uint8 _tokenType = _tokenRender(_token);
         _checkTokenType(_tokenType);
-        // _paymentCheck(0x40d097c3);
-        ERC721Basic(_token).mintTo{ value: msg.value }(_to, _amount);
+        _paymentCheck(_FEE_MINT);
+        ERC721Basic(_token).mintTo{value: msg.value}(_to, _amount);
     }
 
     /// @notice Global token burn controller/single pusher for all token types.
@@ -53,12 +53,12 @@ contract MADRouter is MADRouterBase {
     /// @param _token 721 token address.
     /// @param _ids The token IDs of each token to be burnt;
     ///        should be left empty for the `ERC721Minimal` type.
-    function burn(address _token, uint128[] memory _ids) external payable {
+    function burn(address _token, uint128[] memory _ids) public payable {
         uint8 _tokenType = _tokenRender(_token);
-        // _paymentCheck(0x44df8e70);
+        _paymentCheck(_FEE_BURN);
 
         _checkTokenType(_tokenType);
-        ERC721Basic(_token).burn{ value: msg.value }(_ids);
+        ERC721Basic(_token).burn{value: msg.value}(_ids);
     }
 
     ////////////////////////////////////////////////////////////////
@@ -76,11 +76,11 @@ contract MADRouter is MADRouterBase {
         address _to,
         uint128 _amount,
         uint128 _balance
-    ) external payable {
+    ) public payable {
         uint8 _tokenType = _tokenRender(_token);
         _checkTokenType(_tokenType);
-        // _paymentCheck(0x40d097c3);
-        ERC1155Basic(_token).mintTo{ value: msg.value }(_to, _amount, _balance);
+        _paymentCheck(_FEE_MINT);
+        ERC1155Basic(_token).mintTo{value: msg.value}(_to, _amount, _balance);
     }
 
     /// @dev Function Sighash := 0x535f64e7
@@ -94,13 +94,11 @@ contract MADRouter is MADRouterBase {
         address _to,
         uint128[] memory _ids,
         uint128[] memory _balances
-    ) external payable {
+    ) public payable {
         uint8 _tokenType = _tokenRender(_token);
         _checkTokenType(_tokenType);
-        // _paymentCheck(0x40d097c3);
-        ERC1155Basic(_token).mintBatchTo{ value: msg.value }(
-            _to, _ids, _balances
-        );
+        _paymentCheck(_FEE_MINT);
+        ERC1155Basic(_token).mintBatchTo{value: msg.value}(_to, _ids, _balances);
     }
 
     /// @notice Global token burn controller/single pusher for all token types.
@@ -115,11 +113,11 @@ contract MADRouter is MADRouterBase {
         uint128[] memory _ids,
         address[] memory to,
         uint128[] memory _amount
-    ) external payable {
+    ) public payable {
         uint8 _tokenType = _tokenRender(_token);
-        // _paymentCheck(0x44df8e70);
+        // _paymentCheck(_FEE_BURN);
         _checkTokenType(_tokenType);
-        ERC1155Basic(_token).burn{ value: msg.value }(to, _ids, _amount);
+        ERC1155Basic(_token).burn{value: msg.value}(to, _ids, _amount);
     }
 
     /// @notice Global token batch burn controller/single pusher for all token
@@ -135,12 +133,10 @@ contract MADRouter is MADRouterBase {
         address _from,
         uint128[] memory _ids,
         uint128[] memory _balances
-    ) external payable {
+    ) public payable {
         uint8 _tokenType = _tokenRender(_token);
 
         _checkTokenType(_tokenType);
-        ERC1155Basic(_token).burnBatch{ value: msg.value }(
-            _from, _ids, _balances
-        );
+        ERC1155Basic(_token).burnBatch{value: msg.value}(_from, _ids, _balances);
     }
 }

@@ -107,6 +107,16 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         _checkMint(mintData);
     }
 
+    function testPublicMint_FreeMintZeroPrice() public {
+        uint128 _amountToMint = 10;
+        uint256 _nftPublicMintPrice = 0;
+        MintData memory mintData = _setupMint(
+            nftMinter, nftReceiver, _nftPublicMintPrice, _amountToMint
+        );
+
+        _doPublicMint(mintData, true, 0);
+    }
+
     function testSetPublicMint_Unauthorised() public {
         uint128 _amountToMint = 1;
         MintData memory mintData = _setupMint(
@@ -376,7 +386,7 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         vm.prank(_nftMinter);
         (address _collectionAddress, address _splitterAddress) =
         _createCollectionDefault(
-            deployedContracts.factory, splitterDeployer, _nftMinter
+            deployedContracts.factory, splitterDeployer, _nftMinter, _nftPublicMintPrice
         );
 
         IERC721Basic collection = IERC721Basic(_collectionAddress);
@@ -424,6 +434,10 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
     ) internal {
         IERC721Basic collection = IERC721Basic(mintData.collectionAddress);
 
+        emit log_named_uint("nftPublicMintPrice", mintData.nftPublicMintPrice);
+        emit log_named_uint("Price", collection.price());
+        emit log_named_uint("amountToMint", mintData.amountToMint);
+
         vm.prank(mintData.nftMinter, mintData.nftMinter);
         collection.setPublicMintState(_mintState);
 
@@ -434,11 +448,15 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         uint256 _nftPublicMintPrice =
             mintData.nftPublicMintPrice * mintData.amountToMint;
 
+        emit log_named_uint(
+            "nftPublicMintPrice AFTER", mintData.nftPublicMintPrice
+        );
+
         vm.startPrank(mintData.nftReceiver);
         if (_errorSelector != 0x00000000) {
             vm.expectRevert(_errorSelector);
         }
-        collection.mint{value: _nftPublicMintPrice}(mintData.amountToMint);
+        collection.mint{ value: _nftPublicMintPrice }(mintData.amountToMint);
         vm.stopPrank();
     }
 

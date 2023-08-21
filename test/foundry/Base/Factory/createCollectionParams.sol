@@ -6,7 +6,7 @@ import { IFactory } from "test/foundry/Base/Factory/IFactory.sol";
 import { Strings } from "contracts/MADTokens/common/ImplBase.sol";
 
 abstract contract CreateCollectionParams {
-    uint256 public defaultPrice = 1 ether;
+    // uint256 public defaultPrice = 1 ether;
     uint256 public defaultMaxSupply = 10_000;
     uint8 public defaultTokenType = 1; // ERC721Basic
     uint96 public defaultRoyalty = 1000; // 10% (max)
@@ -47,7 +47,7 @@ abstract contract CreateCollectionParams {
         });
     }
 
-    function defaultCollectionParams(address defaultSplitterAddress)
+    function defaultCollectionParams(address defaultSplitterAddress, uint defaultPrice)
         public
         returns (IFactory.CreateCollectionParams memory)
     {

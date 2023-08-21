@@ -106,8 +106,14 @@ abstract contract PaymentManager {
         view
         returns (uint256 _value)
     {
-        // if ((_price * _amount) != value)
+        // if ((_price * _amount) != _value)
         // revert WrongPrice();
+
+        // No point in doing any calcluations if the price is 0 (Free).
+        // Also it upsets the underlying _getPriceValue() function.
+        if (price == 0) {
+            return 0;
+        }
 
         _value = _getPriceValue(msg.sender);
         uint256 _price = price;

@@ -38,7 +38,7 @@ contract TestCreateCollection is CreateCollectionHelpers, Enums {
         vm.deal(currentSigner, 1000 ether);
 
         _createCollectionDefault(
-            deployedContracts[x], splitterDeployer, currentSigner
+            deployedContracts[x], splitterDeployer, currentSigner,  1 ether
         );
     }
 

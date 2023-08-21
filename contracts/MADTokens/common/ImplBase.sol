@@ -212,7 +212,7 @@ abstract contract ImplBase is
         return _incrementCounter(uint256(amount));
     }
 
-    function _preparePublicMint(uint256 amount, uint256 totalCost)
+    function _preparePublicMint(uint256 amount, uint256 totalAmount)
         internal
         returns (uint256 curId, uint256 endId)
     {
@@ -220,7 +220,7 @@ abstract contract ImplBase is
 
         _hasReachedMax(amount, maxSupply);
 
-        uint256 value = _publicMintPriceCheck(totalCost);
+        uint256 value = _publicMintPriceCheck(totalAmount);
 
         _publicPaymentHandler(value);
 

@@ -47,10 +47,10 @@ abstract contract CreateCollectionParams {
         });
     }
 
-    function defaultCollectionParams(address defaultSplitterAddress, uint defaultPrice)
-        public
-        returns (IFactory.CreateCollectionParams memory)
-    {
+    function defaultCollectionParams(
+        address defaultSplitterAddress,
+        uint256 defaultPrice
+    ) public returns (IFactory.CreateCollectionParams memory) {
         return generateCollectionParams(
             defaultTokenType,
             defaultPrice,

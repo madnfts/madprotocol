@@ -25,7 +25,7 @@ contract CreateCollectionHelpers is
         IFactory _factory,
         DeploySplitterBase splitterDeployer,
         address _currentSigner,
-        uint _price
+        uint256 _price
     ) internal returns (address _collectionAddress, address _splitter) {
         splitterDeployer.setCurrentSigner(_currentSigner);
 
@@ -34,7 +34,8 @@ contract CreateCollectionHelpers is
         setCurrentSigner(_currentSigner);
         // emit log_named_address("currentSigner", currentSigner);
 
-        _collectionAddress = createCollectionDefault(_factory, _splitter, _price);
+        _collectionAddress =
+            createCollectionDefault(_factory, _splitter, _price);
 
         assertTrue(_collectionAddress != address(0));
         assertTrue(_splitter != address(0));

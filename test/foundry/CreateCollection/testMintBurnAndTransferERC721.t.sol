@@ -386,7 +386,10 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         vm.prank(_nftMinter);
         (address _collectionAddress, address _splitterAddress) =
         _createCollectionDefault(
-            deployedContracts.factory, splitterDeployer, _nftMinter, _nftPublicMintPrice
+            deployedContracts.factory,
+            splitterDeployer,
+            _nftMinter,
+            _nftPublicMintPrice
         );
 
         IERC721Basic collection = IERC721Basic(_collectionAddress);

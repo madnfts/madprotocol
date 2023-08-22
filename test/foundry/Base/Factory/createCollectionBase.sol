@@ -20,10 +20,11 @@ abstract contract CreateCollectionBase is
     SettersToggle("defaultCollectionOwner"),
     CreateCollectionParams
 {
-    function createCollectionDefault(IFactory factory, address _splitter, uint256 _price)
-        public
-        returns (address collectionAddress)
-    {
+    function createCollectionDefault(
+        IFactory factory,
+        address _splitter,
+        uint256 _price
+    ) public returns (address collectionAddress) {
         collectionAddress = createCollectionCustom(
             factory,
             _splitter,

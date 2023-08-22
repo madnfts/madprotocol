@@ -134,6 +134,7 @@ abstract contract MADFactoryBase is
     ) internal {
         uint256 projectShareParsed =
             ((10_000 - params.ambassadorShare) * params.projectShare) / 10_000;
+
         address[] memory _payees =
             BufferLib.payeesBuffer(params.ambassador, params.project);
 

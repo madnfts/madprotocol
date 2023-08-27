@@ -66,15 +66,10 @@ interface IFactory {
         view
         returns (bool stdout);
 
-    function creatorCheck(address _collectionId)
+    function creatorCheck(address _collectionId, address _creator)
         external
         view
-        returns (address creator, bool check);
-
-    function collectionTypeChecker(address _collectionId)
-        external
-        view
-        returns (uint8 pointer);
+        returns (bool check);
 
     function userTokens(address user)
         external

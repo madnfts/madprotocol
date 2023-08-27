@@ -27,7 +27,7 @@ contract MADRouter is MADRouterBase {
         FactoryVerifier _factory,
         address _paymentTokenAddress,
         address _recipient
-    ) MADRouterBase(_factory, _paymentTokenAddress, _recipient) { }
+    ) MADRouterBase(_factory, _paymentTokenAddress, _recipient) {}
 
     ////////////////////////////////////////////////////////////////
     //                    CREATOR MINTING ERC721                  //
@@ -42,8 +42,7 @@ contract MADRouter is MADRouterBase {
         public
         payable
     {
-        uint8 _tokenType = _tokenRender(_token);
-        _checkTokenType(_tokenType);
+        _tokenRender(_token);
         _paymentCheck(_FEE_MINT);
         ERC721Basic(_token).mintTo{ value: msg.value }(_to, _amount);
     }
@@ -54,10 +53,8 @@ contract MADRouter is MADRouterBase {
     /// @param _ids The token IDs of each token to be burnt;
     ///        should be left empty for the `ERC721Minimal` type.
     function burn(address _token, uint128[] memory _ids) public payable {
-        uint8 _tokenType = _tokenRender(_token);
+        _tokenRender(_token);
         _paymentCheck(_FEE_BURN);
-
-        _checkTokenType(_tokenType);
         ERC721Basic(_token).burn{ value: msg.value }(_ids);
     }
 
@@ -77,8 +74,7 @@ contract MADRouter is MADRouterBase {
         uint128 _amount,
         uint128 _balance
     ) public payable {
-        uint8 _tokenType = _tokenRender(_token);
-        _checkTokenType(_tokenType);
+        _tokenRender(_token);
         _paymentCheck(_FEE_MINT);
         ERC1155Basic(_token).mintTo{ value: msg.value }(_to, _amount, _balance);
     }
@@ -95,8 +91,7 @@ contract MADRouter is MADRouterBase {
         uint128[] memory _ids,
         uint128[] memory _balances
     ) public payable {
-        uint8 _tokenType = _tokenRender(_token);
-        _checkTokenType(_tokenType);
+        _tokenRender(_token);
         _paymentCheck(_FEE_MINT);
         ERC1155Basic(_token).mintBatchTo{ value: msg.value }(
             _to, _ids, _balances
@@ -116,9 +111,8 @@ contract MADRouter is MADRouterBase {
         address[] memory to,
         uint128[] memory _amount
     ) public payable {
-        uint8 _tokenType = _tokenRender(_token);
-        // _paymentCheck(_FEE_BURN);
-        _checkTokenType(_tokenType);
+        _tokenRender(_token);
+        _paymentCheck(_FEE_BURN);
         ERC1155Basic(_token).burn{ value: msg.value }(to, _ids, _amount);
     }
 
@@ -136,9 +130,8 @@ contract MADRouter is MADRouterBase {
         uint128[] memory _ids,
         uint128[] memory _balances
     ) public payable {
-        uint8 _tokenType = _tokenRender(_token);
-
-        _checkTokenType(_tokenType);
+        _tokenRender(_token);
+        _paymentCheck(_FEE_BURN);
         ERC1155Basic(_token).burnBatch{ value: msg.value }(
             _from, _ids, _balances
         );

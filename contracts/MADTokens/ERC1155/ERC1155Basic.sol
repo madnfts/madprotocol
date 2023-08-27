@@ -16,13 +16,6 @@ contract ERC1155Basic is ERC1155, ImplBase {
     using Strings for uint256;
 
     ////////////////////////////////////////////////////////////////
-    //                          IMMUTABLE                         //
-    ////////////////////////////////////////////////////////////////
-
-    /// @dev Max balance allowed to be minted for each id.
-    uint128 public immutable maxIdBalance;
-
-    ////////////////////////////////////////////////////////////////
     //                           STORAGE                          //
     ////////////////////////////////////////////////////////////////
 
@@ -30,7 +23,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
     /// @dev Live supply counter for each id's balance, excludes burned tokens.
     /// @dev Mint counter for each id's balance, includes burnt count.
     /// `uint128`  [0...127]   := liveBalance
-    /// `uint128`  [128...255] := balanceCount
+    /// `uint128`  [128...255] := mintCount
     /// (id) => (_balanceRegistrar{`uint128`,`uint128`})
     mapping(uint256 => uint256) internal _balanceRegistrar;
 
@@ -38,13 +31,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    constructor(Types.CollectionArgs memory args)
-        /*  */
-        ImplBase(args)
-    /*  */
-    {
-        maxIdBalance = uint128(uint256(bytes32(args._maxSupply)));
-
+    constructor(Types.CollectionArgs memory args) ImplBase(args) {
         emit URI(args._baseURI, 0x00);
     }
 
@@ -55,19 +42,12 @@ contract ERC1155Basic is ERC1155, ImplBase {
     /// @dev Transfer event emitted by parent ERC1155 contract.
     /// @dev Loop runs out of gas before overflowing.
     /// @dev Function Signature := 0xf745586f
-    function mintTo(
-        address to,
-        uint128 amount,
-        /// @todo FE must be adapted here.
-        uint128 balance
-    ) external payable authorised {
-        (uint256 curId, uint256 endId) = _prepareOwnerMint(amount);
-
-        unchecked {
-            do {
-                _mint(to, curId, uint256(balance), "");
-            } while (curId++ != endId);
-        }
+    function mintTo(address to, uint128 amount, uint128 _id)
+        external
+        payable
+        authorised
+    {
+        _mint(to, _id, uint256(amount), "");
     }
 
     /// @dev Transfer event emitted by parent ERC1155 contract.
@@ -77,7 +57,6 @@ contract ERC1155Basic is ERC1155, ImplBase {
         uint128[] memory amounts
     ) external payable authorised {
         uint256 len = ids.length;
-        _prepareOwnerMint(len);
 
         uint256[] memory _ids;
         uint256[] memory _amounts;
@@ -95,8 +74,6 @@ contract ERC1155Basic is ERC1155, ImplBase {
         uint128[] memory balances
     ) external payable authorised {
         uint256 len = ids.length;
-        _decSupply(len);
-
         assembly {
             if iszero(and(eq(len, mload(balances)), eq(len, mload(from)))) {
                 mstore(0, 0x3b800a46)
@@ -120,8 +97,6 @@ contract ERC1155Basic is ERC1155, ImplBase {
         uint128[] memory ids,
         uint128[] memory amounts
     ) external payable authorised {
-        _decSupply(ids.length);
-
         uint256[] memory _ids;
         uint256[] memory _amounts;
         assembly {
@@ -137,15 +112,12 @@ contract ERC1155Basic is ERC1155, ImplBase {
     ////////////////////////////////////////////////////////////////
 
     /// @dev Transfer events emitted by parent ERC1155 contract.
-    function mint(uint128 amount, uint128 balance) external payable {
-        (uint256 curId, uint256 endId) =
-            _preparePublicMint(uint256(amount), uint256(amount * balance));
-
-        unchecked {
-            do {
-                _mint(msg.sender, curId, uint256(balance), "");
-            } while (curId++ != endId);
-        }
+    function mint(uint256 _id, uint128 amount, uint128 balance)
+        external
+        payable
+    {
+        _preparePublicMint(uint256(amount), uint256(amount * balance));
+        _mint(msg.sender, _id, uint256(amount), "");
     }
 
     /// @dev Transfer event emitted by parent ERC1155 contract.
@@ -229,7 +201,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
         virtual
         override(ERC1155)
     {
-        uint128 maxBal = maxIdBalance;
+        uint128 maxBal = maxSupply;
         assembly {
             mstore(32, _balanceRegistrar.slot)
             mstore(0, id)
@@ -259,7 +231,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
         uint256[] memory ids,
         uint256[] memory amounts
     ) internal virtual override(ERC1155) {
-        uint128 maxBal = maxIdBalance;
+        uint128 maxBal = maxSupply;
         assembly {
             let idsLen := mload(ids)
             if iszero(eq(idsLen, mload(amounts))) {

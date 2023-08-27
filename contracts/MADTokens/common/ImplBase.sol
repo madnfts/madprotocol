@@ -44,16 +44,10 @@ abstract contract ImplBase is
     //                           STORAGE                          //
     ////////////////////////////////////////////////////////////////
 
-    /// @notice `_supplyRegistrar` bits layout.
-    /// @dev Live supply counter, excludes burned tokens.
-    /// `uint128`  [0...127]   := liveSupply
-    /// @dev Mint counter, includes burnt count.
-    /// `uint128`  [128...255] := mintCount
-    uint256 internal _supplyRegistrar;
-
     /// @notice Lock the URI (default := false).
     /// @dev The URI can't be unlocked.
     bool public uriLock;
+
     /// @notice Public mint state default := false.
     bool public publicMintState;
 
@@ -68,7 +62,7 @@ abstract contract ImplBase is
         PaymentManager(args._splitter, args._erc20, args._price)
         ERC2981(uint256(args._royaltyPercentage))
     {
-        require(args._maxSupply < _MAXSUPPLY_BOUND, "MAXSUPPLY_BOUND_EXCEEDED");
+        if (args._maxSupply > _MAXSUPPLY_BOUND) revert MaxSupplyBoundExceeded();
 
         // immutable
         maxSupply = uint128(args._maxSupply);
@@ -151,10 +145,6 @@ abstract contract ImplBase is
         return _readString(_BASE_URI_SLOT);
     }
 
-    function totalSupply() public view returns (uint256) {
-        return liveSupply();
-    }
-
     function royaltyInfo(uint256, uint256 salePrice)
         public
         view
@@ -166,65 +156,14 @@ abstract contract ImplBase is
         royaltyAmount = (salePrice * _royaltyFee) / 10_000;
     }
 
-    function liveSupply() public view returns (uint256 _liveSupply) {
-        assembly {
-            _liveSupply := and(_SR_UPPERBITS, sload(_supplyRegistrar.slot))
-        }
-    }
-
-    function mintCount() public view returns (uint256 _mintCount) {
-        assembly {
-            _mintCount := shr(_MINTCOUNT_BITPOS, sload(_supplyRegistrar.slot))
-        }
-    }
-
     ////////////////////////////////////////////////////////////////
     //                     INTERNAL FUNCTIONS                     //
     ////////////////////////////////////////////////////////////////
 
-    function _incrementCounter(uint256 _amount)
-        internal
-        returns (uint256 _nextId, uint256 _mintCount)
-    {
-        // liveSupply = liveSupply + amount;
-        // mintCount = mintCount + amount;
-        // uint256 curId = mintCount + 1;
-        assembly {
-            let _prev := shr(_MINTCOUNT_BITPOS, sload(_supplyRegistrar.slot))
-            let _liveSupply :=
-                add(and(_SR_UPPERBITS, sload(_supplyRegistrar.slot)), _amount)
-            _nextId := add(_prev, 0x01)
-            _mintCount := add(_prev, _amount)
-
-            sstore(
-                _supplyRegistrar.slot,
-                or(_liveSupply, shl(_MINTCOUNT_BITPOS, _mintCount))
-            )
-        }
-    }
-
-    function _prepareOwnerMint(uint256 amount)
-        internal
-        returns (uint256 curId, uint256 endId)
-    {
-        // require(amount < _MAXSUPPLY_BOUND && balance < _MAXSUPPLY_BOUND);
-        _hasReachedMax(uint256(amount), maxSupply);
-        return _incrementCounter(uint256(amount));
-    }
-
-    function _preparePublicMint(uint256 amount, uint256 totalAmount)
-        internal
-        returns (uint256 curId, uint256 endId)
-    {
+    function _preparePublicMint(uint256 amount, uint256 totalAmount) internal {
         _publicMintAccess();
-
-        _hasReachedMax(amount, maxSupply);
-
         uint256 value = _publicMintPriceCheck(totalAmount);
-
         _publicPaymentHandler(value);
-
-        return _incrementCounter(amount);
     }
 
     function _publicMintAccess() internal view {
@@ -234,40 +173,6 @@ abstract contract ImplBase is
                 revert(28, 4)
             }
         }
-    }
-
-    function _hasReachedMax(uint256 _amount, uint256 _maxSupply)
-        internal
-        view
-    {
-        assembly {
-            // if (mintCount + amount > maxSupply)
-            if gt(
-                add(
-                    shr(_MINTCOUNT_BITPOS, sload(_supplyRegistrar.slot)),
-                    _amount
-                ),
-                _maxSupply
-            ) {
-                // revert MaxSupplyReached();
-                mstore(0, 0xd05cb609)
-                revert(28, 4)
-            }
-        }
-    }
-
-    function _decSupply(uint256 _amount) internal {
-        assembly {
-            let _liveSupply := and(_SR_UPPERBITS, sload(_supplyRegistrar.slot))
-            if or(
-                iszero(_liveSupply), gt(sub(_liveSupply, _amount), _liveSupply)
-            ) {
-                // DecOverflow()
-                mstore(0x00, 0xce3a3d37)
-                revert(0x1c, 0x04)
-            }
-        }
-        _supplyRegistrar = _supplyRegistrar - _amount;
     }
 
     function _readString(bytes32 _slot)

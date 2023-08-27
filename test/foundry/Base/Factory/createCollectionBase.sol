@@ -89,16 +89,12 @@ abstract contract CreateCollectionBase is
         );
 
         vm.prank(factory.router(), collectionOwner);
-        (address _creator, bool _check) = factory.creatorCheck(collectionId);
+        bool _check = factory.creatorCheck(collectionId, creator);
 
-        assertTrue(_creator == collectionOwner, "Invalid creator");
+        assertTrue(creator == collectionOwner, "Invalid creator");
         assertTrue(_check, "Invalid creator check");
 
         vm.prank(factory.router(), collectionOwner);
-        assertTrue(
-            factory.collectionTypeChecker(collectionId) == params.tokenType,
-            "Invalid type checker"
-        );
 
         assertTrue(collectionType == params.tokenType, "Invalid token type");
         assertTrue(creator == collectionOwner, "Invalid collection owner");

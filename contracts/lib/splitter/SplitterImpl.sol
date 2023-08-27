@@ -87,8 +87,6 @@ contract SplitterImpl is SplitterEventsAndErrors {
                 ++i;
             }
         }
-
-
     }
 
     ////////////////////////////////////////////////////////////////
@@ -197,10 +195,8 @@ contract SplitterImpl is SplitterEventsAndErrors {
         uint256 totalReceived,
         uint256 alreadyReleased
     ) private view returns (uint256) {
-
-        return (
-            (totalReceived * _shares[account]) / totalShares
-                ) - alreadyReleased;
+        return
+            ((totalReceived * _shares[account]) / totalShares) - alreadyReleased;
     }
 
     /// @dev Add a new payee to the contract.
@@ -228,12 +224,10 @@ contract SplitterImpl is SplitterEventsAndErrors {
     //                        PUBLIC GETTERS                      //
     ////////////////////////////////////////////////////////////////
 
-      /// @dev Getter for the amount of payee's releasable Ether.
+    /// @dev Getter for the amount of payee's releasable Ether.
     function releasable(address account) public view returns (uint256) {
         uint256 totalReceived = address(this).balance + totalReleased();
-        return _pendingPayment(
-            account, totalReceived, released(account)
-        );
+        return _pendingPayment(account, totalReceived, released(account));
     }
 
     /// @dev Getter for the amount of payee's releasable
@@ -247,10 +241,7 @@ contract SplitterImpl is SplitterEventsAndErrors {
         uint256 totalReceivedERC20 =
             token.balanceOf(address(this)) + totalReleased(token);
         return _pendingPayment(
-            account,
-            totalReceivedERC20,
-            released(token, account)
-
+            account, totalReceivedERC20, released(token, account)
         );
     }
 
@@ -258,7 +249,6 @@ contract SplitterImpl is SplitterEventsAndErrors {
     function payeesLength() public view returns (uint256) {
         return _payees.length;
     }
-
 
     /// @dev Getter for the total amount of Ether already released.
     function totalReleased() public view returns (uint256) {
@@ -282,12 +272,10 @@ contract SplitterImpl is SplitterEventsAndErrors {
     /// released to a payee.
     /// @dev `token` should be the address of an ERC20 contract.
     function released(IERC20 token, address account)
-        view
         public
+        view
         returns (uint256)
     {
         return _erc20Released[token][account];
     }
-
-
 }

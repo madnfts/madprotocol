@@ -196,4 +196,6 @@ interface RouterEvents is EventsAndErrorsBase {
 
     error InvalidType();
     error NoFunds();
+
+    error NotCallersCollection();
 }

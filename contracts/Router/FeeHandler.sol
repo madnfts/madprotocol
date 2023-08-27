@@ -104,7 +104,7 @@ abstract contract FeeHandler {
 
         // Transfer Fees to recipient..
         SafeTransferLib.safeTransferFrom(
-                erc20Address, msg.sender, recipient, _fee
+                IERC20(erc20Address), msg.sender, recipient, _fee
             );
     }
 

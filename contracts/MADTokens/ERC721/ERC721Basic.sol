@@ -48,7 +48,7 @@ contract ERC721Basic is ERC721, ImplBase {
     /// @dev Transfer event emitted by parent ERC721 contract.
     /// @dev Function Sighash := 0x438b1b4b
     /// @dev Loop runs out of gas before overflowing.
-    function mintTo(address to, uint128 amount) external payable authorised {
+    function mintTo(address to, uint128 amount) public payable authorised {
         _hasReachedMax(uint256(amount));
         (uint256 curId, uint256 endId) = _incrementCounter(uint256(amount));
         unchecked {
@@ -69,7 +69,7 @@ contract ERC721Basic is ERC721, ImplBase {
     /// @dev Transfer event emitted by parent ERC721 contract.
     /// @dev Function Sighash := 0xa0712d68
     /// @param amount The amount of tokens to mint.
-    function mint(uint128 amount) external payable {
+    function mint(uint128 amount) public payable {
         if (routerHasAuthority) {
             revert RouterIsEnabled();
         }
@@ -86,14 +86,17 @@ contract ERC721Basic is ERC721, ImplBase {
     }
 
     function _publicMint(address to, uint128 amount) private {
-        _hasReachedMax(uint256(amount));
+        // _hasReachedMax(uint256(amount));
         _preparePublicMint(uint256(amount), uint256(amount));
-        (uint256 curId, uint256 endId) = _incrementCounter(uint256(amount));
-        unchecked {
-            do {
-                _mint(to, curId);
-            } while (curId++ != endId);
-        }
+        // (uint256 curId, uint256 endId) = _incrementCounter(uint256(amount));
+
+        mintTo(to, amount);
+
+        // unchecked {
+        //     do {
+        //         _mint(to, curId);
+        //     } while (curId++ != endId);
+        // }
     }
 
     /// @dev Transfer event emitted by parent ERC721 contract.

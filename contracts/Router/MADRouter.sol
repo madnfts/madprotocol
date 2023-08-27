@@ -27,7 +27,7 @@ contract MADRouter is MADRouterBase {
         FactoryVerifier _factory,
         address _paymentTokenAddress,
         address _recipient
-    ) MADRouterBase(_factory, _paymentTokenAddress, _recipient) {}
+    ) MADRouterBase(_factory, _paymentTokenAddress, _recipient) { }
 
     ////////////////////////////////////////////////////////////////
     //                    CREATOR MINTING ERC721                  //
@@ -38,13 +38,14 @@ contract MADRouter is MADRouterBase {
     /// @param _token 721 token address.
     /// @param _to Receiver token address.
     /// @param _amount Num tokens to mint and send.
-    function basicMintTo(address _token, address _to, uint128 _amount)
+    function mintTo(address _token, address _to, uint128 _amount)
         public
         payable
     {
         _tokenRender(_token);
-        _paymentCheck(_FEE_MINT);
-        ERC721Basic(_token).mintTo{ value: msg.value }(_to, _amount);
+        uint256 _fee = _handleFees(_FEE_MINT, _amount);
+        uint256 _value = msg.value - _fee;
+        ERC721Basic(_token).mintTo{value: _value}(_to, _amount);
     }
 
     /// @notice Global token burn controller/single pusher for all token types.
@@ -54,8 +55,26 @@ contract MADRouter is MADRouterBase {
     ///        should be left empty for the `ERC721Minimal` type.
     function burn(address _token, uint128[] memory _ids) public payable {
         _tokenRender(_token);
-        _paymentCheck(_FEE_BURN);
-        ERC721Basic(_token).burn{ value: msg.value }(_ids);
+        uint256 _fee = _handleFees(_FEE_BURN, _ids.length);
+        uint256 _value = msg.value - _fee;
+        ERC721Basic(_token).burn{value: _value}(_ids);
+    }
+
+    ////////////////////////////////////////////////////////////////
+    //                    PUBLIC MINTING ERC721                  //
+    ////////////////////////////////////////////////////////////////
+
+    /// @notice public mint function if madRouter is not authorised.
+    /// This will open up public minting to any contract or EOA if the owner has
+    /// disabled the authorisation for the router.
+    /// Otherwise, Mad Protocol will handle the public minting.
+    /// @dev Transfer event emitted by parent ERC721 contract.
+    /// @dev Function Sighash := 0xa0712d68
+    /// @param _amount The amount of tokens to mint.
+    function mint(address _token, uint128 _amount) public payable {
+        uint256 _fee = _handleFees(_FEE_MINT, _amount);
+        uint256 _value = msg.value - _fee;
+        ERC721Basic(_token).mint{value: _value}(msg.sender, _amount);
     }
 
     ////////////////////////////////////////////////////////////////
@@ -68,15 +87,16 @@ contract MADRouter is MADRouterBase {
     /// @param _to Receiver token address.
     /// @param _amount Num tokens to mint and send.
     /// @param _balance Receiver token balance.
-    function basicMintTo(
+    function mintTo(
         address _token,
         address _to,
         uint128 _amount,
         uint128 _balance
     ) public payable {
         _tokenRender(_token);
-        _paymentCheck(_FEE_MINT);
-        ERC1155Basic(_token).mintTo{ value: msg.value }(_to, _amount, _balance);
+        uint256 _fee = _handleFees(_FEE_MINT, _amount);
+        uint256 _value = msg.value - _fee;
+        ERC1155Basic(_token).mintTo{value: _value}(_to, _amount, _balance);
     }
 
     /// @dev Function Sighash := 0x535f64e7
@@ -85,17 +105,16 @@ contract MADRouter is MADRouterBase {
     /// @param _ids Receiver token _ids array.
     /// @param _balances Receiver token balances array, length should be =
     /// _ids.length.
-    function basicMintBatchTo(
+    function mintBatchTo(
         address _token,
         address _to,
         uint128[] memory _ids,
         uint128[] memory _balances
     ) public payable {
         _tokenRender(_token);
-        _paymentCheck(_FEE_MINT);
-        ERC1155Basic(_token).mintBatchTo{ value: msg.value }(
-            _to, _ids, _balances
-        );
+        uint256 _fee = _handleFees(_FEE_MINT, _ids.length);
+        uint256 _value = msg.value - _fee;
+        ERC1155Basic(_token).mintBatchTo{value: _value}(_to, _ids, _balances);
     }
 
     /// @notice Global token burn controller/single pusher for all token types.
@@ -112,8 +131,9 @@ contract MADRouter is MADRouterBase {
         uint128[] memory _amount
     ) public payable {
         _tokenRender(_token);
-        _paymentCheck(_FEE_BURN);
-        ERC1155Basic(_token).burn{ value: msg.value }(to, _ids, _amount);
+        uint256 _fee = _handleFees(_FEE_BURN, _ids.length);
+        uint256 _value = msg.value - _fee;
+        ERC1155Basic(_token).burn{value: _value}(to, _ids, _amount);
     }
 
     /// @notice Global token batch burn controller/single pusher for all token
@@ -131,9 +151,26 @@ contract MADRouter is MADRouterBase {
         uint128[] memory _balances
     ) public payable {
         _tokenRender(_token);
-        _paymentCheck(_FEE_BURN);
-        ERC1155Basic(_token).burnBatch{ value: msg.value }(
-            _from, _ids, _balances
-        );
+        uint256 _fee = _handleFees(_FEE_BURN, _ids.length);
+        uint256 _value = msg.value - _fee;
+        ERC1155Basic(_token).burnBatch{value: _value}(_from, _ids, _balances);
+    }
+
+    ////////////////////////////////////////////////////////////////
+    //                    PUBLIC MINTING ERC1155                  //
+    ////////////////////////////////////////////////////////////////
+
+    /// @notice ERC1155Basic creator mint function handler.
+    /// @dev Function Sighash := 0x490f7027
+    /// @param _token 1155 token address.
+    /// @param _to Receiver token address.
+    /// @param _amount Num tokens to mint and send.
+    function mint(address _token, address _to, uint128 _id, uint128 _amount)
+        public
+        payable
+    {
+        uint256 _fee = _handleFees(_FEE_MINT, _amount);
+        uint256 _value = msg.value - _fee;
+        ERC1155Basic(_token).mint{value: _value}(_to, _id, _amount);
     }
 }

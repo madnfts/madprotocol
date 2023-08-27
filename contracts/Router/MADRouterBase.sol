@@ -25,9 +25,6 @@ abstract contract MADRouterBase is MADBase, FeeHandler, RouterEvents {
     //                           STORAGE                          //
     ////////////////////////////////////////////////////////////////
 
-    /// @dev The recipient address used for public mint fees.
-    address public recipient;
-
     /// @notice FactoryVerifier connecting the router to madFactory.
     FactoryVerifier public madFactory;
 

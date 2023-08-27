@@ -2,12 +2,16 @@
 
 pragma solidity 0.8.19;
 
+import { SafeTransferLib } from "contracts/lib/utils/SafeTransferLib.sol";
 import { RouterEvents } from "contracts/Shared/EventsAndErrors.sol";
 
 abstract contract FeeHandler {
     ////////////////////////////////////////////////////////////////
     //                           STORAGE                          //
     ////////////////////////////////////////////////////////////////
+
+    /// @notice The recipient address used for public mint fees.
+    address public recipient;
 
     /// @notice Passed to feeLookup to return feeMint.
     bytes4 internal constant _FEE_MINT = 0x40d097c3;
@@ -72,12 +76,18 @@ abstract contract FeeHandler {
     /// @notice Payment check for mint and burn functions.
     /// @dev Function Sighash := 0x3bbed4a0
     /// @param _feeType _FEE_MINT | _FEE_BURN
-    function _paymentCheck(bytes4 _feeType) internal view {
-        uint256 _fee = feeLookup(_feeType);
+    function _handleFees(bytes4 _feeType, uint256 _amount)
+        internal
+        returns (uint256 _fee)
+    {
+        _fee = feeLookup(_feeType) * _amount;
         // Check if value is less than the fee.. logic to check the price (if
         // any)
         // will be handled in the NFT contract itself.
         if (msg.value < _fee) revert RouterEvents.InvalidFees();
+
+        // Transfer Fees to recipient..
+        SafeTransferLib.safeTransferETH(payable(recipient), _fee);
     }
 
     /// @notice Change the Routers mint and burn fees.

@@ -43,7 +43,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
     /// @dev Loop runs out of gas before overflowing.
     /// @dev Function Signature := 0xf745586f
     function mintTo(address to, uint128 amount, uint128 _id)
-        external
+        public
         payable
         authorised
     {
@@ -55,7 +55,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
         address to,
         uint128[] memory ids,
         uint128[] memory amounts
-    ) external payable authorised {
+    ) public payable authorised {
         uint256 len = ids.length;
 
         uint256[] memory _ids;
@@ -72,7 +72,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
         address[] memory from,
         uint128[] memory ids,
         uint128[] memory balances
-    ) external payable authorised {
+    ) public payable authorised {
         uint256 len = ids.length;
         assembly {
             if iszero(and(eq(len, mload(balances)), eq(len, mload(from)))) {
@@ -96,7 +96,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
         address from,
         uint128[] memory ids,
         uint128[] memory amounts
-    ) external payable authorised {
+    ) public payable authorised {
         uint256[] memory _ids;
         uint256[] memory _amounts;
         assembly {
@@ -112,32 +112,48 @@ contract ERC1155Basic is ERC1155, ImplBase {
     ////////////////////////////////////////////////////////////////
 
     /// @dev Transfer events emitted by parent ERC1155 contract.
-    function mint(uint256 _id, uint128 amount, uint128 balance)
+    function mint(uint128 _id, uint128 amount) public payable {
+        _publicMint(msg.sender, _id, amount);
+    }
+
+    function mint(address _to, uint128 _id, uint128 amount)
         external
         payable
+        authorised
     {
-        _preparePublicMint(uint256(amount), uint256(amount * balance));
-        _mint(msg.sender, _id, uint256(amount), "");
+        _publicMint(_to, _id, amount);
+    }
+
+    function _publicMint(address to, uint128 _id, uint128 amount) private {
+        _preparePublicMint(uint256(amount), uint256(amount));
+        mintTo(to, _id, amount);
     }
 
     /// @dev Transfer event emitted by parent ERC1155 contract.
     function mintBatch(uint128[] memory ids, uint128[] calldata amounts)
-        external
+        public
         payable
     {
-        uint256 len = ids.length;
+        _publicMintBatch(msg.sender, ids, amounts);
+    }
 
+    function mintBatch(
+        address _to,
+        uint128[] memory ids,
+        uint128[] calldata amounts
+    ) external payable authorised {
+        _publicMintBatch(_to, ids, amounts);
+    }
+
+    function _publicMintBatch(
+        address _to,
+        uint128[] memory ids,
+        uint128[] calldata amounts
+    ) private {
+        uint256 len = ids.length;
         _preparePublicMint(len, uint256(len * _sumAmounts(amounts)));
 
-        uint128[] memory _amountsCasted = amounts;
-        uint256[] memory _amounts;
-        uint256[] memory _ids;
-        assembly {
-            _ids := ids
-            _amounts := _amountsCasted
-        }
-
-        _batchMint(msg.sender, _ids, _amounts, "");
+        mintBatchTo(_to, ids, amounts);
     }
 
     function _sumAmounts(uint128[] calldata amounts)

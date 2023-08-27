@@ -2,6 +2,8 @@
 abi2json/
 src/
 
+test/Flattened/
+
 .yarn/*
 !.yarn/patches
 !.yarn/releases

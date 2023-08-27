@@ -82,7 +82,8 @@ abstract contract FeeHandler {
         returns (uint256 _fee)
     {
         _fee = feeLookup(_feeType) * _amount;
-        // Check if msg.sender balance is less than the fee.. logic to check the price
+        // Check if msg.sender balance is less than the fee.. logic to check the
+        // price
         // (if any) will be handled in the NFT contract itself.
         if (msg.value < _fee) revert RouterEvents.InvalidFees();
 
@@ -98,14 +99,17 @@ abstract contract FeeHandler {
         returns (uint256 _fee)
     {
         _fee = feeLookup(_feeType, erc20Address) * _amount;
-        // Check if msg.sender balance is less than the fee.. logic to check the price
+        // Check if msg.sender balance is less than the fee.. logic to check the
+        // price
         // (if any) will be handled in the NFT contract itself.
-        if (IERC20(erc20Address).balanceOf(msg.sender) < _fee) revert RouterEvents.InvalidFees();
+        if (IERC20(erc20Address).balanceOf(msg.sender) < _fee) {
+            revert RouterEvents.InvalidFees();
+        }
 
         // Transfer Fees to recipient..
         SafeTransferLib.safeTransferFrom(
-                IERC20(erc20Address), msg.sender, recipient, _fee
-            );
+            IERC20(erc20Address), msg.sender, recipient, _fee
+        );
     }
 
     /// @notice Change the Routers mint and burn fees.

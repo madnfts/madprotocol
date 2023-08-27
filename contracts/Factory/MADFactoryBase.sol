@@ -281,7 +281,7 @@ abstract contract MADFactoryBase is
 
     /// @dev `MADRouter` instance setter.
     /// @dev Function Sighash := 0xc0d78655
-    function setRouter(address _router) external onlyOwner {
+    function setRouter(address _router) public onlyOwner {
         _isZeroAddr(_router);
         assembly {
             sstore(router.slot, _router)

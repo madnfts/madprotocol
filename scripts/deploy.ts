@@ -37,7 +37,7 @@ const deployFactory = async (erc20Address) => {
   return factory;
 };
 
-const deployRouter = async (erc20Address, factoryAddress, deployerAddress ) => {
+const deployRouter = async (erc20Address, factoryAddress, deployerAddress) => {
   const MADRouter = await ethers.getContractFactory("MADRouter");
   const router = await MADRouter.deploy(factoryAddress, erc20Address, deployerAddress);
   console.log(`Router address: ${router.address}`);
@@ -76,18 +76,18 @@ const main = async () => {
     console.log(`Router Address Set..`);
 
     await factory.addCollectionType(
-      ethers.constants.One,
+      1,
       ERC721Basic.bytecode,
     );
 
-      console.log(`Collection Type ERC721 Added..`)
+    console.log(`Collection Type ERC721 Added..`)
 
     await factory.addCollectionType(
-      ethers.constants.Two,
+      2,
       ERC1155Basic.bytecode,
     );
 
-      console.log(`Collection Type ERC1155 Added..`)
+    console.log(`Collection Type ERC1155 Added..`)
 
     console.log("Deployment completed successfully.");
     process.exit(0);

@@ -2,6 +2,7 @@
 
 pragma solidity 0.8.19;
 
+import { IERC20 } from "contracts/lib/tokens/IERC20.sol";
 import { SafeTransferLib } from "contracts/lib/utils/SafeTransferLib.sol";
 import { RouterEvents } from "contracts/Shared/EventsAndErrors.sol";
 
@@ -73,7 +74,7 @@ abstract contract FeeHandler {
         }
     }
 
-    /// @notice Payment check for mint and burn functions.
+    /// @notice Payment handler for mint and burn functions.
     /// @dev Function Sighash := 0x3bbed4a0
     /// @param _feeType _FEE_MINT | _FEE_BURN
     function _handleFees(bytes4 _feeType, uint256 _amount)
@@ -81,13 +82,30 @@ abstract contract FeeHandler {
         returns (uint256 _fee)
     {
         _fee = feeLookup(_feeType) * _amount;
-        // Check if value is less than the fee.. logic to check the price (if
-        // any)
-        // will be handled in the NFT contract itself.
+        // Check if msg.sender balance is less than the fee.. logic to check the price
+        // (if any) will be handled in the NFT contract itself.
         if (msg.value < _fee) revert RouterEvents.InvalidFees();
 
         // Transfer Fees to recipient..
         SafeTransferLib.safeTransferETH(payable(recipient), _fee);
+    }
+
+    /// @notice Payment handler for mint and burn functions.
+    /// @dev Function Sighash := 0x3bbed4a0
+    /// @param _feeType _FEE_MINT | _FEE_BURN
+    function _handleFees(bytes4 _feeType, uint256 _amount, address erc20Address)
+        internal
+        returns (uint256 _fee)
+    {
+        _fee = feeLookup(_feeType, erc20Address) * _amount;
+        // Check if msg.sender balance is less than the fee.. logic to check the price
+        // (if any) will be handled in the NFT contract itself.
+        if (IERC20(erc20Address).balanceOf(msg.sender) < _fee) revert RouterEvents.InvalidFees();
+
+        // Transfer Fees to recipient..
+        SafeTransferLib.safeTransferFrom(
+                erc20, msg.sender, address(splitter), _value
+            );
     }
 
     /// @notice Change the Routers mint and burn fees.

@@ -1,19 +1,24 @@
-// SPDX-License-Identifier: AGPL-3.0-only
-
-pragma solidity 0.8.19;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.4;
 
 /// @notice Simple ERC721 implementation with storage hitchhiking.
-/// @author Solady
-/// (https://github.com/vectorized/solady/blob/main/src/tokens/ERC721.sol)
-/// @author Modified from Solmate
-/// (https://github.com/transmissions11/solmate/blob/main/src/tokens/ERC721.sol)
-/// @author Modified from OpenZeppelin
-/// (https://github.com/OpenZeppelin/openzeppelin-contracts/tree/master/contracts/token/ERC721/ERC721.sol)
-
-/// Note:
+/// @author Solady (https://github.com/vectorized/solady/blob/main/src/tokens/ERC721.sol)
+/// @author Modified from Solmate (https://github.com/transmissions11/solmate/blob/main/src/tokens/ERC721.sol)
+/// @author Modified from OpenZeppelin (https://github.com/OpenZeppelin/openzeppelin-contracts/tree/master/contracts/token/ERC721/ERC721.sol)
+///
+/// @dev Note:
 /// The ERC721 standard allows for self-approvals.
 /// For performance, this implementation WILL NOT revert for such actions.
 /// Please add any checks with overrides if desired.
+///
+/// For performance, methods are made payable where permitted by the ERC721 standard.
+///
+/// For performance, most of the code is manually duplicated and inlined.
+/// Overriding internal functions may not alter the functionality of external functions.
+/// Please check and override accordingly.
+///
+/// Please take care when overriding to never violate the ERC721 invariant:
+/// the balance of an owner must be always be equal to their number of ownership slots.
 abstract contract ERC721 {
     /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
     /*                         CONSTANTS                          */
@@ -56,20 +61,13 @@ abstract contract ERC721 {
     /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
 
     /// @dev Emitted when token `id` is transferred from `from` to `to`.
-    event Transfer(
-        address indexed from, address indexed to, uint256 indexed id
-    );
+    event Transfer(address indexed from, address indexed to, uint256 indexed id);
 
     /// @dev Emitted when `owner` enables `account` to manage the `id` token.
-    event Approval(
-        address indexed owner, address indexed account, uint256 indexed id
-    );
+    event Approval(address indexed owner, address indexed account, uint256 indexed id);
 
-    /// @dev Emitted when `owner` enables or disables `operator` to manage all
-    /// of their tokens.
-    event ApprovalForAll(
-        address indexed owner, address indexed operator, bool isApproved
-    );
+    /// @dev Emitted when `owner` enables or disables `operator` to manage all of their tokens.
+    event ApprovalForAll(address indexed owner, address indexed operator, bool isApproved);
 
     /// @dev `keccak256(bytes("Transfer(address,address,uint256)"))`.
     uint256 private constant _TRANSFER_EVENT_SIGNATURE =
@@ -94,8 +92,8 @@ abstract contract ERC721 {
     ///     let ownershipSlot := add(id, add(id, keccak256(0x00, 0x20)))
     /// ```
     /// Bits Layout:
-    // - [0..159]   `addr`
-    // - [160..223] `extraData`
+    /// - [0..159]   `addr`
+    /// - [160..255] `extraData`
     ///
     /// The approved address slot is given by: `add(1, ownershipSlot)`.
     ///
@@ -109,7 +107,7 @@ abstract contract ERC721 {
     /// ```
     /// Bits Layout:
     /// - [0..31]   `balance`
-    /// - [32..225] `aux`
+    /// - [32..255] `aux`
     ///
     /// The `operator` approval slot of `owner` is given by:
     /// ```
@@ -117,8 +115,10 @@ abstract contract ERC721 {
     ///     mstore(0x00, owner)
     ///     let operatorApprovalSlot := keccak256(0x0c, 0x30)
     /// ```
-    uint256 private constant _ERC721_MASTER_SLOT_SEED =
-        0x7d8825530a5a2e7a << 192;
+    uint256 private constant _ERC721_MASTER_SLOT_SEED = 0x7d8825530a5a2e7a << 192;
+
+    /// @dev Pre-shifted and pre-masked constant.
+    uint256 private constant _ERC721_MASTER_SLOT_SEED_MASKED = 0x0a5a2e7a00000000;
 
     /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
     /*                      ERC721 METADATA                       */
@@ -156,12 +156,7 @@ abstract contract ERC721 {
     ///
     /// Requirements:
     /// - `owner` must not be the zero address.
-    function balanceOf(address owner)
-        public
-        view
-        virtual
-        returns (uint256 result)
-    {
+    function balanceOf(address owner) public view virtual returns (uint256 result) {
         /// @solidity memory-safe-assembly
         assembly {
             // Revert if the `owner` is the zero address.
@@ -175,16 +170,11 @@ abstract contract ERC721 {
         }
     }
 
-    /// @dev Returns the account approved to managed token `id`.
+    /// @dev Returns the account approved to manage token `id`.
     ///
     /// Requirements:
     /// - Token `id` must exist.
-    function getApproved(uint256 id)
-        public
-        view
-        virtual
-        returns (address result)
-    {
+    function getApproved(uint256 id) public view virtual returns (address result) {
         /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, id)
@@ -205,13 +195,12 @@ abstract contract ERC721 {
     /// - The caller must be the owner of the token,
     ///   or an approved operator for the token owner.
     ///
-    /// Emits a {Approval} event.
+    /// Emits an {Approval} event.
     function approve(address account, uint256 id) public payable virtual {
         _approve(msg.sender, account, id);
     }
 
-    /// @dev Returns whether `operator` is approved to manage the tokens of
-    /// `owner`.
+    /// @dev Returns whether `operator` is approved to manage the tokens of `owner`.
     function isApprovedForAll(address owner, address operator)
         public
         view
@@ -220,40 +209,30 @@ abstract contract ERC721 {
     {
         /// @solidity memory-safe-assembly
         assembly {
-            mstore(
-                0x1c, or(_ERC721_MASTER_SLOT_SEED, shr(96, shl(96, operator)))
-            )
+            mstore(0x1c, operator)
+            mstore(0x08, _ERC721_MASTER_SLOT_SEED_MASKED)
             mstore(0x00, owner)
             result := sload(keccak256(0x0c, 0x30))
         }
     }
 
-    /// @dev Sets whether `operator` is approved to manage the tokens of the
-    /// caller.
+    /// @dev Sets whether `operator` is approved to manage the tokens of the caller.
     ///
-    /// Emits a {ApprovalForAll} event.
-    function setApprovalForAll(address operator, bool isApproved)
-        public
-        virtual
-    {
+    /// Emits an {ApprovalForAll} event.
+    function setApprovalForAll(address operator, bool isApproved) public virtual {
         /// @solidity memory-safe-assembly
         assembly {
-            // Clear the upper 96 bits.
-            operator := shr(96, shl(96, operator))
             // Convert to 0 or 1.
             isApproved := iszero(iszero(isApproved))
             // Update the `isApproved` for (`msg.sender`, `operator`).
-            mstore(0x1c, or(_ERC721_MASTER_SLOT_SEED, operator))
+            mstore(0x1c, operator)
+            mstore(0x08, _ERC721_MASTER_SLOT_SEED_MASKED)
             mstore(0x00, caller())
             sstore(keccak256(0x0c, 0x30), isApproved)
             // Emit the {ApprovalForAll} event.
             mstore(0x00, isApproved)
             log3(
-                0x00,
-                0x20,
-                _APPROVAL_FOR_ALL_EVENT_SIGNATURE,
-                caller(),
-                operator
+                0x00, 0x20, _APPROVAL_FOR_ALL_EVENT_SIGNATURE, caller(), shr(96, shl(96, operator))
             )
         }
     }
@@ -265,16 +244,11 @@ abstract contract ERC721 {
     /// - Token `id` must exist.
     /// - `from` must be the owner of the token.
     /// - `to` cannot be the zero address.
-    /// - The caller must be the owner of the token, or be approved to manage
-    /// the token.
+    /// - The caller must be the owner of the token, or be approved to manage the token.
     ///
     /// Emits a {Transfer} event.
-    function transferFrom(address from, address to, uint256 id)
-        public
-        payable
-        virtual
-    {
-        // _beforeTokenTransfer(from, to, id);
+    function transferFrom(address from, address to, uint256 id) public payable virtual {
+        _beforeTokenTransfer(from, to, id);
         /// @solidity memory-safe-assembly
         assembly {
             // Clear the upper 96 bits.
@@ -306,8 +280,7 @@ abstract contract ERC721 {
                 mstore(0x00, from)
                 let approvedAddress := sload(add(1, ownershipSlot))
                 // Revert if the caller is not the owner, nor approved.
-                if iszero(or(eq(caller(), from), eq(caller(), approvedAddress)))
-                {
+                if iszero(or(eq(caller(), from), eq(caller(), approvedAddress))) {
                     if iszero(sload(keccak256(0x0c, 0x30))) {
                         mstore(0x00, 0x4b6e7f18) // `NotOwnerNorApproved()`.
                         revert(0x1c, 0x04)
@@ -337,15 +310,11 @@ abstract contract ERC721 {
             // Emit the {Transfer} event.
             log4(0x00, 0x00, _TRANSFER_EVENT_SIGNATURE, from, to, id)
         }
-        // _afterTokenTransfer(from, to, id);
+        _afterTokenTransfer(from, to, id);
     }
 
     /// @dev Equivalent to `safeTransferFrom(from, to, id, "")`.
-    function safeTransferFrom(address from, address to, uint256 id)
-        public
-        payable
-        virtual
-    {
+    function safeTransferFrom(address from, address to, uint256 id) public payable virtual {
         transferFrom(from, to, id);
         if (_hasCode(to)) _checkOnERC721Received(from, to, id, "");
     }
@@ -357,40 +326,29 @@ abstract contract ERC721 {
     /// - Token `id` must exist.
     /// - `from` must be the owner of the token.
     /// - `to` cannot be the zero address.
-    /// - The caller must be the owner of the token, or be approved to manage
-    /// the token.
+    /// - The caller must be the owner of the token, or be approved to manage the token.
     /// - If `to` refers to a smart contract, it must implement
-    ///   {IERC721Receiver-onERC721Received}, which is called upon a safe
-    /// transfer.
+    ///   {IERC721Receiver-onERC721Received}, which is called upon a safe transfer.
     ///
     /// Emits a {Transfer} event.
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 id,
-        bytes calldata data
-    ) public payable virtual {
+    function safeTransferFrom(address from, address to, uint256 id, bytes calldata data)
+        public
+        payable
+        virtual
+    {
         transferFrom(from, to, id);
         if (_hasCode(to)) _checkOnERC721Received(from, to, id, data);
     }
 
-    /// @dev Returns true if this contract implements the interface defined by
-    /// `interfaceId`.
+    /// @dev Returns true if this contract implements the interface defined by `interfaceId`.
     /// See: https://eips.ethereum.org/EIPS/eip-165
     /// This function call must use less than 30000 gas.
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        virtual
-        returns (bool result)
-    {
+    function supportsInterface(bytes4 interfaceId) public view virtual returns (bool result) {
         /// @solidity memory-safe-assembly
         assembly {
             let s := shr(224, interfaceId)
-            // ERC165: 0x01ffc9a7, ERC721: 0x80ac58cd, ERC721Metadata:
-            // 0x5b5e139f.
-            result :=
-                or(or(eq(s, 0x01ffc9a7), eq(s, 0x80ac58cd)), eq(s, 0x5b5e139f))
+            // ERC165: 0x01ffc9a7, ERC721: 0x80ac58cd, ERC721Metadata: 0x5b5e139f.
+            result := or(or(eq(s, 0x01ffc9a7), eq(s, 0x80ac58cd)), eq(s, 0x5b5e139f))
         }
     }
 
@@ -409,20 +367,13 @@ abstract contract ERC721 {
     }
 
     /// @dev Returns the owner of token `id`.
-    /// Returns the zero address instead of reverting if the token does not
-    /// exist.
-    function _ownerOf(uint256 id)
-        internal
-        view
-        virtual
-        returns (address result)
-    {
+    /// Returns the zero address instead of reverting if the token does not exist.
+    function _ownerOf(uint256 id) internal view virtual returns (address result) {
         /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, id)
             mstore(0x1c, _ERC721_MASTER_SLOT_SEED)
-            result :=
-                shr(96, shl(96, sload(add(id, add(id, keccak256(0x00, 0x20))))))
+            result := shr(96, shl(96, sload(add(id, add(id, keccak256(0x00, 0x20))))))
         }
     }
 
@@ -430,17 +381,13 @@ abstract contract ERC721 {
     /*            INTERNAL DATA HITCHHIKING FUNCTIONS             */
     /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
 
+    // For performance, no events are emitted for the hitchhiking setters.
+    // Please emit your own events if required.
+
     /// @dev Returns the auxiliary data for `owner`.
-    /// Minting, transferring, burning the tokens of `owner` will not change the
-    /// auxiliary data.
-    /// Auxiliary data can be set for any address, even if it does not have any
-    /// tokens.
-    function _getAux(address owner)
-        internal
-        view
-        virtual
-        returns (uint224 result)
-    {
+    /// Minting, transferring, burning the tokens of `owner` will not change the auxiliary data.
+    /// Auxiliary data can be set for any address, even if it does not have any tokens.
+    function _getAux(address owner) internal view virtual returns (uint224 result) {
         /// @solidity memory-safe-assembly
         assembly {
             mstore(0x1c, _ERC721_MASTER_SLOT_SEED)
@@ -450,10 +397,8 @@ abstract contract ERC721 {
     }
 
     /// @dev Set the auxiliary data for `owner` to `value`.
-    /// Minting, transferring, burning the tokens of `owner` will not change the
-    /// auxiliary data.
-    /// Auxiliary data can be set for any address, even if it does not have any
-    /// tokens.
+    /// Minting, transferring, burning the tokens of `owner` will not change the auxiliary data.
+    /// Auxiliary data can be set for any address, even if it does not have any tokens.
     function _setAux(address owner, uint224 value) internal virtual {
         /// @solidity memory-safe-assembly
         assembly {
@@ -461,21 +406,14 @@ abstract contract ERC721 {
             mstore(0x00, owner)
             let balanceSlot := keccak256(0x0c, 0x1c)
             let packed := sload(balanceSlot)
-            sstore(
-                balanceSlot, xor(packed, shl(32, xor(value, shr(32, packed))))
-            )
+            sstore(balanceSlot, xor(packed, shl(32, xor(value, shr(32, packed)))))
         }
     }
 
     /// @dev Returns the extra data for token `id`.
     /// Minting, transferring, burning a token will not change the extra data.
-    /// The extra data can be set on a non existent token.
-    function _getExtraData(uint256 id)
-        internal
-        view
-        virtual
-        returns (uint96 result)
-    {
+    /// The extra data can be set on a non-existent token.
+    function _getExtraData(uint256 id) internal view virtual returns (uint96 result) {
         /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, id)
@@ -486,7 +424,7 @@ abstract contract ERC721 {
 
     /// @dev Sets the extra data for token `id` to `value`.
     /// Minting, transferring, burning a token will not change the extra data.
-    /// The extra data can be set on a non existent token.
+    /// The extra data can be set on a non-existent token.
     function _setExtraData(uint256 id, uint96 value) internal virtual {
         /// @solidity memory-safe-assembly
         assembly {
@@ -494,10 +432,7 @@ abstract contract ERC721 {
             mstore(0x1c, _ERC721_MASTER_SLOT_SEED)
             let ownershipSlot := add(id, add(id, keccak256(0x00, 0x20)))
             let packed := sload(ownershipSlot)
-            sstore(
-                ownershipSlot,
-                xor(packed, shl(160, xor(value, shr(160, packed))))
-            )
+            sstore(ownershipSlot, xor(packed, shl(160, xor(value, shr(160, packed)))))
         }
     }
 
@@ -514,7 +449,7 @@ abstract contract ERC721 {
     ///
     /// Emits a {Transfer} event.
     function _mint(address to, uint256 id) internal virtual {
-        // _beforeTokenTransfer(address(0), to, id);
+        _beforeTokenTransfer(address(0), to, id);
         /// @solidity memory-safe-assembly
         assembly {
             // Clear the upper 96 bits.
@@ -550,7 +485,7 @@ abstract contract ERC721 {
             // Emit the {Transfer} event.
             log4(0x00, 0x00, _TRANSFER_EVENT_SIGNATURE, 0, to, id)
         }
-        // _afterTokenTransfer(address(0), to, id);
+        _afterTokenTransfer(address(0), to, id);
     }
 
     /// @dev Equivalent to `_safeMint(to, id, "")`.
@@ -565,14 +500,10 @@ abstract contract ERC721 {
     /// - Token `id` must not exist.
     /// - `to` cannot be the zero address.
     /// - If `to` refers to a smart contract, it must implement
-    ///   {IERC721Receiver-onERC721Received}, which is called upon a safe
-    /// transfer.
+    ///   {IERC721Receiver-onERC721Received}, which is called upon a safe transfer.
     ///
     /// Emits a {Transfer} event.
-    function _safeMint(address to, uint256 id, bytes memory data)
-        internal
-        virtual
-    {
+    function _safeMint(address to, uint256 id, bytes memory data) internal virtual {
         _mint(to, id);
         if (_hasCode(to)) _checkOnERC721Received(address(0), to, id, data);
     }
@@ -597,7 +528,7 @@ abstract contract ERC721 {
     /// Emits a {Transfer} event.
     function _burn(address by, uint256 id) internal virtual {
         address owner = ownerOf(id);
-        // _beforeTokenTransfer(owner, address(0), id);
+        _beforeTokenTransfer(owner, address(0), id);
         /// @solidity memory-safe-assembly
         assembly {
             // Clear the upper 96 bits.
@@ -620,9 +551,7 @@ abstract contract ERC721 {
                 let approvedAddress := sload(add(1, ownershipSlot))
                 // If `by` is not the zero address, do the authorization check.
                 // Revert if the `by` is not the owner, nor approved.
-                if iszero(
-                    or(iszero(by), or(eq(by, owner), eq(by, approvedAddress)))
-                ) {
+                if iszero(or(iszero(by), or(eq(by, owner), eq(by, approvedAddress)))) {
                     if iszero(sload(keccak256(0x0c, 0x30))) {
                         mstore(0x00, 0x4b6e7f18) // `NotOwnerNorApproved()`.
                         revert(0x1c, 0x04)
@@ -641,15 +570,14 @@ abstract contract ERC721 {
             // Emit the {Transfer} event.
             log4(0x00, 0x00, _TRANSFER_EVENT_SIGNATURE, owner, 0, id)
         }
-        // _afterTokenTransfer(owner, address(0), id);
+        _afterTokenTransfer(owner, address(0), id);
     }
 
     /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
     /*                INTERNAL APPROVAL FUNCTIONS                 */
     /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
 
-    /// @dev Returns whether `account` is the owner of token `id`, or is
-    /// approved to managed it.
+    /// @dev Returns whether `account` is the owner of token `id`, or is approved to manage it.
     ///
     /// Requirements:
     /// - Token `id` must exist.
@@ -677,7 +605,7 @@ abstract contract ERC721 {
             // Check if `account` is the `owner`.
             if iszero(eq(account, owner)) {
                 mstore(0x00, owner)
-                // Check if `account` is approved to
+                // Check if `account` is approved to manage the token.
                 if iszero(sload(keccak256(0x0c, 0x30))) {
                     result := eq(account, sload(add(1, ownershipSlot)))
                 }
@@ -686,14 +614,8 @@ abstract contract ERC721 {
     }
 
     /// @dev Returns the account approved to manage token `id`.
-    /// Returns the zero address instead of reverting if the token does not
-    /// exist.
-    function _getApproved(uint256 id)
-        internal
-        view
-        virtual
-        returns (address result)
-    {
+    /// Returns the zero address instead of reverting if the token does not exist.
+    function _getApproved(uint256 id) internal view virtual returns (address result) {
         /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, id)
@@ -707,8 +629,7 @@ abstract contract ERC721 {
         _approve(address(0), account, id);
     }
 
-    /// @dev Sets `account` as the approved account to manage token `id`, using
-    /// `by`.
+    /// @dev Sets `account` as the approved account to manage token `id`, using `by`.
     ///
     /// Requirements:
     /// - Token `id` must exist.
@@ -716,10 +637,7 @@ abstract contract ERC721 {
     ///   or an approved operator for the token owner.
     ///
     /// Emits a {Transfer} event.
-    function _approve(address by, address account, uint256 id)
-        internal
-        virtual
-    {
+    function _approve(address by, address account, uint256 id) internal virtual {
         assembly {
             // Clear the upper 96 bits.
             let bitmaskAddress := shr(96, not(0))
@@ -754,11 +672,8 @@ abstract contract ERC721 {
     /// @dev Approve or remove the `operator` as an operator for `by`,
     /// without authorization checks.
     ///
-    /// Emits a {ApprovalForAll} event.
-    function _setApprovalForAll(address by, address operator, bool isApproved)
-        internal
-        virtual
-    {
+    /// Emits an {ApprovalForAll} event.
+    function _setApprovalForAll(address by, address operator, bool isApproved) internal virtual {
         /// @solidity memory-safe-assembly
         assembly {
             // Clear the upper 96 bits.
@@ -796,11 +711,8 @@ abstract contract ERC721 {
     ///   it must be the owner of the token, or be approved to manage the token.
     ///
     /// Emits a {Transfer} event.
-    function _transfer(address by, address from, address to, uint256 id)
-        internal
-        virtual
-    {
-        // _beforeTokenTransfer(from, to, id);
+    function _transfer(address by, address from, address to, uint256 id) internal virtual {
+        _beforeTokenTransfer(from, to, id);
         /// @solidity memory-safe-assembly
         assembly {
             // Clear the upper 96 bits.
@@ -834,9 +746,7 @@ abstract contract ERC721 {
                 let approvedAddress := sload(add(1, ownershipSlot))
                 // If `by` is not the zero address, do the authorization check.
                 // Revert if the `by` is not the owner, nor approved.
-                if iszero(
-                    or(iszero(by), or(eq(by, from), eq(by, approvedAddress)))
-                ) {
+                if iszero(or(iszero(by), or(eq(by, from), eq(by, approvedAddress)))) {
                     if iszero(sload(keccak256(0x0c, 0x30))) {
                         mstore(0x00, 0x4b6e7f18) // `NotOwnerNorApproved()`.
                         revert(0x1c, 0x04)
@@ -866,14 +776,11 @@ abstract contract ERC721 {
             // Emit the {Transfer} event.
             log4(0x00, 0x00, _TRANSFER_EVENT_SIGNATURE, from, to, id)
         }
-        // _afterTokenTransfer(from, to, id);
+        _afterTokenTransfer(from, to, id);
     }
 
     /// @dev Equivalent to `_safeTransfer(from, to, id, "")`.
-    function _safeTransfer(address from, address to, uint256 id)
-        internal
-        virtual
-    {
+    function _safeTransfer(address from, address to, uint256 id) internal virtual {
         _safeTransfer(from, to, id, "");
     }
 
@@ -884,28 +791,21 @@ abstract contract ERC721 {
     /// - Token `id` must exist.
     /// - `from` must be the owner of the token.
     /// - `to` cannot be the zero address.
-    /// - The caller must be the owner of the token, or be approved to manage
-    /// the token.
+    /// - The caller must be the owner of the token, or be approved to manage the token.
     /// - If `to` refers to a smart contract, it must implement
-    ///   {IERC721Receiver-onERC721Received}, which is called upon a safe
-    /// transfer.
+    ///   {IERC721Receiver-onERC721Received}, which is called upon a safe transfer.
     ///
     /// Emits a {Transfer} event.
-    function _safeTransfer(
-        address from,
-        address to,
-        uint256 id,
-        bytes memory data
-    ) internal virtual {
+    function _safeTransfer(address from, address to, uint256 id, bytes memory data)
+        internal
+        virtual
+    {
         _transfer(address(0), from, to, id);
         if (_hasCode(to)) _checkOnERC721Received(from, to, id, data);
     }
 
     /// @dev Equivalent to `_safeTransfer(by, from, to, id, "")`.
-    function _safeTransfer(address by, address from, address to, uint256 id)
-        internal
-        virtual
-    {
+    function _safeTransfer(address by, address from, address to, uint256 id) internal virtual {
         _safeTransfer(by, from, to, id, "");
     }
 
@@ -919,17 +819,13 @@ abstract contract ERC721 {
     /// - If `by` is not the zero address,
     ///   it must be the owner of the token, or be approved to manage the token.
     /// - If `to` refers to a smart contract, it must implement
-    ///   {IERC721Receiver-onERC721Received}, which is called upon a safe
-    /// transfer.
+    ///   {IERC721Receiver-onERC721Received}, which is called upon a safe transfer.
     ///
     /// Emits a {Transfer} event.
-    function _safeTransfer(
-        address by,
-        address from,
-        address to,
-        uint256 id,
-        bytes memory data
-    ) internal virtual {
+    function _safeTransfer(address by, address from, address to, uint256 id, bytes memory data)
+        internal
+        virtual
+    {
         _transfer(by, from, to, id);
         if (_hasCode(to)) _checkOnERC721Received(from, to, id, data);
     }
@@ -938,15 +834,11 @@ abstract contract ERC721 {
     /*                    HOOKS FOR OVERRIDING                    */
     /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
 
-    // /// @dev Hook that is called before any token transfers, including
-    // minting and burning.
-    // function _beforeTokenTransfer(address from, address to, uint256 id)
-    // internal virtual {}
+    /// @dev Hook that is called before any token transfers, including minting and burning.
+    function _beforeTokenTransfer(address from, address to, uint256 id) internal virtual {}
 
-    // /// @dev Hook that is called after any token transfers, including minting
-    // and burning.
-    // function _afterTokenTransfer(address from, address to, uint256 id)
-    // internal virtual {}
+    /// @dev Hook that is called after any token transfers, including minting and burning.
+    function _afterTokenTransfer(address from, address to, uint256 id) internal virtual {}
 
     /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
     /*                      PRIVATE HELPERS                       */
@@ -960,31 +852,24 @@ abstract contract ERC721 {
         }
     }
 
-    /// @dev Perform a call to invoke {IERC721Receiver-onERC721Received} on
-    /// `to`.
+    /// @dev Perform a call to invoke {IERC721Receiver-onERC721Received} on `to`.
     /// Reverts if the target does not support the function correctly.
-    function _checkOnERC721Received(
-        address from,
-        address to,
-        uint256 id,
-        bytes memory data
-    ) private {
+    function _checkOnERC721Received(address from, address to, uint256 id, bytes memory data)
+        private
+    {
         /// @solidity memory-safe-assembly
         assembly {
             // Prepare the calldata.
             let m := mload(0x40)
             let onERC721ReceivedSelector := 0x150b7a02
             mstore(m, onERC721ReceivedSelector)
-            mstore(add(m, 0x20), caller()) // The `operator`, which is always
-                // `msg.sender`.
+            mstore(add(m, 0x20), caller()) // The `operator`, which is always `msg.sender`.
             mstore(add(m, 0x40), shr(96, shl(96, from)))
             mstore(add(m, 0x60), id)
             mstore(add(m, 0x80), 0x80)
             let n := mload(data)
             mstore(add(m, 0xa0), n)
-            if n {
-                pop(staticcall(gas(), 4, add(data, 0x20), n, add(m, 0xc0), n))
-            }
+            if n { pop(staticcall(gas(), 4, add(data, 0x20), n, add(m, 0xc0), n)) }
             // Revert if the call reverts.
             if iszero(call(gas(), to, 0, add(m, 0x1c), add(n, 0xa4), m, 0x20)) {
                 if returndatasize() {

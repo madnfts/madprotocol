@@ -43,10 +43,14 @@ contract SplitterImpl is SplitterEventsAndErrors {
     //                           STORAGE                          //
     ////////////////////////////////////////////////////////////////
 
-    uint256 private _totalShares;
-    uint256 private _totalReleased;
+    /// @dev Native token
+    uint256 public totalShares;
 
+    uint256 private _totalReleased;
     mapping(address => uint256) private _released;
+
+    /// @dev ERC20 token
+
     mapping(IERC20 => uint256) private _erc20TotalReleased;
     mapping(IERC20 => mapping(address => uint256)) private _erc20Released;
 
@@ -83,6 +87,8 @@ contract SplitterImpl is SplitterEventsAndErrors {
                 ++i;
             }
         }
+
+
     }
 
     ////////////////////////////////////////////////////////////////
@@ -191,8 +197,10 @@ contract SplitterImpl is SplitterEventsAndErrors {
         uint256 totalReceived,
         uint256 alreadyReleased
     ) private view returns (uint256) {
-        return
-            (totalReceived * _shares[account]) / _totalShares - alreadyReleased;
+
+        return (
+            (totalReceived * _shares[account]) / totalShares
+                ) - alreadyReleased;
     }
 
     /// @dev Add a new payee to the contract.
@@ -211,7 +219,7 @@ contract SplitterImpl is SplitterEventsAndErrors {
 
         _payees.push(account);
         _shares[account] = shares_;
-        _totalShares = _totalShares + shares_;
+        totalShares = totalShares + shares_;
 
         emit PayeeAdded(account, shares_);
     }
@@ -220,15 +228,37 @@ contract SplitterImpl is SplitterEventsAndErrors {
     //                        PUBLIC GETTERS                      //
     ////////////////////////////////////////////////////////////////
 
+      /// @dev Getter for the amount of payee's releasable Ether.
+    function releasable(address account) public view returns (uint256) {
+        uint256 totalReceived = address(this).balance + totalReleased();
+        return _pendingPayment(
+            account, totalReceived, released(account)
+        );
+    }
+
+    /// @dev Getter for the amount of payee's releasable
+    /// `token` tokens.
+    /// @dev `token` should be the address of an ERC20 contract.
+    function releasable(IERC20 token, address account)
+        public
+        view
+        returns (uint256)
+    {
+        uint256 totalReceivedERC20 =
+            token.balanceOf(address(this)) + totalReleased(token);
+        return _pendingPayment(
+            account,
+            totalReceivedERC20,
+            released(token, account)
+
+        );
+    }
+
     /// @dev Getter for `_payees.length`.
     function payeesLength() public view returns (uint256) {
         return _payees.length;
     }
 
-    /// @dev Getter for the total shares held by payees.
-    function totalShares() public view returns (uint256) {
-        return _totalShares;
-    }
 
     /// @dev Getter for the total amount of Ether already released.
     function totalReleased() public view returns (uint256) {
@@ -252,29 +282,12 @@ contract SplitterImpl is SplitterEventsAndErrors {
     /// released to a payee.
     /// @dev `token` should be the address of an ERC20 contract.
     function released(IERC20 token, address account)
-        public
         view
+        public
         returns (uint256)
     {
         return _erc20Released[token][account];
     }
 
-    /// @dev Getter for the amount of payee's releasable Ether.
-    function releasable(address account) public view returns (uint256) {
-        uint256 totalReceived = address(this).balance + totalReleased();
-        return _pendingPayment(account, totalReceived, released(account));
-    }
 
-    /// @dev Getter for the amount of payee's releasable
-    /// `token` tokens.
-    /// @dev `token` should be the address of an ERC20 contract.
-    function releasable(IERC20 token, address account)
-        public
-        view
-        returns (uint256)
-    {
-        uint256 totalReceived =
-            token.balanceOf(address(this)) + totalReleased(token);
-        return _pendingPayment(account, totalReceived, released(token, account));
-    }
 }

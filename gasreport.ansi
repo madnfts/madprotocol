@@ -1,15 +1,5 @@
 No files changed, compilation skipped
 
-Running 1 test for test/foundry/Base/Tokens/ERC20/deployMockERC20.sol:DeployERC20
-[32m[PASS][0m testDeployAndMint():(address) (gas: 1260835)
-Test result: [32mok[0m. 1 passed; 0 failed; 0 skipped; finished in 5.87ms
-
-Running 3 tests for test/foundry/Deploy/deployer.t.sol:Deployer
-[32m[PASS][0m testDeployAllErc1155() (gas: 24376648)
-[32m[PASS][0m testDeployAllErc721() (gas: 22202279)
-[32m[PASS][0m testFailDeployAll() (gas: 991505)
-Test result: [32mok[0m. 3 passed; 0 failed; 0 skipped; finished in 52.62ms
-
 Running 4 tests for test/foundry/Marketplace/marketplaceDeploy.t.sol:DeployERC721Marketplace
 [32m[PASS][0m testDeployDefaultERC1155Marketplace() (gas: 3591616)
 [32m[PASS][0m testDeployDefaultERC721Marketplace() (gas: 3412095)
@@ -25,7 +15,29 @@ Logs:
   Deployment Failed
   Deployment Failed
 
-Test result: [32mok[0m. 4 passed; 0 failed; 0 skipped; finished in 8.94ms
+Test result: [32mok[0m. 4 passed; 0 failed; 0 skipped; finished in 6.67ms
+
+Running 2 tests for test/foundry/Factory/factoryDeploy.t.sol:DeployFactory
+[32m[PASS][0m testERC1155DeployFactoryDefault() (gas: 6009068)
+[32m[PASS][0m testERC721DeployFactoryDefault() (gas: 6009178)
+Test result: [32mok[0m. 2 passed; 0 failed; 0 skipped; finished in 7.01ms
+
+Running 4 tests for test/foundry/Router/routerDeploy.t.sol:DeployERC1155Router
+[32m[PASS][0m testDeployDefaultERC1155Router() (gas: 1199204)
+[32m[PASS][0m testDeployDefaultERC721Router() (gas: 1199380)
+[32m[PASS][0m testDeployZeroAddressesERC1155Router() (gas: 330322)
+Logs:
+  Deployment Failed
+  Deployment Failed
+  Deployment Failed
+
+[32m[PASS][0m testDeployZeroAddressesERC721Router() (gas: 330542)
+Logs:
+  Deployment Failed
+  Deployment Failed
+  Deployment Failed
+
+Test result: [32mok[0m. 4 passed; 0 failed; 0 skipped; finished in 4.60ms
 
 Running 4 tests for test/foundry/Misc/TestBoolAsm.t.sol:TestBoolASM
 [32m[PASS][0m testBoolAsmNoShiftRight() (gas: 16500)
@@ -44,33 +56,15 @@ Logs:
   Anded: 0x0000000000000000000000000000000000000000000000000000000000000000
   Zeroed: 0x0000000000000000000000000000000000000000000000000000000000000001
 
-Test result: [32mok[0m. 4 passed; 0 failed; 0 skipped; finished in 2.45ms
+Test result: [32mok[0m. 4 passed; 0 failed; 0 skipped; finished in 1.00ms
 
 Running 1 test for test/foundry/Misc/bitmaskCheck.sol:BitMaskCheck
 [32m[PASS][0m testBitMask() (gas: 306)
-Test result: [32mok[0m. 1 passed; 0 failed; 0 skipped; finished in 1.80ms
+Test result: [32mok[0m. 1 passed; 0 failed; 0 skipped; finished in 840.56µs
 
-Running 2 tests for test/foundry/Factory/factoryDeploy.t.sol:DeployFactory
-[32m[PASS][0m testERC1155DeployFactoryDefault() (gas: 6009068)
-[32m[PASS][0m testERC721DeployFactoryDefault() (gas: 6009178)
-Test result: [32mok[0m. 2 passed; 0 failed; 0 skipped; finished in 9.67ms
-
-Running 4 tests for test/foundry/Router/routerDeploy.t.sol:DeployERC1155Router
-[32m[PASS][0m testDeployDefaultERC1155Router() (gas: 1199204)
-[32m[PASS][0m testDeployDefaultERC721Router() (gas: 1199380)
-[32m[PASS][0m testDeployZeroAddressesERC1155Router() (gas: 330322)
-Logs:
-  Deployment Failed
-  Deployment Failed
-  Deployment Failed
-
-[32m[PASS][0m testDeployZeroAddressesERC721Router() (gas: 330542)
-Logs:
-  Deployment Failed
-  Deployment Failed
-  Deployment Failed
-
-Test result: [32mok[0m. 4 passed; 0 failed; 0 skipped; finished in 4.07ms
+Running 1 test for test/foundry/Base/Tokens/ERC20/deployMockERC20.sol:DeployERC20
+[32m[PASS][0m testDeployAndMint():(address) (gas: 1260835)
+Test result: [32mok[0m. 1 passed; 0 failed; 0 skipped; finished in 5.94ms
 
 Running 5 tests for test/foundry/Splitter/deploySplitter.t.sol:TestSplitterDeployment
 [32m[PASS][0m testSplitterDeploymentFuzzy_All(uint16,uint16,uint8) (runs: 1000, μ: 1139579, ~: 1139579)
@@ -87,7 +81,7 @@ Logs:
   [0x71bfd15aec5f59917333df9bf0d853d3e1345563, 0xbfeddf4ea2e2ee3c3dc9cdf4393fd38a51a40431, 0xf3b92fcda06750430dd8d851ae2cd72aafca069d]
 
 [32m[PASS][0m testSplitterDeployment_creatorOnly(uint8) (runs: 1000, μ: 952046, ~: 952046)
-Test result: [32mok[0m. 5 passed; 0 failed; 0 skipped; finished in 11.24s
+Test result: [32mok[0m. 5 passed; 0 failed; 0 skipped; finished in 11.17s
 
 Running 16 tests for test/foundry/CreateCollection/testMintBurnAndTransferERC721.t.sol:TestMintBurnAndTransferERC721
 [32m[PASS][0m testBurnFromMintTo_DefaultSingle() (gas: 249098055)
@@ -237,7 +231,7 @@ Logs:
   amountToMint: 10
   nftPublicMintPrice AFTER: 0
 
-[32m[PASS][0m testPublicMint_IncorrectFeeSingleFuzzy(uint256) (runs: 1000, μ: 4048158, ~: 4048414)
+[32m[PASS][0m testPublicMint_IncorrectFeeSingleFuzzy(uint256) (runs: 1000, μ: 4048131, ~: 4048414)
 [32m[PASS][0m testPublicMint_MaxSupply() (gas: 249361039)
 Logs:
   creatorShares: 10000
@@ -310,13 +304,19 @@ Logs:
   config.projectShare: 0
   [0x35459fc01c45c4e9edc55bafd3d40abe7740841a]
 
-Test result: [32mok[0m. 16 passed; 0 failed; 0 skipped; finished in 9.04s
+Test result: [32mok[0m. 16 passed; 0 failed; 0 skipped; finished in 11.29s
+
+Running 3 tests for test/foundry/Deploy/deployer.t.sol:Deployer
+[32m[PASS][0m testDeployAllErc1155() (gas: 24376648)
+[32m[PASS][0m testDeployAllErc721() (gas: 22202279)
+[32m[PASS][0m testFailDeployAll() (gas: 991505)
+Test result: [32mok[0m. 3 passed; 0 failed; 0 skipped; finished in 66.24s
 
 Running 3 tests for test/foundry/CreateCollection/createCollection.t.sol:TestCreateCollection
 [32m[PASS][0m testCreateCollectionCustomSingleFuzzy(uint8,uint256,uint128,uint96) (runs: 1000, μ: 14220501, ~: 14220501)
 [32m[PASS][0m testCreateCollectionDefaultFuzzy(uint8) (runs: 1000, μ: 4013153, ~: 4013153)
 [32m[PASS][0m testCreateMultipleCollectionsWithSplitterFuzzy(uint8,uint256,uint128,uint96) (runs: 1000, μ: 99263719, ~: 99263719)
-Test result: [32mok[0m. 3 passed; 0 failed; 0 skipped; finished in 64.86s
+Test result: [32mok[0m. 3 passed; 0 failed; 0 skipped; finished in 66.24s
 | contracts/Factory/MADFactory.sol:MADFactory contract |                 |         |         |         |         |
 |------------------------------------------------------|-----------------|---------|---------|---------|---------|
 | Deployment Cost                                      | Deployment Size |         |         |         |         |

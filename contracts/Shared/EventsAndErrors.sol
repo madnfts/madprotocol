@@ -26,7 +26,7 @@ interface FactoryEventsAndErrorsBase is EventsAndErrorsBase {
 
     event MarketplaceUpdated(address indexed newMarket);
     event RouterUpdated(address indexed newRouter);
-    event ColTypeUpdated(uint256 indexed index);
+    event CollectionTypeAdded(uint256 indexed index);
     event SplitterCreated(
         address indexed creator,
         uint256[] shares,

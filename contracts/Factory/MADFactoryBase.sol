@@ -300,7 +300,7 @@ abstract contract MADFactoryBase is
     {
         collectionTypes[index] = impl;
 
-        emit ColTypeUpdated(index);
+        emit CollectionTypeAdded(index);
     }
 
     ////////////////////////////////////////////////////////////////

@@ -84,6 +84,15 @@ const chains: Array<NetworkUserConfig> = [
         },
   },
   {
+    chainId: 1351057110, // skale CHAOS
+    url: "https://staging-v3.skalenodes.com/v1/staging-fast-active-bellatrix",
+    accounts: PK
+      ? [PK]
+      : {
+          mnemonic: MNEMONIC || DEFAULT_MNEMONIC,
+        },
+  },
+  {
     chainId: 5, // goerli
     url: "https://goerli.infura.io/v3/" + INFURA_API_KEY,
     accounts: PK
@@ -144,6 +153,7 @@ const config: HardhatUserConfig = {
     harmonyDevnet: getChainConfig(1666900000),
     skale: getChainConfig(1564830818),
     skaleDevnet: getChainConfig(344106930),
+    skaleChaos: getChainConfig(1351057110),
     goerli: getChainConfig(5),
     ganache: getChainConfig(1337),
     hardhat: {

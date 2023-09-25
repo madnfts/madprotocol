@@ -31,7 +31,7 @@ interface FactoryEventsAndErrorsBase is EventsAndErrorsBase {
         address indexed creator,
         uint256[] shares,
         address[] payees,
-        address splitter,
+        address indexed splitter,
         uint256 flag
     );
 

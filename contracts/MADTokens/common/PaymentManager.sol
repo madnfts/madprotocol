@@ -13,6 +13,7 @@ abstract contract PaymentManager {
 
     error NothingToWithdraw();
     error WrongToken();
+    error IncorrectPriceAmount();
 
     ////////////////////////////////////////////////////////////////
     //                          IMMUTABLE                         //
@@ -107,24 +108,23 @@ abstract contract PaymentManager {
         view
         returns (uint256 _value)
     {
-        // if ((_price * _amount) != _value)
-        // revert WrongPrice();
-
         // No point in doing any calcluations if the price is 0 (Free).
         // Also it upsets the underlying _getPriceValue() function.
         if (price == 0) {
             return 0;
         }
 
-        _value = _getPriceValue(msg.sender);
-        uint256 _price = price;
-        assembly {
-            if iszero(eq(mul(_price, _amount), _value)) {
-                // revert WrongPrice();
-                mstore(0, 0xf7760f25)
-                revert(28, 4)
-            }
-        }
+        if ((price * _amount) != _value) revert IncorrectPriceAmount();
+
+        // _value = _getPriceValue(msg.sender);
+        // uint256 _price = price;
+        // assembly {
+        //     if iszero(eq(mul(_price, _amount), _value)) {
+        //         // revert WrongPrice();
+        //         mstore(0, 0xf7760f25)
+        //         revert(28, 4)
+        //     }
+        // }
     }
 
     function _getPriceValue(address _buyer)

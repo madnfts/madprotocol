@@ -85,14 +85,28 @@ const main = async () => {
       ERC721Basic.bytecode,
     );
 
-    console.log(`Collection Type ERC721 Added..`)
+    var isDeployed = await factory.collectionTypes(1) === ERC721Basic.bytecode;
+
+    if (!isDeployed) {
+      console.log(`Collection Type ERC721 Not Added..`)
+    }
+    else{
+      console.log(`Collection Type ERC721 Added..`)
+    }
 
     await factory.addCollectionType(
       2,
       ERC1155Basic.bytecode,
     );
 
-    console.log(`Collection Type ERC1155 Added..`)
+    isDeployed = await factory.collectionTypes(2) === ERC1155Basic.bytecode;
+
+    if (!isDeployed) {
+      console.log(`Collection Type ERC1155 Not Added..`)
+    }
+    else{
+      console.log(`Collection Type ERC1155 Added..`)
+    }
 
     console.log("Deployment completed successfully.");
     process.exit(0);

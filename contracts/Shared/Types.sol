@@ -21,7 +21,7 @@ library Types {
         uint96 royalty;
     }
 
-    // [1, 0x666f6f0000000000000000000000000000000000000000000000000000000000,"TKK","TOKEY",1000000000000000000,10000, "ipfs://SomePlace","0x0", 0]
+    // [1, 0x000000000000000000000000000000000000000000000000002bdc545e14da04,"createCollection_8","CC8",100,97,"https://example.com",0xFc1Ff53Aa986d215e157efF5786e1B3bBB126446,0]
 
     struct CreateSplitterParams {
         bytes32 splitterSalt;

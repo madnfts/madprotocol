@@ -18,6 +18,11 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "IncorrectPriceAmount",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "LoopOverflow",
     type: "error",
   },

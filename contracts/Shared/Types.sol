@@ -21,6 +21,8 @@ library Types {
         uint96 royalty;
     }
 
+    // [1, 0x666f6f0000000000000000000000000000000000000000000000000000000000,"TKK","TOKEY",1000000000000000000,10000, "ipfs://SomePlace","0x0", 0]
+
     struct CreateSplitterParams {
         bytes32 splitterSalt;
         address ambassador;
@@ -29,6 +31,8 @@ library Types {
         uint256 projectShare;
     }
 
+    // MAD TEST SKALE
+// [0x666f6f0000000000000000000000000000000000000000000000000000000000,0x0000000000000000000000000000000000000000,0x0000000000000000000000000000000000000000,0x0,0x0]
     struct CollectionArgs {
         string _name;
         string _symbol;

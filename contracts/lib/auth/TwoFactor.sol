@@ -60,6 +60,7 @@ abstract contract TwoFactor {
     /// slots
     /// Only 2 combinations are allowed.
     // In both cases, the owner HAS to be involved
+    // The Router MUST check that the owner is the msg.sender in the router contract.
     /// 1. msg.sender AND tx.origin == owner
     /// 2. msg.sender == router AND tx.origin == owner
     modifier authorised() {

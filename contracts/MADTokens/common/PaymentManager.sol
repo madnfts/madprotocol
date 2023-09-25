@@ -83,6 +83,7 @@ abstract contract PaymentManager {
     }
 
     function _publicPaymentHandler(uint256 _value) internal {
+
         if (msg.value == 0) {
             feeCountERC20 = feeCountERC20 + _value;
             SafeTransferLib.safeTransferFrom(

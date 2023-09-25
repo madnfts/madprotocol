@@ -5,7 +5,7 @@ import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
 import { resolve } from "path";
 
-import { MockERC20 } from "../src/types";
+import { MockERC20 } from "../contracts/lib/test";
 
 config({ path: resolve(__dirname, "./.env") });
 
@@ -13,7 +13,12 @@ const { UNISWAP_ROUTER, ERC20_TOKEN } = process.env;
 
 const deployERC20 = async () => {
   const ERC20 = await ethers.getContractFactory("MockERC20");
-  const erc20 = await ERC20.deploy(BigNumber.from(2).pow(255)) as MockERC20;
+  const erc20 = await ERC20.deploy(
+    "Mad Mock Eth",
+    "mmEth",
+    18,
+    10
+    ) as MockERC20;
   console.log(`MockERC20 address: ${erc20.address}`);
   return erc20;
 };

@@ -17,6 +17,12 @@
 
 ## Usage
 
+MockERC20 address: 0x8d7b5259EEDc6f3cDd880362c27A9f0C3c36BF6D
+Factory address: 0xFc1Ff53Aa986d215e157efF5786e1B3bBB126446
+Router address: 0x04C47E55496Eed35df2d7D2924F373Fc66d85d7C
+
+Splitter: 0xFc1Ff53Aa986d215e157efF5786e1B3bBB126446
+
 ### Pre Requisites
 
 Before installing, create a `.env` file and set criteria as in `.env.example`.

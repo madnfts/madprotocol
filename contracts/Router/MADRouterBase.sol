@@ -104,7 +104,7 @@ abstract contract MADRouterBase is MADBase, FeeHandler, RouterEvents {
     //                         HELPERS                            //
     ////////////////////////////////////////////////////////////////
 
-    /// @notice Private auth-check mechanism that verifies `madFactory` storage.
+    /// @notice auth-check mechanism that verifies `madFactory` storage.
     /// @dev Retrieves both `collectionId` (bytes32) and collection type (uint8)
     ///      for valid token and approved user.
     ///      Function Sighash := 0xdbf62b2e

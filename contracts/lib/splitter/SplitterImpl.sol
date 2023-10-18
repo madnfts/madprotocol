@@ -102,7 +102,6 @@ contract SplitterImpl is SplitterEventsAndErrors {
     /// without triggering this function. All releasable
     /// balances can also be released by public pull methods.
     receive() external payable {
-        releaseAll();
         emit PaymentReceived(msg.sender, msg.value);
     }
 

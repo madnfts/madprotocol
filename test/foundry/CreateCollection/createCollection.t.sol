@@ -19,6 +19,7 @@ contract TestCreateCollection is CreateCollectionHelpers, Enums {
     IFactory[] deployedContracts;
     Deployer deployer;
     DeploySplitterBase splitterDeployer;
+    bool public isERC20;
 
     function setUp() public {
         // Instantiate deployer contracts
@@ -28,7 +29,7 @@ contract TestCreateCollection is CreateCollectionHelpers, Enums {
         splitterDeployer = new DeploySplitterBase();
 
         // Create array of Factory instances to cover both 721 & 1155 Factories
-        deployedContracts = [deployer.deployAll(ercTypes.ERC721).factory
+        deployedContracts = [deployer.deployAll(ercTypes.ERC721, isERC20).factory
         // deployer.deployAll(ercTypes.ERC1155).factory
         ];
     }

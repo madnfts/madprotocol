@@ -34,6 +34,8 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
     uint128[] idsToBurn =
         [1, 2, 3, 4, 5, 100, 1000, 2000, 3000, 4000, 5000, 9999, 10_000];
 
+    bool public isERC20;
+
     function setUp() public {
         vm.deal(prankster, 20_000 ether);
         // Instantiate deployer contracts
@@ -43,7 +45,7 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         splitterDeployer = new DeploySplitterBase();
 
         // Create array of deployed contracts instances for ERC721
-        deployedContracts = deployer.deployAll(ercTypes.ERC721);
+        deployedContracts = deployer.deployAll(ercTypes.ERC721, isERC20);
     }
 
     function testMintTo_DefaultSingle() public {

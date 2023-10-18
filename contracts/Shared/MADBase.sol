@@ -22,7 +22,7 @@ abstract contract MADBase is EventsAndErrorsBase, Owned(msg.sender) {
     /// @dev Function Signature := 0x46e36a79
     function _setPaymentToken(address _paymentTokenAddress) internal {
         // require(_paymentTokenAddress != address(0), "Invalid token address");
-        if (_paymentTokenAddress == address(0)) revert ZeroAddress();
+        // if (_paymentTokenAddress == address(0)) revert ZeroAddress();
         erc20 = IERC20(_paymentTokenAddress);
 
         emit PaymentTokenUpdated(_paymentTokenAddress);

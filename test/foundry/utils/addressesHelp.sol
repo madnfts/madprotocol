@@ -42,7 +42,10 @@ abstract contract AddressesHelp is Test, Enums {
             }
 
             // Check that the address is reset correctly
-            assertTrue(originalAddress == expectedAddressFunction());
+            assertTrue(
+                originalAddress == expectedAddressFunction(),
+                "originalAddress == expectedAddressFunction() :: do not match"
+            );
         }
     }
 

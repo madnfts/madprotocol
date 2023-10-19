@@ -64,17 +64,30 @@ abstract contract ERC721TransferFunctions is Test {
         IERC721Basic collection = IERC721Basic(mintData.collectionAddress);
 
         // Check that receiver has the expected balance
-        assertTrue(collection.balanceOf(receiver) == expectedReceiverBalance);
         assertTrue(
-            _checkOwnerOf(receiver, mintData) == expectedReceiverOwnership
+            collection.balanceOf(receiver) == expectedReceiverBalance,
+            "collection.balanceOf(receiver) == expectedReceiverBalance ::  do not match"
+        );
+        assertTrue(
+            _checkOwnerOf(receiver, mintData) == expectedReceiverOwnership,
+            "checkOwnerOf(receiver, mintData) == expectedReceiverOwnership ::  do not match"
         );
 
         // Check that friend has the expected balance
-        assertTrue(collection.balanceOf(friend) == expectedFriendBalance);
-        assertTrue(_checkOwnerOf(friend, mintData) != expectedReceiverOwnership);
+        assertTrue(
+            collection.balanceOf(friend) == expectedFriendBalance,
+            "collection.balanceOf(friend) == expectedFriendBalance ::  do not match"
+        );
+        assertTrue(
+            _checkOwnerOf(friend, mintData) != expectedReceiverOwnership,
+            "_checkOwnerOf(friend, mintData) != expectedReceiverOwnership ::  do not match"
+        );
 
         // Check the totalSupply of the collection has NOT increased
-        assertTrue(collection.totalSupply() == mintData.newTotalSupply);
+        assertTrue(
+            collection.totalSupply() == mintData.newTotalSupply,
+            "collection.totalSupply() == mintData.newTotalSupply ::  do not match"
+        );
     }
 
     function _transferCheck(

@@ -14,7 +14,8 @@ contract DeployMarketplaceBase is MarketplaceFactory, AddressesHelp {
     address marketplaceOwner = makeAddr("MarketplaceOwner");
     address recipientMarketplace = makeAddr("RecipientMarketplace");
     address paymentTokenAddressMarket = address(0);
-    address paymentTokenAddressMarketErc20 = makeAddr("paymentTokenAddressMarket");
+    address paymentTokenAddressMarketErc20 =
+        makeAddr("paymentTokenAddressMarket");
     address swapRouter = makeAddr("SwapRouter");
     address factoryVerifierMarketplace = makeAddr("MarketplaceFactory");
 
@@ -220,6 +221,9 @@ contract DeployMarketplaceBase is MarketplaceFactory, AddressesHelp {
 
         vm.prank(_owner);
         _marketplace.setFactory(_factoryVerifierMarketplace);
-        assertTrue(_marketplace.madFactory() == _factoryVerifierMarketplace);
+        assertTrue(
+            _marketplace.madFactory() == _factoryVerifierMarketplace,
+            "_marketplace.madFactory() == _factoryVerifierMarketplace :: addresses do not match"
+        );
     }
 }

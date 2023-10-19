@@ -37,8 +37,10 @@ contract CreateCollectionHelpers is
         _collectionAddress =
             createCollectionDefault(_factory, _splitter, _price);
 
-        assertTrue(_collectionAddress != address(0));
-        assertTrue(_splitter != address(0));
+        assertTrue(
+            _collectionAddress != address(0), "collectionAddress != address(0)"
+        );
+        assertTrue(_splitter != address(0), "splitter != address(0)");
     }
 
     function _createCollectionsWithAllSplitterCombosCustom(
@@ -97,7 +99,10 @@ contract CreateCollectionHelpers is
                     _currentSigner
                 );
 
-                assertTrue(collectionAddress != address(0));
+                assertTrue(
+                    collectionAddress != address(0),
+                    "collectionAddress != address(0)  ::  Do match"
+                );
             }
         }
     }

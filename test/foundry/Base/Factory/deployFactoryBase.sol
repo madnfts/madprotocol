@@ -11,13 +11,12 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
     // Default Values for Factory Deploy tests
     address public factoryOwner = makeAddr("FactoryOwner");
     address public factorySigner = makeAddr("factorySigner");
-    address public factoryRouterAddress = address(0);
-    address public factoryRouterAddressErc20 = makeAddr("factoryRouterAddress");
-    address public paymentTokenAddressFactory =
-        makeAddr("paymentTokenAddressFactory");
+    address public factoryRouterAddress = makeAddr("factoryRouterAddress");
     address public marketplaceAddressFactory =
         makeAddr("marketplaceAddressFactory");
-
+    address public paymentTokenAddressFactory = address(0);
+    address public paymentTokenAddressFactoryErc20 =
+        makeAddr("paymentTokenAddressFactory");
 
     function deployFactoryDefault(ercTypes ercType)
         public
@@ -124,7 +123,8 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
             // Check that collectionTypes for the given index returns the
             // correct bytes
             assertTrue(
-                keccak256(newFactory.collectionTypes(5)) == keccak256(bytecode)
+                keccak256(newFactory.collectionTypes(5)) == keccak256(bytecode),
+                "keccak256(newFactory.collectionTypes(5)) == keccak256(bytecode) do not match"
             );
 
             // Probe they work..

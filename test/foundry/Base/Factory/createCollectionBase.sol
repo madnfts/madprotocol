@@ -183,47 +183,98 @@ abstract contract CreateCollectionBase is
         );
 
         // totalSupply()
-        assertTrue(collection.totalSupply() == 0);
+        assertTrue(
+            collection.totalSupply() == 0,
+            "collection.totalSupply() == 0 :: Incorrect totalSupply"
+        );
 
         // _royaltyFee()
-        assertTrue(collection._royaltyFee() == params.royalty);
+        assertTrue(
+            collection._royaltyFee() == params.royalty,
+            "collection._royaltyFee() == params.royalty :: Incorrect _royaltyFee"
+        );
 
         // erc20()
-        assertTrue(collection.erc20() != address(0));
-        assertTrue(collection.erc20() == factory.erc20());
+        assertTrue(
+            collection.erc20() != address(0),
+            "collection.erc20() != address(0) :: Incorrect erc20"
+        );
+        assertTrue(
+            collection.erc20() == factory.erc20(),
+            "collection.erc20() == factory.erc20() :: Incorrect erc20"
+        );
 
         // getOwner()
-        assertTrue(collection.getOwner() != address(0));
-        assertTrue(collection.getOwner() == collectionOwner);
+        assertTrue(
+            collection.getOwner() != address(0),
+            "collection.getOwner() != address(0) :: Incorrect getOwner"
+        );
+        assertTrue(
+            collection.getOwner() == collectionOwner,
+            "collection.getOwner() == collectionOwner :: Incorrect getOwner"
+        );
 
         // getRouter()
-        assertTrue(collection.getRouter() != address(0));
-        assertTrue(collection.getRouter() == factory.router());
+        assertTrue(
+            collection.getRouter() != address(0),
+            "collection.getRouter() != address(0) :: Incorrect getRouter"
+        );
+        assertTrue(
+            collection.getRouter() == factory.router(),
+            "collection.getRouter() == factory.router() :: Incorrect getRouter"
+        );
 
         // splitter()
-        assertTrue(collection.splitter() != address(0));
-        assertTrue(collection.splitter() == params.splitter);
+        assertTrue(
+            collection.splitter() != address(0),
+            "collection.splitter() != address(0) :: Incorrect splitter"
+        );
+        assertTrue(
+            collection.splitter() == params.splitter,
+            "collection.splitter() == params.splitter :: Incorrect splitter"
+        );
 
         // feeCount()
-        assertTrue(collection.feeCount() == 0);
+        assertTrue(
+            collection.feeCount() == 0,
+            "collection.feeCount() == 0 :: Incorrect feeCount"
+        );
 
         // feeCountERC20()
-        assertTrue(collection.feeCountERC20() == 0);
+        assertTrue(
+            collection.feeCountERC20() == 0,
+            "collection.feeCountERC20() == 0 :: Incorrect feeCountERC20"
+        );
 
         // liveSupply()
-        assertTrue(collection.liveSupply() == 0);
+        assertTrue(
+            collection.liveSupply() == 0,
+            "collection.liveSupply() == 0 :: Incorrect liveSupply"
+        );
 
         // maxSupply()
-        assertTrue(collection.maxSupply() == params.maxSupply);
+        assertTrue(
+            collection.maxSupply() == params.maxSupply,
+            "collection.maxSupply() == params.maxSupply :: Incorrect maxSupply"
+        );
 
         // mintCount()
-        assertTrue(collection.mintCount() == 0);
+        assertTrue(
+            collection.mintCount() == 0,
+            "collection.mintCount() == 0 :: Incorrect mintCount"
+        );
 
         // price()
-        assertTrue(collection.price() == params.price);
+        assertTrue(
+            collection.price() == params.price,
+            "collection.price() == params.price :: Incorrect price"
+        );
 
         // publicMintState()
-        assertTrue(collection.publicMintState() == false);
+        assertTrue(
+            collection.publicMintState() == false,
+            "collection.publicMintState() == false :: Incorrect publicMintState"
+        );
 
         // royaltyInfo(uint256, uint256)
         (address receiver, uint256 royaltyAmount) =
@@ -231,10 +282,14 @@ abstract contract CreateCollectionBase is
         uint256 _royaltyAmount = (1 ether * params.royalty) / 10_000;
 
         assertTrue(
-            receiver == params.splitter && royaltyAmount == _royaltyAmount
+            receiver == params.splitter && royaltyAmount == _royaltyAmount,
+            "Incorrect royaltyInfo"
         );
 
         // uriLock()
-        assertTrue(collection.uriLock() == false);
+        assertTrue(
+            collection.uriLock() == false,
+            "collection.uriLock() == false :: Incorrect uriLock"
+        );
     }
 }

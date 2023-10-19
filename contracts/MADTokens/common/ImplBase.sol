@@ -165,7 +165,7 @@ abstract contract ImplBase is
         uint256 _price = _publicMintPriceCheck(totalAmount);
         // msg.value could be 0 and _value = 0 but still be expecting ETH (Free
         // Mint)
-        if (_price > 0) {_publicPaymentHandler(_price); }
+        if (_price > 0) _publicPaymentHandler(_price);
     }
 
     function _publicMintAccess() internal view {

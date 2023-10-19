@@ -86,20 +86,24 @@ abstract contract AddressesHelp is Test, Enums {
         uint256 len = addresses.length;
         address[] memory _addresses = addresses;
         // iterate over the addresses array, each time setting one to address(0)
-        for (uint256 i = 0; i < len; i++) {
-            temp = _addresses[i];
+        unchecked {
+            for (uint256 i = 0; i < len; i++) {
+                temp = _addresses[i];
+                emit log_named_address("temp", temp);
+                emit log_named_address("addresses[i]", _addresses[i]);
 
-            if (addresses[i] != address(0)) {
-                // If the address is address(0), we expect the transaction
-                // to revert. This is for the paymentToken in particular.
-                _addresses[i] = address(0);
-                vm.expectRevert(0xd92e233d); // error ZeroAddress();
+                if (temp != address(0)) {
+                    // If the address is address(0), we expect the transaction
+                    // to revert. This is for the paymentToken in particular.
+                    _addresses[i] = address(0);
+                    vm.expectRevert(0xd92e233d); // error ZeroAddress();
+                }
+                deployFunction(
+                    ercType, owner, _addresses[0], _addresses[1], _addresses[2]
+                );
+                // reset the address back to original for the next loop
+                _addresses[i] = temp;
             }
-            deployFunction(
-                ercType, owner, _addresses[0], _addresses[1], _addresses[2]
-            );
-            // reset the address back to original for the next loop
-            _addresses[i] = temp;
         }
     }
 }

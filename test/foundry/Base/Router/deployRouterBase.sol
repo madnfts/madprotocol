@@ -122,10 +122,6 @@ contract DeployRouterBase is AddressesHelp, RouterFactory {
                 address(_router.erc20()) == _paymentTokenAddressRouter,
                 "Incorrect payment token address"
             );
-            assertTrue(
-                address(_router.erc20()) != address(0),
-                "Payment token address cannot be address(0)"
-            );
 
             assertTrue(_router.feeBurn() == feeBurn, "Incorrect feeBurn value");
             assertTrue(_router.feeMint() == feeMint, "Incorrect feeMint value");

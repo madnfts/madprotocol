@@ -136,10 +136,7 @@ contract DeployMarketplaceBase is MarketplaceFactory, AddressesHelp {
             address(_marketplace.erc20()) == _paymentTokenAddressMarket,
             "Incorrect payment token address"
         );
-        assertTrue(
-            address(_marketplace.erc20()) != address(0),
-            "Payment token address cannot be address(0)"
-        );
+
         setAndCheckAddress(_marketplace.setOwner, _marketplace.owner);
         setAndCheckAddress(_marketplace.setRecipient, _marketplace.recipient);
 

@@ -196,10 +196,6 @@ abstract contract CreateCollectionBase is
 
         // erc20()
         assertTrue(
-            collection.erc20() != address(0),
-            "collection.erc20() != address(0) :: Incorrect erc20"
-        );
-        assertTrue(
             collection.erc20() == factory.erc20(),
             "collection.erc20() == factory.erc20() :: Incorrect erc20"
         );

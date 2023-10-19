@@ -13,7 +13,8 @@ import { AddressesHelp } from "test/foundry/utils/addressesHelp.sol";
 contract DeployMarketplaceBase is MarketplaceFactory, AddressesHelp {
     address marketplaceOwner = makeAddr("MarketplaceOwner");
     address recipientMarketplace = makeAddr("RecipientMarketplace");
-    address paymentTokenAddressMarket = makeAddr("paymentTokenAddressMarket");
+    address paymentTokenAddressMarket = address(0);
+    address paymentTokenAddressMarketErc20 = makeAddr("paymentTokenAddressMarket");
     address swapRouter = makeAddr("SwapRouter");
     address factoryVerifierMarketplace = makeAddr("MarketplaceFactory");
 

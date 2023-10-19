@@ -11,14 +11,13 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
     // Default Values for Factory Deploy tests
     address public factoryOwner = makeAddr("FactoryOwner");
     address public factorySigner = makeAddr("factorySigner");
-    address public factoryRouterAddress = makeAddr("factoryRouterAddress");
+    address public factoryRouterAddress = address(0);
+    address public factoryRouterAddressErc20 = makeAddr("factoryRouterAddress");
     address public paymentTokenAddressFactory =
         makeAddr("paymentTokenAddressFactory");
     address public marketplaceAddressFactory =
         makeAddr("marketplaceAddressFactory");
 
-    address[] factoryDefaultAddresses =
-        [marketplaceAddressFactory, paymentTokenAddressFactory];
 
     function deployFactoryDefault(ercTypes ercType)
         public

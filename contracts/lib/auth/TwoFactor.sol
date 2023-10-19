@@ -9,7 +9,7 @@ abstract contract TwoFactor {
     ////////////////////////////////////////////////////////////////
 
     uint256 internal constant _NOT_AUTHORISED = 0x1648fd01;
-    uint256 internal constant _ZERO_ADDRESS = 0xaa7feadc;
+    uint256 internal constant _ZERO_ADDRESS = 0xd92e233d;
 
     /// @dev 0x1648fd01
     error NotAuthorised();

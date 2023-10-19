@@ -60,7 +60,6 @@ abstract contract DeployerBase is
             paymentToken = MockERC20(address(0));
         }
 
-
         // Deploy Marketplace
         marketplace = IMarketplace(
             marketplaceDeployer.deployMarketplaceCustom(

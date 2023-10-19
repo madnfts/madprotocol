@@ -1,6 +1,5 @@
-// SPDX-License-Identifier: AGPL-3.0-only
-
-pragma solidity 0.8.19;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.4;
 
 /// @notice Simple ERC721 implementation with storage hitchhiking.
 /// @author Solady
@@ -9,11 +8,23 @@ pragma solidity 0.8.19;
 /// (https://github.com/transmissions11/solmate/blob/main/src/tokens/ERC721.sol)
 /// @author Modified from OpenZeppelin
 /// (https://github.com/OpenZeppelin/openzeppelin-contracts/tree/master/contracts/token/ERC721/ERC721.sol)
-
-/// Note:
+///
+/// @dev Note:
 /// The ERC721 standard allows for self-approvals.
 /// For performance, this implementation WILL NOT revert for such actions.
 /// Please add any checks with overrides if desired.
+///
+/// For performance, methods are made payable where permitted by the ERC721
+/// standard.
+///
+/// For performance, most of the code is manually duplicated and inlined.
+/// Overriding internal functions may not alter the functionality of external
+/// functions.
+/// Please check and override accordingly.
+///
+/// Please take care when overriding to never violate the ERC721 invariant:
+/// the balance of an owner must be always be equal to their number of ownership
+/// slots.
 abstract contract ERC721 {
     /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
     /*                         CONSTANTS                          */
@@ -94,8 +105,8 @@ abstract contract ERC721 {
     ///     let ownershipSlot := add(id, add(id, keccak256(0x00, 0x20)))
     /// ```
     /// Bits Layout:
-    // - [0..159]   `addr`
-    // - [160..223] `extraData`
+    /// - [0..159]   `addr`
+    /// - [160..255] `extraData`
     ///
     /// The approved address slot is given by: `add(1, ownershipSlot)`.
     ///
@@ -109,7 +120,7 @@ abstract contract ERC721 {
     /// ```
     /// Bits Layout:
     /// - [0..31]   `balance`
-    /// - [32..225] `aux`
+    /// - [32..255] `aux`
     ///
     /// The `operator` approval slot of `owner` is given by:
     /// ```
@@ -119,6 +130,10 @@ abstract contract ERC721 {
     /// ```
     uint256 private constant _ERC721_MASTER_SLOT_SEED =
         0x7d8825530a5a2e7a << 192;
+
+    /// @dev Pre-shifted and pre-masked constant.
+    uint256 private constant _ERC721_MASTER_SLOT_SEED_MASKED =
+        0x0a5a2e7a00000000;
 
     /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
     /*                      ERC721 METADATA                       */
@@ -175,7 +190,7 @@ abstract contract ERC721 {
         }
     }
 
-    /// @dev Returns the account approved to managed token `id`.
+    /// @dev Returns the account approved to manage token `id`.
     ///
     /// Requirements:
     /// - Token `id` must exist.
@@ -205,7 +220,7 @@ abstract contract ERC721 {
     /// - The caller must be the owner of the token,
     ///   or an approved operator for the token owner.
     ///
-    /// Emits a {Approval} event.
+    /// Emits an {Approval} event.
     function approve(address account, uint256 id) public payable virtual {
         _approve(msg.sender, account, id);
     }
@@ -220,9 +235,8 @@ abstract contract ERC721 {
     {
         /// @solidity memory-safe-assembly
         assembly {
-            mstore(
-                0x1c, or(_ERC721_MASTER_SLOT_SEED, shr(96, shl(96, operator)))
-            )
+            mstore(0x1c, operator)
+            mstore(0x08, _ERC721_MASTER_SLOT_SEED_MASKED)
             mstore(0x00, owner)
             result := sload(keccak256(0x0c, 0x30))
         }
@@ -231,19 +245,18 @@ abstract contract ERC721 {
     /// @dev Sets whether `operator` is approved to manage the tokens of the
     /// caller.
     ///
-    /// Emits a {ApprovalForAll} event.
+    /// Emits an {ApprovalForAll} event.
     function setApprovalForAll(address operator, bool isApproved)
         public
         virtual
     {
         /// @solidity memory-safe-assembly
         assembly {
-            // Clear the upper 96 bits.
-            operator := shr(96, shl(96, operator))
             // Convert to 0 or 1.
             isApproved := iszero(iszero(isApproved))
             // Update the `isApproved` for (`msg.sender`, `operator`).
-            mstore(0x1c, or(_ERC721_MASTER_SLOT_SEED, operator))
+            mstore(0x1c, operator)
+            mstore(0x08, _ERC721_MASTER_SLOT_SEED_MASKED)
             mstore(0x00, caller())
             sstore(keccak256(0x0c, 0x30), isApproved)
             // Emit the {ApprovalForAll} event.
@@ -253,7 +266,7 @@ abstract contract ERC721 {
                 0x20,
                 _APPROVAL_FOR_ALL_EVENT_SIGNATURE,
                 caller(),
-                operator
+                shr(96, shl(96, operator))
             )
         }
     }
@@ -274,7 +287,7 @@ abstract contract ERC721 {
         payable
         virtual
     {
-        // _beforeTokenTransfer(from, to, id);
+        _beforeTokenTransfer(from, to, id);
         /// @solidity memory-safe-assembly
         assembly {
             // Clear the upper 96 bits.
@@ -337,7 +350,7 @@ abstract contract ERC721 {
             // Emit the {Transfer} event.
             log4(0x00, 0x00, _TRANSFER_EVENT_SIGNATURE, from, to, id)
         }
-        // _afterTokenTransfer(from, to, id);
+        _afterTokenTransfer(from, to, id);
     }
 
     /// @dev Equivalent to `safeTransferFrom(from, to, id, "")`.
@@ -430,6 +443,9 @@ abstract contract ERC721 {
     /*            INTERNAL DATA HITCHHIKING FUNCTIONS             */
     /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
 
+    // For performance, no events are emitted for the hitchhiking setters.
+    // Please emit your own events if required.
+
     /// @dev Returns the auxiliary data for `owner`.
     /// Minting, transferring, burning the tokens of `owner` will not change the
     /// auxiliary data.
@@ -469,7 +485,7 @@ abstract contract ERC721 {
 
     /// @dev Returns the extra data for token `id`.
     /// Minting, transferring, burning a token will not change the extra data.
-    /// The extra data can be set on a non existent token.
+    /// The extra data can be set on a non-existent token.
     function _getExtraData(uint256 id)
         internal
         view
@@ -486,7 +502,7 @@ abstract contract ERC721 {
 
     /// @dev Sets the extra data for token `id` to `value`.
     /// Minting, transferring, burning a token will not change the extra data.
-    /// The extra data can be set on a non existent token.
+    /// The extra data can be set on a non-existent token.
     function _setExtraData(uint256 id, uint96 value) internal virtual {
         /// @solidity memory-safe-assembly
         assembly {
@@ -514,7 +530,7 @@ abstract contract ERC721 {
     ///
     /// Emits a {Transfer} event.
     function _mint(address to, uint256 id) internal virtual {
-        // _beforeTokenTransfer(address(0), to, id);
+        _beforeTokenTransfer(address(0), to, id);
         /// @solidity memory-safe-assembly
         assembly {
             // Clear the upper 96 bits.
@@ -550,7 +566,7 @@ abstract contract ERC721 {
             // Emit the {Transfer} event.
             log4(0x00, 0x00, _TRANSFER_EVENT_SIGNATURE, 0, to, id)
         }
-        // _afterTokenTransfer(address(0), to, id);
+        _afterTokenTransfer(address(0), to, id);
     }
 
     /// @dev Equivalent to `_safeMint(to, id, "")`.
@@ -597,7 +613,7 @@ abstract contract ERC721 {
     /// Emits a {Transfer} event.
     function _burn(address by, uint256 id) internal virtual {
         address owner = ownerOf(id);
-        // _beforeTokenTransfer(owner, address(0), id);
+        _beforeTokenTransfer(owner, address(0), id);
         /// @solidity memory-safe-assembly
         assembly {
             // Clear the upper 96 bits.
@@ -641,7 +657,7 @@ abstract contract ERC721 {
             // Emit the {Transfer} event.
             log4(0x00, 0x00, _TRANSFER_EVENT_SIGNATURE, owner, 0, id)
         }
-        // _afterTokenTransfer(owner, address(0), id);
+        _afterTokenTransfer(owner, address(0), id);
     }
 
     /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
@@ -649,7 +665,7 @@ abstract contract ERC721 {
     /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
 
     /// @dev Returns whether `account` is the owner of token `id`, or is
-    /// approved to managed it.
+    /// approved to manage it.
     ///
     /// Requirements:
     /// - Token `id` must exist.
@@ -677,7 +693,7 @@ abstract contract ERC721 {
             // Check if `account` is the `owner`.
             if iszero(eq(account, owner)) {
                 mstore(0x00, owner)
-                // Check if `account` is approved to
+                // Check if `account` is approved to manage the token.
                 if iszero(sload(keccak256(0x0c, 0x30))) {
                     result := eq(account, sload(add(1, ownershipSlot)))
                 }
@@ -754,7 +770,7 @@ abstract contract ERC721 {
     /// @dev Approve or remove the `operator` as an operator for `by`,
     /// without authorization checks.
     ///
-    /// Emits a {ApprovalForAll} event.
+    /// Emits an {ApprovalForAll} event.
     function _setApprovalForAll(address by, address operator, bool isApproved)
         internal
         virtual
@@ -800,7 +816,7 @@ abstract contract ERC721 {
         internal
         virtual
     {
-        // _beforeTokenTransfer(from, to, id);
+        _beforeTokenTransfer(from, to, id);
         /// @solidity memory-safe-assembly
         assembly {
             // Clear the upper 96 bits.
@@ -866,7 +882,7 @@ abstract contract ERC721 {
             // Emit the {Transfer} event.
             log4(0x00, 0x00, _TRANSFER_EVENT_SIGNATURE, from, to, id)
         }
-        // _afterTokenTransfer(from, to, id);
+        _afterTokenTransfer(from, to, id);
     }
 
     /// @dev Equivalent to `_safeTransfer(from, to, id, "")`.
@@ -938,15 +954,19 @@ abstract contract ERC721 {
     /*                    HOOKS FOR OVERRIDING                    */
     /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
 
-    // /// @dev Hook that is called before any token transfers, including
-    // minting and burning.
-    // function _beforeTokenTransfer(address from, address to, uint256 id)
-    // internal virtual {}
+    /// @dev Hook that is called before any token transfers, including minting
+    /// and burning.
+    function _beforeTokenTransfer(address from, address to, uint256 id)
+        internal
+        virtual
+    { }
 
-    // /// @dev Hook that is called after any token transfers, including minting
-    // and burning.
-    // function _afterTokenTransfer(address from, address to, uint256 id)
-    // internal virtual {}
+    /// @dev Hook that is called after any token transfers, including minting
+    /// and burning.
+    function _afterTokenTransfer(address from, address to, uint256 id)
+        internal
+        virtual
+    { }
 
     /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
     /*                      PRIVATE HELPERS                       */

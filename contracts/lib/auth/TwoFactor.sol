@@ -9,7 +9,7 @@ abstract contract TwoFactor {
     ////////////////////////////////////////////////////////////////
 
     uint256 internal constant _NOT_AUTHORISED = 0x1648fd01;
-    uint256 internal constant _ZERO_ADDRESS = 0xaa7feadc;
+    uint256 internal constant _ZERO_ADDRESS = 0xd92e233d;
 
     /// @dev 0x1648fd01
     error NotAuthorised();
@@ -60,6 +60,8 @@ abstract contract TwoFactor {
     /// slots
     /// Only 2 combinations are allowed.
     // In both cases, the owner HAS to be involved
+    // The Router MUST check that the owner is the msg.sender in the router
+    // contract.
     /// 1. msg.sender AND tx.origin == owner
     /// 2. msg.sender == router AND tx.origin == owner
     modifier authorised() {

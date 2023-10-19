@@ -13,7 +13,13 @@ abstract contract RouterBaseFunctions is Test {
     ) internal {
         vm.prank(_owner);
         router.setFees(_feeMint, _feeBurn);
-        assertTrue(router.feeMint() == _feeMint);
-        assertTrue(router.feeBurn() == _feeBurn);
+        assertTrue(
+            router.feeMint() == _feeMint,
+            "router.feeMint() == _feeMint :: do not match"
+        );
+        assertTrue(
+            router.feeBurn() == _feeBurn,
+            "router.feeBurn() == _feeBurn :: do not match"
+        );
     }
 }

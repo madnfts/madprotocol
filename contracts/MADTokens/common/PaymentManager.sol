@@ -13,6 +13,7 @@ abstract contract PaymentManager {
 
     error NothingToWithdraw();
     error WrongToken();
+    error IncorrectPriceAmount();
 
     ////////////////////////////////////////////////////////////////
     //                          IMMUTABLE                         //
@@ -37,12 +38,18 @@ abstract contract PaymentManager {
     /// @notice total amount of fees accumulated in wrapped token (erc20).
     uint256 public feeCountERC20;
 
+    /// @notice boolean check if ERC20 Payments are enabled.
+    bool public erc20PaymentsEnabled;
+
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
     constructor(address _splitter, address _erc20, uint256 _price) {
         splitter = SplitterImpl(payable(_splitter));
         erc20 = IERC20(_erc20);
+        if (address(_erc20) != address(0)) {
+            erc20PaymentsEnabled = true;
+        }
         price = _price;
     }
 
@@ -83,17 +90,14 @@ abstract contract PaymentManager {
     }
 
     function _publicPaymentHandler(uint256 _value) internal {
-        if (msg.value == 0) {
+        if (erc20PaymentsEnabled) {
             feeCountERC20 = feeCountERC20 + _value;
             SafeTransferLib.safeTransferFrom(
                 erc20, msg.sender, address(splitter), _value
             );
-            // Trigger release from address(splitter)
-            splitter.releaseAll(erc20);
         } else {
             feeCount = feeCount + _value;
             // Relay the msg.value to the splitter.
-            // The receive function will trigger the releaseAll() from Splitter
             SafeTransferLib.safeTransferETH(address(splitter), _value);
         }
     }
@@ -106,18 +110,24 @@ abstract contract PaymentManager {
         view
         returns (uint256 _value)
     {
-        // if ((_price * _amount) != value)
-        // revert WrongPrice();
+        // No point in doing any calcluations if the price is 0 (Free).
+        // Also it upsets the underlying _getPriceValue() function.
+        if (price == 0) {
+            return 0;
+        }
 
         _value = _getPriceValue(msg.sender);
-        uint256 _price = price;
-        assembly {
-            if iszero(eq(mul(_price, _amount), _value)) {
-                // revert WrongPrice();
-                mstore(0, 0xf7760f25)
-                revert(28, 4)
-            }
-        }
+        if ((price * _amount) != _value) revert IncorrectPriceAmount();
+
+        // _value = _getPriceValue(msg.sender);
+        // uint256 _price = price;
+        // assembly {
+        //     if iszero(eq(mul(_price, _amount), _value)) {
+        //         // revert WrongPrice();
+        //         mstore(0, 0xf7760f25)
+        //         revert(28, 4)
+        //     }
+        // }
     }
 
     function _getPriceValue(address _buyer)
@@ -125,7 +135,7 @@ abstract contract PaymentManager {
         view
         returns (uint256 _value)
     {
-        if (msg.value != 0) {
+        if (!erc20PaymentsEnabled) {
             _value = msg.value;
         } else {
             _value = erc20.allowance(_buyer, address(this));

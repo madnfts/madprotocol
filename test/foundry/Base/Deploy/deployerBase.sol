@@ -48,12 +48,16 @@ abstract contract DeployerBase is
     address recipientRouter = makeAddr("RecipientRouter");
     address swapRouter = makeAddr("SwapRouter");
 
-    function deployAll(ercTypes ercType)
+    function deployAll(ercTypes ercType, bool isERC20)
         public
         returns (DeployedContracts memory deployedContracts)
     {
         // First, deploy the ERC20 token contract
-        paymentToken = erc20Deployer._deploy(currentSigner);
+        if (isERC20) {
+            paymentToken = erc20Deployer._deploy(currentSigner);
+        } else {
+            paymentToken = MockERC20(address(0));
+        }
 
         // Deploy Marketplace
         marketplace = IMarketplace(

@@ -79,6 +79,7 @@
     "deploy:harmonyDevnet": "hardhat run scripts/deploy.ts --network harmonyDevnet",
     "deploy:skale": "hardhat run scripts/deploy.ts --network skale",
     "deploy:skaleDevnet": "hardhat run scripts/deploy.ts --network skaleDevnet",
+    "deploy:skaleChaos": "hardhat run scripts/deploy.ts --network skaleChaos",
     "deploy:goerli": "hardhat run scripts/deploy.ts --network goerli",
     "deploy:ganache": "hardhat run scripts/deploy.ts --network ganache",
     "clean": "shx rm -rf ./artifacts ./cache ./coverage ./src/types ./coverage.json ./out",

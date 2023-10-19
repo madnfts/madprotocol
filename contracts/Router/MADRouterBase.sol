@@ -25,9 +25,6 @@ abstract contract MADRouterBase is MADBase, FeeHandler, RouterEvents {
     //                           STORAGE                          //
     ////////////////////////////////////////////////////////////////
 
-    /// @dev The recipient address used for public mint fees.
-    address public recipient;
-
     /// @notice FactoryVerifier connecting the router to madFactory.
     FactoryVerifier public madFactory;
 
@@ -68,7 +65,7 @@ abstract contract MADRouterBase is MADBase, FeeHandler, RouterEvents {
         emit FactoryUpdated(_factory);
     }
 
-    /// @dev Setter for public mint fee _recipient.
+    /// @dev Setter for public mint / burn fee _recipient.
     /// @dev Function Sighash := 0x3bbed4a0
     function setRecipient(address _recipient) public onlyOwner {
         // require(_recipient != address(0), "Invalid address");
@@ -107,24 +104,14 @@ abstract contract MADRouterBase is MADBase, FeeHandler, RouterEvents {
     //                         HELPERS                            //
     ////////////////////////////////////////////////////////////////
 
-    /// @notice Private auth-check mechanism that verifies `madFactory` storage.
+    /// @notice auth-check mechanism that verifies `madFactory` storage.
     /// @dev Retrieves both `collectionId` (bytes32) and collection type (uint8)
     ///      for valid token and approved user.
     ///      Function Sighash := 0xdbf62b2e
     /// @param collectionId 721 / 1155 token address.
-    function _tokenRender(address collectionId)
-        internal
-        view
-        returns (uint8 tokenType)
-    {
-        madFactory.creatorCheck(collectionId);
-        tokenType = madFactory.collectionTypeChecker(collectionId);
-    }
-
-    // MODIFIERS
-    function _checkTokenType(uint256 _tokenType) internal pure {
-        if (_tokenType != 1) {
-            revert InvalidType();
+    function _tokenRender(address collectionId) internal view {
+        if (!madFactory.creatorCheck(collectionId, msg.sender)) {
+            revert NotCallersCollection();
         }
     }
 }

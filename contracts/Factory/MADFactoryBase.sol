@@ -134,6 +134,7 @@ abstract contract MADFactoryBase is
     ) internal {
         uint256 projectShareParsed =
             ((10_000 - params.ambassadorShare) * params.projectShare) / 10_000;
+
         address[] memory _payees =
             BufferLib.payeesBuffer(params.ambassador, params.project);
 
@@ -280,7 +281,7 @@ abstract contract MADFactoryBase is
 
     /// @dev `MADRouter` instance setter.
     /// @dev Function Sighash := 0xc0d78655
-    function setRouter(address _router) external onlyOwner {
+    function setRouter(address _router) public onlyOwner {
         _isZeroAddr(_router);
         assembly {
             sstore(router.slot, _router)
@@ -299,49 +300,28 @@ abstract contract MADFactoryBase is
     {
         collectionTypes[index] = impl;
 
-        emit ColTypeUpdated(index);
+        emit CollectionTypeAdded(index);
     }
 
     ////////////////////////////////////////////////////////////////
     //                           HELPERS                          //
     ////////////////////////////////////////////////////////////////
 
-    /// @notice Everything in storage can be fetch through the
-    /// getters natively provided by all public mappings.
-    /// @dev This public getter serve as a hook to ease frontend
-    /// fetching whilst estimating user's collectionId indexes.
-    /// @dev Function Sighash := 0x8691fe46
-
-    /// @inheritdoc FactoryVerifier
-    function collectionTypeChecker(address _collectionId)
-        public
-        view
-        override(FactoryVerifier)
-        returns (uint8 pointer)
-    {
-        Types.Collection storage collection = collectionInfo[_collectionId];
-
-        assembly {
-            let x := sload(collection.slot)
-            pointer := shr(160, x)
-        }
-    }
-
     /// @inheritdoc FactoryVerifier
     /// @notice This function is used by `MADRouter` to check if a  collection
     /// creator is the same as the caller.
     /// @dev Function Sighash := 5033270c
     /// @param _collectionId address of the collection.
-    /// @return creator address of the collection creator.
+    /// @param _creator address of the collection creator.
     /// @return check Boolean output to either approve or reject call's
-    function creatorCheck(address _collectionId)
+    function creatorCheck(address _collectionId, address _creator)
         external
         view
         override(FactoryVerifier)
-        returns (address creator, bool check)
+        returns (bool check)
     {
-        creator = collectionInfo[_collectionId].creator;
-        if (creator == tx.origin) {
+        address creator = collectionInfo[_collectionId].creator;
+        if (creator == _creator) {
             check = true;
         }
     }

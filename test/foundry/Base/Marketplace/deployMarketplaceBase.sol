@@ -13,7 +13,9 @@ import { AddressesHelp } from "test/foundry/utils/addressesHelp.sol";
 contract DeployMarketplaceBase is MarketplaceFactory, AddressesHelp {
     address marketplaceOwner = makeAddr("MarketplaceOwner");
     address recipientMarketplace = makeAddr("RecipientMarketplace");
-    address paymentTokenAddressMarket = makeAddr("paymentTokenAddressMarket");
+    address paymentTokenAddressMarket = address(0);
+    address paymentTokenAddressMarketErc20 =
+        makeAddr("paymentTokenAddressMarket");
     address swapRouter = makeAddr("SwapRouter");
     address factoryVerifierMarketplace = makeAddr("MarketplaceFactory");
 
@@ -135,10 +137,7 @@ contract DeployMarketplaceBase is MarketplaceFactory, AddressesHelp {
             address(_marketplace.erc20()) == _paymentTokenAddressMarket,
             "Incorrect payment token address"
         );
-        assertTrue(
-            address(_marketplace.erc20()) != address(0),
-            "Payment token address cannot be address(0)"
-        );
+
         setAndCheckAddress(_marketplace.setOwner, _marketplace.owner);
         setAndCheckAddress(_marketplace.setRecipient, _marketplace.recipient);
 
@@ -222,6 +221,9 @@ contract DeployMarketplaceBase is MarketplaceFactory, AddressesHelp {
 
         vm.prank(_owner);
         _marketplace.setFactory(_factoryVerifierMarketplace);
-        assertTrue(_marketplace.madFactory() == _factoryVerifierMarketplace);
+        assertTrue(
+            _marketplace.madFactory() == _factoryVerifierMarketplace,
+            "_marketplace.madFactory() == _factoryVerifierMarketplace :: addresses do not match"
+        );
     }
 }

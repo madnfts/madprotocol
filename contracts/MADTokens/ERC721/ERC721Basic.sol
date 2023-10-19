@@ -22,6 +22,17 @@ contract ERC721Basic is ERC721, ImplBase {
     using Strings for uint256;
 
     ////////////////////////////////////////////////////////////////
+    //                           STORAGE                          //
+    ////////////////////////////////////////////////////////////////
+
+    /// @notice `_supplyRegistrar` bits layout.
+    /// @dev Live supply counter, excludes burned tokens.
+    /// `uint128`  [0...127]   := liveSupply
+    /// @dev Mint counter, includes burnt count.
+    /// `uint128`  [128...255] := mintCount
+    uint256 internal _supplyRegistrar;
+
+    ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
@@ -37,9 +48,9 @@ contract ERC721Basic is ERC721, ImplBase {
     /// @dev Transfer event emitted by parent ERC721 contract.
     /// @dev Function Sighash := 0x438b1b4b
     /// @dev Loop runs out of gas before overflowing.
-    function mintTo(address to, uint128 amount) external payable authorised {
-        (uint256 curId, uint256 endId) = _prepareOwnerMint(amount);
-
+    function mintTo(address to, uint128 amount) public payable authorised {
+        _hasReachedMax(uint256(amount));
+        (uint256 curId, uint256 endId) = _incrementCounter(uint256(amount));
         unchecked {
             do {
                 _mint(to, curId);
@@ -58,7 +69,7 @@ contract ERC721Basic is ERC721, ImplBase {
     /// @dev Transfer event emitted by parent ERC721 contract.
     /// @dev Function Sighash := 0xa0712d68
     /// @param amount The amount of tokens to mint.
-    function mint(uint128 amount) external payable {
+    function mint(uint128 amount) public payable {
         if (routerHasAuthority) {
             revert RouterIsEnabled();
         }
@@ -75,8 +86,10 @@ contract ERC721Basic is ERC721, ImplBase {
     }
 
     function _publicMint(address to, uint128 amount) private {
-        (uint256 curId, uint256 endId) =
-            _preparePublicMint(uint256(amount), uint256(amount));
+        _hasReachedMax(uint256(amount));
+        _preparePublicMint(uint256(amount), uint256(amount));
+        (uint256 curId, uint256 endId) = _incrementCounter(uint256(amount));
+
         unchecked {
             do {
                 _mint(to, curId);
@@ -103,6 +116,83 @@ contract ERC721Basic is ERC721, ImplBase {
 
     ////////////////////////////////////////////////////////////////
     //                           VIEW FX                          //
+    ////////////////////////////////////////////////////////////////
+
+    function totalSupply() public view returns (uint256) {
+        return liveSupply();
+    }
+
+    function liveSupply() public view returns (uint256 _liveSupply) {
+        assembly {
+            _liveSupply := and(_SR_UPPERBITS, sload(_supplyRegistrar.slot))
+        }
+    }
+
+    function mintCount() public view returns (uint256 _mintCount) {
+        assembly {
+            _mintCount := shr(_MINTCOUNT_BITPOS, sload(_supplyRegistrar.slot))
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////
+    //                     PRIVATE FUNCTIONS                     //
+    ////////////////////////////////////////////////////////////////
+
+    function _hasReachedMax(uint256 _amount) private view {
+        uint256 _maxSupply = maxSupply;
+        assembly {
+            // if (mintCount + amount > maxSupply)
+            if gt(
+                add(
+                    shr(_MINTCOUNT_BITPOS, sload(_supplyRegistrar.slot)),
+                    _amount
+                ),
+                _maxSupply
+            ) {
+                // revert MaxSupplyReached();
+                mstore(0, 0xd05cb609)
+                revert(28, 4)
+            }
+        }
+    }
+
+    function _incrementCounter(uint256 _amount)
+        private
+        returns (uint256 _nextId, uint256 _mintCount)
+    {
+        // liveSupply = liveSupply + amount;
+        // mintCount = mintCount + amount;
+        // uint256 curId = mintCount + 1;
+        assembly {
+            let _prev := shr(_MINTCOUNT_BITPOS, sload(_supplyRegistrar.slot))
+            let _liveSupply :=
+                add(and(_SR_UPPERBITS, sload(_supplyRegistrar.slot)), _amount)
+            _nextId := add(_prev, 0x01)
+            _mintCount := add(_prev, _amount)
+
+            sstore(
+                _supplyRegistrar.slot,
+                or(_liveSupply, shl(_MINTCOUNT_BITPOS, _mintCount))
+            )
+        }
+    }
+
+    function _decSupply(uint256 _amount) private {
+        assembly {
+            let _liveSupply := and(_SR_UPPERBITS, sload(_supplyRegistrar.slot))
+            if or(
+                iszero(_liveSupply), gt(sub(_liveSupply, _amount), _liveSupply)
+            ) {
+                // DecOverflow()
+                mstore(0x00, 0xce3a3d37)
+                revert(0x1c, 0x04)
+            }
+        }
+        _supplyRegistrar = _supplyRegistrar - _amount;
+    }
+
+    ////////////////////////////////////////////////////////////////
+    //                     OVERRIDES                     //
     ////////////////////////////////////////////////////////////////
 
     function tokenURI(uint256 id)
@@ -137,10 +227,6 @@ contract ERC721Basic is ERC721, ImplBase {
     {
         return _readString(_SYMBOL_SLOT);
     }
-
-    ////////////////////////////////////////////////////////////////
-    //                     REQUIRED OVERRIDES                     //
-    ////////////////////////////////////////////////////////////////
 
     function supportsInterface(bytes4 interfaceId)
         public

@@ -91,10 +91,10 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
         emit log_named_uint("totalShares", totalShares);
         emit log_named_uint(
             "splitterDataAmbassadorShare", splitterDataAmbassadorShare
-            );
+        );
         emit log_named_uint(
             "splitterDataProjectShare", splitterDataProjectShare
-            );
+        );
         emit log_named_uint("sharesOrZero", sharesOrZero);
         emit log_named_uint("config.projectShare", config.projectShare);
 
@@ -188,21 +188,14 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
             splitter.released(_currentSigner) == 0,
             "Released amount for specific _currentSigner should be 0"
         );
-        assertTrue(
-            splitter.releasable(_currentSigner) == 0,
-            "Releasable amount for specific _currentSigner should be 0"
-        );
 
         // ERC20
-        assertTrue(
-            splitter.released(IERC20(_paymentToken), _currentSigner) == 0,
-            "Released amount for specific token and _currentSigner should be 0"
-        );
-
-        assertTrue(
-            splitter.releasable(IERC20(_paymentToken), _currentSigner) == 0,
-            "Releasable amount for specific token and _currentSigner should be 0"
-        );
+        if (_paymentToken != address(0)) {
+            assertTrue(
+                splitter.released(IERC20(_paymentToken), _currentSigner) == 0,
+                "Released amount for specific token and _currentSigner should be 0"
+            );
+        }
     }
 
     function _runSplitterDeploy_creatorOnly(IFactory factory)

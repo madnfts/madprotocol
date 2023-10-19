@@ -12,7 +12,9 @@ import { AddressesHelp } from "test/foundry/utils/addressesHelp.sol";
 
 contract DeployRouterBase is AddressesHelp, RouterFactory {
     address routerOwner = makeAddr("RouterOwner");
-    address paymentTokenAddressRouter = makeAddr("paymentTokenAddressRouter");
+    address paymentTokenAddressRouter = address(0);
+    address paymentTokenAddressRouterErc20 =
+        makeAddr("paymentTokenAddressRouter");
     address recipientRouter = makeAddr("RecipientRouter");
     address factoryVerifierRouter = makeAddr("RouterFactory");
 
@@ -120,10 +122,6 @@ contract DeployRouterBase is AddressesHelp, RouterFactory {
             assertTrue(
                 address(_router.erc20()) == _paymentTokenAddressRouter,
                 "Incorrect payment token address"
-            );
-            assertTrue(
-                address(_router.erc20()) != address(0),
-                "Payment token address cannot be address(0)"
             );
 
             assertTrue(_router.feeBurn() == feeBurn, "Incorrect feeBurn value");

@@ -11,8 +11,11 @@ abstract contract PaymentManager {
     //                          ERRORS                            //
     ////////////////////////////////////////////////////////////////
 
+    // @dev 0xd0d04f60
     error NothingToWithdraw();
+    // @dev 0xa0f3feea
     error WrongToken();
+    // @dev 0x68e26200
     error IncorrectPriceAmount();
 
     ////////////////////////////////////////////////////////////////
@@ -105,7 +108,7 @@ abstract contract PaymentManager {
     ////////////////////////////////////////////////////////////////
     //                     INTERNAL HELPERS                       //
     ////////////////////////////////////////////////////////////////
-    function _publicMintPriceCheck(uint256 _amount)
+    function _publicMintPriceCheck(uint256 _amount, address _buyer)
         internal
         view
         returns (uint256 _value)
@@ -115,19 +118,8 @@ abstract contract PaymentManager {
         if (price == 0) {
             return 0;
         }
-
-        _value = _getPriceValue(msg.sender);
+        _value = _getPriceValue(_buyer);
         if ((price * _amount) != _value) revert IncorrectPriceAmount();
-
-        // _value = _getPriceValue(msg.sender);
-        // uint256 _price = price;
-        // assembly {
-        //     if iszero(eq(mul(_price, _amount), _value)) {
-        //         // revert WrongPrice();
-        //         mstore(0, 0xf7760f25)
-        //         revert(28, 4)
-        //     }
-        // }
     }
 
     function _getPriceValue(address _buyer)
@@ -141,11 +133,4 @@ abstract contract PaymentManager {
             _value = erc20.allowance(_buyer, address(this));
         }
     }
-
-    // // Receive function to receive ETH and forward to the splitter.
-    // receive() external payable {
-    //     // Relay the msg.value to the splitter.
-    //     // The receive function will trigger the releaseAll() from Splitter
-    //     SafeTransferLib.safeTransferETH(address(splitter), msg.value);
-    // }
 }

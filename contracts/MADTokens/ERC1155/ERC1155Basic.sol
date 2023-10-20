@@ -113,7 +113,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
 
     /// @dev Transfer events emitted by parent ERC1155 contract.
     function mint(uint128 _id, uint128 amount) public payable {
-        _publicMint(msg.sender, _id, amount);
+        _publicMint(msg.sender, _id, amount, msg.sender);
     }
 
     function mint(address _to, uint128 _id, uint128 amount)
@@ -121,11 +121,11 @@ contract ERC1155Basic is ERC1155, ImplBase {
         payable
         authorised
     {
-        _publicMint(_to, _id, amount);
+        _publicMint(_to, _id, amount, _to);
     }
 
-    function _publicMint(address to, uint128 _id, uint128 amount) private {
-        _preparePublicMint(uint256(amount), uint256(amount));
+    function _publicMint(address to, uint128 _id, uint128 amount, address _buyer) private {
+        _preparePublicMint(uint256(amount), uint256(amount), _buyer);
         mintTo(to, _id, amount);
     }
 
@@ -151,7 +151,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
         uint128[] calldata amounts
     ) private {
         uint256 len = ids.length;
-        _preparePublicMint(len, uint256(len * _sumAmounts(amounts)));
+        _preparePublicMint(len, uint256(len * _sumAmounts(amounts)), _to);
 
         mintBatchTo(_to, ids, amounts);
     }

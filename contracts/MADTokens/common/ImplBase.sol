@@ -71,13 +71,6 @@ abstract contract ImplBase is
 
         emit RoyaltyFeeSet(uint256(args._royaltyPercentage));
         emit RoyaltyRecipientSet(payable(args._splitter));
-
-        // assembly {
-        //     // emit RoyaltyFeeSet(uint256(_royaltyPercentage));
-        //     log2(0, 0, _ROYALTY_FEE_SET, _royaltyPercentage)
-        //     // emit RoyaltyRecipientSet(payable(_splitter));
-        //     log2(0, 0, _ROYALTY_RECIPIENT_SET, _splitter)
-        // }
     }
 
     ////////////////////////////////////////////////////////////////
@@ -89,10 +82,6 @@ abstract contract ImplBase is
         // bytes(_baseURI).length > 32 ? revert() : baseURI = _baseURI;
         _setStringCalldata(_baseURI, _BASE_URI_SLOT);
         emit BaseURISet(_baseURI);
-
-        // audit Error in testing - hashes do not match - are we emitting the
-        // correct data?
-        // assembly { log2(0, 0, _BASE_URI_SET, calldataload(0x44)) }
     }
 
     /// @dev `uriLock` and `publicMintState` already
@@ -160,21 +149,12 @@ abstract contract ImplBase is
     //                     INTERNAL FUNCTIONS                     //
     ////////////////////////////////////////////////////////////////
 
-    function _preparePublicMint(uint256 amount, uint256 totalAmount) internal {
-        _publicMintAccess();
-        uint256 _price = _publicMintPriceCheck(totalAmount);
+    function _preparePublicMint(uint256 amount, uint256 totalAmount, address _buyer) internal {
+        if (!publicMintState) revert PublicMintClosed();
+        uint256 _price = _publicMintPriceCheck(totalAmount, _buyer);
         // msg.value could be 0 and _value = 0 but still be expecting ETH (Free
         // Mint)
         if (_price > 0) _publicPaymentHandler(_price);
-    }
-
-    function _publicMintAccess() internal view {
-        assembly {
-            if iszero(sload(publicMintState.slot)) {
-                mstore(0, 0x2d0a3f8e)
-                revert(28, 4)
-            }
-        }
     }
 
     function _readString(bytes32 _slot)

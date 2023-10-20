@@ -73,7 +73,7 @@ contract ERC721Basic is ERC721, ImplBase {
         if (routerHasAuthority) {
             revert RouterIsEnabled();
         }
-        _publicMint(msg.sender, amount);
+        _publicMint(msg.sender, amount, msg.sender);
     }
 
     /// @notice public mint function if madRouter is authorised.
@@ -82,12 +82,12 @@ contract ERC721Basic is ERC721, ImplBase {
     /// @param to The address to mint to.
     /// @param amount The amount of tokens to mint.
     function mint(address to, uint128 amount) external payable authorised {
-        _publicMint(to, amount);
+        _publicMint(to, amount, to);
     }
 
-    function _publicMint(address to, uint128 amount) private {
+    function _publicMint(address to, uint128 amount, address _buyer) private {
         _hasReachedMax(uint256(amount));
-        _preparePublicMint(uint256(amount), uint256(amount));
+        _preparePublicMint(uint256(amount), uint256(amount), _buyer);
         (uint256 curId, uint256 endId) = _incrementCounter(uint256(amount));
 
         unchecked {

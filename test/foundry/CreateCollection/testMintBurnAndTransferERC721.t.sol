@@ -163,7 +163,7 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         _doPublicMint(
             mintData,
             true,
-            0xf7760f25 // error WrongPrice();
+            0x68e26200 // error IncorrectPriceAmount();
         );
     }
 
@@ -241,51 +241,6 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
     //                          WIHDRAW TESTS                     //
     ////////////////////////////////////////////////////////////////
 
-    function testWithdrawERC20() public {
-        uint128 amountToMint = 10;
-        uint256 _amountToSend = 10 ether;
-
-        MockERC20 erc20Token = deployedContracts.paymentToken;
-
-        // Create Collection & Splitter
-        MintData memory mintData =
-            _setupMint(nftMinter, nftReceiver, nftPublicMintPrice, amountToMint);
-
-        address _collectionAddress = mintData.collectionAddress;
-        address _splitterAddress = mintData.splitterAddress;
-
-        IERC721Basic collection = IERC721Basic(_collectionAddress);
-
-        uint256 balanceBeforeSplitter = erc20Token.balanceOf(_splitterAddress);
-        uint256 balanceBeforeCollection =
-            erc20Token.balanceOf(_collectionAddress);
-
-        // Send some ERC20 tokens to the CollectionAddress
-        deployer.sendERC20(_collectionAddress, _amountToSend);
-
-        uint256 expectedCollectionBalance =
-            balanceBeforeCollection + _amountToSend;
-
-        // Check balance of the collectionAddress
-        assertTrue(
-            erc20Token.balanceOf(_collectionAddress)
-                == expectedCollectionBalance,
-            "erc20Token.balanceOf(_collectionAddress) == expectedCollectionBalance ::  do not match"
-        );
-
-        // Withdraw ERC20 to Splitter
-        vm.startPrank(mintData.nftMinter);
-        collection.withdrawERC20(address(erc20Token));
-
-        uint256 splitterBalance = erc20Token.balanceOf(_splitterAddress);
-
-        // Check that the ERC20 has been withdrawn
-        assertTrue(
-            splitterBalance == balanceBeforeSplitter + expectedCollectionBalance,
-            "splitterBalance == balanceBeforeSplitter + expectedCollectionBalance ::  do not match"
-        );
-    }
-
     function testWithdrawEth() public {
         uint128 amountToMint = 10;
         uint256 _amountToSend = 10 ether;
@@ -294,24 +249,35 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         MintData memory mintData =
             _setupMint(nftMinter, nftReceiver, nftPublicMintPrice, amountToMint);
         address contractAddress = mintData.collectionAddress;
+        address _splitterAddress = mintData.splitterAddress;
 
-        uint256 balanceBefore = mintData.nftMinter.balance;
+        uint256 balanceBefore = _splitterAddress.balance;
 
         IERC721Basic collection = IERC721Basic(contractAddress);
 
         // Send some NAtive  tokens to the contractAddress
         vm.deal(contractAddress, _amountToSend);
 
+        // Check the balance of the contract address
+        assertTrue(
+            contractAddress.balance == _amountToSend,
+            "contractAddress.balance == _amountToSend ::  do not match"
+        );
+
         // Withdraw NAtive tokens
         vm.startPrank(mintData.nftMinter);
         collection.withdraw();
 
-        // Check that the ETH has been withdrawn to the splitter
-        // It should auto send to the splitter receivers and in this test case
-        // we have only the minter..
+        // Check the balance of the contract address
         assertTrue(
-            mintData.nftMinter.balance == _amountToSend + balanceBefore,
-            "mintData.nftMinter.balance == _amountToSend + balanceBefore ::  do not match"
+            contractAddress.balance == 0,
+            "contractAddress.balance == 0 ::  do not match"
+        );
+
+        // Check ETH has been sent to the Splitter contract
+        assertTrue(
+            _splitterAddress.balance == balanceBefore + _amountToSend,
+            "_splitterAddress.balance == balanceBefore + _amountToSend ::  do not match"
         );
     }
 

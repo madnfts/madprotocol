@@ -235,7 +235,7 @@ const _abi = [
         type: "address[]",
       },
       {
-        indexed: false,
+        indexed: true,
         internalType: "address",
         name: "splitter",
         type: "address",

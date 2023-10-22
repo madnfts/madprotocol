@@ -756,14 +756,14 @@ export interface MADFactory extends BaseContract {
       creator?: PromiseOrValue<string> | null,
       shares?: null,
       payees?: null,
-      splitter?: null,
+      splitter?: PromiseOrValue<string> | null,
       flag?: null
     ): SplitterCreatedEventFilter;
     SplitterCreated(
       creator?: PromiseOrValue<string> | null,
       shares?: null,
       payees?: null,
-      splitter?: null,
+      splitter?: PromiseOrValue<string> | null,
       flag?: null
     ): SplitterCreatedEventFilter;
   };

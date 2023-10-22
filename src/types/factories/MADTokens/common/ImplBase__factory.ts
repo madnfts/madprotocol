@@ -217,6 +217,19 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "erc20PaymentsEnabled",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "feeCount",
     outputs: [
       {

@@ -79,6 +79,7 @@ export interface ERC1155BasicInterface extends utils.Interface {
     "burn(address[],uint128[],uint128[])": FunctionFragment;
     "burnBatch(address,uint128[],uint128[])": FunctionFragment;
     "erc20()": FunctionFragment;
+    "erc20PaymentsEnabled()": FunctionFragment;
     "feeCount()": FunctionFragment;
     "feeCountERC20()": FunctionFragment;
     "getOwner()": FunctionFragment;
@@ -122,6 +123,7 @@ export interface ERC1155BasicInterface extends utils.Interface {
       | "burn"
       | "burnBatch"
       | "erc20"
+      | "erc20PaymentsEnabled"
       | "feeCount"
       | "feeCountERC20"
       | "getOwner"
@@ -189,6 +191,10 @@ export interface ERC1155BasicInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(functionFragment: "erc20", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "erc20PaymentsEnabled",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "feeCount", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "feeCountERC20",
@@ -335,6 +341,10 @@ export interface ERC1155BasicInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "burnBatch", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "erc20", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "erc20PaymentsEnabled",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "feeCount", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "feeCountERC20",
@@ -628,6 +638,8 @@ export interface ERC1155Basic extends BaseContract {
 
     erc20(overrides?: CallOverrides): Promise<[string]>;
 
+    erc20PaymentsEnabled(overrides?: CallOverrides): Promise<[boolean]>;
+
     feeCount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     feeCountERC20(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -812,6 +824,8 @@ export interface ERC1155Basic extends BaseContract {
 
   erc20(overrides?: CallOverrides): Promise<string>;
 
+  erc20PaymentsEnabled(overrides?: CallOverrides): Promise<boolean>;
+
   feeCount(overrides?: CallOverrides): Promise<BigNumber>;
 
   feeCountERC20(overrides?: CallOverrides): Promise<BigNumber>;
@@ -995,6 +1009,8 @@ export interface ERC1155Basic extends BaseContract {
     ): Promise<void>;
 
     erc20(overrides?: CallOverrides): Promise<string>;
+
+    erc20PaymentsEnabled(overrides?: CallOverrides): Promise<boolean>;
 
     feeCount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1271,6 +1287,8 @@ export interface ERC1155Basic extends BaseContract {
 
     erc20(overrides?: CallOverrides): Promise<BigNumber>;
 
+    erc20PaymentsEnabled(overrides?: CallOverrides): Promise<BigNumber>;
+
     feeCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     feeCountERC20(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1453,6 +1471,10 @@ export interface ERC1155Basic extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     erc20(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    erc20PaymentsEnabled(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     feeCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

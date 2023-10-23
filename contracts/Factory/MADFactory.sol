@@ -6,6 +6,14 @@ import { MADFactoryBase } from "contracts/Factory/MADFactoryBase.sol";
 import { Types } from "contracts/Shared/Types.sol";
 
 contract MADFactory is MADFactoryBase {
+
+    uint constant AMBASSADOR_SHARE_MIN = 100;
+    uint constant AMBASSADOR_SHARE_MAX = 2000;
+    uint constant PROJECT_SHARE_MIN = 100;
+    uint constant PROJECT_SHARE_MAX = 10000;
+
+    address ADDRESS_ZERO = address(0);
+
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
@@ -13,6 +21,7 @@ contract MADFactory is MADFactoryBase {
     constructor(address _paymentTokenAddress)
         MADFactoryBase(_paymentTokenAddress)
     { }
+
 
     /// @notice Core public token types deployment pusher.
     /// @dev Function Sighash := 0x73fd6808
@@ -89,36 +98,35 @@ contract MADFactory is MADFactoryBase {
 
     // Ambassador
     // Up to 20% of Creator Share before Project share
-
     function createSplitter(Types.CreateSplitterParams calldata params)
         public
         isThisOg
     {
-        if (params.ambassador == address(0) && params.project == address(0)) {
+        if (params.ambassador == ADDRESS_ZERO && params.project == ADDRESS_ZERO) {
             _splitterResolver(
                 params,
                 0 // _flag := no project/ no ambassador
             );
         } else if (
-            params.ambassador != address(0) && params.project == address(0)
-                && params.ambassadorShare > 99 && params.ambassadorShare < 2001
+            params.ambassador != ADDRESS_ZERO && params.project == ADDRESS_ZERO
+                && params.ambassadorShare >= AMBASSADOR_SHARE_MIN && params.ambassadorShare <= AMBASSADOR_SHARE_MAX
         ) {
             _splitterResolver(
                 params,
                 1 // _flag := ambassador only
             );
         } else if (
-            params.project != address(0) && params.ambassador == address(0)
-                && params.projectShare > 99 && params.projectShare < 10_001
+            params.project != ADDRESS_ZERO && params.ambassador == ADDRESS_ZERO
+                && params.projectShare >= PROJECT_SHARE_MIN && params.projectShare <= PROJECT_SHARE_MAX
         ) {
             _splitterResolver(
                 params,
                 2 // _flag := project only
             );
         } else if (
-            params.ambassador != address(0) && params.project != address(0)
-                && params.ambassadorShare > 99 && params.ambassadorShare < 2001
-                && params.projectShare > 99 && params.projectShare < 10_001
+            params.ambassador != ADDRESS_ZERO && params.project != ADDRESS_ZERO
+                && params.ambassadorShare >= AMBASSADOR_SHARE_MIN && params.ambassadorShare <= AMBASSADOR_SHARE_MAX
+                && params.projectShare >= PROJECT_SHARE_MIN && params.projectShare <= PROJECT_SHARE_MAX
         ) {
             _splitterResolver(
                 params,

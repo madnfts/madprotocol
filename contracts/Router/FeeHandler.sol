@@ -27,10 +27,10 @@ abstract contract FeeHandler {
     /// @notice Burn fee store.
     uint256 public feeBurn; /* = 0 */
 
-    /// @notice Mint fee store.
+    /// @notice ERC20 Mint fee store.
     mapping(address erc20token => uint256 mintPrice) public feeMintErc20;
 
-    /// @notice Burn fee store.
+    /// @notice ERC20 Burn fee store.
     mapping(address erc20token => uint256 burnPrice) public feeBurnErc20;
 
     /// @notice max fee that can be set for mint - B.1 remove from constructor

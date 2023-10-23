@@ -14,12 +14,15 @@ import { CREATE3, Bytes32AddressLib } from "contracts/lib/utils/CREATE3.sol";
 import { SplitterBufferLib as BufferLib } from
     "contracts/lib/utils/SplitterBufferLib.sol";
 
+import { FeeHandlerFactory } from "contracts/Factory/FeeHandler.sol";
+
 // prettier-ignore
 abstract contract MADFactoryBase is
     MADBase,
     FactoryEventsAndErrorsBase,
     FactoryVerifier,
-    DCPrevent
+    DCPrevent,
+    FeeHandlerFactory
 {
     using Types for Types.CollectionArgs;
     using Types for Types.SplitterConfig;
@@ -65,6 +68,9 @@ abstract contract MADFactoryBase is
     /// constructor.
     address public router;
 
+    address public ADDRESS_ZERO = address(0);
+
+
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
@@ -81,6 +87,12 @@ abstract contract MADFactoryBase is
         _isZeroAddr(router);
         _limiter(params.tokenType, params.splitter);
         _royaltyLocker(params.royalty);
+        if (address(erc20) != ADDRESS_ZERO){
+            _handleFees(feeCreateCollection);
+            }
+        else {
+            _handleFees(feeCreateCollectionErc20[address(erc20)], address(erc20));
+        }
 
         if (params.maxSupply == 0) {
             revert ZeroMaxSupply();
@@ -116,22 +128,19 @@ abstract contract MADFactoryBase is
 
     ////////////////////////////////////////////////////////////////
     //                           HELPERS                          //
-    ////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////
 
-    /// @notice Everything in storage can be fetch through the
-    /// getters natively provided by all public mappings.
-    /// @dev This public getter serves as a hook to ease frontend
-    /// fetching whilst estimating user's collectionId indexes.
-
-    /// @dev Function Sighash := 0x8691fe46
-    function getIDsLength(address _user) public view returns (uint256) {
-        return userTokens[_user].length;
-    }
-
-    function _splitterResolver(
+    function _createSplitter(
         Types.CreateSplitterParams calldata params,
         uint256 _flag
     ) internal {
+        if (address(erc20) != ADDRESS_ZERO){
+            _handleFees(feeCreateSplitter);
+            }
+        else {
+            _handleFees(feeCreateSplitterErc20[address(erc20)], address(erc20));
+        }
+
         uint256 projectShareParsed =
             ((10_000 - params.ambassadorShare) * params.projectShare) / 10_000;
 
@@ -185,6 +194,16 @@ abstract contract MADFactoryBase is
             ),
             0
         );
+    }
+
+    /// @notice Everything in storage can be fetch through the
+    /// getters natively provided by all public mappings.
+    /// @dev This public getter serves as a hook to ease frontend
+    /// fetching whilst estimating user's collectionId indexes.
+
+    /// @dev Function Sighash := 0x8691fe46
+    function getIDsLength(address _user) public view returns (uint256) {
+        return userTokens[_user].length;
     }
 
     /// @inheritdoc FactoryVerifier

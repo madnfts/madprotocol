@@ -11,8 +11,6 @@ contract MADFactory is MADFactoryBase {
     uint256 constant PROJECT_SHARE_MIN = 101;
     uint256 constant PROJECT_SHARE_MAX = 10_001;
 
-    address ADDRESS_ZERO = address(0);
-
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
@@ -102,7 +100,7 @@ contract MADFactory is MADFactoryBase {
     {
         if (params.ambassador == ADDRESS_ZERO && params.project == ADDRESS_ZERO)
         {
-            _splitterResolver(
+            _createSplitter(
                 params,
                 0 // _flag := no project/ no ambassador
             );
@@ -111,7 +109,7 @@ contract MADFactory is MADFactoryBase {
                 && params.ambassadorShare > AMBASSADOR_SHARE_MIN
                 && params.ambassadorShare < AMBASSADOR_SHARE_MAX
         ) {
-            _splitterResolver(
+            _createSplitter(
                 params,
                 1 // _flag := ambassador only
             );
@@ -120,7 +118,7 @@ contract MADFactory is MADFactoryBase {
                 && params.projectShare > PROJECT_SHARE_MIN
                 && params.projectShare < PROJECT_SHARE_MAX
         ) {
-            _splitterResolver(
+            _createSplitter(
                 params,
                 2 // _flag := project only
             );
@@ -131,7 +129,7 @@ contract MADFactory is MADFactoryBase {
                 && params.projectShare > PROJECT_SHARE_MIN
                 && params.projectShare < PROJECT_SHARE_MAX
         ) {
-            _splitterResolver(
+            _createSplitter(
                 params,
                 3 // _flag := ambassador and project
             );

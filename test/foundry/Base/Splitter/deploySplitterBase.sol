@@ -91,10 +91,10 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
         emit log_named_uint("totalShares", totalShares);
         emit log_named_uint(
             "splitterDataAmbassadorShare", splitterDataAmbassadorShare
-        );
+            );
         emit log_named_uint(
             "splitterDataProjectShare", splitterDataProjectShare
-        );
+            );
         emit log_named_uint("sharesOrZero", sharesOrZero);
         emit log_named_uint("config.projectShare", config.projectShare);
 

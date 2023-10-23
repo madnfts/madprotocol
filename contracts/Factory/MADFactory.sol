@@ -6,11 +6,10 @@ import { MADFactoryBase } from "contracts/Factory/MADFactoryBase.sol";
 import { Types } from "contracts/Shared/Types.sol";
 
 contract MADFactory is MADFactoryBase {
-
-    uint constant AMBASSADOR_SHARE_MIN = 100;
-    uint constant AMBASSADOR_SHARE_MAX = 2000;
-    uint constant PROJECT_SHARE_MIN = 100;
-    uint constant PROJECT_SHARE_MAX = 10000;
+    uint256 constant AMBASSADOR_SHARE_MIN = 100;
+    uint256 constant AMBASSADOR_SHARE_MAX = 2000;
+    uint256 constant PROJECT_SHARE_MIN = 100;
+    uint256 constant PROJECT_SHARE_MAX = 10_000;
 
     address ADDRESS_ZERO = address(0);
 
@@ -21,7 +20,6 @@ contract MADFactory is MADFactoryBase {
     constructor(address _paymentTokenAddress)
         MADFactoryBase(_paymentTokenAddress)
     { }
-
 
     /// @notice Core public token types deployment pusher.
     /// @dev Function Sighash := 0x73fd6808
@@ -62,7 +60,7 @@ contract MADFactory is MADFactoryBase {
             params.royalty,
             params.maxSupply,
             params.price
-        );
+            );
     }
 
     /// @notice Splitter deployment pusher.
@@ -102,14 +100,16 @@ contract MADFactory is MADFactoryBase {
         public
         isThisOg
     {
-        if (params.ambassador == ADDRESS_ZERO && params.project == ADDRESS_ZERO) {
+        if (params.ambassador == ADDRESS_ZERO && params.project == ADDRESS_ZERO)
+        {
             _splitterResolver(
                 params,
                 0 // _flag := no project/ no ambassador
             );
         } else if (
             params.ambassador != ADDRESS_ZERO && params.project == ADDRESS_ZERO
-                && params.ambassadorShare >= AMBASSADOR_SHARE_MIN && params.ambassadorShare <= AMBASSADOR_SHARE_MAX
+                && params.ambassadorShare >= AMBASSADOR_SHARE_MIN
+                && params.ambassadorShare <= AMBASSADOR_SHARE_MAX
         ) {
             _splitterResolver(
                 params,
@@ -117,7 +117,8 @@ contract MADFactory is MADFactoryBase {
             );
         } else if (
             params.project != ADDRESS_ZERO && params.ambassador == ADDRESS_ZERO
-                && params.projectShare >= PROJECT_SHARE_MIN && params.projectShare <= PROJECT_SHARE_MAX
+                && params.projectShare >= PROJECT_SHARE_MIN
+                && params.projectShare <= PROJECT_SHARE_MAX
         ) {
             _splitterResolver(
                 params,
@@ -125,8 +126,10 @@ contract MADFactory is MADFactoryBase {
             );
         } else if (
             params.ambassador != ADDRESS_ZERO && params.project != ADDRESS_ZERO
-                && params.ambassadorShare >= AMBASSADOR_SHARE_MIN && params.ambassadorShare <= AMBASSADOR_SHARE_MAX
-                && params.projectShare >= PROJECT_SHARE_MIN && params.projectShare <= PROJECT_SHARE_MAX
+                && params.ambassadorShare >= AMBASSADOR_SHARE_MIN
+                && params.ambassadorShare <= AMBASSADOR_SHARE_MAX
+                && params.projectShare >= PROJECT_SHARE_MIN
+                && params.projectShare <= PROJECT_SHARE_MAX
         ) {
             _splitterResolver(
                 params,

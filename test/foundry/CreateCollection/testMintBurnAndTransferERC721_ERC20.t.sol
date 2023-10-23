@@ -439,7 +439,7 @@ contract TestMintBurnAndTransferERC721_Erc20 is
 
         emit log_named_uint(
             "nftPublicMintPrice AFTER", mintData.nftPublicMintPrice
-        );
+            );
 
         vm.startPrank(mintData.nftReceiver);
 

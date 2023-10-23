@@ -45,7 +45,7 @@ contract MADRouter is MADRouterBase {
         _tokenRender(_token);
         uint256 _fee = _handleFees(_FEE_MINT, _amount);
         uint256 _value = msg.value - _fee;
-        ERC721Basic(_token).mintTo{ value: _value }(_to, _amount);
+        ERC721Basic(_token).mintTo{value: _value}(_to, _amount);
     }
 
     /// @notice Global token burn controller/single pusher for all token types.
@@ -57,7 +57,7 @@ contract MADRouter is MADRouterBase {
         _tokenRender(_token);
         uint256 _fee = _handleFees(_FEE_BURN, _ids.length);
         uint256 _value = msg.value - _fee;
-        ERC721Basic(_token).burn{ value: _value }(_ids);
+        ERC721Basic(_token).burn{value: _value}(_ids);
     }
 
     ////////////////////////////////////////////////////////////////
@@ -74,7 +74,7 @@ contract MADRouter is MADRouterBase {
     function mint(address _token, uint128 _amount) public payable {
         uint256 _fee = _handleFees(_FEE_MINT, _amount);
         uint256 _value = msg.value - _fee;
-        ERC721Basic(_token).mint{ value: _value }(msg.sender, _amount);
+        ERC721Basic(_token).mint{value: _value}(msg.sender, _amount);
     }
 
     ////////////////////////////////////////////////////////////////
@@ -96,7 +96,7 @@ contract MADRouter is MADRouterBase {
         _tokenRender(_token);
         uint256 _fee = _handleFees(_FEE_MINT, _amount);
         uint256 _value = msg.value - _fee;
-        ERC1155Basic(_token).mintTo{ value: _value }(_to, _amount, _balance);
+        ERC1155Basic(_token).mintTo{value: _value}(_to, _amount, _balance);
     }
 
     /// @dev Function Sighash := 0x535f64e7
@@ -114,7 +114,7 @@ contract MADRouter is MADRouterBase {
         _tokenRender(_token);
         uint256 _fee = _handleFees(_FEE_MINT, _ids.length);
         uint256 _value = msg.value - _fee;
-        ERC1155Basic(_token).mintBatchTo{ value: _value }(_to, _ids, _balances);
+        ERC1155Basic(_token).mintBatchTo{value: _value}(_to, _ids, _balances);
     }
 
     /// @notice Global token burn controller/single pusher for all token types.
@@ -133,7 +133,7 @@ contract MADRouter is MADRouterBase {
         _tokenRender(_token);
         uint256 _fee = _handleFees(_FEE_BURN, _ids.length);
         uint256 _value = msg.value - _fee;
-        ERC1155Basic(_token).burn{ value: _value }(to, _ids, _amount);
+        ERC1155Basic(_token).burn{value: _value}(to, _ids, _amount);
     }
 
     /// @notice Global token batch burn controller/single pusher for all token
@@ -153,7 +153,7 @@ contract MADRouter is MADRouterBase {
         _tokenRender(_token);
         uint256 _fee = _handleFees(_FEE_BURN, _ids.length);
         uint256 _value = msg.value - _fee;
-        ERC1155Basic(_token).burnBatch{ value: _value }(_from, _ids, _balances);
+        ERC1155Basic(_token).burnBatch{value: _value}(_from, _ids, _balances);
     }
 
     ////////////////////////////////////////////////////////////////
@@ -171,6 +171,6 @@ contract MADRouter is MADRouterBase {
     {
         uint256 _fee = _handleFees(_FEE_MINT, _amount);
         uint256 _value = msg.value - _fee;
-        ERC1155Basic(_token).mint{ value: _value }(_to, _id, _amount);
+        ERC1155Basic(_token).mint{value: _value}(_to, _id, _amount);
     }
 }

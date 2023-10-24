@@ -593,10 +593,10 @@ error InvalidRoyalty()
 
 _0xe0e54ced_
 
-### SplitterFail
+### InvalidSplitter
 
 ```solidity
-error SplitterFail()
+error InvalidSplitter()
 ```
 
 _0x00adecf0_

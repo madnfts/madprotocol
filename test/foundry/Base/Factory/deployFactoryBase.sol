@@ -52,7 +52,8 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
         address _paymentTokenAddressFactory
     ) public returns (address factoryAddress) {
         vm.prank(_owner);
-        factoryAddress = createFactory(ercType, _paymentTokenAddressFactory);
+        factoryAddress =
+            createFactory(ercType, _paymentTokenAddressFactory, _owner);
 
         IFactory newFactory = IFactory(factoryAddress);
 
@@ -174,5 +175,23 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
         vm.prank(_owner);
         _factory.setRouter(_routerAddress);
         assertEq(_factory.router(), _routerAddress);
+    }
+
+    function setFactoryFees(
+        address _owner,
+        IFactory factory,
+        uint256 _feeCreateCollection,
+        uint256 _feeCreateSplitter
+    ) public {
+        vm.prank(_owner);
+        factory.setFees(_feeCreateCollection, _feeCreateSplitter);
+        assertTrue(
+            factory.feeCreateCollection() == _feeCreateCollection,
+            "factory.feeCreateCollection() == _feeCreateCollection :: do not match"
+        );
+        assertTrue(
+            factory.feeCreateSplitter() == _feeCreateSplitter,
+            "factory.feeCreateSplitter() == _feeCreateSplitter :: do not match"
+        );
     }
 }

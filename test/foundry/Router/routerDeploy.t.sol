@@ -10,6 +10,9 @@ import { RouterBaseFunctions } from
     "test/foundry/Base/Router/routerBaseFunctions.sol";
 
 contract DeployERC1155Router is DeployRouterBase, RouterBaseFunctions {
+    uint128 public mintFee = 1 ether;
+    uint128 public burnFee = 0.25 ether;
+
     function setUp() public {
         // vm.startPrank(routerOwner);
         vm.deal(routerOwner, 1000 ether);
@@ -17,12 +20,12 @@ contract DeployERC1155Router is DeployRouterBase, RouterBaseFunctions {
 
     function testDeployDefaultERC1155Router() public {
         address router = deployRouterDefault(ercTypes.ERC1155);
-        _setRouterFees(routerOwner, IRouter(router), 1.0 ether, 0.25 ether);
+        _setRouterFees(routerOwner, IRouter(router), mintFee, burnFee);
     }
 
     function testDeployDefaultERC721Router() public {
         address router = deployRouterDefault(ercTypes.ERC721);
-        _setRouterFees(routerOwner, IRouter(router), 1.0 ether, 0.25 ether);
+        _setRouterFees(routerOwner, IRouter(router), mintFee, burnFee);
     }
 
     function testDeployZeroAddressesERC1155Router() public {
@@ -45,6 +48,6 @@ contract DeployERC1155Router is DeployRouterBase, RouterBaseFunctions {
 
     function deployDefault(ercTypes ercType) public {
         IRouter router = IRouter(deployRouterDefault(ercType));
-        _setRouterFees(routerOwner, router, 1.0 ether, 0.25 ether);
+        _setRouterFees(routerOwner, router, mintFee, burnFee);
     }
 }

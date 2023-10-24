@@ -124,7 +124,12 @@ contract ERC1155Basic is ERC1155, ImplBase {
         _publicMint(_to, _id, amount, _to);
     }
 
-    function _publicMint(address to, uint128 _id, uint128 amount, address _buyer) private {
+    function _publicMint(
+        address to,
+        uint128 _id,
+        uint128 amount,
+        address _buyer
+    ) private {
         _preparePublicMint(uint256(amount), uint256(amount), _buyer);
         mintTo(to, _id, amount);
     }

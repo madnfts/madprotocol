@@ -24,6 +24,7 @@ import type {
 export interface PaymentManagerInterface extends utils.Interface {
   functions: {
     "erc20()": FunctionFragment;
+    "erc20PaymentsEnabled()": FunctionFragment;
     "feeCount()": FunctionFragment;
     "feeCountERC20()": FunctionFragment;
     "price()": FunctionFragment;
@@ -33,6 +34,7 @@ export interface PaymentManagerInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "erc20"
+      | "erc20PaymentsEnabled"
       | "feeCount"
       | "feeCountERC20"
       | "price"
@@ -40,6 +42,10 @@ export interface PaymentManagerInterface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "erc20", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "erc20PaymentsEnabled",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "feeCount", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "feeCountERC20",
@@ -49,6 +55,10 @@ export interface PaymentManagerInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "splitter", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "erc20", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "erc20PaymentsEnabled",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "feeCount", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "feeCountERC20",
@@ -89,6 +99,8 @@ export interface PaymentManager extends BaseContract {
   functions: {
     erc20(overrides?: CallOverrides): Promise<[string]>;
 
+    erc20PaymentsEnabled(overrides?: CallOverrides): Promise<[boolean]>;
+
     feeCount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     feeCountERC20(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -100,6 +112,8 @@ export interface PaymentManager extends BaseContract {
 
   erc20(overrides?: CallOverrides): Promise<string>;
 
+  erc20PaymentsEnabled(overrides?: CallOverrides): Promise<boolean>;
+
   feeCount(overrides?: CallOverrides): Promise<BigNumber>;
 
   feeCountERC20(overrides?: CallOverrides): Promise<BigNumber>;
@@ -110,6 +124,8 @@ export interface PaymentManager extends BaseContract {
 
   callStatic: {
     erc20(overrides?: CallOverrides): Promise<string>;
+
+    erc20PaymentsEnabled(overrides?: CallOverrides): Promise<boolean>;
 
     feeCount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -125,6 +141,8 @@ export interface PaymentManager extends BaseContract {
   estimateGas: {
     erc20(overrides?: CallOverrides): Promise<BigNumber>;
 
+    erc20PaymentsEnabled(overrides?: CallOverrides): Promise<BigNumber>;
+
     feeCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     feeCountERC20(overrides?: CallOverrides): Promise<BigNumber>;
@@ -136,6 +154,10 @@ export interface PaymentManager extends BaseContract {
 
   populateTransaction: {
     erc20(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    erc20PaymentsEnabled(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     feeCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

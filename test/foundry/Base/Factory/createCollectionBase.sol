@@ -39,10 +39,15 @@ abstract contract CreateCollectionBase is
         IFactory.CreateCollectionParams memory params,
         address collectionOwner
     ) public returns (address collectionAddress) {
-        vm.prank(collectionOwner, collectionOwner);
-
         params.splitter = _splitter;
-        factory.createCollection(params);
+        uint256 _createCollectionFee = factory.feeCreateCollection();
+        if (factory.erc20() == address(0)) {
+            vm.prank(collectionOwner, collectionOwner);
+            factory.createCollection{ value: _createCollectionFee }(params);
+        } else {
+            vm.prank(collectionOwner, collectionOwner);
+            factory.createCollection(params);
+        }
 
         collectionAddress =
             factory.getDeployedAddress(params.tokenSalt, collectionOwner);

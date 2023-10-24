@@ -42,7 +42,13 @@ abstract contract CreateCollectionBase is
         vm.prank(collectionOwner, collectionOwner);
 
         params.splitter = _splitter;
-        factory.createCollection(params);
+        if (factory.erc20() != address(0)) {
+            factory.createCollection{ value: factory.feeCreateCollection() }(
+                params
+            );
+        } else {
+            factory.createCollection(params);
+        }
 
         collectionAddress =
             factory.getDeployedAddress(params.tokenSalt, collectionOwner);

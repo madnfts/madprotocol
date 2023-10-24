@@ -21,6 +21,7 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
     using Types for Types.SplitterConfig;
 
     uint256 public splitterSaltNonce = 67_891_012_456_894_561;
+    bool public isERC20;
 
     function updateSplitterSalt() public returns (bytes32) {
         splitterSaltNonce++;
@@ -43,17 +44,19 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
         // the calling test contract
         vm.prank(splitterData.deployer, splitterData.deployer);
 
-        splitterData.factory.createSplitter(splitterData.createSplitterParams);
-
-        // emit log_named_address("sD: currentSigner",
-        // splitterData.deployer);
-
+        if (!isERC20) {
+            splitterData.factory.createSplitter{
+                value: splitterData.factory.feeCreateSplitter()
+            }(splitterData.createSplitterParams);
+        } else {
+            splitterData.factory.createSplitter(
+                splitterData.createSplitterParams
+            );
+        }
         splitterAddress = splitterData.factory.getDeployedAddress(
             splitterData.createSplitterParams.splitterSalt,
             splitterData.deployer
         );
-
-        // emit log_named_address("sD: splitterAddress", splitterAddress);
 
         validateDeployment(splitterData, splitterAddress);
     }
@@ -91,10 +94,10 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
         emit log_named_uint("totalShares", totalShares);
         emit log_named_uint(
             "splitterDataAmbassadorShare", splitterDataAmbassadorShare
-            );
+        );
         emit log_named_uint(
             "splitterDataProjectShare", splitterDataProjectShare
-            );
+        );
         emit log_named_uint("sharesOrZero", sharesOrZero);
         emit log_named_uint("config.projectShare", config.projectShare);
 

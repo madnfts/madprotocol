@@ -67,16 +67,15 @@ abstract contract MADFactoryBase is
     /// @dev Instance of `MADRouter` being passed as parameter of collection's
     /// constructor.
     address public router;
-
     address public ADDRESS_ZERO = address(0);
-
 
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    constructor(address _paymentTokenAddress) {
+    constructor(address _paymentTokenAddress, address _recipient) {
         _setPaymentToken(_paymentTokenAddress);
+        setRecipient(_recipient);
     }
 
     function _createCollection(Types.CreateCollectionParams calldata params)
@@ -87,11 +86,12 @@ abstract contract MADFactoryBase is
         _isZeroAddr(router);
         _limiter(params.tokenType, params.splitter);
         _royaltyLocker(params.royalty);
-        if (address(erc20) != ADDRESS_ZERO){
+        if (address(erc20) != ADDRESS_ZERO) {
             _handleFees(feeCreateCollection);
-            }
-        else {
-            _handleFees(feeCreateCollectionErc20[address(erc20)], address(erc20));
+        } else {
+            _handleFees(
+                feeCreateCollectionErc20[address(erc20)], address(erc20)
+            );
         }
 
         if (params.maxSupply == 0) {
@@ -134,10 +134,9 @@ abstract contract MADFactoryBase is
         Types.CreateSplitterParams calldata params,
         uint256 _flag
     ) internal {
-        if (address(erc20) != ADDRESS_ZERO){
+        if (address(erc20) != ADDRESS_ZERO) {
             _handleFees(feeCreateSplitter);
-            }
-        else {
+        } else {
             _handleFees(feeCreateSplitterErc20[address(erc20)], address(erc20));
         }
 
@@ -343,5 +342,36 @@ abstract contract MADFactoryBase is
         if (creator == _creator) {
             check = true;
         }
+    }
+
+    function setFees(uint256 _feeCreateCollection, uint256 _feeCreateSplitter)
+        public
+        onlyOwner
+    {
+        _setFees(_feeCreateCollection, _feeCreateSplitter);
+    }
+
+    function setFees(
+        address erc20token,
+        uint256 _feeCreateCollection,
+        uint256 _feeCreateSplitter
+    ) public onlyOwner {
+        _setFees(_feeCreateCollection, _feeCreateSplitter, erc20token);
+    }
+
+    /// @dev Setter for public mint / burn fee _recipient.
+    /// @dev Function Sighash := 0x3bbed4a0
+    function setRecipient(address _recipient) public onlyOwner {
+        // require(_recipient != address(0), "Invalid address");
+
+        assembly {
+            if iszero(_recipient) {
+                mstore(0x00, 0xd92e233d)
+                revert(0x1c, 0x04)
+            }
+            sstore(recipient.slot, _recipient)
+        }
+
+        emit RecipientUpdated(_recipient);
     }
 }

@@ -6,17 +6,17 @@ import { MADFactoryBase } from "contracts/Factory/MADFactoryBase.sol";
 import { Types } from "contracts/Shared/Types.sol";
 
 contract MADFactory is MADFactoryBase {
-    uint256 constant AMBASSADOR_SHARE_MIN = 101;
+    uint256 constant AMBASSADOR_SHARE_MIN = 99;
     uint256 constant AMBASSADOR_SHARE_MAX = 2001;
-    uint256 constant PROJECT_SHARE_MIN = 101;
+    uint256 constant PROJECT_SHARE_MIN = 99;
     uint256 constant PROJECT_SHARE_MAX = 10_001;
 
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    constructor(address _paymentTokenAddress)
-        MADFactoryBase(_paymentTokenAddress)
+    constructor(address _paymentTokenAddress, address _recipient)
+        MADFactoryBase(_paymentTokenAddress, _recipient)
     { }
 
     /// @notice Core public token types deployment pusher.
@@ -49,6 +49,7 @@ contract MADFactory is MADFactoryBase {
     ///     accepted (Min tick := 25).
     function createCollection(Types.CreateCollectionParams calldata params)
         public
+        payable
     {
         emit CollectionCreated(
             params.splitter,
@@ -58,7 +59,7 @@ contract MADFactory is MADFactoryBase {
             params.royalty,
             params.maxSupply,
             params.price
-            );
+        );
     }
 
     /// @notice Splitter deployment pusher.
@@ -96,6 +97,7 @@ contract MADFactory is MADFactoryBase {
     // Up to 20% of Creator Share before Project share
     function createSplitter(Types.CreateSplitterParams calldata params)
         public
+        payable
         isThisOg
     {
         if (params.ambassador == ADDRESS_ZERO && params.project == ADDRESS_ZERO)

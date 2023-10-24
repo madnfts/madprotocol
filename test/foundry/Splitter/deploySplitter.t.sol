@@ -14,7 +14,6 @@ import { SplitterModifiers } from
 contract TestSplitterDeployment is DeploySplitterBase, SplitterModifiers {
     IFactory[] deployedContracts;
     Deployer deployer;
-    bool public isERC20;
 
     function setUp() public {
         // Instantiate deployer contracts

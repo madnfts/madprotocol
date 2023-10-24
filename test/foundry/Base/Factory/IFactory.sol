@@ -11,10 +11,16 @@ interface IFactory {
     function erc20() external view returns (address);
     function router() external view returns (address);
 
-    function createSplitter(CreateSplitterParams calldata params) external;
+    function feeCreateCollection() external view returns (uint256);
+    function feeCreateSplitter() external view returns (uint256);
+
+    function createSplitter(CreateSplitterParams calldata params)
+        external
+        payable;
 
     function createCollection(CreateCollectionParams calldata params)
-        external;
+        external
+        payable;
 
     struct CreateSplitterParams {
         bytes32 splitterSalt;
@@ -94,4 +100,13 @@ interface IFactory {
     // function setMarket(address _market) external;
     function setOwner(address newOwner) external;
     function setRouter(address _router) external;
+
+    function setFees(uint256 _feeCreateCollection, uint256 _feeCreateSplitter)
+        external;
+
+    function setFees(
+        uint256 _feeCreateCollectionErc20,
+        uint256 _feeCreateCollection,
+        uint256 _feeCreateSplitter
+    ) external;
 }

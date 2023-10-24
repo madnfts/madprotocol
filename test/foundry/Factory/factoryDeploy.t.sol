@@ -10,6 +10,9 @@ import {
 import { AddressesHelp } from "test/foundry/utils/addressesHelp.sol";
 
 contract DeployFactory is AddressesHelp, DeployFactoryBase {
+    uint256 public feeCreateCollection = 1 ether;
+    uint256 public feeCreateSplitter = 1 ether;
+
     function setUp() public {
         // vm.startPrank(factoryOwner);
         vm.deal(factoryOwner, 1000 ether);
@@ -26,5 +29,11 @@ contract DeployFactory is AddressesHelp, DeployFactoryBase {
     function deployDefault(ercTypes ercType) public {
         address factory = deployFactoryDefault(ercType);
         setRouter(IFactory(factory), factoryRouterAddress, factoryOwner);
+        _setFactoryFees(
+            factoryOwner,
+            IFactory(factory),
+            feeCreateCollection,
+            feeCreateSplitter
+        );
     }
 }

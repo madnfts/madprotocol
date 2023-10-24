@@ -11,18 +11,19 @@ abstract contract FeeHandlerFactory {
     //                           STORAGE                          //
     ////////////////////////////////////////////////////////////////
 
-    /// @notice The recipient address used for public mint fees.
+    /// @notice The recipient address used for fees.
     address public recipient;
 
     uint256 public feeCreateCollection = 0.0001 ether;
     uint256 public feeCreateSplitter = 0.0001 ether;
 
     /// @notice ERC20 Mint fee store.
-    mapping(address erc20token => uint256 collectionPrice) public feeCreateCollectionErc20;
+    mapping(address erc20token => uint256 collectionPrice) public
+        feeCreateCollectionErc20;
 
     /// @notice ERC20 Burn fee store.
-    mapping(address erc20token => uint256 splitterPrice) public feeCreateSplitterErc20;
-
+    mapping(address erc20token => uint256 splitterPrice) public
+        feeCreateSplitterErc20;
 
     ////////////////////////////////////////////////////////////////
     //                         HELPERS                            //
@@ -30,9 +31,7 @@ abstract contract FeeHandlerFactory {
 
     /// @notice Payment handler for mint and burn functions.
     /// @dev Function Sighash := 0x3bbed4a0
-    function _handleFees(uint256 _fee)
-        internal
-    {
+    function _handleFees(uint256 _fee) internal {
         // Check if msg.sender balance is less than the fee.. logic to check the
         // price
         // (if any) will be handled in the NFT contract itself.
@@ -44,9 +43,7 @@ abstract contract FeeHandlerFactory {
 
     /// @notice Payment handler for mint and burn functions.
     /// @dev Function Sighash := 0x3bbed4a0
-    function _handleFees(uint256 _fee, address erc20Address)
-        internal
-    {
+    function _handleFees(uint256 _fee, address erc20Address) internal {
         // Check if msg.sender balance is less than the fee.. logic to check the
         // price
         // (if any) will be handled in the NFT contract itself.
@@ -60,22 +57,26 @@ abstract contract FeeHandlerFactory {
         );
     }
 
-    /// @notice Change the Routers mint and burn fees.
-    /// @dev access control / events are handled in MADRouterBase
+    /// @notice Change the Factorys mint and burn fees.
+    /// @dev access control / events are handled in MADFactoryBase
     /// @param _feeCreateCollection fee for creating a new collection
     /// @param _feeCreateSplitter fee for creating a new splitter
-    function _setFees(uint256 _feeCreateCollection, uint256 _feeCreateSplitter) internal {
+    function _setFees(uint256 _feeCreateCollection, uint256 _feeCreateSplitter)
+        internal
+    {
         feeCreateCollection = _feeCreateCollection;
         feeCreateSplitter = _feeCreateSplitter;
     }
 
-    /// @notice Change the Routers mint and burn fees for erc20 tokens.
-    /// @dev access control / events are handled in MADRouterBase
+    /// @notice Change the Factorys mint and burn fees for erc20 tokens.
+    /// @dev access control / events are handled in MADFactoryBase
     /// @param _feeCreateCollectionErc20 fee for creating a new collection
     /// @param _feeCreateSplitterErc20 fee for creating a new splitter
-    function _setFees(uint256 _feeCreateCollectionErc20, uint256 _feeCreateSplitterErc20, address erc20Address)
-        internal
-    {
+    function _setFees(
+        uint256 _feeCreateCollectionErc20,
+        uint256 _feeCreateSplitterErc20,
+        address erc20Address
+    ) internal {
         feeCreateCollectionErc20[erc20Address] = _feeCreateCollectionErc20;
         feeCreateSplitterErc20[erc20Address] = _feeCreateSplitterErc20;
     }

@@ -13,7 +13,7 @@ contract FactoryFactory is Enums {
         return address(
             new MADFactory(
                 _paymentTokenAddressFactory,
-                _recipient,
+                _recipient
                 )
         );
         //     if (ercType == ercTypes.ERC721) {

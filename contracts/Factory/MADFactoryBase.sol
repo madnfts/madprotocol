@@ -86,7 +86,8 @@ abstract contract MADFactoryBase is
         _isZeroAddr(router);
         _limiter(params.tokenType, params.splitter);
         _royaltyLocker(params.royalty);
-        if (address(erc20) != ADDRESS_ZERO) {
+
+        if (address(erc20) == ADDRESS_ZERO) {
             _handleFees(feeCreateCollection);
         } else {
             _handleFees(
@@ -134,7 +135,7 @@ abstract contract MADFactoryBase is
         Types.CreateSplitterParams calldata params,
         uint256 _flag
     ) internal {
-        if (address(erc20) != ADDRESS_ZERO) {
+        if (address(erc20) == ADDRESS_ZERO) {
             _handleFees(feeCreateSplitter);
         } else {
             _handleFees(feeCreateSplitterErc20[address(erc20)], address(erc20));
@@ -243,14 +244,15 @@ abstract contract MADFactoryBase is
 
     /// @dev Function Sighash := 0x485a1cff
     function _limiter(uint8 _tokenType, address _splitter) internal view {
-        bool val = splitterInfo[msg.sender][_splitter].valid;
+        bool isValid = splitterInfo[msg.sender][_splitter].valid;
+        if (!isValid) revert InvalidSplitter();
+
         assembly {
             mstore(0, _tokenType)
             mstore(32, collectionTypes.slot)
 
-            // collectionType not allowed or invalid splitter
-            if or(iszero(sload(keccak256(0, 64))), iszero(val)) {
-                mstore(0x00, 0x4ca88867) // AccessDenied()
+            if iszero(sload(keccak256(0, 64))) {
+                mstore(0x00, 0xa1e9dd9d) // InvalidTokenType()
                 revert(0x1c, 0x04)
             }
         }

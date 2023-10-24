@@ -35,20 +35,30 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
     address public ambassador = makeAddr("AmbassadorAddress");
     address public project = makeAddr("ProjectAddress");
 
+    event log_named_bool(string name, bool value);
+
     // Test the deployment
     function splitterDeployment(ISplitter.SplitterData memory splitterData)
         public
         returns (address splitterAddress)
     {
-        // Prank tx.origin as well here, otherwise the splitter will be owned by
-        // the calling test contract
-        vm.prank(splitterData.deployer, splitterData.deployer);
+        uint256 _splitterFee = splitterData.factory.feeCreateSplitter();
+        emit log_named_uint("_splitterFee", _splitterFee);
+        emit log_named_bool("isERC20", isERC20);
 
         if (!isERC20) {
-            splitterData.factory.createSplitter{
-                value: splitterData.factory.feeCreateSplitter()
-            }(splitterData.createSplitterParams);
+            // Prank tx.origin as well here, otherwise the splitter will be
+            // owned by
+            // the calling test contract
+            vm.prank(splitterData.deployer, splitterData.deployer);
+            splitterData.factory.createSplitter{ value: _splitterFee }(
+                splitterData.createSplitterParams
+            );
         } else {
+            // Prank tx.origin as well here, otherwise the splitter will be
+            // owned by
+            // the calling test contract
+            vm.prank(splitterData.deployer, splitterData.deployer);
             splitterData.factory.createSplitter(
                 splitterData.createSplitterParams
             );
@@ -298,10 +308,10 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
         internal
         returns (address splitter)
     {
+        vm.deal(splitterData.deployer, 20_000 ether);
         splitter = splitterDeployment(splitterData);
         assertTrue(
             splitter != address(0), "Splitter address should not be zero."
         );
-        // emit log_named_address("Splitter", splitter);
     }
 }

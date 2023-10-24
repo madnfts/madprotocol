@@ -40,12 +40,14 @@ interface FactoryEventsAndErrorsBase is EventsAndErrorsBase {
     ////////////////////////////////////////////////////////////////
 
     /// @dev 0x00adecf0
-    error SplitterFail();
+    error InvalidSplitter();
     /// @dev 0xe0e54ced
     error InvalidRoyalty();
     /// @dev 0xe6c4247b
     error InvalidAddress();
-
+    /// @dev 0xa1e9dd9d
+    error InvalidTokenType();
+    /// @dev 0x4ca88867
     error ZeroMaxSupply();
 
     event CollectionCreated(

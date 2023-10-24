@@ -33,7 +33,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "SplitterFail",
+    name: "InvalidSplitter",
     type: "error",
   },
   {

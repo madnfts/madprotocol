@@ -136,7 +136,7 @@ contract MADFactory is MADFactoryBase {
                 3 // _flag := ambassador and project
             );
         } else {
-            // revert SplitterFail();
+            // revert InvalidSplitter();
             assembly {
                 mstore(0x00, 0x00adecf0)
                 revert(0x1c, 0x04)

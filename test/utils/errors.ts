@@ -96,7 +96,7 @@ export enum FactoryErrors {
   InvalidAddress = "InvalidAddress",
   Unauthorized = "UNAUTHORIZED",
   AccessDenied = "AccessDenied",
-  SplitterFail = "SplitterFail",
+  InvalidSplitter = "InvalidSplitter",
   PushFailed = "PushFailed",
   ColFail = "ColFail",
   Paused = "PAUSED",

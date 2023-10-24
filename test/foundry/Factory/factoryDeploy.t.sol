@@ -29,7 +29,7 @@ contract DeployFactory is AddressesHelp, DeployFactoryBase {
     function deployDefault(ercTypes ercType) public {
         address factory = deployFactoryDefault(ercType);
         setRouter(IFactory(factory), factoryRouterAddress, factoryOwner);
-        _setFactoryFees(
+        setFactoryFees(
             factoryOwner,
             IFactory(factory),
             feeCreateCollection,

@@ -35,6 +35,12 @@ interface IRouter {
         bool isValid;
     }
 
-    function feeMintErc20(address erc20Token) external view returns (Fee memory);
-    function feeBurnErc20(address erc20Token) external view returns (Fee memory);
+    function feeMintErc20(address erc20Token)
+        external
+        view
+        returns (Fee memory);
+    function feeBurnErc20(address erc20Token)
+        external
+        view
+        returns (Fee memory);
 }

@@ -13,7 +13,11 @@ import { AddressesHelp } from "test/foundry/utils/addressesHelp.sol";
 import { RouterBaseFunctions } from
     "test/foundry/Base/Router/routerBaseFunctions.sol";
 
-contract DeployRouterBase is AddressesHelp, RouterFactory, RouterBaseFunctions {
+contract DeployRouterBase is
+    AddressesHelp,
+    RouterFactory,
+    RouterBaseFunctions
+{
     address routerOwner = makeAddr("RouterOwner");
     address paymentTokenAddressRouter = address(0);
     address paymentTokenAddressRouterErc20 =

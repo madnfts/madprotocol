@@ -37,10 +37,6 @@ contract TestMintBurnAndTransferERC721_Erc20 is
     uint128[] idsToBurn =
         [1, 2, 3, 4, 5, 100, 1000, 2000, 3000, 4000, 5000, 9999, 10_000];
 
-    bool public isERC20 = true;
-
-    MockERC20 public erc20Token;
-
     function setUp() public {
         // Instantiate deployer contracts
         deployer = new Deployer();
@@ -49,6 +45,7 @@ contract TestMintBurnAndTransferERC721_Erc20 is
         splitterDeployer = new DeploySplitterBase();
 
         splitterDeployer.updateIsErc20(true);
+        updateIsErc20(true);
 
         // Create array of deployed contracts instances for ERC721
         deployedContracts = deployer.deployAll(ercTypes.ERC721, isERC20);
@@ -62,7 +59,6 @@ contract TestMintBurnAndTransferERC721_Erc20 is
         erc20Token.mint(nftMinter, 20_000 ether);
 
         vm.deal(nftReceiver, 20_000 ether);
-        erc20Token.mint(nftReceiver, 20_000 ether);
     }
 
     function testMintTo_DefaultSingle() public {

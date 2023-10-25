@@ -91,7 +91,8 @@ abstract contract MADFactoryBase is
             _handleFees(feeCreateCollection);
         } else {
             _handleFees(
-                feeCreateCollectionErc20[address(erc20)], address(erc20)
+                feeCreateCollectionErc20[address(erc20)].feeAmount,
+                address(erc20)
             );
         }
 
@@ -138,7 +139,9 @@ abstract contract MADFactoryBase is
         if (address(erc20) == ADDRESS_ZERO) {
             _handleFees(feeCreateSplitter);
         } else {
-            _handleFees(feeCreateSplitterErc20[address(erc20)], address(erc20));
+            _handleFees(
+                feeCreateSplitterErc20[address(erc20)].feeAmount, address(erc20)
+            );
         }
 
         uint256 projectShareParsed =
@@ -354,9 +357,9 @@ abstract contract MADFactoryBase is
     }
 
     function setFees(
-        address erc20token,
         uint256 _feeCreateCollection,
-        uint256 _feeCreateSplitter
+        uint256 _feeCreateSplitter,
+        address erc20token
     ) public onlyOwner {
         _setFees(_feeCreateCollection, _feeCreateSplitter, erc20token);
     }

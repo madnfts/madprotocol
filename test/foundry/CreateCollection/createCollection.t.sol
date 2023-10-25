@@ -19,7 +19,6 @@ contract TestCreateCollection is CreateCollectionHelpers, Enums {
     IFactory[] deployedContracts;
     Deployer deployer;
     DeploySplitterBase splitterDeployer;
-    bool public isERC20;
 
     function setUp() public {
         // Instantiate deployer contracts

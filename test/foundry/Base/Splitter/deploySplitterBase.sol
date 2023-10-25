@@ -10,7 +10,8 @@ import { Deployer } from "test/foundry/Deploy/deployer.t.sol";
 import {
     IDeployer,
     IFactory,
-    Enums
+    Enums,
+    MockERC20
 } from "test/foundry/Base/Deploy/deployerBase.sol";
 
 import { Strings } from "contracts/MADTokens/common/ImplBase.sol";
@@ -22,6 +23,10 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
 
     uint256 public splitterSaltNonce = 67_891_012_456_894_561;
     bool public isERC20;
+
+    function updateIsErc20(bool _isERC20) public {
+        isERC20 = _isERC20;
+    }
 
     function updateSplitterSalt() public returns (bytes32) {
         splitterSaltNonce++;
@@ -42,14 +47,13 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
         public
         returns (address splitterAddress)
     {
-        uint256 _splitterFee = splitterData.factory.feeCreateSplitter();
-        emit log_named_uint("_splitterFee", _splitterFee);
         emit log_named_bool("isERC20", isERC20);
 
         if (!isERC20) {
             // Prank tx.origin as well here, otherwise the splitter will be
             // owned by
             // the calling test contract
+            uint256 _splitterFee = splitterData.factory.feeCreateSplitter();
             vm.prank(splitterData.deployer, splitterData.deployer);
             splitterData.factory.createSplitter{ value: _splitterFee }(
                 splitterData.createSplitterParams
@@ -58,6 +62,13 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
             // Prank tx.origin as well here, otherwise the splitter will be
             // owned by
             // the calling test contract
+            uint256 _splitterFee = splitterData.factory.feeCreateSplitterErc20(
+                splitterData.paymentToken
+            ).feeAmount;
+            vm.prank(splitterData.deployer, splitterData.deployer);
+            MockERC20(splitterData.paymentToken).approve(
+                address(splitterData.factory), _splitterFee
+            );
             vm.prank(splitterData.deployer, splitterData.deployer);
             splitterData.factory.createSplitter(
                 splitterData.createSplitterParams

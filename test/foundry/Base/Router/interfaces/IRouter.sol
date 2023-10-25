@@ -26,4 +26,21 @@ interface IRouter {
     function setRecipient(address _recipient) external;
 
     function setFees(uint256 _feeMint, uint256 _feeBurn) external;
+
+    function setFees(uint256 _feeMint, uint256 _feeBurn, address erc20Token)
+        external;
+
+    struct Fee {
+        uint256 feeAmount;
+        bool isValid;
+    }
+
+    function feeMintErc20(address erc20Token)
+        external
+        view
+        returns (Fee memory);
+    function feeBurnErc20(address erc20Token)
+        external
+        view
+        returns (Fee memory);
 }

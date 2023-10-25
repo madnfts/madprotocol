@@ -10,10 +10,6 @@ interface IFactory {
     function owner() external view returns (address);
     function erc20() external view returns (address);
     function router() external view returns (address);
-
-    function feeCreateCollection() external view returns (uint256);
-    function feeCreateSplitter() external view returns (uint256);
-
     function createSplitter(CreateSplitterParams calldata params)
         external
         payable;
@@ -105,8 +101,26 @@ interface IFactory {
         external;
 
     function setFees(
-        uint256 _feeCreateCollectionErc20,
         uint256 _feeCreateCollection,
-        uint256 _feeCreateSplitter
+        uint256 _feeCreateSplitter,
+        address erc20Token
     ) external;
+
+    function feeCreateCollection() external view returns (uint256);
+    function feeCreateSplitter() external view returns (uint256);
+
+    struct Fee {
+        uint256 feeAmount;
+        bool isValid;
+    }
+
+    function feeCreateCollectionErc20(address erc20Token)
+        external
+        view
+        returns (Fee memory);
+
+    function feeCreateSplitterErc20(address erc20Token)
+        external
+        view
+        returns (Fee memory);
 }

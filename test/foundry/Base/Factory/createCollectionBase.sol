@@ -12,6 +12,8 @@ import { IERC1155Basic } from
     "test/foundry/Base/Tokens/ERC1155/IERC1155Basic.sol";
 import { IERC721Basic } from "test/foundry/Base/Tokens/ERC721/IERC721Basic.sol";
 
+import { MockERC20 } from "test/foundry/Base/Tokens/ERC20/deployMockERC20.sol";
+
 import { IImplBase } from "test/foundry/Base/Tokens/common/IImplBase.sol";
 
 import { SettersToggle } from "test/foundry/utils/setterToggle.sol";
@@ -20,6 +22,13 @@ abstract contract CreateCollectionBase is
     SettersToggle("defaultCollectionOwner"),
     CreateCollectionParams
 {
+    MockERC20 public erc20Token;
+    bool public isERC20;
+
+    function updateIsErc20(bool _isERC20) public {
+        isERC20 = _isERC20;
+    }
+
     function createCollectionDefault(
         IFactory factory,
         address _splitter,
@@ -40,11 +49,16 @@ abstract contract CreateCollectionBase is
         address collectionOwner
     ) public returns (address collectionAddress) {
         params.splitter = _splitter;
-        uint256 _createCollectionFee = factory.feeCreateCollection();
-        if (factory.erc20() == address(0)) {
+
+        if (!isERC20) {
+            uint256 _createCollectionFee = factory.feeCreateCollection();
             vm.prank(collectionOwner, collectionOwner);
             factory.createCollection{ value: _createCollectionFee }(params);
         } else {
+            uint256 _createCollectionFee =
+                factory.feeCreateCollectionErc20(address(erc20Token)).feeAmount;
+            vm.prank(collectionOwner, collectionOwner);
+            erc20Token.approve(address(factory), _createCollectionFee);
             vm.prank(collectionOwner, collectionOwner);
             factory.createCollection(params);
         }

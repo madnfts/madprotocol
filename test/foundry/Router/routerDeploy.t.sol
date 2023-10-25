@@ -6,10 +6,7 @@ import {
     IRouter
 } from "test/foundry/Base/Router/deployRouterBase.sol";
 
-import { RouterBaseFunctions } from
-    "test/foundry/Base/Router/routerBaseFunctions.sol";
-
-contract DeployERC1155Router is DeployRouterBase, RouterBaseFunctions {
+contract DeployERC1155Router is DeployRouterBase {
     uint128 public mintFee = 1 ether;
     uint128 public burnFee = 0.25 ether;
 

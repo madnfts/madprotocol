@@ -194,4 +194,31 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
             "factory.feeCreateSplitter() == _feeCreateSplitter :: do not match"
         );
     }
+
+    function setFactoryFees(
+        address _owner,
+        IFactory factory,
+        uint256 _feeCreateCollection,
+        uint256 _feeCreateSplitter,
+        address erc20Token
+    ) public {
+        vm.prank(_owner);
+        factory.setFees(_feeCreateCollection, _feeCreateSplitter, erc20Token);
+        assertTrue(
+            factory.feeCreateCollectionErc20(erc20Token).feeAmount == _feeCreateCollection,
+            "factory.feeCreateCollectionErc20(erc20Token) == _feeCreateCollection :: do not match"
+        );
+        assertTrue(
+            factory.feeCreateCollectionErc20(erc20Token).isValid == true,
+            "factory.feeCreateCollectionErc20(erc20Token).isValid == true, :: do not match"
+        );
+        assertTrue(
+            factory.feeCreateSplitterErc20(erc20Token).feeAmount == _feeCreateSplitter,
+            "factory.feeCreateSplitterErc20(erc20Token) == _feeCreateSplitter :: do not match"
+        );
+        assertTrue(
+            factory.feeCreateSplitterErc20(erc20Token).isValid == true,
+            "factory.feeCreateSplitterErc20(erc20Token).isValid == true, :: do not match"
+        );
+    }
 }

@@ -23,6 +23,10 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
     uint256 public splitterSaltNonce = 67_891_012_456_894_561;
     bool public isERC20;
 
+    function updateIsErc20(bool _isERC20) public {
+        isERC20 = _isERC20;
+    }
+
     function updateSplitterSalt() public returns (bytes32) {
         splitterSaltNonce++;
         return bytes32(abi.encodePacked(splitterSaltNonce));

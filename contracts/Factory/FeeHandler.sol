@@ -17,13 +17,20 @@ abstract contract FeeHandlerFactory {
     uint256 public feeCreateCollection = 0.0001 ether;
     uint256 public feeCreateSplitter = 0.0001 ether;
 
+    struct Fee {
+        uint256 feeAmount;
+        bool isValid;
+    }
+
     /// @notice ERC20 Mint fee store.
-    mapping(address erc20token => uint256 collectionPrice) public
+    mapping(address erc20token => Fee collectionPrice) public
         feeCreateCollectionErc20;
 
     /// @notice ERC20 Burn fee store.
-    mapping(address erc20token => uint256 splitterPrice) public
+    mapping(address erc20token => Fee splitterPrice) public
         feeCreateSplitterErc20;
+
+    error AddressNotValid();
 
     ////////////////////////////////////////////////////////////////
     //                         HELPERS                            //
@@ -47,10 +54,13 @@ abstract contract FeeHandlerFactory {
         // Check if msg.sender balance is less than the fee.. logic to check the
         // price
         // (if any) will be handled in the NFT contract itself.
+        if (!feeCreateCollectionErc20[erc20Address].isValid) {
+            revert AddressNotValid();
+        }
+
         if (IERC20(erc20Address).balanceOf(msg.sender) < _fee) {
             revert RouterEvents.InvalidFees();
         }
-
         // Transfer Fees to recipient..
         SafeTransferLib.safeTransferFrom(
             IERC20(erc20Address), msg.sender, recipient, _fee
@@ -77,7 +87,12 @@ abstract contract FeeHandlerFactory {
         uint256 _feeCreateSplitterErc20,
         address erc20Address
     ) internal {
-        feeCreateCollectionErc20[erc20Address] = _feeCreateCollectionErc20;
-        feeCreateSplitterErc20[erc20Address] = _feeCreateSplitterErc20;
+        if (erc20Address == address(0)) {
+            revert AddressNotValid();
+        }
+        feeCreateCollectionErc20[erc20Address] =
+            Fee(_feeCreateCollectionErc20, true);
+        feeCreateSplitterErc20[erc20Address] =
+            Fee(_feeCreateSplitterErc20, true);
     }
 }

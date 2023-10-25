@@ -48,6 +48,8 @@ contract TestMintBurnAndTransferERC721_Erc20 is
         // Instantiate splitter deployer contract
         splitterDeployer = new DeploySplitterBase();
 
+        splitterDeployer.updateIsErc20(true);
+
         // Create array of deployed contracts instances for ERC721
         deployedContracts = deployer.deployAll(ercTypes.ERC721, isERC20);
 
@@ -55,6 +57,12 @@ contract TestMintBurnAndTransferERC721_Erc20 is
 
         vm.deal(prankster, 20_000 ether);
         erc20Token.mint(prankster, 20_000 ether);
+
+        vm.deal(nftMinter, 20_000 ether);
+        erc20Token.mint(nftMinter, 20_000 ether);
+
+        vm.deal(nftReceiver, 20_000 ether);
+        erc20Token.mint(nftReceiver, 20_000 ether);
     }
 
     function testMintTo_DefaultSingle() public {

@@ -105,8 +105,23 @@ interface IFactory {
         external;
 
     function setFees(
-        uint256 _feeCreateCollectionErc20,
         uint256 _feeCreateCollection,
-        uint256 _feeCreateSplitter
+        uint256 _feeCreateSplitter,
+        address erc20Token
     ) external;
+
+    struct Fee {
+        uint256 feeAmount;
+        bool isValid;
+    }
+
+    function feeCreateCollectionErc20(address erc20Token)
+        external
+        view
+        returns (Fee memory);
+
+    function feeCreateSplitterErc20(address erc20Token)
+        external
+        view
+        returns (Fee memory);
 }

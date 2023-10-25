@@ -48,6 +48,11 @@ abstract contract DeployerBase is
     address recipientRouter = makeAddr("RecipientRouter");
     address swapRouter = makeAddr("SwapRouter");
 
+    uint256 erc20MintFee = 1 ether;
+    uint256 erc20BurnFee = 1 ether;
+    uint256 erc20CreateSplitterFee = 1 ether;
+    uint256 erc20CreateCollectionFee = 1 ether;
+
     function deployAll(ercTypes ercType, bool isERC20)
         public
         returns (DeployedContracts memory deployedContracts)
@@ -105,6 +110,26 @@ abstract contract DeployerBase is
             );
         } else {
             revert("Invalid token type");
+        }
+
+        if (isERC20) {
+            // Set the fees for the factory
+            factoryDeployer.setFactoryFees(
+                currentSigner,
+                factory,
+                erc20CreateCollectionFee,
+                erc20CreateSplitterFee,
+                address(paymentToken)
+            );
+
+            // Set the fees for the router
+            routerDeployer._setRouterFees(
+                currentSigner,
+                router,
+                erc20MintFee,
+                erc20BurnFee,
+                address(paymentToken)
+            );
         }
 
         // Return the addresses of the deployed contracts in an array

@@ -27,11 +27,16 @@ abstract contract FeeHandler {
     /// @notice Burn fee store.
     uint256 public feeBurn; /* = 0 */
 
+    struct Fee {
+        uint256 feeAmount;
+        bool isValid;
+    }
+
     /// @notice ERC20 Mint fee store.
-    mapping(address erc20token => uint256 mintPrice) public feeMintErc20;
+    mapping(address erc20token => Fee mintPrice) public feeMintErc20;
 
     /// @notice ERC20 Burn fee store.
-    mapping(address erc20token => uint256 burnPrice) public feeBurnErc20;
+    mapping(address erc20token => Fee burnPrice) public feeBurnErc20;
 
     /// @notice max fee that can be set for mint - B.1 remove from constructor
     uint256 public constant maxFeeMint = 2.5 ether; // 0.0003 ether
@@ -66,9 +71,15 @@ abstract contract FeeHandler {
         returns (uint256)
     {
         if (sigHash == _FEE_MINT) {
-            return feeMintErc20[erc20Address];
+            if (!feeMintErc20[erc20Address].isValid) {
+                revert RouterEvents.AddressNotValid();
+            }
+            return feeMintErc20[erc20Address].feeAmount;
         } else if (sigHash == _FEE_BURN) {
-            return feeBurnErc20[erc20Address];
+            if (!feeBurnErc20[erc20Address].isValid) {
+                revert RouterEvents.AddressNotValid();
+            }
+            return feeBurnErc20[erc20Address].feeAmount;
         } else {
             return 0;
         }
@@ -137,7 +148,11 @@ abstract contract FeeHandler {
     function _setFees(uint256 _feeMint, uint256 _feeBurn, address erc20Address)
         internal
     {
-        feeMintErc20[erc20Address] = _feeMint;
-        feeBurnErc20[erc20Address] = _feeBurn;
+        if (erc20Address == address(0)) {
+            revert RouterEvents.AddressNotValid();
+        }
+
+        feeMintErc20[erc20Address] = Fee(_feeMint, true);
+        feeBurnErc20[erc20Address] = Fee(_feeBurn, true);
     }
 }

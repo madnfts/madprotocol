@@ -12,6 +12,8 @@ config({ path: resolve(__dirname, "./.env") });
 const {
   UNISWAP_ROUTER,
   ERC20_TOKEN,
+  FACTORY,
+  ROUTER,
   feeCreateCollection,
   feeCreateCollectionErc20,
   feeCreateSplitter,
@@ -48,13 +50,13 @@ var deployedMarketplaceAddress = "";
 
 const deployedDisplay = () => {
   console.log(
-    `Deployed Factory Address: ${deployedFactoryAddress}`,
+    `Deployed Factory Address: ${deployedFactoryAddress ? deployedFactoryAddress : FACTORY}`,
   );
   console.log(
-    `Deployed Router Address: ${deployedRouterAddress}`,
+    `Deployed Router Address: ${deployedRouterAddress ? deployedRouterAddress : ROUTER}`,
   );
   console.log(
-    `Deployed ERC20 Address: ${deployedErc20Address}`,
+    `Deployed ERC20 Address: ${deployedErc20Address ? deployedErc20Address : ERC20_TOKEN}`,
   );
   console.log(
     `Deployed Marketplace Address: ${deployedMarketplaceAddress}`,
@@ -348,9 +350,10 @@ const main = async () => {
       _feeBurnErc20,
     );
 
-    console.log("Deployment completed successfully...");
+    console.log("Deployment completed successfully...\n");
     deployedDisplay();
     process.exit(0);
+
   } catch (error) {
     console.error(error);
     process.exit(1);

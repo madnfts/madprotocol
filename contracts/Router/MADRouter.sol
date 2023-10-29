@@ -22,7 +22,6 @@ contract MADRouter is MADRouterBase {
     /// @param _factory 1155 factory address.
     /// @param _paymentTokenAddress erc20 token address | address(0).
     /// @param _recipient 721 factory address.
-    // B.1 - Remove maxFeeMint &  maxFeeBurn from constructor
     constructor(
         FactoryVerifier _factory,
         address _paymentTokenAddress,

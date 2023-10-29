@@ -8,7 +8,7 @@ import {
 
 contract DeployERC1155Router is DeployRouterBase {
     uint128 public mintFee = 1 ether;
-    uint128 public burnFee = 0.25 ether;
+    uint128 public burnFee = 1 ether;
 
     function setUp() public {
         // vm.startPrank(routerOwner);

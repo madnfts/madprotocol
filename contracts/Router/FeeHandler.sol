@@ -22,10 +22,10 @@ abstract contract FeeHandler {
 
     /// @notice Mint fee store.
     // audit B.3 BlockHat Audit
-    uint256 public feeMint = 0.25 ether;
+    uint256 public feeMint = 1 ether;
 
     /// @notice Burn fee store.
-    uint256 public feeBurn; /* = 0 */
+    uint256 public feeBurn = 1 ether; /* = 0 */
 
     struct Fee {
         uint256 feeAmount;
@@ -37,12 +37,6 @@ abstract contract FeeHandler {
 
     /// @notice ERC20 Burn fee store.
     mapping(address erc20token => Fee burnPrice) public feeBurnErc20;
-
-    /// @notice max fee that can be set for mint - B.1 remove from constructor
-    uint256 public constant maxFeeMint = 2.5 ether; // 0.0003 ether
-
-    /// @notice max fee that can be set for burn - B.1 remove from constructor
-    uint256 public constant maxFeeBurn = 0.5 ether;
 
     ////////////////////////////////////////////////////////////////
     //                         HELPERS                            //
@@ -81,7 +75,7 @@ abstract contract FeeHandler {
             }
             return feeBurnErc20[erc20Address].feeAmount;
         } else {
-            return 0;
+            revert RouterEvents.InvalidFees();
         }
     }
 
@@ -128,14 +122,8 @@ abstract contract FeeHandler {
     /// @param _feeMint New mint fee.
     /// @param _feeBurn New burn fee.
     function _setFees(uint256 _feeMint, uint256 _feeBurn) internal {
-        // require(_feeMint <= maxFeeMint && _feeBurn <= maxFeeBurn, "Invalid
-        // fee settings, beyond
-        // max");
         assembly {
-            if or(gt(_feeMint, maxFeeMint), gt(_feeBurn, maxFeeBurn)) {
-                mstore(0x00, 0x2d8768f9)
-                revert(0x1c, 0x04)
-            }
+
             sstore(feeBurn.slot, _feeBurn)
             sstore(feeMint.slot, _feeMint)
         }

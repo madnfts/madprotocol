@@ -15,8 +15,6 @@ interface IRouter {
 
     function feeBurn() external view returns (uint256);
     function feeMint() external view returns (uint256);
-    function maxFeeBurn() external view returns (uint256);
-    function maxFeeMint() external view returns (uint256);
 
     function feeLookup(bytes4 sigHash) external view returns (uint256 fee);
 

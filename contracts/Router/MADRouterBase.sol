@@ -37,7 +37,6 @@ abstract contract MADRouterBase is MADBase, FeeHandler, RouterEvents {
     /// address.
     /// @param _paymentTokenAddress erc20 token address.
     /// @param _recipient Public mint fee recipient address.
-    // B.1 - Remove maxFeeMint &  maxFeeBurn from constructor
     constructor(
         FactoryVerifier _factory,
         address _paymentTokenAddress,

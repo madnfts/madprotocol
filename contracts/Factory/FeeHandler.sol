@@ -14,8 +14,8 @@ abstract contract FeeHandlerFactory {
     /// @notice The recipient address used for fees.
     address public recipient;
 
-    uint256 public feeCreateCollection = 0.0001 ether;
-    uint256 public feeCreateSplitter = 0.0001 ether;
+    uint256 public feeCreateCollection = 1 ether;
+    uint256 public feeCreateSplitter = 1 ether;
 
     struct Fee {
         uint256 feeAmount;

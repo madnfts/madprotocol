@@ -3,14 +3,22 @@
 /* tslint:disable */
 
 /* eslint-disable */
-import type { FeeHandler, FeeHandlerInterface } from "../../Router/FeeHandler";
+import type {
+  FeeHandlerFactory,
+  FeeHandlerFactoryInterface,
+} from "../../../Factory/FeeHandler.sol/FeeHandlerFactory";
 import type { Provider } from "@ethersproject/providers";
 import { Contract, Signer, utils } from "ethers";
 
 const _abi = [
   {
     inputs: [],
-    name: "feeBurn",
+    name: "AddressNotValid",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "feeCreateCollection",
     outputs: [
       {
         internalType: "uint256",
@@ -29,7 +37,7 @@ const _abi = [
         type: "address",
       },
     ],
-    name: "feeBurnErc20",
+    name: "feeCreateCollectionErc20",
     outputs: [
       {
         internalType: "uint256",
@@ -47,7 +55,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "feeMint",
+    name: "feeCreateSplitter",
     outputs: [
       {
         internalType: "uint256",
@@ -66,7 +74,7 @@ const _abi = [
         type: "address",
       },
     ],
-    name: "feeMintErc20",
+    name: "feeCreateSplitterErc20",
     outputs: [
       {
         internalType: "uint256",
@@ -97,15 +105,15 @@ const _abi = [
   },
 ] as const;
 
-export class FeeHandler__factory {
+export class FeeHandlerFactory__factory {
   static readonly abi = _abi;
-  static createInterface(): FeeHandlerInterface {
-    return new utils.Interface(_abi) as FeeHandlerInterface;
+  static createInterface(): FeeHandlerFactoryInterface {
+    return new utils.Interface(_abi) as FeeHandlerFactoryInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): FeeHandler {
-    return new Contract(address, _abi, signerOrProvider) as FeeHandler;
+  ): FeeHandlerFactory {
+    return new Contract(address, _abi, signerOrProvider) as FeeHandlerFactory;
   }
 }

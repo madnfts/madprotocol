@@ -18,6 +18,11 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "AddressNotValid",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "BadCall",
     type: "error",
   },
@@ -38,17 +43,22 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "InvalidSplitter",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "InvalidTokenType",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "NotAuthorised",
     type: "error",
   },
   {
     inputs: [],
     name: "NotOwnerNorApproved",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "InvalidSplitter",
     type: "error",
   },
   {
@@ -251,6 +261,19 @@ const _abi = [
     type: "event",
   },
   {
+    inputs: [],
+    name: "ADDRESS_ZERO",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "uint256",
@@ -388,6 +411,80 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "feeCreateCollection",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "erc20token",
+        type: "address",
+      },
+    ],
+    name: "feeCreateCollectionErc20",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "feeAmount",
+        type: "uint256",
+      },
+      {
+        internalType: "bool",
+        name: "isValid",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "feeCreateSplitter",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "erc20token",
+        type: "address",
+      },
+    ],
+    name: "feeCreateSplitterErc20",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "feeAmount",
+        type: "uint256",
+      },
+      {
+        internalType: "bool",
+        name: "isValid",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "bytes32",
@@ -458,6 +555,19 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "recipient",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "router",
     outputs: [
       {
@@ -472,12 +582,66 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "uint256",
+        name: "_feeCreateCollection",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_feeCreateSplitter",
+        type: "uint256",
+      },
+    ],
+    name: "setFees",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_feeCreateCollection",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_feeCreateSplitter",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "erc20token",
+        type: "address",
+      },
+    ],
+    name: "setFees",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "address",
         name: "newOwner",
         type: "address",
       },
     ],
     name: "setOwner",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_recipient",
+        type: "address",
+      },
+    ],
+    name: "setRecipient",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

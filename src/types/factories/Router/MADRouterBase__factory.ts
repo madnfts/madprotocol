@@ -13,6 +13,11 @@ import { Contract, Signer, utils } from "ethers";
 const _abi = [
   {
     inputs: [],
+    name: "AddressNotValid",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "InsufficientBalance",
     type: "error",
   },
@@ -240,8 +245,13 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "burnPrice",
+        name: "feeAmount",
         type: "uint256",
+      },
+      {
+        internalType: "bool",
+        name: "isValid",
+        type: "bool",
       },
     ],
     stateMutability: "view",
@@ -272,8 +282,13 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "mintPrice",
+        name: "feeAmount",
         type: "uint256",
+      },
+      {
+        internalType: "bool",
+        name: "isValid",
+        type: "bool",
       },
     ],
     stateMutability: "view",
@@ -287,32 +302,6 @@ const _abi = [
         internalType: "contract FactoryVerifier",
         name: "",
         type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "maxFeeBurn",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "maxFeeMint",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
       },
     ],
     stateMutability: "view",

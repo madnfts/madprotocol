@@ -28,12 +28,17 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "NotOwnerNorApproved",
+    name: "InvalidSplitter",
     type: "error",
   },
   {
     inputs: [],
-    name: "InvalidSplitter",
+    name: "InvalidTokenType",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "NotOwnerNorApproved",
     type: "error",
   },
   {

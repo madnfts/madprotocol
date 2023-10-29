@@ -31,18 +31,27 @@ import type {
 
 export interface MADFactoryBaseInterface extends utils.Interface {
   functions: {
+    "ADDRESS_ZERO()": FunctionFragment;
     "addCollectionType(uint256,bytes)": FunctionFragment;
     "collectionInfo(address)": FunctionFragment;
     "collectionTypes(uint256)": FunctionFragment;
     "creatorAuth(address,address)": FunctionFragment;
     "creatorCheck(address,address)": FunctionFragment;
     "erc20()": FunctionFragment;
+    "feeCreateCollection()": FunctionFragment;
+    "feeCreateCollectionErc20(address)": FunctionFragment;
+    "feeCreateSplitter()": FunctionFragment;
+    "feeCreateSplitterErc20(address)": FunctionFragment;
     "getDeployedAddress(bytes32,address)": FunctionFragment;
     "getIDsLength(address)": FunctionFragment;
     "name()": FunctionFragment;
     "owner()": FunctionFragment;
+    "recipient()": FunctionFragment;
     "router()": FunctionFragment;
+    "setFees(uint256,uint256)": FunctionFragment;
+    "setFees(uint256,uint256,address)": FunctionFragment;
     "setOwner(address)": FunctionFragment;
+    "setRecipient(address)": FunctionFragment;
     "setRouter(address)": FunctionFragment;
     "splitterInfo(address,address)": FunctionFragment;
     "userTokens(address,uint256)": FunctionFragment;
@@ -50,23 +59,36 @@ export interface MADFactoryBaseInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "ADDRESS_ZERO"
       | "addCollectionType"
       | "collectionInfo"
       | "collectionTypes"
       | "creatorAuth"
       | "creatorCheck"
       | "erc20"
+      | "feeCreateCollection"
+      | "feeCreateCollectionErc20"
+      | "feeCreateSplitter"
+      | "feeCreateSplitterErc20"
       | "getDeployedAddress"
       | "getIDsLength"
       | "name"
       | "owner"
+      | "recipient"
       | "router"
+      | "setFees(uint256,uint256)"
+      | "setFees(uint256,uint256,address)"
       | "setOwner"
+      | "setRecipient"
       | "setRouter"
       | "splitterInfo"
       | "userTokens"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "ADDRESS_ZERO",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "addCollectionType",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
@@ -89,6 +111,22 @@ export interface MADFactoryBaseInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "erc20", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "feeCreateCollection",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "feeCreateCollectionErc20",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "feeCreateSplitter",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "feeCreateSplitterErc20",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getDeployedAddress",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
   ): string;
@@ -98,9 +136,26 @@ export interface MADFactoryBaseInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(functionFragment: "recipient", values?: undefined): string;
   encodeFunctionData(functionFragment: "router", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "setFees(uint256,uint256)",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setFees(uint256,uint256,address)",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>
+    ]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setOwner",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setRecipient",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -116,6 +171,10 @@ export interface MADFactoryBaseInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "ADDRESS_ZERO",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "addCollectionType",
     data: BytesLike
@@ -138,6 +197,22 @@ export interface MADFactoryBaseInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "erc20", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "feeCreateCollection",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "feeCreateCollectionErc20",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "feeCreateSplitter",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "feeCreateSplitterErc20",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getDeployedAddress",
     data: BytesLike
   ): Result;
@@ -147,8 +222,21 @@ export interface MADFactoryBaseInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "recipient", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "router", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setFees(uint256,uint256)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setFees(uint256,uint256,address)",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "setOwner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setRecipient",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "setRouter", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "splitterInfo",
@@ -310,6 +398,8 @@ export interface MADFactoryBase extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    ADDRESS_ZERO(overrides?: CallOverrides): Promise<[string]>;
+
     addCollectionType(
       index: PromiseOrValue<BigNumberish>,
       impl: PromiseOrValue<BytesLike>,
@@ -348,6 +438,24 @@ export interface MADFactoryBase extends BaseContract {
 
     erc20(overrides?: CallOverrides): Promise<[string]>;
 
+    feeCreateCollection(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    feeCreateCollectionErc20(
+      erc20token: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, boolean] & { feeAmount: BigNumber; isValid: boolean }
+    >;
+
+    feeCreateSplitter(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    feeCreateSplitterErc20(
+      erc20token: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, boolean] & { feeAmount: BigNumber; isValid: boolean }
+    >;
+
     getDeployedAddress(
       _salt: PromiseOrValue<BytesLike>,
       _addr: PromiseOrValue<string>,
@@ -363,10 +471,30 @@ export interface MADFactoryBase extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
+    recipient(overrides?: CallOverrides): Promise<[string]>;
+
     router(overrides?: CallOverrides): Promise<[string]>;
+
+    "setFees(uint256,uint256)"(
+      _feeCreateCollection: PromiseOrValue<BigNumberish>,
+      _feeCreateSplitter: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "setFees(uint256,uint256,address)"(
+      _feeCreateCollection: PromiseOrValue<BigNumberish>,
+      _feeCreateSplitter: PromiseOrValue<BigNumberish>,
+      erc20token: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     setOwner(
       newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setRecipient(
+      _recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -397,6 +525,8 @@ export interface MADFactoryBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string] & { deployedCollections: string }>;
   };
+
+  ADDRESS_ZERO(overrides?: CallOverrides): Promise<string>;
 
   addCollectionType(
     index: PromiseOrValue<BigNumberish>,
@@ -436,6 +566,20 @@ export interface MADFactoryBase extends BaseContract {
 
   erc20(overrides?: CallOverrides): Promise<string>;
 
+  feeCreateCollection(overrides?: CallOverrides): Promise<BigNumber>;
+
+  feeCreateCollectionErc20(
+    erc20token: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<[BigNumber, boolean] & { feeAmount: BigNumber; isValid: boolean }>;
+
+  feeCreateSplitter(overrides?: CallOverrides): Promise<BigNumber>;
+
+  feeCreateSplitterErc20(
+    erc20token: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<[BigNumber, boolean] & { feeAmount: BigNumber; isValid: boolean }>;
+
   getDeployedAddress(
     _salt: PromiseOrValue<BytesLike>,
     _addr: PromiseOrValue<string>,
@@ -451,10 +595,30 @@ export interface MADFactoryBase extends BaseContract {
 
   owner(overrides?: CallOverrides): Promise<string>;
 
+  recipient(overrides?: CallOverrides): Promise<string>;
+
   router(overrides?: CallOverrides): Promise<string>;
+
+  "setFees(uint256,uint256)"(
+    _feeCreateCollection: PromiseOrValue<BigNumberish>,
+    _feeCreateSplitter: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "setFees(uint256,uint256,address)"(
+    _feeCreateCollection: PromiseOrValue<BigNumberish>,
+    _feeCreateSplitter: PromiseOrValue<BigNumberish>,
+    erc20token: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   setOwner(
     newOwner: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setRecipient(
+    _recipient: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -486,6 +650,8 @@ export interface MADFactoryBase extends BaseContract {
   ): Promise<string>;
 
   callStatic: {
+    ADDRESS_ZERO(overrides?: CallOverrides): Promise<string>;
+
     addCollectionType(
       index: PromiseOrValue<BigNumberish>,
       impl: PromiseOrValue<BytesLike>,
@@ -524,6 +690,24 @@ export interface MADFactoryBase extends BaseContract {
 
     erc20(overrides?: CallOverrides): Promise<string>;
 
+    feeCreateCollection(overrides?: CallOverrides): Promise<BigNumber>;
+
+    feeCreateCollectionErc20(
+      erc20token: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, boolean] & { feeAmount: BigNumber; isValid: boolean }
+    >;
+
+    feeCreateSplitter(overrides?: CallOverrides): Promise<BigNumber>;
+
+    feeCreateSplitterErc20(
+      erc20token: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, boolean] & { feeAmount: BigNumber; isValid: boolean }
+    >;
+
     getDeployedAddress(
       _salt: PromiseOrValue<BytesLike>,
       _addr: PromiseOrValue<string>,
@@ -539,10 +723,30 @@ export interface MADFactoryBase extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<string>;
 
+    recipient(overrides?: CallOverrides): Promise<string>;
+
     router(overrides?: CallOverrides): Promise<string>;
+
+    "setFees(uint256,uint256)"(
+      _feeCreateCollection: PromiseOrValue<BigNumberish>,
+      _feeCreateSplitter: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setFees(uint256,uint256,address)"(
+      _feeCreateCollection: PromiseOrValue<BigNumberish>,
+      _feeCreateSplitter: PromiseOrValue<BigNumberish>,
+      erc20token: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     setOwner(
       newOwner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setRecipient(
+      _recipient: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -661,6 +865,8 @@ export interface MADFactoryBase extends BaseContract {
   };
 
   estimateGas: {
+    ADDRESS_ZERO(overrides?: CallOverrides): Promise<BigNumber>;
+
     addCollectionType(
       index: PromiseOrValue<BigNumberish>,
       impl: PromiseOrValue<BytesLike>,
@@ -691,6 +897,20 @@ export interface MADFactoryBase extends BaseContract {
 
     erc20(overrides?: CallOverrides): Promise<BigNumber>;
 
+    feeCreateCollection(overrides?: CallOverrides): Promise<BigNumber>;
+
+    feeCreateCollectionErc20(
+      erc20token: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    feeCreateSplitter(overrides?: CallOverrides): Promise<BigNumber>;
+
+    feeCreateSplitterErc20(
+      erc20token: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getDeployedAddress(
       _salt: PromiseOrValue<BytesLike>,
       _addr: PromiseOrValue<string>,
@@ -706,10 +926,30 @@ export interface MADFactoryBase extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
+    recipient(overrides?: CallOverrides): Promise<BigNumber>;
+
     router(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "setFees(uint256,uint256)"(
+      _feeCreateCollection: PromiseOrValue<BigNumberish>,
+      _feeCreateSplitter: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "setFees(uint256,uint256,address)"(
+      _feeCreateCollection: PromiseOrValue<BigNumberish>,
+      _feeCreateSplitter: PromiseOrValue<BigNumberish>,
+      erc20token: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     setOwner(
       newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setRecipient(
+      _recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -732,6 +972,8 @@ export interface MADFactoryBase extends BaseContract {
   };
 
   populateTransaction: {
+    ADDRESS_ZERO(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     addCollectionType(
       index: PromiseOrValue<BigNumberish>,
       impl: PromiseOrValue<BytesLike>,
@@ -762,6 +1004,22 @@ export interface MADFactoryBase extends BaseContract {
 
     erc20(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    feeCreateCollection(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    feeCreateCollectionErc20(
+      erc20token: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    feeCreateSplitter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    feeCreateSplitterErc20(
+      erc20token: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getDeployedAddress(
       _salt: PromiseOrValue<BytesLike>,
       _addr: PromiseOrValue<string>,
@@ -777,10 +1035,30 @@ export interface MADFactoryBase extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    recipient(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     router(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "setFees(uint256,uint256)"(
+      _feeCreateCollection: PromiseOrValue<BigNumberish>,
+      _feeCreateSplitter: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "setFees(uint256,uint256,address)"(
+      _feeCreateCollection: PromiseOrValue<BigNumberish>,
+      _feeCreateSplitter: PromiseOrValue<BigNumberish>,
+      erc20token: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     setOwner(
       newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setRecipient(
+      _recipient: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

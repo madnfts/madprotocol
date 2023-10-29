@@ -9,7 +9,7 @@ import type {
   TypedListener,
   OnEvent,
   PromiseOrValue,
-} from "../common";
+} from "../../common";
 import type { FunctionFragment, Result } from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type {
@@ -22,44 +22,56 @@ import type {
   utils,
 } from "ethers";
 
-export interface FeeHandlerInterface extends utils.Interface {
+export interface FeeHandlerFactoryInterface extends utils.Interface {
   functions: {
-    "feeBurn()": FunctionFragment;
-    "feeBurnErc20(address)": FunctionFragment;
-    "feeMint()": FunctionFragment;
-    "feeMintErc20(address)": FunctionFragment;
+    "feeCreateCollection()": FunctionFragment;
+    "feeCreateCollectionErc20(address)": FunctionFragment;
+    "feeCreateSplitter()": FunctionFragment;
+    "feeCreateSplitterErc20(address)": FunctionFragment;
     "recipient()": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "feeBurn"
-      | "feeBurnErc20"
-      | "feeMint"
-      | "feeMintErc20"
+      | "feeCreateCollection"
+      | "feeCreateCollectionErc20"
+      | "feeCreateSplitter"
+      | "feeCreateSplitterErc20"
       | "recipient"
   ): FunctionFragment;
 
-  encodeFunctionData(functionFragment: "feeBurn", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "feeBurnErc20",
+    functionFragment: "feeCreateCollection",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "feeCreateCollectionErc20",
     values: [PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(functionFragment: "feeMint", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "feeMintErc20",
+    functionFragment: "feeCreateSplitter",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "feeCreateSplitterErc20",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "recipient", values?: undefined): string;
 
-  decodeFunctionResult(functionFragment: "feeBurn", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "feeBurnErc20",
+    functionFragment: "feeCreateCollection",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "feeMint", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "feeMintErc20",
+    functionFragment: "feeCreateCollectionErc20",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "feeCreateSplitter",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "feeCreateSplitterErc20",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "recipient", data: BytesLike): Result;
@@ -67,12 +79,12 @@ export interface FeeHandlerInterface extends utils.Interface {
   events: {};
 }
 
-export interface FeeHandler extends BaseContract {
+export interface FeeHandlerFactory extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: FeeHandlerInterface;
+  interface: FeeHandlerFactoryInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -94,18 +106,18 @@ export interface FeeHandler extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    feeBurn(overrides?: CallOverrides): Promise<[BigNumber]>;
+    feeCreateCollection(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    feeBurnErc20(
+    feeCreateCollectionErc20(
       erc20token: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, boolean] & { feeAmount: BigNumber; isValid: boolean }
     >;
 
-    feeMint(overrides?: CallOverrides): Promise<[BigNumber]>;
+    feeCreateSplitter(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    feeMintErc20(
+    feeCreateSplitterErc20(
       erc20token: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<
@@ -115,16 +127,16 @@ export interface FeeHandler extends BaseContract {
     recipient(overrides?: CallOverrides): Promise<[string]>;
   };
 
-  feeBurn(overrides?: CallOverrides): Promise<BigNumber>;
+  feeCreateCollection(overrides?: CallOverrides): Promise<BigNumber>;
 
-  feeBurnErc20(
+  feeCreateCollectionErc20(
     erc20token: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<[BigNumber, boolean] & { feeAmount: BigNumber; isValid: boolean }>;
 
-  feeMint(overrides?: CallOverrides): Promise<BigNumber>;
+  feeCreateSplitter(overrides?: CallOverrides): Promise<BigNumber>;
 
-  feeMintErc20(
+  feeCreateSplitterErc20(
     erc20token: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<[BigNumber, boolean] & { feeAmount: BigNumber; isValid: boolean }>;
@@ -132,18 +144,18 @@ export interface FeeHandler extends BaseContract {
   recipient(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
-    feeBurn(overrides?: CallOverrides): Promise<BigNumber>;
+    feeCreateCollection(overrides?: CallOverrides): Promise<BigNumber>;
 
-    feeBurnErc20(
+    feeCreateCollectionErc20(
       erc20token: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, boolean] & { feeAmount: BigNumber; isValid: boolean }
     >;
 
-    feeMint(overrides?: CallOverrides): Promise<BigNumber>;
+    feeCreateSplitter(overrides?: CallOverrides): Promise<BigNumber>;
 
-    feeMintErc20(
+    feeCreateSplitterErc20(
       erc20token: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<
@@ -156,16 +168,16 @@ export interface FeeHandler extends BaseContract {
   filters: {};
 
   estimateGas: {
-    feeBurn(overrides?: CallOverrides): Promise<BigNumber>;
+    feeCreateCollection(overrides?: CallOverrides): Promise<BigNumber>;
 
-    feeBurnErc20(
+    feeCreateCollectionErc20(
       erc20token: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    feeMint(overrides?: CallOverrides): Promise<BigNumber>;
+    feeCreateSplitter(overrides?: CallOverrides): Promise<BigNumber>;
 
-    feeMintErc20(
+    feeCreateSplitterErc20(
       erc20token: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -174,16 +186,18 @@ export interface FeeHandler extends BaseContract {
   };
 
   populateTransaction: {
-    feeBurn(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    feeCreateCollection(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-    feeBurnErc20(
+    feeCreateCollectionErc20(
       erc20token: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    feeMint(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    feeCreateSplitter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    feeMintErc20(
+    feeCreateSplitterErc20(
       erc20token: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

@@ -56,8 +56,6 @@ contract ERC1155Basic is ERC1155, ImplBase {
         uint128[] memory ids,
         uint128[] memory amounts
     ) public payable authorised {
-        uint256 len = ids.length;
-
         uint256[] memory _ids;
         uint256[] memory _amounts;
         assembly {

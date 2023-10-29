@@ -13,6 +13,10 @@ import { ethers } from "ethers";
 declare module "hardhat/types/runtime" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
     getContractFactory(
+      name: "FeeHandlerFactory",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.FeeHandlerFactory__factory>;
+    getContractFactory(
       name: "MADFactory",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MADFactory__factory>;
@@ -217,6 +221,11 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MADBase__factory>;
 
+    getContractAt(
+      name: "FeeHandlerFactory",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.FeeHandlerFactory>;
     getContractAt(
       name: "MADFactory",
       address: string,

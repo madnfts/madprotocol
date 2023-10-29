@@ -37,8 +37,6 @@ export interface MADRouterBaseInterface extends utils.Interface {
     "feeMint()": FunctionFragment;
     "feeMintErc20(address)": FunctionFragment;
     "madFactory()": FunctionFragment;
-    "maxFeeBurn()": FunctionFragment;
-    "maxFeeMint()": FunctionFragment;
     "name()": FunctionFragment;
     "owner()": FunctionFragment;
     "recipient()": FunctionFragment;
@@ -57,8 +55,6 @@ export interface MADRouterBaseInterface extends utils.Interface {
       | "feeMint"
       | "feeMintErc20"
       | "madFactory"
-      | "maxFeeBurn"
-      | "maxFeeMint"
       | "name"
       | "owner"
       | "recipient"
@@ -82,14 +78,6 @@ export interface MADRouterBaseInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "madFactory",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "maxFeeBurn",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "maxFeeMint",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
@@ -132,8 +120,6 @@ export interface MADRouterBaseInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "madFactory", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "maxFeeBurn", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "maxFeeMint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "recipient", data: BytesLike): Result;
@@ -297,20 +283,20 @@ export interface MADRouterBase extends BaseContract {
     feeBurnErc20(
       erc20token: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { burnPrice: BigNumber }>;
+    ): Promise<
+      [BigNumber, boolean] & { feeAmount: BigNumber; isValid: boolean }
+    >;
 
     feeMint(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     feeMintErc20(
       erc20token: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { mintPrice: BigNumber }>;
+    ): Promise<
+      [BigNumber, boolean] & { feeAmount: BigNumber; isValid: boolean }
+    >;
 
     madFactory(overrides?: CallOverrides): Promise<[string]>;
-
-    maxFeeBurn(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    maxFeeMint(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
@@ -354,20 +340,16 @@ export interface MADRouterBase extends BaseContract {
   feeBurnErc20(
     erc20token: PromiseOrValue<string>,
     overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  ): Promise<[BigNumber, boolean] & { feeAmount: BigNumber; isValid: boolean }>;
 
   feeMint(overrides?: CallOverrides): Promise<BigNumber>;
 
   feeMintErc20(
     erc20token: PromiseOrValue<string>,
     overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  ): Promise<[BigNumber, boolean] & { feeAmount: BigNumber; isValid: boolean }>;
 
   madFactory(overrides?: CallOverrides): Promise<string>;
-
-  maxFeeBurn(overrides?: CallOverrides): Promise<BigNumber>;
-
-  maxFeeMint(overrides?: CallOverrides): Promise<BigNumber>;
 
   name(overrides?: CallOverrides): Promise<string>;
 
@@ -411,20 +393,20 @@ export interface MADRouterBase extends BaseContract {
     feeBurnErc20(
       erc20token: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<
+      [BigNumber, boolean] & { feeAmount: BigNumber; isValid: boolean }
+    >;
 
     feeMint(overrides?: CallOverrides): Promise<BigNumber>;
 
     feeMintErc20(
       erc20token: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<
+      [BigNumber, boolean] & { feeAmount: BigNumber; isValid: boolean }
+    >;
 
     madFactory(overrides?: CallOverrides): Promise<string>;
-
-    maxFeeBurn(overrides?: CallOverrides): Promise<BigNumber>;
-
-    maxFeeMint(overrides?: CallOverrides): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<string>;
 
@@ -549,10 +531,6 @@ export interface MADRouterBase extends BaseContract {
 
     madFactory(overrides?: CallOverrides): Promise<BigNumber>;
 
-    maxFeeBurn(overrides?: CallOverrides): Promise<BigNumber>;
-
-    maxFeeMint(overrides?: CallOverrides): Promise<BigNumber>;
-
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
@@ -606,10 +584,6 @@ export interface MADRouterBase extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     madFactory(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    maxFeeBurn(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    maxFeeMint(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

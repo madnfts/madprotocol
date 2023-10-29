@@ -23,6 +23,8 @@ export type { shared };
 export type { lib };
 export type { MAD } from "./MAD";
 export * as factories from "./factories";
+export type { FeeHandlerFactory } from "./Factory/FeeHandler.sol/FeeHandlerFactory";
+export { FeeHandlerFactory__factory } from "./factories/Factory/FeeHandler.sol/FeeHandlerFactory__factory";
 export type { MADFactory } from "./Factory/MADFactory";
 export { MADFactory__factory } from "./factories/Factory/MADFactory__factory";
 export type { MADFactoryBase } from "./Factory/MADFactoryBase";

@@ -96,6 +96,12 @@ const _abi = [
         name: "mintPrice",
         type: "uint256",
       },
+      {
+        indexed: false,
+        internalType: "uint8",
+        name: "tokenType",
+        type: "uint8",
+      },
     ],
     name: "CollectionCreated",
     type: "event",

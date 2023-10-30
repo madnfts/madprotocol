@@ -58,7 +58,8 @@ contract MADFactory is MADFactoryBase {
             params.symbol,
             params.royalty,
             params.maxSupply,
-            params.price
+            params.price,
+            params.tokenType
         );
     }
 

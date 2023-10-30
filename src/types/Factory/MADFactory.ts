@@ -324,7 +324,7 @@ export interface MADFactoryInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "userTokens", data: BytesLike): Result;
 
   events: {
-    "CollectionCreated(address,address,string,string,uint256,uint256,uint256)": EventFragment;
+    "CollectionCreated(address,address,string,string,uint256,uint256,uint256,uint8)": EventFragment;
     "CollectionTypeAdded(uint256)": EventFragment;
     "FeesUpdated(uint256,uint256)": EventFragment;
     "MarketplaceUpdated(address)": EventFragment;
@@ -354,9 +354,10 @@ export interface CollectionCreatedEventObject {
   royalties: BigNumber;
   maxSupply: BigNumber;
   mintPrice: BigNumber;
+  tokenType: number;
 }
 export type CollectionCreatedEvent = TypedEvent<
-  [string, string, string, string, BigNumber, BigNumber, BigNumber],
+  [string, string, string, string, BigNumber, BigNumber, BigNumber, number],
   CollectionCreatedEventObject
 >;
 
@@ -888,14 +889,15 @@ export interface MADFactory extends BaseContract {
   };
 
   filters: {
-    "CollectionCreated(address,address,string,string,uint256,uint256,uint256)"(
+    "CollectionCreated(address,address,string,string,uint256,uint256,uint256,uint8)"(
       newSplitter?: PromiseOrValue<string> | null,
       newCollection?: PromiseOrValue<string> | null,
       name?: null,
       symbol?: null,
       royalties?: null,
       maxSupply?: null,
-      mintPrice?: null
+      mintPrice?: null,
+      tokenType?: null
     ): CollectionCreatedEventFilter;
     CollectionCreated(
       newSplitter?: PromiseOrValue<string> | null,
@@ -904,7 +906,8 @@ export interface MADFactory extends BaseContract {
       symbol?: null,
       royalties?: null,
       maxSupply?: null,
-      mintPrice?: null
+      mintPrice?: null,
+      tokenType?: null
     ): CollectionCreatedEventFilter;
 
     "CollectionTypeAdded(uint256)"(

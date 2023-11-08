@@ -26,6 +26,14 @@ Router address: 0xA90Ff82851ed5594DEfE3BF9b2F5142e60575987
 
 Splitter: 0x42b27CAdf6CeAE4f8d0c06ee6b5Ff4A54d0Ad2DF
 Collection 721: 0xF52593aCeF1d17D810Bfb5806D5A767887CbD097
+
+## Goerli Contracts:
+
+Deploying contracts with 0xe1fe7A4DBF33e6dA8c9e2628d102c67FB9E94549
+Deployed Factory Address: 0xd0049975A1A6eFBE0335318976c6B08585581a65
+Deployed Router Address: 0x102c1bEa188bcf1A1B7657Eb53575B0222080540
+Deployed ERC20 Address: 0x9104625a1042A78D307Ccac9AE7744482ac1a6E4
+
 ### Pre Requisites
 
 Before installing, create a `.env` file and set criteria as in `.env.example`.

@@ -7,8 +7,7 @@ import type {
   ISwapRouter,
   ISwapRouterInterface,
 } from "../../../lib/uniswap/ISwapRouter";
-import type { Provider } from "@ethersproject/providers";
-import { Contract, Signer, utils } from "ethers";
+import { Contract, Interface, type ContractRunner } from "ethers";
 
 const _abi = [
   {
@@ -253,12 +252,9 @@ const _abi = [
 export class ISwapRouter__factory {
   static readonly abi = _abi;
   static createInterface(): ISwapRouterInterface {
-    return new utils.Interface(_abi) as ISwapRouterInterface;
+    return new Interface(_abi) as ISwapRouterInterface;
   }
-  static connect(
-    address: string,
-    signerOrProvider: Signer | Provider
-  ): ISwapRouter {
-    return new Contract(address, _abi, signerOrProvider) as ISwapRouter;
+  static connect(address: string, runner?: ContractRunner | null): ISwapRouter {
+    return new Contract(address, _abi, runner) as unknown as ISwapRouter;
   }
 }

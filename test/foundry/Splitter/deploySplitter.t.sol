@@ -1,6 +1,6 @@
 pragma solidity 0.8.19;
 
-import "forge-std/src/Test.sol";
+import "test/lib/forge-std/src/Test.sol";
 import {
     DeploySplitterBase,
     ISplitter,

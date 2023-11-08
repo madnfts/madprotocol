@@ -7,8 +7,7 @@ import type {
   TwoFactor,
   TwoFactorInterface,
 } from "../../../lib/auth/TwoFactor";
-import type { Provider } from "@ethersproject/providers";
-import { Contract, Signer, utils } from "ethers";
+import { Contract, Interface, type ContractRunner } from "ethers";
 
 const _abi = [
   {
@@ -123,12 +122,9 @@ const _abi = [
 export class TwoFactor__factory {
   static readonly abi = _abi;
   static createInterface(): TwoFactorInterface {
-    return new utils.Interface(_abi) as TwoFactorInterface;
+    return new Interface(_abi) as TwoFactorInterface;
   }
-  static connect(
-    address: string,
-    signerOrProvider: Signer | Provider
-  ): TwoFactor {
-    return new Contract(address, _abi, signerOrProvider) as TwoFactor;
+  static connect(address: string, runner?: ContractRunner | null): TwoFactor {
+    return new Contract(address, _abi, runner) as unknown as TwoFactor;
   }
 }

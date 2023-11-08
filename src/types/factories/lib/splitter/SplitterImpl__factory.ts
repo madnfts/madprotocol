@@ -3,19 +3,23 @@
 /* tslint:disable */
 
 /* eslint-disable */
-import type { PromiseOrValue } from "../../../common";
+import type { PayableOverrides } from "../../../common";
 import type {
   SplitterImpl,
   SplitterImplInterface,
 } from "../../../lib/splitter/SplitterImpl";
-import type { Provider, TransactionRequest } from "@ethersproject/providers";
 import {
-  Signer,
-  utils,
   Contract,
   ContractFactory,
-  PayableOverrides,
+  ContractTransactionResponse,
+  Interface,
+} from "ethers";
+import type {
+  Signer,
   BigNumberish,
+  AddressLike,
+  ContractDeployTransaction,
+  ContractRunner,
 } from "ethers";
 
 const _abi = [
@@ -411,40 +415,37 @@ export class SplitterImpl__factory extends ContractFactory {
     }
   }
 
-  override deploy(
-    payees: PromiseOrValue<string>[],
-    shares_: PromiseOrValue<BigNumberish>[],
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<SplitterImpl> {
-    return super.deploy(
-      payees,
-      shares_,
-      overrides || {}
-    ) as Promise<SplitterImpl>;
-  }
   override getDeployTransaction(
-    payees: PromiseOrValue<string>[],
-    shares_: PromiseOrValue<BigNumberish>[],
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): TransactionRequest {
+    payees: AddressLike[],
+    shares_: BigNumberish[],
+    overrides?: PayableOverrides & { from?: string }
+  ): Promise<ContractDeployTransaction> {
     return super.getDeployTransaction(payees, shares_, overrides || {});
   }
-  override attach(address: string): SplitterImpl {
-    return super.attach(address) as SplitterImpl;
+  override deploy(
+    payees: AddressLike[],
+    shares_: BigNumberish[],
+    overrides?: PayableOverrides & { from?: string }
+  ) {
+    return super.deploy(payees, shares_, overrides || {}) as Promise<
+      SplitterImpl & {
+        deploymentTransaction(): ContractTransactionResponse;
+      }
+    >;
   }
-  override connect(signer: Signer): SplitterImpl__factory {
-    return super.connect(signer) as SplitterImpl__factory;
+  override connect(runner: ContractRunner | null): SplitterImpl__factory {
+    return super.connect(runner) as SplitterImpl__factory;
   }
 
   static readonly bytecode = _bytecode;
   static readonly abi = _abi;
   static createInterface(): SplitterImplInterface {
-    return new utils.Interface(_abi) as SplitterImplInterface;
+    return new Interface(_abi) as SplitterImplInterface;
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    runner?: ContractRunner | null
   ): SplitterImpl {
-    return new Contract(address, _abi, signerOrProvider) as SplitterImpl;
+    return new Contract(address, _abi, runner) as unknown as SplitterImpl;
   }
 }

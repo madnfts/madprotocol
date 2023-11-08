@@ -4,140 +4,210 @@
 
 /* eslint-disable */
 import type {
-  TypedEventFilter,
-  TypedEvent,
+  TypedContractEvent,
+  TypedDeferredTopicFilter,
+  TypedEventLog,
+  TypedLogDescription,
   TypedListener,
-  OnEvent,
-  PromiseOrValue,
 } from "../../common";
-import type { EventFragment } from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
-import type { BaseContract, BigNumber, Signer, utils } from "ethers";
+import type {
+  BaseContract,
+  BigNumberish,
+  FunctionFragment,
+  Interface,
+  EventFragment,
+  AddressLike,
+  ContractRunner,
+  ContractMethod,
+  Listener,
+} from "ethers";
 
-export interface SplitterEventsAndErrorsInterface extends utils.Interface {
-  functions: {};
-
-  events: {
-    "ERC20PaymentReleased(address,address,uint256)": EventFragment;
-    "PayeeAdded(address,uint256)": EventFragment;
-    "PaymentReceived(address,uint256)": EventFragment;
-    "PaymentReleased(address,uint256)": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "ERC20PaymentReleased"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PayeeAdded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PaymentReceived"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PaymentReleased"): EventFragment;
+export interface SplitterEventsAndErrorsInterface extends Interface {
+  getEvent(
+    nameOrSignatureOrTopic:
+      | "ERC20PaymentReleased"
+      | "PayeeAdded"
+      | "PaymentReceived"
+      | "PaymentReleased"
+  ): EventFragment;
 }
 
-export interface ERC20PaymentReleasedEventObject {
-  token: string;
-  to: string;
-  amount: BigNumber;
+export namespace ERC20PaymentReleasedEvent {
+  export type InputTuple = [
+    token: AddressLike,
+    to: AddressLike,
+    amount: BigNumberish
+  ];
+  export type OutputTuple = [token: string, to: string, amount: bigint];
+  export interface OutputObject {
+    token: string;
+    to: string;
+    amount: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type ERC20PaymentReleasedEvent = TypedEvent<
-  [string, string, BigNumber],
-  ERC20PaymentReleasedEventObject
->;
 
-export type ERC20PaymentReleasedEventFilter =
-  TypedEventFilter<ERC20PaymentReleasedEvent>;
-
-export interface PayeeAddedEventObject {
-  account: string;
-  shares: BigNumber;
+export namespace PayeeAddedEvent {
+  export type InputTuple = [account: AddressLike, shares: BigNumberish];
+  export type OutputTuple = [account: string, shares: bigint];
+  export interface OutputObject {
+    account: string;
+    shares: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type PayeeAddedEvent = TypedEvent<
-  [string, BigNumber],
-  PayeeAddedEventObject
->;
 
-export type PayeeAddedEventFilter = TypedEventFilter<PayeeAddedEvent>;
-
-export interface PaymentReceivedEventObject {
-  from: string;
-  amount: BigNumber;
+export namespace PaymentReceivedEvent {
+  export type InputTuple = [from: AddressLike, amount: BigNumberish];
+  export type OutputTuple = [from: string, amount: bigint];
+  export interface OutputObject {
+    from: string;
+    amount: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type PaymentReceivedEvent = TypedEvent<
-  [string, BigNumber],
-  PaymentReceivedEventObject
->;
 
-export type PaymentReceivedEventFilter = TypedEventFilter<PaymentReceivedEvent>;
-
-export interface PaymentReleasedEventObject {
-  to: string;
-  amount: BigNumber;
+export namespace PaymentReleasedEvent {
+  export type InputTuple = [to: AddressLike, amount: BigNumberish];
+  export type OutputTuple = [to: string, amount: bigint];
+  export interface OutputObject {
+    to: string;
+    amount: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type PaymentReleasedEvent = TypedEvent<
-  [string, BigNumber],
-  PaymentReleasedEventObject
->;
-
-export type PaymentReleasedEventFilter = TypedEventFilter<PaymentReleasedEvent>;
 
 export interface SplitterEventsAndErrors extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(runner?: ContractRunner | null): SplitterEventsAndErrors;
+  waitForDeployment(): Promise<this>;
 
   interface: SplitterEventsAndErrorsInterface;
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
+  queryFilter<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  queryFilter<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+  on<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  on<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  functions: {};
+  once<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  once<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  callStatic: {};
+  listeners<TCEvent extends TypedContractEvent>(
+    event: TCEvent
+  ): Promise<Array<TypedListener<TCEvent>>>;
+  listeners(eventName?: string): Promise<Array<Listener>>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(
+    event?: TCEvent
+  ): Promise<this>;
+
+  getFunction<T extends ContractMethod = ContractMethod>(
+    key: string | FunctionFragment
+  ): T;
+
+  getEvent(
+    key: "ERC20PaymentReleased"
+  ): TypedContractEvent<
+    ERC20PaymentReleasedEvent.InputTuple,
+    ERC20PaymentReleasedEvent.OutputTuple,
+    ERC20PaymentReleasedEvent.OutputObject
+  >;
+  getEvent(
+    key: "PayeeAdded"
+  ): TypedContractEvent<
+    PayeeAddedEvent.InputTuple,
+    PayeeAddedEvent.OutputTuple,
+    PayeeAddedEvent.OutputObject
+  >;
+  getEvent(
+    key: "PaymentReceived"
+  ): TypedContractEvent<
+    PaymentReceivedEvent.InputTuple,
+    PaymentReceivedEvent.OutputTuple,
+    PaymentReceivedEvent.OutputObject
+  >;
+  getEvent(
+    key: "PaymentReleased"
+  ): TypedContractEvent<
+    PaymentReleasedEvent.InputTuple,
+    PaymentReleasedEvent.OutputTuple,
+    PaymentReleasedEvent.OutputObject
+  >;
 
   filters: {
-    "ERC20PaymentReleased(address,address,uint256)"(
-      token?: PromiseOrValue<string> | null,
-      to?: null,
-      amount?: null
-    ): ERC20PaymentReleasedEventFilter;
-    ERC20PaymentReleased(
-      token?: PromiseOrValue<string> | null,
-      to?: null,
-      amount?: null
-    ): ERC20PaymentReleasedEventFilter;
+    "ERC20PaymentReleased(address,address,uint256)": TypedContractEvent<
+      ERC20PaymentReleasedEvent.InputTuple,
+      ERC20PaymentReleasedEvent.OutputTuple,
+      ERC20PaymentReleasedEvent.OutputObject
+    >;
+    ERC20PaymentReleased: TypedContractEvent<
+      ERC20PaymentReleasedEvent.InputTuple,
+      ERC20PaymentReleasedEvent.OutputTuple,
+      ERC20PaymentReleasedEvent.OutputObject
+    >;
 
-    "PayeeAdded(address,uint256)"(
-      account?: null,
-      shares?: null
-    ): PayeeAddedEventFilter;
-    PayeeAdded(account?: null, shares?: null): PayeeAddedEventFilter;
+    "PayeeAdded(address,uint256)": TypedContractEvent<
+      PayeeAddedEvent.InputTuple,
+      PayeeAddedEvent.OutputTuple,
+      PayeeAddedEvent.OutputObject
+    >;
+    PayeeAdded: TypedContractEvent<
+      PayeeAddedEvent.InputTuple,
+      PayeeAddedEvent.OutputTuple,
+      PayeeAddedEvent.OutputObject
+    >;
 
-    "PaymentReceived(address,uint256)"(
-      from?: null,
-      amount?: null
-    ): PaymentReceivedEventFilter;
-    PaymentReceived(from?: null, amount?: null): PaymentReceivedEventFilter;
+    "PaymentReceived(address,uint256)": TypedContractEvent<
+      PaymentReceivedEvent.InputTuple,
+      PaymentReceivedEvent.OutputTuple,
+      PaymentReceivedEvent.OutputObject
+    >;
+    PaymentReceived: TypedContractEvent<
+      PaymentReceivedEvent.InputTuple,
+      PaymentReceivedEvent.OutputTuple,
+      PaymentReceivedEvent.OutputObject
+    >;
 
-    "PaymentReleased(address,uint256)"(
-      to?: null,
-      amount?: null
-    ): PaymentReleasedEventFilter;
-    PaymentReleased(to?: null, amount?: null): PaymentReleasedEventFilter;
+    "PaymentReleased(address,uint256)": TypedContractEvent<
+      PaymentReleasedEvent.InputTuple,
+      PaymentReleasedEvent.OutputTuple,
+      PaymentReleasedEvent.OutputObject
+    >;
+    PaymentReleased: TypedContractEvent<
+      PaymentReleasedEvent.InputTuple,
+      PaymentReleasedEvent.OutputTuple,
+      PaymentReleasedEvent.OutputObject
+    >;
   };
-
-  estimateGas: {};
-
-  populateTransaction: {};
 }

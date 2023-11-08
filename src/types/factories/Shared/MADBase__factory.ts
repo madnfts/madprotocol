@@ -4,8 +4,7 @@
 
 /* eslint-disable */
 import type { MADBase, MADBaseInterface } from "../../Shared/MADBase";
-import type { Provider } from "@ethersproject/providers";
-import { Contract, Signer, utils } from "ethers";
+import { Contract, Interface, type ContractRunner } from "ethers";
 
 const _abi = [
   {
@@ -136,12 +135,9 @@ const _abi = [
 export class MADBase__factory {
   static readonly abi = _abi;
   static createInterface(): MADBaseInterface {
-    return new utils.Interface(_abi) as MADBaseInterface;
+    return new Interface(_abi) as MADBaseInterface;
   }
-  static connect(
-    address: string,
-    signerOrProvider: Signer | Provider
-  ): MADBase {
-    return new Contract(address, _abi, signerOrProvider) as MADBase;
+  static connect(address: string, runner?: ContractRunner | null): MADBase {
+    return new Contract(address, _abi, runner) as unknown as MADBase;
   }
 }

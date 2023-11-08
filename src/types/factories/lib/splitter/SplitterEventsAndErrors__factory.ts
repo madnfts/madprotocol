@@ -7,8 +7,7 @@ import type {
   SplitterEventsAndErrors,
   SplitterEventsAndErrorsInterface,
 } from "../../../lib/splitter/SplitterEventsAndErrors";
-import type { Provider } from "@ethersproject/providers";
-import { Contract, Signer, utils } from "ethers";
+import { Contract, Interface, type ContractRunner } from "ethers";
 
 const _abi = [
   {
@@ -133,16 +132,16 @@ const _abi = [
 export class SplitterEventsAndErrors__factory {
   static readonly abi = _abi;
   static createInterface(): SplitterEventsAndErrorsInterface {
-    return new utils.Interface(_abi) as SplitterEventsAndErrorsInterface;
+    return new Interface(_abi) as SplitterEventsAndErrorsInterface;
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    runner?: ContractRunner | null
   ): SplitterEventsAndErrors {
     return new Contract(
       address,
       _abi,
-      signerOrProvider
-    ) as SplitterEventsAndErrors;
+      runner
+    ) as unknown as SplitterEventsAndErrors;
   }
 }

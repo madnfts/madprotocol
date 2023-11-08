@@ -4,8 +4,7 @@
 
 /* eslint-disable */
 import type { MAD, MADInterface } from "../MAD";
-import type { Provider } from "@ethersproject/providers";
-import { Contract, Signer, utils } from "ethers";
+import { Contract, Interface, type ContractRunner } from "ethers";
 
 const _abi = [
   {
@@ -26,9 +25,9 @@ const _abi = [
 export class MAD__factory {
   static readonly abi = _abi;
   static createInterface(): MADInterface {
-    return new utils.Interface(_abi) as MADInterface;
+    return new Interface(_abi) as MADInterface;
   }
-  static connect(address: string, signerOrProvider: Signer | Provider): MAD {
-    return new Contract(address, _abi, signerOrProvider) as MAD;
+  static connect(address: string, runner?: ContractRunner | null): MAD {
+    return new Contract(address, _abi, runner) as unknown as MAD;
   }
 }

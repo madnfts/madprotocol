@@ -6,7 +6,7 @@ import {
     ImplBase,
     ERC2981,
     Strings,
-    Types
+    ContractTypes
 } from "contracts/MADTokens/common/ImplBase.sol";
 import { ERC721 } from "contracts/lib/tokens/ERC721/Base/ERC721.sol";
 
@@ -18,7 +18,7 @@ contract ERC721Basic is ERC721, ImplBase {
     bytes32 private constant _SYMBOL_SLOT = /*  */
         0x30ec9400a6906cefbe2888cc908b6b5efeceee7bcd5438fa93fc189e1bbe64ac;
 
-    using Types for Types.CollectionArgs;
+    using ContractTypes for ContractTypes.CollectionArgs;
     using Strings for uint256;
 
     ////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ contract ERC721Basic is ERC721, ImplBase {
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    constructor(Types.CollectionArgs memory args) ImplBase(args) {
+    constructor(ContractTypes.CollectionArgs memory args) ImplBase(args) {
         _setStringMemory(args._name, _NAME_SLOT);
         _setStringMemory(args._symbol, _SYMBOL_SLOT);
     }

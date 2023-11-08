@@ -3,13 +3,18 @@
 /* tslint:disable */
 
 /* eslint-disable */
-import type { PromiseOrValue } from "../../../../../../../common";
+import type { NonPayableOverrides } from "../../../../../../../common";
 import type {
   ERC721Holder,
   ERC721HolderInterface,
 } from "../../../../../../../lib/tokens/ERC721/Base/utils/ERC721Holder.sol/ERC721Holder";
-import type { Provider, TransactionRequest } from "@ethersproject/providers";
-import { Signer, utils, Contract, ContractFactory, Overrides } from "ethers";
+import {
+  Contract,
+  ContractFactory,
+  ContractTransactionResponse,
+  Interface,
+} from "ethers";
+import type { Signer, ContractDeployTransaction, ContractRunner } from "ethers";
 
 const _abi = [
   {
@@ -68,32 +73,31 @@ export class ERC721Holder__factory extends ContractFactory {
     }
   }
 
-  override deploy(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ERC721Holder> {
-    return super.deploy(overrides || {}) as Promise<ERC721Holder>;
-  }
   override getDeployTransaction(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): TransactionRequest {
+    overrides?: NonPayableOverrides & { from?: string }
+  ): Promise<ContractDeployTransaction> {
     return super.getDeployTransaction(overrides || {});
   }
-  override attach(address: string): ERC721Holder {
-    return super.attach(address) as ERC721Holder;
+  override deploy(overrides?: NonPayableOverrides & { from?: string }) {
+    return super.deploy(overrides || {}) as Promise<
+      ERC721Holder & {
+        deploymentTransaction(): ContractTransactionResponse;
+      }
+    >;
   }
-  override connect(signer: Signer): ERC721Holder__factory {
-    return super.connect(signer) as ERC721Holder__factory;
+  override connect(runner: ContractRunner | null): ERC721Holder__factory {
+    return super.connect(runner) as ERC721Holder__factory;
   }
 
   static readonly bytecode = _bytecode;
   static readonly abi = _abi;
   static createInterface(): ERC721HolderInterface {
-    return new utils.Interface(_abi) as ERC721HolderInterface;
+    return new Interface(_abi) as ERC721HolderInterface;
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    runner?: ContractRunner | null
   ): ERC721Holder {
-    return new Contract(address, _abi, signerOrProvider) as ERC721Holder;
+    return new Contract(address, _abi, runner) as unknown as ERC721Holder;
   }
 }

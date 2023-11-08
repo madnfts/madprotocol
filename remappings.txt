@@ -1,2 +1,2 @@
-ds-test/=forge-std/lib/ds-test/src/
-forge-std/=forge-std/
+ds-test/=test/lib/forge-std/lib/ds-test/src/
+forge-std/=test/lib/forge-std/

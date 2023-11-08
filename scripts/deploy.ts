@@ -1,11 +1,8 @@
-import "@nomiclabs/hardhat-ethers";
-import "@nomiclabs/hardhat-etherscan";
 import { config } from "dotenv";
-import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
 import { resolve } from "path";
 
-import { MockERC20 } from "../contracts/lib/test";
+import { MockERC20 } from "../src/types/lib/test/erc20-mock.sol";
 
 config({ path: resolve(__dirname, "./.env") });
 
@@ -25,23 +22,23 @@ const {
   RECIPIENT,
 } = process.env;
 
-const _feeCreateCollection = ethers.utils.parseEther(
-  feeCreateCollection,
+const _feeCreateCollection = ethers.parseEther(
+  feeCreateCollection
 );
-const _feeCreateSplitter = ethers.utils.parseEther(
+const _feeCreateSplitter = ethers.parseEther(
   feeCreateSplitter,
 );
-const _feeCreateCollectionErc20 = ethers.utils.parseEther(
+const _feeCreateCollectionErc20 = ethers.parseEther(
   feeCreateCollectionErc20,
 );
-const _feeCreateSplitterErc20 = ethers.utils.parseEther(
+const _feeCreateSplitterErc20 = ethers.parseEther(
   feeCreateSplitterErc20,
 );
 
-const _feeMint = ethers.utils.parseEther(feeMint);
-const _feeBurn = ethers.utils.parseEther(feeBurn);
-const _feeMintErc20 = ethers.utils.parseEther(feeMintErc20);
-const _feeBurnErc20 = ethers.utils.parseEther(feeBurnErc20);
+const _feeMint = ethers.parseEther(feeMint);
+const _feeBurn = ethers.parseEther(feeBurn);
+const _feeMintErc20 = ethers.parseEther(feeMintErc20);
+const _feeBurnErc20 = ethers.parseEther(feeBurnErc20);
 
 var deployedFactoryAddress = "";
 var deployedRouterAddress = "";
@@ -62,49 +59,51 @@ const deployedDisplay = () => {
     `Deployed Marketplace Address: ${deployedMarketplaceAddress}`,
   );
 };
+// const deployMarketplace = async erc20Address => {
+//   const MADMarketplace721 = await ethers.getContractFactory(
+//     "MADMarketplace721",
+//   );
+//   const m721 = await MADMarketplace721.deploy(
+//     erc20Address,
+//     UNISWAP_ROUTER,
+//   );
+//   console.log(`ERC721 Marketplace address: ${m721.target}`);
+
+//   const MADMarketplace1155 = await ethers.getContractFactory(
+//     "MADMarketplace1155",
+//   );
+//   const m1155 = await MADMarketplace1155.deploy(
+//     erc20Address,
+//     UNISWAP_ROUTER,
+//   );
+//   deployedMarketplaceAddress = m721.target;
+//   return { m721, m1155 };
+// };
 
 const deployERC20 = async () => {
   const ERC20 = await ethers.getContractFactory("MockERC20");
-  const erc20 = (await ERC20.deploy(
+  const erc20 = await ERC20.deploy(
     "Mad Mock Eth",
     "mmEth",
     18,
     10,
-  )) as MockERC20;
-  deployedErc20Address = erc20.address;
+  );
+  await erc20.waitForDeployment();
+  deployedErc20Address = erc20.target;
   return erc20;
 };
 
-const deployMarketplace = async erc20Address => {
-  const MADMarketplace721 = await ethers.getContractFactory(
-    "MADMarketplace721",
-  );
-  const m721 = await MADMarketplace721.deploy(
-    erc20Address,
-    UNISWAP_ROUTER,
-  );
-  console.log(`ERC721 Marketplace address: ${m721.address}`);
-
-  const MADMarketplace1155 = await ethers.getContractFactory(
-    "MADMarketplace1155",
-  );
-  const m1155 = await MADMarketplace1155.deploy(
-    erc20Address,
-    UNISWAP_ROUTER,
-  );
-  deployedMarketplaceAddress = m721.address;
-  return { m721, m1155 };
-};
-
-const deployFactory = async erc20Address => {
+const deployFactory = async (erc20Address) => {
   const MADFactory = await ethers.getContractFactory(
     "MADFactory",
   );
+  console.log(`Deploying Factory with args ${erc20Address} and ${RECIPIENT}`);
   const factory = await MADFactory.deploy(
     erc20Address,
     RECIPIENT,
   );
-  deployedFactoryAddress = factory.address;
+  await factory.waitForDeployment();
+  deployedFactoryAddress = factory.target;
   return factory;
 };
 
@@ -121,7 +120,8 @@ const deployRouter = async (
     erc20Address,
     deployerAddress,
   );
-  deployedRouterAddress = router.address;
+  await router.waitForDeployment();
+  deployedRouterAddress = router.target;
   return router;
 };
 
@@ -155,7 +155,7 @@ const setRouterFees = async (
     console.log(`Router Mint Fee Set`);
   }
 
-  if (erc20Address != ethers.constants.AddressZero) {
+  if (erc20Address != ethers.ZeroAddress) {
     await router["setFees(uint256,uint256,address)"](
       _feeMint,
       _feeBurn,
@@ -221,7 +221,7 @@ const setFactoryFees = async (
     console.log(`Factory Splitter Fees Set`);
   }
 
-  if (erc20Address != ethers.constants.AddressZero) {
+  if (erc20Address != ethers.ZeroAddress) {
     await factory["setFees(uint256,uint256,address)"](
       _feeCreateCollectionErc20,
       _feeCreateSplitterErc20,
@@ -271,7 +271,7 @@ const setCollectionType = async (
 };
 
 const main = async () => {
-  let erc20Address = ethers.constants.AddressZero;
+  let erc20Address = ethers.ZeroAddress;
   const ERC721Basic = await ethers.getContractFactory(
     "ERC721Basic",
   );
@@ -288,7 +288,7 @@ const main = async () => {
     );
     if (ERC20_TOKEN === "mock") {
       let erc20 = await deployERC20();
-      erc20Address = erc20.address;
+      erc20Address = erc20.getAddress();
     } else if (ERC20_TOKEN) {
       erc20Address = ERC20_TOKEN;
       console.log(`ERC20 address: ${erc20Address}`);
@@ -300,20 +300,21 @@ const main = async () => {
     console.log(
       `Deploying contracts Factory with ${deployer.address}`,
     );
-    const factory = await deployFactory(erc20Address);
+    const factory = await deployFactory(erc20Address)
+
     console.log(
       `Deploying contracts Router with ${deployer.address}`,
     );
     const router = await deployRouter(
       erc20Address,
-      factory.address,
+      factory.target,
       deployer.address,
     );
 
     deployedDisplay();
 
     // Set router address
-    await factory.connect(deployer).setRouter(router.address);
+    await factory.connect(deployer).setRouter(router.getAddress());
     console.log(`Router Address Set..`);
 
     // Add Collection Types

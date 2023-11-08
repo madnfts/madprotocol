@@ -4,35 +4,27 @@
 
 /* eslint-disable */
 import type {
-  TypedEventFilter,
-  TypedEvent,
+  TypedContractEvent,
+  TypedDeferredTopicFilter,
+  TypedEventLog,
   TypedListener,
-  OnEvent,
-  PromiseOrValue,
+  TypedContractMethod,
 } from "../../common";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   BaseContract,
-  BigNumber,
   BytesLike,
-  CallOverrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
+  FunctionFragment,
+  Result,
+  Interface,
+  AddressLike,
+  ContractRunner,
+  ContractMethod,
+  Listener,
 } from "ethers";
 
-export interface FeeHandlerFactoryInterface extends utils.Interface {
-  functions: {
-    "feeCreateCollection()": FunctionFragment;
-    "feeCreateCollectionErc20(address)": FunctionFragment;
-    "feeCreateSplitter()": FunctionFragment;
-    "feeCreateSplitterErc20(address)": FunctionFragment;
-    "recipient()": FunctionFragment;
-  };
-
+export interface FeeHandlerFactoryInterface extends Interface {
   getFunction(
-    nameOrSignatureOrTopic:
+    nameOrSignature:
       | "feeCreateCollection"
       | "feeCreateCollectionErc20"
       | "feeCreateSplitter"
@@ -46,7 +38,7 @@ export interface FeeHandlerFactoryInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "feeCreateCollectionErc20",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "feeCreateSplitter",
@@ -54,7 +46,7 @@ export interface FeeHandlerFactoryInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "feeCreateSplitterErc20",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(functionFragment: "recipient", values?: undefined): string;
 
@@ -75,133 +67,96 @@ export interface FeeHandlerFactoryInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "recipient", data: BytesLike): Result;
-
-  events: {};
 }
 
 export interface FeeHandlerFactory extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(runner?: ContractRunner | null): FeeHandlerFactory;
+  waitForDeployment(): Promise<this>;
 
   interface: FeeHandlerFactoryInterface;
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
+  queryFilter<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  queryFilter<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+  on<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  on<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  functions: {
-    feeCreateCollection(overrides?: CallOverrides): Promise<[BigNumber]>;
+  once<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  once<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-    feeCreateCollectionErc20(
-      erc20token: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, boolean] & { feeAmount: BigNumber; isValid: boolean }
-    >;
+  listeners<TCEvent extends TypedContractEvent>(
+    event: TCEvent
+  ): Promise<Array<TypedListener<TCEvent>>>;
+  listeners(eventName?: string): Promise<Array<Listener>>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(
+    event?: TCEvent
+  ): Promise<this>;
 
-    feeCreateSplitter(overrides?: CallOverrides): Promise<[BigNumber]>;
+  feeCreateCollection: TypedContractMethod<[], [bigint], "view">;
 
-    feeCreateSplitterErc20(
-      erc20token: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, boolean] & { feeAmount: BigNumber; isValid: boolean }
-    >;
+  feeCreateCollectionErc20: TypedContractMethod<
+    [erc20token: AddressLike],
+    [[bigint, boolean] & { feeAmount: bigint; isValid: boolean }],
+    "view"
+  >;
 
-    recipient(overrides?: CallOverrides): Promise<[string]>;
-  };
+  feeCreateSplitter: TypedContractMethod<[], [bigint], "view">;
 
-  feeCreateCollection(overrides?: CallOverrides): Promise<BigNumber>;
+  feeCreateSplitterErc20: TypedContractMethod<
+    [erc20token: AddressLike],
+    [[bigint, boolean] & { feeAmount: bigint; isValid: boolean }],
+    "view"
+  >;
 
-  feeCreateCollectionErc20(
-    erc20token: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, boolean] & { feeAmount: BigNumber; isValid: boolean }>;
+  recipient: TypedContractMethod<[], [string], "view">;
 
-  feeCreateSplitter(overrides?: CallOverrides): Promise<BigNumber>;
+  getFunction<T extends ContractMethod = ContractMethod>(
+    key: string | FunctionFragment
+  ): T;
 
-  feeCreateSplitterErc20(
-    erc20token: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, boolean] & { feeAmount: BigNumber; isValid: boolean }>;
-
-  recipient(overrides?: CallOverrides): Promise<string>;
-
-  callStatic: {
-    feeCreateCollection(overrides?: CallOverrides): Promise<BigNumber>;
-
-    feeCreateCollectionErc20(
-      erc20token: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, boolean] & { feeAmount: BigNumber; isValid: boolean }
-    >;
-
-    feeCreateSplitter(overrides?: CallOverrides): Promise<BigNumber>;
-
-    feeCreateSplitterErc20(
-      erc20token: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, boolean] & { feeAmount: BigNumber; isValid: boolean }
-    >;
-
-    recipient(overrides?: CallOverrides): Promise<string>;
-  };
+  getFunction(
+    nameOrSignature: "feeCreateCollection"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "feeCreateCollectionErc20"
+  ): TypedContractMethod<
+    [erc20token: AddressLike],
+    [[bigint, boolean] & { feeAmount: bigint; isValid: boolean }],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "feeCreateSplitter"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "feeCreateSplitterErc20"
+  ): TypedContractMethod<
+    [erc20token: AddressLike],
+    [[bigint, boolean] & { feeAmount: bigint; isValid: boolean }],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "recipient"
+  ): TypedContractMethod<[], [string], "view">;
 
   filters: {};
-
-  estimateGas: {
-    feeCreateCollection(overrides?: CallOverrides): Promise<BigNumber>;
-
-    feeCreateCollectionErc20(
-      erc20token: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    feeCreateSplitter(overrides?: CallOverrides): Promise<BigNumber>;
-
-    feeCreateSplitterErc20(
-      erc20token: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    recipient(overrides?: CallOverrides): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    feeCreateCollection(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    feeCreateCollectionErc20(
-      erc20token: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    feeCreateSplitter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    feeCreateSplitterErc20(
-      erc20token: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    recipient(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-  };
 }

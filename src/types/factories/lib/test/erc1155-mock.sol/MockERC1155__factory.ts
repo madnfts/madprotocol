@@ -3,13 +3,18 @@
 /* tslint:disable */
 
 /* eslint-disable */
-import type { PromiseOrValue } from "../../../../common";
+import type { NonPayableOverrides } from "../../../../common";
 import type {
   MockERC1155,
   MockERC1155Interface,
 } from "../../../../lib/test/erc1155-mock.sol/MockERC1155";
-import type { Provider, TransactionRequest } from "@ethersproject/providers";
-import { Signer, utils, Contract, ContractFactory, Overrides } from "ethers";
+import {
+  Contract,
+  ContractFactory,
+  ContractTransactionResponse,
+  Interface,
+} from "ethers";
+import type { Signer, ContractDeployTransaction, ContractRunner } from "ethers";
 
 const _abi = [
   {
@@ -472,32 +477,28 @@ export class MockERC1155__factory extends ContractFactory {
     }
   }
 
-  override deploy(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<MockERC1155> {
-    return super.deploy(overrides || {}) as Promise<MockERC1155>;
-  }
   override getDeployTransaction(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): TransactionRequest {
+    overrides?: NonPayableOverrides & { from?: string }
+  ): Promise<ContractDeployTransaction> {
     return super.getDeployTransaction(overrides || {});
   }
-  override attach(address: string): MockERC1155 {
-    return super.attach(address) as MockERC1155;
+  override deploy(overrides?: NonPayableOverrides & { from?: string }) {
+    return super.deploy(overrides || {}) as Promise<
+      MockERC1155 & {
+        deploymentTransaction(): ContractTransactionResponse;
+      }
+    >;
   }
-  override connect(signer: Signer): MockERC1155__factory {
-    return super.connect(signer) as MockERC1155__factory;
+  override connect(runner: ContractRunner | null): MockERC1155__factory {
+    return super.connect(runner) as MockERC1155__factory;
   }
 
   static readonly bytecode = _bytecode;
   static readonly abi = _abi;
   static createInterface(): MockERC1155Interface {
-    return new utils.Interface(_abi) as MockERC1155Interface;
+    return new Interface(_abi) as MockERC1155Interface;
   }
-  static connect(
-    address: string,
-    signerOrProvider: Signer | Provider
-  ): MockERC1155 {
-    return new Contract(address, _abi, signerOrProvider) as MockERC1155;
+  static connect(address: string, runner?: ContractRunner | null): MockERC1155 {
+    return new Contract(address, _abi, runner) as unknown as MockERC1155;
   }
 }

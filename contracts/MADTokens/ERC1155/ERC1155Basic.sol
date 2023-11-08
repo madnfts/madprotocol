@@ -7,12 +7,12 @@ import {
     ImplBase,
     ERC2981,
     Strings,
-    Types
+    ContractTypes
 } from "contracts/MADTokens/common/ImplBase.sol";
 import { ERC1155 } from "contracts/lib/tokens/ERC1155/Base/ERC1155.sol";
 
 contract ERC1155Basic is ERC1155, ImplBase {
-    using Types for Types.CollectionArgs;
+    using ContractTypes for ContractTypes.CollectionArgs;
     using Strings for uint256;
 
     ////////////////////////////////////////////////////////////////
@@ -31,7 +31,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    constructor(Types.CollectionArgs memory args) ImplBase(args) {
+    constructor(ContractTypes.CollectionArgs memory args) ImplBase(args) {
         emit URI(args._baseURI, 0x00);
     }
 

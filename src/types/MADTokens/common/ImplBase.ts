@@ -4,60 +4,30 @@
 
 /* eslint-disable */
 import type {
-  TypedEventFilter,
-  TypedEvent,
+  TypedContractEvent,
+  TypedDeferredTopicFilter,
+  TypedEventLog,
+  TypedLogDescription,
   TypedListener,
-  OnEvent,
-  PromiseOrValue,
+  TypedContractMethod,
 } from "../../common";
 import type {
-  FunctionFragment,
-  Result,
-  EventFragment,
-} from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
-import type {
   BaseContract,
-  BigNumber,
   BigNumberish,
   BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
+  FunctionFragment,
+  Result,
+  Interface,
+  EventFragment,
+  AddressLike,
+  ContractRunner,
+  ContractMethod,
+  Listener,
 } from "ethers";
 
-export interface ImplBaseInterface extends utils.Interface {
-  functions: {
-    "_royaltyFee()": FunctionFragment;
-    "baseURI()": FunctionFragment;
-    "erc20()": FunctionFragment;
-    "erc20PaymentsEnabled()": FunctionFragment;
-    "feeCount()": FunctionFragment;
-    "feeCountERC20()": FunctionFragment;
-    "getOwner()": FunctionFragment;
-    "getRouter()": FunctionFragment;
-    "maxSupply()": FunctionFragment;
-    "price()": FunctionFragment;
-    "publicMintState()": FunctionFragment;
-    "routerHasAuthority()": FunctionFragment;
-    "royaltyInfo(uint256,uint256)": FunctionFragment;
-    "setBaseURI(string)": FunctionFragment;
-    "setBaseURILock()": FunctionFragment;
-    "setOwnership(address)": FunctionFragment;
-    "setPublicMintState(bool)": FunctionFragment;
-    "setRouterHasAuthority(bool)": FunctionFragment;
-    "splitter()": FunctionFragment;
-    "supportsInterface(bytes4)": FunctionFragment;
-    "uriLock()": FunctionFragment;
-    "withdraw()": FunctionFragment;
-    "withdrawERC20(address)": FunctionFragment;
-  };
-
+export interface ImplBaseInterface extends Interface {
   getFunction(
-    nameOrSignatureOrTopic:
+    nameOrSignature:
       | "_royaltyFee"
       | "baseURI"
       | "erc20"
@@ -82,6 +52,17 @@ export interface ImplBaseInterface extends utils.Interface {
       | "withdraw"
       | "withdrawERC20"
   ): FunctionFragment;
+
+  getEvent(
+    nameOrSignatureOrTopic:
+      | "BaseURILocked"
+      | "BaseURISet"
+      | "OwnerUpdated"
+      | "PublicMintStateSet"
+      | "RouterSet"
+      | "RoyaltyFeeSet"
+      | "RoyaltyRecipientSet"
+  ): EventFragment;
 
   encodeFunctionData(
     functionFragment: "_royaltyFee",
@@ -112,38 +93,35 @@ export interface ImplBaseInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "royaltyInfo",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    values: [BigNumberish, BigNumberish]
   ): string;
-  encodeFunctionData(
-    functionFragment: "setBaseURI",
-    values: [PromiseOrValue<string>]
-  ): string;
+  encodeFunctionData(functionFragment: "setBaseURI", values: [string]): string;
   encodeFunctionData(
     functionFragment: "setBaseURILock",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "setOwnership",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "setPublicMintState",
-    values: [PromiseOrValue<boolean>]
+    values: [boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "setRouterHasAuthority",
-    values: [PromiseOrValue<boolean>]
+    values: [boolean]
   ): string;
   encodeFunctionData(functionFragment: "splitter", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
-    values: [PromiseOrValue<BytesLike>]
+    values: [BytesLike]
   ): string;
   encodeFunctionData(functionFragment: "uriLock", values?: undefined): string;
   encodeFunctionData(functionFragment: "withdraw", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "withdrawERC20",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
 
   decodeFunctionResult(
@@ -205,532 +183,408 @@ export interface ImplBaseInterface extends utils.Interface {
     functionFragment: "withdrawERC20",
     data: BytesLike
   ): Result;
-
-  events: {
-    "BaseURILocked()": EventFragment;
-    "BaseURISet(string)": EventFragment;
-    "OwnerUpdated(address,address)": EventFragment;
-    "PublicMintStateSet(bool)": EventFragment;
-    "RouterSet(address)": EventFragment;
-    "RoyaltyFeeSet(uint256)": EventFragment;
-    "RoyaltyRecipientSet(address)": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "BaseURILocked"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "BaseURISet"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnerUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PublicMintStateSet"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RouterSet"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RoyaltyFeeSet"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RoyaltyRecipientSet"): EventFragment;
 }
 
-export interface BaseURILockedEventObject {}
-export type BaseURILockedEvent = TypedEvent<[], BaseURILockedEventObject>;
-
-export type BaseURILockedEventFilter = TypedEventFilter<BaseURILockedEvent>;
-
-export interface BaseURISetEventObject {
-  newBaseURI: string;
+export namespace BaseURILockedEvent {
+  export type InputTuple = [];
+  export type OutputTuple = [];
+  export interface OutputObject {}
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type BaseURISetEvent = TypedEvent<[string], BaseURISetEventObject>;
 
-export type BaseURISetEventFilter = TypedEventFilter<BaseURISetEvent>;
-
-export interface OwnerUpdatedEventObject {
-  user: string;
-  newOwner: string;
+export namespace BaseURISetEvent {
+  export type InputTuple = [newBaseURI: string];
+  export type OutputTuple = [newBaseURI: string];
+  export interface OutputObject {
+    newBaseURI: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type OwnerUpdatedEvent = TypedEvent<
-  [string, string],
-  OwnerUpdatedEventObject
->;
 
-export type OwnerUpdatedEventFilter = TypedEventFilter<OwnerUpdatedEvent>;
-
-export interface PublicMintStateSetEventObject {
-  newPublicState: boolean;
+export namespace OwnerUpdatedEvent {
+  export type InputTuple = [user: AddressLike, newOwner: AddressLike];
+  export type OutputTuple = [user: string, newOwner: string];
+  export interface OutputObject {
+    user: string;
+    newOwner: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type PublicMintStateSetEvent = TypedEvent<
-  [boolean],
-  PublicMintStateSetEventObject
->;
 
-export type PublicMintStateSetEventFilter =
-  TypedEventFilter<PublicMintStateSetEvent>;
-
-export interface RouterSetEventObject {
-  newRouter: string;
+export namespace PublicMintStateSetEvent {
+  export type InputTuple = [newPublicState: boolean];
+  export type OutputTuple = [newPublicState: boolean];
+  export interface OutputObject {
+    newPublicState: boolean;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type RouterSetEvent = TypedEvent<[string], RouterSetEventObject>;
 
-export type RouterSetEventFilter = TypedEventFilter<RouterSetEvent>;
-
-export interface RoyaltyFeeSetEventObject {
-  newRoyaltyFee: BigNumber;
+export namespace RouterSetEvent {
+  export type InputTuple = [newRouter: AddressLike];
+  export type OutputTuple = [newRouter: string];
+  export interface OutputObject {
+    newRouter: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type RoyaltyFeeSetEvent = TypedEvent<
-  [BigNumber],
-  RoyaltyFeeSetEventObject
->;
 
-export type RoyaltyFeeSetEventFilter = TypedEventFilter<RoyaltyFeeSetEvent>;
-
-export interface RoyaltyRecipientSetEventObject {
-  newRecipient: string;
+export namespace RoyaltyFeeSetEvent {
+  export type InputTuple = [newRoyaltyFee: BigNumberish];
+  export type OutputTuple = [newRoyaltyFee: bigint];
+  export interface OutputObject {
+    newRoyaltyFee: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type RoyaltyRecipientSetEvent = TypedEvent<
-  [string],
-  RoyaltyRecipientSetEventObject
->;
 
-export type RoyaltyRecipientSetEventFilter =
-  TypedEventFilter<RoyaltyRecipientSetEvent>;
+export namespace RoyaltyRecipientSetEvent {
+  export type InputTuple = [newRecipient: AddressLike];
+  export type OutputTuple = [newRecipient: string];
+  export interface OutputObject {
+    newRecipient: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
 
 export interface ImplBase extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(runner?: ContractRunner | null): ImplBase;
+  waitForDeployment(): Promise<this>;
 
   interface: ImplBaseInterface;
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
+  queryFilter<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  queryFilter<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+  on<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  on<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  functions: {
-    _royaltyFee(overrides?: CallOverrides): Promise<[BigNumber]>;
+  once<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  once<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-    baseURI(overrides?: CallOverrides): Promise<[string]>;
+  listeners<TCEvent extends TypedContractEvent>(
+    event: TCEvent
+  ): Promise<Array<TypedListener<TCEvent>>>;
+  listeners(eventName?: string): Promise<Array<Listener>>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(
+    event?: TCEvent
+  ): Promise<this>;
 
-    erc20(overrides?: CallOverrides): Promise<[string]>;
+  _royaltyFee: TypedContractMethod<[], [bigint], "view">;
 
-    erc20PaymentsEnabled(overrides?: CallOverrides): Promise<[boolean]>;
+  baseURI: TypedContractMethod<[], [string], "view">;
 
-    feeCount(overrides?: CallOverrides): Promise<[BigNumber]>;
+  erc20: TypedContractMethod<[], [string], "view">;
 
-    feeCountERC20(overrides?: CallOverrides): Promise<[BigNumber]>;
+  erc20PaymentsEnabled: TypedContractMethod<[], [boolean], "view">;
 
-    getOwner(overrides?: CallOverrides): Promise<[string]>;
+  feeCount: TypedContractMethod<[], [bigint], "view">;
 
-    getRouter(overrides?: CallOverrides): Promise<[string]>;
+  feeCountERC20: TypedContractMethod<[], [bigint], "view">;
 
-    maxSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
+  getOwner: TypedContractMethod<[], [string], "view">;
 
-    price(overrides?: CallOverrides): Promise<[BigNumber]>;
+  getRouter: TypedContractMethod<[], [string], "view">;
 
-    publicMintState(overrides?: CallOverrides): Promise<[boolean]>;
+  maxSupply: TypedContractMethod<[], [bigint], "view">;
 
-    routerHasAuthority(overrides?: CallOverrides): Promise<[boolean]>;
+  price: TypedContractMethod<[], [bigint], "view">;
 
-    royaltyInfo(
-      arg0: PromiseOrValue<BigNumberish>,
-      salePrice: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber] & { receiver: string; royaltyAmount: BigNumber }
-    >;
+  publicMintState: TypedContractMethod<[], [boolean], "view">;
 
-    setBaseURI(
-      _baseURI: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  routerHasAuthority: TypedContractMethod<[], [boolean], "view">;
 
-    setBaseURILock(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setOwnership(
-      _owner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setPublicMintState(
-      _publicMintState: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setRouterHasAuthority(
-      _hasAuthority: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    splitter(overrides?: CallOverrides): Promise<[string]>;
-
-    supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    uriLock(overrides?: CallOverrides): Promise<[boolean]>;
-
-    withdraw(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    withdrawERC20(
-      _erc20: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-  };
-
-  _royaltyFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-  baseURI(overrides?: CallOverrides): Promise<string>;
-
-  erc20(overrides?: CallOverrides): Promise<string>;
-
-  erc20PaymentsEnabled(overrides?: CallOverrides): Promise<boolean>;
-
-  feeCount(overrides?: CallOverrides): Promise<BigNumber>;
-
-  feeCountERC20(overrides?: CallOverrides): Promise<BigNumber>;
-
-  getOwner(overrides?: CallOverrides): Promise<string>;
-
-  getRouter(overrides?: CallOverrides): Promise<string>;
-
-  maxSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-  price(overrides?: CallOverrides): Promise<BigNumber>;
-
-  publicMintState(overrides?: CallOverrides): Promise<boolean>;
-
-  routerHasAuthority(overrides?: CallOverrides): Promise<boolean>;
-
-  royaltyInfo(
-    arg0: PromiseOrValue<BigNumberish>,
-    salePrice: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<
-    [string, BigNumber] & { receiver: string; royaltyAmount: BigNumber }
+  royaltyInfo: TypedContractMethod<
+    [arg0: BigNumberish, salePrice: BigNumberish],
+    [[string, bigint] & { receiver: string; royaltyAmount: bigint }],
+    "view"
   >;
 
-  setBaseURI(
-    _baseURI: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  setBaseURI: TypedContractMethod<[_baseURI: string], [void], "nonpayable">;
 
-  setBaseURILock(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  setBaseURILock: TypedContractMethod<[], [void], "nonpayable">;
 
-  setOwnership(
-    _owner: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  setOwnership: TypedContractMethod<
+    [_owner: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-  setPublicMintState(
-    _publicMintState: PromiseOrValue<boolean>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  setPublicMintState: TypedContractMethod<
+    [_publicMintState: boolean],
+    [void],
+    "nonpayable"
+  >;
 
-  setRouterHasAuthority(
-    _hasAuthority: PromiseOrValue<boolean>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  setRouterHasAuthority: TypedContractMethod<
+    [_hasAuthority: boolean],
+    [void],
+    "nonpayable"
+  >;
 
-  splitter(overrides?: CallOverrides): Promise<string>;
+  splitter: TypedContractMethod<[], [string], "view">;
 
-  supportsInterface(
-    interfaceId: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+  supportsInterface: TypedContractMethod<
+    [interfaceId: BytesLike],
+    [boolean],
+    "view"
+  >;
 
-  uriLock(overrides?: CallOverrides): Promise<boolean>;
+  uriLock: TypedContractMethod<[], [boolean], "view">;
 
-  withdraw(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  withdraw: TypedContractMethod<[], [void], "nonpayable">;
 
-  withdrawERC20(
-    _erc20: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  withdrawERC20: TypedContractMethod<
+    [_erc20: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-  callStatic: {
-    _royaltyFee(overrides?: CallOverrides): Promise<BigNumber>;
+  getFunction<T extends ContractMethod = ContractMethod>(
+    key: string | FunctionFragment
+  ): T;
 
-    baseURI(overrides?: CallOverrides): Promise<string>;
+  getFunction(
+    nameOrSignature: "_royaltyFee"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "baseURI"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "erc20"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "erc20PaymentsEnabled"
+  ): TypedContractMethod<[], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "feeCount"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "feeCountERC20"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "getOwner"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "getRouter"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "maxSupply"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "price"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "publicMintState"
+  ): TypedContractMethod<[], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "routerHasAuthority"
+  ): TypedContractMethod<[], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "royaltyInfo"
+  ): TypedContractMethod<
+    [arg0: BigNumberish, salePrice: BigNumberish],
+    [[string, bigint] & { receiver: string; royaltyAmount: bigint }],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "setBaseURI"
+  ): TypedContractMethod<[_baseURI: string], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setBaseURILock"
+  ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setOwnership"
+  ): TypedContractMethod<[_owner: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setPublicMintState"
+  ): TypedContractMethod<[_publicMintState: boolean], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setRouterHasAuthority"
+  ): TypedContractMethod<[_hasAuthority: boolean], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "splitter"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "supportsInterface"
+  ): TypedContractMethod<[interfaceId: BytesLike], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "uriLock"
+  ): TypedContractMethod<[], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "withdraw"
+  ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "withdrawERC20"
+  ): TypedContractMethod<[_erc20: AddressLike], [void], "nonpayable">;
 
-    erc20(overrides?: CallOverrides): Promise<string>;
-
-    erc20PaymentsEnabled(overrides?: CallOverrides): Promise<boolean>;
-
-    feeCount(overrides?: CallOverrides): Promise<BigNumber>;
-
-    feeCountERC20(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getOwner(overrides?: CallOverrides): Promise<string>;
-
-    getRouter(overrides?: CallOverrides): Promise<string>;
-
-    maxSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-    price(overrides?: CallOverrides): Promise<BigNumber>;
-
-    publicMintState(overrides?: CallOverrides): Promise<boolean>;
-
-    routerHasAuthority(overrides?: CallOverrides): Promise<boolean>;
-
-    royaltyInfo(
-      arg0: PromiseOrValue<BigNumberish>,
-      salePrice: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber] & { receiver: string; royaltyAmount: BigNumber }
-    >;
-
-    setBaseURI(
-      _baseURI: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setBaseURILock(overrides?: CallOverrides): Promise<void>;
-
-    setOwnership(
-      _owner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setPublicMintState(
-      _publicMintState: PromiseOrValue<boolean>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setRouterHasAuthority(
-      _hasAuthority: PromiseOrValue<boolean>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    splitter(overrides?: CallOverrides): Promise<string>;
-
-    supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    uriLock(overrides?: CallOverrides): Promise<boolean>;
-
-    withdraw(overrides?: CallOverrides): Promise<void>;
-
-    withdrawERC20(
-      _erc20: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-  };
+  getEvent(
+    key: "BaseURILocked"
+  ): TypedContractEvent<
+    BaseURILockedEvent.InputTuple,
+    BaseURILockedEvent.OutputTuple,
+    BaseURILockedEvent.OutputObject
+  >;
+  getEvent(
+    key: "BaseURISet"
+  ): TypedContractEvent<
+    BaseURISetEvent.InputTuple,
+    BaseURISetEvent.OutputTuple,
+    BaseURISetEvent.OutputObject
+  >;
+  getEvent(
+    key: "OwnerUpdated"
+  ): TypedContractEvent<
+    OwnerUpdatedEvent.InputTuple,
+    OwnerUpdatedEvent.OutputTuple,
+    OwnerUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "PublicMintStateSet"
+  ): TypedContractEvent<
+    PublicMintStateSetEvent.InputTuple,
+    PublicMintStateSetEvent.OutputTuple,
+    PublicMintStateSetEvent.OutputObject
+  >;
+  getEvent(
+    key: "RouterSet"
+  ): TypedContractEvent<
+    RouterSetEvent.InputTuple,
+    RouterSetEvent.OutputTuple,
+    RouterSetEvent.OutputObject
+  >;
+  getEvent(
+    key: "RoyaltyFeeSet"
+  ): TypedContractEvent<
+    RoyaltyFeeSetEvent.InputTuple,
+    RoyaltyFeeSetEvent.OutputTuple,
+    RoyaltyFeeSetEvent.OutputObject
+  >;
+  getEvent(
+    key: "RoyaltyRecipientSet"
+  ): TypedContractEvent<
+    RoyaltyRecipientSetEvent.InputTuple,
+    RoyaltyRecipientSetEvent.OutputTuple,
+    RoyaltyRecipientSetEvent.OutputObject
+  >;
 
   filters: {
-    "BaseURILocked()"(): BaseURILockedEventFilter;
-    BaseURILocked(): BaseURILockedEventFilter;
+    "BaseURILocked()": TypedContractEvent<
+      BaseURILockedEvent.InputTuple,
+      BaseURILockedEvent.OutputTuple,
+      BaseURILockedEvent.OutputObject
+    >;
+    BaseURILocked: TypedContractEvent<
+      BaseURILockedEvent.InputTuple,
+      BaseURILockedEvent.OutputTuple,
+      BaseURILockedEvent.OutputObject
+    >;
 
-    "BaseURISet(string)"(
-      newBaseURI?: PromiseOrValue<string> | null
-    ): BaseURISetEventFilter;
-    BaseURISet(
-      newBaseURI?: PromiseOrValue<string> | null
-    ): BaseURISetEventFilter;
+    "BaseURISet(string)": TypedContractEvent<
+      BaseURISetEvent.InputTuple,
+      BaseURISetEvent.OutputTuple,
+      BaseURISetEvent.OutputObject
+    >;
+    BaseURISet: TypedContractEvent<
+      BaseURISetEvent.InputTuple,
+      BaseURISetEvent.OutputTuple,
+      BaseURISetEvent.OutputObject
+    >;
 
-    "OwnerUpdated(address,address)"(
-      user?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnerUpdatedEventFilter;
-    OwnerUpdated(
-      user?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnerUpdatedEventFilter;
+    "OwnerUpdated(address,address)": TypedContractEvent<
+      OwnerUpdatedEvent.InputTuple,
+      OwnerUpdatedEvent.OutputTuple,
+      OwnerUpdatedEvent.OutputObject
+    >;
+    OwnerUpdated: TypedContractEvent<
+      OwnerUpdatedEvent.InputTuple,
+      OwnerUpdatedEvent.OutputTuple,
+      OwnerUpdatedEvent.OutputObject
+    >;
 
-    "PublicMintStateSet(bool)"(
-      newPublicState?: PromiseOrValue<boolean> | null
-    ): PublicMintStateSetEventFilter;
-    PublicMintStateSet(
-      newPublicState?: PromiseOrValue<boolean> | null
-    ): PublicMintStateSetEventFilter;
+    "PublicMintStateSet(bool)": TypedContractEvent<
+      PublicMintStateSetEvent.InputTuple,
+      PublicMintStateSetEvent.OutputTuple,
+      PublicMintStateSetEvent.OutputObject
+    >;
+    PublicMintStateSet: TypedContractEvent<
+      PublicMintStateSetEvent.InputTuple,
+      PublicMintStateSetEvent.OutputTuple,
+      PublicMintStateSetEvent.OutputObject
+    >;
 
-    "RouterSet(address)"(
-      newRouter?: PromiseOrValue<string> | null
-    ): RouterSetEventFilter;
-    RouterSet(newRouter?: PromiseOrValue<string> | null): RouterSetEventFilter;
+    "RouterSet(address)": TypedContractEvent<
+      RouterSetEvent.InputTuple,
+      RouterSetEvent.OutputTuple,
+      RouterSetEvent.OutputObject
+    >;
+    RouterSet: TypedContractEvent<
+      RouterSetEvent.InputTuple,
+      RouterSetEvent.OutputTuple,
+      RouterSetEvent.OutputObject
+    >;
 
-    "RoyaltyFeeSet(uint256)"(
-      newRoyaltyFee?: PromiseOrValue<BigNumberish> | null
-    ): RoyaltyFeeSetEventFilter;
-    RoyaltyFeeSet(
-      newRoyaltyFee?: PromiseOrValue<BigNumberish> | null
-    ): RoyaltyFeeSetEventFilter;
+    "RoyaltyFeeSet(uint256)": TypedContractEvent<
+      RoyaltyFeeSetEvent.InputTuple,
+      RoyaltyFeeSetEvent.OutputTuple,
+      RoyaltyFeeSetEvent.OutputObject
+    >;
+    RoyaltyFeeSet: TypedContractEvent<
+      RoyaltyFeeSetEvent.InputTuple,
+      RoyaltyFeeSetEvent.OutputTuple,
+      RoyaltyFeeSetEvent.OutputObject
+    >;
 
-    "RoyaltyRecipientSet(address)"(
-      newRecipient?: PromiseOrValue<string> | null
-    ): RoyaltyRecipientSetEventFilter;
-    RoyaltyRecipientSet(
-      newRecipient?: PromiseOrValue<string> | null
-    ): RoyaltyRecipientSetEventFilter;
-  };
-
-  estimateGas: {
-    _royaltyFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-    baseURI(overrides?: CallOverrides): Promise<BigNumber>;
-
-    erc20(overrides?: CallOverrides): Promise<BigNumber>;
-
-    erc20PaymentsEnabled(overrides?: CallOverrides): Promise<BigNumber>;
-
-    feeCount(overrides?: CallOverrides): Promise<BigNumber>;
-
-    feeCountERC20(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getOwner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getRouter(overrides?: CallOverrides): Promise<BigNumber>;
-
-    maxSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-    price(overrides?: CallOverrides): Promise<BigNumber>;
-
-    publicMintState(overrides?: CallOverrides): Promise<BigNumber>;
-
-    routerHasAuthority(overrides?: CallOverrides): Promise<BigNumber>;
-
-    royaltyInfo(
-      arg0: PromiseOrValue<BigNumberish>,
-      salePrice: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    setBaseURI(
-      _baseURI: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setBaseURILock(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setOwnership(
-      _owner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setPublicMintState(
-      _publicMintState: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setRouterHasAuthority(
-      _hasAuthority: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    splitter(overrides?: CallOverrides): Promise<BigNumber>;
-
-    supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    uriLock(overrides?: CallOverrides): Promise<BigNumber>;
-
-    withdraw(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    withdrawERC20(
-      _erc20: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    _royaltyFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    baseURI(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    erc20(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    erc20PaymentsEnabled(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    feeCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    feeCountERC20(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getRouter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    maxSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    price(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    publicMintState(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    routerHasAuthority(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    royaltyInfo(
-      arg0: PromiseOrValue<BigNumberish>,
-      salePrice: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    setBaseURI(
-      _baseURI: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setBaseURILock(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setOwnership(
-      _owner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setPublicMintState(
-      _publicMintState: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setRouterHasAuthority(
-      _hasAuthority: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    splitter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    uriLock(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    withdraw(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    withdrawERC20(
-      _erc20: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+    "RoyaltyRecipientSet(address)": TypedContractEvent<
+      RoyaltyRecipientSetEvent.InputTuple,
+      RoyaltyRecipientSetEvent.OutputTuple,
+      RoyaltyRecipientSetEvent.OutputObject
+    >;
+    RoyaltyRecipientSet: TypedContractEvent<
+      RoyaltyRecipientSetEvent.InputTuple,
+      RoyaltyRecipientSetEvent.OutputTuple,
+      RoyaltyRecipientSetEvent.OutputObject
+    >;
   };
 }

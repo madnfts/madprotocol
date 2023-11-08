@@ -3,7 +3,7 @@
 pragma solidity 0.8.19;
 
 import { MADFactoryBase } from "contracts/Factory/MADFactoryBase.sol";
-import { Types } from "contracts/Shared/Types.sol";
+import { ContractTypes } from "contracts/Shared/ContractTypes.sol";
 
 contract MADFactory is MADFactoryBase {
     uint256 constant AMBASSADOR_SHARE_MIN = 99;
@@ -47,15 +47,15 @@ contract MADFactory is MADFactoryBase {
     ///     validate and attach to collection.
     ///   - royalty: Ranges in between 0%-10%, in percentage basis points,
     ///     accepted (Min tick := 25).
-    function createCollection(Types.CreateCollectionParams calldata params)
+    function createCollection(ContractTypes.CreateCollectionParams calldata params)
         public
         payable
     {
         emit CollectionCreated(
             params.splitter,
             _createCollection(params),
-            params.name,
-            params.symbol,
+            params.collectionName,
+            params.collectionSymbol,
             params.royalty,
             params.maxSupply,
             params.price,
@@ -96,7 +96,7 @@ contract MADFactory is MADFactoryBase {
 
     // Ambassador
     // Up to 20% of Creator Share before Project share
-    function createSplitter(Types.CreateSplitterParams calldata params)
+    function createSplitter(ContractTypes.CreateSplitterParams calldata params)
         public
         payable
         isThisOg

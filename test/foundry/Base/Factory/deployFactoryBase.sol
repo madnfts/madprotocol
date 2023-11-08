@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.19;
 
-import "forge-std/src/Test.sol";
+import "test/lib/forge-std/src/Test.sol";
 import { IFactory } from "test/foundry/Base/Factory/IFactory.sol";
 import { FactoryFactory } from "test/foundry/Base/Factory/factoryFactory.sol";
 
@@ -148,7 +148,7 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
         uint8 collectionType,
         bytes memory _tokenType
     ) public {
-        // Set Token Types
+        // Set Token ContractTypes
         // emit log_named_address("factoryOwner", _owner);
 
         vm.startPrank(makeAddr("NotOwner"));

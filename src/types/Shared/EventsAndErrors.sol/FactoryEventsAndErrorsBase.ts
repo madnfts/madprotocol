@@ -4,250 +4,367 @@
 
 /* eslint-disable */
 import type {
-  TypedEventFilter,
-  TypedEvent,
+  TypedContractEvent,
+  TypedDeferredTopicFilter,
+  TypedEventLog,
+  TypedLogDescription,
   TypedListener,
-  OnEvent,
-  PromiseOrValue,
 } from "../../common";
-import type { EventFragment } from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   BaseContract,
-  BigNumber,
   BigNumberish,
-  Signer,
-  utils,
+  FunctionFragment,
+  Interface,
+  EventFragment,
+  AddressLike,
+  ContractRunner,
+  ContractMethod,
+  Listener,
 } from "ethers";
 
-export interface FactoryEventsAndErrorsBaseInterface extends utils.Interface {
-  functions: {};
-
-  events: {
-    "CollectionCreated(address,address,string,string,uint256,uint256,uint256,uint8)": EventFragment;
-    "CollectionTypeAdded(uint256)": EventFragment;
-    "FeesUpdated(uint256,uint256)": EventFragment;
-    "MarketplaceUpdated(address)": EventFragment;
-    "PaymentTokenUpdated(address)": EventFragment;
-    "RecipientUpdated(address)": EventFragment;
-    "RouterUpdated(address)": EventFragment;
-    "SplitterCreated(address,uint256[],address[],address,uint256)": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "CollectionCreated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "CollectionTypeAdded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "FeesUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "MarketplaceUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PaymentTokenUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RecipientUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RouterUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "SplitterCreated"): EventFragment;
+export interface FactoryEventsAndErrorsBaseInterface extends Interface {
+  getEvent(
+    nameOrSignatureOrTopic:
+      | "CollectionCreated"
+      | "CollectionTypeAdded"
+      | "FeesUpdated"
+      | "MarketplaceUpdated"
+      | "PaymentTokenUpdated"
+      | "RecipientUpdated"
+      | "RouterUpdated"
+      | "SplitterCreated"
+  ): EventFragment;
 }
 
-export interface CollectionCreatedEventObject {
-  newSplitter: string;
-  newCollection: string;
-  name: string;
-  symbol: string;
-  royalties: BigNumber;
-  maxSupply: BigNumber;
-  mintPrice: BigNumber;
-  tokenType: number;
+export namespace CollectionCreatedEvent {
+  export type InputTuple = [
+    newSplitter: AddressLike,
+    newCollection: AddressLike,
+    collectionName: string,
+    collectionSymbol: string,
+    royalties: BigNumberish,
+    maxSupply: BigNumberish,
+    mintPrice: BigNumberish,
+    tokenType: BigNumberish
+  ];
+  export type OutputTuple = [
+    newSplitter: string,
+    newCollection: string,
+    collectionName: string,
+    collectionSymbol: string,
+    royalties: bigint,
+    maxSupply: bigint,
+    mintPrice: bigint,
+    tokenType: bigint
+  ];
+  export interface OutputObject {
+    newSplitter: string;
+    newCollection: string;
+    collectionName: string;
+    collectionSymbol: string;
+    royalties: bigint;
+    maxSupply: bigint;
+    mintPrice: bigint;
+    tokenType: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type CollectionCreatedEvent = TypedEvent<
-  [string, string, string, string, BigNumber, BigNumber, BigNumber, number],
-  CollectionCreatedEventObject
->;
 
-export type CollectionCreatedEventFilter =
-  TypedEventFilter<CollectionCreatedEvent>;
-
-export interface CollectionTypeAddedEventObject {
-  index: BigNumber;
+export namespace CollectionTypeAddedEvent {
+  export type InputTuple = [index: BigNumberish];
+  export type OutputTuple = [index: bigint];
+  export interface OutputObject {
+    index: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type CollectionTypeAddedEvent = TypedEvent<
-  [BigNumber],
-  CollectionTypeAddedEventObject
->;
 
-export type CollectionTypeAddedEventFilter =
-  TypedEventFilter<CollectionTypeAddedEvent>;
-
-export interface FeesUpdatedEventObject {
-  feeVal2: BigNumber;
-  feeVal3: BigNumber;
+export namespace FeesUpdatedEvent {
+  export type InputTuple = [feeVal2: BigNumberish, feeVal3: BigNumberish];
+  export type OutputTuple = [feeVal2: bigint, feeVal3: bigint];
+  export interface OutputObject {
+    feeVal2: bigint;
+    feeVal3: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type FeesUpdatedEvent = TypedEvent<
-  [BigNumber, BigNumber],
-  FeesUpdatedEventObject
->;
 
-export type FeesUpdatedEventFilter = TypedEventFilter<FeesUpdatedEvent>;
-
-export interface MarketplaceUpdatedEventObject {
-  newMarket: string;
+export namespace MarketplaceUpdatedEvent {
+  export type InputTuple = [newMarket: AddressLike];
+  export type OutputTuple = [newMarket: string];
+  export interface OutputObject {
+    newMarket: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type MarketplaceUpdatedEvent = TypedEvent<
-  [string],
-  MarketplaceUpdatedEventObject
->;
 
-export type MarketplaceUpdatedEventFilter =
-  TypedEventFilter<MarketplaceUpdatedEvent>;
-
-export interface PaymentTokenUpdatedEventObject {
-  newPaymentToken: string;
+export namespace PaymentTokenUpdatedEvent {
+  export type InputTuple = [newPaymentToken: AddressLike];
+  export type OutputTuple = [newPaymentToken: string];
+  export interface OutputObject {
+    newPaymentToken: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type PaymentTokenUpdatedEvent = TypedEvent<
-  [string],
-  PaymentTokenUpdatedEventObject
->;
 
-export type PaymentTokenUpdatedEventFilter =
-  TypedEventFilter<PaymentTokenUpdatedEvent>;
-
-export interface RecipientUpdatedEventObject {
-  newRecipient: string;
+export namespace RecipientUpdatedEvent {
+  export type InputTuple = [newRecipient: AddressLike];
+  export type OutputTuple = [newRecipient: string];
+  export interface OutputObject {
+    newRecipient: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type RecipientUpdatedEvent = TypedEvent<
-  [string],
-  RecipientUpdatedEventObject
->;
 
-export type RecipientUpdatedEventFilter =
-  TypedEventFilter<RecipientUpdatedEvent>;
-
-export interface RouterUpdatedEventObject {
-  newRouter: string;
+export namespace RouterUpdatedEvent {
+  export type InputTuple = [newRouter: AddressLike];
+  export type OutputTuple = [newRouter: string];
+  export interface OutputObject {
+    newRouter: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type RouterUpdatedEvent = TypedEvent<[string], RouterUpdatedEventObject>;
 
-export type RouterUpdatedEventFilter = TypedEventFilter<RouterUpdatedEvent>;
-
-export interface SplitterCreatedEventObject {
-  creator: string;
-  shares: BigNumber[];
-  payees: string[];
-  splitter: string;
-  flag: BigNumber;
+export namespace SplitterCreatedEvent {
+  export type InputTuple = [
+    creator: AddressLike,
+    shares: BigNumberish[],
+    payees: AddressLike[],
+    splitter: AddressLike,
+    flag: BigNumberish
+  ];
+  export type OutputTuple = [
+    creator: string,
+    shares: bigint[],
+    payees: string[],
+    splitter: string,
+    flag: bigint
+  ];
+  export interface OutputObject {
+    creator: string;
+    shares: bigint[];
+    payees: string[];
+    splitter: string;
+    flag: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type SplitterCreatedEvent = TypedEvent<
-  [string, BigNumber[], string[], string, BigNumber],
-  SplitterCreatedEventObject
->;
-
-export type SplitterCreatedEventFilter = TypedEventFilter<SplitterCreatedEvent>;
 
 export interface FactoryEventsAndErrorsBase extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(runner?: ContractRunner | null): FactoryEventsAndErrorsBase;
+  waitForDeployment(): Promise<this>;
 
   interface: FactoryEventsAndErrorsBaseInterface;
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
+  queryFilter<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  queryFilter<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+  on<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  on<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  functions: {};
+  once<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  once<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  callStatic: {};
+  listeners<TCEvent extends TypedContractEvent>(
+    event: TCEvent
+  ): Promise<Array<TypedListener<TCEvent>>>;
+  listeners(eventName?: string): Promise<Array<Listener>>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(
+    event?: TCEvent
+  ): Promise<this>;
+
+  getFunction<T extends ContractMethod = ContractMethod>(
+    key: string | FunctionFragment
+  ): T;
+
+  getEvent(
+    key: "CollectionCreated"
+  ): TypedContractEvent<
+    CollectionCreatedEvent.InputTuple,
+    CollectionCreatedEvent.OutputTuple,
+    CollectionCreatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "CollectionTypeAdded"
+  ): TypedContractEvent<
+    CollectionTypeAddedEvent.InputTuple,
+    CollectionTypeAddedEvent.OutputTuple,
+    CollectionTypeAddedEvent.OutputObject
+  >;
+  getEvent(
+    key: "FeesUpdated"
+  ): TypedContractEvent<
+    FeesUpdatedEvent.InputTuple,
+    FeesUpdatedEvent.OutputTuple,
+    FeesUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "MarketplaceUpdated"
+  ): TypedContractEvent<
+    MarketplaceUpdatedEvent.InputTuple,
+    MarketplaceUpdatedEvent.OutputTuple,
+    MarketplaceUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "PaymentTokenUpdated"
+  ): TypedContractEvent<
+    PaymentTokenUpdatedEvent.InputTuple,
+    PaymentTokenUpdatedEvent.OutputTuple,
+    PaymentTokenUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "RecipientUpdated"
+  ): TypedContractEvent<
+    RecipientUpdatedEvent.InputTuple,
+    RecipientUpdatedEvent.OutputTuple,
+    RecipientUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "RouterUpdated"
+  ): TypedContractEvent<
+    RouterUpdatedEvent.InputTuple,
+    RouterUpdatedEvent.OutputTuple,
+    RouterUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "SplitterCreated"
+  ): TypedContractEvent<
+    SplitterCreatedEvent.InputTuple,
+    SplitterCreatedEvent.OutputTuple,
+    SplitterCreatedEvent.OutputObject
+  >;
 
   filters: {
-    "CollectionCreated(address,address,string,string,uint256,uint256,uint256,uint8)"(
-      newSplitter?: PromiseOrValue<string> | null,
-      newCollection?: PromiseOrValue<string> | null,
-      name?: null,
-      symbol?: null,
-      royalties?: null,
-      maxSupply?: null,
-      mintPrice?: null,
-      tokenType?: null
-    ): CollectionCreatedEventFilter;
-    CollectionCreated(
-      newSplitter?: PromiseOrValue<string> | null,
-      newCollection?: PromiseOrValue<string> | null,
-      name?: null,
-      symbol?: null,
-      royalties?: null,
-      maxSupply?: null,
-      mintPrice?: null,
-      tokenType?: null
-    ): CollectionCreatedEventFilter;
+    "CollectionCreated(address,address,string,string,uint256,uint256,uint256,uint8)": TypedContractEvent<
+      CollectionCreatedEvent.InputTuple,
+      CollectionCreatedEvent.OutputTuple,
+      CollectionCreatedEvent.OutputObject
+    >;
+    CollectionCreated: TypedContractEvent<
+      CollectionCreatedEvent.InputTuple,
+      CollectionCreatedEvent.OutputTuple,
+      CollectionCreatedEvent.OutputObject
+    >;
 
-    "CollectionTypeAdded(uint256)"(
-      index?: PromiseOrValue<BigNumberish> | null
-    ): CollectionTypeAddedEventFilter;
-    CollectionTypeAdded(
-      index?: PromiseOrValue<BigNumberish> | null
-    ): CollectionTypeAddedEventFilter;
+    "CollectionTypeAdded(uint256)": TypedContractEvent<
+      CollectionTypeAddedEvent.InputTuple,
+      CollectionTypeAddedEvent.OutputTuple,
+      CollectionTypeAddedEvent.OutputObject
+    >;
+    CollectionTypeAdded: TypedContractEvent<
+      CollectionTypeAddedEvent.InputTuple,
+      CollectionTypeAddedEvent.OutputTuple,
+      CollectionTypeAddedEvent.OutputObject
+    >;
 
-    "FeesUpdated(uint256,uint256)"(
-      feeVal2?: null,
-      feeVal3?: null
-    ): FeesUpdatedEventFilter;
-    FeesUpdated(feeVal2?: null, feeVal3?: null): FeesUpdatedEventFilter;
+    "FeesUpdated(uint256,uint256)": TypedContractEvent<
+      FeesUpdatedEvent.InputTuple,
+      FeesUpdatedEvent.OutputTuple,
+      FeesUpdatedEvent.OutputObject
+    >;
+    FeesUpdated: TypedContractEvent<
+      FeesUpdatedEvent.InputTuple,
+      FeesUpdatedEvent.OutputTuple,
+      FeesUpdatedEvent.OutputObject
+    >;
 
-    "MarketplaceUpdated(address)"(
-      newMarket?: PromiseOrValue<string> | null
-    ): MarketplaceUpdatedEventFilter;
-    MarketplaceUpdated(
-      newMarket?: PromiseOrValue<string> | null
-    ): MarketplaceUpdatedEventFilter;
+    "MarketplaceUpdated(address)": TypedContractEvent<
+      MarketplaceUpdatedEvent.InputTuple,
+      MarketplaceUpdatedEvent.OutputTuple,
+      MarketplaceUpdatedEvent.OutputObject
+    >;
+    MarketplaceUpdated: TypedContractEvent<
+      MarketplaceUpdatedEvent.InputTuple,
+      MarketplaceUpdatedEvent.OutputTuple,
+      MarketplaceUpdatedEvent.OutputObject
+    >;
 
-    "PaymentTokenUpdated(address)"(
-      newPaymentToken?: PromiseOrValue<string> | null
-    ): PaymentTokenUpdatedEventFilter;
-    PaymentTokenUpdated(
-      newPaymentToken?: PromiseOrValue<string> | null
-    ): PaymentTokenUpdatedEventFilter;
+    "PaymentTokenUpdated(address)": TypedContractEvent<
+      PaymentTokenUpdatedEvent.InputTuple,
+      PaymentTokenUpdatedEvent.OutputTuple,
+      PaymentTokenUpdatedEvent.OutputObject
+    >;
+    PaymentTokenUpdated: TypedContractEvent<
+      PaymentTokenUpdatedEvent.InputTuple,
+      PaymentTokenUpdatedEvent.OutputTuple,
+      PaymentTokenUpdatedEvent.OutputObject
+    >;
 
-    "RecipientUpdated(address)"(
-      newRecipient?: PromiseOrValue<string> | null
-    ): RecipientUpdatedEventFilter;
-    RecipientUpdated(
-      newRecipient?: PromiseOrValue<string> | null
-    ): RecipientUpdatedEventFilter;
+    "RecipientUpdated(address)": TypedContractEvent<
+      RecipientUpdatedEvent.InputTuple,
+      RecipientUpdatedEvent.OutputTuple,
+      RecipientUpdatedEvent.OutputObject
+    >;
+    RecipientUpdated: TypedContractEvent<
+      RecipientUpdatedEvent.InputTuple,
+      RecipientUpdatedEvent.OutputTuple,
+      RecipientUpdatedEvent.OutputObject
+    >;
 
-    "RouterUpdated(address)"(
-      newRouter?: PromiseOrValue<string> | null
-    ): RouterUpdatedEventFilter;
-    RouterUpdated(
-      newRouter?: PromiseOrValue<string> | null
-    ): RouterUpdatedEventFilter;
+    "RouterUpdated(address)": TypedContractEvent<
+      RouterUpdatedEvent.InputTuple,
+      RouterUpdatedEvent.OutputTuple,
+      RouterUpdatedEvent.OutputObject
+    >;
+    RouterUpdated: TypedContractEvent<
+      RouterUpdatedEvent.InputTuple,
+      RouterUpdatedEvent.OutputTuple,
+      RouterUpdatedEvent.OutputObject
+    >;
 
-    "SplitterCreated(address,uint256[],address[],address,uint256)"(
-      creator?: PromiseOrValue<string> | null,
-      shares?: null,
-      payees?: null,
-      splitter?: PromiseOrValue<string> | null,
-      flag?: null
-    ): SplitterCreatedEventFilter;
-    SplitterCreated(
-      creator?: PromiseOrValue<string> | null,
-      shares?: null,
-      payees?: null,
-      splitter?: PromiseOrValue<string> | null,
-      flag?: null
-    ): SplitterCreatedEventFilter;
+    "SplitterCreated(address,uint256[],address[],address,uint256)": TypedContractEvent<
+      SplitterCreatedEvent.InputTuple,
+      SplitterCreatedEvent.OutputTuple,
+      SplitterCreatedEvent.OutputObject
+    >;
+    SplitterCreated: TypedContractEvent<
+      SplitterCreatedEvent.InputTuple,
+      SplitterCreatedEvent.OutputTuple,
+      SplitterCreatedEvent.OutputObject
+    >;
   };
-
-  estimateGas: {};
-
-  populateTransaction: {};
 }

@@ -3,13 +3,18 @@
 /* tslint:disable */
 
 /* eslint-disable */
-import type { PromiseOrValue } from "../../../common";
+import type { NonPayableOverrides } from "../../../common";
 import type {
   SafeTransferLib,
   SafeTransferLibInterface,
 } from "../../../lib/utils/SafeTransferLib";
-import type { Provider, TransactionRequest } from "@ethersproject/providers";
-import { Signer, utils, Contract, ContractFactory, Overrides } from "ethers";
+import {
+  Contract,
+  ContractFactory,
+  ContractTransactionResponse,
+  Interface,
+} from "ethers";
+import type { Signer, ContractDeployTransaction, ContractRunner } from "ethers";
 
 const _abi = [
   {
@@ -54,32 +59,31 @@ export class SafeTransferLib__factory extends ContractFactory {
     }
   }
 
-  override deploy(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<SafeTransferLib> {
-    return super.deploy(overrides || {}) as Promise<SafeTransferLib>;
-  }
   override getDeployTransaction(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): TransactionRequest {
+    overrides?: NonPayableOverrides & { from?: string }
+  ): Promise<ContractDeployTransaction> {
     return super.getDeployTransaction(overrides || {});
   }
-  override attach(address: string): SafeTransferLib {
-    return super.attach(address) as SafeTransferLib;
+  override deploy(overrides?: NonPayableOverrides & { from?: string }) {
+    return super.deploy(overrides || {}) as Promise<
+      SafeTransferLib & {
+        deploymentTransaction(): ContractTransactionResponse;
+      }
+    >;
   }
-  override connect(signer: Signer): SafeTransferLib__factory {
-    return super.connect(signer) as SafeTransferLib__factory;
+  override connect(runner: ContractRunner | null): SafeTransferLib__factory {
+    return super.connect(runner) as SafeTransferLib__factory;
   }
 
   static readonly bytecode = _bytecode;
   static readonly abi = _abi;
   static createInterface(): SafeTransferLibInterface {
-    return new utils.Interface(_abi) as SafeTransferLibInterface;
+    return new Interface(_abi) as SafeTransferLibInterface;
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    runner?: ContractRunner | null
   ): SafeTransferLib {
-    return new Contract(address, _abi, signerOrProvider) as SafeTransferLib;
+    return new Contract(address, _abi, runner) as unknown as SafeTransferLib;
   }
 }

@@ -8,7 +8,7 @@ import {
     FactoryVerifier
 } from "contracts/Shared/EventsAndErrors.sol";
 import { DCPrevent } from "contracts/lib/security/DCPrevent.sol";
-import { Types } from "contracts/Shared/Types.sol";
+import { ContractTypes } from "contracts/Shared/ContractTypes.sol";
 import { SplitterImpl } from "contracts/lib/splitter/SplitterImpl.sol";
 import { CREATE3, Bytes32AddressLib } from "contracts/lib/utils/CREATE3.sol";
 import { SplitterBufferLib as BufferLib } from
@@ -24,9 +24,9 @@ abstract contract MADFactoryBase is
     DCPrevent,
     FeeHandlerFactory
 {
-    using Types for Types.CollectionArgs;
-    using Types for Types.SplitterConfig;
-    using Types for Types.Collection;
+    using ContractTypes for ContractTypes.CollectionArgs;
+    using ContractTypes for ContractTypes.SplitterConfig;
+    using ContractTypes for ContractTypes.Collection;
     using Bytes32AddressLib for address;
     using Bytes32AddressLib for bytes32;
 
@@ -48,11 +48,11 @@ abstract contract MADFactoryBase is
     ////////////////////////////////////////////////////////////////
 
     /// @dev `collectionIds` are derived from a collection's address.
-    mapping(address collectionId => Types.Collection) public collectionInfo;
+    mapping(address collectionId => ContractTypes.Collection) public collectionInfo;
 
     /// @dev Nested mapping that takes an collection creator as key of
     /// a hashmap of splitter contracts to its respective deployment configs.
-    mapping(address => mapping(address => Types.SplitterConfig)) public
+    mapping(address => mapping(address => ContractTypes.SplitterConfig)) public
         splitterInfo;
 
     /// @dev Maps collection's index to its respective bytecode.
@@ -78,7 +78,7 @@ abstract contract MADFactoryBase is
         setRecipient(_recipient);
     }
 
-    function _createCollection(Types.CreateCollectionParams calldata params)
+    function _createCollection(ContractTypes.CreateCollectionParams calldata params)
         internal
         isThisOg
         returns (address)
@@ -102,9 +102,9 @@ abstract contract MADFactoryBase is
         address deployedCollection = _collectionDeploy(
             params.tokenType,
             params.tokenSalt,
-            Types.CollectionArgs(
-                params.name,
-                params.symbol,
+            ContractTypes.CollectionArgs(
+                params.collectionName,
+                params.collectionSymbol,
                 params.uri,
                 params.price,
                 params.maxSupply,
@@ -118,7 +118,7 @@ abstract contract MADFactoryBase is
 
         userTokens[msg.sender].push(deployedCollection);
 
-        collectionInfo[deployedCollection] = Types.Collection(
+        collectionInfo[deployedCollection] = ContractTypes.Collection(
             msg.sender,
             params.tokenType,
             params.tokenSalt,
@@ -133,7 +133,7 @@ abstract contract MADFactoryBase is
     ///////////////////////////////////////////////////////////////
 
     function _createSplitter(
-        Types.CreateSplitterParams calldata params,
+        ContractTypes.CreateSplitterParams calldata params,
         uint256 _flag
     ) internal {
         if (address(erc20) == ADDRESS_ZERO) {
@@ -156,7 +156,7 @@ abstract contract MADFactoryBase is
         address splitter =
             _splitterDeploy(params.splitterSalt, _payees, _shares);
 
-        splitterInfo[msg.sender][splitter] = Types.SplitterConfig(
+        splitterInfo[msg.sender][splitter] = ContractTypes.SplitterConfig(
             splitter,
             params.splitterSalt,
             params.ambassador,
@@ -172,7 +172,7 @@ abstract contract MADFactoryBase is
     function _collectionDeploy(
         uint8 _tokenType,
         bytes32 _tokenSalt,
-        Types.CollectionArgs memory _args
+        ContractTypes.CollectionArgs memory _args
     ) internal returns (address deployed) {
         deployed = CREATE3.deploy(
             keccak256(abi.encode(msg.sender, _tokenSalt)),

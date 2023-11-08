@@ -3,7 +3,7 @@
 pragma solidity 0.8.19;
 
 import { FactoryVerifier } from "contracts/lib/auth/FactoryVerifier.sol";
-import { IERC721, IERC1155 } from "contracts/Shared/Types.sol";
+import { IERC721, IERC1155 } from "contracts/Shared/ContractTypes.sol";
 
 interface EventsAndErrorsBase {
     event PaymentTokenUpdated(address indexed newPaymentToken);
@@ -53,8 +53,8 @@ interface FactoryEventsAndErrorsBase is EventsAndErrorsBase {
     event CollectionCreated(
         address indexed newSplitter,
         address indexed newCollection,
-        string name,
-        string symbol,
+        string collectionName,
+        string collectionSymbol,
         uint256 royalties,
         uint256 maxSupply,
         uint256 mintPrice,

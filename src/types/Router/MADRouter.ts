@@ -4,60 +4,30 @@
 
 /* eslint-disable */
 import type {
-  TypedEventFilter,
-  TypedEvent,
+  TypedContractEvent,
+  TypedDeferredTopicFilter,
+  TypedEventLog,
+  TypedLogDescription,
   TypedListener,
-  OnEvent,
-  PromiseOrValue,
+  TypedContractMethod,
 } from "../common";
 import type {
-  FunctionFragment,
-  Result,
-  EventFragment,
-} from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
-import type {
   BaseContract,
-  BigNumber,
   BigNumberish,
   BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PayableOverrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
+  FunctionFragment,
+  Result,
+  Interface,
+  EventFragment,
+  AddressLike,
+  ContractRunner,
+  ContractMethod,
+  Listener,
 } from "ethers";
 
-export interface MADRouterInterface extends utils.Interface {
-  functions: {
-    "batchBurn(address,address,uint128[],uint128[])": FunctionFragment;
-    "burn(address,uint128[],address[],uint128[])": FunctionFragment;
-    "burn(address,uint128[])": FunctionFragment;
-    "erc20()": FunctionFragment;
-    "feeBurn()": FunctionFragment;
-    "feeBurnErc20(address)": FunctionFragment;
-    "feeMint()": FunctionFragment;
-    "feeMintErc20(address)": FunctionFragment;
-    "madFactory()": FunctionFragment;
-    "mint(address,address,uint128,uint128)": FunctionFragment;
-    "mint(address,uint128)": FunctionFragment;
-    "mintBatchTo(address,address,uint128[],uint128[])": FunctionFragment;
-    "mintTo(address,address,uint128,uint128)": FunctionFragment;
-    "mintTo(address,address,uint128)": FunctionFragment;
-    "name()": FunctionFragment;
-    "owner()": FunctionFragment;
-    "recipient()": FunctionFragment;
-    "setFactory(address)": FunctionFragment;
-    "setFees(uint256,uint256)": FunctionFragment;
-    "setFees(uint256,uint256,address)": FunctionFragment;
-    "setOwner(address)": FunctionFragment;
-    "setRecipient(address)": FunctionFragment;
-  };
-
+export interface MADRouterInterface extends Interface {
   getFunction(
-    nameOrSignatureOrTopic:
+    nameOrSignature:
       | "batchBurn"
       | "burn(address,uint128[],address[],uint128[])"
       | "burn(address,uint128[])"
@@ -82,38 +52,40 @@ export interface MADRouterInterface extends utils.Interface {
       | "setRecipient"
   ): FunctionFragment;
 
+  getEvent(
+    nameOrSignatureOrTopic:
+      | "BaseURISet"
+      | "FactoryUpdated"
+      | "FeesUpdated"
+      | "OwnerUpdated"
+      | "PaymentTokenUpdated"
+      | "PublicMintState"
+      | "RecipientUpdated"
+      | "TokenFundsWithdrawn"
+  ): EventFragment;
+
   encodeFunctionData(
     functionFragment: "batchBurn",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<BigNumberish>[]
-    ]
+    values: [AddressLike, AddressLike, BigNumberish[], BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "burn(address,uint128[],address[],uint128[])",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<string>[],
-      PromiseOrValue<BigNumberish>[]
-    ]
+    values: [AddressLike, BigNumberish[], AddressLike[], BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "burn(address,uint128[])",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>[]]
+    values: [AddressLike, BigNumberish[]]
   ): string;
   encodeFunctionData(functionFragment: "erc20", values?: undefined): string;
   encodeFunctionData(functionFragment: "feeBurn", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "feeBurnErc20",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(functionFragment: "feeMint", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "feeMintErc20",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "madFactory",
@@ -121,69 +93,46 @@ export interface MADRouterInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "mint(address,address,uint128,uint128)",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
-    ]
+    values: [AddressLike, AddressLike, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "mint(address,uint128)",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+    values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "mintBatchTo",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<BigNumberish>[]
-    ]
+    values: [AddressLike, AddressLike, BigNumberish[], BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "mintTo(address,address,uint128,uint128)",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
-    ]
+    values: [AddressLike, AddressLike, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "mintTo(address,address,uint128)",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>
-    ]
+    values: [AddressLike, AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(functionFragment: "recipient", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "setFactory",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "setFees(uint256,uint256)",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setFees(uint256,uint256,address)",
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>
-    ]
+    values: [BigNumberish, BigNumberish, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "setOwner",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "setRecipient",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
 
   decodeFunctionResult(functionFragment: "batchBurn", data: BytesLike): Result;
@@ -244,781 +193,575 @@ export interface MADRouterInterface extends utils.Interface {
     functionFragment: "setRecipient",
     data: BytesLike
   ): Result;
-
-  events: {
-    "BaseURISet(address,string)": EventFragment;
-    "FactoryUpdated(address)": EventFragment;
-    "FeesUpdated(uint256,uint256)": EventFragment;
-    "OwnerUpdated(address,address)": EventFragment;
-    "PaymentTokenUpdated(address)": EventFragment;
-    "PublicMintState(address,uint8,bool)": EventFragment;
-    "RecipientUpdated(address)": EventFragment;
-    "TokenFundsWithdrawn(address,uint8,address)": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "BaseURISet"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "FactoryUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "FeesUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnerUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PaymentTokenUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PublicMintState"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RecipientUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TokenFundsWithdrawn"): EventFragment;
 }
 
-export interface BaseURISetEventObject {
-  _id: string;
-  _baseURI: string;
+export namespace BaseURISetEvent {
+  export type InputTuple = [_id: AddressLike, _baseURI: string];
+  export type OutputTuple = [_id: string, _baseURI: string];
+  export interface OutputObject {
+    _id: string;
+    _baseURI: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type BaseURISetEvent = TypedEvent<
-  [string, string],
-  BaseURISetEventObject
->;
 
-export type BaseURISetEventFilter = TypedEventFilter<BaseURISetEvent>;
-
-export interface FactoryUpdatedEventObject {
-  newFactory: string;
+export namespace FactoryUpdatedEvent {
+  export type InputTuple = [newFactory: AddressLike];
+  export type OutputTuple = [newFactory: string];
+  export interface OutputObject {
+    newFactory: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type FactoryUpdatedEvent = TypedEvent<
-  [string],
-  FactoryUpdatedEventObject
->;
 
-export type FactoryUpdatedEventFilter = TypedEventFilter<FactoryUpdatedEvent>;
-
-export interface FeesUpdatedEventObject {
-  feeVal2: BigNumber;
-  feeVal3: BigNumber;
+export namespace FeesUpdatedEvent {
+  export type InputTuple = [feeVal2: BigNumberish, feeVal3: BigNumberish];
+  export type OutputTuple = [feeVal2: bigint, feeVal3: bigint];
+  export interface OutputObject {
+    feeVal2: bigint;
+    feeVal3: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type FeesUpdatedEvent = TypedEvent<
-  [BigNumber, BigNumber],
-  FeesUpdatedEventObject
->;
 
-export type FeesUpdatedEventFilter = TypedEventFilter<FeesUpdatedEvent>;
-
-export interface OwnerUpdatedEventObject {
-  user: string;
-  newOwner: string;
+export namespace OwnerUpdatedEvent {
+  export type InputTuple = [user: AddressLike, newOwner: AddressLike];
+  export type OutputTuple = [user: string, newOwner: string];
+  export interface OutputObject {
+    user: string;
+    newOwner: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type OwnerUpdatedEvent = TypedEvent<
-  [string, string],
-  OwnerUpdatedEventObject
->;
 
-export type OwnerUpdatedEventFilter = TypedEventFilter<OwnerUpdatedEvent>;
-
-export interface PaymentTokenUpdatedEventObject {
-  newPaymentToken: string;
+export namespace PaymentTokenUpdatedEvent {
+  export type InputTuple = [newPaymentToken: AddressLike];
+  export type OutputTuple = [newPaymentToken: string];
+  export interface OutputObject {
+    newPaymentToken: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type PaymentTokenUpdatedEvent = TypedEvent<
-  [string],
-  PaymentTokenUpdatedEventObject
->;
 
-export type PaymentTokenUpdatedEventFilter =
-  TypedEventFilter<PaymentTokenUpdatedEvent>;
-
-export interface PublicMintStateEventObject {
-  _id: string;
-  _type: number;
-  _state: boolean;
+export namespace PublicMintStateEvent {
+  export type InputTuple = [
+    _id: AddressLike,
+    _type: BigNumberish,
+    _state: boolean
+  ];
+  export type OutputTuple = [_id: string, _type: bigint, _state: boolean];
+  export interface OutputObject {
+    _id: string;
+    _type: bigint;
+    _state: boolean;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type PublicMintStateEvent = TypedEvent<
-  [string, number, boolean],
-  PublicMintStateEventObject
->;
 
-export type PublicMintStateEventFilter = TypedEventFilter<PublicMintStateEvent>;
-
-export interface RecipientUpdatedEventObject {
-  newRecipient: string;
+export namespace RecipientUpdatedEvent {
+  export type InputTuple = [newRecipient: AddressLike];
+  export type OutputTuple = [newRecipient: string];
+  export interface OutputObject {
+    newRecipient: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type RecipientUpdatedEvent = TypedEvent<
-  [string],
-  RecipientUpdatedEventObject
->;
 
-export type RecipientUpdatedEventFilter =
-  TypedEventFilter<RecipientUpdatedEvent>;
-
-export interface TokenFundsWithdrawnEventObject {
-  _id: string;
-  _type: number;
-  _payee: string;
+export namespace TokenFundsWithdrawnEvent {
+  export type InputTuple = [
+    _id: AddressLike,
+    _type: BigNumberish,
+    _payee: AddressLike
+  ];
+  export type OutputTuple = [_id: string, _type: bigint, _payee: string];
+  export interface OutputObject {
+    _id: string;
+    _type: bigint;
+    _payee: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type TokenFundsWithdrawnEvent = TypedEvent<
-  [string, number, string],
-  TokenFundsWithdrawnEventObject
->;
-
-export type TokenFundsWithdrawnEventFilter =
-  TypedEventFilter<TokenFundsWithdrawnEvent>;
 
 export interface MADRouter extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(runner?: ContractRunner | null): MADRouter;
+  waitForDeployment(): Promise<this>;
 
   interface: MADRouterInterface;
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
+  queryFilter<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
-
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
-
-  functions: {
-    batchBurn(
-      _token: PromiseOrValue<string>,
-      _from: PromiseOrValue<string>,
-      _ids: PromiseOrValue<BigNumberish>[],
-      _balances: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "burn(address,uint128[],address[],uint128[])"(
-      _token: PromiseOrValue<string>,
-      _ids: PromiseOrValue<BigNumberish>[],
-      to: PromiseOrValue<string>[],
-      _amount: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "burn(address,uint128[])"(
-      _token: PromiseOrValue<string>,
-      _ids: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    erc20(overrides?: CallOverrides): Promise<[string]>;
-
-    feeBurn(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    feeBurnErc20(
-      erc20token: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, boolean] & { feeAmount: BigNumber; isValid: boolean }
-    >;
-
-    feeMint(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    feeMintErc20(
-      erc20token: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, boolean] & { feeAmount: BigNumber; isValid: boolean }
-    >;
-
-    madFactory(overrides?: CallOverrides): Promise<[string]>;
-
-    "mint(address,address,uint128,uint128)"(
-      _token: PromiseOrValue<string>,
-      _to: PromiseOrValue<string>,
-      _id: PromiseOrValue<BigNumberish>,
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "mint(address,uint128)"(
-      _token: PromiseOrValue<string>,
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    mintBatchTo(
-      _token: PromiseOrValue<string>,
-      _to: PromiseOrValue<string>,
-      _ids: PromiseOrValue<BigNumberish>[],
-      _balances: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "mintTo(address,address,uint128,uint128)"(
-      _token: PromiseOrValue<string>,
-      _to: PromiseOrValue<string>,
-      _amount: PromiseOrValue<BigNumberish>,
-      _balance: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "mintTo(address,address,uint128)"(
-      _token: PromiseOrValue<string>,
-      _to: PromiseOrValue<string>,
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    name(overrides?: CallOverrides): Promise<[string]>;
-
-    owner(overrides?: CallOverrides): Promise<[string]>;
-
-    recipient(overrides?: CallOverrides): Promise<[string]>;
-
-    setFactory(
-      _factory: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "setFees(uint256,uint256)"(
-      _feeMint: PromiseOrValue<BigNumberish>,
-      _feeBurn: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "setFees(uint256,uint256,address)"(
-      _feeMint: PromiseOrValue<BigNumberish>,
-      _feeBurn: PromiseOrValue<BigNumberish>,
-      erc20Address: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setOwner(
-      newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setRecipient(
-      _recipient: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-  };
-
-  batchBurn(
-    _token: PromiseOrValue<string>,
-    _from: PromiseOrValue<string>,
-    _ids: PromiseOrValue<BigNumberish>[],
-    _balances: PromiseOrValue<BigNumberish>[],
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "burn(address,uint128[],address[],uint128[])"(
-    _token: PromiseOrValue<string>,
-    _ids: PromiseOrValue<BigNumberish>[],
-    to: PromiseOrValue<string>[],
-    _amount: PromiseOrValue<BigNumberish>[],
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "burn(address,uint128[])"(
-    _token: PromiseOrValue<string>,
-    _ids: PromiseOrValue<BigNumberish>[],
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  erc20(overrides?: CallOverrides): Promise<string>;
-
-  feeBurn(overrides?: CallOverrides): Promise<BigNumber>;
-
-  feeBurnErc20(
-    erc20token: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, boolean] & { feeAmount: BigNumber; isValid: boolean }>;
-
-  feeMint(overrides?: CallOverrides): Promise<BigNumber>;
-
-  feeMintErc20(
-    erc20token: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, boolean] & { feeAmount: BigNumber; isValid: boolean }>;
-
-  madFactory(overrides?: CallOverrides): Promise<string>;
-
-  "mint(address,address,uint128,uint128)"(
-    _token: PromiseOrValue<string>,
-    _to: PromiseOrValue<string>,
-    _id: PromiseOrValue<BigNumberish>,
-    _amount: PromiseOrValue<BigNumberish>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "mint(address,uint128)"(
-    _token: PromiseOrValue<string>,
-    _amount: PromiseOrValue<BigNumberish>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  mintBatchTo(
-    _token: PromiseOrValue<string>,
-    _to: PromiseOrValue<string>,
-    _ids: PromiseOrValue<BigNumberish>[],
-    _balances: PromiseOrValue<BigNumberish>[],
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "mintTo(address,address,uint128,uint128)"(
-    _token: PromiseOrValue<string>,
-    _to: PromiseOrValue<string>,
-    _amount: PromiseOrValue<BigNumberish>,
-    _balance: PromiseOrValue<BigNumberish>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "mintTo(address,address,uint128)"(
-    _token: PromiseOrValue<string>,
-    _to: PromiseOrValue<string>,
-    _amount: PromiseOrValue<BigNumberish>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  name(overrides?: CallOverrides): Promise<string>;
-
-  owner(overrides?: CallOverrides): Promise<string>;
-
-  recipient(overrides?: CallOverrides): Promise<string>;
-
-  setFactory(
-    _factory: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "setFees(uint256,uint256)"(
-    _feeMint: PromiseOrValue<BigNumberish>,
-    _feeBurn: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "setFees(uint256,uint256,address)"(
-    _feeMint: PromiseOrValue<BigNumberish>,
-    _feeBurn: PromiseOrValue<BigNumberish>,
-    erc20Address: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  setOwner(
-    newOwner: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  setRecipient(
-    _recipient: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  callStatic: {
-    batchBurn(
-      _token: PromiseOrValue<string>,
-      _from: PromiseOrValue<string>,
-      _ids: PromiseOrValue<BigNumberish>[],
-      _balances: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "burn(address,uint128[],address[],uint128[])"(
-      _token: PromiseOrValue<string>,
-      _ids: PromiseOrValue<BigNumberish>[],
-      to: PromiseOrValue<string>[],
-      _amount: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "burn(address,uint128[])"(
-      _token: PromiseOrValue<string>,
-      _ids: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    erc20(overrides?: CallOverrides): Promise<string>;
-
-    feeBurn(overrides?: CallOverrides): Promise<BigNumber>;
-
-    feeBurnErc20(
-      erc20token: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, boolean] & { feeAmount: BigNumber; isValid: boolean }
-    >;
-
-    feeMint(overrides?: CallOverrides): Promise<BigNumber>;
-
-    feeMintErc20(
-      erc20token: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, boolean] & { feeAmount: BigNumber; isValid: boolean }
-    >;
-
-    madFactory(overrides?: CallOverrides): Promise<string>;
-
-    "mint(address,address,uint128,uint128)"(
-      _token: PromiseOrValue<string>,
-      _to: PromiseOrValue<string>,
-      _id: PromiseOrValue<BigNumberish>,
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "mint(address,uint128)"(
-      _token: PromiseOrValue<string>,
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    mintBatchTo(
-      _token: PromiseOrValue<string>,
-      _to: PromiseOrValue<string>,
-      _ids: PromiseOrValue<BigNumberish>[],
-      _balances: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "mintTo(address,address,uint128,uint128)"(
-      _token: PromiseOrValue<string>,
-      _to: PromiseOrValue<string>,
-      _amount: PromiseOrValue<BigNumberish>,
-      _balance: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "mintTo(address,address,uint128)"(
-      _token: PromiseOrValue<string>,
-      _to: PromiseOrValue<string>,
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    name(overrides?: CallOverrides): Promise<string>;
-
-    owner(overrides?: CallOverrides): Promise<string>;
-
-    recipient(overrides?: CallOverrides): Promise<string>;
-
-    setFactory(
-      _factory: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setFees(uint256,uint256)"(
-      _feeMint: PromiseOrValue<BigNumberish>,
-      _feeBurn: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setFees(uint256,uint256,address)"(
-      _feeMint: PromiseOrValue<BigNumberish>,
-      _feeBurn: PromiseOrValue<BigNumberish>,
-      erc20Address: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setOwner(
-      newOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setRecipient(
-      _recipient: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-  };
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  queryFilter<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+
+  on<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  on<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+
+  once<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  once<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+
+  listeners<TCEvent extends TypedContractEvent>(
+    event: TCEvent
+  ): Promise<Array<TypedListener<TCEvent>>>;
+  listeners(eventName?: string): Promise<Array<Listener>>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(
+    event?: TCEvent
+  ): Promise<this>;
+
+  batchBurn: TypedContractMethod<
+    [
+      _token: AddressLike,
+      _from: AddressLike,
+      _ids: BigNumberish[],
+      _balances: BigNumberish[]
+    ],
+    [void],
+    "payable"
+  >;
+
+  "burn(address,uint128[],address[],uint128[])": TypedContractMethod<
+    [
+      _token: AddressLike,
+      _ids: BigNumberish[],
+      to: AddressLike[],
+      _amount: BigNumberish[]
+    ],
+    [void],
+    "payable"
+  >;
+
+  "burn(address,uint128[])": TypedContractMethod<
+    [_token: AddressLike, _ids: BigNumberish[]],
+    [void],
+    "payable"
+  >;
+
+  erc20: TypedContractMethod<[], [string], "view">;
+
+  feeBurn: TypedContractMethod<[], [bigint], "view">;
+
+  feeBurnErc20: TypedContractMethod<
+    [erc20token: AddressLike],
+    [[bigint, boolean] & { feeAmount: bigint; isValid: boolean }],
+    "view"
+  >;
+
+  feeMint: TypedContractMethod<[], [bigint], "view">;
+
+  feeMintErc20: TypedContractMethod<
+    [erc20token: AddressLike],
+    [[bigint, boolean] & { feeAmount: bigint; isValid: boolean }],
+    "view"
+  >;
+
+  madFactory: TypedContractMethod<[], [string], "view">;
+
+  "mint(address,address,uint128,uint128)": TypedContractMethod<
+    [
+      _token: AddressLike,
+      _to: AddressLike,
+      _id: BigNumberish,
+      _amount: BigNumberish
+    ],
+    [void],
+    "payable"
+  >;
+
+  "mint(address,uint128)": TypedContractMethod<
+    [_token: AddressLike, _amount: BigNumberish],
+    [void],
+    "payable"
+  >;
+
+  mintBatchTo: TypedContractMethod<
+    [
+      _token: AddressLike,
+      _to: AddressLike,
+      _ids: BigNumberish[],
+      _balances: BigNumberish[]
+    ],
+    [void],
+    "payable"
+  >;
+
+  "mintTo(address,address,uint128,uint128)": TypedContractMethod<
+    [
+      _token: AddressLike,
+      _to: AddressLike,
+      _amount: BigNumberish,
+      _balance: BigNumberish
+    ],
+    [void],
+    "payable"
+  >;
+
+  "mintTo(address,address,uint128)": TypedContractMethod<
+    [_token: AddressLike, _to: AddressLike, _amount: BigNumberish],
+    [void],
+    "payable"
+  >;
+
+  name: TypedContractMethod<[], [string], "view">;
+
+  owner: TypedContractMethod<[], [string], "view">;
+
+  recipient: TypedContractMethod<[], [string], "view">;
+
+  setFactory: TypedContractMethod<
+    [_factory: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  "setFees(uint256,uint256)": TypedContractMethod<
+    [_feeMint: BigNumberish, _feeBurn: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+
+  "setFees(uint256,uint256,address)": TypedContractMethod<
+    [_feeMint: BigNumberish, _feeBurn: BigNumberish, erc20Address: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  setOwner: TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
+
+  setRecipient: TypedContractMethod<
+    [_recipient: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  getFunction<T extends ContractMethod = ContractMethod>(
+    key: string | FunctionFragment
+  ): T;
+
+  getFunction(
+    nameOrSignature: "batchBurn"
+  ): TypedContractMethod<
+    [
+      _token: AddressLike,
+      _from: AddressLike,
+      _ids: BigNumberish[],
+      _balances: BigNumberish[]
+    ],
+    [void],
+    "payable"
+  >;
+  getFunction(
+    nameOrSignature: "burn(address,uint128[],address[],uint128[])"
+  ): TypedContractMethod<
+    [
+      _token: AddressLike,
+      _ids: BigNumberish[],
+      to: AddressLike[],
+      _amount: BigNumberish[]
+    ],
+    [void],
+    "payable"
+  >;
+  getFunction(
+    nameOrSignature: "burn(address,uint128[])"
+  ): TypedContractMethod<
+    [_token: AddressLike, _ids: BigNumberish[]],
+    [void],
+    "payable"
+  >;
+  getFunction(
+    nameOrSignature: "erc20"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "feeBurn"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "feeBurnErc20"
+  ): TypedContractMethod<
+    [erc20token: AddressLike],
+    [[bigint, boolean] & { feeAmount: bigint; isValid: boolean }],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "feeMint"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "feeMintErc20"
+  ): TypedContractMethod<
+    [erc20token: AddressLike],
+    [[bigint, boolean] & { feeAmount: bigint; isValid: boolean }],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "madFactory"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "mint(address,address,uint128,uint128)"
+  ): TypedContractMethod<
+    [
+      _token: AddressLike,
+      _to: AddressLike,
+      _id: BigNumberish,
+      _amount: BigNumberish
+    ],
+    [void],
+    "payable"
+  >;
+  getFunction(
+    nameOrSignature: "mint(address,uint128)"
+  ): TypedContractMethod<
+    [_token: AddressLike, _amount: BigNumberish],
+    [void],
+    "payable"
+  >;
+  getFunction(
+    nameOrSignature: "mintBatchTo"
+  ): TypedContractMethod<
+    [
+      _token: AddressLike,
+      _to: AddressLike,
+      _ids: BigNumberish[],
+      _balances: BigNumberish[]
+    ],
+    [void],
+    "payable"
+  >;
+  getFunction(
+    nameOrSignature: "mintTo(address,address,uint128,uint128)"
+  ): TypedContractMethod<
+    [
+      _token: AddressLike,
+      _to: AddressLike,
+      _amount: BigNumberish,
+      _balance: BigNumberish
+    ],
+    [void],
+    "payable"
+  >;
+  getFunction(
+    nameOrSignature: "mintTo(address,address,uint128)"
+  ): TypedContractMethod<
+    [_token: AddressLike, _to: AddressLike, _amount: BigNumberish],
+    [void],
+    "payable"
+  >;
+  getFunction(
+    nameOrSignature: "name"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "owner"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "recipient"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "setFactory"
+  ): TypedContractMethod<[_factory: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setFees(uint256,uint256)"
+  ): TypedContractMethod<
+    [_feeMint: BigNumberish, _feeBurn: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "setFees(uint256,uint256,address)"
+  ): TypedContractMethod<
+    [_feeMint: BigNumberish, _feeBurn: BigNumberish, erc20Address: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "setOwner"
+  ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setRecipient"
+  ): TypedContractMethod<[_recipient: AddressLike], [void], "nonpayable">;
+
+  getEvent(
+    key: "BaseURISet"
+  ): TypedContractEvent<
+    BaseURISetEvent.InputTuple,
+    BaseURISetEvent.OutputTuple,
+    BaseURISetEvent.OutputObject
+  >;
+  getEvent(
+    key: "FactoryUpdated"
+  ): TypedContractEvent<
+    FactoryUpdatedEvent.InputTuple,
+    FactoryUpdatedEvent.OutputTuple,
+    FactoryUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "FeesUpdated"
+  ): TypedContractEvent<
+    FeesUpdatedEvent.InputTuple,
+    FeesUpdatedEvent.OutputTuple,
+    FeesUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "OwnerUpdated"
+  ): TypedContractEvent<
+    OwnerUpdatedEvent.InputTuple,
+    OwnerUpdatedEvent.OutputTuple,
+    OwnerUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "PaymentTokenUpdated"
+  ): TypedContractEvent<
+    PaymentTokenUpdatedEvent.InputTuple,
+    PaymentTokenUpdatedEvent.OutputTuple,
+    PaymentTokenUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "PublicMintState"
+  ): TypedContractEvent<
+    PublicMintStateEvent.InputTuple,
+    PublicMintStateEvent.OutputTuple,
+    PublicMintStateEvent.OutputObject
+  >;
+  getEvent(
+    key: "RecipientUpdated"
+  ): TypedContractEvent<
+    RecipientUpdatedEvent.InputTuple,
+    RecipientUpdatedEvent.OutputTuple,
+    RecipientUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "TokenFundsWithdrawn"
+  ): TypedContractEvent<
+    TokenFundsWithdrawnEvent.InputTuple,
+    TokenFundsWithdrawnEvent.OutputTuple,
+    TokenFundsWithdrawnEvent.OutputObject
+  >;
 
   filters: {
-    "BaseURISet(address,string)"(
-      _id?: PromiseOrValue<string> | null,
-      _baseURI?: PromiseOrValue<string> | null
-    ): BaseURISetEventFilter;
-    BaseURISet(
-      _id?: PromiseOrValue<string> | null,
-      _baseURI?: PromiseOrValue<string> | null
-    ): BaseURISetEventFilter;
+    "BaseURISet(address,string)": TypedContractEvent<
+      BaseURISetEvent.InputTuple,
+      BaseURISetEvent.OutputTuple,
+      BaseURISetEvent.OutputObject
+    >;
+    BaseURISet: TypedContractEvent<
+      BaseURISetEvent.InputTuple,
+      BaseURISetEvent.OutputTuple,
+      BaseURISetEvent.OutputObject
+    >;
 
-    "FactoryUpdated(address)"(
-      newFactory?: PromiseOrValue<string> | null
-    ): FactoryUpdatedEventFilter;
-    FactoryUpdated(
-      newFactory?: PromiseOrValue<string> | null
-    ): FactoryUpdatedEventFilter;
+    "FactoryUpdated(address)": TypedContractEvent<
+      FactoryUpdatedEvent.InputTuple,
+      FactoryUpdatedEvent.OutputTuple,
+      FactoryUpdatedEvent.OutputObject
+    >;
+    FactoryUpdated: TypedContractEvent<
+      FactoryUpdatedEvent.InputTuple,
+      FactoryUpdatedEvent.OutputTuple,
+      FactoryUpdatedEvent.OutputObject
+    >;
 
-    "FeesUpdated(uint256,uint256)"(
-      feeVal2?: null,
-      feeVal3?: null
-    ): FeesUpdatedEventFilter;
-    FeesUpdated(feeVal2?: null, feeVal3?: null): FeesUpdatedEventFilter;
+    "FeesUpdated(uint256,uint256)": TypedContractEvent<
+      FeesUpdatedEvent.InputTuple,
+      FeesUpdatedEvent.OutputTuple,
+      FeesUpdatedEvent.OutputObject
+    >;
+    FeesUpdated: TypedContractEvent<
+      FeesUpdatedEvent.InputTuple,
+      FeesUpdatedEvent.OutputTuple,
+      FeesUpdatedEvent.OutputObject
+    >;
 
-    "OwnerUpdated(address,address)"(
-      user?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnerUpdatedEventFilter;
-    OwnerUpdated(
-      user?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnerUpdatedEventFilter;
+    "OwnerUpdated(address,address)": TypedContractEvent<
+      OwnerUpdatedEvent.InputTuple,
+      OwnerUpdatedEvent.OutputTuple,
+      OwnerUpdatedEvent.OutputObject
+    >;
+    OwnerUpdated: TypedContractEvent<
+      OwnerUpdatedEvent.InputTuple,
+      OwnerUpdatedEvent.OutputTuple,
+      OwnerUpdatedEvent.OutputObject
+    >;
 
-    "PaymentTokenUpdated(address)"(
-      newPaymentToken?: PromiseOrValue<string> | null
-    ): PaymentTokenUpdatedEventFilter;
-    PaymentTokenUpdated(
-      newPaymentToken?: PromiseOrValue<string> | null
-    ): PaymentTokenUpdatedEventFilter;
+    "PaymentTokenUpdated(address)": TypedContractEvent<
+      PaymentTokenUpdatedEvent.InputTuple,
+      PaymentTokenUpdatedEvent.OutputTuple,
+      PaymentTokenUpdatedEvent.OutputObject
+    >;
+    PaymentTokenUpdated: TypedContractEvent<
+      PaymentTokenUpdatedEvent.InputTuple,
+      PaymentTokenUpdatedEvent.OutputTuple,
+      PaymentTokenUpdatedEvent.OutputObject
+    >;
 
-    "PublicMintState(address,uint8,bool)"(
-      _id?: PromiseOrValue<string> | null,
-      _type?: PromiseOrValue<BigNumberish> | null,
-      _state?: PromiseOrValue<boolean> | null
-    ): PublicMintStateEventFilter;
-    PublicMintState(
-      _id?: PromiseOrValue<string> | null,
-      _type?: PromiseOrValue<BigNumberish> | null,
-      _state?: PromiseOrValue<boolean> | null
-    ): PublicMintStateEventFilter;
+    "PublicMintState(address,uint8,bool)": TypedContractEvent<
+      PublicMintStateEvent.InputTuple,
+      PublicMintStateEvent.OutputTuple,
+      PublicMintStateEvent.OutputObject
+    >;
+    PublicMintState: TypedContractEvent<
+      PublicMintStateEvent.InputTuple,
+      PublicMintStateEvent.OutputTuple,
+      PublicMintStateEvent.OutputObject
+    >;
 
-    "RecipientUpdated(address)"(
-      newRecipient?: PromiseOrValue<string> | null
-    ): RecipientUpdatedEventFilter;
-    RecipientUpdated(
-      newRecipient?: PromiseOrValue<string> | null
-    ): RecipientUpdatedEventFilter;
+    "RecipientUpdated(address)": TypedContractEvent<
+      RecipientUpdatedEvent.InputTuple,
+      RecipientUpdatedEvent.OutputTuple,
+      RecipientUpdatedEvent.OutputObject
+    >;
+    RecipientUpdated: TypedContractEvent<
+      RecipientUpdatedEvent.InputTuple,
+      RecipientUpdatedEvent.OutputTuple,
+      RecipientUpdatedEvent.OutputObject
+    >;
 
-    "TokenFundsWithdrawn(address,uint8,address)"(
-      _id?: PromiseOrValue<string> | null,
-      _type?: PromiseOrValue<BigNumberish> | null,
-      _payee?: PromiseOrValue<string> | null
-    ): TokenFundsWithdrawnEventFilter;
-    TokenFundsWithdrawn(
-      _id?: PromiseOrValue<string> | null,
-      _type?: PromiseOrValue<BigNumberish> | null,
-      _payee?: PromiseOrValue<string> | null
-    ): TokenFundsWithdrawnEventFilter;
-  };
-
-  estimateGas: {
-    batchBurn(
-      _token: PromiseOrValue<string>,
-      _from: PromiseOrValue<string>,
-      _ids: PromiseOrValue<BigNumberish>[],
-      _balances: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "burn(address,uint128[],address[],uint128[])"(
-      _token: PromiseOrValue<string>,
-      _ids: PromiseOrValue<BigNumberish>[],
-      to: PromiseOrValue<string>[],
-      _amount: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "burn(address,uint128[])"(
-      _token: PromiseOrValue<string>,
-      _ids: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    erc20(overrides?: CallOverrides): Promise<BigNumber>;
-
-    feeBurn(overrides?: CallOverrides): Promise<BigNumber>;
-
-    feeBurnErc20(
-      erc20token: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    feeMint(overrides?: CallOverrides): Promise<BigNumber>;
-
-    feeMintErc20(
-      erc20token: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    madFactory(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "mint(address,address,uint128,uint128)"(
-      _token: PromiseOrValue<string>,
-      _to: PromiseOrValue<string>,
-      _id: PromiseOrValue<BigNumberish>,
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "mint(address,uint128)"(
-      _token: PromiseOrValue<string>,
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    mintBatchTo(
-      _token: PromiseOrValue<string>,
-      _to: PromiseOrValue<string>,
-      _ids: PromiseOrValue<BigNumberish>[],
-      _balances: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "mintTo(address,address,uint128,uint128)"(
-      _token: PromiseOrValue<string>,
-      _to: PromiseOrValue<string>,
-      _amount: PromiseOrValue<BigNumberish>,
-      _balance: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "mintTo(address,address,uint128)"(
-      _token: PromiseOrValue<string>,
-      _to: PromiseOrValue<string>,
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    name(overrides?: CallOverrides): Promise<BigNumber>;
-
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    recipient(overrides?: CallOverrides): Promise<BigNumber>;
-
-    setFactory(
-      _factory: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "setFees(uint256,uint256)"(
-      _feeMint: PromiseOrValue<BigNumberish>,
-      _feeBurn: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "setFees(uint256,uint256,address)"(
-      _feeMint: PromiseOrValue<BigNumberish>,
-      _feeBurn: PromiseOrValue<BigNumberish>,
-      erc20Address: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setOwner(
-      newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setRecipient(
-      _recipient: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    batchBurn(
-      _token: PromiseOrValue<string>,
-      _from: PromiseOrValue<string>,
-      _ids: PromiseOrValue<BigNumberish>[],
-      _balances: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "burn(address,uint128[],address[],uint128[])"(
-      _token: PromiseOrValue<string>,
-      _ids: PromiseOrValue<BigNumberish>[],
-      to: PromiseOrValue<string>[],
-      _amount: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "burn(address,uint128[])"(
-      _token: PromiseOrValue<string>,
-      _ids: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    erc20(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    feeBurn(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    feeBurnErc20(
-      erc20token: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    feeMint(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    feeMintErc20(
-      erc20token: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    madFactory(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "mint(address,address,uint128,uint128)"(
-      _token: PromiseOrValue<string>,
-      _to: PromiseOrValue<string>,
-      _id: PromiseOrValue<BigNumberish>,
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "mint(address,uint128)"(
-      _token: PromiseOrValue<string>,
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    mintBatchTo(
-      _token: PromiseOrValue<string>,
-      _to: PromiseOrValue<string>,
-      _ids: PromiseOrValue<BigNumberish>[],
-      _balances: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "mintTo(address,address,uint128,uint128)"(
-      _token: PromiseOrValue<string>,
-      _to: PromiseOrValue<string>,
-      _amount: PromiseOrValue<BigNumberish>,
-      _balance: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "mintTo(address,address,uint128)"(
-      _token: PromiseOrValue<string>,
-      _to: PromiseOrValue<string>,
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    recipient(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    setFactory(
-      _factory: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "setFees(uint256,uint256)"(
-      _feeMint: PromiseOrValue<BigNumberish>,
-      _feeBurn: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "setFees(uint256,uint256,address)"(
-      _feeMint: PromiseOrValue<BigNumberish>,
-      _feeBurn: PromiseOrValue<BigNumberish>,
-      erc20Address: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setOwner(
-      newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setRecipient(
-      _recipient: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+    "TokenFundsWithdrawn(address,uint8,address)": TypedContractEvent<
+      TokenFundsWithdrawnEvent.InputTuple,
+      TokenFundsWithdrawnEvent.OutputTuple,
+      TokenFundsWithdrawnEvent.OutputObject
+    >;
+    TokenFundsWithdrawn: TypedContractEvent<
+      TokenFundsWithdrawnEvent.InputTuple,
+      TokenFundsWithdrawnEvent.OutputTuple,
+      TokenFundsWithdrawnEvent.OutputObject
+    >;
   };
 }

@@ -7,8 +7,7 @@ import type {
   IERC165,
   IERC165Interface,
 } from "../../../../lib/test/test-interfaces.sol/IERC165";
-import type { Provider } from "@ethersproject/providers";
-import { Contract, Signer, utils } from "ethers";
+import { Contract, Interface, type ContractRunner } from "ethers";
 
 const _abi = [
   {
@@ -35,12 +34,9 @@ const _abi = [
 export class IERC165__factory {
   static readonly abi = _abi;
   static createInterface(): IERC165Interface {
-    return new utils.Interface(_abi) as IERC165Interface;
+    return new Interface(_abi) as IERC165Interface;
   }
-  static connect(
-    address: string,
-    signerOrProvider: Signer | Provider
-  ): IERC165 {
-    return new Contract(address, _abi, signerOrProvider) as IERC165;
+  static connect(address: string, runner?: ContractRunner | null): IERC165 {
+    return new Contract(address, _abi, runner) as unknown as IERC165;
   }
 }

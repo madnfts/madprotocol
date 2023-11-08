@@ -7,8 +7,7 @@ import type {
   MarketplaceEventsAndErrorsBase,
   MarketplaceEventsAndErrorsBaseInterface,
 } from "../../../Shared/EventsAndErrors.sol/MarketplaceEventsAndErrorsBase";
-import type { Provider } from "@ethersproject/providers";
-import { Contract, Signer, utils } from "ethers";
+import { Contract, Interface, type ContractRunner } from "ethers";
 
 const _abi = [
   {
@@ -230,16 +229,16 @@ const _abi = [
 export class MarketplaceEventsAndErrorsBase__factory {
   static readonly abi = _abi;
   static createInterface(): MarketplaceEventsAndErrorsBaseInterface {
-    return new utils.Interface(_abi) as MarketplaceEventsAndErrorsBaseInterface;
+    return new Interface(_abi) as MarketplaceEventsAndErrorsBaseInterface;
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    runner?: ContractRunner | null
   ): MarketplaceEventsAndErrorsBase {
     return new Contract(
       address,
       _abi,
-      signerOrProvider
-    ) as MarketplaceEventsAndErrorsBase;
+      runner
+    ) as unknown as MarketplaceEventsAndErrorsBase;
   }
 }

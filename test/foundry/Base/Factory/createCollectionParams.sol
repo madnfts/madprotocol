@@ -37,8 +37,8 @@ abstract contract CreateCollectionParams {
         return IFactory.CreateCollectionParams({
             tokenType: uint8(_tokenType),
             tokenSalt: updateCreateCollectionSalt(),
-            name: name,
-            symbol: symbol,
+            collectionName: name,
+            collectionSymbol: symbol,
             price: _price,
             maxSupply: _maxSupply,
             uri: _uri,

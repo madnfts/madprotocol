@@ -4,7 +4,7 @@ pragma solidity 0.8.19;
 import { IFactory } from "test/foundry/Base/Factory/IFactory.sol";
 import { ISplitter, IERC20 } from "test/foundry/Base/Splitter/ISplitter.sol";
 import { SplitterImpl } from "contracts/lib/splitter/SplitterImpl.sol";
-import { Types } from "contracts/Shared/Types.sol";
+import { ContractTypes } from "contracts/Shared/ContractTypes.sol";
 import { Deployer } from "test/foundry/Deploy/deployer.t.sol";
 
 import {
@@ -19,7 +19,7 @@ import { SettersToggle } from "test/foundry/utils/setterToggle.sol";
 import { SplitterHelpers } from "test/foundry/Base/Splitter/splitterHelpers.sol";
 
 contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
-    using Types for Types.SplitterConfig;
+    using ContractTypes for ContractTypes.SplitterConfig;
 
     uint256 public splitterSaltNonce = 67_891_012_456_894_561;
     bool public isERC20;
@@ -87,7 +87,7 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
         ISplitter.SplitterData memory splitterData,
         address splitterAddress
     ) public {
-        Types.SplitterConfig memory config = splitterData.factory.splitterInfo(
+        ContractTypes.SplitterConfig memory config = splitterData.factory.splitterInfo(
             splitterData.deployer, splitterAddress
         );
 

@@ -1,19 +1,16 @@
 import "@nomicfoundation/hardhat-chai-matchers";
-import "@nomiclabs/hardhat-etherscan";
-import "@primitivefi/hardhat-dodoc";
+import "@nomicfoundation/hardhat-ethers";
+import "@nomicfoundation/hardhat-toolbox";
 import "@typechain/hardhat";
 import { config as dotenvConfig } from "dotenv";
-import "hardhat-gas-reporter";
-import "hardhat-tracer";
 import { HardhatUserConfig } from "hardhat/config";
 import { NetworkUserConfig } from "hardhat/types";
 import { resolve } from "path";
-import "solidity-coverage";
 import yargs from "yargs";
 
 import "./tasks/accounts";
 
-// Set script args
+// // Set script args
 const parser = yargs
   .option("network", {
     type: "string",
@@ -24,6 +21,7 @@ const parser = yargs
 
 // Load and validate .env configs
 dotenvConfig({ path: resolve(__dirname, "./.env") });
+
 const {
   INFURA_API_KEY,
   MNEMONIC,
@@ -31,6 +29,7 @@ const {
   PK,
   ALCHEMY_KEY,
 } = process.env;
+
 const DEFAULT_MNEMONIC =
   "candy maple cake sugar pudding cream honey rich smooth crumble sweet treat";
 (async () => {
@@ -200,13 +199,13 @@ const config: HardhatUserConfig = {
   },
   typechain: {
     outDir: "src/types",
-    target: "ethers-v5",
+    target: "ethers-v6",
   },
-  dodoc: {
-    runOnCompile: !!(
-      process.env.GEN_DOCS && process.env.GEN_DOCS != "false"
-    ),
-  },
+  // dodoc: {
+  //   runOnCompile: !!(
+  //     process.env.GEN_DOCS && process.env.GEN_DOCS != "false"
+  //   ),
+  // },
 };
 
 export default config;

@@ -3,19 +3,23 @@
 /* tslint:disable */
 
 /* eslint-disable */
-import type { PromiseOrValue } from "../../../../common";
+import type { NonPayableOverrides } from "../../../../common";
 import type {
   MockERC2981,
   MockERC2981Interface,
 } from "../../../../lib/test/erc2981-mock.sol/MockERC2981";
-import type { Provider, TransactionRequest } from "@ethersproject/providers";
 import {
-  Signer,
-  utils,
   Contract,
   ContractFactory,
+  ContractTransactionResponse,
+  Interface,
+} from "ethers";
+import type {
+  Signer,
   BigNumberish,
-  Overrides,
+  AddressLike,
+  ContractDeployTransaction,
+  ContractRunner,
 } from "ethers";
 
 const _abi = [
@@ -220,40 +224,34 @@ export class MockERC2981__factory extends ContractFactory {
     }
   }
 
-  override deploy(
-    fee: PromiseOrValue<BigNumberish>,
-    recipient: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<MockERC2981> {
-    return super.deploy(
-      fee,
-      recipient,
-      overrides || {}
-    ) as Promise<MockERC2981>;
-  }
   override getDeployTransaction(
-    fee: PromiseOrValue<BigNumberish>,
-    recipient: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): TransactionRequest {
+    fee: BigNumberish,
+    recipient: AddressLike,
+    overrides?: NonPayableOverrides & { from?: string }
+  ): Promise<ContractDeployTransaction> {
     return super.getDeployTransaction(fee, recipient, overrides || {});
   }
-  override attach(address: string): MockERC2981 {
-    return super.attach(address) as MockERC2981;
+  override deploy(
+    fee: BigNumberish,
+    recipient: AddressLike,
+    overrides?: NonPayableOverrides & { from?: string }
+  ) {
+    return super.deploy(fee, recipient, overrides || {}) as Promise<
+      MockERC2981 & {
+        deploymentTransaction(): ContractTransactionResponse;
+      }
+    >;
   }
-  override connect(signer: Signer): MockERC2981__factory {
-    return super.connect(signer) as MockERC2981__factory;
+  override connect(runner: ContractRunner | null): MockERC2981__factory {
+    return super.connect(runner) as MockERC2981__factory;
   }
 
   static readonly bytecode = _bytecode;
   static readonly abi = _abi;
   static createInterface(): MockERC2981Interface {
-    return new utils.Interface(_abi) as MockERC2981Interface;
+    return new Interface(_abi) as MockERC2981Interface;
   }
-  static connect(
-    address: string,
-    signerOrProvider: Signer | Provider
-  ): MockERC2981 {
-    return new Contract(address, _abi, signerOrProvider) as MockERC2981;
+  static connect(address: string, runner?: ContractRunner | null): MockERC2981 {
+    return new Contract(address, _abi, runner) as unknown as MockERC2981;
   }
 }

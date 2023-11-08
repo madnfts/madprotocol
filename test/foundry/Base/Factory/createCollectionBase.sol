@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.19;
 
-import "forge-std/src/Test.sol";
+import "test/lib/forge-std/src/Test.sol";
 import {
     IFactory,
     CreateCollectionParams,
@@ -178,11 +178,11 @@ abstract contract CreateCollectionBase is
 
         // Test name function
         string memory name = collection.name();
-        assertEq(name, params.name, "Incorrect name value");
+        assertEq(name, params.collectionName, "Incorrect name value");
 
         // Test symbol function
         string memory symbol = collection.symbol();
-        assertEq(symbol, params.symbol, "Incorrect symbol value");
+        assertEq(symbol, params.collectionSymbol, "Incorrect symbol value");
     }
 
     function _verifyCollectionTokensShared(

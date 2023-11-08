@@ -4,51 +4,30 @@
 
 /* eslint-disable */
 import type {
-  TypedEventFilter,
-  TypedEvent,
+  TypedContractEvent,
+  TypedDeferredTopicFilter,
+  TypedEventLog,
+  TypedLogDescription,
   TypedListener,
-  OnEvent,
-  PromiseOrValue,
+  TypedContractMethod,
 } from "../../common";
 import type {
-  FunctionFragment,
-  Result,
-  EventFragment,
-} from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
-import type {
   BaseContract,
-  BigNumber,
   BigNumberish,
   BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
+  FunctionFragment,
+  Result,
+  Interface,
+  EventFragment,
+  AddressLike,
+  ContractRunner,
+  ContractMethod,
+  Listener,
 } from "ethers";
 
-export interface SplitterImplInterface extends utils.Interface {
-  functions: {
-    "_payees(uint256)": FunctionFragment;
-    "_shares(address)": FunctionFragment;
-    "payeesLength()": FunctionFragment;
-    "releasable(address)": FunctionFragment;
-    "releasable(address,address)": FunctionFragment;
-    "release(address)": FunctionFragment;
-    "release(address,address)": FunctionFragment;
-    "releaseAll(address)": FunctionFragment;
-    "releaseAll()": FunctionFragment;
-    "released(address,address)": FunctionFragment;
-    "released(address)": FunctionFragment;
-    "totalReleased(address)": FunctionFragment;
-    "totalReleased()": FunctionFragment;
-    "totalShares()": FunctionFragment;
-  };
-
+export interface SplitterImplInterface extends Interface {
   getFunction(
-    nameOrSignatureOrTopic:
+    nameOrSignature:
       | "_payees"
       | "_shares"
       | "payeesLength"
@@ -65,13 +44,21 @@ export interface SplitterImplInterface extends utils.Interface {
       | "totalShares"
   ): FunctionFragment;
 
+  getEvent(
+    nameOrSignatureOrTopic:
+      | "ERC20PaymentReleased"
+      | "PayeeAdded"
+      | "PaymentReceived"
+      | "PaymentReleased"
+  ): EventFragment;
+
   encodeFunctionData(
     functionFragment: "_payees",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "_shares",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "payeesLength",
@@ -79,23 +66,23 @@ export interface SplitterImplInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "releasable(address)",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "releasable(address,address)",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+    values: [AddressLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "release(address)",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "release(address,address)",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+    values: [AddressLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "releaseAll(address)",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "releaseAll()",
@@ -103,15 +90,15 @@ export interface SplitterImplInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "released(address,address)",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+    values: [AddressLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "released(address)",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "totalReleased(address)",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "totalReleased()",
@@ -172,441 +159,299 @@ export interface SplitterImplInterface extends utils.Interface {
     functionFragment: "totalShares",
     data: BytesLike
   ): Result;
-
-  events: {
-    "ERC20PaymentReleased(address,address,uint256)": EventFragment;
-    "PayeeAdded(address,uint256)": EventFragment;
-    "PaymentReceived(address,uint256)": EventFragment;
-    "PaymentReleased(address,uint256)": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "ERC20PaymentReleased"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PayeeAdded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PaymentReceived"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PaymentReleased"): EventFragment;
 }
 
-export interface ERC20PaymentReleasedEventObject {
-  token: string;
-  to: string;
-  amount: BigNumber;
+export namespace ERC20PaymentReleasedEvent {
+  export type InputTuple = [
+    token: AddressLike,
+    to: AddressLike,
+    amount: BigNumberish
+  ];
+  export type OutputTuple = [token: string, to: string, amount: bigint];
+  export interface OutputObject {
+    token: string;
+    to: string;
+    amount: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type ERC20PaymentReleasedEvent = TypedEvent<
-  [string, string, BigNumber],
-  ERC20PaymentReleasedEventObject
->;
 
-export type ERC20PaymentReleasedEventFilter =
-  TypedEventFilter<ERC20PaymentReleasedEvent>;
-
-export interface PayeeAddedEventObject {
-  account: string;
-  shares: BigNumber;
+export namespace PayeeAddedEvent {
+  export type InputTuple = [account: AddressLike, shares: BigNumberish];
+  export type OutputTuple = [account: string, shares: bigint];
+  export interface OutputObject {
+    account: string;
+    shares: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type PayeeAddedEvent = TypedEvent<
-  [string, BigNumber],
-  PayeeAddedEventObject
->;
 
-export type PayeeAddedEventFilter = TypedEventFilter<PayeeAddedEvent>;
-
-export interface PaymentReceivedEventObject {
-  from: string;
-  amount: BigNumber;
+export namespace PaymentReceivedEvent {
+  export type InputTuple = [from: AddressLike, amount: BigNumberish];
+  export type OutputTuple = [from: string, amount: bigint];
+  export interface OutputObject {
+    from: string;
+    amount: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type PaymentReceivedEvent = TypedEvent<
-  [string, BigNumber],
-  PaymentReceivedEventObject
->;
 
-export type PaymentReceivedEventFilter = TypedEventFilter<PaymentReceivedEvent>;
-
-export interface PaymentReleasedEventObject {
-  to: string;
-  amount: BigNumber;
+export namespace PaymentReleasedEvent {
+  export type InputTuple = [to: AddressLike, amount: BigNumberish];
+  export type OutputTuple = [to: string, amount: bigint];
+  export interface OutputObject {
+    to: string;
+    amount: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type PaymentReleasedEvent = TypedEvent<
-  [string, BigNumber],
-  PaymentReleasedEventObject
->;
-
-export type PaymentReleasedEventFilter = TypedEventFilter<PaymentReleasedEvent>;
 
 export interface SplitterImpl extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(runner?: ContractRunner | null): SplitterImpl;
+  waitForDeployment(): Promise<this>;
 
   interface: SplitterImplInterface;
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
+  queryFilter<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  queryFilter<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+  on<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  on<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  functions: {
-    _payees(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
+  once<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  once<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-    _shares(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+  listeners<TCEvent extends TypedContractEvent>(
+    event: TCEvent
+  ): Promise<Array<TypedListener<TCEvent>>>;
+  listeners(eventName?: string): Promise<Array<Listener>>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(
+    event?: TCEvent
+  ): Promise<this>;
 
-    payeesLength(overrides?: CallOverrides): Promise<[BigNumber]>;
+  _payees: TypedContractMethod<[arg0: BigNumberish], [string], "view">;
 
-    "releasable(address)"(
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+  _shares: TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
 
-    "releasable(address,address)"(
-      token: PromiseOrValue<string>,
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+  payeesLength: TypedContractMethod<[], [bigint], "view">;
 
-    "release(address)"(
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  "releasable(address)": TypedContractMethod<
+    [account: AddressLike],
+    [bigint],
+    "view"
+  >;
 
-    "release(address,address)"(
-      token: PromiseOrValue<string>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  "releasable(address,address)": TypedContractMethod<
+    [token: AddressLike, account: AddressLike],
+    [bigint],
+    "view"
+  >;
 
-    "releaseAll(address)"(
-      token: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  "release(address)": TypedContractMethod<
+    [account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-    "releaseAll()"(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  "release(address,address)": TypedContractMethod<
+    [token: AddressLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-    "released(address,address)"(
-      token: PromiseOrValue<string>,
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+  "releaseAll(address)": TypedContractMethod<
+    [token: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-    "released(address)"(
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+  "releaseAll()": TypedContractMethod<[], [void], "nonpayable">;
 
-    "totalReleased(address)"(
-      token: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+  "released(address,address)": TypedContractMethod<
+    [token: AddressLike, account: AddressLike],
+    [bigint],
+    "view"
+  >;
 
-    "totalReleased()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+  "released(address)": TypedContractMethod<
+    [account: AddressLike],
+    [bigint],
+    "view"
+  >;
 
-    totalShares(overrides?: CallOverrides): Promise<[BigNumber]>;
-  };
+  "totalReleased(address)": TypedContractMethod<
+    [token: AddressLike],
+    [bigint],
+    "view"
+  >;
 
-  _payees(
-    arg0: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
+  "totalReleased()": TypedContractMethod<[], [bigint], "view">;
 
-  _shares(
-    arg0: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  totalShares: TypedContractMethod<[], [bigint], "view">;
 
-  payeesLength(overrides?: CallOverrides): Promise<BigNumber>;
+  getFunction<T extends ContractMethod = ContractMethod>(
+    key: string | FunctionFragment
+  ): T;
 
-  "releasable(address)"(
-    account: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  getFunction(
+    nameOrSignature: "_payees"
+  ): TypedContractMethod<[arg0: BigNumberish], [string], "view">;
+  getFunction(
+    nameOrSignature: "_shares"
+  ): TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "payeesLength"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "releasable(address)"
+  ): TypedContractMethod<[account: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "releasable(address,address)"
+  ): TypedContractMethod<
+    [token: AddressLike, account: AddressLike],
+    [bigint],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "release(address)"
+  ): TypedContractMethod<[account: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "release(address,address)"
+  ): TypedContractMethod<
+    [token: AddressLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "releaseAll(address)"
+  ): TypedContractMethod<[token: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "releaseAll()"
+  ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "released(address,address)"
+  ): TypedContractMethod<
+    [token: AddressLike, account: AddressLike],
+    [bigint],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "released(address)"
+  ): TypedContractMethod<[account: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "totalReleased(address)"
+  ): TypedContractMethod<[token: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "totalReleased()"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "totalShares"
+  ): TypedContractMethod<[], [bigint], "view">;
 
-  "releasable(address,address)"(
-    token: PromiseOrValue<string>,
-    account: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  "release(address)"(
-    account: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "release(address,address)"(
-    token: PromiseOrValue<string>,
-    account: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "releaseAll(address)"(
-    token: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "releaseAll()"(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "released(address,address)"(
-    token: PromiseOrValue<string>,
-    account: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  "released(address)"(
-    account: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  "totalReleased(address)"(
-    token: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  "totalReleased()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-  totalShares(overrides?: CallOverrides): Promise<BigNumber>;
-
-  callStatic: {
-    _payees(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    _shares(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    payeesLength(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "releasable(address)"(
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "releasable(address,address)"(
-      token: PromiseOrValue<string>,
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "release(address)"(
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "release(address,address)"(
-      token: PromiseOrValue<string>,
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "releaseAll(address)"(
-      token: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "releaseAll()"(overrides?: CallOverrides): Promise<void>;
-
-    "released(address,address)"(
-      token: PromiseOrValue<string>,
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "released(address)"(
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "totalReleased(address)"(
-      token: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "totalReleased()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    totalShares(overrides?: CallOverrides): Promise<BigNumber>;
-  };
+  getEvent(
+    key: "ERC20PaymentReleased"
+  ): TypedContractEvent<
+    ERC20PaymentReleasedEvent.InputTuple,
+    ERC20PaymentReleasedEvent.OutputTuple,
+    ERC20PaymentReleasedEvent.OutputObject
+  >;
+  getEvent(
+    key: "PayeeAdded"
+  ): TypedContractEvent<
+    PayeeAddedEvent.InputTuple,
+    PayeeAddedEvent.OutputTuple,
+    PayeeAddedEvent.OutputObject
+  >;
+  getEvent(
+    key: "PaymentReceived"
+  ): TypedContractEvent<
+    PaymentReceivedEvent.InputTuple,
+    PaymentReceivedEvent.OutputTuple,
+    PaymentReceivedEvent.OutputObject
+  >;
+  getEvent(
+    key: "PaymentReleased"
+  ): TypedContractEvent<
+    PaymentReleasedEvent.InputTuple,
+    PaymentReleasedEvent.OutputTuple,
+    PaymentReleasedEvent.OutputObject
+  >;
 
   filters: {
-    "ERC20PaymentReleased(address,address,uint256)"(
-      token?: PromiseOrValue<string> | null,
-      to?: null,
-      amount?: null
-    ): ERC20PaymentReleasedEventFilter;
-    ERC20PaymentReleased(
-      token?: PromiseOrValue<string> | null,
-      to?: null,
-      amount?: null
-    ): ERC20PaymentReleasedEventFilter;
+    "ERC20PaymentReleased(address,address,uint256)": TypedContractEvent<
+      ERC20PaymentReleasedEvent.InputTuple,
+      ERC20PaymentReleasedEvent.OutputTuple,
+      ERC20PaymentReleasedEvent.OutputObject
+    >;
+    ERC20PaymentReleased: TypedContractEvent<
+      ERC20PaymentReleasedEvent.InputTuple,
+      ERC20PaymentReleasedEvent.OutputTuple,
+      ERC20PaymentReleasedEvent.OutputObject
+    >;
 
-    "PayeeAdded(address,uint256)"(
-      account?: null,
-      shares?: null
-    ): PayeeAddedEventFilter;
-    PayeeAdded(account?: null, shares?: null): PayeeAddedEventFilter;
+    "PayeeAdded(address,uint256)": TypedContractEvent<
+      PayeeAddedEvent.InputTuple,
+      PayeeAddedEvent.OutputTuple,
+      PayeeAddedEvent.OutputObject
+    >;
+    PayeeAdded: TypedContractEvent<
+      PayeeAddedEvent.InputTuple,
+      PayeeAddedEvent.OutputTuple,
+      PayeeAddedEvent.OutputObject
+    >;
 
-    "PaymentReceived(address,uint256)"(
-      from?: null,
-      amount?: null
-    ): PaymentReceivedEventFilter;
-    PaymentReceived(from?: null, amount?: null): PaymentReceivedEventFilter;
+    "PaymentReceived(address,uint256)": TypedContractEvent<
+      PaymentReceivedEvent.InputTuple,
+      PaymentReceivedEvent.OutputTuple,
+      PaymentReceivedEvent.OutputObject
+    >;
+    PaymentReceived: TypedContractEvent<
+      PaymentReceivedEvent.InputTuple,
+      PaymentReceivedEvent.OutputTuple,
+      PaymentReceivedEvent.OutputObject
+    >;
 
-    "PaymentReleased(address,uint256)"(
-      to?: null,
-      amount?: null
-    ): PaymentReleasedEventFilter;
-    PaymentReleased(to?: null, amount?: null): PaymentReleasedEventFilter;
-  };
-
-  estimateGas: {
-    _payees(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _shares(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    payeesLength(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "releasable(address)"(
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "releasable(address,address)"(
-      token: PromiseOrValue<string>,
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "release(address)"(
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "release(address,address)"(
-      token: PromiseOrValue<string>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "releaseAll(address)"(
-      token: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "releaseAll()"(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "released(address,address)"(
-      token: PromiseOrValue<string>,
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "released(address)"(
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "totalReleased(address)"(
-      token: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "totalReleased()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    totalShares(overrides?: CallOverrides): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    _payees(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _shares(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    payeesLength(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "releasable(address)"(
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "releasable(address,address)"(
-      token: PromiseOrValue<string>,
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "release(address)"(
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "release(address,address)"(
-      token: PromiseOrValue<string>,
-      account: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "releaseAll(address)"(
-      token: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "releaseAll()"(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "released(address,address)"(
-      token: PromiseOrValue<string>,
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "released(address)"(
-      account: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "totalReleased(address)"(
-      token: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "totalReleased()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    totalShares(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    "PaymentReleased(address,uint256)": TypedContractEvent<
+      PaymentReleasedEvent.InputTuple,
+      PaymentReleasedEvent.OutputTuple,
+      PaymentReleasedEvent.OutputObject
+    >;
+    PaymentReleased: TypedContractEvent<
+      PaymentReleasedEvent.InputTuple,
+      PaymentReleasedEvent.OutputTuple,
+      PaymentReleasedEvent.OutputObject
+    >;
   };
 }

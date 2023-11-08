@@ -3,13 +3,18 @@
 /* tslint:disable */
 
 /* eslint-disable */
-import type { PromiseOrValue } from "../../../../../../../common";
+import type { NonPayableOverrides } from "../../../../../../../common";
 import type {
   ERC1155Holder,
   ERC1155HolderInterface,
 } from "../../../../../../../lib/tokens/ERC1155/Base/utils/ERC1155Holder.sol/ERC1155Holder";
-import type { Provider, TransactionRequest } from "@ethersproject/providers";
-import { Signer, utils, Contract, ContractFactory, Overrides } from "ethers";
+import {
+  Contract,
+  ContractFactory,
+  ContractTransactionResponse,
+  Interface,
+} from "ethers";
+import type { Signer, ContractDeployTransaction, ContractRunner } from "ethers";
 
 const _abi = [
   {
@@ -112,32 +117,31 @@ export class ERC1155Holder__factory extends ContractFactory {
     }
   }
 
-  override deploy(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ERC1155Holder> {
-    return super.deploy(overrides || {}) as Promise<ERC1155Holder>;
-  }
   override getDeployTransaction(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): TransactionRequest {
+    overrides?: NonPayableOverrides & { from?: string }
+  ): Promise<ContractDeployTransaction> {
     return super.getDeployTransaction(overrides || {});
   }
-  override attach(address: string): ERC1155Holder {
-    return super.attach(address) as ERC1155Holder;
+  override deploy(overrides?: NonPayableOverrides & { from?: string }) {
+    return super.deploy(overrides || {}) as Promise<
+      ERC1155Holder & {
+        deploymentTransaction(): ContractTransactionResponse;
+      }
+    >;
   }
-  override connect(signer: Signer): ERC1155Holder__factory {
-    return super.connect(signer) as ERC1155Holder__factory;
+  override connect(runner: ContractRunner | null): ERC1155Holder__factory {
+    return super.connect(runner) as ERC1155Holder__factory;
   }
 
   static readonly bytecode = _bytecode;
   static readonly abi = _abi;
   static createInterface(): ERC1155HolderInterface {
-    return new utils.Interface(_abi) as ERC1155HolderInterface;
+    return new Interface(_abi) as ERC1155HolderInterface;
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    runner?: ContractRunner | null
   ): ERC1155Holder {
-    return new Contract(address, _abi, signerOrProvider) as ERC1155Holder;
+    return new Contract(address, _abi, runner) as unknown as ERC1155Holder;
   }
 }

@@ -7,8 +7,7 @@ import type {
   MADRouterBase,
   MADRouterBaseInterface,
 } from "../../Router/MADRouterBase";
-import type { Provider } from "@ethersproject/providers";
-import { Contract, Signer, utils } from "ethers";
+import { Contract, Interface, type ContractRunner } from "ethers";
 
 const _abi = [
   {
@@ -431,12 +430,12 @@ const _abi = [
 export class MADRouterBase__factory {
   static readonly abi = _abi;
   static createInterface(): MADRouterBaseInterface {
-    return new utils.Interface(_abi) as MADRouterBaseInterface;
+    return new Interface(_abi) as MADRouterBaseInterface;
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    runner?: ContractRunner | null
   ): MADRouterBase {
-    return new Contract(address, _abi, signerOrProvider) as MADRouterBase;
+    return new Contract(address, _abi, runner) as unknown as MADRouterBase;
   }
 }

@@ -7,8 +7,7 @@ import type {
   IERC721Metadata,
   IERC721MetadataInterface,
 } from "../../../../lib/test/test-interfaces.sol/IERC721Metadata";
-import type { Provider } from "@ethersproject/providers";
-import { Contract, Signer, utils } from "ethers";
+import { Contract, Interface, type ContractRunner } from "ethers";
 
 const _abi = [
   {
@@ -61,12 +60,12 @@ const _abi = [
 export class IERC721Metadata__factory {
   static readonly abi = _abi;
   static createInterface(): IERC721MetadataInterface {
-    return new utils.Interface(_abi) as IERC721MetadataInterface;
+    return new Interface(_abi) as IERC721MetadataInterface;
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    runner?: ContractRunner | null
   ): IERC721Metadata {
-    return new Contract(address, _abi, signerOrProvider) as IERC721Metadata;
+    return new Contract(address, _abi, runner) as unknown as IERC721Metadata;
   }
 }

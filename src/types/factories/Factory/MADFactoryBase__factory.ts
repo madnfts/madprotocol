@@ -7,8 +7,7 @@ import type {
   MADFactoryBase,
   MADFactoryBaseInterface,
 } from "../../Factory/MADFactoryBase";
-import type { Provider } from "@ethersproject/providers";
-import { Contract, Signer, utils } from "ethers";
+import { Contract, Interface, type ContractRunner } from "ethers";
 
 const _abi = [
   {
@@ -89,13 +88,13 @@ const _abi = [
       {
         indexed: false,
         internalType: "string",
-        name: "name",
+        name: "collectionName",
         type: "string",
       },
       {
         indexed: false,
         internalType: "string",
-        name: "symbol",
+        name: "collectionSymbol",
         type: "string",
       },
       {
@@ -748,12 +747,12 @@ const _abi = [
 export class MADFactoryBase__factory {
   static readonly abi = _abi;
   static createInterface(): MADFactoryBaseInterface {
-    return new utils.Interface(_abi) as MADFactoryBaseInterface;
+    return new Interface(_abi) as MADFactoryBaseInterface;
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    runner?: ContractRunner | null
   ): MADFactoryBase {
-    return new Contract(address, _abi, signerOrProvider) as MADFactoryBase;
+    return new Contract(address, _abi, runner) as unknown as MADFactoryBase;
   }
 }

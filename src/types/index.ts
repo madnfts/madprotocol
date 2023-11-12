@@ -8,6 +8,7 @@ import type * as madTokens from "./MADTokens";
 import type * as marketplace from "./Marketplace";
 import type * as router from "./Router";
 import type * as shared from "./Shared";
+import type * as splitter from "./Splitter";
 import type * as lib from "./lib";
 
 export type { factory };
@@ -19,6 +20,8 @@ export type { marketplace };
 export type { router };
 
 export type { shared };
+
+export type { splitter };
 
 export type { lib };
 export type { MAD } from "./MAD";

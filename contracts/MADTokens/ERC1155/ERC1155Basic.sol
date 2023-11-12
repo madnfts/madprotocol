@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 // solhint-disable-next-line
 
 import {
@@ -78,15 +78,10 @@ contract ERC1155Basic is ERC1155, ImplBase {
                 revert(28, 4)
             } // ArrayLengthsMismatch()
         }
-
-        uint256 i;
-        for (i; i < len;) {
+        
+        for (uint256 i = 0; i < len; ++i) {
             _burn(from[i], uint256(ids[i]), uint256(balances[i]));
-            unchecked {
-                ++i;
-            }
         }
-        _loopOverflow(i, len);
     }
 
     /// @dev Transfer event emitted by parent ERC1155 contract.

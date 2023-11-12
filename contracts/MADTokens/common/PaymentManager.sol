@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 
 import { IERC20 } from "contracts/lib/tokens/IERC20.sol";
-import { SplitterImpl } from "contracts/lib/splitter/SplitterImpl.sol";
+import { SplitterImpl } from "contracts/Splitter/SplitterImpl.sol";
 import { SafeTransferLib } from "contracts/lib/utils/SafeTransferLib.sol";
 
 abstract contract PaymentManager {

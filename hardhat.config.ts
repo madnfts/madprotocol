@@ -53,11 +53,20 @@ const chains: Array<NetworkUserConfig> = [
       ? [PK]
       : {
           mnemonic: MNEMONIC || DEFAULT_MNEMONIC,
+        }
         },
-  },
   {
     chainId: 1666900000, // harmonyDevnet
     url: "https://api.s0.ps.hmny.io",
+    accounts: PK
+      ? [PK]
+      : {
+          mnemonic: MNEMONIC || DEFAULT_MNEMONIC,
+        },
+  },
+  {
+    chainId: 137, // Polygon
+    url: "https://polygon-rpc.com/",
     accounts: PK
       ? [PK]
       : {
@@ -150,6 +159,7 @@ const config: HardhatUserConfig = {
   networks: {
     harmony: getChainConfig(1666600000),
     harmonyDevnet: getChainConfig(1666900000),
+    polygon: getChainConfig(137),
     skale: getChainConfig(1564830818),
     skaleDevnet: getChainConfig(344106930),
     skaleChaos: getChainConfig(1351057110),
@@ -170,7 +180,7 @@ const config: HardhatUserConfig = {
   },
 
   // solidity: {
-  //   version: "0.8.19",
+  //   version: "0.8.22",
   //   settings: {
   //     metadata: {
   //       bytecodeHash: "none",
@@ -182,7 +192,7 @@ const config: HardhatUserConfig = {
   //   },
   // },
   solidity: {
-    version: "0.8.19",
+    version: "0.8.22",
     settings: {
       viaIR: true,
       optimizer: {

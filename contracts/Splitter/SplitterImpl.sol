@@ -6,10 +6,10 @@
 /// @author Modified from OpenZeppelin Contracts
 /// (https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/finance/PaymentSplitter.sol)
 
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 
 import { SplitterEventsAndErrors } from
-    "contracts/lib/splitter/SplitterEventsAndErrors.sol";
+    "contracts/Splitter/SplitterEventsAndErrors.sol";
 import {
     SafeTransferLib, IERC20
 } from "contracts/lib/utils/SafeTransferLib.sol";
@@ -80,12 +80,8 @@ contract SplitterImpl is SplitterEventsAndErrors {
             revert NoPayees();
         }
 
-        uint256 i;
-        for (i; i < pLen;) {
+        for (uint256 i; i < pLen; ++i) {
             _addPayee(payees[i], shares_[i]);
-            unchecked {
-                ++i;
-            }
         }
     }
 
@@ -131,16 +127,12 @@ contract SplitterImpl is SplitterEventsAndErrors {
 
     /// @dev Release all pending withdrawals.
     function releaseAll() public {
-        uint256 i;
         uint256 _payeesLength = _payees.length;
-        for (i; i < _payeesLength;) {
-            address addr = _payees[i];
-            uint256 rel = releasable(_payees[i]);
+        address addr;
+        for (uint256 i = 0; i < _payeesLength; ++i) {
+            uint256 rel = releasable(addr);
             if (rel != 0) {
                 release(payable(addr));
-            }
-            unchecked {
-                ++i;
             }
         }
     }
@@ -168,17 +160,13 @@ contract SplitterImpl is SplitterEventsAndErrors {
 
     /// @dev Release all pending withdrawals.
     function releaseAll(IERC20 token) public {
-        uint256 i;
         uint256 _payeesLength = _payees.length;
-        for (i; i < _payeesLength;) {
+        for ( uint256 i = 0; i < _payeesLength; ++i) {
             address addr = _payees[i];
-            uint256 rel = releasable(token, _payees[i]);
+            uint256 rel = releasable(token, addr);
             if (rel != 0) {
                 release(token, payable(addr));
-            }
-            unchecked {
-                ++i;
-            }
+        }
         }
     }
 

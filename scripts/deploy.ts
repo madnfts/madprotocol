@@ -2,8 +2,6 @@ import { config } from "dotenv";
 import { ethers } from "hardhat";
 import { resolve } from "path";
 
-import { MockERC20 } from "../src/types/lib/test/erc20-mock.sol";
-
 config({ path: resolve(__dirname, "./.env") });
 
 const {
@@ -86,7 +84,7 @@ const deployERC20 = async () => {
     "Mad Mock Eth",
     "mmEth",
     18,
-    10,
+    10
   );
   await erc20.waitForDeployment();
   deployedErc20Address = erc20.target;
@@ -94,16 +92,21 @@ const deployERC20 = async () => {
 };
 
 const deployFactory = async (erc20Address) => {
-  const MADFactory = await ethers.getContractFactory(
-    "MADFactory",
-  );
-  console.log(`Deploying Factory with args ${erc20Address} and ${RECIPIENT}`);
-  const factory = await MADFactory.deploy(
-    erc20Address,
-    RECIPIENT,
+  
+  const factory = await ethers.deployContract(
+    "MADFactory",[ erc20Address,
+         RECIPIENT],
+         {
+              gasLimit: 0x1000000,
+              gasPrice: 0x7a120,
+              gas:1000000
+            }
   );
   await factory.waitForDeployment();
   deployedFactoryAddress = factory.target;
+  const factoryErc20 = await factory.erc20();
+  console.log(`factory.erc20: ${factoryErc20}`);
+  console.log(`factory.erc20 == erc20Address: ${factoryErc20 == erc20Address}`);
   return factory;
 };
 

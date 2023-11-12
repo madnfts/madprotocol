@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 
 import { ERC2981 } from "contracts/lib/tokens/common/ERC2981.sol";
 import { TwoFactor } from "contracts/lib/auth/TwoFactor.sol";
@@ -188,16 +188,6 @@ abstract contract ImplBase is
             let len := mload(_string)
             if lt(0x1f, len) { invalid() }
             sstore(_slot, or(mload(add(_string, 0x20)), shl(0x01, len)))
-        }
-    }
-
-    function _loopOverflow(uint256 _index, uint256 _end) internal pure {
-        assembly {
-            if lt(_index, _end) {
-                // LoopOverflow()
-                mstore(0x00, 0xdfb035c9)
-                revert(0x1c, 0x04)
-            }
         }
     }
 }

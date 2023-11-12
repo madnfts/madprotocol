@@ -44,7 +44,7 @@ optimizer = true
 # optimizer = true
 # optimizer_runs = 100
 # via_ir = true
-# solc_version = "0.8.19"
+# solc_version = "0.8.22"
 # script = "script"
 
 # general test options for forge
@@ -173,7 +173,7 @@ max_test_rejects = 1_000_000 # 65536
 #     'CREATE3',
 # ], 'contracts/lib/utils/SafeTransferLib.sol' = [
 #     'SafeTransferLib',
-# ], 'contracts/lib/utils/SplitterBufferLib.sol' = [
+# ], 'contracts/lib/splitter/SplitterBufferLib.sol' = [
 #     'SplitterBufferLib',
 # ], 'contracts/lib/utils/Strings.sol' = [
 #     'Strings',

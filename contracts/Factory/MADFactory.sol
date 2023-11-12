@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 
 import { MADFactoryBase } from "contracts/Factory/MADFactoryBase.sol";
 import { ContractTypes } from "contracts/Shared/ContractTypes.sol";
@@ -9,7 +9,7 @@ contract MADFactory is MADFactoryBase {
     uint256 constant AMBASSADOR_SHARE_MIN = 99;
     uint256 constant AMBASSADOR_SHARE_MAX = 2001;
     uint256 constant PROJECT_SHARE_MIN = 99;
-    uint256 constant PROJECT_SHARE_MAX = 10_001;
+    uint256 constant ONE_HUNDRED_PERCENT = 10_001;
 
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
@@ -47,10 +47,9 @@ contract MADFactory is MADFactoryBase {
     ///     validate and attach to collection.
     ///   - royalty: Ranges in between 0%-10%, in percentage basis points,
     ///     accepted (Min tick := 25).
-    function createCollection(ContractTypes.CreateCollectionParams calldata params)
-        public
-        payable
-    {
+    function createCollection(
+        ContractTypes.CreateCollectionParams calldata params
+    ) public payable {
         emit CollectionCreated(
             params.splitter,
             _createCollection(params),
@@ -119,7 +118,7 @@ contract MADFactory is MADFactoryBase {
         } else if (
             params.project != ADDRESS_ZERO && params.ambassador == ADDRESS_ZERO
                 && params.projectShare > PROJECT_SHARE_MIN
-                && params.projectShare < PROJECT_SHARE_MAX
+                && params.projectShare < ONE_HUNDRED_PERCENT
         ) {
             _createSplitter(
                 params,
@@ -130,7 +129,9 @@ contract MADFactory is MADFactoryBase {
                 && params.ambassadorShare > AMBASSADOR_SHARE_MIN
                 && params.ambassadorShare < AMBASSADOR_SHARE_MAX
                 && params.projectShare > PROJECT_SHARE_MIN
-                && params.projectShare < PROJECT_SHARE_MAX
+                && params.projectShare < ONE_HUNDRED_PERCENT
+                && params.ambassadorShare + params.projectShare
+                    < ONE_HUNDRED_PERCENT
         ) {
             _createSplitter(
                 params,

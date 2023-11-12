@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 
 import { MADBase } from "contracts/Shared/MADBase.sol";
 import {
@@ -9,10 +9,9 @@ import {
 } from "contracts/Shared/EventsAndErrors.sol";
 import { DCPrevent } from "contracts/lib/security/DCPrevent.sol";
 import { ContractTypes } from "contracts/Shared/ContractTypes.sol";
-import { SplitterImpl } from "contracts/lib/splitter/SplitterImpl.sol";
+import { SplitterImpl } from "contracts/Splitter/SplitterImpl.sol";
 import { CREATE3, Bytes32AddressLib } from "contracts/lib/utils/CREATE3.sol";
-import { SplitterBufferLib as BufferLib } from
-    "contracts/lib/utils/SplitterBufferLib.sol";
+import { SplitterBufferLib } from "contracts/Splitter/SplitterBufferLib.sol";
 
 import { FeeHandlerFactory } from "contracts/Factory/FeeHandler.sol";
 
@@ -48,7 +47,8 @@ abstract contract MADFactoryBase is
     ////////////////////////////////////////////////////////////////
 
     /// @dev `collectionIds` are derived from a collection's address.
-    mapping(address collectionId => ContractTypes.Collection) public collectionInfo;
+    mapping(address collectionId => ContractTypes.Collection) public
+        collectionInfo;
 
     /// @dev Nested mapping that takes an collection creator as key of
     /// a hashmap of splitter contracts to its respective deployment configs.
@@ -78,11 +78,9 @@ abstract contract MADFactoryBase is
         setRecipient(_recipient);
     }
 
-    function _createCollection(ContractTypes.CreateCollectionParams calldata params)
-        internal
-        isThisOg
-        returns (address)
-    {
+    function _createCollection(
+        ContractTypes.CreateCollectionParams calldata params
+    ) internal isThisOg returns (address) {
         _isZeroAddr(router);
         _limiter(params.tokenType, params.splitter);
         _royaltyLocker(params.royalty);
@@ -148,10 +146,11 @@ abstract contract MADFactoryBase is
             ((10_000 - params.ambassadorShare) * params.projectShare) / 10_000;
 
         address[] memory _payees =
-            BufferLib.payeesBuffer(params.ambassador, params.project);
+            SplitterBufferLib.payeesBuffer(params.ambassador, params.project);
 
-        uint256[] memory _shares =
-            BufferLib.sharesBuffer(params.ambassadorShare, projectShareParsed);
+        uint256[] memory _shares = SplitterBufferLib.sharesBuffer(
+            params.ambassadorShare, projectShareParsed
+        );
 
         address splitter =
             _splitterDeploy(params.splitterSalt, _payees, _shares);
@@ -218,16 +217,12 @@ abstract contract MADFactoryBase is
     {
         stdout = _userRender(_user);
 
-        uint256 i;
         uint256 len = getIDsLength(_user);
 
-        for (; i < len;) {
+        for (uint256 i = 0; i < len; ++i) {
             if (_token == userTokens[_user][i]) {
                 stdout = true;
                 break;
-            }
-            unchecked {
-                ++i;
             }
         }
     }

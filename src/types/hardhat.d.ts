@@ -221,6 +221,14 @@ declare module "hardhat/types/runtime" {
       name: "MADBase",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MADBase__factory>;
+    getContractFactory(
+      name: "SplitterEventsAndErrors",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.SplitterEventsAndErrors__factory>;
+    getContractFactory(
+      name: "SplitterImpl",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.SplitterImpl__factory>;
 
     getContractAt(
       name: "FeeHandlerFactory",
@@ -482,6 +490,16 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.MADBase>;
+    getContractAt(
+      name: "SplitterEventsAndErrors",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.SplitterEventsAndErrors>;
+    getContractAt(
+      name: "SplitterImpl",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.SplitterImpl>;
 
     deployContract(
       name: "FeeHandlerFactory",
@@ -691,6 +709,14 @@ declare module "hardhat/types/runtime" {
       name: "MADBase",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.MADBase>;
+    deployContract(
+      name: "SplitterEventsAndErrors",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SplitterEventsAndErrors>;
+    deployContract(
+      name: "SplitterImpl",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SplitterImpl>;
 
     deployContract(
       name: "FeeHandlerFactory",
@@ -952,6 +978,16 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.MADBase>;
+    deployContract(
+      name: "SplitterEventsAndErrors",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SplitterEventsAndErrors>;
+    deployContract(
+      name: "SplitterImpl",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SplitterImpl>;
 
     // default types
     getContractFactory(

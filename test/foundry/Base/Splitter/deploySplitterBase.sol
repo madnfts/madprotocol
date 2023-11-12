@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 
 import { IFactory } from "test/foundry/Base/Factory/IFactory.sol";
 import { ISplitter, IERC20 } from "test/foundry/Base/Splitter/ISplitter.sol";
-import { SplitterImpl } from "contracts/lib/splitter/SplitterImpl.sol";
+import { SplitterImpl } from "contracts/Splitter/SplitterImpl.sol";
 import { ContractTypes } from "contracts/Shared/ContractTypes.sol";
 import { Deployer } from "test/foundry/Deploy/deployer.t.sol";
 
@@ -87,9 +87,9 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
         ISplitter.SplitterData memory splitterData,
         address splitterAddress
     ) public {
-        ContractTypes.SplitterConfig memory config = splitterData.factory.splitterInfo(
-            splitterData.deployer, splitterAddress
-        );
+        ContractTypes.SplitterConfig memory config = splitterData
+            .factory
+            .splitterInfo(splitterData.deployer, splitterAddress);
 
         ISplitter splitter = ISplitter(splitterAddress);
         uint256 creatorShares = splitter._shares(splitterData.deployer);

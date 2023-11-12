@@ -3,7 +3,7 @@ import os
 
 
 class Abi2Interface:
-    solidity_version = "0.8.19"
+    solidity_version = "0.8.22"
 
     def get_in_or_out(self, inputs):
         return ", ".join(

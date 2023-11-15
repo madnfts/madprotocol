@@ -14,6 +14,7 @@ abstract contract FeeHandlerFactory {
     /// @notice The recipient address used for fees.
     address public recipient;
 
+    // Native Token fees
     uint256 public feeCreateCollection = 1 ether;
     uint256 public feeCreateSplitter = 1 ether;
 

@@ -78,7 +78,7 @@ contract MADFactory is MADFactoryBase {
     ///   - project: This is another optional address for which the splitter
     ///             contract can set a share.
 
-    ///   - ambassadorShare: Percentage (1%-20%) of  sales & royalties tobe
+    ///   - ambassadorShare: Percentage (1%-20%) of  sales & royalties to be
     ///             assigned to an ambassador (optional, will be disregarded if
     /// left
     ///             empty(value == 0)).

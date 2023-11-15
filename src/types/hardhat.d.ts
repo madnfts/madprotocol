@@ -42,14 +42,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.DCPrevent__factory>;
     getContractFactory(
-      name: "SplitterEventsAndErrors",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.SplitterEventsAndErrors__factory>;
-    getContractFactory(
-      name: "SplitterImpl",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.SplitterImpl__factory>;
-    getContractFactory(
       name: "MockERC1155",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MockERC1155__factory>;
@@ -266,16 +258,6 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.DCPrevent>;
     getContractAt(
-      name: "SplitterEventsAndErrors",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.SplitterEventsAndErrors>;
-    getContractAt(
-      name: "SplitterImpl",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.SplitterImpl>;
-    getContractAt(
       name: "MockERC1155",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -530,14 +512,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.DCPrevent>;
     deployContract(
-      name: "SplitterEventsAndErrors",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.SplitterEventsAndErrors>;
-    deployContract(
-      name: "SplitterImpl",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.SplitterImpl>;
-    deployContract(
       name: "MockERC1155",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.MockERC1155>;
@@ -753,16 +727,6 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.DCPrevent>;
-    deployContract(
-      name: "SplitterEventsAndErrors",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.SplitterEventsAndErrors>;
-    deployContract(
-      name: "SplitterImpl",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.SplitterImpl>;
     deployContract(
       name: "MockERC1155",
       args: any[],

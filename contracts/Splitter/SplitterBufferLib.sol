@@ -39,23 +39,25 @@ library SplitterBufferLib {
         pure
         returns (uint256[] memory memOffset)
     {
+        uint256 oneHundredPercent = 10_000;
         if (_ambassadorShare == 0 && _projectShare == 0) {
             memOffset = new uint256[](1);
-            memOffset[0] = 10_000;
+            memOffset[0] = oneHundredPercent;
         } else {
             if (_projectShare == 0) {
                 memOffset = new uint256[](2);
                 memOffset[0] = _ambassadorShare;
-                memOffset[1] = 10_000 - _ambassadorShare;
+                memOffset[1] = oneHundredPercent - _ambassadorShare;
             } else if (_ambassadorShare == 0) {
                 memOffset = new uint256[](2);
                 memOffset[0] = _projectShare;
-                memOffset[1] = 10_000 - _projectShare;
+                memOffset[1] = oneHundredPercent - _projectShare;
             } else {
                 memOffset = new uint256[](3);
                 memOffset[0] = _ambassadorShare;
                 memOffset[1] = _projectShare;
-                memOffset[2] = 10_000 - (_ambassadorShare + _projectShare);
+                memOffset[2] =
+                    oneHundredPercent - (_ambassadorShare + _projectShare);
             }
         }
         return memOffset;

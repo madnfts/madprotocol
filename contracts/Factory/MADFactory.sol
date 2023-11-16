@@ -15,9 +15,38 @@ contract MADFactory is MADFactoryBase {
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    constructor(address _paymentTokenAddress, address _recipient)
-        MADFactoryBase(_paymentTokenAddress, _recipient)
-    { }
+    constructor(address _recipient) MADFactoryBase(_recipient) { }
+
+    function createCollection(
+        ContractTypes.CreateCollectionParams calldata params
+    ) public payable {
+        emit CollectionCreated(
+            params.splitter,
+            _createCollection(params, address(0)),
+            params.collectionName,
+            params.collectionSymbol,
+            params.royalty,
+            params.maxSupply,
+            params.price,
+            params.tokenType
+        );
+    }
+
+    function createCollection(
+        ContractTypes.CreateCollectionParams calldata params,
+        address collectionToken
+    ) public payable {
+        emit CollectionCreated(
+            params.splitter,
+            _createCollection(params, collectionToken),
+            params.collectionName,
+            params.collectionSymbol,
+            params.royalty,
+            params.maxSupply,
+            params.price,
+            params.tokenType
+        );
+    }
 
     /// @notice Core public token types deployment pusher.
     /// @dev Function Sighash := 0x73fd6808
@@ -47,12 +76,14 @@ contract MADFactory is MADFactoryBase {
     ///     validate and attach to collection.
     ///   - royalty: Ranges in between 0%-10%, in percentage basis points,
     ///     accepted (Min tick := 25).
-    function createCollection(
-        ContractTypes.CreateCollectionParams calldata params
-    ) public payable {
+    ///   - erc20Address: Address of the ERC20 token to be used as payment token
+    function _handleCreateCollection(
+        ContractTypes.CreateCollectionParams calldata params,
+        address collectionToken
+    ) private {
         emit CollectionCreated(
             params.splitter,
-            _createCollection(params),
+            _createCollection(params, collectionToken),
             params.collectionName,
             params.collectionSymbol,
             params.royalty,
@@ -69,6 +100,8 @@ contract MADFactory is MADFactoryBase {
     ///   - splitterSalt: Nonce/Entropy factor used by CREATE3 method
     ///         to generate payment splitter deployment address. Must be always
     ///         different to avoid address collision.
+    ///   - erc20Address: Address of the ERC20 token to be used as payment for
+    /// fees.
 
     ///   - ambassador: User may choose from one of the whitelisted addresses
     ///             to donate 1%-20% of secondary sales royalties (optional,

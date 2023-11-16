@@ -160,6 +160,10 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
 
         assertTrue(true == config.valid, "Splitter must be valid.");
 
+        if (splitterDataProjectShare == 10_000) {
+            // 100% of the shares
+            _payeesExpectedLength = 1;
+        }
         assertTrue(
             _payeesExpectedLength == splitter.payeesLength(),
             "Payees Lengths should match expected"
@@ -222,10 +226,10 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
         }
     }
 
-    function _runSplitterDeploy_creatorOnly(IFactory factory)
-        public
-        returns (address splitter)
-    {
+    function _runSplitterDeploy_creatorOnly(
+        IFactory factory,
+        address erc20Address
+    ) public returns (address splitter) {
         return _runSplitterDeploy(
             ISplitter.SplitterData({
                 factory: factory,
@@ -235,19 +239,21 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
                     ambassador: address(0),
                     project: address(0),
                     ambassadorShare: 0,
-                    projectShare: 0
+                    projectShare: 0,
+                    erc20Address: erc20Address
                 }),
                 payeesExpected: SplitterHelpers.getExpectedSplitterAddresses(
                     currentSigner, address(0), address(0)
                     ),
-                paymentToken: factory.erc20()
+                paymentToken: erc20Address
             })
         );
     }
 
     function _runSplitterDeploy_ambassadorWithNoProject(
         IFactory factory,
-        uint256 _ambassadorShare
+        uint256 _ambassadorShare,
+        address erc20Address
     ) public returns (address splitter) {
         return _runSplitterDeploy(
             ISplitter.SplitterData({
@@ -258,19 +264,21 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
                     ambassador: ambassador,
                     project: address(0),
                     ambassadorShare: _ambassadorShare,
-                    projectShare: 0
+                    projectShare: 0,
+                    erc20Address: erc20Address
                 }),
                 payeesExpected: SplitterHelpers.getExpectedSplitterAddresses(
                     currentSigner, ambassador, address(0)
                     ),
-                paymentToken: factory.erc20()
+                paymentToken: erc20Address
             })
         );
     }
 
     function _runSplitterDeploy_projectWithNoAmbassador(
         IFactory factory,
-        uint256 _projectShare
+        uint256 _projectShare,
+        address erc20Address
     ) public returns (address splitter) {
         return _runSplitterDeploy(
             ISplitter.SplitterData({
@@ -281,12 +289,13 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
                     ambassador: address(0),
                     project: project,
                     ambassadorShare: 0,
-                    projectShare: _projectShare
+                    projectShare: _projectShare,
+                    erc20Address: erc20Address
                 }),
                 payeesExpected: SplitterHelpers.getExpectedSplitterAddresses(
                     currentSigner, address(0), project
                     ),
-                paymentToken: factory.erc20()
+                paymentToken: erc20Address
             })
         );
     }
@@ -294,7 +303,8 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
     function _runSplitterDeploy_BothAmbassadorAndProject(
         IFactory factory,
         uint256 _ambassadorShare,
-        uint256 _projectShare
+        uint256 _projectShare,
+        address erc20Address
     ) public returns (address splitter) {
         return _runSplitterDeploy(
             ISplitter.SplitterData({
@@ -305,12 +315,13 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
                     ambassador: ambassador,
                     project: project,
                     ambassadorShare: _ambassadorShare,
-                    projectShare: _projectShare
+                    projectShare: _projectShare,
+                    erc20Address: erc20Address
                 }),
                 payeesExpected: SplitterHelpers.getExpectedSplitterAddresses(
                     currentSigner, ambassador, project
                     ),
-                paymentToken: factory.erc20()
+                paymentToken: erc20Address
             })
         );
     }

@@ -161,12 +161,12 @@ contract SplitterImpl is SplitterEventsAndErrors {
     /// @dev Release all pending withdrawals.
     function releaseAll(IERC20 token) public {
         uint256 _payeesLength = _payees.length;
-        for ( uint256 i = 0; i < _payeesLength; ++i) {
+        for (uint256 i = 0; i < _payeesLength; ++i) {
             address addr = _payees[i];
             uint256 rel = releasable(token, addr);
             if (rel != 0) {
                 release(token, payable(addr));
-        }
+            }
         }
     }
 

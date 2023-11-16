@@ -17,12 +17,8 @@ import {
 } from "test/foundry/CreateCollection/createCollectionHelpers.sol";
 
 import { IERC721Basic } from "test/foundry/Base/Tokens/ERC721/IERC721Basic.sol";
-import { MockERC20 } from "test/foundry/Base/Tokens/ERC20/deployMockERC20.sol";
 
-contract TestMintBurnAndTransferERC721_Erc20 is
-    CreateCollectionHelpers,
-    Enums
-{
+contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
     IDeployer.DeployedContracts deployedContracts;
     Deployer deployer;
     DeploySplitterBase splitterDeployer;
@@ -38,69 +34,63 @@ contract TestMintBurnAndTransferERC721_Erc20 is
         [1, 2, 3, 4, 5, 100, 1000, 2000, 3000, 4000, 5000, 9999, 10_000];
 
     function setUp() public {
+        vm.deal(prankster, 20_000 ether);
         // Instantiate deployer contracts
         deployer = new Deployer();
 
         // Instantiate splitter deployer contract
         splitterDeployer = new DeploySplitterBase();
 
-        splitterDeployer.updateIsErc20(true);
-        updateIsErc20(true);
-
         // Create array of deployed contracts instances for ERC721
         deployedContracts = deployer.deployAll(ercTypes.ERC721, isERC20);
-
         erc20Token = deployedContracts.paymentToken;
-
-        vm.deal(prankster, 20_000 ether);
-        erc20Token.mint(prankster, 20_000 ether);
-
-        vm.deal(nftMinter, 20_000 ether);
-        erc20Token.mint(nftMinter, 20_000 ether);
-
-        vm.deal(nftReceiver, 20_000 ether);
     }
 
-    function testMintTo_DefaultSingle() public {
+    function test_ROUTER_MintTo_DefaultSingle() public {
         uint128 _amountToMint = 1;
         MintData memory mintData =
             _setupMint(nftMinter, nftReceiver, 0, _amountToMint);
         _doMintTo(mintData, 0);
+
         _checkMint(mintData);
     }
 
-    function testPublicMint_DefaultSingle() public {
+    function test_ROUTER_PublicMint_DefaultSingle() public {
         uint128 _amountToMint = 1;
         MintData memory mintData = _setupMint(
             nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
         );
+
         _doPublicMint(mintData, true, 0);
+
         _checkMint(mintData);
     }
 
-    function testMintTo_DefaultMultiple() public {
+    function test_ROUTER_MintTo_DefaultMultiple() public {
         for (uint256 i = 0; i < 10; i++) {
             uint128 _amountToMint = 10;
             MintData memory mintData =
                 _setupMint(nftMinter, nftReceiver, 0, _amountToMint);
-
             _doMintTo(mintData, 0);
+
             _checkMint(mintData);
         }
     }
 
-    function TestPublicMint_DefaultMultiple() public {
+    function test_ROUTER_PublicMint_DefaultMultiple() public {
         for (uint256 i = 0; i < 10; i++) {
             uint128 _amountToMint = 10;
             MintData memory mintData = _setupMint(
                 nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
             );
+
             _doPublicMint(mintData, true, 0);
+
             _checkMint(mintData);
         }
     }
 
-    function testMintTo_DefaultFuzzy(uint256 x) public {
+    function test_ROUTER_MintTo_DefaultFuzzy(uint256 x) public {
         uint128 _amountToMint = 10;
         MintData memory mintData =
             _setupMint(nftMinter, nftReceiver, 0, _amountToMint);
@@ -108,7 +98,7 @@ contract TestMintBurnAndTransferERC721_Erc20 is
         _checkMint(mintData);
     }
 
-    function testPublicMint_DefaultFuzzy(uint256 x) public {
+    function test_ROUTER_PublicMint_DefaultFuzzy(uint256 x) public {
         uint128 _amountToMint = 10;
         MintData memory mintData = _setupMint(
             nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
@@ -117,31 +107,17 @@ contract TestMintBurnAndTransferERC721_Erc20 is
         _checkMint(mintData);
     }
 
-    function testPublicMint_FreeMintZeroPrice() public {
+    function test_ROUTER_PublicMint_FreeMintZeroPrice() public {
         uint128 _amountToMint = 10;
         uint256 _nftPublicMintPrice = 0;
         MintData memory mintData = _setupMint(
             nftMinter, nftReceiver, _nftPublicMintPrice, _amountToMint
         );
+
         _doPublicMint(mintData, true, 0);
     }
 
-    function testSetPublicMint_Unauthorised() public {
-        uint128 _amountToMint = 1;
-        MintData memory mintData = _setupMint(
-            nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
-        );
-        IERC721Basic collection = IERC721Basic(mintData.collectionAddress);
-
-        vm.startPrank(prankster);
-        vm.deal(prankster, 20_000 ether);
-        erc20Token.mint(prankster, 20_000 ether);
-        vm.expectRevert(0x1648fd01); // error NotAuthorised();
-        collection.setPublicMintState(true);
-        vm.stopPrank();
-    }
-
-    function testPublicMint_PublicMintClosed() public {
+    function test_ROUTER_PublicMint_PublicMintClosed() public {
         uint128 _amountToMint = 1;
         MintData memory mintData = _setupMint(
             nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
@@ -154,9 +130,9 @@ contract TestMintBurnAndTransferERC721_Erc20 is
         );
     }
 
-    function testPublicMint_IncorrectFeeSingleFuzzy(uint256 _nftPublicMintPrice)
-        public
-    {
+    function test_ROUTER_PublicMint_IncorrectFeeSingleFuzzy(
+        uint256 _nftPublicMintPrice
+    ) public {
         vm.assume(
             _nftPublicMintPrice != nftPublicMintPrice
                 && _nftPublicMintPrice <= 1 ether
@@ -175,40 +151,7 @@ contract TestMintBurnAndTransferERC721_Erc20 is
         );
     }
 
-    // function testPublicMint_ZeroAmount() public {
-    //     uint128 _amountToMint = 0;
-    //     MintData memory mintData = _setupMint(
-    //         nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
-    //     );
-
-    //     _doPublicMint(
-    //         mintData,
-    //         true,
-    //         0xf7760f25 // error WrongPrice();
-    //     );
-    // }
-
-    // function testMintTo_ZeroAmount() public {
-    //     uint128 _amountToMint = 0;
-    //     MintData memory mintData =
-    //         _setupMint(nftMinter, nftReceiver, 0, _amountToMint);
-
-    //     _doMintTo(mintData, 0xf7760f25); // error WrongPrice();
-    // }
-
-    function testPublicMint_RouterAuthorisedRevert() public {
-        uint128 _amountToMint = 1;
-        MintData memory mintData = _setupMint(
-            nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
-        );
-
-        erc20Token.approve(mintData.collectionAddress, _amountToMint);
-
-        vm.expectRevert(0xf56dc29c); // error RouterIsEnabled();
-        IERC721Basic(mintData.collectionAddress).mint(_amountToMint);
-    }
-
-    function testMintTo_UnAuthorised() public {
+    function test_ROUTER_MintTo_UnAuthorised() public {
         uint128 _amountToMint = 1;
         MintData memory mintData = _setupMint(
             nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
@@ -221,11 +164,11 @@ contract TestMintBurnAndTransferERC721_Erc20 is
         IERC721Basic(mintData.collectionAddress).mintTo(prankster, 1);
     }
 
-    function testMintTo_MaxSupply() public {
+    function test_ROUTER_MintTo_MaxSupply() public {
         _mintTo_MaxSupply();
     }
 
-    function testPublicMint_MaxSupply() public {
+    function test_ROUTER_PublicMint_MaxSupply() public {
         _publicMint_MaxSupply();
     }
 
@@ -233,13 +176,13 @@ contract TestMintBurnAndTransferERC721_Erc20 is
     //                          BURN TESTS                        //
     ////////////////////////////////////////////////////////////////
 
-    function testBurnFromMintTo_DefaultSingle() public {
+    function test_ROUTER_BurnFromMintTo_DefaultSingle() public {
         // Mint Max supply
         MintData memory mintData = _mintTo_MaxSupply();
         _doBurn(mintData, mintData.nftReceiver);
     }
 
-    function testBurnFromPublicMint_DefaultSingle() public {
+    function test_ROUTER_BurnFromPublicMint_DefaultSingle() public {
         // Mint Max supply
         MintData memory mintData = _publicMint_MaxSupply();
         _doBurn(mintData, mintData.nftReceiver);
@@ -249,46 +192,43 @@ contract TestMintBurnAndTransferERC721_Erc20 is
     //                          WIHDRAW TESTS                     //
     ////////////////////////////////////////////////////////////////
 
-    function testWithdrawERC20() public {
+    function test_ROUTER_WithdrawEth() public {
         uint128 amountToMint = 10;
         uint256 _amountToSend = 10 ether;
 
         // Create Collection & Splitter
         MintData memory mintData =
             _setupMint(nftMinter, nftReceiver, nftPublicMintPrice, amountToMint);
-
-        address _collectionAddress = mintData.collectionAddress;
+        address contractAddress = mintData.collectionAddress;
         address _splitterAddress = mintData.splitterAddress;
 
-        IERC721Basic collection = IERC721Basic(_collectionAddress);
+        uint256 balanceBefore = _splitterAddress.balance;
 
-        uint256 balanceBeforeSplitter = erc20Token.balanceOf(_splitterAddress);
-        uint256 balanceBeforeCollection =
-            erc20Token.balanceOf(_collectionAddress);
+        IERC721Basic collection = IERC721Basic(contractAddress);
 
-        // Send some ERC20 tokens to the CollectionAddress
-        deployer.sendERC20(_collectionAddress, _amountToSend);
+        // Send some NAtive  tokens to the contractAddress
+        vm.deal(contractAddress, _amountToSend);
 
-        uint256 expectedCollectionBalance =
-            balanceBeforeCollection + _amountToSend;
-
-        // Check balance of the collectionAddress
+        // Check the balance of the contract address
         assertTrue(
-            erc20Token.balanceOf(_collectionAddress)
-                == expectedCollectionBalance,
-            "erc20Token.balanceOf(_collectionAddress) == expectedCollectionBalance ::  do not match"
+            contractAddress.balance == _amountToSend,
+            "contractAddress.balance == _amountToSend ::  do not match"
         );
 
-        // Withdraw ERC20 to Splitter
+        // Withdraw NAtive tokens
         vm.startPrank(mintData.nftMinter);
-        collection.withdrawERC20(address(erc20Token));
+        collection.withdraw();
 
-        uint256 splitterBalance = erc20Token.balanceOf(_splitterAddress);
-
-        // Check that the ERC20 has been withdrawn
+        // Check the balance of the contract address
         assertTrue(
-            splitterBalance == balanceBeforeSplitter + expectedCollectionBalance,
-            "splitterBalance == balanceBeforeSplitter + expectedCollectionBalance ::  do not match"
+            contractAddress.balance == 0,
+            "contractAddress.balance == 0 ::  do not match"
+        );
+
+        // Check ETH has been sent to the Splitter contract
+        assertTrue(
+            _splitterAddress.balance == balanceBefore + _amountToSend,
+            "_splitterAddress.balance == balanceBefore + _amountToSend ::  do not match"
         );
     }
 
@@ -336,14 +276,13 @@ contract TestMintBurnAndTransferERC721_Erc20 is
     }
 
     function _mintTo_MaxSupply() internal returns (MintData memory mintData) {
+        vm.deal(nftMinter, 220_000 ether);
         // Mint Max Supply
         uint128 _amountToMint = 10_000;
         mintData = _setupMint(nftMinter, nftReceiver, 0, _amountToMint);
         _doMintTo(mintData, 0);
 
         // Try and mint more..
-        vm.deal(nftMinter, 20_000 ether);
-        erc20Token.mint(nftMinter, 20_000 ether);
         _doMintTo(mintData, 0xd05cb609); // error MaxSupplyReached();
     }
 
@@ -351,6 +290,7 @@ contract TestMintBurnAndTransferERC721_Erc20 is
         internal
         returns (MintData memory mintData)
     {
+        vm.deal(nftMinter, 220_000 ether);
         // Mint Max Supply
         uint128 _amountToMint = 10_000;
         mintData = _setupMint(
@@ -359,8 +299,6 @@ contract TestMintBurnAndTransferERC721_Erc20 is
         _doPublicMint(mintData, true, 0);
 
         // Try and mint more..
-        vm.deal(nftMinter, 20_000 ether);
-        erc20Token.mint(nftMinter, 20_000 ether);
         _doPublicMint(mintData, true, 0xd05cb609); // error MaxSupplyReached();
     }
 
@@ -386,9 +324,7 @@ contract TestMintBurnAndTransferERC721_Erc20 is
 
         // Add Ether to Accounts
         vm.deal(_nftMinter, 20_000 ether);
-        erc20Token.mint(_nftMinter, 20_000 ether);
         vm.deal(_nftReceiver, 20_000 ether);
-        erc20Token.mint(_nftReceiver, 20_000 ether);
 
         uint256 _totalSupplyBefore = collection.totalSupply();
 
@@ -411,13 +347,19 @@ contract TestMintBurnAndTransferERC721_Erc20 is
     function _doMintTo(MintData memory mintData, bytes4 _errorSelector)
         internal
     {
+        uint256 val = deployedContracts.router.feeMint() * mintData.amountToMint;
+
         vm.startPrank(mintData.nftMinter, mintData.nftMinter);
-        IERC721Basic collection = IERC721Basic(mintData.collectionAddress);
 
         if (_errorSelector != 0x00000000) {
             vm.expectRevert(_errorSelector);
         }
-        collection.mintTo(mintData.nftReceiver, mintData.amountToMint);
+
+        deployedContracts.router.mintTo{ value: val }(
+            mintData.collectionAddress,
+            mintData.nftReceiver,
+            mintData.amountToMint
+        );
         vm.stopPrank();
     }
 
@@ -435,25 +377,28 @@ contract TestMintBurnAndTransferERC721_Erc20 is
         vm.prank(mintData.nftMinter, mintData.nftMinter);
         collection.setPublicMintState(_mintState);
 
-        // Turn off router authority
+        // Turn on router authority
         vm.prank(mintData.nftMinter);
-        collection.setRouterHasAuthority(false);
+        collection.setRouterHasAuthority(true);
 
         uint256 _nftPublicMintPrice =
             mintData.nftPublicMintPrice * mintData.amountToMint;
+
+        uint256 val = _nftPublicMintPrice
+            + (deployedContracts.router.feeMint() * mintData.amountToMint);
 
         emit log_named_uint(
             "nftPublicMintPrice AFTER", mintData.nftPublicMintPrice
         );
 
         vm.startPrank(mintData.nftReceiver);
-
-        erc20Token.approve(address(collection), _nftPublicMintPrice);
-
         if (_errorSelector != 0x00000000) {
             vm.expectRevert(_errorSelector);
         }
-        collection.mint(mintData.amountToMint);
+
+        deployedContracts.router.mint{ value: val }(
+            mintData.collectionAddress, mintData.amountToMint
+        );
         vm.stopPrank();
     }
 

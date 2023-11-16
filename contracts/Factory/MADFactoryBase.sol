@@ -73,29 +73,28 @@ abstract contract MADFactoryBase is
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    constructor(address _paymentTokenAddress, address _recipient) {
-        _setPaymentToken(_paymentTokenAddress);
+    constructor(address _recipient) {
         setRecipient(_recipient);
     }
 
     function _createCollection(
-        ContractTypes.CreateCollectionParams calldata params
+        ContractTypes.CreateCollectionParams calldata params,
+        address collectionToken
     ) internal isThisOg returns (address) {
+        if (params.maxSupply == 0) {
+            revert ZeroMaxSupply();
+        }
         _isZeroAddr(router);
         _limiter(params.tokenType, params.splitter);
         _royaltyLocker(params.royalty);
 
-        if (address(erc20) == ADDRESS_ZERO) {
+        address erc20Address = params.erc20Address;
+        if (erc20Address == ADDRESS_ZERO) {
             _handleFees(feeCreateCollection);
         } else {
             _handleFees(
-                feeCreateCollectionErc20[address(erc20)].feeAmount,
-                address(erc20)
+                feeCreateCollectionErc20[erc20Address].feeAmount, erc20Address
             );
-        }
-
-        if (params.maxSupply == 0) {
-            revert ZeroMaxSupply();
         }
         address deployedCollection = _collectionDeploy(
             params.tokenType,
@@ -109,7 +108,7 @@ abstract contract MADFactoryBase is
                 params.splitter,
                 params.royalty,
                 router,
-                address(erc20),
+                collectionToken,
                 msg.sender
             )
         );
@@ -134,23 +133,35 @@ abstract contract MADFactoryBase is
         ContractTypes.CreateSplitterParams calldata params,
         uint256 _flag
     ) internal {
-        if (address(erc20) == ADDRESS_ZERO) {
+        address erc20Address = params.erc20Address;
+        if (erc20Address == ADDRESS_ZERO) {
             _handleFees(feeCreateSplitter);
         } else {
             _handleFees(
-                feeCreateSplitterErc20[address(erc20)].feeAmount, address(erc20)
+                feeCreateSplitterErc20[erc20Address].feeAmount, erc20Address
             );
         }
 
         uint256 projectShareParsed =
             ((10_000 - params.ambassadorShare) * params.projectShare) / 10_000;
 
-        address[] memory _payees =
-            SplitterBufferLib.payeesBuffer(params.ambassador, params.project);
+        address[] memory _payees;
+        uint256[] memory _shares;
 
-        uint256[] memory _shares = SplitterBufferLib.sharesBuffer(
-            params.ambassadorShare, projectShareParsed
-        );
+        if (projectShareParsed < 10_000) {
+            _payees = SplitterBufferLib.payeesBuffer(
+                params.ambassador, params.project
+            );
+
+            _shares = SplitterBufferLib.sharesBuffer(
+                params.ambassadorShare, projectShareParsed
+            );
+        } else {
+            _payees = new address[](1);
+            _payees[0] = params.project;
+            _shares = new uint256[](1);
+            _shares[0] = 10_000;
+        }
 
         address splitter =
             _splitterDeploy(params.splitterSalt, _payees, _shares);

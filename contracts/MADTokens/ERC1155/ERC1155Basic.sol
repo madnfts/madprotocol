@@ -78,7 +78,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
                 revert(28, 4)
             } // ArrayLengthsMismatch()
         }
-        
+
         for (uint256 i = 0; i < len; ++i) {
             _burn(from[i], uint256(ids[i]), uint256(balances[i]));
         }

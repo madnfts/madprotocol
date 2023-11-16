@@ -18,15 +18,22 @@ interface IFactory {
         external
         payable;
 
+    function createCollection(
+        CreateCollectionParams calldata params,
+        address collectionPaymentToken
+    ) external payable;
+
     struct CreateSplitterParams {
         bytes32 splitterSalt;
         address ambassador;
         address project;
         uint256 ambassadorShare;
         uint256 projectShare;
+        address erc20Address;
     }
 
     struct CreateCollectionParams {
+        address erc20Address;
         uint8 tokenType;
         bytes32 tokenSalt;
         string collectionName;

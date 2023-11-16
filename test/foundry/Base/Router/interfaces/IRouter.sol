@@ -41,4 +41,10 @@ interface IRouter {
         external
         view
         returns (Fee memory);
+
+    function mintTo(address token, address to, uint128 amount)
+        external
+        payable;
+
+    function mint(address token, uint128 amount) external payable;
 }

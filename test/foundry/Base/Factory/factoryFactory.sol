@@ -6,13 +6,13 @@ import { Enums } from "test/foundry/utils/enums.sol";
 
 contract FactoryFactory is Enums {
     function createFactory(
-        ercTypes ercType,
-        address _paymentTokenAddressFactory,
+        // ercTypes ercType,
+        // address _paymentTokenAddressFactory,
         address _recipient
     ) public returns (address newFactory) {
         return address(
             new MADFactory(
-                _paymentTokenAddressFactory,
+                // _paymentTokenAddressFactory,
                 _recipient
                 )
         );

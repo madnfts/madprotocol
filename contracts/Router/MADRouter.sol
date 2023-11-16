@@ -63,12 +63,12 @@ contract MADRouter is MADRouterBase {
     //                    PUBLIC MINTING ERC721                  //
     ////////////////////////////////////////////////////////////////
 
-    /// @notice public mint function if madRouter is not authorised.
-    /// This will open up public minting to any contract or EOA if the owner has
-    /// disabled the authorisation for the router.
-    /// Otherwise, Mad Protocol will handle the public minting.
+    /// @notice public mint function if madRouter is authorised.
+    /// This will open up public minting to this contract if the owner has
+    /// enabled the authorisation for the router.
     /// @dev Transfer event emitted by parent ERC721 contract.
     /// @dev Function Sighash := 0xa0712d68
+    /// @dev _token 721 token address.
     /// @param _amount The amount of tokens to mint.
     function mint(address _token, uint128 _amount) public payable {
         uint256 _fee = _handleFees(_FEE_MINT, _amount);

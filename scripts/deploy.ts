@@ -94,7 +94,7 @@ const deployERC20 = async () => {
 const deployFactory = async (erc20Address) => {
   
   const factory = await ethers.deployContract(
-    "MADFactory",[ erc20Address,
+    "MADFactory", [ erc20Address,
          RECIPIENT],
          {
               gasLimit: 0x1000000,

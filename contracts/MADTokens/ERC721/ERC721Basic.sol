@@ -51,7 +51,7 @@ contract ERC721Basic is ERC721, ImplBase {
     function mintTo(address to, uint128 amount) public payable authorised {
         _hasReachedMax(uint256(amount));
         (uint256 curId, uint256 endId) = _incrementCounter(uint256(amount));
-        
+
         for (uint256 i = curId; i < endId; ++i) {
             _mint(to, i);
         }
@@ -72,7 +72,7 @@ contract ERC721Basic is ERC721, ImplBase {
         if (routerHasAuthority) {
             revert RouterIsEnabled();
         }
-        _publicMint(msg.sender, amount, msg.sender);
+        _publicMint(msg.sender, amount);
     }
 
     /// @notice public mint function if madRouter is authorised.
@@ -80,13 +80,15 @@ contract ERC721Basic is ERC721, ImplBase {
     /// @dev Function Sighash := 0xbe29184f
     /// @param to The address to mint to.
     /// @param amount The amount of tokens to mint.
-    function mint(address to, uint128 amount) external payable authorised {
-        _publicMint(to, amount, to);
+    function mint(address to, uint128 amount) external payable 
+    // authorised
+    {
+        _publicMint(to, amount);
     }
 
-    function _publicMint(address to, uint128 amount, address _buyer) private {
+    function _publicMint(address to, uint128 amount) private {
         _hasReachedMax(uint256(amount));
-        _preparePublicMint(uint256(amount), uint256(amount), _buyer);
+        _preparePublicMint(uint256(amount), uint256(amount), to);
         (uint256 curId, uint256 endId) = _incrementCounter(uint256(amount));
 
         for (uint256 i = curId; i < endId; ++i) {

@@ -29,12 +29,14 @@ abstract contract CreateCollectionParams {
         uint256 _maxSupply,
         string memory _uri,
         address _splitter,
-        uint96 _royalty
+        uint96 _royalty,
+        address erc20Address
     ) public returns (IFactory.CreateCollectionParams memory) {
         string memory name = BASE_NAME;
         string memory symbol = BASE_SYMBOL;
 
         return IFactory.CreateCollectionParams({
+            erc20Address: erc20Address,
             tokenType: uint8(_tokenType),
             tokenSalt: updateCreateCollectionSalt(),
             collectionName: name,
@@ -49,7 +51,8 @@ abstract contract CreateCollectionParams {
 
     function defaultCollectionParams(
         address defaultSplitterAddress,
-        uint256 defaultPrice
+        uint256 defaultPrice,
+        address erc20Address
     ) public returns (IFactory.CreateCollectionParams memory) {
         return generateCollectionParams(
             defaultTokenType,
@@ -57,7 +60,8 @@ abstract contract CreateCollectionParams {
             defaultMaxSupply,
             defaultUri,
             defaultSplitterAddress,
-            defaultRoyalty
+            defaultRoyalty,
+            erc20Address
         );
     }
 }

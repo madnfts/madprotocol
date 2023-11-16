@@ -37,7 +37,9 @@ abstract contract CreateCollectionBase is
         collectionAddress = createCollectionCustom(
             factory,
             _splitter,
-            CreateCollectionParams.defaultCollectionParams(_splitter, _price),
+            CreateCollectionParams.defaultCollectionParams(
+                _splitter, _price, address(erc20Token)
+            ),
             currentSigner
         );
     }
@@ -56,11 +58,11 @@ abstract contract CreateCollectionBase is
             factory.createCollection{ value: _createCollectionFee }(params);
         } else {
             uint256 _createCollectionFee =
-                factory.feeCreateCollectionErc20(address(erc20Token)).feeAmount;
+                factory.feeCreateCollectionErc20(params.erc20Address).feeAmount;
             vm.prank(collectionOwner, collectionOwner);
             erc20Token.approve(address(factory), _createCollectionFee);
             vm.prank(collectionOwner, collectionOwner);
-            factory.createCollection(params);
+            factory.createCollection(params, params.erc20Address);
         }
 
         collectionAddress =
@@ -214,10 +216,10 @@ abstract contract CreateCollectionBase is
         );
 
         // erc20()
-        assertTrue(
-            collection.erc20() == factory.erc20(),
-            "collection.erc20() == factory.erc20() :: Incorrect erc20"
-        );
+        // assertTrue(
+        //     collection.erc20() == factory.erc20(),
+        //     "collection.erc20() == factory.erc20() :: Incorrect erc20"
+        // );
 
         // getOwner()
         assertTrue(

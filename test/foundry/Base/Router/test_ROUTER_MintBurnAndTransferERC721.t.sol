@@ -291,6 +291,7 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         returns (MintData memory mintData)
     {
         vm.deal(nftMinter, 220_000 ether);
+        vm.deal(nftReceiver, 220_000 ether);
         // Mint Max Supply
         uint128 _amountToMint = 10_000;
         mintData = _setupMint(
@@ -392,6 +393,7 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         );
 
         vm.startPrank(mintData.nftReceiver);
+        vm.deal(mintData.nftReceiver, val);
         if (_errorSelector != 0x00000000) {
             vm.expectRevert(_errorSelector);
         }

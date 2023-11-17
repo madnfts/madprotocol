@@ -10,7 +10,7 @@ number_underscore = 'thousands'
 single_line_statement_blocks = 'preserve'
 wrap_comments=true
 ignore = ["src/console.sol", "src/console2.sol"]
-
+memory_limit = 3355443200
 
 # https://book.getfoundry.sh/reference/config/
 [profile.default]

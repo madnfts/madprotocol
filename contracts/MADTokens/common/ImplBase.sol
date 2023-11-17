@@ -150,7 +150,6 @@ abstract contract ImplBase is
     ////////////////////////////////////////////////////////////////
 
     function _preparePublicMint(
-        uint256 amount,
         uint256 totalAmount,
         address _buyer
     ) internal {

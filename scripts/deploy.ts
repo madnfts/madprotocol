@@ -81,8 +81,8 @@ const deployedDisplay = () => {
 const deployERC20 = async () => {
   const ERC20 = await ethers.getContractFactory("MockERC20");
   const erc20 = await ERC20.deploy(
-    "Mad Mock Eth",
-    "mmEth",
+    "Mad Mock Token",
+    "MAD",
     18,
     10
   );
@@ -94,8 +94,7 @@ const deployERC20 = async () => {
 const deployFactory = async (erc20Address) => {
   
   const factory = await ethers.deployContract(
-    "MADFactory", [ erc20Address,
-         RECIPIENT],
+    "MADFactory", [RECIPIENT],
          {
               gasLimit: 0x1000000,
               gasPrice: 0x7a120,

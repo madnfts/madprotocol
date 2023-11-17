@@ -96,7 +96,7 @@ contract ERC721Basic is ERC721, ImplBase {
 
     /// @dev Transfer event emitted by parent ERC721 contract.
     /// @dev Function Sighash := 0x362c0cb5
-    function burn(uint128[] calldata ids) external payable routerOrPublic {
+    function burn(uint128[] calldata ids) external payable {
         uint256 len = ids.length;
         _decSupply(len);
 

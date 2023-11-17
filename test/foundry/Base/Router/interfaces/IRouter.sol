@@ -46,5 +46,16 @@ interface IRouter {
         external
         payable;
 
+    function mintTo(
+        address token,
+        address to,
+        uint128 amount,
+        address erc20Token
+    ) external payable;
+
     function mint(address token, uint128 amount) external payable;
+
+    function mint(address token, uint128 amount, address erc20Token)
+        external
+        payable;
 }

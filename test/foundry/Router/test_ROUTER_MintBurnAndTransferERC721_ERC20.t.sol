@@ -329,7 +329,8 @@ contract TestROUTERMintBurnAndTransferERC721_Erc20 is
         deployedContracts.router.mintTo(
             mintData.collectionAddress,
             mintData.nftReceiver,
-            mintData.amountToMint
+            mintData.amountToMint,
+            address(erc20Token)
         );
         vm.stopPrank();
     }
@@ -356,7 +357,7 @@ contract TestROUTERMintBurnAndTransferERC721_Erc20 is
             mintData.nftPublicMintPrice * mintData.amountToMint;
 
         uint256 val = _nftPublicMintPrice
-            + (deployedContracts.router.feeMintErc20(mintData.collectionAddress).feeAmount  * mintData.amountToMint);
+            + (deployedContracts.router.feeMintErc20(mintData.collectionAddress).feeAmount  * mintData.amountToMint + collection.price() * mintData.amountToMint);
 
         emit log_named_uint(
             "nftPublicMintPrice AFTER", mintData.nftPublicMintPrice
@@ -372,7 +373,7 @@ contract TestROUTERMintBurnAndTransferERC721_Erc20 is
             vm.expectRevert(_errorSelector);
         }
         deployedContracts.router.mint(
-            mintData.collectionAddress, mintData.amountToMint
+            mintData.collectionAddress, mintData.amountToMint, address(erc20Token)
         );
         vm.stopPrank();
     }

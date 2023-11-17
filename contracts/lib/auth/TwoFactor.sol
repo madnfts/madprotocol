@@ -54,6 +54,23 @@ abstract contract TwoFactor {
         _;
     }
 
+    /// @notice modifier to check if caller is the router to call functions.
+    /// @dev checks the caller against the router storage slot
+    modifier routerOrPublic() virtual {
+        if (routerHasAuthority) {
+            assembly {
+                let _caller := shl(12, caller())
+                let _router := sload(router.slot)
+                if iszero(eq(_caller, _router)) {
+                    // revert NotAuthorised()
+                    mstore(0, _NOT_AUTHORISED)
+                    revert(28, 4)
+                }
+            }
+        }
+        _;
+    }
+
     /// @notice modifier to check if caller / origin combined is authorised to  call
     /// functions
     /// @dev checks the caller and origin against the router and owner storage

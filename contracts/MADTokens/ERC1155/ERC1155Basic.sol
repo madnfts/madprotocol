@@ -123,7 +123,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
         uint128 amount,
         address _buyer
     ) private {
-        _preparePublicMint(uint256(amount), uint256(amount), _buyer);
+        _preparePublicMint(uint256(amount), _buyer);
         mintTo(to, _id, amount);
     }
 
@@ -149,7 +149,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
         uint128[] calldata amounts
     ) private {
         uint256 len = ids.length;
-        _preparePublicMint(len, uint256(len * _sumAmounts(amounts)), _to);
+        _preparePublicMint(uint256(len * _sumAmounts(amounts)), _to);
 
         mintBatchTo(_to, ids, amounts);
     }

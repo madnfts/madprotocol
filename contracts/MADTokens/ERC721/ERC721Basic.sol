@@ -80,15 +80,13 @@ contract ERC721Basic is ERC721, ImplBase {
     /// @dev Function Sighash := 0xbe29184f
     /// @param to The address to mint to.
     /// @param amount The amount of tokens to mint.
-    function mint(address to, uint128 amount) external payable 
-    // authorised
-    {
+    function mint(address to, uint128 amount) external payable routerOrPublic {
         _publicMint(to, amount);
     }
 
     function _publicMint(address to, uint128 amount) private {
         _hasReachedMax(uint256(amount));
-        _preparePublicMint(uint256(amount), uint256(amount), to);
+        _preparePublicMint(uint256(amount), to);
         (uint256 curId, uint256 endId) = _incrementCounter(uint256(amount));
 
         for (uint256 i = curId; i < endId; ++i) {
@@ -98,7 +96,7 @@ contract ERC721Basic is ERC721, ImplBase {
 
     /// @dev Transfer event emitted by parent ERC721 contract.
     /// @dev Function Sighash := 0x362c0cb5
-    function burn(uint128[] calldata ids) external payable {
+    function burn(uint128[] calldata ids) external payable routerOrPublic {
         uint256 len = ids.length;
         _decSupply(len);
 

@@ -50,7 +50,6 @@ contract SplitterImpl is SplitterEventsAndErrors {
     mapping(address => uint256) private _released;
 
     /// @dev ERC20 token
-
     mapping(IERC20 => uint256) private _erc20TotalReleased;
     mapping(IERC20 => mapping(address => uint256)) private _erc20Released;
 
@@ -109,13 +108,11 @@ contract SplitterImpl is SplitterEventsAndErrors {
     /// Ether they are owed, according to their percentage of
     /// the total shares and their previous withdrawals.
     function release(address payable account) public {
-        if (_shares[account] < 1) {
-            revert NoShares();
-        }
+        if (_shares[account] < 1) revert NoShares();
+
         uint256 payment = releasable(account);
-        if (payment < 1) {
-            revert DeniedAccount();
-        }
+
+        if (payment < 1) revert DeniedAccount();
         /// audit GAS
         _released[account] = _released[account] + payment;
         _totalReleased = _totalReleased + payment;

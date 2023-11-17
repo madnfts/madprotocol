@@ -320,7 +320,7 @@ contract TestROUTERMintBurnAndTransferERC721_Erc20 is
     {
         vm.startPrank(mintData.nftMinter, mintData.nftMinter);
         IERC721Basic collection = IERC721Basic(mintData.collectionAddress);
-        uint256 val = deployedContracts.router.feeMint() * mintData.amountToMint;
+        uint256 val = deployedContracts.router.feeMintErc20(mintData.collectionAddress).feeAmount  * mintData.amountToMint;
         erc20Token.approve(address(collection), val);
 
         if (_errorSelector != 0x00000000) {
@@ -356,7 +356,7 @@ contract TestROUTERMintBurnAndTransferERC721_Erc20 is
             mintData.nftPublicMintPrice * mintData.amountToMint;
 
         uint256 val = _nftPublicMintPrice
-            + (deployedContracts.router.feeMint() * mintData.amountToMint);
+            + (deployedContracts.router.feeMintErc20(mintData.collectionAddress).feeAmount  * mintData.amountToMint);
 
         emit log_named_uint(
             "nftPublicMintPrice AFTER", mintData.nftPublicMintPrice

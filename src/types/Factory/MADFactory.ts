@@ -27,6 +27,7 @@ import type {
 
 export declare namespace ContractTypes {
   export type CreateCollectionParamsStruct = {
+    erc20Address: AddressLike;
     tokenType: BigNumberish;
     tokenSalt: BytesLike;
     collectionName: string;
@@ -39,6 +40,7 @@ export declare namespace ContractTypes {
   };
 
   export type CreateCollectionParamsStructOutput = [
+    erc20Address: string,
     tokenType: bigint,
     tokenSalt: string,
     collectionName: string,
@@ -49,6 +51,7 @@ export declare namespace ContractTypes {
     splitter: string,
     royalty: bigint
   ] & {
+    erc20Address: string;
     tokenType: bigint;
     tokenSalt: string;
     collectionName: string;
@@ -66,6 +69,7 @@ export declare namespace ContractTypes {
     project: AddressLike;
     ambassadorShare: BigNumberish;
     projectShare: BigNumberish;
+    erc20Address: AddressLike;
   };
 
   export type CreateSplitterParamsStructOutput = [
@@ -73,13 +77,15 @@ export declare namespace ContractTypes {
     ambassador: string,
     project: string,
     ambassadorShare: bigint,
-    projectShare: bigint
+    projectShare: bigint,
+    erc20Address: string
   ] & {
     splitterSalt: string;
     ambassador: string;
     project: string;
     ambassadorShare: bigint;
     projectShare: bigint;
+    erc20Address: string;
   };
 }
 
@@ -90,7 +96,8 @@ export interface MADFactoryInterface extends Interface {
       | "addCollectionType"
       | "collectionInfo"
       | "collectionTypes"
-      | "createCollection"
+      | "createCollection((address,uint8,bytes32,string,string,uint256,uint256,string,address,uint96))"
+      | "createCollection((address,uint8,bytes32,string,string,uint256,uint256,string,address,uint96),address)"
       | "createSplitter"
       | "creatorAuth"
       | "creatorCheck"
@@ -144,8 +151,12 @@ export interface MADFactoryInterface extends Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "createCollection",
+    functionFragment: "createCollection((address,uint8,bytes32,string,string,uint256,uint256,string,address,uint96))",
     values: [ContractTypes.CreateCollectionParamsStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "createCollection((address,uint8,bytes32,string,string,uint256,uint256,string,address,uint96),address)",
+    values: [ContractTypes.CreateCollectionParamsStruct, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "createSplitter",
@@ -234,7 +245,11 @@ export interface MADFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "createCollection",
+    functionFragment: "createCollection((address,uint8,bytes32,string,string,uint256,uint256,string,address,uint96))",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "createCollection((address,uint8,bytes32,string,string,uint256,uint256,string,address,uint96),address)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -521,8 +536,17 @@ export interface MADFactory extends BaseContract {
     "view"
   >;
 
-  createCollection: TypedContractMethod<
+  "createCollection((address,uint8,bytes32,string,string,uint256,uint256,string,address,uint96))": TypedContractMethod<
     [params: ContractTypes.CreateCollectionParamsStruct],
+    [void],
+    "payable"
+  >;
+
+  "createCollection((address,uint8,bytes32,string,string,uint256,uint256,string,address,uint96),address)": TypedContractMethod<
+    [
+      params: ContractTypes.CreateCollectionParamsStruct,
+      collectionToken: AddressLike
+    ],
     [void],
     "payable"
   >;
@@ -660,9 +684,19 @@ export interface MADFactory extends BaseContract {
     nameOrSignature: "collectionTypes"
   ): TypedContractMethod<[collectionIndex: BigNumberish], [string], "view">;
   getFunction(
-    nameOrSignature: "createCollection"
+    nameOrSignature: "createCollection((address,uint8,bytes32,string,string,uint256,uint256,string,address,uint96))"
   ): TypedContractMethod<
     [params: ContractTypes.CreateCollectionParamsStruct],
+    [void],
+    "payable"
+  >;
+  getFunction(
+    nameOrSignature: "createCollection((address,uint8,bytes32,string,string,uint256,uint256,string,address,uint96),address)"
+  ): TypedContractMethod<
+    [
+      params: ContractTypes.CreateCollectionParamsStruct,
+      collectionToken: AddressLike
+    ],
     [void],
     "payable"
   >;

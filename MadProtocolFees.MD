@@ -60,6 +60,15 @@ createCollection(
     }
 ```
 
+## Native (ETH) Token Mapping Factory
+
+Native (ETH) fees are called from the following functions.
+
+``` javascript
+
+    feeCreateCollection() external view returns (uint256);
+    feeCreateSplitter() external view returns (uint256);
+```
 
 ## Erc20 Token Mapping Factory
 
@@ -114,6 +123,15 @@ Using ERC20 Tokens we include the `erc20Address` field and the fee will be paid 
 ```
 
 The same logic applies to `mint`, `burn` and batches of those
+
+## Native (ETH) Token Mapping Router
+
+Native (ETH) fees are called from the following functions.
+
+``` javascript
+    feeMint() external view returns (uint256);
+    feeBurn() external view returns (uint256);
+```
 
 ## Erc20 Token Mapping Router
 

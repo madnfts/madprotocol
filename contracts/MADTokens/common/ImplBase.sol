@@ -149,15 +149,14 @@ abstract contract ImplBase is
     //                     INTERNAL FUNCTIONS                     //
     ////////////////////////////////////////////////////////////////
 
-    function _preparePublicMint(
-        uint256 totalAmount,
-        address _buyer
-    ) internal {
+    function _preparePublicMint(uint256 totalAmount, address _minter)
+        internal
+    {
         if (!publicMintState) revert PublicMintClosed();
-        uint256 _price = _publicMintPriceCheck(totalAmount, _buyer);
+        uint256 _price = _publicMintPriceCheck(totalAmount, _minter);
         // msg.value could be 0 and _value = 0 but still be expecting ETH (Free
         // Mint)
-        if (_price > 0) _publicPaymentHandler(_price);
+        if (_price > 0) _publicPaymentHandler(_price, _minter);
     }
 
     function _readString(bytes32 _slot)

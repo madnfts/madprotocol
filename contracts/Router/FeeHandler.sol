@@ -87,7 +87,7 @@ abstract contract FeeHandler {
         returns (uint256 _fee)
     {
         _fee = feeLookup(_feeType) * _amount;
-        // Check if msg.sender balance is less than the fee.. logic to check the
+        // Check if msg.value balance is less than the fee.. logic to check the
         // price
         // (if any) will be handled in the NFT contract itself.
         if (msg.value < _fee) revert RouterEvents.InvalidFees();

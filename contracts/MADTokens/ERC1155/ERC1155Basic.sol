@@ -106,13 +106,16 @@ contract ERC1155Basic is ERC1155, ImplBase {
 
     /// @dev Transfer events emitted by parent ERC1155 contract.
     function mint(uint128 _id, uint128 amount) public payable {
+        if (routerHasAuthority) {
+            revert RouterIsEnabled();
+        }
         _publicMint(msg.sender, _id, amount, msg.sender);
     }
 
     function mint(address _to, uint128 _id, uint128 amount)
         external
         payable
-        authorised
+        routerOrPublic
     {
         _publicMint(_to, _id, amount, _to);
     }
@@ -121,25 +124,18 @@ contract ERC1155Basic is ERC1155, ImplBase {
         address to,
         uint128 _id,
         uint128 amount,
-        address _buyer
+        address _minter
     ) private {
-        _preparePublicMint(uint256(amount), _buyer);
+        _preparePublicMint(uint256(amount), _minter);
         mintTo(to, _id, amount);
     }
 
     /// @dev Transfer event emitted by parent ERC1155 contract.
-    function mintBatch(uint128[] memory ids, uint128[] calldata amounts)
-        public
-        payable
-    {
-        _publicMintBatch(msg.sender, ids, amounts);
-    }
-
     function mintBatch(
         address _to,
         uint128[] memory ids,
         uint128[] calldata amounts
-    ) external payable authorised {
+    ) external payable routerOrPublic {
         _publicMintBatch(_to, ids, amounts);
     }
 

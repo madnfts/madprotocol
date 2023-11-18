@@ -18,7 +18,10 @@ import {
 
 import { IERC721Basic } from "test/foundry/Base/Tokens/ERC721/IERC721Basic.sol";
 
-contract TestROUTERMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
+contract TestROUTERMintBurnAndTransferERC721 is
+    CreateCollectionHelpers,
+    Enums
+{
     IDeployer.DeployedContracts deployedContracts;
     Deployer deployer;
     DeploySplitterBase splitterDeployer;

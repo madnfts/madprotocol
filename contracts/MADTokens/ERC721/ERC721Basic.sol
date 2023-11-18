@@ -84,13 +84,13 @@ contract ERC721Basic is ERC721, ImplBase {
         _publicMint(to, amount);
     }
 
-    function _publicMint(address to, uint128 amount) private {
+    function _publicMint(address _minter, uint128 amount) private {
         _hasReachedMax(uint256(amount));
-        _preparePublicMint(uint256(amount), to);
+        _preparePublicMint(uint256(amount), _minter);
         (uint256 curId, uint256 endId) = _incrementCounter(uint256(amount));
 
         for (uint256 i = curId; i < endId; ++i) {
-            _mint(to, i);
+            _mint(_minter, i);
         }
     }
 

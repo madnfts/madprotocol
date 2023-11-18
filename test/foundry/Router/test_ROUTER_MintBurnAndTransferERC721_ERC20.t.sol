@@ -59,6 +59,7 @@ contract TestROUTERMintBurnAndTransferERC721_Erc20 is
         erc20Token.mint(nftMinter, 20_000 ether);
 
         vm.deal(nftReceiver, 20_000 ether);
+        erc20Token.mint(nftReceiver, 20_000 ether);
     }
 
     function test_ROUTER_ERC20_MintTo_DefaultSingle() public {
@@ -319,9 +320,9 @@ contract TestROUTERMintBurnAndTransferERC721_Erc20 is
         internal
     {
         vm.startPrank(mintData.nftMinter, mintData.nftMinter);
-        IERC721Basic collection = IERC721Basic(mintData.collectionAddress);
-        uint256 val = deployedContracts.router.feeMintErc20(mintData.collectionAddress).feeAmount  * mintData.amountToMint;
-        erc20Token.approve(address(collection), val);
+        uint256 val = deployedContracts.router.feeMintErc20(address(erc20Token))
+            .feeAmount * mintData.amountToMint;
+        erc20Token.approve(address(deployedContracts.router), val);
 
         if (_errorSelector != 0x00000000) {
             vm.expectRevert(_errorSelector);
@@ -357,7 +358,10 @@ contract TestROUTERMintBurnAndTransferERC721_Erc20 is
             mintData.nftPublicMintPrice * mintData.amountToMint;
 
         uint256 val = _nftPublicMintPrice
-            + (deployedContracts.router.feeMintErc20(mintData.collectionAddress).feeAmount  * mintData.amountToMint + collection.price() * mintData.amountToMint);
+            + (
+                deployedContracts.router.feeMintErc20(address(erc20Token)).feeAmount
+                    * mintData.amountToMint + collection.price() * mintData.amountToMint
+            );
 
         emit log_named_uint(
             "nftPublicMintPrice AFTER", mintData.nftPublicMintPrice
@@ -368,12 +372,15 @@ contract TestROUTERMintBurnAndTransferERC721_Erc20 is
         vm.startPrank(mintData.nftReceiver);
 
         erc20Token.approve(address(collection), val);
+        erc20Token.approve(address(deployedContracts.router), val);
 
         if (_errorSelector != 0x00000000) {
             vm.expectRevert(_errorSelector);
         }
         deployedContracts.router.mint(
-            mintData.collectionAddress, mintData.amountToMint, address(erc20Token)
+            mintData.collectionAddress,
+            mintData.amountToMint,
+            address(erc20Token)
         );
         vm.stopPrank();
     }

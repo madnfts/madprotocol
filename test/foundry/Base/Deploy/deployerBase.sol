@@ -48,10 +48,10 @@ abstract contract DeployerBase is
     address recipientRouter = makeAddr("RecipientRouter");
     address swapRouter = makeAddr("SwapRouter");
 
-    uint256 erc20MintFee = 1 ether;
-    uint256 erc20BurnFee = 1 ether;
-    uint256 erc20CreateSplitterFee = 1 ether;
-    uint256 erc20CreateCollectionFee = 1 ether;
+    uint256 public erc20MintFee = 1 ether;
+    uint256 public erc20BurnFee = 1 ether;
+    uint256 public erc20CreateSplitterFee = 1 ether;
+    uint256 public erc20CreateCollectionFee = 1 ether;
 
     function deployAll(ercTypes ercType, bool isERC20)
         public

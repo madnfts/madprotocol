@@ -135,7 +135,7 @@ contract TestROUTERMintBurnAndTransferERC721 is
         );
     }
 
-    function test_ROUTER_PublicMint_IncorrectFeeSingleFuzzy(
+    function test_ROUTER_PublicMint_IncorrectPriceAmountSingleFuzzy(
         uint256 _nftPublicMintPrice
     ) public {
         vm.assume(

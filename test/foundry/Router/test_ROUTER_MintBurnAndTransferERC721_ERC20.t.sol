@@ -158,21 +158,24 @@ contract TestROUTERMintBurnAndTransferERC721_Erc20 is
     function test_ROUTER_ERC20_PublicMint_IncorrectFeeSingleFuzzy(
         uint256 _nftPublicMintPrice
     ) public {
+        address _publicMinter = makeAddr("publicMinter");
+        erc20Token.mint(_publicMinter, 1 ether);
         vm.assume(
             _nftPublicMintPrice != nftPublicMintPrice
-                && _nftPublicMintPrice <= 1 ether
+                && _nftPublicMintPrice > 1 ether
         );
         uint128 _amountToMint = 1;
         MintData memory mintData = _setupMint(
-            nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
+            _publicMinter, nftReceiver, nftPublicMintPrice, _amountToMint
         );
 
-        mintData.nftPublicMintPrice = _nftPublicMintPrice; // change mint fee
+        // change mint fee to more than 1 ether
+        mintData.nftPublicMintPrice = _nftPublicMintPrice; 
 
         _doPublicMint(
             mintData,
             true,
-            0x68e26200 // error IncorrectPriceAmount();
+            0x2d8768f9 // error InvalidFees();
         );
     }
 

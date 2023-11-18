@@ -37,7 +37,9 @@ contract TestROUTERMintBurnAndTransferERC721 is
         [1, 2, 3, 4, 5, 100, 1000, 2000, 3000, 4000, 5000, 9999, 10_000];
 
     function setUp() public {
-        vm.deal(prankster, 20_000 ether);
+        vm.deal(prankster, 100_000 ether);
+        vm.deal(nftMinter, 100_000 ether);
+        vm.deal(nftReceiver, 100_000 ether);
         // Instantiate deployer contracts
         deployer = new Deployer();
 
@@ -222,7 +224,6 @@ contract TestROUTERMintBurnAndTransferERC721 is
     }
 
     function _mintTo_MaxSupply() internal returns (MintData memory mintData) {
-        vm.deal(nftMinter, 220_000 ether);
         // Mint Max Supply
         uint128 _amountToMint = 10_000;
         mintData = _setupMint(nftMinter, nftReceiver, 0, _amountToMint);
@@ -236,8 +237,6 @@ contract TestROUTERMintBurnAndTransferERC721 is
         internal
         returns (MintData memory mintData)
     {
-        vm.deal(nftMinter, 220_000 ether);
-        vm.deal(nftReceiver, 220_000 ether);
         // Mint Max Supply
         uint128 _amountToMint = 10_000;
         mintData = _setupMint(

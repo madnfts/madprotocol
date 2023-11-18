@@ -1,9 +1,9 @@
-## Factory
+# Factory
 
 - Accept either Native (ETH) or ERC20 Tokens as Fee Payment
 - Accept either Native (ETH) or ERC20 Tokens as `Price` for Public Minting
 
-### Create Collection
+## Create Collection
 
 `createCollection(params, [erc20Token])` will take in the following parameters:
 
@@ -21,30 +21,31 @@ CreateCollectionParams {
         uint96 royalty;
     }
 ```
-#### For Native(Eth) Fee Payment:
+### For Native(Eth) Fee Payment:
 
 Ignore the `erc20Address` field and the public mint price of the collection will be in Native (ETH)
 
+
 ``` javascript
 createCollection(
-        ContractTypes.CreateCollectionParams calldata params
+        CreateCollectionParams calldata params
     )
 ```
 
-#### For ERC20 Fee Payment:
+### For ERC20 Fee Payment:
 
 Include the `erc20Address` field and the public mint price of the collection will be in the ERC20 Token
 
 ``` javascript
 createCollection(
-        ContractTypes.CreateCollectionParams calldata params,
+        CreateCollectionParams calldata params,
         address collectionToken  <-- ERC20 Token Address for public minting
 
     )
 
 ```
 
-### Create Splitter
+## Create Splitter
 
 `createSplitter(params)` will take in the following parameters and create a splitter contract:
 
@@ -60,7 +61,7 @@ createCollection(
 ```
 
 
-### Erc20 Token Mapping Factory
+## Erc20 Token Mapping Factory
 
 ERC20 fees are set in a struct.
 
@@ -80,12 +81,12 @@ To check if an ERC20 token is valid, the following functions can be called:
 ```
 Each will return if the token is valid and the fee amount.
 
-## Router
+# Router
 
 - Accept either Native (ETH) or ERC20 Tokens as Fee Payment
 - Accept either Native (ETH) or ERC20 Tokens as `Price` for Public Minting
 
-### MintTo
+## MintTo
 
 When an owner uses MAD to mint NFT's they will be charged a fee for each mint.
 
@@ -114,7 +115,7 @@ Using ERC20 Tokens we include the `erc20Address` field and the fee will be paid 
 
 The same logic applies to `mint`, `burn` and batches of those
 
-### Erc20 Token Mapping Router
+## Erc20 Token Mapping Router
 
 ERC20 fees are set in a struct.
 

@@ -52,14 +52,14 @@ contract TestROUTERMintBurnAndTransferERC721_Erc20 is
 
         erc20Token = deployedContracts.paymentToken;
 
-        vm.deal(prankster, 20_000 ether);
-        erc20Token.mint(prankster, 20_000 ether);
+        vm.deal(prankster, 100_000 ether);
+        erc20Token.mint(prankster, 100_000 ether);
 
-        vm.deal(nftMinter, 20_000 ether);
-        erc20Token.mint(nftMinter, 20_000 ether);
+        vm.deal(nftMinter, 100_000 ether);
+        erc20Token.mint(nftMinter, 100_000 ether);
 
-        vm.deal(nftReceiver, 20_000 ether);
-        erc20Token.mint(nftReceiver, 20_000 ether);
+        vm.deal(nftReceiver, 100_000 ether);
+        erc20Token.mint(nftReceiver, 100_000 ether);
     }
 
     function test_ROUTER_ERC20_MintTo_DefaultSingle() public {
@@ -250,8 +250,6 @@ contract TestROUTERMintBurnAndTransferERC721_Erc20 is
         _doMintTo(mintData, 0);
 
         // Try and mint more..
-        vm.deal(nftMinter, 20_000 ether);
-        erc20Token.mint(nftMinter, 20_000 ether);
         _doMintTo(mintData, 0xd05cb609); // error MaxSupplyReached();
     }
 
@@ -267,8 +265,6 @@ contract TestROUTERMintBurnAndTransferERC721_Erc20 is
         _doPublicMint(mintData, true, 0);
 
         // Try and mint more..
-        vm.deal(nftMinter, 20_000 ether);
-        erc20Token.mint(nftMinter, 20_000 ether);
         _doPublicMint(mintData, true, 0xd05cb609); // error MaxSupplyReached();
     }
 

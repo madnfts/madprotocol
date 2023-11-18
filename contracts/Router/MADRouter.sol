@@ -180,7 +180,9 @@ contract MADRouter is MADRouterBase {
         _tokenRender(collection);
         uint256 _fee = _handleFees(_FEE_MINT, _ids.length);
         uint256 _value = msg.value - _fee;
-        ERC1155Basic(collection).mintBatchTo{ value: _value }(_to, _ids, _balances);
+        ERC1155Basic(collection).mintBatchTo{ value: _value }(
+            _to, _ids, _balances
+        );
     }
 
     /// @dev Function Sighash := 0x535f64e7
@@ -258,7 +260,9 @@ contract MADRouter is MADRouterBase {
         _tokenRender(collection);
         uint256 _fee = _handleFees(_FEE_BURN, _ids.length);
         uint256 _value = msg.value - _fee;
-        ERC1155Basic(collection).burnBatch{ value: _value }(_from, _ids, _balances);
+        ERC1155Basic(collection).burnBatch{ value: _value }(
+            _from, _ids, _balances
+        );
     }
 
     /// @notice Global token batch burn controller/single pusher for all token

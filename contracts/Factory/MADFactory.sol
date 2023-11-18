@@ -9,7 +9,7 @@ contract MADFactory is MADFactoryBase {
     uint256 constant AMBASSADOR_SHARE_MIN = 99;
     uint256 constant AMBASSADOR_SHARE_MAX = 2001;
     uint256 constant PROJECT_SHARE_MIN = 99;
-    uint256 constant ONE_HUNDRED_PERCENT = 10_001; 
+    uint256 constant ONE_HUNDRED_PERCENT = 10_001;
 
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //

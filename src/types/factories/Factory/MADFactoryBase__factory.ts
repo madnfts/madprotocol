@@ -22,11 +22,6 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "BadCall",
-    type: "error",
-  },
-  {
-    inputs: [],
     name: "InsufficientBalance",
     type: "error",
   },

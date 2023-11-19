@@ -116,7 +116,6 @@ contract MADFactory is MADFactoryBase {
     function createSplitter(FactoryTypes.CreateSplitterParams calldata params)
         public
         payable
-        isThisOg
     {
         if (params.ambassador == ADDRESS_ZERO && params.project == ADDRESS_ZERO)
         {

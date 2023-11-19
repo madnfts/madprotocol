@@ -105,10 +105,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
     ////////////////////////////////////////////////////////////////
 
     /// @dev Transfer events emitted by parent ERC1155 contract.
-    function mint(uint128 _id, uint128 amount) public payable {
-        if (routerHasAuthority) {
-            revert RouterIsEnabled();
-        }
+    function mint(uint128 _id, uint128 amount) public payable routerOrPublic {
         _publicMint(msg.sender, _id, amount, msg.sender);
     }
 

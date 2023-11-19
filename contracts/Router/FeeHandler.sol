@@ -123,10 +123,8 @@ abstract contract FeeHandler {
     /// @param _feeMint New mint fee.
     /// @param _feeBurn New burn fee.
     function _setFees(uint256 _feeMint, uint256 _feeBurn) internal {
-        assembly {
-            sstore(feeBurn.slot, _feeBurn)
-            sstore(feeMint.slot, _feeMint)
-        }
+        feeMint = _feeMint;
+        feeBurn = _feeBurn;
     }
 
     /// @notice Change the Routers mint and burn fees for erc20 tokens.

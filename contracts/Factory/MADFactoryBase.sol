@@ -7,7 +7,6 @@ import {
     FactoryEventsAndErrorsBase,
     FactoryVerifier
 } from "contracts/Shared/EventsAndErrors.sol";
-import { DCPrevent } from "contracts/lib/security/DCPrevent.sol";
 import { FactoryTypes } from "contracts/Shared/FactoryTypes.sol";
 import { SplitterImpl } from "contracts/Splitter/SplitterImpl.sol";
 import { CREATE3, Bytes32AddressLib } from "contracts/lib/utils/CREATE3.sol";
@@ -20,7 +19,6 @@ abstract contract MADFactoryBase is
     MADBase,
     FactoryEventsAndErrorsBase,
     FactoryVerifier,
-    DCPrevent,
     FeeHandlerFactory
 {
     using FactoryTypes for FactoryTypes.CollectionArgs;
@@ -80,7 +78,7 @@ abstract contract MADFactoryBase is
     function _createCollection(
         FactoryTypes.CreateCollectionParams calldata params,
         address collectionToken
-    ) internal isThisOg returns (address) {
+    ) internal returns (address) {
         if (params.maxSupply == 0) {
             revert ZeroMaxSupply();
         }

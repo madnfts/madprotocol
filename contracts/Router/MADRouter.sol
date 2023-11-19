@@ -103,6 +103,7 @@ contract MADRouter is MADRouterBase {
     /// @dev collection 721 token address.
     /// @param _amount The amount of tokens to mint.
     function mint(address collection, uint128 _amount) public payable {
+        _tokenRender(collection);
         uint256 _fee = _handleFees(_FEE_MINT, _amount);
         uint256 _value = msg.value - _fee;
         ERC721Basic(collection).mint{ value: _value }(msg.sender, _amount);
@@ -120,6 +121,7 @@ contract MADRouter is MADRouterBase {
         public
         payable
     {
+        _tokenRender(collection);
         _handleFees(_FEE_MINT, _amount, erc20Token);
         ERC721Basic(collection).mint(msg.sender, _amount);
     }
@@ -299,6 +301,7 @@ contract MADRouter is MADRouterBase {
         public
         payable
     {
+        _tokenRender(collection);
         uint256 _fee = _handleFees(_FEE_MINT, _amount);
         uint256 _value = msg.value - _fee;
         ERC1155Basic(collection).mint{ value: _value }(_to, _id, _amount);
@@ -317,6 +320,7 @@ contract MADRouter is MADRouterBase {
         uint128 _amount,
         address erc20Token
     ) public payable {
+        _tokenRender(collection);
         _handleFees(_FEE_MINT, _amount, erc20Token);
         ERC1155Basic(collection).mint(_to, _id, _amount);
     }

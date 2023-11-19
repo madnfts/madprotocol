@@ -37,12 +37,12 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "NotCallersCollection",
+    name: "NotOwnerNorApproved",
     type: "error",
   },
   {
     inputs: [],
-    name: "NotOwnerNorApproved",
+    name: "NotValidCollection",
     type: "error",
   },
   {

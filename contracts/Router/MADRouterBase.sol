@@ -110,7 +110,7 @@ abstract contract MADRouterBase is MADBase, FeeHandler, RouterEvents {
     /// @param collectionId 721 / 1155 token address.
     function _tokenRender(address collectionId) internal view {
         if (!madFactory.creatorCheck(collectionId, msg.sender)) {
-            revert NotCallersCollection();
+            revert NotValidCollection();
         }
     }
 }

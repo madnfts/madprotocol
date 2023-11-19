@@ -186,6 +186,8 @@ contract TestROUTERMintBurnAndTransferERC721 is
 
     function _doBurn(MintData memory mintData, address _tokenOwner) internal {
         uint256 idsToBurnLength = idsToBurn.length;
+        uint256 val = deployedContracts.router.feeBurn() * idsToBurnLength;
+
         // Burn tokens
         IERC721Basic collection = IERC721Basic(mintData.collectionAddress);
 
@@ -193,7 +195,7 @@ contract TestROUTERMintBurnAndTransferERC721 is
         uint256 _balanceNftMinterBefore = collection.balanceOf(_tokenOwner);
 
         vm.prank(_tokenOwner, _tokenOwner);
-        collection.burn(idsToBurn);
+        deployedContracts.router.burn{value: val}( mintData.collectionAddress,idsToBurn);
 
         uint256 _expectedBalanceNftMinterAfter =
             _balanceNftMinterBefore - idsToBurnLength;
@@ -220,7 +222,7 @@ contract TestROUTERMintBurnAndTransferERC721 is
         // Try to burn the same tokens again
         vm.startPrank(_tokenOwner, _tokenOwner);
         vm.expectRevert(0xceea21b6); // `TokenDoesNotExist()`.
-        collection.burn(idsToBurn);
+        deployedContracts.router.burn{value: val}( mintData.collectionAddress, idsToBurn);
     }
 
     function _mintTo_MaxSupply() internal returns (MintData memory mintData) {

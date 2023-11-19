@@ -522,12 +522,13 @@ export interface MADFactory extends BaseContract {
   collectionInfo: TypedContractMethod<
     [collectionId: AddressLike],
     [
-      [string, bigint, string, bigint, string] & {
+      [string, bigint, string, bigint, string, boolean] & {
         creator: string;
         collectionType: bigint;
         collectionSalt: string;
         blocknumber: bigint;
         splitter: string;
+        isValid: boolean;
       }
     ],
     "view"
@@ -673,12 +674,13 @@ export interface MADFactory extends BaseContract {
   ): TypedContractMethod<
     [collectionId: AddressLike],
     [
-      [string, bigint, string, bigint, string] & {
+      [string, bigint, string, bigint, string, boolean] & {
         creator: string;
         collectionType: bigint;
         collectionSalt: string;
         blocknumber: bigint;
         splitter: string;
+        isValid: boolean;
       }
     ],
     "view"

@@ -55,6 +55,7 @@ library ContractTypes {
         bytes32 collectionSalt;
         uint256 blocknumber;
         address splitter;
+        bool isValid;
     }
 
     struct SplitterConfig {

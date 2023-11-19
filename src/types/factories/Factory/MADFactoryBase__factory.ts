@@ -337,6 +337,11 @@ const _abi = [
         name: "splitter",
         type: "address",
       },
+      {
+        internalType: "bool",
+        name: "isValid",
+        type: "bool",
+      },
     ],
     stateMutability: "view",
     type: "function",

@@ -120,7 +120,8 @@ abstract contract MADFactoryBase is
             params.tokenType,
             params.tokenSalt,
             block.number,
-            params.splitter
+            params.splitter,
+            true
         );
         return deployedCollection;
     }
@@ -349,10 +350,7 @@ abstract contract MADFactoryBase is
         override(FactoryVerifier)
         returns (bool check)
     {
-        address creator = collectionInfo[_collectionId].creator;
-        if (creator == _creator) {
-            check = true;
-        }
+        return collectionInfo[_collectionId].isValid;
     }
 
     function setFees(uint256 _feeCreateCollection, uint256 _feeCreateSplitter)

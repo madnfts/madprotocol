@@ -201,7 +201,7 @@ interface RouterEvents is EventsAndErrorsBase {
     error InvalidType();
     error NoFunds();
     /// @dev 0x18fda3e7
-    error NotCallersCollection();
+    error NotValidCollection();
     /// @dev 0xd23f9521
     error AddressNotValid();
 }

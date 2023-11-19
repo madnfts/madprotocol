@@ -166,7 +166,7 @@ contract TestROUTERMintBurnAndTransferERC721_Erc20 is
         );
         uint128 _amountToMint = 1;
         MintData memory mintData = _setupMint(
-            _publicMinter, nftReceiver, nftPublicMintPrice, _amountToMint
+            _publicMinter, _publicMinter, nftPublicMintPrice, _amountToMint
         );
 
         // change mint fee to more than 1 ether
@@ -208,9 +208,12 @@ contract TestROUTERMintBurnAndTransferERC721_Erc20 is
     ////////////////////////////////////////////////////////////////
 
     function _doBurn(MintData memory mintData, address _tokenOwner) internal {
+        // Try to burn the same tokens again
+        vm.startPrank(_tokenOwner, _tokenOwner);
+
         uint256 idsToBurnLength = idsToBurn.length;
 
-        uint256 val = deployedContracts.router.feeMint() * idsToBurnLength;
+        uint256 val =  deployedContracts.router.feeBurnErc20(address(erc20Token)).feeAmount * idsToBurnLength;
         erc20Token.approve(address(deployedContracts.router), val);
 
         // Burn tokens
@@ -219,7 +222,6 @@ contract TestROUTERMintBurnAndTransferERC721_Erc20 is
         // log balance of nftMinter before
         uint256 _balanceNftMinterBefore = collection.balanceOf(_tokenOwner);
 
-        vm.prank(_tokenOwner, _tokenOwner);
         deployedContracts.router.burn(
             mintData.collectionAddress, idsToBurn, address(erc20Token)
         );
@@ -246,8 +248,6 @@ contract TestROUTERMintBurnAndTransferERC721_Erc20 is
             collection.ownerOf(idsToBurn[i]);
         }
 
-        // Try to burn the same tokens again
-        vm.startPrank(_tokenOwner, _tokenOwner);
         vm.expectRevert(0xceea21b6); // `TokenDoesNotExist()`.
         deployedContracts.router.burn(
             mintData.collectionAddress, idsToBurn, address(erc20Token)

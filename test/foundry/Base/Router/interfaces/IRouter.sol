@@ -42,20 +42,25 @@ interface IRouter {
         view
         returns (Fee memory);
 
-    function mintTo(address token, address to, uint128 amount)
+    function mintTo(address collection, address to, uint128 amount)
         external
         payable;
 
     function mintTo(
-        address token,
+        address collection,
         address to,
         uint128 amount,
         address erc20Token
     ) external payable;
 
-    function mint(address token, uint128 amount) external payable;
+    function mint(address collection, uint128 amount) external payable;
 
-    function mint(address token, uint128 amount, address erc20Token)
+    function mint(address collection, uint128 amount, address erc20Token)
         external
         payable;
+
+    function burn(address collection, uint128[] memory _ids) external payable;
+
+    function burn(address collection, uint128[] memory _ids, address erc20Token)
+        external;
 }

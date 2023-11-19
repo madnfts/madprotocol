@@ -159,10 +159,10 @@ contract TestROUTERMintBurnAndTransferERC721_Erc20 is
         uint256 _nftPublicMintPrice
     ) public {
         address _publicMinter = makeAddr("publicMinter");
-        erc20Token.mint(_publicMinter, 1 ether);
+        erc20Token.mint(_publicMinter, 2 ether);
         vm.assume(
             _nftPublicMintPrice != nftPublicMintPrice
-                && _nftPublicMintPrice > 1 ether
+                && _nftPublicMintPrice < 1 ether
         );
         uint128 _amountToMint = 1;
         MintData memory mintData = _setupMint(
@@ -170,7 +170,7 @@ contract TestROUTERMintBurnAndTransferERC721_Erc20 is
         );
 
         // change mint fee to more than 1 ether
-        mintData.nftPublicMintPrice = _nftPublicMintPrice; 
+        mintData.nftPublicMintPrice = _nftPublicMintPrice + 5 ether;
 
         _doPublicMint(
             mintData,
@@ -209,6 +209,10 @@ contract TestROUTERMintBurnAndTransferERC721_Erc20 is
 
     function _doBurn(MintData memory mintData, address _tokenOwner) internal {
         uint256 idsToBurnLength = idsToBurn.length;
+
+        uint256 val = deployedContracts.router.feeMint() * idsToBurnLength;
+        erc20Token.approve(address(deployedContracts.router), val);
+
         // Burn tokens
         IERC721Basic collection = IERC721Basic(mintData.collectionAddress);
 
@@ -216,7 +220,9 @@ contract TestROUTERMintBurnAndTransferERC721_Erc20 is
         uint256 _balanceNftMinterBefore = collection.balanceOf(_tokenOwner);
 
         vm.prank(_tokenOwner, _tokenOwner);
-        collection.burn(idsToBurn);
+        deployedContracts.router.burn(
+            mintData.collectionAddress, idsToBurn, address(erc20Token)
+        );
 
         uint256 _expectedBalanceNftMinterAfter =
             _balanceNftMinterBefore - idsToBurnLength;
@@ -243,7 +249,9 @@ contract TestROUTERMintBurnAndTransferERC721_Erc20 is
         // Try to burn the same tokens again
         vm.startPrank(_tokenOwner, _tokenOwner);
         vm.expectRevert(0xceea21b6); // `TokenDoesNotExist()`.
-        collection.burn(idsToBurn);
+        deployedContracts.router.burn(
+            mintData.collectionAddress, idsToBurn, address(erc20Token)
+        );
     }
 
     function _mintTo_MaxSupply() internal returns (MintData memory mintData) {

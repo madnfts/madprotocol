@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.22;
 
-import { IERC20 } from "contracts/lib/tokens/IERC20.sol";
+import { IERC20 } from "contracts/lib/tokens/ERC20/interfaces/IERC20.sol";
 import { SplitterImpl } from "contracts/Splitter/SplitterImpl.sol";
 import { SafeTransferLib } from "contracts/lib/utils/SafeTransferLib.sol";
 

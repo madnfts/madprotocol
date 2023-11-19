@@ -10,7 +10,7 @@ import type {
   TypedLogDescription,
   TypedListener,
   TypedContractMethod,
-} from "../../common";
+} from "../../../../common";
 import type {
   BaseContract,
   BigNumberish,
@@ -25,12 +25,18 @@ import type {
   Listener,
 } from "ethers";
 
-export interface IERC20Interface extends Interface {
+export interface ERC20Interface extends Interface {
   getFunction(
     nameOrSignature:
+      | "_DOMAIN_SEPARATOR"
       | "allowance"
       | "approve"
       | "balanceOf"
+      | "decimals"
+      | "name"
+      | "nonces"
+      | "permit"
+      | "symbol"
       | "totalSupply"
       | "transfer"
       | "transferFrom"
@@ -38,6 +44,10 @@ export interface IERC20Interface extends Interface {
 
   getEvent(nameOrSignatureOrTopic: "Approval" | "Transfer"): EventFragment;
 
+  encodeFunctionData(
+    functionFragment: "_DOMAIN_SEPARATOR",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "allowance",
     values: [AddressLike, AddressLike]
@@ -50,6 +60,22 @@ export interface IERC20Interface extends Interface {
     functionFragment: "balanceOf",
     values: [AddressLike]
   ): string;
+  encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
+  encodeFunctionData(functionFragment: "name", values?: undefined): string;
+  encodeFunctionData(functionFragment: "nonces", values: [AddressLike]): string;
+  encodeFunctionData(
+    functionFragment: "permit",
+    values: [
+      AddressLike,
+      AddressLike,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BytesLike,
+      BytesLike
+    ]
+  ): string;
+  encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "totalSupply",
     values?: undefined
@@ -63,9 +89,18 @@ export interface IERC20Interface extends Interface {
     values: [AddressLike, AddressLike, BigNumberish]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "_DOMAIN_SEPARATOR",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "nonces", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "permit", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalSupply",
     data: BytesLike
@@ -81,13 +116,13 @@ export namespace ApprovalEvent {
   export type InputTuple = [
     owner: AddressLike,
     spender: AddressLike,
-    value: BigNumberish
+    amount: BigNumberish
   ];
-  export type OutputTuple = [owner: string, spender: string, value: bigint];
+  export type OutputTuple = [owner: string, spender: string, amount: bigint];
   export interface OutputObject {
     owner: string;
     spender: string;
-    value: bigint;
+    amount: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -99,13 +134,13 @@ export namespace TransferEvent {
   export type InputTuple = [
     from: AddressLike,
     to: AddressLike,
-    value: BigNumberish
+    amount: BigNumberish
   ];
-  export type OutputTuple = [from: string, to: string, value: bigint];
+  export type OutputTuple = [from: string, to: string, amount: bigint];
   export interface OutputObject {
     from: string;
     to: string;
-    value: bigint;
+    amount: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -113,11 +148,11 @@ export namespace TransferEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export interface IERC20 extends BaseContract {
-  connect(runner?: ContractRunner | null): IERC20;
+export interface ERC20 extends BaseContract {
+  connect(runner?: ContractRunner | null): ERC20;
   waitForDeployment(): Promise<this>;
 
-  interface: IERC20Interface;
+  interface: ERC20Interface;
 
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,
@@ -156,8 +191,10 @@ export interface IERC20 extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
+  _DOMAIN_SEPARATOR: TypedContractMethod<[], [string], "view">;
+
   allowance: TypedContractMethod<
-    [owner: AddressLike, spender: AddressLike],
+    [arg0: AddressLike, arg1: AddressLike],
     [bigint],
     "view"
   >;
@@ -168,7 +205,29 @@ export interface IERC20 extends BaseContract {
     "nonpayable"
   >;
 
-  balanceOf: TypedContractMethod<[account: AddressLike], [bigint], "view">;
+  balanceOf: TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
+
+  decimals: TypedContractMethod<[], [bigint], "view">;
+
+  name: TypedContractMethod<[], [string], "view">;
+
+  nonces: TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
+
+  permit: TypedContractMethod<
+    [
+      owner: AddressLike,
+      spender: AddressLike,
+      value: BigNumberish,
+      deadline: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike
+    ],
+    [void],
+    "nonpayable"
+  >;
+
+  symbol: TypedContractMethod<[], [string], "view">;
 
   totalSupply: TypedContractMethod<[], [bigint], "view">;
 
@@ -189,9 +248,12 @@ export interface IERC20 extends BaseContract {
   ): T;
 
   getFunction(
+    nameOrSignature: "_DOMAIN_SEPARATOR"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
     nameOrSignature: "allowance"
   ): TypedContractMethod<
-    [owner: AddressLike, spender: AddressLike],
+    [arg0: AddressLike, arg1: AddressLike],
     [bigint],
     "view"
   >;
@@ -204,7 +266,34 @@ export interface IERC20 extends BaseContract {
   >;
   getFunction(
     nameOrSignature: "balanceOf"
-  ): TypedContractMethod<[account: AddressLike], [bigint], "view">;
+  ): TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "decimals"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "name"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "nonces"
+  ): TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "permit"
+  ): TypedContractMethod<
+    [
+      owner: AddressLike,
+      spender: AddressLike,
+      value: BigNumberish,
+      deadline: BigNumberish,
+      v: BigNumberish,
+      r: BytesLike,
+      s: BytesLike
+    ],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "symbol"
+  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "totalSupply"
   ): TypedContractMethod<[], [bigint], "view">;

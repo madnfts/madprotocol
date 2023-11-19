@@ -48,6 +48,12 @@ export type { ERC1155Holder } from "./lib/tokens/ERC1155/Base/utils/ERC1155Holde
 export { ERC1155Holder__factory } from "./factories/lib/tokens/ERC1155/Base/utils/ERC1155Holder.sol/ERC1155Holder__factory";
 export type { ERC1155TokenReceiver } from "./lib/tokens/ERC1155/Base/utils/ERC1155Holder.sol/ERC1155TokenReceiver";
 export { ERC1155TokenReceiver__factory } from "./factories/lib/tokens/ERC1155/Base/utils/ERC1155Holder.sol/ERC1155TokenReceiver__factory";
+export type { ERC20 } from "./lib/tokens/ERC20/erc20-mock.sol/ERC20";
+export { ERC20__factory } from "./factories/lib/tokens/ERC20/erc20-mock.sol/ERC20__factory";
+export type { MockERC20 } from "./lib/tokens/ERC20/erc20-mock.sol/MockERC20";
+export { MockERC20__factory } from "./factories/lib/tokens/ERC20/erc20-mock.sol/MockERC20__factory";
+export type { IERC20 } from "./lib/tokens/ERC20/interfaces/IERC20";
+export { IERC20__factory } from "./factories/lib/tokens/ERC20/interfaces/IERC20__factory";
 export type { ERC721 } from "./lib/tokens/ERC721/Base/ERC721";
 export { ERC721__factory } from "./factories/lib/tokens/ERC721/Base/ERC721__factory";
 export type { IERC721 } from "./lib/tokens/ERC721/Base/interfaces/IERC721";
@@ -56,8 +62,6 @@ export type { ERC721Holder } from "./lib/tokens/ERC721/Base/utils/ERC721Holder.s
 export { ERC721Holder__factory } from "./factories/lib/tokens/ERC721/Base/utils/ERC721Holder.sol/ERC721Holder__factory";
 export type { ERC721TokenReceiver } from "./lib/tokens/ERC721/Base/utils/ERC721Holder.sol/ERC721TokenReceiver";
 export { ERC721TokenReceiver__factory } from "./factories/lib/tokens/ERC721/Base/utils/ERC721Holder.sol/ERC721TokenReceiver__factory";
-export type { IERC20 } from "./lib/tokens/IERC20";
-export { IERC20__factory } from "./factories/lib/tokens/IERC20__factory";
 export type { ISwapRouter } from "./lib/uniswap/ISwapRouter";
 export { ISwapRouter__factory } from "./factories/lib/uniswap/ISwapRouter__factory";
 export type { IUniswapV3SwapCallback } from "./lib/uniswap/IUniswapV3SwapCallback";

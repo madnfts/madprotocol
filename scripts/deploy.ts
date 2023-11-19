@@ -102,25 +102,18 @@ const deployFactory = async (erc20Address) => {
             }
   );
   await factory.waitForDeployment();
-  deployedFactoryAddress = factory.target;
-  const factoryErc20 = await factory.erc20();
-  console.log(`factory.erc20: ${factoryErc20}`);
-  console.log(`factory.erc20 == erc20Address: ${factoryErc20 == erc20Address}`);
   return factory;
 };
 
 const deployRouter = async (
-  erc20Address,
-  factoryAddress,
-  deployerAddress,
+  factoryAddress
 ) => {
   const MADRouter = await ethers.getContractFactory(
     "MADRouter",
   );
   const router = await MADRouter.deploy(
     factoryAddress,
-    erc20Address,
-    deployerAddress,
+    RECIPIENT,
   );
   await router.waitForDeployment();
   deployedRouterAddress = router.target;

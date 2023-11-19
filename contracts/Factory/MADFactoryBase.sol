@@ -90,10 +90,7 @@ abstract contract MADFactoryBase is
         if (madFeeTokenAddress == ADDRESS_ZERO) {
             _handleFees(feeCreateCollection);
         } else {
-            _handleFees(
-                feeCreateCollectionErc20[madFeeTokenAddress].feeAmount,
-                madFeeTokenAddress
-            );
+            _handleFees(madFeeTokenAddress, this.feeCreateCollectionErc20);
         }
         address deployedCollection = _collectionDeploy(
             params.tokenType,
@@ -137,10 +134,7 @@ abstract contract MADFactoryBase is
         if (madFeeTokenAddress == ADDRESS_ZERO) {
             _handleFees(feeCreateSplitter);
         } else {
-            _handleFees(
-                feeCreateSplitterErc20[madFeeTokenAddress].feeAmount,
-                madFeeTokenAddress
-            );
+            _handleFees(madFeeTokenAddress, this.feeCreateSplitterErc20);
         }
 
         uint256 projectShareParsed =

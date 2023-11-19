@@ -33,10 +33,32 @@ abstract contract FeeHandler {
     }
 
     /// @notice ERC20 Mint fee store.
-    mapping(address erc20token => Fee mintPrice) public feeMintErc20;
+    mapping(address madFeeTokenAddress => Fee mintPrice) private _feeMintErc20;
 
     /// @notice ERC20 Burn fee store.
-    mapping(address erc20token => Fee burnPrice) public feeBurnErc20;
+    mapping(address madFeeTokenAddress => Fee burnPrice) private _feeBurnErc20;
+
+    function feeMintErc20(address madFeeTokenAddress)
+        public
+        view
+        returns (Fee memory)
+    {
+        if (madFeeTokenAddress == address(0)) {
+            revert RouterEvents.AddressNotValid();
+        }
+        return _feeMintErc20[madFeeTokenAddress];
+    }
+
+    function feeBurnErc20(address madFeeTokenAddress)
+        public
+        view
+        returns (Fee memory)
+    {
+        if (madFeeTokenAddress == address(0)) {
+            revert RouterEvents.AddressNotValid();
+        }
+        return _feeBurnErc20[madFeeTokenAddress];
+    }
 
     ////////////////////////////////////////////////////////////////
     //                         HELPERS                            //
@@ -52,30 +74,6 @@ abstract contract FeeHandler {
             return feeBurn;
         } else {
             return 0;
-        }
-    }
-
-    /// @notice Mint and burn fee lookup for erc20 tokens.
-    /// @dev Function Sighash := 0xedc9e7a4
-    /// @param sigHash _FEE_MINT | _FEE_BURN
-    /// @param madFeeTokenAddress Address of the erc20 token.
-    function feeLookup(bytes4 sigHash, address madFeeTokenAddress)
-        internal
-        view
-        returns (uint256)
-    {
-        if (sigHash == _FEE_MINT) {
-            if (!feeMintErc20[madFeeTokenAddress].isValid) {
-                revert RouterEvents.AddressNotValid();
-            }
-            return feeMintErc20[madFeeTokenAddress].feeAmount;
-        } else if (sigHash == _FEE_BURN) {
-            if (!feeBurnErc20[madFeeTokenAddress].isValid) {
-                revert RouterEvents.AddressNotValid();
-            }
-            return feeBurnErc20[madFeeTokenAddress].feeAmount;
-        } else {
-            revert RouterEvents.InvalidFees();
         }
     }
 
@@ -97,14 +95,21 @@ abstract contract FeeHandler {
     }
 
     /// @notice Payment handler for mint and burn functions.
-    /// @dev Function Sighash := 0x3bbed4a0
-    /// @param _feeType _FEE_MINT | _FEE_BURN
+    /// @param _amount  Amount of tokens to be minted or burned.
+    /// @param madFeeTokenAddress  Address of the ERC20 token to be used as
+    /// payment token.
+    /// @param _feeErc20  Function to return the fee amount and validity of the
+    /// fee token.
     function _handleFees(
-        bytes4 _feeType,
         uint256 _amount,
-        address madFeeTokenAddress
-    ) internal returns (uint256 _fee) {
-        _fee = feeLookup(_feeType, madFeeTokenAddress) * _amount;
+        address madFeeTokenAddress,
+        function (address) external view returns (Fee memory) _feeErc20
+    ) internal {
+        Fee memory feeErc20 = _feeErc20(madFeeTokenAddress);
+        if (!feeErc20.isValid) {
+            revert RouterEvents.AddressNotValid();
+        }
+        uint256 _fee = feeErc20.feeAmount * _amount;
         // Check if msg.sender balance is less than the fee.. logic to check the
         // price
         // (if any) will be handled in the NFT contract itself.
@@ -140,7 +145,7 @@ abstract contract FeeHandler {
             revert RouterEvents.AddressNotValid();
         }
 
-        feeMintErc20[madFeeTokenAddress] = Fee(_feeMint, true);
-        feeBurnErc20[madFeeTokenAddress] = Fee(_feeBurn, true);
+        _feeMintErc20[madFeeTokenAddress] = Fee(_feeMint, true);
+        _feeBurnErc20[madFeeTokenAddress] = Fee(_feeBurn, true);
     }
 }

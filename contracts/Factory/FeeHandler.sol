@@ -11,6 +11,8 @@ abstract contract FeeHandlerFactory {
     //                           STORAGE                          //
     ////////////////////////////////////////////////////////////////
 
+    error AddressNotValid();
+
     /// @notice The recipient address used for fees.
     address public recipient;
 
@@ -24,14 +26,34 @@ abstract contract FeeHandlerFactory {
     }
 
     /// @notice ERC20 Mint fee store.
-    mapping(address erc20token => Fee collectionPrice) public
-        feeCreateCollectionErc20;
+    mapping(address madFeeTokenAddress => Fee collectionPrice) private
+        _feeCreateCollectionErc20;
 
     /// @notice ERC20 Burn fee store.
-    mapping(address erc20token => Fee splitterPrice) public
-        feeCreateSplitterErc20;
+    mapping(address madFeeTokenAddress => Fee splitterPrice) private
+        _feeCreateSplitterErc20;
 
-    error AddressNotValid();
+    function feeCreateCollectionErc20(address madFeeTokenAddress)
+        public
+        view
+        returns (Fee memory)
+    {
+        if (madFeeTokenAddress == address(0)) {
+            revert AddressNotValid();
+        }
+        return _feeCreateCollectionErc20[madFeeTokenAddress];
+    }
+
+    function feeCreateSplitterErc20(address madFeeTokenAddress)
+        public
+        view
+        returns (Fee memory)
+    {
+        if (madFeeTokenAddress == address(0)) {
+            revert AddressNotValid();
+        }
+        return _feeCreateSplitterErc20[madFeeTokenAddress];
+    }
 
     ////////////////////////////////////////////////////////////////
     //                         HELPERS                            //
@@ -51,11 +73,17 @@ abstract contract FeeHandlerFactory {
 
     /// @notice Payment handler for mint and burn functions.
     /// @dev Function Sighash := 0x3bbed4a0
-    function _handleFees(uint256 _fee, address madFeeTokenAddress) internal {
+    function _handleFees(
+        address madFeeTokenAddress,
+        function(address) external view returns (Fee memory) _feeErc20
+    ) internal {
         // Check if msg.sender balance is less than the fee.. logic to check the
         // price
         // (if any) will be handled in the NFT contract itself.
-        if (!feeCreateCollectionErc20[madFeeTokenAddress].isValid) {
+        Fee memory feeErc20 = _feeErc20(madFeeTokenAddress);
+        uint256 _fee = feeErc20.feeAmount;
+
+        if (!feeErc20.isValid) {
             revert AddressNotValid();
         }
 
@@ -81,19 +109,19 @@ abstract contract FeeHandlerFactory {
 
     /// @notice Change the Factorys mint and burn fees for erc20 tokens.
     /// @dev access control / events are handled in MADFactoryBase
-    /// @param _feeCreateCollectionErc20 fee for creating a new collection
-    /// @param _feeCreateSplitterErc20 fee for creating a new splitter
+    /// @param _madFeeCreateCollectionErc20 fee for creating a new collection
+    /// @param _madFeeCreateSplitterErc20 fee for creating a new splitter
     function _setFees(
-        uint256 _feeCreateCollectionErc20,
-        uint256 _feeCreateSplitterErc20,
+        uint256 _madFeeCreateCollectionErc20,
+        uint256 _madFeeCreateSplitterErc20,
         address madFeeTokenAddress
     ) internal {
         if (madFeeTokenAddress == address(0)) {
             revert AddressNotValid();
         }
-        feeCreateCollectionErc20[madFeeTokenAddress] =
-            Fee(_feeCreateCollectionErc20, true);
-        feeCreateSplitterErc20[madFeeTokenAddress] =
-            Fee(_feeCreateSplitterErc20, true);
+        _feeCreateCollectionErc20[madFeeTokenAddress] =
+            Fee(_madFeeCreateCollectionErc20, true);
+        _feeCreateSplitterErc20[madFeeTokenAddress] =
+            Fee(_madFeeCreateSplitterErc20, true);
     }
 }

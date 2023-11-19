@@ -196,7 +196,6 @@ contract TestMintBurnAndTransferERC721_Erc20 is
     //     _doMintTo(mintData, 0xf7760f25); // error WrongPrice();
     // }
 
-
     function testMintTo_UnAuthorised() public {
         uint128 _amountToMint = 1;
         MintData memory mintData = _setupMint(

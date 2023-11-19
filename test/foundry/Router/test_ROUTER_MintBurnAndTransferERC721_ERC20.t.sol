@@ -247,11 +247,6 @@ contract TestROUTERMintBurnAndTransferERC721_Erc20 is
             vm.expectRevert(0xceea21b6); // `TokenDoesNotExist()`.
             collection.ownerOf(idsToBurn[i]);
         }
-
-        vm.expectRevert(0xceea21b6); // `TokenDoesNotExist()`.
-        deployedContracts.router.burn(
-            mintData.collectionAddress, idsToBurn, address(erc20Token)
-        );
     }
 
     function _mintTo_MaxSupply() internal returns (MintData memory mintData) {

@@ -20,32 +20,14 @@ contract MADFactory is MADFactoryBase {
     function createCollection(
         ContractTypes.CreateCollectionParams calldata params
     ) public payable {
-        emit CollectionCreated(
-            params.splitter,
-            _createCollection(params, address(0)),
-            params.collectionName,
-            params.collectionSymbol,
-            params.royalty,
-            params.maxSupply,
-            params.price,
-            params.tokenType
-        );
+        _handleCreateCollection(params, ADDRESS_ZERO);
     }
 
     function createCollection(
         ContractTypes.CreateCollectionParams calldata params,
         address collectionToken
     ) public payable {
-        emit CollectionCreated(
-            params.splitter,
-            _createCollection(params, collectionToken),
-            params.collectionName,
-            params.collectionSymbol,
-            params.royalty,
-            params.maxSupply,
-            params.price,
-            params.tokenType
-        );
+        _handleCreateCollection(params, collectionToken);
     }
 
     /// @notice Core public token types deployment pusher.
@@ -89,7 +71,8 @@ contract MADFactory is MADFactoryBase {
             params.royalty,
             params.maxSupply,
             params.price,
-            params.tokenType
+            params.tokenType,
+            collectionToken
         );
     }
 

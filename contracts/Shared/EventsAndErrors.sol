@@ -58,7 +58,8 @@ interface FactoryEventsAndErrorsBase is EventsAndErrorsBase {
         uint256 royalties,
         uint256 maxSupply,
         uint256 mintPrice,
-        uint8 tokenType
+        uint8 tokenType,
+        address collectionToken
     );
 }
 

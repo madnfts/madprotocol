@@ -45,7 +45,8 @@ export namespace CollectionCreatedEvent {
     royalties: BigNumberish,
     maxSupply: BigNumberish,
     mintPrice: BigNumberish,
-    tokenType: BigNumberish
+    tokenType: BigNumberish,
+    collectionToken: AddressLike
   ];
   export type OutputTuple = [
     newSplitter: string,
@@ -55,7 +56,8 @@ export namespace CollectionCreatedEvent {
     royalties: bigint,
     maxSupply: bigint,
     mintPrice: bigint,
-    tokenType: bigint
+    tokenType: bigint,
+    collectionToken: string
   ];
   export interface OutputObject {
     newSplitter: string;
@@ -66,6 +68,7 @@ export namespace CollectionCreatedEvent {
     maxSupply: bigint;
     mintPrice: bigint;
     tokenType: bigint;
+    collectionToken: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -279,7 +282,7 @@ export interface FactoryEventsAndErrorsBase extends BaseContract {
   >;
 
   filters: {
-    "CollectionCreated(address,address,string,string,uint256,uint256,uint256,uint8)": TypedContractEvent<
+    "CollectionCreated(address,address,string,string,uint256,uint256,uint256,uint8,address)": TypedContractEvent<
       CollectionCreatedEvent.InputTuple,
       CollectionCreatedEvent.OutputTuple,
       CollectionCreatedEvent.OutputObject

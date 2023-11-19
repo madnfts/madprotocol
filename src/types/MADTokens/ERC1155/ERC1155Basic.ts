@@ -85,8 +85,7 @@ export interface ERC1155BasicInterface extends Interface {
       | "maxSupply"
       | "mint(address,uint128,uint128)"
       | "mint(uint128,uint128)"
-      | "mintBatch(address,uint128[],uint128[])"
-      | "mintBatch(uint128[],uint128[])"
+      | "mintBatch"
       | "mintBatchTo"
       | "mintTo"
       | "price"
@@ -179,12 +178,8 @@ export interface ERC1155BasicInterface extends Interface {
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "mintBatch(address,uint128[],uint128[])",
+    functionFragment: "mintBatch",
     values: [AddressLike, BigNumberish[], BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "mintBatch(uint128[],uint128[])",
-    values: [BigNumberish[], BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "mintBatchTo",
@@ -300,14 +295,7 @@ export interface ERC1155BasicInterface extends Interface {
     functionFragment: "mint(uint128,uint128)",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "mintBatch(address,uint128[],uint128[])",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "mintBatch(uint128[],uint128[])",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "mintBatch", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "mintBatchTo",
     data: BytesLike
@@ -650,14 +638,8 @@ export interface ERC1155Basic extends BaseContract {
     "payable"
   >;
 
-  "mintBatch(address,uint128[],uint128[])": TypedContractMethod<
+  mintBatch: TypedContractMethod<
     [_to: AddressLike, ids: BigNumberish[], amounts: BigNumberish[]],
-    [void],
-    "payable"
-  >;
-
-  "mintBatch(uint128[],uint128[])": TypedContractMethod<
-    [ids: BigNumberish[], amounts: BigNumberish[]],
     [void],
     "payable"
   >;
@@ -845,16 +827,9 @@ export interface ERC1155Basic extends BaseContract {
     "payable"
   >;
   getFunction(
-    nameOrSignature: "mintBatch(address,uint128[],uint128[])"
+    nameOrSignature: "mintBatch"
   ): TypedContractMethod<
     [_to: AddressLike, ids: BigNumberish[], amounts: BigNumberish[]],
-    [void],
-    "payable"
-  >;
-  getFunction(
-    nameOrSignature: "mintBatch(uint128[],uint128[])"
-  ): TypedContractMethod<
-    [ids: BigNumberish[], amounts: BigNumberish[]],
     [void],
     "payable"
   >;

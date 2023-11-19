@@ -121,6 +121,12 @@ const _abi = [
         name: "tokenType",
         type: "uint8",
       },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "collectionToken",
+        type: "address",
+      },
     ],
     name: "CollectionCreated",
     type: "event",

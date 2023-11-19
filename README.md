@@ -30,9 +30,9 @@ Collection 721: 0xF52593aCeF1d17D810Bfb5806D5A767887CbD097
 ## Goerli Contracts:
 
 Deploying contracts with 0xe1fe7A4DBF33e6dA8c9e2628d102c67FB9E94549
-Deployed Factory Address: 0xbb9f0a48faB9CB833c3fbeFa91ef0974db243439
-Deployed Router Address: 0x7FFcDbA4278dC651CfFFBd7f28226453ccD7fA5A
-Deployed ERC20 Address: 0x56BBaD08B7a210FdDDCA267e97eD336453E9356C
+Deployed Factory Address: 0x2C3B4A271E5223E90a1db411B8138355e70eb5F6
+Deployed Router Address: 0xFEB70034ae1CfaEBA42fFe040D30308cE7D76b79
+Deployed ERC20 Address: 0x1C57BfD919FEC11Eda828AA2b939fdd330A6d68f
 
 ### Pre Requisites
 

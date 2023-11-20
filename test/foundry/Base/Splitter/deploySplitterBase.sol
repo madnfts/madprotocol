@@ -228,7 +228,7 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
 
     function _runSplitterDeploy_creatorOnly(
         IFactory factory,
-        address erc20Address
+        address madFeeTokenAddress
     ) public returns (address splitter) {
         return _runSplitterDeploy(
             ISplitter.SplitterData({
@@ -240,12 +240,12 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
                     project: address(0),
                     ambassadorShare: 0,
                     projectShare: 0,
-                    erc20Address: erc20Address
+                    madFeeTokenAddress: madFeeTokenAddress
                 }),
                 payeesExpected: SplitterHelpers.getExpectedSplitterAddresses(
                     currentSigner, address(0), address(0)
                     ),
-                paymentToken: erc20Address
+                paymentToken: madFeeTokenAddress
             })
         );
     }
@@ -253,7 +253,7 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
     function _runSplitterDeploy_ambassadorWithNoProject(
         IFactory factory,
         uint256 _ambassadorShare,
-        address erc20Address
+        address madFeeTokenAddress
     ) public returns (address splitter) {
         return _runSplitterDeploy(
             ISplitter.SplitterData({
@@ -265,12 +265,12 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
                     project: address(0),
                     ambassadorShare: _ambassadorShare,
                     projectShare: 0,
-                    erc20Address: erc20Address
+                    madFeeTokenAddress: madFeeTokenAddress
                 }),
                 payeesExpected: SplitterHelpers.getExpectedSplitterAddresses(
                     currentSigner, ambassador, address(0)
                     ),
-                paymentToken: erc20Address
+                paymentToken: madFeeTokenAddress
             })
         );
     }
@@ -278,7 +278,7 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
     function _runSplitterDeploy_projectWithNoAmbassador(
         IFactory factory,
         uint256 _projectShare,
-        address erc20Address
+        address madFeeTokenAddress
     ) public returns (address splitter) {
         return _runSplitterDeploy(
             ISplitter.SplitterData({
@@ -290,12 +290,12 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
                     project: project,
                     ambassadorShare: 0,
                     projectShare: _projectShare,
-                    erc20Address: erc20Address
+                   madFeeTokenAddress: madFeeTokenAddress
                 }),
                 payeesExpected: SplitterHelpers.getExpectedSplitterAddresses(
                     currentSigner, address(0), project
                     ),
-                paymentToken: erc20Address
+                paymentToken: madFeeTokenAddress
             })
         );
     }
@@ -304,7 +304,7 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
         IFactory factory,
         uint256 _ambassadorShare,
         uint256 _projectShare,
-        address erc20Address
+        address madFeeTokenAddress
     ) public returns (address splitter) {
         return _runSplitterDeploy(
             ISplitter.SplitterData({
@@ -316,12 +316,12 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
                     project: project,
                     ambassadorShare: _ambassadorShare,
                     projectShare: _projectShare,
-                    erc20Address: erc20Address
+                   madFeeTokenAddress: madFeeTokenAddress
                 }),
                 payeesExpected: SplitterHelpers.getExpectedSplitterAddresses(
                     currentSigner, ambassador, project
                     ),
-                paymentToken: erc20Address
+                paymentToken: madFeeTokenAddress
             })
         );
     }

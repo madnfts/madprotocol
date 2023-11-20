@@ -123,12 +123,6 @@ contract DeployRouterBase is
                 "Recipient router cannot be address(0)"
             );
 
-            // Verify erc20
-            assertTrue(
-                address(_router.erc20()) == _paymentTokenAddressRouter,
-                "Incorrect payment token address"
-            );
-
             assertTrue(_router.feeBurn() == feeBurn, "Incorrect feeBurn value");
             assertTrue(_router.feeMint() == feeMint, "Incorrect feeMint value");
 

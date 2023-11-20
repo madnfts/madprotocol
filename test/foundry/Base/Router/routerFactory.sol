@@ -17,7 +17,6 @@ contract RouterFactory is Enums {
         return address(
             new MADRouter(
                     _factoryVerifier,
-                    _paymentTokenAddressRouter,
                     _recipientRouter
                 )
         );

@@ -29,11 +29,11 @@ interface IFactory {
         address project;
         uint256 ambassadorShare;
         uint256 projectShare;
-        address erc20Address;
+        address madFeeTokenAddress;
     }
 
     struct CreateCollectionParams {
-        address erc20Address;
+        address madFeeTokenAddress;
         uint8 tokenType;
         bytes32 tokenSalt;
         string collectionName;

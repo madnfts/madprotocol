@@ -26,12 +26,12 @@ contract CreateCollectionHelpers is
         DeploySplitterBase splitterDeployer,
         address _currentSigner,
         uint256 _price,
-        address erc20Address
+        address madFeeTokenAddress
     ) internal returns (address _collectionAddress, address _splitter) {
         splitterDeployer.setCurrentSigner(_currentSigner);
 
         _splitter = splitterDeployer._runSplitterDeploy_creatorOnly(
-            _factory, erc20Address
+            _factory, madFeeTokenAddress
         );
 
         setCurrentSigner(_currentSigner);
@@ -57,12 +57,12 @@ contract CreateCollectionHelpers is
         uint256 _ambassadorShare,
         uint256 _projectShare,
         string memory _baseURI,
-        address erc20Address
+        address madFeeTokenAddress
     ) internal {
         // Define arrays for function signatures and arguments
         (bytes4[4] memory functionSignatures, bytes[4] memory functionArgs) =
         SplitterHelpers.allSplitterCombinations(
-            address(factory), _ambassadorShare, _projectShare, erc20Address
+            address(factory), _ambassadorShare, _projectShare, madFeeTokenAddress
         );
 
         _splitterDeployer.setCurrentSigner(_currentSigner);
@@ -90,7 +90,7 @@ contract CreateCollectionHelpers is
                     IFactory(factory),
                     splitter,
                     IFactory.CreateCollectionParams(
-                        erc20Address,
+                        madFeeTokenAddress,
                         1,
                         updateCreateCollectionSalt(),
                         BASE_NAME,

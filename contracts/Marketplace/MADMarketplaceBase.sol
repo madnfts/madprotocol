@@ -59,6 +59,9 @@ abstract contract MADMarketplaceBase is
 
     FactoryVerifier public madFactory;
 
+    /// @notice ERC20 payment token address.
+    IERC20 public erc20;
+
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
@@ -80,7 +83,7 @@ abstract contract MADMarketplaceBase is
 
         swapRouter = ISwapRouter(_swapRouter);
 
-        _setPaymentToken(_paymentTokenAddress);
+        erc20 = IERC20(_paymentTokenAddress);
         if (address(swapRouter) == address(0)) revert ZeroAddress();
 
         // Approve the router to spend the ERC20 payment token.

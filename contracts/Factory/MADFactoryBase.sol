@@ -88,12 +88,12 @@ abstract contract MADFactoryBase is
         _limiter(params.tokenType, params.splitter);
         _royaltyLocker(params.royalty);
 
-        address erc20Address = params.erc20Address;
-        if (erc20Address == ADDRESS_ZERO) {
+        address madFeeTokenAddress = params.madFeeTokenAddress;
+        if (madFeeTokenAddress == ADDRESS_ZERO) {
             _handleFees(feeCreateCollection);
         } else {
             _handleFees(
-                feeCreateCollectionErc20[erc20Address].feeAmount, erc20Address
+                feeCreateCollectionErc20[madFeeTokenAddress].feeAmount, madFeeTokenAddress
             );
         }
         address deployedCollection = _collectionDeploy(
@@ -134,12 +134,12 @@ abstract contract MADFactoryBase is
         ContractTypes.CreateSplitterParams calldata params,
         uint256 _flag
     ) internal {
-        address erc20Address = params.erc20Address;
-        if (erc20Address == ADDRESS_ZERO) {
+        address madFeeTokenAddress = params.madFeeTokenAddress;
+        if (madFeeTokenAddress == ADDRESS_ZERO) {
             _handleFees(feeCreateSplitter);
         } else {
             _handleFees(
-                feeCreateSplitterErc20[erc20Address].feeAmount, erc20Address
+                feeCreateSplitterErc20[madFeeTokenAddress].feeAmount, madFeeTokenAddress
             );
         }
 

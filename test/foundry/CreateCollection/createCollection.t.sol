@@ -21,7 +21,7 @@ contract TestCreateCollection is CreateCollectionHelpers, Enums {
     Deployer deployer;
     DeploySplitterBase splitterDeployer;
 
-    address[] erc20Addresses = [address(0), address(0)];
+    address[] madFeeTokenAddresses = [address(0), address(0)];
 
     function setUp() public {
         // Instantiate deployer contracts
@@ -38,7 +38,7 @@ contract TestCreateCollection is CreateCollectionHelpers, Enums {
         // Create array of Factory instances to cover both 721 & 1155 Factories
         deployedContracts = [erc721.factory, erc1155.factory];
 
-        erc20Addresses =
+        madFeeTokenAddresses =
             [address(erc721.paymentToken), address(erc1155.paymentToken)];
     }
 
@@ -51,7 +51,7 @@ contract TestCreateCollection is CreateCollectionHelpers, Enums {
             splitterDeployer,
             currentSigner,
             1 ether,
-            erc20Addresses[x]
+            madFeeTokenAddresses[x]
         );
     }
 
@@ -97,7 +97,7 @@ contract TestCreateCollection is CreateCollectionHelpers, Enums {
             2000,
             1000,
             "https://example.com",
-            erc20Addresses[x]
+            madFeeTokenAddresses[x]
         );
     }
 }

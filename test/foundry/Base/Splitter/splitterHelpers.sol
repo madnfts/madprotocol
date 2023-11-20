@@ -47,7 +47,7 @@ library SplitterHelpers {
         address factory,
         uint256 _ambassadorShare,
         uint256 _projectShare,
-        address erc20Address
+        address madFeeTokenAddress
     )
         external
         pure
@@ -64,10 +64,10 @@ library SplitterHelpers {
                 bytes4(0x14a78a6e) //   =>  _runSplitterDeploy_BothAmbassadorAndProject(address,uint256,uint256,address)
             ],
             [
-                abi.encode(factory, erc20Address),
-                abi.encode(factory, _ambassadorShare, erc20Address),
-                abi.encode(factory, _projectShare, erc20Address),
-                abi.encode(factory, _ambassadorShare, _projectShare, erc20Address)
+                abi.encode(factory, madFeeTokenAddress),
+                abi.encode(factory, _ambassadorShare, madFeeTokenAddress),
+                abi.encode(factory, _projectShare, madFeeTokenAddress),
+                abi.encode(factory, _ambassadorShare, _projectShare, madFeeTokenAddress)
             ]
         );
     }

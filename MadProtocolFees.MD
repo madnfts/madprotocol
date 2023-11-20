@@ -9,7 +9,7 @@
 
 ``` javascript
 CreateCollectionParams {
-        address erc20Address;  <-- Fee Payment - 0x0 address will resolve to Native (ETH)
+        address madFeeTokenAddress;  <-- Fee Payment - 0x0 address will resolve to Native (ETH)
         uint8 tokenType;
         bytes32 tokenSalt;
         string collectionName;
@@ -56,7 +56,7 @@ createCollection(
         address project;
         uint256 ambassadorShare;
         uint256 projectShare;
-        address erc20Address; <-- Fee Payment - 0x0 address will resolve to Native (ETH)
+        address madFeeTokenAddress; <-- Fee Payment - 0x0 address will resolve to Native (ETH)
     }
 ```
 
@@ -83,7 +83,7 @@ ERC20 fees are set in a struct.
 
 To check if an ERC20 token is valid, the following functions can be called:
 
-```javascript 
+```javascript
     feeCreateCollectionErc20(address token) external view returns (Fee);
 
     feeCreateSplitterErc20(address token) external view returns (Fee);
@@ -107,7 +107,7 @@ Using ETH we ignore the `erc20Address` field and the fee will be paid in Native 
     mintTo(
         address collection,
         address to,
-        uint256 amount        
+        uint256 amount
     ) external payable;
 ```
 
@@ -146,7 +146,7 @@ ERC20 fees are set in a struct.
 
 To check if an ERC20 token is valid, the following functions can be called:
 
-```javascript 
+```javascript
     feeMintErc20(address token) external view returns (Fee);
 
     feeBurnErc20(address token) external view returns (Fee);

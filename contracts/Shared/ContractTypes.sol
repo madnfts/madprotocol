@@ -10,7 +10,7 @@ import { IERC1155 } from
 // prettier-ignore
 library ContractTypes {
     struct CreateCollectionParams {
-        address erc20Address;
+        address madFeeTokenAddress;
         uint8 tokenType;
         bytes32 tokenSalt;
         string collectionName;
@@ -31,7 +31,7 @@ library ContractTypes {
         address project;
         uint256 ambassadorShare;
         uint256 projectShare;
-        address erc20Address;
+        address madFeeTokenAddress;
     }
 
     // MAD TEST SKALE

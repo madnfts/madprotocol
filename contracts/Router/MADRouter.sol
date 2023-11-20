@@ -19,14 +19,12 @@ contract MADRouter is MADRouterBase {
 
     /// @notice Constructor requires a valid factory address and an optional
     /// erc20 payment token address.
-    /// @param _factory 1155 factory address.
-    /// @param _paymentTokenAddress erc20 token address | address(0).
-    /// @param _recipient 721 factory address.
+    /// @param _factory  factory address.
+    /// @param _recipient fee payment address.
     constructor(
         FactoryVerifier _factory,
-        address _paymentTokenAddress,
         address _recipient
-    ) MADRouterBase(_factory, _paymentTokenAddress, _recipient) { }
+    ) MADRouterBase(_factory, _recipient) { }
 
     ////////////////////////////////////////////////////////////////
     //                    CREATOR MINTING ERC721                  //

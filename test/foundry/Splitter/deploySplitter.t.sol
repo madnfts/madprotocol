@@ -16,7 +16,7 @@ import { IDeployer } from "test/foundry/Base/Deploy/IDeployer.sol";
 contract TestSplitterDeployment is DeploySplitterBase, SplitterModifiers {
     IFactory[] deployedContracts;
     Deployer deployer;
-    address[] erc20Addresses;
+    address[] madFeeTokenAddresses;
 
     function setUp() public {
         // Instantiate deployer contracts
@@ -30,7 +30,7 @@ contract TestSplitterDeployment is DeploySplitterBase, SplitterModifiers {
         // Create array of Factory instances to cover both 721 & 1155 Factories
         deployedContracts = [erc721.factory, erc1155.factory];
 
-        erc20Addresses =
+        madFeeTokenAddresses =
             [address(erc721.paymentToken), address(erc1155.paymentToken)];
     }
 
@@ -38,7 +38,7 @@ contract TestSplitterDeployment is DeploySplitterBase, SplitterModifiers {
     // (_ambassador == address(0) && _project == address(0))
     function testSplitterDeployment_creatorOnly(uint8 x) public {
         vm.assume(x < deployedContracts.length);
-        _runSplitterDeploy_creatorOnly(deployedContracts[x], erc20Addresses[x]);
+        _runSplitterDeploy_creatorOnly(deployedContracts[x], madFeeTokenAddresses[x]);
     }
 
     /// @dev tests the condition:
@@ -48,7 +48,7 @@ contract TestSplitterDeployment is DeploySplitterBase, SplitterModifiers {
         public
     {
         _runSplitterDeploy_projectWithNoAmbassador(
-            deployedContracts[0], 10_000, erc20Addresses[0]
+            deployedContracts[0], 10_000, madFeeTokenAddresses[0]
         );
     }
 
@@ -61,7 +61,7 @@ contract TestSplitterDeployment is DeploySplitterBase, SplitterModifiers {
     ) public ambassadorWithNoProjectAssumptions(_ambassadorShare) {
         vm.assume(x < deployedContracts.length);
         _runSplitterDeploy_ambassadorWithNoProject(
-            deployedContracts[x], uint256(_ambassadorShare), erc20Addresses[x]
+            deployedContracts[x], uint256(_ambassadorShare), madFeeTokenAddresses[x]
         );
     }
 
@@ -74,7 +74,7 @@ contract TestSplitterDeployment is DeploySplitterBase, SplitterModifiers {
     ) public projectWithNoAmbassadorAssumptions(_projectShare) {
         vm.assume(x < deployedContracts.length);
         _runSplitterDeploy_projectWithNoAmbassador(
-            deployedContracts[x], uint256(_projectShare), erc20Addresses[x]
+            deployedContracts[x], uint256(_projectShare), madFeeTokenAddresses[x]
         );
     }
 
@@ -96,7 +96,7 @@ contract TestSplitterDeployment is DeploySplitterBase, SplitterModifiers {
             deployedContracts[x],
             uint256(_ambassadorShare),
             uint256(_projectShare),
-            erc20Addresses[x]
+            madFeeTokenAddresses[x]
         );
     }
 
@@ -107,7 +107,7 @@ contract TestSplitterDeployment is DeploySplitterBase, SplitterModifiers {
     ///             && _projectShare < 10001
     function testSplitterDeployment_All() public {
         _runSplitterDeploy_BothAmbassadorAndProject(
-            deployedContracts[0], 2000, 2000, erc20Addresses[0]
+            deployedContracts[0], 2000, 2000, madFeeTokenAddresses[0]
         );
     }
 }

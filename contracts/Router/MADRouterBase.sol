@@ -35,14 +35,11 @@ abstract contract MADRouterBase is MADBase, FeeHandler, RouterEvents {
     /// @notice Constructor requires a valid factory address and an optional
     /// erc20 payment token
     /// address.
-    /// @param _paymentTokenAddress erc20 token address.
     /// @param _recipient Public mint fee recipient address.
     constructor(
         FactoryVerifier _factory,
-        address _paymentTokenAddress,
         address _recipient
     ) {
-        _setPaymentToken(_paymentTokenAddress);
         setFactory(_factory);
         setRecipient(_recipient);
     }
@@ -91,11 +88,11 @@ abstract contract MADRouterBase is MADBase, FeeHandler, RouterEvents {
     /// @notice Change the Routers mint and burn fees for erc20 Tokens.
     /// @param _feeMint New mint fee.
     /// @param _feeBurn New burn fee.
-    function setFees(uint256 _feeMint, uint256 _feeBurn, address erc20Address)
+    function setFees(uint256 _feeMint, uint256 _feeBurn, address madFeeTokenAddress)
         public
         onlyOwner
     {
-        _setFees(_feeMint, _feeBurn, erc20Address);
+        _setFees(_feeMint, _feeBurn, madFeeTokenAddress);
         emit FeesUpdated(_feeMint, _feeBurn);
     }
 

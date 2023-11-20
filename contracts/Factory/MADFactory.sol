@@ -58,7 +58,7 @@ contract MADFactory is MADFactoryBase {
     ///     validate and attach to collection.
     ///   - royalty: Ranges in between 0%-10%, in percentage basis points,
     ///     accepted (Min tick := 25).
-    ///   - erc20Address: Address of the ERC20 token to be used as payment token
+    ///   -madFeeTokenAddress: Address of the ERC20 token to be used as payment token
     function _handleCreateCollection(
         ContractTypes.CreateCollectionParams calldata params,
         address collectionToken
@@ -83,7 +83,7 @@ contract MADFactory is MADFactoryBase {
     ///   - splitterSalt: Nonce/Entropy factor used by CREATE3 method
     ///         to generate payment splitter deployment address. Must be always
     ///         different to avoid address collision.
-    ///   - erc20Address: Address of the ERC20 token to be used as payment for
+    ///   -madFeeTokenAddress: Address of the ERC20 token to be used as payment for
     /// fees.
 
     ///   - ambassador: User may choose from one of the whitelisted addresses

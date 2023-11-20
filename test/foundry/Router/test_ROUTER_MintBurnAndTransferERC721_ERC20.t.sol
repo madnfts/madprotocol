@@ -170,12 +170,12 @@ contract TestROUTERMintBurnAndTransferERC721_Erc20 is
         );
 
         // change mint fee to more than 1 ether
-        mintData.nftPublicMintPrice = _nftPublicMintPrice + 5 ether;
+        mintData.nftPublicMintPrice = _nftPublicMintPrice + 50_000 ether;
 
         _doPublicMint(
             mintData,
             true,
-            0x2d8768f9 // error InvalidFees();
+            0x7939f424 // error TransferFromFailed();
         );
     }
 
@@ -213,7 +213,8 @@ contract TestROUTERMintBurnAndTransferERC721_Erc20 is
 
         uint256 idsToBurnLength = idsToBurn.length;
 
-        uint256 val =  deployedContracts.router.feeBurnErc20(address(erc20Token)).feeAmount * idsToBurnLength;
+        uint256 val = deployedContracts.router.feeBurnErc20(address(erc20Token))
+            .feeAmount * idsToBurnLength;
         erc20Token.approve(address(deployedContracts.router), val);
 
         // Burn tokens

@@ -19,6 +19,25 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
+        name: "_collectionId",
+        type: "address",
+      },
+    ],
+    name: "collectionCheck",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "check",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
         name: "_token",
         type: "address",
       },
@@ -33,30 +52,6 @@ const _abi = [
       {
         internalType: "bool",
         name: "stdout",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_collectionId",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_creator",
-        type: "address",
-      },
-    ],
-    name: "creatorCheck",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "check",
         type: "bool",
       },
     ],

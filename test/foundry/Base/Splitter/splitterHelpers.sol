@@ -67,7 +67,9 @@ library SplitterHelpers {
                 abi.encode(factory, madFeeTokenAddress),
                 abi.encode(factory, _ambassadorShare, madFeeTokenAddress),
                 abi.encode(factory, _projectShare, madFeeTokenAddress),
-                abi.encode(factory, _ambassadorShare, _projectShare, madFeeTokenAddress)
+                abi.encode(
+                    factory, _ambassadorShare, _projectShare, madFeeTokenAddress
+                )
             ]
         );
     }

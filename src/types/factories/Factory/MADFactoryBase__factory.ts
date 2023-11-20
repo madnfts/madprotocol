@@ -167,13 +167,25 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
-        indexed: true,
+        indexed: false,
+        internalType: "uint256",
+        name: "feeVal2",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "feeVal3",
+        type: "uint256",
+      },
+      {
+        indexed: false,
         internalType: "address",
-        name: "newMarket",
+        name: "erc20Token",
         type: "address",
       },
     ],
-    name: "MarketplaceUpdated",
+    name: "FeesUpdated",
     type: "event",
   },
   {
@@ -306,6 +318,25 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
+        name: "_collectionId",
+        type: "address",
+      },
+    ],
+    name: "collectionCheck",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
         name: "collectionId",
         type: "address",
       },
@@ -384,43 +415,6 @@ const _abi = [
         internalType: "bool",
         name: "stdout",
         type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_collectionId",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_creator",
-        type: "address",
-      },
-    ],
-    name: "creatorCheck",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "check",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "erc20",
-    outputs: [
-      {
-        internalType: "contract IERC20",
-        name: "",
-        type: "address",
       },
     ],
     stateMutability: "view",
@@ -617,17 +611,17 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_feeCreateCollection",
+        name: "_feeCreateCollectionErc20",
         type: "uint256",
       },
       {
         internalType: "uint256",
-        name: "_feeCreateSplitter",
+        name: "_feeCreateSplitterErc20",
         type: "uint256",
       },
       {
         internalType: "address",
-        name: "erc20token",
+        name: "madFeeTokenAddress",
         type: "address",
       },
     ],

@@ -12,14 +12,14 @@ import {
     MADMarketplaceBase,
     SafeTransferLib
 } from "contracts/Marketplace/MADMarketplaceBase.sol";
-import { ContractTypes } from "contracts/Shared/ContractTypes.sol";
+import { MarketplaceTypes } from "contracts/Shared/MarketplaceTypes.sol";
 
 contract MADMarketplace1155 is
     MADMarketplaceBase,
     MarketplaceEventsAndErrors1155,
     ERC1155Holder
 {
-    using ContractTypes for ContractTypes.Order1155;
+    using MarketplaceTypes for MarketplaceTypes.Order1155;
 
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
@@ -39,7 +39,7 @@ contract MADMarketplace1155 is
         public orderIdByToken;
 
     /// @dev orderID => order details
-    mapping(bytes32 => ContractTypes.Order1155) public orderInfo;
+    mapping(bytes32 => MarketplaceTypes.Order1155) public orderInfo;
 
     /// @dev token => tokenId => amount => case0(feePercent0)/case1(feePercent1)
     mapping(uint256 => mapping(uint256 => mapping(uint256 => bool))) public
@@ -97,7 +97,7 @@ contract MADMarketplace1155 is
     /// expected to take 1s in the
     /// harmony blockchain.
     function bid(bytes32 _order) external payable {
-        ContractTypes.Order1155 storage order = orderInfo[_order];
+        MarketplaceTypes.Order1155 storage order = orderInfo[_order];
 
         uint256 lastBidPrice = order.lastBidPrice;
         uint256 bidValue = address(erc20) != address(0)
@@ -156,7 +156,7 @@ contract MADMarketplace1155 is
     /// @dev Price overrunning not accepted in fixed price and dutch auction.
     /// @dev Function Signature := 0x9c9a1061
     function buy(bytes32 _order) external payable {
-        ContractTypes.Order1155 storage order = orderInfo[_order];
+        MarketplaceTypes.Order1155 storage order = orderInfo[_order];
 
         _buyChecks(order.endTime, order.orderType, order.isSold);
 
@@ -204,7 +204,7 @@ contract MADMarketplace1155 is
     /// @dev Function Signature := 0xbd66528a
     /// @dev Callable by both the seller and the auction winner.
     function claim(bytes32 _order) external {
-        ContractTypes.Order1155 storage order = orderInfo[_order];
+        MarketplaceTypes.Order1155 storage order = orderInfo[_order];
 
         _isBidderOrSeller(order.lastBidder, order.seller);
         _claimChecks(order.isSold, order.orderType, order.endTime);
@@ -241,7 +241,7 @@ contract MADMarketplace1155 is
     /// @dev Function Signature := 0x7489ec23
     /// @dev Cancels order setting endTime value to 0.
     function cancelOrder(bytes32 _order) external {
-        ContractTypes.Order1155 storage order = orderInfo[_order];
+        MarketplaceTypes.Order1155 storage order = orderInfo[_order];
         _cancelOrderChecks(order.seller, order.isSold, order.lastBidPrice);
 
         IERC1155 token = order.token;
@@ -297,7 +297,7 @@ contract MADMarketplace1155 is
         _makeOrderChecks(_endTime, _startPrice);
 
         bytes32 hash = _hash(_token, _id, _amount, msg.sender);
-        orderInfo[hash] = ContractTypes.Order1155(
+        orderInfo[hash] = MarketplaceTypes.Order1155(
             _id,
             _amount,
             _startPrice,
@@ -371,7 +371,7 @@ contract MADMarketplace1155 is
     }
 
     function _intPath(
-        ContractTypes.Order1155 storage _order,
+        MarketplaceTypes.Order1155 storage _order,
         uint256 _price,
         bytes32 _orderId,
         address _to,
@@ -421,7 +421,7 @@ contract MADMarketplace1155 is
     }
 
     function _extPath0(
-        ContractTypes.Order1155 storage _order,
+        MarketplaceTypes.Order1155 storage _order,
         uint256 _price,
         bytes32 _orderId,
         address _to
@@ -476,7 +476,7 @@ contract MADMarketplace1155 is
     }
 
     function _extPath1(
-        ContractTypes.Order1155 storage _order,
+        MarketplaceTypes.Order1155 storage _order,
         uint256 _price,
         bytes32 _orderId,
         address _to
@@ -549,7 +549,7 @@ contract MADMarketplace1155 is
         view
         returns (uint256 price)
     {
-        ContractTypes.Order1155 storage order = orderInfo[_order];
+        MarketplaceTypes.Order1155 storage order = orderInfo[_order];
 
         assembly {
             let orderType := shr(160, sload(add(order.slot, 9)))

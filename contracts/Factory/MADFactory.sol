@@ -3,7 +3,7 @@
 pragma solidity 0.8.22;
 
 import { MADFactoryBase } from "contracts/Factory/MADFactoryBase.sol";
-import { ContractTypes } from "contracts/Shared/ContractTypes.sol";
+import { FactoryTypes } from "contracts/Shared/FactoryTypes.sol";
 
 contract MADFactory is MADFactoryBase {
     uint256 constant AMBASSADOR_SHARE_MIN = 99;
@@ -18,13 +18,13 @@ contract MADFactory is MADFactoryBase {
     constructor(address _recipient) MADFactoryBase(_recipient) { }
 
     function createCollection(
-        ContractTypes.CreateCollectionParams calldata params
+        FactoryTypes.CreateCollectionParams calldata params
     ) public payable {
         _handleCreateCollection(params, ADDRESS_ZERO);
     }
 
     function createCollection(
-        ContractTypes.CreateCollectionParams calldata params,
+        FactoryTypes.CreateCollectionParams calldata params,
         address collectionToken
     ) public payable {
         _handleCreateCollection(params, collectionToken);
@@ -58,9 +58,10 @@ contract MADFactory is MADFactoryBase {
     ///     validate and attach to collection.
     ///   - royalty: Ranges in between 0%-10%, in percentage basis points,
     ///     accepted (Min tick := 25).
-    ///   -madFeeTokenAddress: Address of the ERC20 token to be used as payment token
+    ///   -madFeeTokenAddress: Address of the ERC20 token to be used as payment
+    /// token
     function _handleCreateCollection(
-        ContractTypes.CreateCollectionParams calldata params,
+        FactoryTypes.CreateCollectionParams calldata params,
         address collectionToken
     ) private {
         emit CollectionCreated(
@@ -83,7 +84,8 @@ contract MADFactory is MADFactoryBase {
     ///   - splitterSalt: Nonce/Entropy factor used by CREATE3 method
     ///         to generate payment splitter deployment address. Must be always
     ///         different to avoid address collision.
-    ///   -madFeeTokenAddress: Address of the ERC20 token to be used as payment for
+    ///   -madFeeTokenAddress: Address of the ERC20 token to be used as payment
+    /// for
     /// fees.
 
     ///   - ambassador: User may choose from one of the whitelisted addresses
@@ -111,7 +113,7 @@ contract MADFactory is MADFactoryBase {
 
     // Ambassador
     // Up to 20% of Creator Share before Project share
-    function createSplitter(ContractTypes.CreateSplitterParams calldata params)
+    function createSplitter(FactoryTypes.CreateSplitterParams calldata params)
         public
         payable
         isThisOg

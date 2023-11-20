@@ -38,7 +38,9 @@ contract TestSplitterDeployment is DeploySplitterBase, SplitterModifiers {
     // (_ambassador == address(0) && _project == address(0))
     function testSplitterDeployment_creatorOnly(uint8 x) public {
         vm.assume(x < deployedContracts.length);
-        _runSplitterDeploy_creatorOnly(deployedContracts[x], madFeeTokenAddresses[x]);
+        _runSplitterDeploy_creatorOnly(
+            deployedContracts[x], madFeeTokenAddresses[x]
+        );
     }
 
     /// @dev tests the condition:
@@ -61,7 +63,9 @@ contract TestSplitterDeployment is DeploySplitterBase, SplitterModifiers {
     ) public ambassadorWithNoProjectAssumptions(_ambassadorShare) {
         vm.assume(x < deployedContracts.length);
         _runSplitterDeploy_ambassadorWithNoProject(
-            deployedContracts[x], uint256(_ambassadorShare), madFeeTokenAddresses[x]
+            deployedContracts[x],
+            uint256(_ambassadorShare),
+            madFeeTokenAddresses[x]
         );
     }
 
@@ -74,7 +78,9 @@ contract TestSplitterDeployment is DeploySplitterBase, SplitterModifiers {
     ) public projectWithNoAmbassadorAssumptions(_projectShare) {
         vm.assume(x < deployedContracts.length);
         _runSplitterDeploy_projectWithNoAmbassador(
-            deployedContracts[x], uint256(_projectShare), madFeeTokenAddresses[x]
+            deployedContracts[x],
+            uint256(_projectShare),
+            madFeeTokenAddresses[x]
         );
     }
 

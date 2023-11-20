@@ -24,24 +24,24 @@ import type {
 
 export interface FactoryVerifierInterface extends Interface {
   getFunction(
-    nameOrSignature: "creatorAuth" | "creatorCheck"
+    nameOrSignature: "collectionCheck" | "creatorAuth"
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "creatorAuth",
-    values: [AddressLike, AddressLike]
+    functionFragment: "collectionCheck",
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "creatorCheck",
+    functionFragment: "creatorAuth",
     values: [AddressLike, AddressLike]
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "creatorAuth",
+    functionFragment: "collectionCheck",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "creatorCheck",
+    functionFragment: "creatorAuth",
     data: BytesLike
   ): Result;
 }
@@ -89,14 +89,14 @@ export interface FactoryVerifier extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  creatorAuth: TypedContractMethod<
-    [_token: AddressLike, _user: AddressLike],
+  collectionCheck: TypedContractMethod<
+    [_collectionId: AddressLike],
     [boolean],
     "view"
   >;
 
-  creatorCheck: TypedContractMethod<
-    [_collectionId: AddressLike, _creator: AddressLike],
+  creatorAuth: TypedContractMethod<
+    [_token: AddressLike, _user: AddressLike],
     [boolean],
     "view"
   >;
@@ -106,16 +106,12 @@ export interface FactoryVerifier extends BaseContract {
   ): T;
 
   getFunction(
+    nameOrSignature: "collectionCheck"
+  ): TypedContractMethod<[_collectionId: AddressLike], [boolean], "view">;
+  getFunction(
     nameOrSignature: "creatorAuth"
   ): TypedContractMethod<
     [_token: AddressLike, _user: AddressLike],
-    [boolean],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "creatorCheck"
-  ): TypedContractMethod<
-    [_collectionId: AddressLike, _creator: AddressLike],
     [boolean],
     "view"
   >;

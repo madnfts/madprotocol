@@ -34,7 +34,6 @@ export interface MADRouterInterface extends Interface {
       | "burn(address,uint128[],address[],uint128[],address)"
       | "burn(address,uint128[],address)"
       | "burn(address,uint128[])"
-      | "erc20"
       | "feeBurn"
       | "feeBurnErc20"
       | "feeMint"
@@ -64,7 +63,8 @@ export interface MADRouterInterface extends Interface {
     nameOrSignatureOrTopic:
       | "BaseURISet"
       | "FactoryUpdated"
-      | "FeesUpdated"
+      | "FeesUpdated(uint256,uint256)"
+      | "FeesUpdated(uint256,uint256,address)"
       | "OwnerUpdated"
       | "PaymentTokenUpdated"
       | "PublicMintState"
@@ -108,7 +108,6 @@ export interface MADRouterInterface extends Interface {
     functionFragment: "burn(address,uint128[])",
     values: [AddressLike, BigNumberish[]]
   ): string;
-  encodeFunctionData(functionFragment: "erc20", values?: undefined): string;
   encodeFunctionData(functionFragment: "feeBurn", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "feeBurnErc20",
@@ -217,7 +216,6 @@ export interface MADRouterInterface extends Interface {
     functionFragment: "burn(address,uint128[])",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "erc20", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "feeBurn", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "feeBurnErc20",
@@ -313,12 +311,34 @@ export namespace FactoryUpdatedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export namespace FeesUpdatedEvent {
+export namespace FeesUpdated_uint256_uint256_Event {
   export type InputTuple = [feeVal2: BigNumberish, feeVal3: BigNumberish];
   export type OutputTuple = [feeVal2: bigint, feeVal3: bigint];
   export interface OutputObject {
     feeVal2: bigint;
     feeVal3: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace FeesUpdated_uint256_uint256_address_Event {
+  export type InputTuple = [
+    feeVal2: BigNumberish,
+    feeVal3: BigNumberish,
+    erc20Token: AddressLike
+  ];
+  export type OutputTuple = [
+    feeVal2: bigint,
+    feeVal3: bigint,
+    erc20Token: string
+  ];
+  export interface OutputObject {
+    feeVal2: bigint;
+    feeVal3: bigint;
+    erc20Token: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -500,8 +520,6 @@ export interface MADRouter extends BaseContract {
     "payable"
   >;
 
-  erc20: TypedContractMethod<[], [string], "view">;
-
   feeBurn: TypedContractMethod<[], [bigint], "view">;
 
   feeBurnErc20: TypedContractMethod<
@@ -637,7 +655,11 @@ export interface MADRouter extends BaseContract {
   >;
 
   "setFees(uint256,uint256,address)": TypedContractMethod<
-    [_feeMint: BigNumberish, _feeBurn: BigNumberish, erc20Address: AddressLike],
+    [
+      _feeMint: BigNumberish,
+      _feeBurn: BigNumberish,
+      madFeeTokenAddress: AddressLike
+    ],
     [void],
     "nonpayable"
   >;
@@ -718,9 +740,6 @@ export interface MADRouter extends BaseContract {
     [void],
     "payable"
   >;
-  getFunction(
-    nameOrSignature: "erc20"
-  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "feeBurn"
   ): TypedContractMethod<[], [bigint], "view">;
@@ -874,7 +893,11 @@ export interface MADRouter extends BaseContract {
   getFunction(
     nameOrSignature: "setFees(uint256,uint256,address)"
   ): TypedContractMethod<
-    [_feeMint: BigNumberish, _feeBurn: BigNumberish, erc20Address: AddressLike],
+    [
+      _feeMint: BigNumberish,
+      _feeBurn: BigNumberish,
+      madFeeTokenAddress: AddressLike
+    ],
     [void],
     "nonpayable"
   >;
@@ -900,11 +923,18 @@ export interface MADRouter extends BaseContract {
     FactoryUpdatedEvent.OutputObject
   >;
   getEvent(
-    key: "FeesUpdated"
+    key: "FeesUpdated(uint256,uint256)"
   ): TypedContractEvent<
-    FeesUpdatedEvent.InputTuple,
-    FeesUpdatedEvent.OutputTuple,
-    FeesUpdatedEvent.OutputObject
+    FeesUpdated_uint256_uint256_Event.InputTuple,
+    FeesUpdated_uint256_uint256_Event.OutputTuple,
+    FeesUpdated_uint256_uint256_Event.OutputObject
+  >;
+  getEvent(
+    key: "FeesUpdated(uint256,uint256,address)"
+  ): TypedContractEvent<
+    FeesUpdated_uint256_uint256_address_Event.InputTuple,
+    FeesUpdated_uint256_uint256_address_Event.OutputTuple,
+    FeesUpdated_uint256_uint256_address_Event.OutputObject
   >;
   getEvent(
     key: "OwnerUpdated"
@@ -966,14 +996,14 @@ export interface MADRouter extends BaseContract {
     >;
 
     "FeesUpdated(uint256,uint256)": TypedContractEvent<
-      FeesUpdatedEvent.InputTuple,
-      FeesUpdatedEvent.OutputTuple,
-      FeesUpdatedEvent.OutputObject
+      FeesUpdated_uint256_uint256_Event.InputTuple,
+      FeesUpdated_uint256_uint256_Event.OutputTuple,
+      FeesUpdated_uint256_uint256_Event.OutputObject
     >;
-    FeesUpdated: TypedContractEvent<
-      FeesUpdatedEvent.InputTuple,
-      FeesUpdatedEvent.OutputTuple,
-      FeesUpdatedEvent.OutputObject
+    "FeesUpdated(uint256,uint256,address)": TypedContractEvent<
+      FeesUpdated_uint256_uint256_address_Event.InputTuple,
+      FeesUpdated_uint256_uint256_address_Event.OutputTuple,
+      FeesUpdated_uint256_uint256_address_Event.OutputObject
     >;
 
     "OwnerUpdated(address,address)": TypedContractEvent<

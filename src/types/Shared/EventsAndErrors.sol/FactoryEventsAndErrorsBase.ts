@@ -27,8 +27,8 @@ export interface FactoryEventsAndErrorsBaseInterface extends Interface {
     nameOrSignatureOrTopic:
       | "CollectionCreated"
       | "CollectionTypeAdded"
-      | "FeesUpdated"
-      | "MarketplaceUpdated"
+      | "FeesUpdated(uint256,uint256)"
+      | "FeesUpdated(uint256,uint256,address)"
       | "PaymentTokenUpdated"
       | "RecipientUpdated"
       | "RouterUpdated"
@@ -88,7 +88,7 @@ export namespace CollectionTypeAddedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export namespace FeesUpdatedEvent {
+export namespace FeesUpdated_uint256_uint256_Event {
   export type InputTuple = [feeVal2: BigNumberish, feeVal3: BigNumberish];
   export type OutputTuple = [feeVal2: bigint, feeVal3: bigint];
   export interface OutputObject {
@@ -101,11 +101,21 @@ export namespace FeesUpdatedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export namespace MarketplaceUpdatedEvent {
-  export type InputTuple = [newMarket: AddressLike];
-  export type OutputTuple = [newMarket: string];
+export namespace FeesUpdated_uint256_uint256_address_Event {
+  export type InputTuple = [
+    feeVal2: BigNumberish,
+    feeVal3: BigNumberish,
+    erc20Token: AddressLike
+  ];
+  export type OutputTuple = [
+    feeVal2: bigint,
+    feeVal3: bigint,
+    erc20Token: string
+  ];
   export interface OutputObject {
-    newMarket: string;
+    feeVal2: bigint;
+    feeVal3: bigint;
+    erc20Token: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -239,18 +249,18 @@ export interface FactoryEventsAndErrorsBase extends BaseContract {
     CollectionTypeAddedEvent.OutputObject
   >;
   getEvent(
-    key: "FeesUpdated"
+    key: "FeesUpdated(uint256,uint256)"
   ): TypedContractEvent<
-    FeesUpdatedEvent.InputTuple,
-    FeesUpdatedEvent.OutputTuple,
-    FeesUpdatedEvent.OutputObject
+    FeesUpdated_uint256_uint256_Event.InputTuple,
+    FeesUpdated_uint256_uint256_Event.OutputTuple,
+    FeesUpdated_uint256_uint256_Event.OutputObject
   >;
   getEvent(
-    key: "MarketplaceUpdated"
+    key: "FeesUpdated(uint256,uint256,address)"
   ): TypedContractEvent<
-    MarketplaceUpdatedEvent.InputTuple,
-    MarketplaceUpdatedEvent.OutputTuple,
-    MarketplaceUpdatedEvent.OutputObject
+    FeesUpdated_uint256_uint256_address_Event.InputTuple,
+    FeesUpdated_uint256_uint256_address_Event.OutputTuple,
+    FeesUpdated_uint256_uint256_address_Event.OutputObject
   >;
   getEvent(
     key: "PaymentTokenUpdated"
@@ -305,25 +315,14 @@ export interface FactoryEventsAndErrorsBase extends BaseContract {
     >;
 
     "FeesUpdated(uint256,uint256)": TypedContractEvent<
-      FeesUpdatedEvent.InputTuple,
-      FeesUpdatedEvent.OutputTuple,
-      FeesUpdatedEvent.OutputObject
+      FeesUpdated_uint256_uint256_Event.InputTuple,
+      FeesUpdated_uint256_uint256_Event.OutputTuple,
+      FeesUpdated_uint256_uint256_Event.OutputObject
     >;
-    FeesUpdated: TypedContractEvent<
-      FeesUpdatedEvent.InputTuple,
-      FeesUpdatedEvent.OutputTuple,
-      FeesUpdatedEvent.OutputObject
-    >;
-
-    "MarketplaceUpdated(address)": TypedContractEvent<
-      MarketplaceUpdatedEvent.InputTuple,
-      MarketplaceUpdatedEvent.OutputTuple,
-      MarketplaceUpdatedEvent.OutputObject
-    >;
-    MarketplaceUpdated: TypedContractEvent<
-      MarketplaceUpdatedEvent.InputTuple,
-      MarketplaceUpdatedEvent.OutputTuple,
-      MarketplaceUpdatedEvent.OutputObject
+    "FeesUpdated(uint256,uint256,address)": TypedContractEvent<
+      FeesUpdated_uint256_uint256_address_Event.InputTuple,
+      FeesUpdated_uint256_uint256_address_Event.OutputTuple,
+      FeesUpdated_uint256_uint256_address_Event.OutputObject
     >;
 
     "PaymentTokenUpdated(address)": TypedContractEvent<

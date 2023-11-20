@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.22;
 
-import { ContractTypes } from "contracts/Shared/ContractTypes.sol";
+import { FactoryTypes } from "contracts/Shared/FactoryTypes.sol";
 
 interface IFactory {
     function name() external pure returns (string memory);
@@ -75,7 +75,7 @@ interface IFactory {
         view
         returns (bool stdout);
 
-    function creatorCheck(address _collectionId, address _creator)
+    function collectionCheck(address _collectionId)
         external
         view
         returns (bool check);
@@ -88,7 +88,7 @@ interface IFactory {
     function splitterInfo(address creator, address splitterContract)
         external
         view
-        returns (ContractTypes.SplitterConfig memory);
+        returns (FactoryTypes.SplitterConfig memory);
 
     // Helpers
     function getIDsLength(address _user) external view returns (uint256);

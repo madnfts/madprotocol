@@ -99,10 +99,11 @@ abstract contract FeeHandler {
     /// @notice Payment handler for mint and burn functions.
     /// @dev Function Sighash := 0x3bbed4a0
     /// @param _feeType _FEE_MINT | _FEE_BURN
-    function _handleFees(bytes4 _feeType, uint256 _amount, address madFeeTokenAddress)
-        internal
-        returns (uint256 _fee)
-    {
+    function _handleFees(
+        bytes4 _feeType,
+        uint256 _amount,
+        address madFeeTokenAddress
+    ) internal returns (uint256 _fee) {
         _fee = feeLookup(_feeType, madFeeTokenAddress) * _amount;
         // Check if msg.sender balance is less than the fee.. logic to check the
         // price
@@ -132,9 +133,11 @@ abstract contract FeeHandler {
     /// @dev access control / events are handled in MADRouterBase
     /// @param _feeMint New mint fee.
     /// @param _feeBurn New burn fee.
-    function _setFees(uint256 _feeMint, uint256 _feeBurn, address madFeeTokenAddress)
-        internal
-    {
+    function _setFees(
+        uint256 _feeMint,
+        uint256 _feeBurn,
+        address madFeeTokenAddress
+    ) internal {
         if (madFeeTokenAddress == address(0)) {
             revert RouterEvents.AddressNotValid();
         }

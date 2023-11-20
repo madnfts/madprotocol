@@ -6,6 +6,4 @@ import { EventsAndErrorsBase } from "contracts/Shared/EventsAndErrors.sol";
 import { IERC20 } from "contracts/lib/tokens/IERC20.sol";
 import { Owned } from "contracts/lib/auth/Owned.sol";
 
-abstract contract MADBase is EventsAndErrorsBase, Owned(msg.sender) {
-
-}
+abstract contract MADBase is EventsAndErrorsBase, Owned(msg.sender) { }

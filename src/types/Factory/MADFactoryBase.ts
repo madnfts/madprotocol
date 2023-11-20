@@ -30,11 +30,10 @@ export interface MADFactoryBaseInterface extends Interface {
     nameOrSignature:
       | "ADDRESS_ZERO"
       | "addCollectionType"
+      | "collectionCheck"
       | "collectionInfo"
       | "collectionTypes"
       | "creatorAuth"
-      | "creatorCheck"
-      | "erc20"
       | "feeCreateCollection"
       | "feeCreateCollectionErc20"
       | "feeCreateSplitter"
@@ -58,8 +57,8 @@ export interface MADFactoryBaseInterface extends Interface {
     nameOrSignatureOrTopic:
       | "CollectionCreated"
       | "CollectionTypeAdded"
-      | "FeesUpdated"
-      | "MarketplaceUpdated"
+      | "FeesUpdated(uint256,uint256)"
+      | "FeesUpdated(uint256,uint256,address)"
       | "OwnerUpdated"
       | "PaymentTokenUpdated"
       | "RecipientUpdated"
@@ -76,6 +75,10 @@ export interface MADFactoryBaseInterface extends Interface {
     values: [BigNumberish, BytesLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "collectionCheck",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "collectionInfo",
     values: [AddressLike]
   ): string;
@@ -87,11 +90,6 @@ export interface MADFactoryBaseInterface extends Interface {
     functionFragment: "creatorAuth",
     values: [AddressLike, AddressLike]
   ): string;
-  encodeFunctionData(
-    functionFragment: "creatorCheck",
-    values: [AddressLike, AddressLike]
-  ): string;
-  encodeFunctionData(functionFragment: "erc20", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "feeCreateCollection",
     values?: undefined
@@ -158,6 +156,10 @@ export interface MADFactoryBaseInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "collectionCheck",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "collectionInfo",
     data: BytesLike
   ): Result;
@@ -169,11 +171,6 @@ export interface MADFactoryBaseInterface extends Interface {
     functionFragment: "creatorAuth",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "creatorCheck",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "erc20", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "feeCreateCollection",
     data: BytesLike
@@ -275,7 +272,7 @@ export namespace CollectionTypeAddedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export namespace FeesUpdatedEvent {
+export namespace FeesUpdated_uint256_uint256_Event {
   export type InputTuple = [feeVal2: BigNumberish, feeVal3: BigNumberish];
   export type OutputTuple = [feeVal2: bigint, feeVal3: bigint];
   export interface OutputObject {
@@ -288,11 +285,21 @@ export namespace FeesUpdatedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export namespace MarketplaceUpdatedEvent {
-  export type InputTuple = [newMarket: AddressLike];
-  export type OutputTuple = [newMarket: string];
+export namespace FeesUpdated_uint256_uint256_address_Event {
+  export type InputTuple = [
+    feeVal2: BigNumberish,
+    feeVal3: BigNumberish,
+    erc20Token: AddressLike
+  ];
+  export type OutputTuple = [
+    feeVal2: bigint,
+    feeVal3: bigint,
+    erc20Token: string
+  ];
   export interface OutputObject {
-    newMarket: string;
+    feeVal2: bigint;
+    feeVal3: bigint;
+    erc20Token: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -428,6 +435,12 @@ export interface MADFactoryBase extends BaseContract {
     "nonpayable"
   >;
 
+  collectionCheck: TypedContractMethod<
+    [_collectionId: AddressLike],
+    [boolean],
+    "view"
+  >;
+
   collectionInfo: TypedContractMethod<
     [collectionId: AddressLike],
     [
@@ -454,14 +467,6 @@ export interface MADFactoryBase extends BaseContract {
     [boolean],
     "view"
   >;
-
-  creatorCheck: TypedContractMethod<
-    [_collectionId: AddressLike, _creator: AddressLike],
-    [boolean],
-    "view"
-  >;
-
-  erc20: TypedContractMethod<[], [string], "view">;
 
   feeCreateCollection: TypedContractMethod<[], [bigint], "view">;
 
@@ -503,9 +508,9 @@ export interface MADFactoryBase extends BaseContract {
 
   "setFees(uint256,uint256,address)": TypedContractMethod<
     [
-      _feeCreateCollection: BigNumberish,
-      _feeCreateSplitter: BigNumberish,
-      erc20token: AddressLike
+      _feeCreateCollectionErc20: BigNumberish,
+      _feeCreateSplitterErc20: BigNumberish,
+      madFeeTokenAddress: AddressLike
     ],
     [void],
     "nonpayable"
@@ -558,6 +563,9 @@ export interface MADFactoryBase extends BaseContract {
     "nonpayable"
   >;
   getFunction(
+    nameOrSignature: "collectionCheck"
+  ): TypedContractMethod<[_collectionId: AddressLike], [boolean], "view">;
+  getFunction(
     nameOrSignature: "collectionInfo"
   ): TypedContractMethod<
     [collectionId: AddressLike],
@@ -583,16 +591,6 @@ export interface MADFactoryBase extends BaseContract {
     [boolean],
     "view"
   >;
-  getFunction(
-    nameOrSignature: "creatorCheck"
-  ): TypedContractMethod<
-    [_collectionId: AddressLike, _creator: AddressLike],
-    [boolean],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "erc20"
-  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "feeCreateCollection"
   ): TypedContractMethod<[], [bigint], "view">;
@@ -646,9 +644,9 @@ export interface MADFactoryBase extends BaseContract {
     nameOrSignature: "setFees(uint256,uint256,address)"
   ): TypedContractMethod<
     [
-      _feeCreateCollection: BigNumberish,
-      _feeCreateSplitter: BigNumberish,
-      erc20token: AddressLike
+      _feeCreateCollectionErc20: BigNumberish,
+      _feeCreateSplitterErc20: BigNumberish,
+      madFeeTokenAddress: AddressLike
     ],
     [void],
     "nonpayable"
@@ -702,18 +700,18 @@ export interface MADFactoryBase extends BaseContract {
     CollectionTypeAddedEvent.OutputObject
   >;
   getEvent(
-    key: "FeesUpdated"
+    key: "FeesUpdated(uint256,uint256)"
   ): TypedContractEvent<
-    FeesUpdatedEvent.InputTuple,
-    FeesUpdatedEvent.OutputTuple,
-    FeesUpdatedEvent.OutputObject
+    FeesUpdated_uint256_uint256_Event.InputTuple,
+    FeesUpdated_uint256_uint256_Event.OutputTuple,
+    FeesUpdated_uint256_uint256_Event.OutputObject
   >;
   getEvent(
-    key: "MarketplaceUpdated"
+    key: "FeesUpdated(uint256,uint256,address)"
   ): TypedContractEvent<
-    MarketplaceUpdatedEvent.InputTuple,
-    MarketplaceUpdatedEvent.OutputTuple,
-    MarketplaceUpdatedEvent.OutputObject
+    FeesUpdated_uint256_uint256_address_Event.InputTuple,
+    FeesUpdated_uint256_uint256_address_Event.OutputTuple,
+    FeesUpdated_uint256_uint256_address_Event.OutputObject
   >;
   getEvent(
     key: "OwnerUpdated"
@@ -775,25 +773,14 @@ export interface MADFactoryBase extends BaseContract {
     >;
 
     "FeesUpdated(uint256,uint256)": TypedContractEvent<
-      FeesUpdatedEvent.InputTuple,
-      FeesUpdatedEvent.OutputTuple,
-      FeesUpdatedEvent.OutputObject
+      FeesUpdated_uint256_uint256_Event.InputTuple,
+      FeesUpdated_uint256_uint256_Event.OutputTuple,
+      FeesUpdated_uint256_uint256_Event.OutputObject
     >;
-    FeesUpdated: TypedContractEvent<
-      FeesUpdatedEvent.InputTuple,
-      FeesUpdatedEvent.OutputTuple,
-      FeesUpdatedEvent.OutputObject
-    >;
-
-    "MarketplaceUpdated(address)": TypedContractEvent<
-      MarketplaceUpdatedEvent.InputTuple,
-      MarketplaceUpdatedEvent.OutputTuple,
-      MarketplaceUpdatedEvent.OutputObject
-    >;
-    MarketplaceUpdated: TypedContractEvent<
-      MarketplaceUpdatedEvent.InputTuple,
-      MarketplaceUpdatedEvent.OutputTuple,
-      MarketplaceUpdatedEvent.OutputObject
+    "FeesUpdated(uint256,uint256,address)": TypedContractEvent<
+      FeesUpdated_uint256_uint256_address_Event.InputTuple,
+      FeesUpdated_uint256_uint256_address_Event.OutputTuple,
+      FeesUpdated_uint256_uint256_address_Event.OutputObject
     >;
 
     "OwnerUpdated(address,address)": TypedContractEvent<

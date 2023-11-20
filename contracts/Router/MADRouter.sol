@@ -21,10 +21,9 @@ contract MADRouter is MADRouterBase {
     /// erc20 payment token address.
     /// @param _factory  factory address.
     /// @param _recipient fee payment address.
-    constructor(
-        FactoryVerifier _factory,
-        address _recipient
-    ) MADRouterBase(_factory, _recipient) { }
+    constructor(FactoryVerifier _factory, address _recipient)
+        MADRouterBase(_factory, _recipient)
+    { }
 
     ////////////////////////////////////////////////////////////////
     //                    CREATOR MINTING ERC721                  //

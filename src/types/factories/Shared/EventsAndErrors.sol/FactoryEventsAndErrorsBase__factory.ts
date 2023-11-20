@@ -147,13 +147,25 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
-        indexed: true,
+        indexed: false,
+        internalType: "uint256",
+        name: "feeVal2",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "feeVal3",
+        type: "uint256",
+      },
+      {
+        indexed: false,
         internalType: "address",
-        name: "newMarket",
+        name: "erc20Token",
         type: "address",
       },
     ],
-    name: "MarketplaceUpdated",
+    name: "FeesUpdated",
     type: "event",
   },
   {

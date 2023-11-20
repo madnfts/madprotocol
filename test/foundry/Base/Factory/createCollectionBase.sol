@@ -57,8 +57,9 @@ abstract contract CreateCollectionBase is
             vm.prank(collectionOwner, collectionOwner);
             factory.createCollection{ value: _createCollectionFee }(params);
         } else {
-            uint256 _createCollectionFee =
-                factory.feeCreateCollectionErc20(params.madFeeTokenAddress).feeAmount;
+            uint256 _createCollectionFee = factory.feeCreateCollectionErc20(
+                params.madFeeTokenAddress
+            ).feeAmount;
             vm.prank(collectionOwner, collectionOwner);
             erc20Token.approve(address(factory), _createCollectionFee);
             vm.prank(collectionOwner, collectionOwner);
@@ -110,7 +111,7 @@ abstract contract CreateCollectionBase is
         );
 
         vm.prank(factory.router(), collectionOwner);
-        bool _check = factory.creatorCheck(collectionId, creator);
+        bool _check = factory.collectionCheck(collectionId);
 
         assertTrue(creator == collectionOwner, "Invalid creator");
         assertTrue(_check, "Invalid creator check");
@@ -215,7 +216,7 @@ abstract contract CreateCollectionBase is
             "collection._royaltyFee() == params.royalty :: Incorrect _royaltyFee"
         );
 
-            // getOwner()
+        // getOwner()
         assertTrue(
             collection.getOwner() != address(0),
             "collection.getOwner() != address(0) :: Incorrect getOwner"

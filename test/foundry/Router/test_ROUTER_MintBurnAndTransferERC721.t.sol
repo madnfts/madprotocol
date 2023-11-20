@@ -195,7 +195,9 @@ contract TestROUTERMintBurnAndTransferERC721 is
         uint256 _balanceNftMinterBefore = collection.balanceOf(_tokenOwner);
 
         vm.prank(_tokenOwner, _tokenOwner);
-        deployedContracts.router.burn{value: val}( mintData.collectionAddress,idsToBurn);
+        deployedContracts.router.burn{ value: val }(
+            mintData.collectionAddress, idsToBurn
+        );
 
         uint256 _expectedBalanceNftMinterAfter =
             _balanceNftMinterBefore - idsToBurnLength;
@@ -222,7 +224,9 @@ contract TestROUTERMintBurnAndTransferERC721 is
         // Try to burn the same tokens again
         vm.startPrank(_tokenOwner, _tokenOwner);
         vm.expectRevert(0xceea21b6); // `TokenDoesNotExist()`.
-        deployedContracts.router.burn{value: val}( mintData.collectionAddress, idsToBurn);
+        deployedContracts.router.burn{ value: val }(
+            mintData.collectionAddress, idsToBurn
+        );
     }
 
     function _mintTo_MaxSupply() internal returns (MintData memory mintData) {

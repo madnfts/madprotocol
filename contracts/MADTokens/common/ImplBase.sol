@@ -5,7 +5,7 @@ pragma solidity 0.8.22;
 import { ERC2981 } from "contracts/lib/tokens/common/ERC2981.sol";
 import { TwoFactor } from "contracts/lib/auth/TwoFactor.sol";
 import { Strings } from "contracts/lib/utils/Strings.sol";
-import { ContractTypes } from "contracts/Shared/ContractTypes.sol";
+import { FactoryTypes } from "contracts/Shared/FactoryTypes.sol";
 import { PaymentManager } from "contracts/MADTokens/common/PaymentManager.sol";
 // solhint-disable-next-line
 import {
@@ -55,7 +55,7 @@ abstract contract ImplBase is
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    constructor(ContractTypes.CollectionArgs memory args)
+    constructor(FactoryTypes.CollectionArgs memory args)
         payable
         /*  */
         TwoFactor(args._router, args._owner)

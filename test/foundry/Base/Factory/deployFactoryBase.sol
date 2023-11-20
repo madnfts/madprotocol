@@ -119,7 +119,7 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
         uint8 collectionType,
         bytes memory _tokenType
     ) public {
-        // Set Token ContractTypes
+        // Set Token FactoryTypes
         // emit log_named_address("factoryOwner", _owner);
 
         vm.startPrank(makeAddr("NotOwner"));

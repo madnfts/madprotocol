@@ -115,6 +115,31 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
+        indexed: false,
+        internalType: "uint256",
+        name: "feeVal2",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "feeVal3",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "erc20Token",
+        type: "address",
+      },
+    ],
+    name: "FeesUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
         indexed: true,
         internalType: "address",
         name: "user",
@@ -205,19 +230,6 @@ const _abi = [
     ],
     name: "TokenFundsWithdrawn",
     type: "event",
-  },
-  {
-    inputs: [],
-    name: "erc20",
-    outputs: [
-      {
-        internalType: "contract IERC20",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
   },
   {
     inputs: [],
@@ -390,7 +402,7 @@ const _abi = [
       },
       {
         internalType: "address",
-        name: "erc20Address",
+        name: "madFeeTokenAddress",
         type: "address",
       },
     ],

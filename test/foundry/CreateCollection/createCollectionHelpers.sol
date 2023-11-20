@@ -62,7 +62,10 @@ contract CreateCollectionHelpers is
         // Define arrays for function signatures and arguments
         (bytes4[4] memory functionSignatures, bytes[4] memory functionArgs) =
         SplitterHelpers.allSplitterCombinations(
-            address(factory), _ambassadorShare, _projectShare, madFeeTokenAddress
+            address(factory),
+            _ambassadorShare,
+            _projectShare,
+            madFeeTokenAddress
         );
 
         _splitterDeployer.setCurrentSigner(_currentSigner);

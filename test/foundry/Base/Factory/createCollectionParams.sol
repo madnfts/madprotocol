@@ -36,7 +36,7 @@ abstract contract CreateCollectionParams {
         string memory symbol = BASE_SYMBOL;
 
         return IFactory.CreateCollectionParams({
-           madFeeTokenAddress: madFeeTokenAddress,
+            madFeeTokenAddress: madFeeTokenAddress,
             tokenType: uint8(_tokenType),
             tokenSalt: updateCreateCollectionSalt(),
             collectionName: name,

@@ -25,7 +25,7 @@ import type {
   Listener,
 } from "ethers";
 
-export declare namespace ContractTypes {
+export declare namespace FactoryTypes {
   export type CollectionArgsStruct = {
     _name: string;
     _symbol: string;

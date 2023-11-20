@@ -133,7 +133,7 @@ contract DeployMarketplaceBase is MarketplaceFactory, AddressesHelp {
             "Recipient marketplace cannot be address(0)"
         );
 
-               setAndCheckAddress(_marketplace.setOwner, _marketplace.owner);
+        setAndCheckAddress(_marketplace.setOwner, _marketplace.owner);
         setAndCheckAddress(_marketplace.setRecipient, _marketplace.recipient);
 
         // Fees

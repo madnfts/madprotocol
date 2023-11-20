@@ -4,7 +4,7 @@ pragma solidity 0.8.22;
 import { IFactory } from "test/foundry/Base/Factory/IFactory.sol";
 import { ISplitter, IERC20 } from "test/foundry/Base/Splitter/ISplitter.sol";
 import { SplitterImpl } from "contracts/Splitter/SplitterImpl.sol";
-import { ContractTypes } from "contracts/Shared/ContractTypes.sol";
+import { FactoryTypes } from "contracts/Shared/FactoryTypes.sol";
 import { Deployer } from "test/foundry/Deploy/deployer.t.sol";
 
 import {
@@ -19,7 +19,7 @@ import { SettersToggle } from "test/foundry/utils/setterToggle.sol";
 import { SplitterHelpers } from "test/foundry/Base/Splitter/splitterHelpers.sol";
 
 contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
-    using ContractTypes for ContractTypes.SplitterConfig;
+    using FactoryTypes for FactoryTypes.SplitterConfig;
 
     uint256 public splitterSaltNonce = 67_891_012_456_894_561;
     bool public isERC20;
@@ -87,7 +87,7 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
         ISplitter.SplitterData memory splitterData,
         address splitterAddress
     ) public {
-        ContractTypes.SplitterConfig memory config = splitterData
+        FactoryTypes.SplitterConfig memory config = splitterData
             .factory
             .splitterInfo(splitterData.deployer, splitterAddress);
 
@@ -290,7 +290,7 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
                     project: project,
                     ambassadorShare: 0,
                     projectShare: _projectShare,
-                   madFeeTokenAddress: madFeeTokenAddress
+                    madFeeTokenAddress: madFeeTokenAddress
                 }),
                 payeesExpected: SplitterHelpers.getExpectedSplitterAddresses(
                     currentSigner, address(0), project
@@ -316,7 +316,7 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
                     project: project,
                     ambassadorShare: _ambassadorShare,
                     projectShare: _projectShare,
-                   madFeeTokenAddress: madFeeTokenAddress
+                    madFeeTokenAddress: madFeeTokenAddress
                 }),
                 payeesExpected: SplitterHelpers.getExpectedSplitterAddresses(
                     currentSigner, ambassador, project

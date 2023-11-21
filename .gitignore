@@ -1,7 +1,8 @@
 # directories
 abi2json/
-
+flat/
 test/Flattened/
+flat.sol
 
 .yarn/*
 !.yarn/patches

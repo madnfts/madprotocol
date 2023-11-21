@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 
 import { IFactory } from "test/foundry/Base/Factory/IFactory.sol";
 import { ISplitter, IERC20 } from "test/foundry/Base/Splitter/ISplitter.sol";
-import { SplitterImpl } from "contracts/lib/splitter/SplitterImpl.sol";
-import { Types } from "contracts/Shared/Types.sol";
+import { SplitterImpl } from "contracts/Splitter/SplitterImpl.sol";
+import { FactoryTypes } from "contracts/Shared/FactoryTypes.sol";
 import { Deployer } from "test/foundry/Deploy/deployer.t.sol";
 
 import {
@@ -19,7 +19,7 @@ import { SettersToggle } from "test/foundry/utils/setterToggle.sol";
 import { SplitterHelpers } from "test/foundry/Base/Splitter/splitterHelpers.sol";
 
 contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
-    using Types for Types.SplitterConfig;
+    using FactoryTypes for FactoryTypes.SplitterConfig;
 
     uint256 public splitterSaltNonce = 67_891_012_456_894_561;
     bool public isERC20;
@@ -87,9 +87,9 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
         ISplitter.SplitterData memory splitterData,
         address splitterAddress
     ) public {
-        Types.SplitterConfig memory config = splitterData.factory.splitterInfo(
-            splitterData.deployer, splitterAddress
-        );
+        FactoryTypes.SplitterConfig memory config = splitterData
+            .factory
+            .splitterInfo(splitterData.deployer, splitterAddress);
 
         ISplitter splitter = ISplitter(splitterAddress);
         uint256 creatorShares = splitter._shares(splitterData.deployer);
@@ -160,6 +160,10 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
 
         assertTrue(true == config.valid, "Splitter must be valid.");
 
+        if (splitterDataProjectShare == 10_000) {
+            // 100% of the shares
+            _payeesExpectedLength = 1;
+        }
         assertTrue(
             _payeesExpectedLength == splitter.payeesLength(),
             "Payees Lengths should match expected"
@@ -222,10 +226,10 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
         }
     }
 
-    function _runSplitterDeploy_creatorOnly(IFactory factory)
-        public
-        returns (address splitter)
-    {
+    function _runSplitterDeploy_creatorOnly(
+        IFactory factory,
+        address madFeeTokenAddress
+    ) public returns (address splitter) {
         return _runSplitterDeploy(
             ISplitter.SplitterData({
                 factory: factory,
@@ -235,19 +239,21 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
                     ambassador: address(0),
                     project: address(0),
                     ambassadorShare: 0,
-                    projectShare: 0
+                    projectShare: 0,
+                    madFeeTokenAddress: madFeeTokenAddress
                 }),
                 payeesExpected: SplitterHelpers.getExpectedSplitterAddresses(
                     currentSigner, address(0), address(0)
                     ),
-                paymentToken: factory.erc20()
+                paymentToken: madFeeTokenAddress
             })
         );
     }
 
     function _runSplitterDeploy_ambassadorWithNoProject(
         IFactory factory,
-        uint256 _ambassadorShare
+        uint256 _ambassadorShare,
+        address madFeeTokenAddress
     ) public returns (address splitter) {
         return _runSplitterDeploy(
             ISplitter.SplitterData({
@@ -258,19 +264,21 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
                     ambassador: ambassador,
                     project: address(0),
                     ambassadorShare: _ambassadorShare,
-                    projectShare: 0
+                    projectShare: 0,
+                    madFeeTokenAddress: madFeeTokenAddress
                 }),
                 payeesExpected: SplitterHelpers.getExpectedSplitterAddresses(
                     currentSigner, ambassador, address(0)
                     ),
-                paymentToken: factory.erc20()
+                paymentToken: madFeeTokenAddress
             })
         );
     }
 
     function _runSplitterDeploy_projectWithNoAmbassador(
         IFactory factory,
-        uint256 _projectShare
+        uint256 _projectShare,
+        address madFeeTokenAddress
     ) public returns (address splitter) {
         return _runSplitterDeploy(
             ISplitter.SplitterData({
@@ -281,12 +289,13 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
                     ambassador: address(0),
                     project: project,
                     ambassadorShare: 0,
-                    projectShare: _projectShare
+                    projectShare: _projectShare,
+                    madFeeTokenAddress: madFeeTokenAddress
                 }),
                 payeesExpected: SplitterHelpers.getExpectedSplitterAddresses(
                     currentSigner, address(0), project
                     ),
-                paymentToken: factory.erc20()
+                paymentToken: madFeeTokenAddress
             })
         );
     }
@@ -294,7 +303,8 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
     function _runSplitterDeploy_BothAmbassadorAndProject(
         IFactory factory,
         uint256 _ambassadorShare,
-        uint256 _projectShare
+        uint256 _projectShare,
+        address madFeeTokenAddress
     ) public returns (address splitter) {
         return _runSplitterDeploy(
             ISplitter.SplitterData({
@@ -305,12 +315,13 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
                     ambassador: ambassador,
                     project: project,
                     ambassadorShare: _ambassadorShare,
-                    projectShare: _projectShare
+                    projectShare: _projectShare,
+                    madFeeTokenAddress: madFeeTokenAddress
                 }),
                 payeesExpected: SplitterHelpers.getExpectedSplitterAddresses(
                     currentSigner, ambassador, project
                     ),
-                paymentToken: factory.erc20()
+                paymentToken: madFeeTokenAddress
             })
         );
     }

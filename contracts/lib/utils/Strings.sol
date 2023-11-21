@@ -6,7 +6,7 @@
 /// @author Modified from Solmate
 /// (https://github.com/Rari-Capital/solmate/blob/main/src/utils/LibString.sol)
 
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 
 library Strings {
     /// @dev Converts a `uint256` to its ASCII `string` decimal representation.

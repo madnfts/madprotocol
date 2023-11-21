@@ -4,355 +4,548 @@
 
 /* eslint-disable */
 import type {
-  TypedEventFilter,
-  TypedEvent,
+  TypedContractEvent,
+  TypedDeferredTopicFilter,
+  TypedEventLog,
+  TypedLogDescription,
   TypedListener,
-  OnEvent,
-  PromiseOrValue,
 } from "../../common";
-import type { EventFragment } from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   BaseContract,
-  BigNumber,
   BigNumberish,
   BytesLike,
-  Signer,
-  utils,
+  FunctionFragment,
+  Interface,
+  EventFragment,
+  AddressLike,
+  ContractRunner,
+  ContractMethod,
+  Listener,
 } from "ethers";
 
-export interface MarketplaceEventsAndErrors1155Interface
-  extends utils.Interface {
-  functions: {};
-
-  events: {
-    "AuctionSettingsUpdated(uint256,uint256,uint256,uint256)": EventFragment;
-    "Bid(address,uint256,uint256,bytes32,address,uint256)": EventFragment;
-    "CancelOrder(address,uint256,uint256,bytes32,address)": EventFragment;
-    "Claim(address,uint256,uint256,bytes32,address,address,uint256)": EventFragment;
-    "FactoryUpdated(address)": EventFragment;
-    "FeesUpdated(uint256,uint256)": EventFragment;
-    "MakeOrder(address,uint256,uint256,bytes32,address)": EventFragment;
-    "PaymentTokenUpdated(address)": EventFragment;
-    "RecipientUpdated(address)": EventFragment;
-    "UserOutbid(address,address,uint256)": EventFragment;
-    "WithdrawOutbid(address,address,uint256)": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "AuctionSettingsUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Bid"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "CancelOrder"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Claim"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "FactoryUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "FeesUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "MakeOrder"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PaymentTokenUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RecipientUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "UserOutbid"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "WithdrawOutbid"): EventFragment;
+export interface MarketplaceEventsAndErrors1155Interface extends Interface {
+  getEvent(
+    nameOrSignatureOrTopic:
+      | "AuctionSettingsUpdated"
+      | "Bid"
+      | "CancelOrder"
+      | "Claim"
+      | "FactoryUpdated"
+      | "FeesUpdated(uint256,uint256)"
+      | "FeesUpdated(uint256,uint256,address)"
+      | "MakeOrder"
+      | "PaymentTokenUpdated"
+      | "RecipientUpdated"
+      | "UserOutbid"
+      | "WithdrawOutbid"
+  ): EventFragment;
 }
 
-export interface AuctionSettingsUpdatedEventObject {
-  newMinDuration: BigNumber;
-  newIncrement: BigNumber;
-  newMinBidValue: BigNumber;
-  newMaxDuration: BigNumber;
+export namespace AuctionSettingsUpdatedEvent {
+  export type InputTuple = [
+    newMinDuration: BigNumberish,
+    newIncrement: BigNumberish,
+    newMinBidValue: BigNumberish,
+    newMaxDuration: BigNumberish
+  ];
+  export type OutputTuple = [
+    newMinDuration: bigint,
+    newIncrement: bigint,
+    newMinBidValue: bigint,
+    newMaxDuration: bigint
+  ];
+  export interface OutputObject {
+    newMinDuration: bigint;
+    newIncrement: bigint;
+    newMinBidValue: bigint;
+    newMaxDuration: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type AuctionSettingsUpdatedEvent = TypedEvent<
-  [BigNumber, BigNumber, BigNumber, BigNumber],
-  AuctionSettingsUpdatedEventObject
->;
 
-export type AuctionSettingsUpdatedEventFilter =
-  TypedEventFilter<AuctionSettingsUpdatedEvent>;
-
-export interface BidEventObject {
-  token: string;
-  id: BigNumber;
-  amount: BigNumber;
-  hash: string;
-  bidder: string;
-  bidPrice: BigNumber;
+export namespace BidEvent {
+  export type InputTuple = [
+    token: AddressLike,
+    id: BigNumberish,
+    amount: BigNumberish,
+    hash: BytesLike,
+    bidder: AddressLike,
+    bidPrice: BigNumberish
+  ];
+  export type OutputTuple = [
+    token: string,
+    id: bigint,
+    amount: bigint,
+    hash: string,
+    bidder: string,
+    bidPrice: bigint
+  ];
+  export interface OutputObject {
+    token: string;
+    id: bigint;
+    amount: bigint;
+    hash: string;
+    bidder: string;
+    bidPrice: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type BidEvent = TypedEvent<
-  [string, BigNumber, BigNumber, string, string, BigNumber],
-  BidEventObject
->;
 
-export type BidEventFilter = TypedEventFilter<BidEvent>;
-
-export interface CancelOrderEventObject {
-  token: string;
-  id: BigNumber;
-  amount: BigNumber;
-  hash: string;
-  seller: string;
+export namespace CancelOrderEvent {
+  export type InputTuple = [
+    token: AddressLike,
+    id: BigNumberish,
+    amount: BigNumberish,
+    hash: BytesLike,
+    seller: AddressLike
+  ];
+  export type OutputTuple = [
+    token: string,
+    id: bigint,
+    amount: bigint,
+    hash: string,
+    seller: string
+  ];
+  export interface OutputObject {
+    token: string;
+    id: bigint;
+    amount: bigint;
+    hash: string;
+    seller: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type CancelOrderEvent = TypedEvent<
-  [string, BigNumber, BigNumber, string, string],
-  CancelOrderEventObject
->;
 
-export type CancelOrderEventFilter = TypedEventFilter<CancelOrderEvent>;
-
-export interface ClaimEventObject {
-  token: string;
-  id: BigNumber;
-  amount: BigNumber;
-  hash: string;
-  seller: string;
-  taker: string;
-  price: BigNumber;
+export namespace ClaimEvent {
+  export type InputTuple = [
+    token: AddressLike,
+    id: BigNumberish,
+    amount: BigNumberish,
+    hash: BytesLike,
+    seller: AddressLike,
+    taker: AddressLike,
+    price: BigNumberish
+  ];
+  export type OutputTuple = [
+    token: string,
+    id: bigint,
+    amount: bigint,
+    hash: string,
+    seller: string,
+    taker: string,
+    price: bigint
+  ];
+  export interface OutputObject {
+    token: string;
+    id: bigint;
+    amount: bigint;
+    hash: string;
+    seller: string;
+    taker: string;
+    price: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type ClaimEvent = TypedEvent<
-  [string, BigNumber, BigNumber, string, string, string, BigNumber],
-  ClaimEventObject
->;
 
-export type ClaimEventFilter = TypedEventFilter<ClaimEvent>;
-
-export interface FactoryUpdatedEventObject {
-  newFactory: string;
+export namespace FactoryUpdatedEvent {
+  export type InputTuple = [newFactory: AddressLike];
+  export type OutputTuple = [newFactory: string];
+  export interface OutputObject {
+    newFactory: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type FactoryUpdatedEvent = TypedEvent<
-  [string],
-  FactoryUpdatedEventObject
->;
 
-export type FactoryUpdatedEventFilter = TypedEventFilter<FactoryUpdatedEvent>;
-
-export interface FeesUpdatedEventObject {
-  feeVal2: BigNumber;
-  feeVal3: BigNumber;
+export namespace FeesUpdated_uint256_uint256_Event {
+  export type InputTuple = [feeVal2: BigNumberish, feeVal3: BigNumberish];
+  export type OutputTuple = [feeVal2: bigint, feeVal3: bigint];
+  export interface OutputObject {
+    feeVal2: bigint;
+    feeVal3: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type FeesUpdatedEvent = TypedEvent<
-  [BigNumber, BigNumber],
-  FeesUpdatedEventObject
->;
 
-export type FeesUpdatedEventFilter = TypedEventFilter<FeesUpdatedEvent>;
-
-export interface MakeOrderEventObject {
-  token: string;
-  id: BigNumber;
-  amount: BigNumber;
-  hash: string;
-  seller: string;
+export namespace FeesUpdated_uint256_uint256_address_Event {
+  export type InputTuple = [
+    feeVal2: BigNumberish,
+    feeVal3: BigNumberish,
+    erc20Token: AddressLike
+  ];
+  export type OutputTuple = [
+    feeVal2: bigint,
+    feeVal3: bigint,
+    erc20Token: string
+  ];
+  export interface OutputObject {
+    feeVal2: bigint;
+    feeVal3: bigint;
+    erc20Token: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type MakeOrderEvent = TypedEvent<
-  [string, BigNumber, BigNumber, string, string],
-  MakeOrderEventObject
->;
 
-export type MakeOrderEventFilter = TypedEventFilter<MakeOrderEvent>;
-
-export interface PaymentTokenUpdatedEventObject {
-  newPaymentToken: string;
+export namespace MakeOrderEvent {
+  export type InputTuple = [
+    token: AddressLike,
+    id: BigNumberish,
+    amount: BigNumberish,
+    hash: BytesLike,
+    seller: AddressLike
+  ];
+  export type OutputTuple = [
+    token: string,
+    id: bigint,
+    amount: bigint,
+    hash: string,
+    seller: string
+  ];
+  export interface OutputObject {
+    token: string;
+    id: bigint;
+    amount: bigint;
+    hash: string;
+    seller: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type PaymentTokenUpdatedEvent = TypedEvent<
-  [string],
-  PaymentTokenUpdatedEventObject
->;
 
-export type PaymentTokenUpdatedEventFilter =
-  TypedEventFilter<PaymentTokenUpdatedEvent>;
-
-export interface RecipientUpdatedEventObject {
-  newRecipient: string;
+export namespace PaymentTokenUpdatedEvent {
+  export type InputTuple = [newPaymentToken: AddressLike];
+  export type OutputTuple = [newPaymentToken: string];
+  export interface OutputObject {
+    newPaymentToken: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type RecipientUpdatedEvent = TypedEvent<
-  [string],
-  RecipientUpdatedEventObject
->;
 
-export type RecipientUpdatedEventFilter =
-  TypedEventFilter<RecipientUpdatedEvent>;
-
-export interface UserOutbidEventObject {
-  user: string;
-  erc20: string;
-  amount: BigNumber;
+export namespace RecipientUpdatedEvent {
+  export type InputTuple = [newRecipient: AddressLike];
+  export type OutputTuple = [newRecipient: string];
+  export interface OutputObject {
+    newRecipient: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type UserOutbidEvent = TypedEvent<
-  [string, string, BigNumber],
-  UserOutbidEventObject
->;
 
-export type UserOutbidEventFilter = TypedEventFilter<UserOutbidEvent>;
-
-export interface WithdrawOutbidEventObject {
-  user: string;
-  erc20: string;
-  amount: BigNumber;
+export namespace UserOutbidEvent {
+  export type InputTuple = [
+    user: AddressLike,
+    erc20: AddressLike,
+    amount: BigNumberish
+  ];
+  export type OutputTuple = [user: string, erc20: string, amount: bigint];
+  export interface OutputObject {
+    user: string;
+    erc20: string;
+    amount: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type WithdrawOutbidEvent = TypedEvent<
-  [string, string, BigNumber],
-  WithdrawOutbidEventObject
->;
 
-export type WithdrawOutbidEventFilter = TypedEventFilter<WithdrawOutbidEvent>;
+export namespace WithdrawOutbidEvent {
+  export type InputTuple = [
+    user: AddressLike,
+    erc20: AddressLike,
+    amount: BigNumberish
+  ];
+  export type OutputTuple = [user: string, erc20: string, amount: bigint];
+  export interface OutputObject {
+    user: string;
+    erc20: string;
+    amount: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
 
 export interface MarketplaceEventsAndErrors1155 extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(runner?: ContractRunner | null): MarketplaceEventsAndErrors1155;
+  waitForDeployment(): Promise<this>;
 
   interface: MarketplaceEventsAndErrors1155Interface;
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
+  queryFilter<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  queryFilter<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+  on<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  on<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  functions: {};
+  once<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  once<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  callStatic: {};
+  listeners<TCEvent extends TypedContractEvent>(
+    event: TCEvent
+  ): Promise<Array<TypedListener<TCEvent>>>;
+  listeners(eventName?: string): Promise<Array<Listener>>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(
+    event?: TCEvent
+  ): Promise<this>;
+
+  getFunction<T extends ContractMethod = ContractMethod>(
+    key: string | FunctionFragment
+  ): T;
+
+  getEvent(
+    key: "AuctionSettingsUpdated"
+  ): TypedContractEvent<
+    AuctionSettingsUpdatedEvent.InputTuple,
+    AuctionSettingsUpdatedEvent.OutputTuple,
+    AuctionSettingsUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "Bid"
+  ): TypedContractEvent<
+    BidEvent.InputTuple,
+    BidEvent.OutputTuple,
+    BidEvent.OutputObject
+  >;
+  getEvent(
+    key: "CancelOrder"
+  ): TypedContractEvent<
+    CancelOrderEvent.InputTuple,
+    CancelOrderEvent.OutputTuple,
+    CancelOrderEvent.OutputObject
+  >;
+  getEvent(
+    key: "Claim"
+  ): TypedContractEvent<
+    ClaimEvent.InputTuple,
+    ClaimEvent.OutputTuple,
+    ClaimEvent.OutputObject
+  >;
+  getEvent(
+    key: "FactoryUpdated"
+  ): TypedContractEvent<
+    FactoryUpdatedEvent.InputTuple,
+    FactoryUpdatedEvent.OutputTuple,
+    FactoryUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "FeesUpdated(uint256,uint256)"
+  ): TypedContractEvent<
+    FeesUpdated_uint256_uint256_Event.InputTuple,
+    FeesUpdated_uint256_uint256_Event.OutputTuple,
+    FeesUpdated_uint256_uint256_Event.OutputObject
+  >;
+  getEvent(
+    key: "FeesUpdated(uint256,uint256,address)"
+  ): TypedContractEvent<
+    FeesUpdated_uint256_uint256_address_Event.InputTuple,
+    FeesUpdated_uint256_uint256_address_Event.OutputTuple,
+    FeesUpdated_uint256_uint256_address_Event.OutputObject
+  >;
+  getEvent(
+    key: "MakeOrder"
+  ): TypedContractEvent<
+    MakeOrderEvent.InputTuple,
+    MakeOrderEvent.OutputTuple,
+    MakeOrderEvent.OutputObject
+  >;
+  getEvent(
+    key: "PaymentTokenUpdated"
+  ): TypedContractEvent<
+    PaymentTokenUpdatedEvent.InputTuple,
+    PaymentTokenUpdatedEvent.OutputTuple,
+    PaymentTokenUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "RecipientUpdated"
+  ): TypedContractEvent<
+    RecipientUpdatedEvent.InputTuple,
+    RecipientUpdatedEvent.OutputTuple,
+    RecipientUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "UserOutbid"
+  ): TypedContractEvent<
+    UserOutbidEvent.InputTuple,
+    UserOutbidEvent.OutputTuple,
+    UserOutbidEvent.OutputObject
+  >;
+  getEvent(
+    key: "WithdrawOutbid"
+  ): TypedContractEvent<
+    WithdrawOutbidEvent.InputTuple,
+    WithdrawOutbidEvent.OutputTuple,
+    WithdrawOutbidEvent.OutputObject
+  >;
 
   filters: {
-    "AuctionSettingsUpdated(uint256,uint256,uint256,uint256)"(
-      newMinDuration?: PromiseOrValue<BigNumberish> | null,
-      newIncrement?: PromiseOrValue<BigNumberish> | null,
-      newMinBidValue?: null,
-      newMaxDuration?: PromiseOrValue<BigNumberish> | null
-    ): AuctionSettingsUpdatedEventFilter;
-    AuctionSettingsUpdated(
-      newMinDuration?: PromiseOrValue<BigNumberish> | null,
-      newIncrement?: PromiseOrValue<BigNumberish> | null,
-      newMinBidValue?: null,
-      newMaxDuration?: PromiseOrValue<BigNumberish> | null
-    ): AuctionSettingsUpdatedEventFilter;
+    "AuctionSettingsUpdated(uint256,uint256,uint256,uint256)": TypedContractEvent<
+      AuctionSettingsUpdatedEvent.InputTuple,
+      AuctionSettingsUpdatedEvent.OutputTuple,
+      AuctionSettingsUpdatedEvent.OutputObject
+    >;
+    AuctionSettingsUpdated: TypedContractEvent<
+      AuctionSettingsUpdatedEvent.InputTuple,
+      AuctionSettingsUpdatedEvent.OutputTuple,
+      AuctionSettingsUpdatedEvent.OutputObject
+    >;
 
-    "Bid(address,uint256,uint256,bytes32,address,uint256)"(
-      token?: PromiseOrValue<string> | null,
-      id?: null,
-      amount?: null,
-      hash?: PromiseOrValue<BytesLike> | null,
-      bidder?: null,
-      bidPrice?: null
-    ): BidEventFilter;
-    Bid(
-      token?: PromiseOrValue<string> | null,
-      id?: null,
-      amount?: null,
-      hash?: PromiseOrValue<BytesLike> | null,
-      bidder?: null,
-      bidPrice?: null
-    ): BidEventFilter;
+    "Bid(address,uint256,uint256,bytes32,address,uint256)": TypedContractEvent<
+      BidEvent.InputTuple,
+      BidEvent.OutputTuple,
+      BidEvent.OutputObject
+    >;
+    Bid: TypedContractEvent<
+      BidEvent.InputTuple,
+      BidEvent.OutputTuple,
+      BidEvent.OutputObject
+    >;
 
-    "CancelOrder(address,uint256,uint256,bytes32,address)"(
-      token?: PromiseOrValue<string> | null,
-      id?: null,
-      amount?: null,
-      hash?: PromiseOrValue<BytesLike> | null,
-      seller?: null
-    ): CancelOrderEventFilter;
-    CancelOrder(
-      token?: PromiseOrValue<string> | null,
-      id?: null,
-      amount?: null,
-      hash?: PromiseOrValue<BytesLike> | null,
-      seller?: null
-    ): CancelOrderEventFilter;
+    "CancelOrder(address,uint256,uint256,bytes32,address)": TypedContractEvent<
+      CancelOrderEvent.InputTuple,
+      CancelOrderEvent.OutputTuple,
+      CancelOrderEvent.OutputObject
+    >;
+    CancelOrder: TypedContractEvent<
+      CancelOrderEvent.InputTuple,
+      CancelOrderEvent.OutputTuple,
+      CancelOrderEvent.OutputObject
+    >;
 
-    "Claim(address,uint256,uint256,bytes32,address,address,uint256)"(
-      token?: PromiseOrValue<string> | null,
-      id?: null,
-      amount?: null,
-      hash?: PromiseOrValue<BytesLike> | null,
-      seller?: null,
-      taker?: null,
-      price?: null
-    ): ClaimEventFilter;
-    Claim(
-      token?: PromiseOrValue<string> | null,
-      id?: null,
-      amount?: null,
-      hash?: PromiseOrValue<BytesLike> | null,
-      seller?: null,
-      taker?: null,
-      price?: null
-    ): ClaimEventFilter;
+    "Claim(address,uint256,uint256,bytes32,address,address,uint256)": TypedContractEvent<
+      ClaimEvent.InputTuple,
+      ClaimEvent.OutputTuple,
+      ClaimEvent.OutputObject
+    >;
+    Claim: TypedContractEvent<
+      ClaimEvent.InputTuple,
+      ClaimEvent.OutputTuple,
+      ClaimEvent.OutputObject
+    >;
 
-    "FactoryUpdated(address)"(
-      newFactory?: PromiseOrValue<string> | null
-    ): FactoryUpdatedEventFilter;
-    FactoryUpdated(
-      newFactory?: PromiseOrValue<string> | null
-    ): FactoryUpdatedEventFilter;
+    "FactoryUpdated(address)": TypedContractEvent<
+      FactoryUpdatedEvent.InputTuple,
+      FactoryUpdatedEvent.OutputTuple,
+      FactoryUpdatedEvent.OutputObject
+    >;
+    FactoryUpdated: TypedContractEvent<
+      FactoryUpdatedEvent.InputTuple,
+      FactoryUpdatedEvent.OutputTuple,
+      FactoryUpdatedEvent.OutputObject
+    >;
 
-    "FeesUpdated(uint256,uint256)"(
-      feeVal2?: null,
-      feeVal3?: null
-    ): FeesUpdatedEventFilter;
-    FeesUpdated(feeVal2?: null, feeVal3?: null): FeesUpdatedEventFilter;
+    "FeesUpdated(uint256,uint256)": TypedContractEvent<
+      FeesUpdated_uint256_uint256_Event.InputTuple,
+      FeesUpdated_uint256_uint256_Event.OutputTuple,
+      FeesUpdated_uint256_uint256_Event.OutputObject
+    >;
+    "FeesUpdated(uint256,uint256,address)": TypedContractEvent<
+      FeesUpdated_uint256_uint256_address_Event.InputTuple,
+      FeesUpdated_uint256_uint256_address_Event.OutputTuple,
+      FeesUpdated_uint256_uint256_address_Event.OutputObject
+    >;
 
-    "MakeOrder(address,uint256,uint256,bytes32,address)"(
-      token?: PromiseOrValue<string> | null,
-      id?: null,
-      amount?: null,
-      hash?: PromiseOrValue<BytesLike> | null,
-      seller?: null
-    ): MakeOrderEventFilter;
-    MakeOrder(
-      token?: PromiseOrValue<string> | null,
-      id?: null,
-      amount?: null,
-      hash?: PromiseOrValue<BytesLike> | null,
-      seller?: null
-    ): MakeOrderEventFilter;
+    "MakeOrder(address,uint256,uint256,bytes32,address)": TypedContractEvent<
+      MakeOrderEvent.InputTuple,
+      MakeOrderEvent.OutputTuple,
+      MakeOrderEvent.OutputObject
+    >;
+    MakeOrder: TypedContractEvent<
+      MakeOrderEvent.InputTuple,
+      MakeOrderEvent.OutputTuple,
+      MakeOrderEvent.OutputObject
+    >;
 
-    "PaymentTokenUpdated(address)"(
-      newPaymentToken?: PromiseOrValue<string> | null
-    ): PaymentTokenUpdatedEventFilter;
-    PaymentTokenUpdated(
-      newPaymentToken?: PromiseOrValue<string> | null
-    ): PaymentTokenUpdatedEventFilter;
+    "PaymentTokenUpdated(address)": TypedContractEvent<
+      PaymentTokenUpdatedEvent.InputTuple,
+      PaymentTokenUpdatedEvent.OutputTuple,
+      PaymentTokenUpdatedEvent.OutputObject
+    >;
+    PaymentTokenUpdated: TypedContractEvent<
+      PaymentTokenUpdatedEvent.InputTuple,
+      PaymentTokenUpdatedEvent.OutputTuple,
+      PaymentTokenUpdatedEvent.OutputObject
+    >;
 
-    "RecipientUpdated(address)"(
-      newRecipient?: PromiseOrValue<string> | null
-    ): RecipientUpdatedEventFilter;
-    RecipientUpdated(
-      newRecipient?: PromiseOrValue<string> | null
-    ): RecipientUpdatedEventFilter;
+    "RecipientUpdated(address)": TypedContractEvent<
+      RecipientUpdatedEvent.InputTuple,
+      RecipientUpdatedEvent.OutputTuple,
+      RecipientUpdatedEvent.OutputObject
+    >;
+    RecipientUpdated: TypedContractEvent<
+      RecipientUpdatedEvent.InputTuple,
+      RecipientUpdatedEvent.OutputTuple,
+      RecipientUpdatedEvent.OutputObject
+    >;
 
-    "UserOutbid(address,address,uint256)"(
-      user?: PromiseOrValue<string> | null,
-      erc20?: null,
-      amount?: null
-    ): UserOutbidEventFilter;
-    UserOutbid(
-      user?: PromiseOrValue<string> | null,
-      erc20?: null,
-      amount?: null
-    ): UserOutbidEventFilter;
+    "UserOutbid(address,address,uint256)": TypedContractEvent<
+      UserOutbidEvent.InputTuple,
+      UserOutbidEvent.OutputTuple,
+      UserOutbidEvent.OutputObject
+    >;
+    UserOutbid: TypedContractEvent<
+      UserOutbidEvent.InputTuple,
+      UserOutbidEvent.OutputTuple,
+      UserOutbidEvent.OutputObject
+    >;
 
-    "WithdrawOutbid(address,address,uint256)"(
-      user?: PromiseOrValue<string> | null,
-      erc20?: null,
-      amount?: null
-    ): WithdrawOutbidEventFilter;
-    WithdrawOutbid(
-      user?: PromiseOrValue<string> | null,
-      erc20?: null,
-      amount?: null
-    ): WithdrawOutbidEventFilter;
+    "WithdrawOutbid(address,address,uint256)": TypedContractEvent<
+      WithdrawOutbidEvent.InputTuple,
+      WithdrawOutbidEvent.OutputTuple,
+      WithdrawOutbidEvent.OutputObject
+    >;
+    WithdrawOutbid: TypedContractEvent<
+      WithdrawOutbidEvent.InputTuple,
+      WithdrawOutbidEvent.OutputTuple,
+      WithdrawOutbidEvent.OutputObject
+    >;
   };
-
-  estimateGas: {};
-
-  populateTransaction: {};
 }

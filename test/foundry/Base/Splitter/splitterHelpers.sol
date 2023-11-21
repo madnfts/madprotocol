@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 
 import { IFactory } from "test/foundry/Base/Factory/IFactory.sol";
 
@@ -46,7 +46,8 @@ library SplitterHelpers {
     function allSplitterCombinations(
         address factory,
         uint256 _ambassadorShare,
-        uint256 _projectShare
+        uint256 _projectShare,
+        address madFeeTokenAddress
     )
         external
         pure
@@ -57,16 +58,18 @@ library SplitterHelpers {
     {
         return (
             [
-                bytes4(0xe559eca2), //  =>  _runSplitterDeploy_creatorOnly(address)
-                bytes4(0x3d9f677f), //  =>  _runSplitterDeploy_ambassadorWithNoProject(address,uint256)
-                bytes4(0x61594b53), //  =>  _runSplitterDeploy_projectWithNoAmbassador(address,uint256)
-                bytes4(0x480297ed) //   =>  _runSplitterDeploy_BothAmbassadorAndProject(address,uint256,uint256)
+                bytes4(0x0286a88c), //  =>  _runSplitterDeploy_creatorOnly(address,address)
+                bytes4(0x849ba238), //  =>  _runSplitterDeploy_ambassadorWithNoProject(address,uint256,address)
+                bytes4(0x08f3e5ff), //  =>  _runSplitterDeploy_projectWithNoAmbassador(address,uint256,address)
+                bytes4(0x14a78a6e) //   =>  _runSplitterDeploy_BothAmbassadorAndProject(address,uint256,uint256,address)
             ],
             [
-                abi.encode(factory),
-                abi.encode(factory, _ambassadorShare),
-                abi.encode(factory, _projectShare),
-                abi.encode(factory, _ambassadorShare, _projectShare)
+                abi.encode(factory, madFeeTokenAddress),
+                abi.encode(factory, _ambassadorShare, madFeeTokenAddress),
+                abi.encode(factory, _projectShare, madFeeTokenAddress),
+                abi.encode(
+                    factory, _ambassadorShare, _projectShare, madFeeTokenAddress
+                )
             ]
         );
     }

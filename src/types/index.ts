@@ -8,6 +8,7 @@ import type * as madTokens from "./MADTokens";
 import type * as marketplace from "./Marketplace";
 import type * as router from "./Router";
 import type * as shared from "./Shared";
+import type * as splitter from "./Splitter";
 import type * as lib from "./lib";
 
 export type { factory };
@@ -20,9 +21,13 @@ export type { router };
 
 export type { shared };
 
+export type { splitter };
+
 export type { lib };
 export type { MAD } from "./MAD";
 export * as factories from "./factories";
+export type { FeeHandlerFactory } from "./Factory/FeeHandler.sol/FeeHandlerFactory";
+export { FeeHandlerFactory__factory } from "./factories/Factory/FeeHandler.sol/FeeHandlerFactory__factory";
 export type { MADFactory } from "./Factory/MADFactory";
 export { MADFactory__factory } from "./factories/Factory/MADFactory__factory";
 export type { MADFactoryBase } from "./Factory/MADFactoryBase";
@@ -35,10 +40,6 @@ export type { TwoFactor } from "./lib/auth/TwoFactor";
 export { TwoFactor__factory } from "./factories/lib/auth/TwoFactor__factory";
 export type { DCPrevent } from "./lib/security/DCPrevent";
 export { DCPrevent__factory } from "./factories/lib/security/DCPrevent__factory";
-export type { SplitterEventsAndErrors } from "./lib/splitter/SplitterEventsAndErrors";
-export { SplitterEventsAndErrors__factory } from "./factories/lib/splitter/SplitterEventsAndErrors__factory";
-export type { SplitterImpl } from "./lib/splitter/SplitterImpl";
-export { SplitterImpl__factory } from "./factories/lib/splitter/SplitterImpl__factory";
 export type { MockERC1155 } from "./lib/test/erc1155-mock.sol/MockERC1155";
 export { MockERC1155__factory } from "./factories/lib/test/erc1155-mock.sol/MockERC1155__factory";
 export type { ERC20 } from "./lib/test/erc20-mock.sol/ERC20";
@@ -120,3 +121,7 @@ export type { RouterEvents } from "./Shared/EventsAndErrors.sol/RouterEvents";
 export { RouterEvents__factory } from "./factories/Shared/EventsAndErrors.sol/RouterEvents__factory";
 export type { MADBase } from "./Shared/MADBase";
 export { MADBase__factory } from "./factories/Shared/MADBase__factory";
+export type { SplitterEventsAndErrors } from "./Splitter/SplitterEventsAndErrors";
+export { SplitterEventsAndErrors__factory } from "./factories/Splitter/SplitterEventsAndErrors__factory";
+export type { SplitterImpl } from "./Splitter/SplitterImpl";
+export { SplitterImpl__factory } from "./factories/Splitter/SplitterImpl__factory";

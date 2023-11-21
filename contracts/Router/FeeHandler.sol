@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 
 import { IERC20 } from "contracts/lib/tokens/IERC20.sol";
 import { SafeTransferLib } from "contracts/lib/utils/SafeTransferLib.sol";
@@ -22,10 +22,10 @@ abstract contract FeeHandler {
 
     /// @notice Mint fee store.
     // audit B.3 BlockHat Audit
-    uint256 public feeMint = 0.25 ether;
+    uint256 public feeMint = 1 ether;
 
     /// @notice Burn fee store.
-    uint256 public feeBurn; /* = 0 */
+    uint256 public feeBurn = 1 ether; /* = 0 */
 
     struct Fee {
         uint256 feeAmount;
@@ -37,12 +37,6 @@ abstract contract FeeHandler {
 
     /// @notice ERC20 Burn fee store.
     mapping(address erc20token => Fee burnPrice) public feeBurnErc20;
-
-    /// @notice max fee that can be set for mint - B.1 remove from constructor
-    uint256 public constant maxFeeMint = 2.5 ether; // 0.0003 ether
-
-    /// @notice max fee that can be set for burn - B.1 remove from constructor
-    uint256 public constant maxFeeBurn = 0.5 ether;
 
     ////////////////////////////////////////////////////////////////
     //                         HELPERS                            //
@@ -64,24 +58,24 @@ abstract contract FeeHandler {
     /// @notice Mint and burn fee lookup for erc20 tokens.
     /// @dev Function Sighash := 0xedc9e7a4
     /// @param sigHash _FEE_MINT | _FEE_BURN
-    /// @param erc20Address Address of the erc20 token.
-    function feeLookup(bytes4 sigHash, address erc20Address)
+    /// @param madFeeTokenAddress Address of the erc20 token.
+    function feeLookup(bytes4 sigHash, address madFeeTokenAddress)
         internal
         view
         returns (uint256)
     {
         if (sigHash == _FEE_MINT) {
-            if (!feeMintErc20[erc20Address].isValid) {
+            if (!feeMintErc20[madFeeTokenAddress].isValid) {
                 revert RouterEvents.AddressNotValid();
             }
-            return feeMintErc20[erc20Address].feeAmount;
+            return feeMintErc20[madFeeTokenAddress].feeAmount;
         } else if (sigHash == _FEE_BURN) {
-            if (!feeBurnErc20[erc20Address].isValid) {
+            if (!feeBurnErc20[madFeeTokenAddress].isValid) {
                 revert RouterEvents.AddressNotValid();
             }
-            return feeBurnErc20[erc20Address].feeAmount;
+            return feeBurnErc20[madFeeTokenAddress].feeAmount;
         } else {
-            return 0;
+            revert RouterEvents.InvalidFees();
         }
     }
 
@@ -93,7 +87,7 @@ abstract contract FeeHandler {
         returns (uint256 _fee)
     {
         _fee = feeLookup(_feeType) * _amount;
-        // Check if msg.sender balance is less than the fee.. logic to check the
+        // Check if msg.value balance is less than the fee.. logic to check the
         // price
         // (if any) will be handled in the NFT contract itself.
         if (msg.value < _fee) revert RouterEvents.InvalidFees();
@@ -105,21 +99,22 @@ abstract contract FeeHandler {
     /// @notice Payment handler for mint and burn functions.
     /// @dev Function Sighash := 0x3bbed4a0
     /// @param _feeType _FEE_MINT | _FEE_BURN
-    function _handleFees(bytes4 _feeType, uint256 _amount, address erc20Address)
-        internal
-        returns (uint256 _fee)
-    {
-        _fee = feeLookup(_feeType, erc20Address) * _amount;
+    function _handleFees(
+        bytes4 _feeType,
+        uint256 _amount,
+        address madFeeTokenAddress
+    ) internal returns (uint256 _fee) {
+        _fee = feeLookup(_feeType, madFeeTokenAddress) * _amount;
         // Check if msg.sender balance is less than the fee.. logic to check the
         // price
         // (if any) will be handled in the NFT contract itself.
-        if (IERC20(erc20Address).balanceOf(msg.sender) < _fee) {
+        if (IERC20(madFeeTokenAddress).balanceOf(msg.sender) < _fee) {
             revert RouterEvents.InvalidFees();
         }
 
         // Transfer Fees to recipient..
         SafeTransferLib.safeTransferFrom(
-            IERC20(erc20Address), msg.sender, recipient, _fee
+            IERC20(madFeeTokenAddress), msg.sender, recipient, _fee
         );
     }
 
@@ -128,14 +123,7 @@ abstract contract FeeHandler {
     /// @param _feeMint New mint fee.
     /// @param _feeBurn New burn fee.
     function _setFees(uint256 _feeMint, uint256 _feeBurn) internal {
-        // require(_feeMint <= maxFeeMint && _feeBurn <= maxFeeBurn, "Invalid
-        // fee settings, beyond
-        // max");
         assembly {
-            if or(gt(_feeMint, maxFeeMint), gt(_feeBurn, maxFeeBurn)) {
-                mstore(0x00, 0x2d8768f9)
-                revert(0x1c, 0x04)
-            }
             sstore(feeBurn.slot, _feeBurn)
             sstore(feeMint.slot, _feeMint)
         }
@@ -145,14 +133,16 @@ abstract contract FeeHandler {
     /// @dev access control / events are handled in MADRouterBase
     /// @param _feeMint New mint fee.
     /// @param _feeBurn New burn fee.
-    function _setFees(uint256 _feeMint, uint256 _feeBurn, address erc20Address)
-        internal
-    {
-        if (erc20Address == address(0)) {
+    function _setFees(
+        uint256 _feeMint,
+        uint256 _feeBurn,
+        address madFeeTokenAddress
+    ) internal {
+        if (madFeeTokenAddress == address(0)) {
             revert RouterEvents.AddressNotValid();
         }
 
-        feeMintErc20[erc20Address] = Fee(_feeMint, true);
-        feeBurnErc20[erc20Address] = Fee(_feeBurn, true);
+        feeMintErc20[madFeeTokenAddress] = Fee(_feeMint, true);
+        feeBurnErc20[madFeeTokenAddress] = Fee(_feeBurn, true);
     }
 }

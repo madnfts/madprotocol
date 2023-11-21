@@ -7,13 +7,17 @@ import type {
   MADFactoryBase,
   MADFactoryBaseInterface,
 } from "../../Factory/MADFactoryBase";
-import type { Provider } from "@ethersproject/providers";
-import { Contract, Signer, utils } from "ethers";
+import { Contract, Interface, type ContractRunner } from "ethers";
 
 const _abi = [
   {
     inputs: [],
     name: "AccessDenied",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "AddressNotValid",
     type: "error",
   },
   {
@@ -38,17 +42,22 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "InvalidSplitter",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "InvalidTokenType",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "NotAuthorised",
     type: "error",
   },
   {
     inputs: [],
     name: "NotOwnerNorApproved",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "InvalidSplitter",
     type: "error",
   },
   {
@@ -79,13 +88,13 @@ const _abi = [
       {
         indexed: false,
         internalType: "string",
-        name: "name",
+        name: "collectionName",
         type: "string",
       },
       {
         indexed: false,
         internalType: "string",
-        name: "symbol",
+        name: "collectionSymbol",
         type: "string",
       },
       {
@@ -105,6 +114,18 @@ const _abi = [
         internalType: "uint256",
         name: "mintPrice",
         type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint8",
+        name: "tokenType",
+        type: "uint8",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "collectionToken",
+        type: "address",
       },
     ],
     name: "CollectionCreated",
@@ -146,13 +167,25 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
-        indexed: true,
+        indexed: false,
+        internalType: "uint256",
+        name: "feeVal2",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "feeVal3",
+        type: "uint256",
+      },
+      {
+        indexed: false,
         internalType: "address",
-        name: "newMarket",
+        name: "erc20Token",
         type: "address",
       },
     ],
-    name: "MarketplaceUpdated",
+    name: "FeesUpdated",
     type: "event",
   },
   {
@@ -251,6 +284,19 @@ const _abi = [
     type: "event",
   },
   {
+    inputs: [],
+    name: "ADDRESS_ZERO",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "uint256",
@@ -266,6 +312,25 @@ const _abi = [
     name: "addCollectionType",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_collectionId",
+        type: "address",
+      },
+    ],
+    name: "collectionCheck",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -302,6 +367,11 @@ const _abi = [
         internalType: "address",
         name: "splitter",
         type: "address",
+      },
+      {
+        internalType: "bool",
+        name: "isValid",
+        type: "bool",
       },
     ],
     stateMutability: "view",
@@ -351,23 +421,36 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "feeCreateCollection",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "address",
-        name: "_collectionId",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_creator",
+        name: "erc20token",
         type: "address",
       },
     ],
-    name: "creatorCheck",
+    name: "feeCreateCollectionErc20",
     outputs: [
       {
+        internalType: "uint256",
+        name: "feeAmount",
+        type: "uint256",
+      },
+      {
         internalType: "bool",
-        name: "check",
+        name: "isValid",
         type: "bool",
       },
     ],
@@ -376,12 +459,36 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "erc20",
+    name: "feeCreateSplitter",
     outputs: [
       {
-        internalType: "contract IERC20",
+        internalType: "uint256",
         name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "erc20token",
         type: "address",
+      },
+    ],
+    name: "feeCreateSplitterErc20",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "feeAmount",
+        type: "uint256",
+      },
+      {
+        internalType: "bool",
+        name: "isValid",
+        type: "bool",
       },
     ],
     stateMutability: "view",
@@ -458,6 +565,19 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "recipient",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "router",
     outputs: [
       {
@@ -472,12 +592,66 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "uint256",
+        name: "_feeCreateCollection",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_feeCreateSplitter",
+        type: "uint256",
+      },
+    ],
+    name: "setFees",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_feeCreateCollectionErc20",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_feeCreateSplitterErc20",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "madFeeTokenAddress",
+        type: "address",
+      },
+    ],
+    name: "setFees",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "address",
         name: "newOwner",
         type: "address",
       },
     ],
     name: "setOwner",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_recipient",
+        type: "address",
+      },
+    ],
+    name: "setRecipient",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -578,12 +752,12 @@ const _abi = [
 export class MADFactoryBase__factory {
   static readonly abi = _abi;
   static createInterface(): MADFactoryBaseInterface {
-    return new utils.Interface(_abi) as MADFactoryBaseInterface;
+    return new Interface(_abi) as MADFactoryBaseInterface;
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    runner?: ContractRunner | null
   ): MADFactoryBase {
-    return new Contract(address, _abi, signerOrProvider) as MADFactoryBase;
+    return new Contract(address, _abi, runner) as unknown as MADFactoryBase;
   }
 }

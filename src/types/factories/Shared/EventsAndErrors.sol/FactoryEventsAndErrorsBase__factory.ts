@@ -7,8 +7,7 @@ import type {
   FactoryEventsAndErrorsBase,
   FactoryEventsAndErrorsBaseInterface,
 } from "../../../Shared/EventsAndErrors.sol/FactoryEventsAndErrorsBase";
-import type { Provider } from "@ethersproject/providers";
-import { Contract, Signer, utils } from "ethers";
+import { Contract, Interface, type ContractRunner } from "ethers";
 
 const _abi = [
   {
@@ -28,12 +27,17 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "NotOwnerNorApproved",
+    name: "InvalidSplitter",
     type: "error",
   },
   {
     inputs: [],
-    name: "InvalidSplitter",
+    name: "InvalidTokenType",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "NotOwnerNorApproved",
     type: "error",
   },
   {
@@ -64,13 +68,13 @@ const _abi = [
       {
         indexed: false,
         internalType: "string",
-        name: "name",
+        name: "collectionName",
         type: "string",
       },
       {
         indexed: false,
         internalType: "string",
-        name: "symbol",
+        name: "collectionSymbol",
         type: "string",
       },
       {
@@ -90,6 +94,18 @@ const _abi = [
         internalType: "uint256",
         name: "mintPrice",
         type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint8",
+        name: "tokenType",
+        type: "uint8",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "collectionToken",
+        type: "address",
       },
     ],
     name: "CollectionCreated",
@@ -131,13 +147,25 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
-        indexed: true,
+        indexed: false,
+        internalType: "uint256",
+        name: "feeVal2",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "feeVal3",
+        type: "uint256",
+      },
+      {
+        indexed: false,
         internalType: "address",
-        name: "newMarket",
+        name: "erc20Token",
         type: "address",
       },
     ],
-    name: "MarketplaceUpdated",
+    name: "FeesUpdated",
     type: "event",
   },
   {
@@ -221,16 +249,16 @@ const _abi = [
 export class FactoryEventsAndErrorsBase__factory {
   static readonly abi = _abi;
   static createInterface(): FactoryEventsAndErrorsBaseInterface {
-    return new utils.Interface(_abi) as FactoryEventsAndErrorsBaseInterface;
+    return new Interface(_abi) as FactoryEventsAndErrorsBaseInterface;
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    runner?: ContractRunner | null
   ): FactoryEventsAndErrorsBase {
     return new Contract(
       address,
       _abi,
-      signerOrProvider
-    ) as FactoryEventsAndErrorsBase;
+      runner
+    ) as unknown as FactoryEventsAndErrorsBase;
   }
 }

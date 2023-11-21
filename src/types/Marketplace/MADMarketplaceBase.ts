@@ -4,71 +4,30 @@
 
 /* eslint-disable */
 import type {
-  TypedEventFilter,
-  TypedEvent,
+  TypedContractEvent,
+  TypedDeferredTopicFilter,
+  TypedEventLog,
+  TypedLogDescription,
   TypedListener,
-  OnEvent,
-  PromiseOrValue,
+  TypedContractMethod,
 } from "../common";
 import type {
-  FunctionFragment,
-  Result,
-  EventFragment,
-} from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
-import type {
   BaseContract,
-  BigNumber,
   BigNumberish,
   BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
+  FunctionFragment,
+  Result,
+  Interface,
+  EventFragment,
+  AddressLike,
+  ContractRunner,
+  ContractMethod,
+  Listener,
 } from "ethers";
 
-export interface MADMarketplaceBaseInterface extends utils.Interface {
-  functions: {
-    "basisPoints()": FunctionFragment;
-    "erc20()": FunctionFragment;
-    "feeTier()": FunctionFragment;
-    "getOutbidBalance()": FunctionFragment;
-    "madFactory()": FunctionFragment;
-    "maxFee()": FunctionFragment;
-    "maxFeesAllowed()": FunctionFragment;
-    "maxOrderDuration()": FunctionFragment;
-    "maxRoyaltyFee()": FunctionFragment;
-    "minAuctionIncrement()": FunctionFragment;
-    "minAuctionIncrementMAX()": FunctionFragment;
-    "minBidValue()": FunctionFragment;
-    "minOrderDuration()": FunctionFragment;
-    "minOrderDurationtMAX()": FunctionFragment;
-    "name()": FunctionFragment;
-    "orderIdBySeller(address,uint256)": FunctionFragment;
-    "owner()": FunctionFragment;
-    "recipient()": FunctionFragment;
-    "royaltyFee()": FunctionFragment;
-    "sellerOrderLength(address)": FunctionFragment;
-    "setFactory(address)": FunctionFragment;
-    "setFees(uint256,uint256)": FunctionFragment;
-    "setMinAuctionIncrementMAX(uint256)": FunctionFragment;
-    "setMinOrderDurationtMAX(uint256)": FunctionFragment;
-    "setOwner(address)": FunctionFragment;
-    "setRecipient(address)": FunctionFragment;
-    "swapRouter()": FunctionFragment;
-    "totalOutbid()": FunctionFragment;
-    "updateSettings(uint256,uint256,uint256,uint256)": FunctionFragment;
-    "userOutbid(address)": FunctionFragment;
-    "withdraw()": FunctionFragment;
-    "withdrawERC20()": FunctionFragment;
-    "withdrawOutbid(address,uint256,uint160)": FunctionFragment;
-    "withdrawOutbidEth()": FunctionFragment;
-  };
-
+export interface MADMarketplaceBaseInterface extends Interface {
   getFunction(
-    nameOrSignatureOrTopic:
+    nameOrSignature:
       | "basisPoints"
       | "erc20"
       | "feeTier"
@@ -104,6 +63,19 @@ export interface MADMarketplaceBaseInterface extends utils.Interface {
       | "withdrawOutbid"
       | "withdrawOutbidEth"
   ): FunctionFragment;
+
+  getEvent(
+    nameOrSignatureOrTopic:
+      | "AuctionSettingsUpdated"
+      | "FactoryUpdated"
+      | "FeesUpdated(uint256,uint256)"
+      | "FeesUpdated(uint256,uint256,address)"
+      | "OwnerUpdated"
+      | "PaymentTokenUpdated"
+      | "RecipientUpdated"
+      | "UserOutbid"
+      | "WithdrawOutbid"
+  ): EventFragment;
 
   encodeFunctionData(
     functionFragment: "basisPoints",
@@ -155,7 +127,7 @@ export interface MADMarketplaceBaseInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "orderIdBySeller",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+    values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(functionFragment: "recipient", values?: undefined): string;
@@ -165,31 +137,31 @@ export interface MADMarketplaceBaseInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "sellerOrderLength",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "setFactory",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "setFees",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setMinAuctionIncrementMAX",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setMinOrderDurationtMAX",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setOwner",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "setRecipient",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "swapRouter",
@@ -201,16 +173,11 @@ export interface MADMarketplaceBaseInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "updateSettings",
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
-    ]
+    values: [BigNumberish, BigNumberish, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "userOutbid",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(functionFragment: "withdraw", values?: undefined): string;
   encodeFunctionData(
@@ -219,11 +186,7 @@ export interface MADMarketplaceBaseInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "withdrawOutbid",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
-    ]
+    values: [AddressLike, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "withdrawOutbidEth",
@@ -324,796 +287,592 @@ export interface MADMarketplaceBaseInterface extends utils.Interface {
     functionFragment: "withdrawOutbidEth",
     data: BytesLike
   ): Result;
-
-  events: {
-    "AuctionSettingsUpdated(uint256,uint256,uint256,uint256)": EventFragment;
-    "FactoryUpdated(address)": EventFragment;
-    "FeesUpdated(uint256,uint256)": EventFragment;
-    "OwnerUpdated(address,address)": EventFragment;
-    "PaymentTokenUpdated(address)": EventFragment;
-    "RecipientUpdated(address)": EventFragment;
-    "UserOutbid(address,address,uint256)": EventFragment;
-    "WithdrawOutbid(address,address,uint256)": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "AuctionSettingsUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "FactoryUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "FeesUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnerUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PaymentTokenUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RecipientUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "UserOutbid"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "WithdrawOutbid"): EventFragment;
 }
 
-export interface AuctionSettingsUpdatedEventObject {
-  newMinDuration: BigNumber;
-  newIncrement: BigNumber;
-  newMinBidValue: BigNumber;
-  newMaxDuration: BigNumber;
+export namespace AuctionSettingsUpdatedEvent {
+  export type InputTuple = [
+    newMinDuration: BigNumberish,
+    newIncrement: BigNumberish,
+    newMinBidValue: BigNumberish,
+    newMaxDuration: BigNumberish
+  ];
+  export type OutputTuple = [
+    newMinDuration: bigint,
+    newIncrement: bigint,
+    newMinBidValue: bigint,
+    newMaxDuration: bigint
+  ];
+  export interface OutputObject {
+    newMinDuration: bigint;
+    newIncrement: bigint;
+    newMinBidValue: bigint;
+    newMaxDuration: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type AuctionSettingsUpdatedEvent = TypedEvent<
-  [BigNumber, BigNumber, BigNumber, BigNumber],
-  AuctionSettingsUpdatedEventObject
->;
 
-export type AuctionSettingsUpdatedEventFilter =
-  TypedEventFilter<AuctionSettingsUpdatedEvent>;
-
-export interface FactoryUpdatedEventObject {
-  newFactory: string;
+export namespace FactoryUpdatedEvent {
+  export type InputTuple = [newFactory: AddressLike];
+  export type OutputTuple = [newFactory: string];
+  export interface OutputObject {
+    newFactory: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type FactoryUpdatedEvent = TypedEvent<
-  [string],
-  FactoryUpdatedEventObject
->;
 
-export type FactoryUpdatedEventFilter = TypedEventFilter<FactoryUpdatedEvent>;
-
-export interface FeesUpdatedEventObject {
-  feeVal2: BigNumber;
-  feeVal3: BigNumber;
+export namespace FeesUpdated_uint256_uint256_Event {
+  export type InputTuple = [feeVal2: BigNumberish, feeVal3: BigNumberish];
+  export type OutputTuple = [feeVal2: bigint, feeVal3: bigint];
+  export interface OutputObject {
+    feeVal2: bigint;
+    feeVal3: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type FeesUpdatedEvent = TypedEvent<
-  [BigNumber, BigNumber],
-  FeesUpdatedEventObject
->;
 
-export type FeesUpdatedEventFilter = TypedEventFilter<FeesUpdatedEvent>;
-
-export interface OwnerUpdatedEventObject {
-  user: string;
-  newOwner: string;
+export namespace FeesUpdated_uint256_uint256_address_Event {
+  export type InputTuple = [
+    feeVal2: BigNumberish,
+    feeVal3: BigNumberish,
+    erc20Token: AddressLike
+  ];
+  export type OutputTuple = [
+    feeVal2: bigint,
+    feeVal3: bigint,
+    erc20Token: string
+  ];
+  export interface OutputObject {
+    feeVal2: bigint;
+    feeVal3: bigint;
+    erc20Token: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type OwnerUpdatedEvent = TypedEvent<
-  [string, string],
-  OwnerUpdatedEventObject
->;
 
-export type OwnerUpdatedEventFilter = TypedEventFilter<OwnerUpdatedEvent>;
-
-export interface PaymentTokenUpdatedEventObject {
-  newPaymentToken: string;
+export namespace OwnerUpdatedEvent {
+  export type InputTuple = [user: AddressLike, newOwner: AddressLike];
+  export type OutputTuple = [user: string, newOwner: string];
+  export interface OutputObject {
+    user: string;
+    newOwner: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type PaymentTokenUpdatedEvent = TypedEvent<
-  [string],
-  PaymentTokenUpdatedEventObject
->;
 
-export type PaymentTokenUpdatedEventFilter =
-  TypedEventFilter<PaymentTokenUpdatedEvent>;
-
-export interface RecipientUpdatedEventObject {
-  newRecipient: string;
+export namespace PaymentTokenUpdatedEvent {
+  export type InputTuple = [newPaymentToken: AddressLike];
+  export type OutputTuple = [newPaymentToken: string];
+  export interface OutputObject {
+    newPaymentToken: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type RecipientUpdatedEvent = TypedEvent<
-  [string],
-  RecipientUpdatedEventObject
->;
 
-export type RecipientUpdatedEventFilter =
-  TypedEventFilter<RecipientUpdatedEvent>;
-
-export interface UserOutbidEventObject {
-  user: string;
-  erc20: string;
-  amount: BigNumber;
+export namespace RecipientUpdatedEvent {
+  export type InputTuple = [newRecipient: AddressLike];
+  export type OutputTuple = [newRecipient: string];
+  export interface OutputObject {
+    newRecipient: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type UserOutbidEvent = TypedEvent<
-  [string, string, BigNumber],
-  UserOutbidEventObject
->;
 
-export type UserOutbidEventFilter = TypedEventFilter<UserOutbidEvent>;
-
-export interface WithdrawOutbidEventObject {
-  user: string;
-  erc20: string;
-  amount: BigNumber;
+export namespace UserOutbidEvent {
+  export type InputTuple = [
+    user: AddressLike,
+    erc20: AddressLike,
+    amount: BigNumberish
+  ];
+  export type OutputTuple = [user: string, erc20: string, amount: bigint];
+  export interface OutputObject {
+    user: string;
+    erc20: string;
+    amount: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type WithdrawOutbidEvent = TypedEvent<
-  [string, string, BigNumber],
-  WithdrawOutbidEventObject
->;
 
-export type WithdrawOutbidEventFilter = TypedEventFilter<WithdrawOutbidEvent>;
+export namespace WithdrawOutbidEvent {
+  export type InputTuple = [
+    user: AddressLike,
+    erc20: AddressLike,
+    amount: BigNumberish
+  ];
+  export type OutputTuple = [user: string, erc20: string, amount: bigint];
+  export interface OutputObject {
+    user: string;
+    erc20: string;
+    amount: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
 
 export interface MADMarketplaceBase extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(runner?: ContractRunner | null): MADMarketplaceBase;
+  waitForDeployment(): Promise<this>;
 
   interface: MADMarketplaceBaseInterface;
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
+  queryFilter<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  queryFilter<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+  on<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  on<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  functions: {
-    basisPoints(overrides?: CallOverrides): Promise<[number]>;
+  once<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  once<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-    erc20(overrides?: CallOverrides): Promise<[string]>;
+  listeners<TCEvent extends TypedContractEvent>(
+    event: TCEvent
+  ): Promise<Array<TypedListener<TCEvent>>>;
+  listeners(eventName?: string): Promise<Array<Listener>>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(
+    event?: TCEvent
+  ): Promise<this>;
 
-    feeTier(overrides?: CallOverrides): Promise<[number]>;
+  basisPoints: TypedContractMethod<[], [bigint], "view">;
 
-    getOutbidBalance(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { balance: BigNumber }>;
+  erc20: TypedContractMethod<[], [string], "view">;
 
-    madFactory(overrides?: CallOverrides): Promise<[string]>;
+  feeTier: TypedContractMethod<[], [bigint], "view">;
 
-    maxFee(overrides?: CallOverrides): Promise<[BigNumber]>;
+  getOutbidBalance: TypedContractMethod<[], [bigint], "view">;
 
-    maxFeesAllowed(overrides?: CallOverrides): Promise<[BigNumber]>;
+  madFactory: TypedContractMethod<[], [string], "view">;
 
-    maxOrderDuration(overrides?: CallOverrides): Promise<[BigNumber]>;
+  maxFee: TypedContractMethod<[], [bigint], "view">;
 
-    maxRoyaltyFee(overrides?: CallOverrides): Promise<[BigNumber]>;
+  maxFeesAllowed: TypedContractMethod<[], [bigint], "view">;
 
-    minAuctionIncrement(overrides?: CallOverrides): Promise<[BigNumber]>;
+  maxOrderDuration: TypedContractMethod<[], [bigint], "view">;
 
-    minAuctionIncrementMAX(overrides?: CallOverrides): Promise<[BigNumber]>;
+  maxRoyaltyFee: TypedContractMethod<[], [bigint], "view">;
 
-    minBidValue(overrides?: CallOverrides): Promise<[BigNumber]>;
+  minAuctionIncrement: TypedContractMethod<[], [bigint], "view">;
 
-    minOrderDuration(overrides?: CallOverrides): Promise<[BigNumber]>;
+  minAuctionIncrementMAX: TypedContractMethod<[], [bigint], "view">;
 
-    minOrderDurationtMAX(overrides?: CallOverrides): Promise<[BigNumber]>;
+  minBidValue: TypedContractMethod<[], [bigint], "view">;
 
-    name(overrides?: CallOverrides): Promise<[string]>;
-
-    orderIdBySeller(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    owner(overrides?: CallOverrides): Promise<[string]>;
-
-    recipient(overrides?: CallOverrides): Promise<[string]>;
-
-    royaltyFee(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    sellerOrderLength(
-      _seller: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    setFactory(
-      _factory: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setFees(
-      _royaltyFee: PromiseOrValue<BigNumberish>,
-      _maxFee: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setMinAuctionIncrementMAX(
-      _minAuctionIncrementMAX: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setMinOrderDurationtMAX(
-      _minOrderDurationtMAX: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setOwner(
-      newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setRecipient(
-      _recipient: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    swapRouter(overrides?: CallOverrides): Promise<[string]>;
-
-    totalOutbid(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    updateSettings(
-      _minAuctionIncrement: PromiseOrValue<BigNumberish>,
-      _minOrderDuration: PromiseOrValue<BigNumberish>,
-      _minBidValue: PromiseOrValue<BigNumberish>,
-      _maxOrderDuration: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    userOutbid(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    withdraw(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    withdrawERC20(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    withdrawOutbid(
-      _token: PromiseOrValue<string>,
-      minOut: PromiseOrValue<BigNumberish>,
-      priceLimit: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    withdrawOutbidEth(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-  };
-
-  basisPoints(overrides?: CallOverrides): Promise<number>;
-
-  erc20(overrides?: CallOverrides): Promise<string>;
-
-  feeTier(overrides?: CallOverrides): Promise<number>;
-
-  getOutbidBalance(overrides?: CallOverrides): Promise<BigNumber>;
-
-  madFactory(overrides?: CallOverrides): Promise<string>;
-
-  maxFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-  maxFeesAllowed(overrides?: CallOverrides): Promise<BigNumber>;
-
-  maxOrderDuration(overrides?: CallOverrides): Promise<BigNumber>;
-
-  maxRoyaltyFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-  minAuctionIncrement(overrides?: CallOverrides): Promise<BigNumber>;
-
-  minAuctionIncrementMAX(overrides?: CallOverrides): Promise<BigNumber>;
-
-  minBidValue(overrides?: CallOverrides): Promise<BigNumber>;
-
-  minOrderDuration(overrides?: CallOverrides): Promise<BigNumber>;
-
-  minOrderDurationtMAX(overrides?: CallOverrides): Promise<BigNumber>;
-
-  name(overrides?: CallOverrides): Promise<string>;
-
-  orderIdBySeller(
-    arg0: PromiseOrValue<string>,
-    arg1: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  owner(overrides?: CallOverrides): Promise<string>;
-
-  recipient(overrides?: CallOverrides): Promise<string>;
-
-  royaltyFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-  sellerOrderLength(
-    _seller: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  setFactory(
-    _factory: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  setFees(
-    _royaltyFee: PromiseOrValue<BigNumberish>,
-    _maxFee: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  setMinAuctionIncrementMAX(
-    _minAuctionIncrementMAX: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  setMinOrderDurationtMAX(
-    _minOrderDurationtMAX: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  setOwner(
-    newOwner: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  setRecipient(
-    _recipient: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  swapRouter(overrides?: CallOverrides): Promise<string>;
-
-  totalOutbid(overrides?: CallOverrides): Promise<BigNumber>;
-
-  updateSettings(
-    _minAuctionIncrement: PromiseOrValue<BigNumberish>,
-    _minOrderDuration: PromiseOrValue<BigNumberish>,
-    _minBidValue: PromiseOrValue<BigNumberish>,
-    _maxOrderDuration: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  userOutbid(
-    arg0: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  withdraw(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  withdrawERC20(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  withdrawOutbid(
-    _token: PromiseOrValue<string>,
-    minOut: PromiseOrValue<BigNumberish>,
-    priceLimit: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  withdrawOutbidEth(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  callStatic: {
-    basisPoints(overrides?: CallOverrides): Promise<number>;
-
-    erc20(overrides?: CallOverrides): Promise<string>;
-
-    feeTier(overrides?: CallOverrides): Promise<number>;
-
-    getOutbidBalance(overrides?: CallOverrides): Promise<BigNumber>;
-
-    madFactory(overrides?: CallOverrides): Promise<string>;
-
-    maxFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-    maxFeesAllowed(overrides?: CallOverrides): Promise<BigNumber>;
-
-    maxOrderDuration(overrides?: CallOverrides): Promise<BigNumber>;
-
-    maxRoyaltyFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-    minAuctionIncrement(overrides?: CallOverrides): Promise<BigNumber>;
-
-    minAuctionIncrementMAX(overrides?: CallOverrides): Promise<BigNumber>;
-
-    minBidValue(overrides?: CallOverrides): Promise<BigNumber>;
-
-    minOrderDuration(overrides?: CallOverrides): Promise<BigNumber>;
-
-    minOrderDurationtMAX(overrides?: CallOverrides): Promise<BigNumber>;
-
-    name(overrides?: CallOverrides): Promise<string>;
-
-    orderIdBySeller(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    owner(overrides?: CallOverrides): Promise<string>;
-
-    recipient(overrides?: CallOverrides): Promise<string>;
-
-    royaltyFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-    sellerOrderLength(
-      _seller: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    setFactory(
-      _factory: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setFees(
-      _royaltyFee: PromiseOrValue<BigNumberish>,
-      _maxFee: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setMinAuctionIncrementMAX(
-      _minAuctionIncrementMAX: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setMinOrderDurationtMAX(
-      _minOrderDurationtMAX: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setOwner(
-      newOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setRecipient(
-      _recipient: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    swapRouter(overrides?: CallOverrides): Promise<string>;
-
-    totalOutbid(overrides?: CallOverrides): Promise<BigNumber>;
-
-    updateSettings(
-      _minAuctionIncrement: PromiseOrValue<BigNumberish>,
-      _minOrderDuration: PromiseOrValue<BigNumberish>,
-      _minBidValue: PromiseOrValue<BigNumberish>,
-      _maxOrderDuration: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    userOutbid(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    withdraw(overrides?: CallOverrides): Promise<void>;
-
-    withdrawERC20(overrides?: CallOverrides): Promise<void>;
-
-    withdrawOutbid(
-      _token: PromiseOrValue<string>,
-      minOut: PromiseOrValue<BigNumberish>,
-      priceLimit: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    withdrawOutbidEth(overrides?: CallOverrides): Promise<void>;
-  };
+  minOrderDuration: TypedContractMethod<[], [bigint], "view">;
+
+  minOrderDurationtMAX: TypedContractMethod<[], [bigint], "view">;
+
+  name: TypedContractMethod<[], [string], "view">;
+
+  orderIdBySeller: TypedContractMethod<
+    [arg0: AddressLike, arg1: BigNumberish],
+    [string],
+    "view"
+  >;
+
+  owner: TypedContractMethod<[], [string], "view">;
+
+  recipient: TypedContractMethod<[], [string], "view">;
+
+  royaltyFee: TypedContractMethod<[], [bigint], "view">;
+
+  sellerOrderLength: TypedContractMethod<
+    [_seller: AddressLike],
+    [bigint],
+    "view"
+  >;
+
+  setFactory: TypedContractMethod<
+    [_factory: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  setFees: TypedContractMethod<
+    [_royaltyFee: BigNumberish, _maxFee: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+
+  setMinAuctionIncrementMAX: TypedContractMethod<
+    [_minAuctionIncrementMAX: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+
+  setMinOrderDurationtMAX: TypedContractMethod<
+    [_minOrderDurationtMAX: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+
+  setOwner: TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
+
+  setRecipient: TypedContractMethod<
+    [_recipient: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  swapRouter: TypedContractMethod<[], [string], "view">;
+
+  totalOutbid: TypedContractMethod<[], [bigint], "view">;
+
+  updateSettings: TypedContractMethod<
+    [
+      _minAuctionIncrement: BigNumberish,
+      _minOrderDuration: BigNumberish,
+      _minBidValue: BigNumberish,
+      _maxOrderDuration: BigNumberish
+    ],
+    [void],
+    "nonpayable"
+  >;
+
+  userOutbid: TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
+
+  withdraw: TypedContractMethod<[], [void], "nonpayable">;
+
+  withdrawERC20: TypedContractMethod<[], [void], "nonpayable">;
+
+  withdrawOutbid: TypedContractMethod<
+    [_token: AddressLike, minOut: BigNumberish, priceLimit: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+
+  withdrawOutbidEth: TypedContractMethod<[], [void], "nonpayable">;
+
+  getFunction<T extends ContractMethod = ContractMethod>(
+    key: string | FunctionFragment
+  ): T;
+
+  getFunction(
+    nameOrSignature: "basisPoints"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "erc20"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "feeTier"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "getOutbidBalance"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "madFactory"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "maxFee"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "maxFeesAllowed"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "maxOrderDuration"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "maxRoyaltyFee"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "minAuctionIncrement"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "minAuctionIncrementMAX"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "minBidValue"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "minOrderDuration"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "minOrderDurationtMAX"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "name"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "orderIdBySeller"
+  ): TypedContractMethod<
+    [arg0: AddressLike, arg1: BigNumberish],
+    [string],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "owner"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "recipient"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "royaltyFee"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "sellerOrderLength"
+  ): TypedContractMethod<[_seller: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "setFactory"
+  ): TypedContractMethod<[_factory: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setFees"
+  ): TypedContractMethod<
+    [_royaltyFee: BigNumberish, _maxFee: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "setMinAuctionIncrementMAX"
+  ): TypedContractMethod<
+    [_minAuctionIncrementMAX: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "setMinOrderDurationtMAX"
+  ): TypedContractMethod<
+    [_minOrderDurationtMAX: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "setOwner"
+  ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setRecipient"
+  ): TypedContractMethod<[_recipient: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "swapRouter"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "totalOutbid"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "updateSettings"
+  ): TypedContractMethod<
+    [
+      _minAuctionIncrement: BigNumberish,
+      _minOrderDuration: BigNumberish,
+      _minBidValue: BigNumberish,
+      _maxOrderDuration: BigNumberish
+    ],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "userOutbid"
+  ): TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "withdraw"
+  ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "withdrawERC20"
+  ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "withdrawOutbid"
+  ): TypedContractMethod<
+    [_token: AddressLike, minOut: BigNumberish, priceLimit: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "withdrawOutbidEth"
+  ): TypedContractMethod<[], [void], "nonpayable">;
+
+  getEvent(
+    key: "AuctionSettingsUpdated"
+  ): TypedContractEvent<
+    AuctionSettingsUpdatedEvent.InputTuple,
+    AuctionSettingsUpdatedEvent.OutputTuple,
+    AuctionSettingsUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "FactoryUpdated"
+  ): TypedContractEvent<
+    FactoryUpdatedEvent.InputTuple,
+    FactoryUpdatedEvent.OutputTuple,
+    FactoryUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "FeesUpdated(uint256,uint256)"
+  ): TypedContractEvent<
+    FeesUpdated_uint256_uint256_Event.InputTuple,
+    FeesUpdated_uint256_uint256_Event.OutputTuple,
+    FeesUpdated_uint256_uint256_Event.OutputObject
+  >;
+  getEvent(
+    key: "FeesUpdated(uint256,uint256,address)"
+  ): TypedContractEvent<
+    FeesUpdated_uint256_uint256_address_Event.InputTuple,
+    FeesUpdated_uint256_uint256_address_Event.OutputTuple,
+    FeesUpdated_uint256_uint256_address_Event.OutputObject
+  >;
+  getEvent(
+    key: "OwnerUpdated"
+  ): TypedContractEvent<
+    OwnerUpdatedEvent.InputTuple,
+    OwnerUpdatedEvent.OutputTuple,
+    OwnerUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "PaymentTokenUpdated"
+  ): TypedContractEvent<
+    PaymentTokenUpdatedEvent.InputTuple,
+    PaymentTokenUpdatedEvent.OutputTuple,
+    PaymentTokenUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "RecipientUpdated"
+  ): TypedContractEvent<
+    RecipientUpdatedEvent.InputTuple,
+    RecipientUpdatedEvent.OutputTuple,
+    RecipientUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "UserOutbid"
+  ): TypedContractEvent<
+    UserOutbidEvent.InputTuple,
+    UserOutbidEvent.OutputTuple,
+    UserOutbidEvent.OutputObject
+  >;
+  getEvent(
+    key: "WithdrawOutbid"
+  ): TypedContractEvent<
+    WithdrawOutbidEvent.InputTuple,
+    WithdrawOutbidEvent.OutputTuple,
+    WithdrawOutbidEvent.OutputObject
+  >;
 
   filters: {
-    "AuctionSettingsUpdated(uint256,uint256,uint256,uint256)"(
-      newMinDuration?: PromiseOrValue<BigNumberish> | null,
-      newIncrement?: PromiseOrValue<BigNumberish> | null,
-      newMinBidValue?: null,
-      newMaxDuration?: PromiseOrValue<BigNumberish> | null
-    ): AuctionSettingsUpdatedEventFilter;
-    AuctionSettingsUpdated(
-      newMinDuration?: PromiseOrValue<BigNumberish> | null,
-      newIncrement?: PromiseOrValue<BigNumberish> | null,
-      newMinBidValue?: null,
-      newMaxDuration?: PromiseOrValue<BigNumberish> | null
-    ): AuctionSettingsUpdatedEventFilter;
-
-    "FactoryUpdated(address)"(
-      newFactory?: PromiseOrValue<string> | null
-    ): FactoryUpdatedEventFilter;
-    FactoryUpdated(
-      newFactory?: PromiseOrValue<string> | null
-    ): FactoryUpdatedEventFilter;
-
-    "FeesUpdated(uint256,uint256)"(
-      feeVal2?: null,
-      feeVal3?: null
-    ): FeesUpdatedEventFilter;
-    FeesUpdated(feeVal2?: null, feeVal3?: null): FeesUpdatedEventFilter;
-
-    "OwnerUpdated(address,address)"(
-      user?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnerUpdatedEventFilter;
-    OwnerUpdated(
-      user?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnerUpdatedEventFilter;
-
-    "PaymentTokenUpdated(address)"(
-      newPaymentToken?: PromiseOrValue<string> | null
-    ): PaymentTokenUpdatedEventFilter;
-    PaymentTokenUpdated(
-      newPaymentToken?: PromiseOrValue<string> | null
-    ): PaymentTokenUpdatedEventFilter;
-
-    "RecipientUpdated(address)"(
-      newRecipient?: PromiseOrValue<string> | null
-    ): RecipientUpdatedEventFilter;
-    RecipientUpdated(
-      newRecipient?: PromiseOrValue<string> | null
-    ): RecipientUpdatedEventFilter;
-
-    "UserOutbid(address,address,uint256)"(
-      user?: PromiseOrValue<string> | null,
-      erc20?: null,
-      amount?: null
-    ): UserOutbidEventFilter;
-    UserOutbid(
-      user?: PromiseOrValue<string> | null,
-      erc20?: null,
-      amount?: null
-    ): UserOutbidEventFilter;
-
-    "WithdrawOutbid(address,address,uint256)"(
-      user?: PromiseOrValue<string> | null,
-      erc20?: null,
-      amount?: null
-    ): WithdrawOutbidEventFilter;
-    WithdrawOutbid(
-      user?: PromiseOrValue<string> | null,
-      erc20?: null,
-      amount?: null
-    ): WithdrawOutbidEventFilter;
-  };
-
-  estimateGas: {
-    basisPoints(overrides?: CallOverrides): Promise<BigNumber>;
-
-    erc20(overrides?: CallOverrides): Promise<BigNumber>;
-
-    feeTier(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getOutbidBalance(overrides?: CallOverrides): Promise<BigNumber>;
-
-    madFactory(overrides?: CallOverrides): Promise<BigNumber>;
-
-    maxFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-    maxFeesAllowed(overrides?: CallOverrides): Promise<BigNumber>;
-
-    maxOrderDuration(overrides?: CallOverrides): Promise<BigNumber>;
-
-    maxRoyaltyFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-    minAuctionIncrement(overrides?: CallOverrides): Promise<BigNumber>;
-
-    minAuctionIncrementMAX(overrides?: CallOverrides): Promise<BigNumber>;
-
-    minBidValue(overrides?: CallOverrides): Promise<BigNumber>;
-
-    minOrderDuration(overrides?: CallOverrides): Promise<BigNumber>;
-
-    minOrderDurationtMAX(overrides?: CallOverrides): Promise<BigNumber>;
-
-    name(overrides?: CallOverrides): Promise<BigNumber>;
-
-    orderIdBySeller(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    recipient(overrides?: CallOverrides): Promise<BigNumber>;
-
-    royaltyFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-    sellerOrderLength(
-      _seller: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    setFactory(
-      _factory: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setFees(
-      _royaltyFee: PromiseOrValue<BigNumberish>,
-      _maxFee: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setMinAuctionIncrementMAX(
-      _minAuctionIncrementMAX: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setMinOrderDurationtMAX(
-      _minOrderDurationtMAX: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setOwner(
-      newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setRecipient(
-      _recipient: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    swapRouter(overrides?: CallOverrides): Promise<BigNumber>;
-
-    totalOutbid(overrides?: CallOverrides): Promise<BigNumber>;
-
-    updateSettings(
-      _minAuctionIncrement: PromiseOrValue<BigNumberish>,
-      _minOrderDuration: PromiseOrValue<BigNumberish>,
-      _minBidValue: PromiseOrValue<BigNumberish>,
-      _maxOrderDuration: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    userOutbid(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    withdraw(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    withdrawERC20(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    withdrawOutbid(
-      _token: PromiseOrValue<string>,
-      minOut: PromiseOrValue<BigNumberish>,
-      priceLimit: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    withdrawOutbidEth(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    basisPoints(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    erc20(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    feeTier(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getOutbidBalance(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    madFactory(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    maxFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    maxFeesAllowed(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    maxOrderDuration(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    maxRoyaltyFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    minAuctionIncrement(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    minAuctionIncrementMAX(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    minBidValue(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    minOrderDuration(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    minOrderDurationtMAX(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    orderIdBySeller(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    recipient(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    royaltyFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    sellerOrderLength(
-      _seller: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    setFactory(
-      _factory: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setFees(
-      _royaltyFee: PromiseOrValue<BigNumberish>,
-      _maxFee: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setMinAuctionIncrementMAX(
-      _minAuctionIncrementMAX: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setMinOrderDurationtMAX(
-      _minOrderDurationtMAX: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setOwner(
-      newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setRecipient(
-      _recipient: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    swapRouter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    totalOutbid(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    updateSettings(
-      _minAuctionIncrement: PromiseOrValue<BigNumberish>,
-      _minOrderDuration: PromiseOrValue<BigNumberish>,
-      _minBidValue: PromiseOrValue<BigNumberish>,
-      _maxOrderDuration: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    userOutbid(
-      arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    withdraw(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    withdrawERC20(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    withdrawOutbid(
-      _token: PromiseOrValue<string>,
-      minOut: PromiseOrValue<BigNumberish>,
-      priceLimit: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    withdrawOutbidEth(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+    "AuctionSettingsUpdated(uint256,uint256,uint256,uint256)": TypedContractEvent<
+      AuctionSettingsUpdatedEvent.InputTuple,
+      AuctionSettingsUpdatedEvent.OutputTuple,
+      AuctionSettingsUpdatedEvent.OutputObject
+    >;
+    AuctionSettingsUpdated: TypedContractEvent<
+      AuctionSettingsUpdatedEvent.InputTuple,
+      AuctionSettingsUpdatedEvent.OutputTuple,
+      AuctionSettingsUpdatedEvent.OutputObject
+    >;
+
+    "FactoryUpdated(address)": TypedContractEvent<
+      FactoryUpdatedEvent.InputTuple,
+      FactoryUpdatedEvent.OutputTuple,
+      FactoryUpdatedEvent.OutputObject
+    >;
+    FactoryUpdated: TypedContractEvent<
+      FactoryUpdatedEvent.InputTuple,
+      FactoryUpdatedEvent.OutputTuple,
+      FactoryUpdatedEvent.OutputObject
+    >;
+
+    "FeesUpdated(uint256,uint256)": TypedContractEvent<
+      FeesUpdated_uint256_uint256_Event.InputTuple,
+      FeesUpdated_uint256_uint256_Event.OutputTuple,
+      FeesUpdated_uint256_uint256_Event.OutputObject
+    >;
+    "FeesUpdated(uint256,uint256,address)": TypedContractEvent<
+      FeesUpdated_uint256_uint256_address_Event.InputTuple,
+      FeesUpdated_uint256_uint256_address_Event.OutputTuple,
+      FeesUpdated_uint256_uint256_address_Event.OutputObject
+    >;
+
+    "OwnerUpdated(address,address)": TypedContractEvent<
+      OwnerUpdatedEvent.InputTuple,
+      OwnerUpdatedEvent.OutputTuple,
+      OwnerUpdatedEvent.OutputObject
+    >;
+    OwnerUpdated: TypedContractEvent<
+      OwnerUpdatedEvent.InputTuple,
+      OwnerUpdatedEvent.OutputTuple,
+      OwnerUpdatedEvent.OutputObject
+    >;
+
+    "PaymentTokenUpdated(address)": TypedContractEvent<
+      PaymentTokenUpdatedEvent.InputTuple,
+      PaymentTokenUpdatedEvent.OutputTuple,
+      PaymentTokenUpdatedEvent.OutputObject
+    >;
+    PaymentTokenUpdated: TypedContractEvent<
+      PaymentTokenUpdatedEvent.InputTuple,
+      PaymentTokenUpdatedEvent.OutputTuple,
+      PaymentTokenUpdatedEvent.OutputObject
+    >;
+
+    "RecipientUpdated(address)": TypedContractEvent<
+      RecipientUpdatedEvent.InputTuple,
+      RecipientUpdatedEvent.OutputTuple,
+      RecipientUpdatedEvent.OutputObject
+    >;
+    RecipientUpdated: TypedContractEvent<
+      RecipientUpdatedEvent.InputTuple,
+      RecipientUpdatedEvent.OutputTuple,
+      RecipientUpdatedEvent.OutputObject
+    >;
+
+    "UserOutbid(address,address,uint256)": TypedContractEvent<
+      UserOutbidEvent.InputTuple,
+      UserOutbidEvent.OutputTuple,
+      UserOutbidEvent.OutputObject
+    >;
+    UserOutbid: TypedContractEvent<
+      UserOutbidEvent.InputTuple,
+      UserOutbidEvent.OutputTuple,
+      UserOutbidEvent.OutputObject
+    >;
+
+    "WithdrawOutbid(address,address,uint256)": TypedContractEvent<
+      WithdrawOutbidEvent.InputTuple,
+      WithdrawOutbidEvent.OutputTuple,
+      WithdrawOutbidEvent.OutputObject
+    >;
+    WithdrawOutbid: TypedContractEvent<
+      WithdrawOutbidEvent.InputTuple,
+      WithdrawOutbidEvent.OutputTuple,
+      WithdrawOutbidEvent.OutputObject
+    >;
   };
 }

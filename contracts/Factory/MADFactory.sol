@@ -1,23 +1,34 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 
 import { MADFactoryBase } from "contracts/Factory/MADFactoryBase.sol";
-import { Types } from "contracts/Shared/Types.sol";
+import { FactoryTypes } from "contracts/Shared/FactoryTypes.sol";
 
 contract MADFactory is MADFactoryBase {
     uint256 constant AMBASSADOR_SHARE_MIN = 99;
     uint256 constant AMBASSADOR_SHARE_MAX = 2001;
     uint256 constant PROJECT_SHARE_MIN = 99;
-    uint256 constant PROJECT_SHARE_MAX = 10_001;
+    uint256 constant ONE_HUNDRED_PERCENT = 10_001;
 
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    constructor(address _paymentTokenAddress, address _recipient)
-        MADFactoryBase(_paymentTokenAddress, _recipient)
-    { }
+    constructor(address _recipient) MADFactoryBase(_recipient) { }
+
+    function createCollection(
+        FactoryTypes.CreateCollectionParams calldata params
+    ) public payable {
+        _handleCreateCollection(params, ADDRESS_ZERO);
+    }
+
+    function createCollection(
+        FactoryTypes.CreateCollectionParams calldata params,
+        address collectionToken
+    ) public payable {
+        _handleCreateCollection(params, collectionToken);
+    }
 
     /// @notice Core public token types deployment pusher.
     /// @dev Function Sighash := 0x73fd6808
@@ -47,18 +58,22 @@ contract MADFactory is MADFactoryBase {
     ///     validate and attach to collection.
     ///   - royalty: Ranges in between 0%-10%, in percentage basis points,
     ///     accepted (Min tick := 25).
-    function createCollection(Types.CreateCollectionParams calldata params)
-        public
-        payable
-    {
+    ///   -madFeeTokenAddress: Address of the ERC20 token to be used as payment
+    /// token
+    function _handleCreateCollection(
+        FactoryTypes.CreateCollectionParams calldata params,
+        address collectionToken
+    ) private {
         emit CollectionCreated(
             params.splitter,
-            _createCollection(params),
-            params.name,
-            params.symbol,
+            _createCollection(params, collectionToken),
+            params.collectionName,
+            params.collectionSymbol,
             params.royalty,
             params.maxSupply,
-            params.price
+            params.price,
+            params.tokenType,
+            collectionToken
         );
     }
 
@@ -69,6 +84,9 @@ contract MADFactory is MADFactoryBase {
     ///   - splitterSalt: Nonce/Entropy factor used by CREATE3 method
     ///         to generate payment splitter deployment address. Must be always
     ///         different to avoid address collision.
+    ///   -madFeeTokenAddress: Address of the ERC20 token to be used as payment
+    /// for
+    /// fees.
 
     ///   - ambassador: User may choose from one of the whitelisted addresses
     ///             to donate 1%-20% of secondary sales royalties (optional,
@@ -78,7 +96,7 @@ contract MADFactory is MADFactoryBase {
     ///   - project: This is another optional address for which the splitter
     ///             contract can set a share.
 
-    ///   - ambassadorShare: Percentage (1%-20%) of  sales & royalties tobe
+    ///   - ambassadorShare: Percentage (1%-20%) of  sales & royalties to be
     ///             assigned to an ambassador (optional, will be disregarded if
     /// left
     ///             empty(value == 0)).
@@ -95,7 +113,7 @@ contract MADFactory is MADFactoryBase {
 
     // Ambassador
     // Up to 20% of Creator Share before Project share
-    function createSplitter(Types.CreateSplitterParams calldata params)
+    function createSplitter(FactoryTypes.CreateSplitterParams calldata params)
         public
         payable
         isThisOg
@@ -118,7 +136,7 @@ contract MADFactory is MADFactoryBase {
         } else if (
             params.project != ADDRESS_ZERO && params.ambassador == ADDRESS_ZERO
                 && params.projectShare > PROJECT_SHARE_MIN
-                && params.projectShare < PROJECT_SHARE_MAX
+                && params.projectShare < ONE_HUNDRED_PERCENT
         ) {
             _createSplitter(
                 params,
@@ -129,7 +147,9 @@ contract MADFactory is MADFactoryBase {
                 && params.ambassadorShare > AMBASSADOR_SHARE_MIN
                 && params.ambassadorShare < AMBASSADOR_SHARE_MAX
                 && params.projectShare > PROJECT_SHARE_MIN
-                && params.projectShare < PROJECT_SHARE_MAX
+                && params.projectShare < ONE_HUNDRED_PERCENT
+                && params.ambassadorShare + params.projectShare
+                    < ONE_HUNDRED_PERCENT
         ) {
             _createSplitter(
                 params,

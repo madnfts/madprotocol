@@ -1,6 +1,6 @@
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 
-import "forge-std/src/Test.sol";
+import "test/lib/forge-std/src/Test.sol";
 import {
     ISplitter,
     Deployer,
@@ -377,7 +377,8 @@ contract TestMintBurnAndTransferERC721_Erc20 is
             deployedContracts.factory,
             splitterDeployer,
             _nftMinter,
-            _nftPublicMintPrice
+            _nftPublicMintPrice,
+            address(erc20Token)
         );
 
         IERC721Basic collection = IERC721Basic(_collectionAddress);

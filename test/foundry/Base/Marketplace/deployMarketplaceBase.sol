@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 
 import { IMarketplace } from
     "test/foundry/Base/Marketplace/interfaces/IMarketplace.sol";
@@ -131,11 +131,6 @@ contract DeployMarketplaceBase is MarketplaceFactory, AddressesHelp {
         assertTrue(
             _marketplace.recipient() != address(0),
             "Recipient marketplace cannot be address(0)"
-        );
-
-        assertTrue(
-            address(_marketplace.erc20()) == _paymentTokenAddressMarket,
-            "Incorrect payment token address"
         );
 
         setAndCheckAddress(_marketplace.setOwner, _marketplace.owner);

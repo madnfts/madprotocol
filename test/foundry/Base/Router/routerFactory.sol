@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 
 import { MADRouter } from "contracts/Router/MADRouter.sol";
 // import { MADRouter1155 } from "contracts/Router/MADRouter1155.sol";
@@ -17,7 +17,6 @@ contract RouterFactory is Enums {
         return address(
             new MADRouter(
                     _factoryVerifier,
-                    _paymentTokenAddressRouter,
                     _recipientRouter
                 )
         );

@@ -4,120 +4,159 @@
 
 /* eslint-disable */
 import type {
-  TypedEventFilter,
-  TypedEvent,
+  TypedContractEvent,
+  TypedDeferredTopicFilter,
+  TypedEventLog,
+  TypedLogDescription,
   TypedListener,
-  OnEvent,
-  PromiseOrValue,
+  TypedContractMethod,
 } from "../common";
 import type {
-  FunctionFragment,
-  Result,
-  EventFragment,
-} from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
-import type {
   BaseContract,
-  BigNumber,
   BigNumberish,
   BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
+  FunctionFragment,
+  Result,
+  Interface,
+  EventFragment,
+  AddressLike,
+  ContractRunner,
+  ContractMethod,
+  Listener,
 } from "ethers";
 
-export interface MADFactoryBaseInterface extends utils.Interface {
-  functions: {
-    "addCollectionType(uint256,bytes)": FunctionFragment;
-    "collectionInfo(address)": FunctionFragment;
-    "collectionTypes(uint256)": FunctionFragment;
-    "creatorAuth(address,address)": FunctionFragment;
-    "creatorCheck(address,address)": FunctionFragment;
-    "erc20()": FunctionFragment;
-    "getDeployedAddress(bytes32,address)": FunctionFragment;
-    "getIDsLength(address)": FunctionFragment;
-    "name()": FunctionFragment;
-    "owner()": FunctionFragment;
-    "router()": FunctionFragment;
-    "setOwner(address)": FunctionFragment;
-    "setRouter(address)": FunctionFragment;
-    "splitterInfo(address,address)": FunctionFragment;
-    "userTokens(address,uint256)": FunctionFragment;
-  };
-
+export interface MADFactoryBaseInterface extends Interface {
   getFunction(
-    nameOrSignatureOrTopic:
+    nameOrSignature:
+      | "ADDRESS_ZERO"
       | "addCollectionType"
+      | "collectionCheck"
       | "collectionInfo"
       | "collectionTypes"
       | "creatorAuth"
-      | "creatorCheck"
-      | "erc20"
+      | "feeCreateCollection"
+      | "feeCreateCollectionErc20"
+      | "feeCreateSplitter"
+      | "feeCreateSplitterErc20"
       | "getDeployedAddress"
       | "getIDsLength"
       | "name"
       | "owner"
+      | "recipient"
       | "router"
+      | "setFees(uint256,uint256)"
+      | "setFees(uint256,uint256,address)"
       | "setOwner"
+      | "setRecipient"
       | "setRouter"
       | "splitterInfo"
       | "userTokens"
   ): FunctionFragment;
 
+  getEvent(
+    nameOrSignatureOrTopic:
+      | "CollectionCreated"
+      | "CollectionTypeAdded"
+      | "FeesUpdated(uint256,uint256)"
+      | "FeesUpdated(uint256,uint256,address)"
+      | "OwnerUpdated"
+      | "PaymentTokenUpdated"
+      | "RecipientUpdated"
+      | "RouterUpdated"
+      | "SplitterCreated"
+  ): EventFragment;
+
+  encodeFunctionData(
+    functionFragment: "ADDRESS_ZERO",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "addCollectionType",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
+    values: [BigNumberish, BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "collectionCheck",
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "collectionInfo",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "collectionTypes",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "creatorAuth",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+    values: [AddressLike, AddressLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "creatorCheck",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+    functionFragment: "feeCreateCollection",
+    values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "erc20", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "feeCreateCollectionErc20",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "feeCreateSplitter",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "feeCreateSplitterErc20",
+    values: [AddressLike]
+  ): string;
   encodeFunctionData(
     functionFragment: "getDeployedAddress",
-    values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+    values: [BytesLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "getIDsLength",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(functionFragment: "recipient", values?: undefined): string;
   encodeFunctionData(functionFragment: "router", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "setFees(uint256,uint256)",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setFees(uint256,uint256,address)",
+    values: [BigNumberish, BigNumberish, AddressLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setOwner",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setRecipient",
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "setRouter",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "splitterInfo",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+    values: [AddressLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "userTokens",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+    values: [AddressLike, BigNumberish]
   ): string;
 
   decodeFunctionResult(
+    functionFragment: "ADDRESS_ZERO",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "addCollectionType",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "collectionCheck",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -133,10 +172,21 @@ export interface MADFactoryBaseInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "creatorCheck",
+    functionFragment: "feeCreateCollection",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "erc20", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "feeCreateCollectionErc20",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "feeCreateSplitter",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "feeCreateSplitterErc20",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getDeployedAddress",
     data: BytesLike
@@ -147,658 +197,645 @@ export interface MADFactoryBaseInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "recipient", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "router", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setFees(uint256,uint256)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setFees(uint256,uint256,address)",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "setOwner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setRecipient",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "setRouter", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "splitterInfo",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "userTokens", data: BytesLike): Result;
-
-  events: {
-    "CollectionCreated(address,address,string,string,uint256,uint256,uint256)": EventFragment;
-    "CollectionTypeAdded(uint256)": EventFragment;
-    "FeesUpdated(uint256,uint256)": EventFragment;
-    "MarketplaceUpdated(address)": EventFragment;
-    "OwnerUpdated(address,address)": EventFragment;
-    "PaymentTokenUpdated(address)": EventFragment;
-    "RecipientUpdated(address)": EventFragment;
-    "RouterUpdated(address)": EventFragment;
-    "SplitterCreated(address,uint256[],address[],address,uint256)": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "CollectionCreated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "CollectionTypeAdded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "FeesUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "MarketplaceUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnerUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PaymentTokenUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RecipientUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RouterUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "SplitterCreated"): EventFragment;
 }
 
-export interface CollectionCreatedEventObject {
-  newSplitter: string;
-  newCollection: string;
-  name: string;
-  symbol: string;
-  royalties: BigNumber;
-  maxSupply: BigNumber;
-  mintPrice: BigNumber;
+export namespace CollectionCreatedEvent {
+  export type InputTuple = [
+    newSplitter: AddressLike,
+    newCollection: AddressLike,
+    collectionName: string,
+    collectionSymbol: string,
+    royalties: BigNumberish,
+    maxSupply: BigNumberish,
+    mintPrice: BigNumberish,
+    tokenType: BigNumberish,
+    collectionToken: AddressLike
+  ];
+  export type OutputTuple = [
+    newSplitter: string,
+    newCollection: string,
+    collectionName: string,
+    collectionSymbol: string,
+    royalties: bigint,
+    maxSupply: bigint,
+    mintPrice: bigint,
+    tokenType: bigint,
+    collectionToken: string
+  ];
+  export interface OutputObject {
+    newSplitter: string;
+    newCollection: string;
+    collectionName: string;
+    collectionSymbol: string;
+    royalties: bigint;
+    maxSupply: bigint;
+    mintPrice: bigint;
+    tokenType: bigint;
+    collectionToken: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type CollectionCreatedEvent = TypedEvent<
-  [string, string, string, string, BigNumber, BigNumber, BigNumber],
-  CollectionCreatedEventObject
->;
 
-export type CollectionCreatedEventFilter =
-  TypedEventFilter<CollectionCreatedEvent>;
-
-export interface CollectionTypeAddedEventObject {
-  index: BigNumber;
+export namespace CollectionTypeAddedEvent {
+  export type InputTuple = [index: BigNumberish];
+  export type OutputTuple = [index: bigint];
+  export interface OutputObject {
+    index: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type CollectionTypeAddedEvent = TypedEvent<
-  [BigNumber],
-  CollectionTypeAddedEventObject
->;
 
-export type CollectionTypeAddedEventFilter =
-  TypedEventFilter<CollectionTypeAddedEvent>;
-
-export interface FeesUpdatedEventObject {
-  feeVal2: BigNumber;
-  feeVal3: BigNumber;
+export namespace FeesUpdated_uint256_uint256_Event {
+  export type InputTuple = [feeVal2: BigNumberish, feeVal3: BigNumberish];
+  export type OutputTuple = [feeVal2: bigint, feeVal3: bigint];
+  export interface OutputObject {
+    feeVal2: bigint;
+    feeVal3: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type FeesUpdatedEvent = TypedEvent<
-  [BigNumber, BigNumber],
-  FeesUpdatedEventObject
->;
 
-export type FeesUpdatedEventFilter = TypedEventFilter<FeesUpdatedEvent>;
-
-export interface MarketplaceUpdatedEventObject {
-  newMarket: string;
+export namespace FeesUpdated_uint256_uint256_address_Event {
+  export type InputTuple = [
+    feeVal2: BigNumberish,
+    feeVal3: BigNumberish,
+    erc20Token: AddressLike
+  ];
+  export type OutputTuple = [
+    feeVal2: bigint,
+    feeVal3: bigint,
+    erc20Token: string
+  ];
+  export interface OutputObject {
+    feeVal2: bigint;
+    feeVal3: bigint;
+    erc20Token: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type MarketplaceUpdatedEvent = TypedEvent<
-  [string],
-  MarketplaceUpdatedEventObject
->;
 
-export type MarketplaceUpdatedEventFilter =
-  TypedEventFilter<MarketplaceUpdatedEvent>;
-
-export interface OwnerUpdatedEventObject {
-  user: string;
-  newOwner: string;
+export namespace OwnerUpdatedEvent {
+  export type InputTuple = [user: AddressLike, newOwner: AddressLike];
+  export type OutputTuple = [user: string, newOwner: string];
+  export interface OutputObject {
+    user: string;
+    newOwner: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type OwnerUpdatedEvent = TypedEvent<
-  [string, string],
-  OwnerUpdatedEventObject
->;
 
-export type OwnerUpdatedEventFilter = TypedEventFilter<OwnerUpdatedEvent>;
-
-export interface PaymentTokenUpdatedEventObject {
-  newPaymentToken: string;
+export namespace PaymentTokenUpdatedEvent {
+  export type InputTuple = [newPaymentToken: AddressLike];
+  export type OutputTuple = [newPaymentToken: string];
+  export interface OutputObject {
+    newPaymentToken: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type PaymentTokenUpdatedEvent = TypedEvent<
-  [string],
-  PaymentTokenUpdatedEventObject
->;
 
-export type PaymentTokenUpdatedEventFilter =
-  TypedEventFilter<PaymentTokenUpdatedEvent>;
-
-export interface RecipientUpdatedEventObject {
-  newRecipient: string;
+export namespace RecipientUpdatedEvent {
+  export type InputTuple = [newRecipient: AddressLike];
+  export type OutputTuple = [newRecipient: string];
+  export interface OutputObject {
+    newRecipient: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type RecipientUpdatedEvent = TypedEvent<
-  [string],
-  RecipientUpdatedEventObject
->;
 
-export type RecipientUpdatedEventFilter =
-  TypedEventFilter<RecipientUpdatedEvent>;
-
-export interface RouterUpdatedEventObject {
-  newRouter: string;
+export namespace RouterUpdatedEvent {
+  export type InputTuple = [newRouter: AddressLike];
+  export type OutputTuple = [newRouter: string];
+  export interface OutputObject {
+    newRouter: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type RouterUpdatedEvent = TypedEvent<[string], RouterUpdatedEventObject>;
 
-export type RouterUpdatedEventFilter = TypedEventFilter<RouterUpdatedEvent>;
-
-export interface SplitterCreatedEventObject {
-  creator: string;
-  shares: BigNumber[];
-  payees: string[];
-  splitter: string;
-  flag: BigNumber;
+export namespace SplitterCreatedEvent {
+  export type InputTuple = [
+    creator: AddressLike,
+    shares: BigNumberish[],
+    payees: AddressLike[],
+    splitter: AddressLike,
+    flag: BigNumberish
+  ];
+  export type OutputTuple = [
+    creator: string,
+    shares: bigint[],
+    payees: string[],
+    splitter: string,
+    flag: bigint
+  ];
+  export interface OutputObject {
+    creator: string;
+    shares: bigint[];
+    payees: string[];
+    splitter: string;
+    flag: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type SplitterCreatedEvent = TypedEvent<
-  [string, BigNumber[], string[], string, BigNumber],
-  SplitterCreatedEventObject
->;
-
-export type SplitterCreatedEventFilter = TypedEventFilter<SplitterCreatedEvent>;
 
 export interface MADFactoryBase extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(runner?: ContractRunner | null): MADFactoryBase;
+  waitForDeployment(): Promise<this>;
 
   interface: MADFactoryBaseInterface;
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
+  queryFilter<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  queryFilter<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+  on<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  on<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  functions: {
-    addCollectionType(
-      index: PromiseOrValue<BigNumberish>,
-      impl: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  once<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  once<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-    collectionInfo(
-      collectionId: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, number, string, BigNumber, string] & {
+  listeners<TCEvent extends TypedContractEvent>(
+    event: TCEvent
+  ): Promise<Array<TypedListener<TCEvent>>>;
+  listeners(eventName?: string): Promise<Array<Listener>>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(
+    event?: TCEvent
+  ): Promise<this>;
+
+  ADDRESS_ZERO: TypedContractMethod<[], [string], "view">;
+
+  addCollectionType: TypedContractMethod<
+    [index: BigNumberish, impl: BytesLike],
+    [void],
+    "nonpayable"
+  >;
+
+  collectionCheck: TypedContractMethod<
+    [_collectionId: AddressLike],
+    [boolean],
+    "view"
+  >;
+
+  collectionInfo: TypedContractMethod<
+    [collectionId: AddressLike],
+    [
+      [string, bigint, string, bigint, string, boolean] & {
         creator: string;
-        collectionType: number;
+        collectionType: bigint;
         collectionSalt: string;
-        blocknumber: BigNumber;
+        blocknumber: bigint;
         splitter: string;
+        isValid: boolean;
       }
-    >;
+    ],
+    "view"
+  >;
 
-    collectionTypes(
-      collectionIndex: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string] & { collectionBytecode: string }>;
+  collectionTypes: TypedContractMethod<
+    [collectionIndex: BigNumberish],
+    [string],
+    "view"
+  >;
 
-    creatorAuth(
-      _token: PromiseOrValue<string>,
-      _user: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[boolean] & { stdout: boolean }>;
+  creatorAuth: TypedContractMethod<
+    [_token: AddressLike, _user: AddressLike],
+    [boolean],
+    "view"
+  >;
 
-    creatorCheck(
-      _collectionId: PromiseOrValue<string>,
-      _creator: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[boolean] & { check: boolean }>;
+  feeCreateCollection: TypedContractMethod<[], [bigint], "view">;
 
-    erc20(overrides?: CallOverrides): Promise<[string]>;
+  feeCreateCollectionErc20: TypedContractMethod<
+    [erc20token: AddressLike],
+    [[bigint, boolean] & { feeAmount: bigint; isValid: boolean }],
+    "view"
+  >;
 
-    getDeployedAddress(
-      _salt: PromiseOrValue<BytesLike>,
-      _addr: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
+  feeCreateSplitter: TypedContractMethod<[], [bigint], "view">;
 
-    getIDsLength(
-      _user: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+  feeCreateSplitterErc20: TypedContractMethod<
+    [erc20token: AddressLike],
+    [[bigint, boolean] & { feeAmount: bigint; isValid: boolean }],
+    "view"
+  >;
 
-    name(overrides?: CallOverrides): Promise<[string]>;
+  getDeployedAddress: TypedContractMethod<
+    [_salt: BytesLike, _addr: AddressLike],
+    [string],
+    "view"
+  >;
 
-    owner(overrides?: CallOverrides): Promise<[string]>;
+  getIDsLength: TypedContractMethod<[_user: AddressLike], [bigint], "view">;
 
-    router(overrides?: CallOverrides): Promise<[string]>;
+  name: TypedContractMethod<[], [string], "view">;
 
-    setOwner(
-      newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  owner: TypedContractMethod<[], [string], "view">;
 
-    setRouter(
-      _router: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  recipient: TypedContractMethod<[], [string], "view">;
 
-    splitterInfo(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, string, string, string, BigNumber, BigNumber, boolean] & {
+  router: TypedContractMethod<[], [string], "view">;
+
+  "setFees(uint256,uint256)": TypedContractMethod<
+    [_feeCreateCollection: BigNumberish, _feeCreateSplitter: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+
+  "setFees(uint256,uint256,address)": TypedContractMethod<
+    [
+      _feeCreateCollectionErc20: BigNumberish,
+      _feeCreateSplitterErc20: BigNumberish,
+      madFeeTokenAddress: AddressLike
+    ],
+    [void],
+    "nonpayable"
+  >;
+
+  setOwner: TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
+
+  setRecipient: TypedContractMethod<
+    [_recipient: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  setRouter: TypedContractMethod<[_router: AddressLike], [void], "nonpayable">;
+
+  splitterInfo: TypedContractMethod<
+    [arg0: AddressLike, arg1: AddressLike],
+    [
+      [string, string, string, string, bigint, bigint, boolean] & {
         splitter: string;
         splitterSalt: string;
         ambassador: string;
         project: string;
-        ambassadorShare: BigNumber;
-        projectShare: BigNumber;
+        ambassadorShare: bigint;
+        projectShare: bigint;
         valid: boolean;
       }
-    >;
-
-    userTokens(
-      collectionOwner: PromiseOrValue<string>,
-      arg1: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string] & { deployedCollections: string }>;
-  };
-
-  addCollectionType(
-    index: PromiseOrValue<BigNumberish>,
-    impl: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  collectionInfo(
-    collectionId: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<
-    [string, number, string, BigNumber, string] & {
-      creator: string;
-      collectionType: number;
-      collectionSalt: string;
-      blocknumber: BigNumber;
-      splitter: string;
-    }
+    ],
+    "view"
   >;
 
-  collectionTypes(
-    collectionIndex: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  creatorAuth(
-    _token: PromiseOrValue<string>,
-    _user: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  creatorCheck(
-    _collectionId: PromiseOrValue<string>,
-    _creator: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  erc20(overrides?: CallOverrides): Promise<string>;
-
-  getDeployedAddress(
-    _salt: PromiseOrValue<BytesLike>,
-    _addr: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  getIDsLength(
-    _user: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  name(overrides?: CallOverrides): Promise<string>;
-
-  owner(overrides?: CallOverrides): Promise<string>;
-
-  router(overrides?: CallOverrides): Promise<string>;
-
-  setOwner(
-    newOwner: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  setRouter(
-    _router: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  splitterInfo(
-    arg0: PromiseOrValue<string>,
-    arg1: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<
-    [string, string, string, string, BigNumber, BigNumber, boolean] & {
-      splitter: string;
-      splitterSalt: string;
-      ambassador: string;
-      project: string;
-      ambassadorShare: BigNumber;
-      projectShare: BigNumber;
-      valid: boolean;
-    }
+  userTokens: TypedContractMethod<
+    [collectionOwner: AddressLike, arg1: BigNumberish],
+    [string],
+    "view"
   >;
 
-  userTokens(
-    collectionOwner: PromiseOrValue<string>,
-    arg1: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
+  getFunction<T extends ContractMethod = ContractMethod>(
+    key: string | FunctionFragment
+  ): T;
 
-  callStatic: {
-    addCollectionType(
-      index: PromiseOrValue<BigNumberish>,
-      impl: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    collectionInfo(
-      collectionId: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, number, string, BigNumber, string] & {
+  getFunction(
+    nameOrSignature: "ADDRESS_ZERO"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "addCollectionType"
+  ): TypedContractMethod<
+    [index: BigNumberish, impl: BytesLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "collectionCheck"
+  ): TypedContractMethod<[_collectionId: AddressLike], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "collectionInfo"
+  ): TypedContractMethod<
+    [collectionId: AddressLike],
+    [
+      [string, bigint, string, bigint, string, boolean] & {
         creator: string;
-        collectionType: number;
+        collectionType: bigint;
         collectionSalt: string;
-        blocknumber: BigNumber;
+        blocknumber: bigint;
         splitter: string;
+        isValid: boolean;
       }
-    >;
-
-    collectionTypes(
-      collectionIndex: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    creatorAuth(
-      _token: PromiseOrValue<string>,
-      _user: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    creatorCheck(
-      _collectionId: PromiseOrValue<string>,
-      _creator: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    erc20(overrides?: CallOverrides): Promise<string>;
-
-    getDeployedAddress(
-      _salt: PromiseOrValue<BytesLike>,
-      _addr: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    getIDsLength(
-      _user: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    name(overrides?: CallOverrides): Promise<string>;
-
-    owner(overrides?: CallOverrides): Promise<string>;
-
-    router(overrides?: CallOverrides): Promise<string>;
-
-    setOwner(
-      newOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setRouter(
-      _router: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    splitterInfo(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, string, string, string, BigNumber, BigNumber, boolean] & {
+    ],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "collectionTypes"
+  ): TypedContractMethod<[collectionIndex: BigNumberish], [string], "view">;
+  getFunction(
+    nameOrSignature: "creatorAuth"
+  ): TypedContractMethod<
+    [_token: AddressLike, _user: AddressLike],
+    [boolean],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "feeCreateCollection"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "feeCreateCollectionErc20"
+  ): TypedContractMethod<
+    [erc20token: AddressLike],
+    [[bigint, boolean] & { feeAmount: bigint; isValid: boolean }],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "feeCreateSplitter"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "feeCreateSplitterErc20"
+  ): TypedContractMethod<
+    [erc20token: AddressLike],
+    [[bigint, boolean] & { feeAmount: bigint; isValid: boolean }],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "getDeployedAddress"
+  ): TypedContractMethod<
+    [_salt: BytesLike, _addr: AddressLike],
+    [string],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "getIDsLength"
+  ): TypedContractMethod<[_user: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "name"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "owner"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "recipient"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "router"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "setFees(uint256,uint256)"
+  ): TypedContractMethod<
+    [_feeCreateCollection: BigNumberish, _feeCreateSplitter: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "setFees(uint256,uint256,address)"
+  ): TypedContractMethod<
+    [
+      _feeCreateCollectionErc20: BigNumberish,
+      _feeCreateSplitterErc20: BigNumberish,
+      madFeeTokenAddress: AddressLike
+    ],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "setOwner"
+  ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setRecipient"
+  ): TypedContractMethod<[_recipient: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setRouter"
+  ): TypedContractMethod<[_router: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "splitterInfo"
+  ): TypedContractMethod<
+    [arg0: AddressLike, arg1: AddressLike],
+    [
+      [string, string, string, string, bigint, bigint, boolean] & {
         splitter: string;
         splitterSalt: string;
         ambassador: string;
         project: string;
-        ambassadorShare: BigNumber;
-        projectShare: BigNumber;
+        ambassadorShare: bigint;
+        projectShare: bigint;
         valid: boolean;
       }
-    >;
+    ],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "userTokens"
+  ): TypedContractMethod<
+    [collectionOwner: AddressLike, arg1: BigNumberish],
+    [string],
+    "view"
+  >;
 
-    userTokens(
-      collectionOwner: PromiseOrValue<string>,
-      arg1: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-  };
+  getEvent(
+    key: "CollectionCreated"
+  ): TypedContractEvent<
+    CollectionCreatedEvent.InputTuple,
+    CollectionCreatedEvent.OutputTuple,
+    CollectionCreatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "CollectionTypeAdded"
+  ): TypedContractEvent<
+    CollectionTypeAddedEvent.InputTuple,
+    CollectionTypeAddedEvent.OutputTuple,
+    CollectionTypeAddedEvent.OutputObject
+  >;
+  getEvent(
+    key: "FeesUpdated(uint256,uint256)"
+  ): TypedContractEvent<
+    FeesUpdated_uint256_uint256_Event.InputTuple,
+    FeesUpdated_uint256_uint256_Event.OutputTuple,
+    FeesUpdated_uint256_uint256_Event.OutputObject
+  >;
+  getEvent(
+    key: "FeesUpdated(uint256,uint256,address)"
+  ): TypedContractEvent<
+    FeesUpdated_uint256_uint256_address_Event.InputTuple,
+    FeesUpdated_uint256_uint256_address_Event.OutputTuple,
+    FeesUpdated_uint256_uint256_address_Event.OutputObject
+  >;
+  getEvent(
+    key: "OwnerUpdated"
+  ): TypedContractEvent<
+    OwnerUpdatedEvent.InputTuple,
+    OwnerUpdatedEvent.OutputTuple,
+    OwnerUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "PaymentTokenUpdated"
+  ): TypedContractEvent<
+    PaymentTokenUpdatedEvent.InputTuple,
+    PaymentTokenUpdatedEvent.OutputTuple,
+    PaymentTokenUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "RecipientUpdated"
+  ): TypedContractEvent<
+    RecipientUpdatedEvent.InputTuple,
+    RecipientUpdatedEvent.OutputTuple,
+    RecipientUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "RouterUpdated"
+  ): TypedContractEvent<
+    RouterUpdatedEvent.InputTuple,
+    RouterUpdatedEvent.OutputTuple,
+    RouterUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "SplitterCreated"
+  ): TypedContractEvent<
+    SplitterCreatedEvent.InputTuple,
+    SplitterCreatedEvent.OutputTuple,
+    SplitterCreatedEvent.OutputObject
+  >;
 
   filters: {
-    "CollectionCreated(address,address,string,string,uint256,uint256,uint256)"(
-      newSplitter?: PromiseOrValue<string> | null,
-      newCollection?: PromiseOrValue<string> | null,
-      name?: null,
-      symbol?: null,
-      royalties?: null,
-      maxSupply?: null,
-      mintPrice?: null
-    ): CollectionCreatedEventFilter;
-    CollectionCreated(
-      newSplitter?: PromiseOrValue<string> | null,
-      newCollection?: PromiseOrValue<string> | null,
-      name?: null,
-      symbol?: null,
-      royalties?: null,
-      maxSupply?: null,
-      mintPrice?: null
-    ): CollectionCreatedEventFilter;
+    "CollectionCreated(address,address,string,string,uint256,uint256,uint256,uint8,address)": TypedContractEvent<
+      CollectionCreatedEvent.InputTuple,
+      CollectionCreatedEvent.OutputTuple,
+      CollectionCreatedEvent.OutputObject
+    >;
+    CollectionCreated: TypedContractEvent<
+      CollectionCreatedEvent.InputTuple,
+      CollectionCreatedEvent.OutputTuple,
+      CollectionCreatedEvent.OutputObject
+    >;
 
-    "CollectionTypeAdded(uint256)"(
-      index?: PromiseOrValue<BigNumberish> | null
-    ): CollectionTypeAddedEventFilter;
-    CollectionTypeAdded(
-      index?: PromiseOrValue<BigNumberish> | null
-    ): CollectionTypeAddedEventFilter;
+    "CollectionTypeAdded(uint256)": TypedContractEvent<
+      CollectionTypeAddedEvent.InputTuple,
+      CollectionTypeAddedEvent.OutputTuple,
+      CollectionTypeAddedEvent.OutputObject
+    >;
+    CollectionTypeAdded: TypedContractEvent<
+      CollectionTypeAddedEvent.InputTuple,
+      CollectionTypeAddedEvent.OutputTuple,
+      CollectionTypeAddedEvent.OutputObject
+    >;
 
-    "FeesUpdated(uint256,uint256)"(
-      feeVal2?: null,
-      feeVal3?: null
-    ): FeesUpdatedEventFilter;
-    FeesUpdated(feeVal2?: null, feeVal3?: null): FeesUpdatedEventFilter;
+    "FeesUpdated(uint256,uint256)": TypedContractEvent<
+      FeesUpdated_uint256_uint256_Event.InputTuple,
+      FeesUpdated_uint256_uint256_Event.OutputTuple,
+      FeesUpdated_uint256_uint256_Event.OutputObject
+    >;
+    "FeesUpdated(uint256,uint256,address)": TypedContractEvent<
+      FeesUpdated_uint256_uint256_address_Event.InputTuple,
+      FeesUpdated_uint256_uint256_address_Event.OutputTuple,
+      FeesUpdated_uint256_uint256_address_Event.OutputObject
+    >;
 
-    "MarketplaceUpdated(address)"(
-      newMarket?: PromiseOrValue<string> | null
-    ): MarketplaceUpdatedEventFilter;
-    MarketplaceUpdated(
-      newMarket?: PromiseOrValue<string> | null
-    ): MarketplaceUpdatedEventFilter;
+    "OwnerUpdated(address,address)": TypedContractEvent<
+      OwnerUpdatedEvent.InputTuple,
+      OwnerUpdatedEvent.OutputTuple,
+      OwnerUpdatedEvent.OutputObject
+    >;
+    OwnerUpdated: TypedContractEvent<
+      OwnerUpdatedEvent.InputTuple,
+      OwnerUpdatedEvent.OutputTuple,
+      OwnerUpdatedEvent.OutputObject
+    >;
 
-    "OwnerUpdated(address,address)"(
-      user?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnerUpdatedEventFilter;
-    OwnerUpdated(
-      user?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnerUpdatedEventFilter;
+    "PaymentTokenUpdated(address)": TypedContractEvent<
+      PaymentTokenUpdatedEvent.InputTuple,
+      PaymentTokenUpdatedEvent.OutputTuple,
+      PaymentTokenUpdatedEvent.OutputObject
+    >;
+    PaymentTokenUpdated: TypedContractEvent<
+      PaymentTokenUpdatedEvent.InputTuple,
+      PaymentTokenUpdatedEvent.OutputTuple,
+      PaymentTokenUpdatedEvent.OutputObject
+    >;
 
-    "PaymentTokenUpdated(address)"(
-      newPaymentToken?: PromiseOrValue<string> | null
-    ): PaymentTokenUpdatedEventFilter;
-    PaymentTokenUpdated(
-      newPaymentToken?: PromiseOrValue<string> | null
-    ): PaymentTokenUpdatedEventFilter;
+    "RecipientUpdated(address)": TypedContractEvent<
+      RecipientUpdatedEvent.InputTuple,
+      RecipientUpdatedEvent.OutputTuple,
+      RecipientUpdatedEvent.OutputObject
+    >;
+    RecipientUpdated: TypedContractEvent<
+      RecipientUpdatedEvent.InputTuple,
+      RecipientUpdatedEvent.OutputTuple,
+      RecipientUpdatedEvent.OutputObject
+    >;
 
-    "RecipientUpdated(address)"(
-      newRecipient?: PromiseOrValue<string> | null
-    ): RecipientUpdatedEventFilter;
-    RecipientUpdated(
-      newRecipient?: PromiseOrValue<string> | null
-    ): RecipientUpdatedEventFilter;
+    "RouterUpdated(address)": TypedContractEvent<
+      RouterUpdatedEvent.InputTuple,
+      RouterUpdatedEvent.OutputTuple,
+      RouterUpdatedEvent.OutputObject
+    >;
+    RouterUpdated: TypedContractEvent<
+      RouterUpdatedEvent.InputTuple,
+      RouterUpdatedEvent.OutputTuple,
+      RouterUpdatedEvent.OutputObject
+    >;
 
-    "RouterUpdated(address)"(
-      newRouter?: PromiseOrValue<string> | null
-    ): RouterUpdatedEventFilter;
-    RouterUpdated(
-      newRouter?: PromiseOrValue<string> | null
-    ): RouterUpdatedEventFilter;
-
-    "SplitterCreated(address,uint256[],address[],address,uint256)"(
-      creator?: PromiseOrValue<string> | null,
-      shares?: null,
-      payees?: null,
-      splitter?: PromiseOrValue<string> | null,
-      flag?: null
-    ): SplitterCreatedEventFilter;
-    SplitterCreated(
-      creator?: PromiseOrValue<string> | null,
-      shares?: null,
-      payees?: null,
-      splitter?: PromiseOrValue<string> | null,
-      flag?: null
-    ): SplitterCreatedEventFilter;
-  };
-
-  estimateGas: {
-    addCollectionType(
-      index: PromiseOrValue<BigNumberish>,
-      impl: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    collectionInfo(
-      collectionId: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    collectionTypes(
-      collectionIndex: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    creatorAuth(
-      _token: PromiseOrValue<string>,
-      _user: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    creatorCheck(
-      _collectionId: PromiseOrValue<string>,
-      _creator: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    erc20(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getDeployedAddress(
-      _salt: PromiseOrValue<BytesLike>,
-      _addr: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getIDsLength(
-      _user: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    name(overrides?: CallOverrides): Promise<BigNumber>;
-
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    router(overrides?: CallOverrides): Promise<BigNumber>;
-
-    setOwner(
-      newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setRouter(
-      _router: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    splitterInfo(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    userTokens(
-      collectionOwner: PromiseOrValue<string>,
-      arg1: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    addCollectionType(
-      index: PromiseOrValue<BigNumberish>,
-      impl: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    collectionInfo(
-      collectionId: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    collectionTypes(
-      collectionIndex: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    creatorAuth(
-      _token: PromiseOrValue<string>,
-      _user: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    creatorCheck(
-      _collectionId: PromiseOrValue<string>,
-      _creator: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    erc20(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getDeployedAddress(
-      _salt: PromiseOrValue<BytesLike>,
-      _addr: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getIDsLength(
-      _user: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    router(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    setOwner(
-      newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setRouter(
-      _router: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    splitterInfo(
-      arg0: PromiseOrValue<string>,
-      arg1: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    userTokens(
-      collectionOwner: PromiseOrValue<string>,
-      arg1: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    "SplitterCreated(address,uint256[],address[],address,uint256)": TypedContractEvent<
+      SplitterCreatedEvent.InputTuple,
+      SplitterCreatedEvent.OutputTuple,
+      SplitterCreatedEvent.OutputObject
+    >;
+    SplitterCreated: TypedContractEvent<
+      SplitterCreatedEvent.InputTuple,
+      SplitterCreatedEvent.OutputTuple,
+      SplitterCreatedEvent.OutputObject
+    >;
   };
 }

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 
-import { Types } from "contracts/Shared/Types.sol";
+import { FactoryTypes } from "contracts/Shared/FactoryTypes.sol";
 
 interface IFactory {
     function name() external pure returns (string memory);
@@ -18,19 +18,26 @@ interface IFactory {
         external
         payable;
 
+    function createCollection(
+        CreateCollectionParams calldata params,
+        address collectionPaymentToken
+    ) external payable;
+
     struct CreateSplitterParams {
         bytes32 splitterSalt;
         address ambassador;
         address project;
         uint256 ambassadorShare;
         uint256 projectShare;
+        address madFeeTokenAddress;
     }
 
     struct CreateCollectionParams {
+        address madFeeTokenAddress;
         uint8 tokenType;
         bytes32 tokenSalt;
-        string name;
-        string symbol;
+        string collectionName;
+        string collectionSymbol;
         uint256 price;
         uint256 maxSupply;
         string uri;
@@ -68,7 +75,7 @@ interface IFactory {
         view
         returns (bool stdout);
 
-    function creatorCheck(address _collectionId, address _creator)
+    function collectionCheck(address _collectionId)
         external
         view
         returns (bool check);
@@ -81,7 +88,7 @@ interface IFactory {
     function splitterInfo(address creator, address splitterContract)
         external
         view
-        returns (Types.SplitterConfig memory);
+        returns (FactoryTypes.SplitterConfig memory);
 
     // Helpers
     function getIDsLength(address _user) external view returns (uint256);

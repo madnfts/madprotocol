@@ -1,19 +1,16 @@
 import "@nomicfoundation/hardhat-chai-matchers";
-import "@nomiclabs/hardhat-etherscan";
-import "@primitivefi/hardhat-dodoc";
+import "@nomicfoundation/hardhat-ethers";
+import "@nomicfoundation/hardhat-toolbox";
 import "@typechain/hardhat";
 import { config as dotenvConfig } from "dotenv";
-import "hardhat-gas-reporter";
-import "hardhat-tracer";
 import { HardhatUserConfig } from "hardhat/config";
 import { NetworkUserConfig } from "hardhat/types";
 import { resolve } from "path";
-import "solidity-coverage";
 import yargs from "yargs";
 
 import "./tasks/accounts";
 
-// Set script args
+// // Set script args
 const parser = yargs
   .option("network", {
     type: "string",
@@ -24,6 +21,7 @@ const parser = yargs
 
 // Load and validate .env configs
 dotenvConfig({ path: resolve(__dirname, "./.env") });
+
 const {
   INFURA_API_KEY,
   MNEMONIC,
@@ -31,6 +29,7 @@ const {
   PK,
   ALCHEMY_KEY,
 } = process.env;
+
 const DEFAULT_MNEMONIC =
   "candy maple cake sugar pudding cream honey rich smooth crumble sweet treat";
 (async () => {
@@ -54,11 +53,20 @@ const chains: Array<NetworkUserConfig> = [
       ? [PK]
       : {
           mnemonic: MNEMONIC || DEFAULT_MNEMONIC,
+        }
         },
-  },
   {
     chainId: 1666900000, // harmonyDevnet
     url: "https://api.s0.ps.hmny.io",
+    accounts: PK
+      ? [PK]
+      : {
+          mnemonic: MNEMONIC || DEFAULT_MNEMONIC,
+        },
+  },
+  {
+    chainId: 137, // Polygon
+    url: "https://polygon-rpc.com/",
     accounts: PK
       ? [PK]
       : {
@@ -151,6 +159,7 @@ const config: HardhatUserConfig = {
   networks: {
     harmony: getChainConfig(1666600000),
     harmonyDevnet: getChainConfig(1666900000),
+    polygon: getChainConfig(137),
     skale: getChainConfig(1564830818),
     skaleDevnet: getChainConfig(344106930),
     skaleChaos: getChainConfig(1351057110),
@@ -171,7 +180,7 @@ const config: HardhatUserConfig = {
   },
 
   // solidity: {
-  //   version: "0.8.19",
+  //   version: "0.8.22",
   //   settings: {
   //     metadata: {
   //       bytecodeHash: "none",
@@ -183,7 +192,7 @@ const config: HardhatUserConfig = {
   //   },
   // },
   solidity: {
-    version: "0.8.19",
+    version: "0.8.22",
     settings: {
       viaIR: true,
       optimizer: {
@@ -200,13 +209,13 @@ const config: HardhatUserConfig = {
   },
   typechain: {
     outDir: "src/types",
-    target: "ethers-v5",
+    target: "ethers-v6",
   },
-  dodoc: {
-    runOnCompile: !!(
-      process.env.GEN_DOCS && process.env.GEN_DOCS != "false"
-    ),
-  },
+  // dodoc: {
+  //   runOnCompile: !!(
+  //     process.env.GEN_DOCS && process.env.GEN_DOCS != "false"
+  //   ),
+  // },
 };
 
 export default config;

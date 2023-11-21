@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 
 import { ERC2981 } from "contracts/lib/tokens/common/ERC2981.sol";
 import { TwoFactor } from "contracts/lib/auth/TwoFactor.sol";
 import { Strings } from "contracts/lib/utils/Strings.sol";
-import { Types } from "contracts/Shared/Types.sol";
+import { FactoryTypes } from "contracts/Shared/FactoryTypes.sol";
 import { PaymentManager } from "contracts/MADTokens/common/PaymentManager.sol";
 // solhint-disable-next-line
 import {
@@ -55,7 +55,7 @@ abstract contract ImplBase is
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    constructor(Types.CollectionArgs memory args)
+    constructor(FactoryTypes.CollectionArgs memory args)
         payable
         /*  */
         TwoFactor(args._router, args._owner)
@@ -149,16 +149,14 @@ abstract contract ImplBase is
     //                     INTERNAL FUNCTIONS                     //
     ////////////////////////////////////////////////////////////////
 
-    function _preparePublicMint(
-        uint256 amount,
-        uint256 totalAmount,
-        address _buyer
-    ) internal {
+    function _preparePublicMint(uint256 totalAmount, address _minter)
+        internal
+    {
         if (!publicMintState) revert PublicMintClosed();
-        uint256 _price = _publicMintPriceCheck(totalAmount, _buyer);
+        uint256 _price = _publicMintPriceCheck(totalAmount, _minter);
         // msg.value could be 0 and _value = 0 but still be expecting ETH (Free
         // Mint)
-        if (_price > 0) _publicPaymentHandler(_price);
+        if (_price > 0) _publicPaymentHandler(_price, _minter);
     }
 
     function _readString(bytes32 _slot)
@@ -188,16 +186,6 @@ abstract contract ImplBase is
             let len := mload(_string)
             if lt(0x1f, len) { invalid() }
             sstore(_slot, or(mload(add(_string, 0x20)), shl(0x01, len)))
-        }
-    }
-
-    function _loopOverflow(uint256 _index, uint256 _end) internal pure {
-        assembly {
-            if lt(_index, _end) {
-                // LoopOverflow()
-                mstore(0x00, 0xdfb035c9)
-                revert(0x1c, 0x04)
-            }
         }
     }
 }

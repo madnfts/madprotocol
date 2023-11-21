@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 
 import {
     MarketplaceEventsAndErrors721,
@@ -12,14 +12,14 @@ import {
     MADMarketplaceBase,
     SafeTransferLib
 } from "contracts/Marketplace/MADMarketplaceBase.sol";
-import { Types } from "contracts/Shared/Types.sol";
+import { MarketplaceTypes } from "contracts/Shared/MarketplaceTypes.sol";
 
 contract MADMarketplace721 is
     MADMarketplaceBase,
     MarketplaceEventsAndErrors721,
     ERC721Holder
 {
-    using Types for Types.Order721;
+    using MarketplaceTypes for MarketplaceTypes.Order721;
 
     constructor(
         address _recipient,
@@ -35,7 +35,7 @@ contract MADMarketplace721 is
     mapping(IERC721 => mapping(uint256 => bytes32[])) public orderIdByToken;
 
     /// @dev orderID => order details
-    mapping(bytes32 => Types.Order721) public orderInfo;
+    mapping(bytes32 => MarketplaceTypes.Order721) public orderInfo;
 
     /// @dev token => tokenId => case0(feePercent0)/case1(feePercent1)
     mapping(uint256 => mapping(uint256 => bool)) public feeSelector;
@@ -89,7 +89,7 @@ contract MADMarketplace721 is
     /// expected to take 1s in the
     /// harmony blockchain.
     function bid(bytes32 _order) public payable {
-        Types.Order721 storage order = orderInfo[_order];
+        MarketplaceTypes.Order721 storage order = orderInfo[_order];
 
         uint256 lastBidPrice = order.lastBidPrice;
 
@@ -141,7 +141,7 @@ contract MADMarketplace721 is
     /// @dev Price overrunning not accepted in fixed price and dutch auction.
     /// @dev Function Signature := 0x9c9a1061
     function buy(bytes32 _order) external payable {
-        Types.Order721 storage order = orderInfo[_order];
+        MarketplaceTypes.Order721 storage order = orderInfo[_order];
 
         _buyChecks(order.endTime, order.orderType, order.isSold);
 
@@ -201,7 +201,7 @@ contract MADMarketplace721 is
     /// @dev Function Signature := 0xbd66528a
     /// @dev Callable by both the seller and the auction winner.
     function claim(bytes32 _order) external {
-        Types.Order721 storage order = orderInfo[_order];
+        MarketplaceTypes.Order721 storage order = orderInfo[_order];
 
         _isBidderOrSeller(order.lastBidder, order.seller);
         _claimChecks(order.isSold, order.orderType, order.endTime);
@@ -250,7 +250,7 @@ contract MADMarketplace721 is
     /// @dev Function Signature := 0x7489ec23
     /// @dev Cancels order setting endTime value to 0.
     function cancelOrder(bytes32 _order) external {
-        Types.Order721 storage order = orderInfo[_order];
+        MarketplaceTypes.Order721 storage order = orderInfo[_order];
         _cancelOrderChecks(order.seller, order.isSold, order.lastBidPrice);
 
         IERC721 token = order.token;
@@ -302,7 +302,7 @@ contract MADMarketplace721 is
         _makeOrderChecks(_endTime, _startPrice);
 
         bytes32 hash = _hash(_token, _id, msg.sender);
-        orderInfo[hash] = Types.Order721(
+        orderInfo[hash] = MarketplaceTypes.Order721(
             _id,
             _startPrice,
             _endPrice,
@@ -372,7 +372,7 @@ contract MADMarketplace721 is
     }
 
     function _intPath(
-        Types.Order721 storage _order,
+        MarketplaceTypes.Order721 storage _order,
         uint256 _price,
         bytes32 _orderId,
         address _to,
@@ -414,7 +414,7 @@ contract MADMarketplace721 is
     }
 
     function _extPath0(
-        Types.Order721 storage _order,
+        MarketplaceTypes.Order721 storage _order,
         uint256 _price,
         bytes32 _orderId,
         address _to
@@ -455,7 +455,7 @@ contract MADMarketplace721 is
     }
 
     function _extPath1(
-        Types.Order721 storage _order,
+        MarketplaceTypes.Order721 storage _order,
         uint256 _price,
         bytes32 _orderId,
         address _to
@@ -513,7 +513,7 @@ contract MADMarketplace721 is
         view
         returns (uint256 price)
     {
-        Types.Order721 storage order = orderInfo[_order];
+        MarketplaceTypes.Order721 storage order = orderInfo[_order];
 
         assembly {
             let orderType := shr(160, sload(add(order.slot, 8)))

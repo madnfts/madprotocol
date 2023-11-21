@@ -7,8 +7,7 @@ import type {
   ERC721TokenReceiver,
   ERC721TokenReceiverInterface,
 } from "../../../../../../../lib/tokens/ERC721/Base/utils/ERC721Holder.sol/ERC721TokenReceiver";
-import type { Provider } from "@ethersproject/providers";
-import { Contract, Signer, utils } from "ethers";
+import { Contract, Interface, type ContractRunner } from "ethers";
 
 const _abi = [
   {
@@ -50,12 +49,16 @@ const _abi = [
 export class ERC721TokenReceiver__factory {
   static readonly abi = _abi;
   static createInterface(): ERC721TokenReceiverInterface {
-    return new utils.Interface(_abi) as ERC721TokenReceiverInterface;
+    return new Interface(_abi) as ERC721TokenReceiverInterface;
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    runner?: ContractRunner | null
   ): ERC721TokenReceiver {
-    return new Contract(address, _abi, signerOrProvider) as ERC721TokenReceiver;
+    return new Contract(
+      address,
+      _abi,
+      runner
+    ) as unknown as ERC721TokenReceiver;
   }
 }

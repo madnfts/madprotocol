@@ -4,214 +4,338 @@
 
 /* eslint-disable */
 import type {
-  TypedEventFilter,
-  TypedEvent,
+  TypedContractEvent,
+  TypedDeferredTopicFilter,
+  TypedEventLog,
+  TypedLogDescription,
   TypedListener,
-  OnEvent,
-  PromiseOrValue,
 } from "../../common";
-import type { EventFragment } from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   BaseContract,
-  BigNumber,
   BigNumberish,
-  Signer,
-  utils,
+  FunctionFragment,
+  Interface,
+  EventFragment,
+  AddressLike,
+  ContractRunner,
+  ContractMethod,
+  Listener,
 } from "ethers";
 
-export interface RouterEventsInterface extends utils.Interface {
-  functions: {};
-
-  events: {
-    "BaseURISet(address,string)": EventFragment;
-    "FactoryUpdated(address)": EventFragment;
-    "FeesUpdated(uint256,uint256)": EventFragment;
-    "PaymentTokenUpdated(address)": EventFragment;
-    "PublicMintState(address,uint8,bool)": EventFragment;
-    "RecipientUpdated(address)": EventFragment;
-    "TokenFundsWithdrawn(address,uint8,address)": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "BaseURISet"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "FactoryUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "FeesUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PaymentTokenUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PublicMintState"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RecipientUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TokenFundsWithdrawn"): EventFragment;
+export interface RouterEventsInterface extends Interface {
+  getEvent(
+    nameOrSignatureOrTopic:
+      | "BaseURISet"
+      | "FactoryUpdated"
+      | "FeesUpdated(uint256,uint256)"
+      | "FeesUpdated(uint256,uint256,address)"
+      | "PaymentTokenUpdated"
+      | "PublicMintState"
+      | "RecipientUpdated"
+      | "TokenFundsWithdrawn"
+  ): EventFragment;
 }
 
-export interface BaseURISetEventObject {
-  _id: string;
-  _baseURI: string;
+export namespace BaseURISetEvent {
+  export type InputTuple = [_id: AddressLike, _baseURI: string];
+  export type OutputTuple = [_id: string, _baseURI: string];
+  export interface OutputObject {
+    _id: string;
+    _baseURI: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type BaseURISetEvent = TypedEvent<
-  [string, string],
-  BaseURISetEventObject
->;
 
-export type BaseURISetEventFilter = TypedEventFilter<BaseURISetEvent>;
-
-export interface FactoryUpdatedEventObject {
-  newFactory: string;
+export namespace FactoryUpdatedEvent {
+  export type InputTuple = [newFactory: AddressLike];
+  export type OutputTuple = [newFactory: string];
+  export interface OutputObject {
+    newFactory: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type FactoryUpdatedEvent = TypedEvent<
-  [string],
-  FactoryUpdatedEventObject
->;
 
-export type FactoryUpdatedEventFilter = TypedEventFilter<FactoryUpdatedEvent>;
-
-export interface FeesUpdatedEventObject {
-  feeVal2: BigNumber;
-  feeVal3: BigNumber;
+export namespace FeesUpdated_uint256_uint256_Event {
+  export type InputTuple = [feeVal2: BigNumberish, feeVal3: BigNumberish];
+  export type OutputTuple = [feeVal2: bigint, feeVal3: bigint];
+  export interface OutputObject {
+    feeVal2: bigint;
+    feeVal3: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type FeesUpdatedEvent = TypedEvent<
-  [BigNumber, BigNumber],
-  FeesUpdatedEventObject
->;
 
-export type FeesUpdatedEventFilter = TypedEventFilter<FeesUpdatedEvent>;
-
-export interface PaymentTokenUpdatedEventObject {
-  newPaymentToken: string;
+export namespace FeesUpdated_uint256_uint256_address_Event {
+  export type InputTuple = [
+    feeVal2: BigNumberish,
+    feeVal3: BigNumberish,
+    erc20Token: AddressLike
+  ];
+  export type OutputTuple = [
+    feeVal2: bigint,
+    feeVal3: bigint,
+    erc20Token: string
+  ];
+  export interface OutputObject {
+    feeVal2: bigint;
+    feeVal3: bigint;
+    erc20Token: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type PaymentTokenUpdatedEvent = TypedEvent<
-  [string],
-  PaymentTokenUpdatedEventObject
->;
 
-export type PaymentTokenUpdatedEventFilter =
-  TypedEventFilter<PaymentTokenUpdatedEvent>;
-
-export interface PublicMintStateEventObject {
-  _id: string;
-  _type: number;
-  _state: boolean;
+export namespace PaymentTokenUpdatedEvent {
+  export type InputTuple = [newPaymentToken: AddressLike];
+  export type OutputTuple = [newPaymentToken: string];
+  export interface OutputObject {
+    newPaymentToken: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type PublicMintStateEvent = TypedEvent<
-  [string, number, boolean],
-  PublicMintStateEventObject
->;
 
-export type PublicMintStateEventFilter = TypedEventFilter<PublicMintStateEvent>;
-
-export interface RecipientUpdatedEventObject {
-  newRecipient: string;
+export namespace PublicMintStateEvent {
+  export type InputTuple = [
+    _id: AddressLike,
+    _type: BigNumberish,
+    _state: boolean
+  ];
+  export type OutputTuple = [_id: string, _type: bigint, _state: boolean];
+  export interface OutputObject {
+    _id: string;
+    _type: bigint;
+    _state: boolean;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type RecipientUpdatedEvent = TypedEvent<
-  [string],
-  RecipientUpdatedEventObject
->;
 
-export type RecipientUpdatedEventFilter =
-  TypedEventFilter<RecipientUpdatedEvent>;
-
-export interface TokenFundsWithdrawnEventObject {
-  _id: string;
-  _type: number;
-  _payee: string;
+export namespace RecipientUpdatedEvent {
+  export type InputTuple = [newRecipient: AddressLike];
+  export type OutputTuple = [newRecipient: string];
+  export interface OutputObject {
+    newRecipient: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type TokenFundsWithdrawnEvent = TypedEvent<
-  [string, number, string],
-  TokenFundsWithdrawnEventObject
->;
 
-export type TokenFundsWithdrawnEventFilter =
-  TypedEventFilter<TokenFundsWithdrawnEvent>;
+export namespace TokenFundsWithdrawnEvent {
+  export type InputTuple = [
+    _id: AddressLike,
+    _type: BigNumberish,
+    _payee: AddressLike
+  ];
+  export type OutputTuple = [_id: string, _type: bigint, _payee: string];
+  export interface OutputObject {
+    _id: string;
+    _type: bigint;
+    _payee: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
 
 export interface RouterEvents extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(runner?: ContractRunner | null): RouterEvents;
+  waitForDeployment(): Promise<this>;
 
   interface: RouterEventsInterface;
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
+  queryFilter<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  queryFilter<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+  on<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  on<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  functions: {};
+  once<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  once<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  callStatic: {};
+  listeners<TCEvent extends TypedContractEvent>(
+    event: TCEvent
+  ): Promise<Array<TypedListener<TCEvent>>>;
+  listeners(eventName?: string): Promise<Array<Listener>>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(
+    event?: TCEvent
+  ): Promise<this>;
+
+  getFunction<T extends ContractMethod = ContractMethod>(
+    key: string | FunctionFragment
+  ): T;
+
+  getEvent(
+    key: "BaseURISet"
+  ): TypedContractEvent<
+    BaseURISetEvent.InputTuple,
+    BaseURISetEvent.OutputTuple,
+    BaseURISetEvent.OutputObject
+  >;
+  getEvent(
+    key: "FactoryUpdated"
+  ): TypedContractEvent<
+    FactoryUpdatedEvent.InputTuple,
+    FactoryUpdatedEvent.OutputTuple,
+    FactoryUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "FeesUpdated(uint256,uint256)"
+  ): TypedContractEvent<
+    FeesUpdated_uint256_uint256_Event.InputTuple,
+    FeesUpdated_uint256_uint256_Event.OutputTuple,
+    FeesUpdated_uint256_uint256_Event.OutputObject
+  >;
+  getEvent(
+    key: "FeesUpdated(uint256,uint256,address)"
+  ): TypedContractEvent<
+    FeesUpdated_uint256_uint256_address_Event.InputTuple,
+    FeesUpdated_uint256_uint256_address_Event.OutputTuple,
+    FeesUpdated_uint256_uint256_address_Event.OutputObject
+  >;
+  getEvent(
+    key: "PaymentTokenUpdated"
+  ): TypedContractEvent<
+    PaymentTokenUpdatedEvent.InputTuple,
+    PaymentTokenUpdatedEvent.OutputTuple,
+    PaymentTokenUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "PublicMintState"
+  ): TypedContractEvent<
+    PublicMintStateEvent.InputTuple,
+    PublicMintStateEvent.OutputTuple,
+    PublicMintStateEvent.OutputObject
+  >;
+  getEvent(
+    key: "RecipientUpdated"
+  ): TypedContractEvent<
+    RecipientUpdatedEvent.InputTuple,
+    RecipientUpdatedEvent.OutputTuple,
+    RecipientUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "TokenFundsWithdrawn"
+  ): TypedContractEvent<
+    TokenFundsWithdrawnEvent.InputTuple,
+    TokenFundsWithdrawnEvent.OutputTuple,
+    TokenFundsWithdrawnEvent.OutputObject
+  >;
 
   filters: {
-    "BaseURISet(address,string)"(
-      _id?: PromiseOrValue<string> | null,
-      _baseURI?: PromiseOrValue<string> | null
-    ): BaseURISetEventFilter;
-    BaseURISet(
-      _id?: PromiseOrValue<string> | null,
-      _baseURI?: PromiseOrValue<string> | null
-    ): BaseURISetEventFilter;
+    "BaseURISet(address,string)": TypedContractEvent<
+      BaseURISetEvent.InputTuple,
+      BaseURISetEvent.OutputTuple,
+      BaseURISetEvent.OutputObject
+    >;
+    BaseURISet: TypedContractEvent<
+      BaseURISetEvent.InputTuple,
+      BaseURISetEvent.OutputTuple,
+      BaseURISetEvent.OutputObject
+    >;
 
-    "FactoryUpdated(address)"(
-      newFactory?: PromiseOrValue<string> | null
-    ): FactoryUpdatedEventFilter;
-    FactoryUpdated(
-      newFactory?: PromiseOrValue<string> | null
-    ): FactoryUpdatedEventFilter;
+    "FactoryUpdated(address)": TypedContractEvent<
+      FactoryUpdatedEvent.InputTuple,
+      FactoryUpdatedEvent.OutputTuple,
+      FactoryUpdatedEvent.OutputObject
+    >;
+    FactoryUpdated: TypedContractEvent<
+      FactoryUpdatedEvent.InputTuple,
+      FactoryUpdatedEvent.OutputTuple,
+      FactoryUpdatedEvent.OutputObject
+    >;
 
-    "FeesUpdated(uint256,uint256)"(
-      feeVal2?: null,
-      feeVal3?: null
-    ): FeesUpdatedEventFilter;
-    FeesUpdated(feeVal2?: null, feeVal3?: null): FeesUpdatedEventFilter;
+    "FeesUpdated(uint256,uint256)": TypedContractEvent<
+      FeesUpdated_uint256_uint256_Event.InputTuple,
+      FeesUpdated_uint256_uint256_Event.OutputTuple,
+      FeesUpdated_uint256_uint256_Event.OutputObject
+    >;
+    "FeesUpdated(uint256,uint256,address)": TypedContractEvent<
+      FeesUpdated_uint256_uint256_address_Event.InputTuple,
+      FeesUpdated_uint256_uint256_address_Event.OutputTuple,
+      FeesUpdated_uint256_uint256_address_Event.OutputObject
+    >;
 
-    "PaymentTokenUpdated(address)"(
-      newPaymentToken?: PromiseOrValue<string> | null
-    ): PaymentTokenUpdatedEventFilter;
-    PaymentTokenUpdated(
-      newPaymentToken?: PromiseOrValue<string> | null
-    ): PaymentTokenUpdatedEventFilter;
+    "PaymentTokenUpdated(address)": TypedContractEvent<
+      PaymentTokenUpdatedEvent.InputTuple,
+      PaymentTokenUpdatedEvent.OutputTuple,
+      PaymentTokenUpdatedEvent.OutputObject
+    >;
+    PaymentTokenUpdated: TypedContractEvent<
+      PaymentTokenUpdatedEvent.InputTuple,
+      PaymentTokenUpdatedEvent.OutputTuple,
+      PaymentTokenUpdatedEvent.OutputObject
+    >;
 
-    "PublicMintState(address,uint8,bool)"(
-      _id?: PromiseOrValue<string> | null,
-      _type?: PromiseOrValue<BigNumberish> | null,
-      _state?: PromiseOrValue<boolean> | null
-    ): PublicMintStateEventFilter;
-    PublicMintState(
-      _id?: PromiseOrValue<string> | null,
-      _type?: PromiseOrValue<BigNumberish> | null,
-      _state?: PromiseOrValue<boolean> | null
-    ): PublicMintStateEventFilter;
+    "PublicMintState(address,uint8,bool)": TypedContractEvent<
+      PublicMintStateEvent.InputTuple,
+      PublicMintStateEvent.OutputTuple,
+      PublicMintStateEvent.OutputObject
+    >;
+    PublicMintState: TypedContractEvent<
+      PublicMintStateEvent.InputTuple,
+      PublicMintStateEvent.OutputTuple,
+      PublicMintStateEvent.OutputObject
+    >;
 
-    "RecipientUpdated(address)"(
-      newRecipient?: PromiseOrValue<string> | null
-    ): RecipientUpdatedEventFilter;
-    RecipientUpdated(
-      newRecipient?: PromiseOrValue<string> | null
-    ): RecipientUpdatedEventFilter;
+    "RecipientUpdated(address)": TypedContractEvent<
+      RecipientUpdatedEvent.InputTuple,
+      RecipientUpdatedEvent.OutputTuple,
+      RecipientUpdatedEvent.OutputObject
+    >;
+    RecipientUpdated: TypedContractEvent<
+      RecipientUpdatedEvent.InputTuple,
+      RecipientUpdatedEvent.OutputTuple,
+      RecipientUpdatedEvent.OutputObject
+    >;
 
-    "TokenFundsWithdrawn(address,uint8,address)"(
-      _id?: PromiseOrValue<string> | null,
-      _type?: PromiseOrValue<BigNumberish> | null,
-      _payee?: PromiseOrValue<string> | null
-    ): TokenFundsWithdrawnEventFilter;
-    TokenFundsWithdrawn(
-      _id?: PromiseOrValue<string> | null,
-      _type?: PromiseOrValue<BigNumberish> | null,
-      _payee?: PromiseOrValue<string> | null
-    ): TokenFundsWithdrawnEventFilter;
+    "TokenFundsWithdrawn(address,uint8,address)": TypedContractEvent<
+      TokenFundsWithdrawnEvent.InputTuple,
+      TokenFundsWithdrawnEvent.OutputTuple,
+      TokenFundsWithdrawnEvent.OutputObject
+    >;
+    TokenFundsWithdrawn: TypedContractEvent<
+      TokenFundsWithdrawnEvent.InputTuple,
+      TokenFundsWithdrawnEvent.OutputTuple,
+      TokenFundsWithdrawnEvent.OutputObject
+    >;
   };
-
-  estimateGas: {};
-
-  populateTransaction: {};
 }

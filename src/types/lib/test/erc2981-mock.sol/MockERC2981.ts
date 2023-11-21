@@ -4,44 +4,30 @@
 
 /* eslint-disable */
 import type {
-  TypedEventFilter,
-  TypedEvent,
+  TypedContractEvent,
+  TypedDeferredTopicFilter,
+  TypedEventLog,
+  TypedLogDescription,
   TypedListener,
-  OnEvent,
-  PromiseOrValue,
+  TypedContractMethod,
 } from "../../../common";
 import type {
-  FunctionFragment,
-  Result,
-  EventFragment,
-} from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
-import type {
   BaseContract,
-  BigNumber,
   BigNumberish,
   BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
+  FunctionFragment,
+  Result,
+  Interface,
+  EventFragment,
+  AddressLike,
+  ContractRunner,
+  ContractMethod,
+  Listener,
 } from "ethers";
 
-export interface MockERC2981Interface extends utils.Interface {
-  functions: {
-    "_royaltyFee()": FunctionFragment;
-    "_royaltyRecipient()": FunctionFragment;
-    "owner()": FunctionFragment;
-    "royaltyInfo(uint256,uint256)": FunctionFragment;
-    "setOwner(address)": FunctionFragment;
-    "setRoyaltyRecipient(address)": FunctionFragment;
-    "supportsInterface(bytes4)": FunctionFragment;
-  };
-
+export interface MockERC2981Interface extends Interface {
   getFunction(
-    nameOrSignatureOrTopic:
+    nameOrSignature:
       | "_royaltyFee"
       | "_royaltyRecipient"
       | "owner"
@@ -50,6 +36,13 @@ export interface MockERC2981Interface extends utils.Interface {
       | "setRoyaltyRecipient"
       | "supportsInterface"
   ): FunctionFragment;
+
+  getEvent(
+    nameOrSignatureOrTopic:
+      | "OwnerUpdated"
+      | "RoyaltyFeeSet"
+      | "RoyaltyRecipientSet"
+  ): EventFragment;
 
   encodeFunctionData(
     functionFragment: "_royaltyFee",
@@ -62,19 +55,19 @@ export interface MockERC2981Interface extends utils.Interface {
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "royaltyInfo",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setOwner",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "setRoyaltyRecipient",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
-    values: [PromiseOrValue<BytesLike>]
+    values: [BytesLike]
   ): string;
 
   decodeFunctionResult(
@@ -99,247 +92,198 @@ export interface MockERC2981Interface extends utils.Interface {
     functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
-
-  events: {
-    "OwnerUpdated(address,address)": EventFragment;
-    "RoyaltyFeeSet(uint256)": EventFragment;
-    "RoyaltyRecipientSet(address)": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "OwnerUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RoyaltyFeeSet"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RoyaltyRecipientSet"): EventFragment;
 }
 
-export interface OwnerUpdatedEventObject {
-  user: string;
-  newOwner: string;
+export namespace OwnerUpdatedEvent {
+  export type InputTuple = [user: AddressLike, newOwner: AddressLike];
+  export type OutputTuple = [user: string, newOwner: string];
+  export interface OutputObject {
+    user: string;
+    newOwner: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type OwnerUpdatedEvent = TypedEvent<
-  [string, string],
-  OwnerUpdatedEventObject
->;
 
-export type OwnerUpdatedEventFilter = TypedEventFilter<OwnerUpdatedEvent>;
-
-export interface RoyaltyFeeSetEventObject {
-  newRoyaltyFee: BigNumber;
+export namespace RoyaltyFeeSetEvent {
+  export type InputTuple = [newRoyaltyFee: BigNumberish];
+  export type OutputTuple = [newRoyaltyFee: bigint];
+  export interface OutputObject {
+    newRoyaltyFee: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type RoyaltyFeeSetEvent = TypedEvent<
-  [BigNumber],
-  RoyaltyFeeSetEventObject
->;
 
-export type RoyaltyFeeSetEventFilter = TypedEventFilter<RoyaltyFeeSetEvent>;
-
-export interface RoyaltyRecipientSetEventObject {
-  newRecipient: string;
+export namespace RoyaltyRecipientSetEvent {
+  export type InputTuple = [newRecipient: AddressLike];
+  export type OutputTuple = [newRecipient: string];
+  export interface OutputObject {
+    newRecipient: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type RoyaltyRecipientSetEvent = TypedEvent<
-  [string],
-  RoyaltyRecipientSetEventObject
->;
-
-export type RoyaltyRecipientSetEventFilter =
-  TypedEventFilter<RoyaltyRecipientSetEvent>;
 
 export interface MockERC2981 extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(runner?: ContractRunner | null): MockERC2981;
+  waitForDeployment(): Promise<this>;
 
   interface: MockERC2981Interface;
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
+  queryFilter<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  queryFilter<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+  on<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  on<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  functions: {
-    _royaltyFee(overrides?: CallOverrides): Promise<[BigNumber]>;
+  once<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  once<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-    _royaltyRecipient(overrides?: CallOverrides): Promise<[string]>;
+  listeners<TCEvent extends TypedContractEvent>(
+    event: TCEvent
+  ): Promise<Array<TypedListener<TCEvent>>>;
+  listeners(eventName?: string): Promise<Array<Listener>>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(
+    event?: TCEvent
+  ): Promise<this>;
 
-    owner(overrides?: CallOverrides): Promise<[string]>;
+  _royaltyFee: TypedContractMethod<[], [bigint], "view">;
 
-    royaltyInfo(
-      arg0: PromiseOrValue<BigNumberish>,
-      salePrice: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber] & { receiver: string; royaltyAmount: BigNumber }
-    >;
+  _royaltyRecipient: TypedContractMethod<[], [string], "view">;
 
-    setOwner(
-      newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  owner: TypedContractMethod<[], [string], "view">;
 
-    setRoyaltyRecipient(
-      recipient: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-  };
-
-  _royaltyFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-  _royaltyRecipient(overrides?: CallOverrides): Promise<string>;
-
-  owner(overrides?: CallOverrides): Promise<string>;
-
-  royaltyInfo(
-    arg0: PromiseOrValue<BigNumberish>,
-    salePrice: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<
-    [string, BigNumber] & { receiver: string; royaltyAmount: BigNumber }
+  royaltyInfo: TypedContractMethod<
+    [arg0: BigNumberish, salePrice: BigNumberish],
+    [[string, bigint] & { receiver: string; royaltyAmount: bigint }],
+    "view"
   >;
 
-  setOwner(
-    newOwner: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  setOwner: TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
 
-  setRoyaltyRecipient(
-    recipient: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  setRoyaltyRecipient: TypedContractMethod<
+    [recipient: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-  supportsInterface(
-    interfaceId: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+  supportsInterface: TypedContractMethod<
+    [interfaceId: BytesLike],
+    [boolean],
+    "view"
+  >;
 
-  callStatic: {
-    _royaltyFee(overrides?: CallOverrides): Promise<BigNumber>;
+  getFunction<T extends ContractMethod = ContractMethod>(
+    key: string | FunctionFragment
+  ): T;
 
-    _royaltyRecipient(overrides?: CallOverrides): Promise<string>;
+  getFunction(
+    nameOrSignature: "_royaltyFee"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "_royaltyRecipient"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "owner"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "royaltyInfo"
+  ): TypedContractMethod<
+    [arg0: BigNumberish, salePrice: BigNumberish],
+    [[string, bigint] & { receiver: string; royaltyAmount: bigint }],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "setOwner"
+  ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setRoyaltyRecipient"
+  ): TypedContractMethod<[recipient: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "supportsInterface"
+  ): TypedContractMethod<[interfaceId: BytesLike], [boolean], "view">;
 
-    owner(overrides?: CallOverrides): Promise<string>;
-
-    royaltyInfo(
-      arg0: PromiseOrValue<BigNumberish>,
-      salePrice: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber] & { receiver: string; royaltyAmount: BigNumber }
-    >;
-
-    setOwner(
-      newOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setRoyaltyRecipient(
-      recipient: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-  };
+  getEvent(
+    key: "OwnerUpdated"
+  ): TypedContractEvent<
+    OwnerUpdatedEvent.InputTuple,
+    OwnerUpdatedEvent.OutputTuple,
+    OwnerUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "RoyaltyFeeSet"
+  ): TypedContractEvent<
+    RoyaltyFeeSetEvent.InputTuple,
+    RoyaltyFeeSetEvent.OutputTuple,
+    RoyaltyFeeSetEvent.OutputObject
+  >;
+  getEvent(
+    key: "RoyaltyRecipientSet"
+  ): TypedContractEvent<
+    RoyaltyRecipientSetEvent.InputTuple,
+    RoyaltyRecipientSetEvent.OutputTuple,
+    RoyaltyRecipientSetEvent.OutputObject
+  >;
 
   filters: {
-    "OwnerUpdated(address,address)"(
-      user?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnerUpdatedEventFilter;
-    OwnerUpdated(
-      user?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnerUpdatedEventFilter;
+    "OwnerUpdated(address,address)": TypedContractEvent<
+      OwnerUpdatedEvent.InputTuple,
+      OwnerUpdatedEvent.OutputTuple,
+      OwnerUpdatedEvent.OutputObject
+    >;
+    OwnerUpdated: TypedContractEvent<
+      OwnerUpdatedEvent.InputTuple,
+      OwnerUpdatedEvent.OutputTuple,
+      OwnerUpdatedEvent.OutputObject
+    >;
 
-    "RoyaltyFeeSet(uint256)"(
-      newRoyaltyFee?: PromiseOrValue<BigNumberish> | null
-    ): RoyaltyFeeSetEventFilter;
-    RoyaltyFeeSet(
-      newRoyaltyFee?: PromiseOrValue<BigNumberish> | null
-    ): RoyaltyFeeSetEventFilter;
+    "RoyaltyFeeSet(uint256)": TypedContractEvent<
+      RoyaltyFeeSetEvent.InputTuple,
+      RoyaltyFeeSetEvent.OutputTuple,
+      RoyaltyFeeSetEvent.OutputObject
+    >;
+    RoyaltyFeeSet: TypedContractEvent<
+      RoyaltyFeeSetEvent.InputTuple,
+      RoyaltyFeeSetEvent.OutputTuple,
+      RoyaltyFeeSetEvent.OutputObject
+    >;
 
-    "RoyaltyRecipientSet(address)"(
-      newRecipient?: PromiseOrValue<string> | null
-    ): RoyaltyRecipientSetEventFilter;
-    RoyaltyRecipientSet(
-      newRecipient?: PromiseOrValue<string> | null
-    ): RoyaltyRecipientSetEventFilter;
-  };
-
-  estimateGas: {
-    _royaltyFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-    _royaltyRecipient(overrides?: CallOverrides): Promise<BigNumber>;
-
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    royaltyInfo(
-      arg0: PromiseOrValue<BigNumberish>,
-      salePrice: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    setOwner(
-      newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setRoyaltyRecipient(
-      recipient: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    _royaltyFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    _royaltyRecipient(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    royaltyInfo(
-      arg0: PromiseOrValue<BigNumberish>,
-      salePrice: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    setOwner(
-      newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setRoyaltyRecipient(
-      recipient: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    "RoyaltyRecipientSet(address)": TypedContractEvent<
+      RoyaltyRecipientSetEvent.InputTuple,
+      RoyaltyRecipientSetEvent.OutputTuple,
+      RoyaltyRecipientSetEvent.OutputObject
+    >;
+    RoyaltyRecipientSet: TypedContractEvent<
+      RoyaltyRecipientSetEvent.InputTuple,
+      RoyaltyRecipientSetEvent.OutputTuple,
+      RoyaltyRecipientSetEvent.OutputObject
+    >;
   };
 }

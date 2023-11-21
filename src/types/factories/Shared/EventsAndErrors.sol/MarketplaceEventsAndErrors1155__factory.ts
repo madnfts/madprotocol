@@ -7,8 +7,7 @@ import type {
   MarketplaceEventsAndErrors1155,
   MarketplaceEventsAndErrors1155Interface,
 } from "../../../Shared/EventsAndErrors.sol/MarketplaceEventsAndErrors1155";
-import type { Provider } from "@ethersproject/providers";
-import { Contract, Signer, utils } from "ethers";
+import { Contract, Interface, type ContractRunner } from "ethers";
 
 const _abi = [
   {
@@ -282,6 +281,31 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
+        indexed: false,
+        internalType: "uint256",
+        name: "feeVal2",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "feeVal3",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "erc20Token",
+        type: "address",
+      },
+    ],
+    name: "FeesUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
         indexed: true,
         internalType: "contract IERC1155",
         name: "token",
@@ -396,16 +420,16 @@ const _abi = [
 export class MarketplaceEventsAndErrors1155__factory {
   static readonly abi = _abi;
   static createInterface(): MarketplaceEventsAndErrors1155Interface {
-    return new utils.Interface(_abi) as MarketplaceEventsAndErrors1155Interface;
+    return new Interface(_abi) as MarketplaceEventsAndErrors1155Interface;
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    runner?: ContractRunner | null
   ): MarketplaceEventsAndErrors1155 {
     return new Contract(
       address,
       _abi,
-      signerOrProvider
-    ) as MarketplaceEventsAndErrors1155;
+      runner
+    ) as unknown as MarketplaceEventsAndErrors1155;
   }
 }

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 
-import "forge-std/src/Test.sol";
+import "test/lib/forge-std/src/Test.sol";
 import {
     IFactory,
     CreateCollectionParams,
@@ -37,7 +37,9 @@ abstract contract CreateCollectionBase is
         collectionAddress = createCollectionCustom(
             factory,
             _splitter,
-            CreateCollectionParams.defaultCollectionParams(_splitter, _price),
+            CreateCollectionParams.defaultCollectionParams(
+                _splitter, _price, address(erc20Token)
+            ),
             currentSigner
         );
     }
@@ -55,12 +57,13 @@ abstract contract CreateCollectionBase is
             vm.prank(collectionOwner, collectionOwner);
             factory.createCollection{ value: _createCollectionFee }(params);
         } else {
-            uint256 _createCollectionFee =
-                factory.feeCreateCollectionErc20(address(erc20Token)).feeAmount;
+            uint256 _createCollectionFee = factory.feeCreateCollectionErc20(
+                params.madFeeTokenAddress
+            ).feeAmount;
             vm.prank(collectionOwner, collectionOwner);
             erc20Token.approve(address(factory), _createCollectionFee);
             vm.prank(collectionOwner, collectionOwner);
-            factory.createCollection(params);
+            factory.createCollection(params, params.madFeeTokenAddress);
         }
 
         collectionAddress =
@@ -108,7 +111,7 @@ abstract contract CreateCollectionBase is
         );
 
         vm.prank(factory.router(), collectionOwner);
-        bool _check = factory.creatorCheck(collectionId, creator);
+        bool _check = factory.collectionCheck(collectionId);
 
         assertTrue(creator == collectionOwner, "Invalid creator");
         assertTrue(_check, "Invalid creator check");
@@ -178,11 +181,11 @@ abstract contract CreateCollectionBase is
 
         // Test name function
         string memory name = collection.name();
-        assertEq(name, params.name, "Incorrect name value");
+        assertEq(name, params.collectionName, "Incorrect name value");
 
         // Test symbol function
         string memory symbol = collection.symbol();
-        assertEq(symbol, params.symbol, "Incorrect symbol value");
+        assertEq(symbol, params.collectionSymbol, "Incorrect symbol value");
     }
 
     function _verifyCollectionTokensShared(
@@ -211,12 +214,6 @@ abstract contract CreateCollectionBase is
         assertTrue(
             collection._royaltyFee() == params.royalty,
             "collection._royaltyFee() == params.royalty :: Incorrect _royaltyFee"
-        );
-
-        // erc20()
-        assertTrue(
-            collection.erc20() == factory.erc20(),
-            "collection.erc20() == factory.erc20() :: Incorrect erc20"
         );
 
         // getOwner()

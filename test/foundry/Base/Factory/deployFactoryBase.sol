@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 
-import "forge-std/src/Test.sol";
+import "test/lib/forge-std/src/Test.sol";
 import { IFactory } from "test/foundry/Base/Factory/IFactory.sol";
 import { FactoryFactory } from "test/foundry/Base/Factory/factoryFactory.sol";
 
@@ -18,42 +18,25 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
     address public paymentTokenAddressFactoryErc20 =
         makeAddr("paymentTokenAddressFactory");
 
-    function deployFactoryDefault(ercTypes ercType)
-        public
-        returns (address factoryAddress)
-    {
-        factoryAddress = address(
-            deployFactoryCustom(
-                ercType, factoryOwner, factorySigner, paymentTokenAddressFactory
-            )
-        );
+    function deployFactoryDefault() public returns (address factoryAddress) {
+        factoryAddress =
+            address(deployFactoryCustom(factoryOwner, factorySigner));
     }
 
     function _deployFactoryCustomInternal(
-        ercTypes ercType,
         address _owner,
-        address _factorySignerAddress,
-        address _paymentTokenAddressFactory
+        address _factorySignerAddress
     ) internal returns (address factoryAddress) {
-        factoryAddress = address(
-            deployFactoryCustom(
-                ercType,
-                _owner,
-                _factorySignerAddress,
-                _paymentTokenAddressFactory
-            )
-        );
+        factoryAddress =
+            address(deployFactoryCustom(_owner, _factorySignerAddress));
     }
 
-    function deployFactoryCustom(
-        ercTypes ercType,
-        address _owner,
-        address _factorySignerAddress,
-        address _paymentTokenAddressFactory
-    ) public returns (address factoryAddress) {
+    function deployFactoryCustom(address _owner, address _factorySignerAddress)
+        public
+        returns (address factoryAddress)
+    {
         vm.prank(_owner);
-        factoryAddress =
-            createFactory(ercType, _paymentTokenAddressFactory, _owner);
+        factoryAddress = createFactory(_owner);
 
         IFactory newFactory = IFactory(factoryAddress);
 
@@ -61,19 +44,13 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
         // emit log_named_address("factoryOwner", _owner);
         // emit log_named_address("address(this)", address(this));
 
-        verifyDeployment(
-            newFactory,
-            _owner,
-            _factorySignerAddress,
-            _paymentTokenAddressFactory
-        );
+        verifyDeployment(newFactory, _owner, _factorySignerAddress);
     }
 
     function verifyDeployment(
         IFactory newFactory,
         address _owner,
-        address _factorySignerAddress,
-        address _paymentTokenAddressFactory
+        address _factorySignerAddress
     ) internal {
         if (address(newFactory) != address(1)) {
             vm.startPrank(_owner);
@@ -81,12 +58,6 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
             assertTrue(
                 newFactory.owner() == _owner,
                 "Owner should be the provided _owner"
-            );
-
-            // Check that newFactory's ERC20 token address is as expected
-            assertTrue(
-                address(newFactory.erc20()) == _paymentTokenAddressFactory,
-                "ERC20 token address should match the provided _paymentTokenAddressFactory"
             );
 
             // Check that collectionTypes for the given index returns empty
@@ -148,7 +119,7 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
         uint8 collectionType,
         bytes memory _tokenType
     ) public {
-        // Set Token Types
+        // Set Token FactoryTypes
         // emit log_named_address("factoryOwner", _owner);
 
         vm.startPrank(makeAddr("NotOwner"));

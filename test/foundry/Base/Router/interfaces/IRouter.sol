@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 
 import { FactoryVerifier } from "contracts/Shared/EventsAndErrors.sol";
 
@@ -15,8 +15,6 @@ interface IRouter {
 
     function feeBurn() external view returns (uint256);
     function feeMint() external view returns (uint256);
-    function maxFeeBurn() external view returns (uint256);
-    function maxFeeMint() external view returns (uint256);
 
     function feeLookup(bytes4 sigHash) external view returns (uint256 fee);
 
@@ -43,4 +41,26 @@ interface IRouter {
         external
         view
         returns (Fee memory);
+
+    function mintTo(address collection, address to, uint128 amount)
+        external
+        payable;
+
+    function mintTo(
+        address collection,
+        address to,
+        uint128 amount,
+        address erc20Token
+    ) external payable;
+
+    function mint(address collection, uint128 amount) external payable;
+
+    function mint(address collection, uint128 amount, address erc20Token)
+        external
+        payable;
+
+    function burn(address collection, uint128[] memory _ids) external payable;
+
+    function burn(address collection, uint128[] memory _ids, address erc20Token)
+        external;
 }

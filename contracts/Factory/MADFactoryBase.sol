@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 
 import { MADBase } from "contracts/Shared/MADBase.sol";
 import {
@@ -8,11 +8,10 @@ import {
     FactoryVerifier
 } from "contracts/Shared/EventsAndErrors.sol";
 import { DCPrevent } from "contracts/lib/security/DCPrevent.sol";
-import { Types } from "contracts/Shared/Types.sol";
-import { SplitterImpl } from "contracts/lib/splitter/SplitterImpl.sol";
+import { FactoryTypes } from "contracts/Shared/FactoryTypes.sol";
+import { SplitterImpl } from "contracts/Splitter/SplitterImpl.sol";
 import { CREATE3, Bytes32AddressLib } from "contracts/lib/utils/CREATE3.sol";
-import { SplitterBufferLib as BufferLib } from
-    "contracts/lib/utils/SplitterBufferLib.sol";
+import { SplitterBufferLib } from "contracts/Splitter/SplitterBufferLib.sol";
 
 import { FeeHandlerFactory } from "contracts/Factory/FeeHandler.sol";
 
@@ -24,9 +23,9 @@ abstract contract MADFactoryBase is
     DCPrevent,
     FeeHandlerFactory
 {
-    using Types for Types.CollectionArgs;
-    using Types for Types.SplitterConfig;
-    using Types for Types.Collection;
+    using FactoryTypes for FactoryTypes.CollectionArgs;
+    using FactoryTypes for FactoryTypes.SplitterConfig;
+    using FactoryTypes for FactoryTypes.Collection;
     using Bytes32AddressLib for address;
     using Bytes32AddressLib for bytes32;
 
@@ -48,11 +47,12 @@ abstract contract MADFactoryBase is
     ////////////////////////////////////////////////////////////////
 
     /// @dev `collectionIds` are derived from a collection's address.
-    mapping(address collectionId => Types.Collection) public collectionInfo;
+    mapping(address collectionId => FactoryTypes.Collection) public
+        collectionInfo;
 
     /// @dev Nested mapping that takes an collection creator as key of
     /// a hashmap of splitter contracts to its respective deployment configs.
-    mapping(address => mapping(address => Types.SplitterConfig)) public
+    mapping(address => mapping(address => FactoryTypes.SplitterConfig)) public
         splitterInfo;
 
     /// @dev Maps collection's index to its respective bytecode.
@@ -73,57 +73,56 @@ abstract contract MADFactoryBase is
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    constructor(address _paymentTokenAddress, address _recipient) {
-        _setPaymentToken(_paymentTokenAddress);
+    constructor(address _recipient) {
         setRecipient(_recipient);
     }
 
-    function _createCollection(Types.CreateCollectionParams calldata params)
-        internal
-        isThisOg
-        returns (address)
-    {
+    function _createCollection(
+        FactoryTypes.CreateCollectionParams calldata params,
+        address collectionToken
+    ) internal isThisOg returns (address) {
+        if (params.maxSupply == 0) {
+            revert ZeroMaxSupply();
+        }
         _isZeroAddr(router);
         _limiter(params.tokenType, params.splitter);
         _royaltyLocker(params.royalty);
 
-        if (address(erc20) == ADDRESS_ZERO) {
+        address madFeeTokenAddress = params.madFeeTokenAddress;
+        if (madFeeTokenAddress == ADDRESS_ZERO) {
             _handleFees(feeCreateCollection);
         } else {
             _handleFees(
-                feeCreateCollectionErc20[address(erc20)].feeAmount,
-                address(erc20)
+                feeCreateCollectionErc20[madFeeTokenAddress].feeAmount,
+                madFeeTokenAddress
             );
-        }
-
-        if (params.maxSupply == 0) {
-            revert ZeroMaxSupply();
         }
         address deployedCollection = _collectionDeploy(
             params.tokenType,
             params.tokenSalt,
-            Types.CollectionArgs(
-                params.name,
-                params.symbol,
+            FactoryTypes.CollectionArgs(
+                params.collectionName,
+                params.collectionSymbol,
                 params.uri,
                 params.price,
                 params.maxSupply,
                 params.splitter,
                 params.royalty,
                 router,
-                address(erc20),
+                collectionToken,
                 msg.sender
             )
         );
 
         userTokens[msg.sender].push(deployedCollection);
 
-        collectionInfo[deployedCollection] = Types.Collection(
+        collectionInfo[deployedCollection] = FactoryTypes.Collection(
             msg.sender,
             params.tokenType,
             params.tokenSalt,
             block.number,
-            params.splitter
+            params.splitter,
+            true
         );
         return deployedCollection;
     }
@@ -133,30 +132,44 @@ abstract contract MADFactoryBase is
     ///////////////////////////////////////////////////////////////
 
     function _createSplitter(
-        Types.CreateSplitterParams calldata params,
+        FactoryTypes.CreateSplitterParams calldata params,
         uint256 _flag
     ) internal {
-        if (address(erc20) == ADDRESS_ZERO) {
+        address madFeeTokenAddress = params.madFeeTokenAddress;
+        if (madFeeTokenAddress == ADDRESS_ZERO) {
             _handleFees(feeCreateSplitter);
         } else {
             _handleFees(
-                feeCreateSplitterErc20[address(erc20)].feeAmount, address(erc20)
+                feeCreateSplitterErc20[madFeeTokenAddress].feeAmount,
+                madFeeTokenAddress
             );
         }
 
         uint256 projectShareParsed =
             ((10_000 - params.ambassadorShare) * params.projectShare) / 10_000;
 
-        address[] memory _payees =
-            BufferLib.payeesBuffer(params.ambassador, params.project);
+        address[] memory _payees;
+        uint256[] memory _shares;
 
-        uint256[] memory _shares =
-            BufferLib.sharesBuffer(params.ambassadorShare, projectShareParsed);
+        if (projectShareParsed < 10_000) {
+            _payees = SplitterBufferLib.payeesBuffer(
+                params.ambassador, params.project
+            );
+
+            _shares = SplitterBufferLib.sharesBuffer(
+                params.ambassadorShare, projectShareParsed
+            );
+        } else {
+            _payees = new address[](1);
+            _payees[0] = params.project;
+            _shares = new uint256[](1);
+            _shares[0] = 10_000;
+        }
 
         address splitter =
             _splitterDeploy(params.splitterSalt, _payees, _shares);
 
-        splitterInfo[msg.sender][splitter] = Types.SplitterConfig(
+        splitterInfo[msg.sender][splitter] = FactoryTypes.SplitterConfig(
             splitter,
             params.splitterSalt,
             params.ambassador,
@@ -172,7 +185,7 @@ abstract contract MADFactoryBase is
     function _collectionDeploy(
         uint8 _tokenType,
         bytes32 _tokenSalt,
-        Types.CollectionArgs memory _args
+        FactoryTypes.CollectionArgs memory _args
     ) internal returns (address deployed) {
         deployed = CREATE3.deploy(
             keccak256(abi.encode(msg.sender, _tokenSalt)),
@@ -218,16 +231,12 @@ abstract contract MADFactoryBase is
     {
         stdout = _userRender(_user);
 
-        uint256 i;
         uint256 len = getIDsLength(_user);
 
-        for (; i < len;) {
+        for (uint256 i = 0; i < len; ++i) {
             if (_token == userTokens[_user][i]) {
                 stdout = true;
                 break;
-            }
-            unchecked {
-                ++i;
             }
         }
     }
@@ -332,21 +341,17 @@ abstract contract MADFactoryBase is
 
     /// @inheritdoc FactoryVerifier
     /// @notice This function is used by `MADRouter` to check if a  collection
-    /// creator is the same as the caller.
-    /// @dev Function Sighash := 5033270c
+    /// is a vliad MAD collection.
+    /// @dev Function Sighash := 97cf65af
     /// @param _collectionId address of the collection.
-    /// @param _creator address of the collection creator.
-    /// @return check Boolean output to either approve or reject call's
-    function creatorCheck(address _collectionId, address _creator)
+    /// @return Boolean output to either approve or reject call's
+    function collectionCheck(address _collectionId)
         external
         view
         override(FactoryVerifier)
-        returns (bool check)
+        returns (bool)
     {
-        address creator = collectionInfo[_collectionId].creator;
-        if (creator == _creator) {
-            check = true;
-        }
+        return collectionInfo[_collectionId].isValid;
     }
 
     function setFees(uint256 _feeCreateCollection, uint256 _feeCreateSplitter)
@@ -354,14 +359,24 @@ abstract contract MADFactoryBase is
         onlyOwner
     {
         _setFees(_feeCreateCollection, _feeCreateSplitter);
+        emit FeesUpdated(_feeCreateCollection, _feeCreateSplitter);
     }
 
     function setFees(
-        uint256 _feeCreateCollection,
-        uint256 _feeCreateSplitter,
-        address erc20token
+        uint256 _feeCreateCollectionErc20,
+        uint256 _feeCreateSplitterErc20,
+        address madFeeTokenAddress
     ) public onlyOwner {
-        _setFees(_feeCreateCollection, _feeCreateSplitter, erc20token);
+        _setFees(
+            _feeCreateCollectionErc20,
+            _feeCreateSplitterErc20,
+            madFeeTokenAddress
+        );
+        emit FeesUpdated(
+            _feeCreateCollectionErc20,
+            _feeCreateSplitterErc20,
+            madFeeTokenAddress
+        );
     }
 
     /// @dev Setter for public mint / burn fee _recipient.

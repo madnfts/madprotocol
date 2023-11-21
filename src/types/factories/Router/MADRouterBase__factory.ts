@@ -7,10 +7,14 @@ import type {
   MADRouterBase,
   MADRouterBaseInterface,
 } from "../../Router/MADRouterBase";
-import type { Provider } from "@ethersproject/providers";
-import { Contract, Signer, utils } from "ethers";
+import { Contract, Interface, type ContractRunner } from "ethers";
 
 const _abi = [
+  {
+    inputs: [],
+    name: "AddressNotValid",
+    type: "error",
+  },
   {
     inputs: [],
     name: "InsufficientBalance",
@@ -38,12 +42,12 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "NotCallersCollection",
+    name: "NotOwnerNorApproved",
     type: "error",
   },
   {
     inputs: [],
-    name: "NotOwnerNorApproved",
+    name: "NotValidCollection",
     type: "error",
   },
   {
@@ -102,6 +106,31 @@ const _abi = [
         internalType: "uint256",
         name: "feeVal3",
         type: "uint256",
+      },
+    ],
+    name: "FeesUpdated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "feeVal2",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "feeVal3",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "erc20Token",
+        type: "address",
       },
     ],
     name: "FeesUpdated",
@@ -204,19 +233,6 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "erc20",
-    outputs: [
-      {
-        internalType: "contract IERC20",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
     name: "feeBurn",
     outputs: [
       {
@@ -240,8 +256,13 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "burnPrice",
+        name: "feeAmount",
         type: "uint256",
+      },
+      {
+        internalType: "bool",
+        name: "isValid",
+        type: "bool",
       },
     ],
     stateMutability: "view",
@@ -272,8 +293,13 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "mintPrice",
+        name: "feeAmount",
         type: "uint256",
+      },
+      {
+        internalType: "bool",
+        name: "isValid",
+        type: "bool",
       },
     ],
     stateMutability: "view",
@@ -287,32 +313,6 @@ const _abi = [
         internalType: "contract FactoryVerifier",
         name: "",
         type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "maxFeeBurn",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "maxFeeMint",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -402,7 +402,7 @@ const _abi = [
       },
       {
         internalType: "address",
-        name: "erc20Address",
+        name: "madFeeTokenAddress",
         type: "address",
       },
     ],
@@ -442,12 +442,12 @@ const _abi = [
 export class MADRouterBase__factory {
   static readonly abi = _abi;
   static createInterface(): MADRouterBaseInterface {
-    return new utils.Interface(_abi) as MADRouterBaseInterface;
+    return new Interface(_abi) as MADRouterBaseInterface;
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    runner?: ContractRunner | null
   ): MADRouterBase {
-    return new Contract(address, _abi, signerOrProvider) as MADRouterBase;
+    return new Contract(address, _abi, runner) as unknown as MADRouterBase;
   }
 }

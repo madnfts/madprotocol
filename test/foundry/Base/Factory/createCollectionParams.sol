@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 
 import { IFactory } from "test/foundry/Base/Factory/IFactory.sol";
 
@@ -29,16 +29,18 @@ abstract contract CreateCollectionParams {
         uint256 _maxSupply,
         string memory _uri,
         address _splitter,
-        uint96 _royalty
+        uint96 _royalty,
+        address madFeeTokenAddress
     ) public returns (IFactory.CreateCollectionParams memory) {
         string memory name = BASE_NAME;
         string memory symbol = BASE_SYMBOL;
 
         return IFactory.CreateCollectionParams({
+            madFeeTokenAddress: madFeeTokenAddress,
             tokenType: uint8(_tokenType),
             tokenSalt: updateCreateCollectionSalt(),
-            name: name,
-            symbol: symbol,
+            collectionName: name,
+            collectionSymbol: symbol,
             price: _price,
             maxSupply: _maxSupply,
             uri: _uri,
@@ -49,7 +51,8 @@ abstract contract CreateCollectionParams {
 
     function defaultCollectionParams(
         address defaultSplitterAddress,
-        uint256 defaultPrice
+        uint256 defaultPrice,
+        address madFeeTokenAddress
     ) public returns (IFactory.CreateCollectionParams memory) {
         return generateCollectionParams(
             defaultTokenType,
@@ -57,7 +60,8 @@ abstract contract CreateCollectionParams {
             defaultMaxSupply,
             defaultUri,
             defaultSplitterAddress,
-            defaultRoyalty
+            defaultRoyalty,
+            madFeeTokenAddress
         );
     }
 }

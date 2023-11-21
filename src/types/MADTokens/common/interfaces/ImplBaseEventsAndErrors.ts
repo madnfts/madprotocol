@@ -4,148 +4,230 @@
 
 /* eslint-disable */
 import type {
-  TypedEventFilter,
-  TypedEvent,
+  TypedContractEvent,
+  TypedDeferredTopicFilter,
+  TypedEventLog,
+  TypedLogDescription,
   TypedListener,
-  OnEvent,
-  PromiseOrValue,
 } from "../../../common";
-import type { EventFragment } from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   BaseContract,
-  BigNumber,
   BigNumberish,
-  Signer,
-  utils,
+  FunctionFragment,
+  Interface,
+  EventFragment,
+  AddressLike,
+  ContractRunner,
+  ContractMethod,
+  Listener,
 } from "ethers";
 
-export interface ImplBaseEventsAndErrorsInterface extends utils.Interface {
-  functions: {};
-
-  events: {
-    "BaseURILocked()": EventFragment;
-    "BaseURISet(string)": EventFragment;
-    "PublicMintStateSet(bool)": EventFragment;
-    "RoyaltyFeeSet(uint256)": EventFragment;
-    "RoyaltyRecipientSet(address)": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "BaseURILocked"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "BaseURISet"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PublicMintStateSet"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RoyaltyFeeSet"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RoyaltyRecipientSet"): EventFragment;
+export interface ImplBaseEventsAndErrorsInterface extends Interface {
+  getEvent(
+    nameOrSignatureOrTopic:
+      | "BaseURILocked"
+      | "BaseURISet"
+      | "PublicMintStateSet"
+      | "RoyaltyFeeSet"
+      | "RoyaltyRecipientSet"
+  ): EventFragment;
 }
 
-export interface BaseURILockedEventObject {}
-export type BaseURILockedEvent = TypedEvent<[], BaseURILockedEventObject>;
-
-export type BaseURILockedEventFilter = TypedEventFilter<BaseURILockedEvent>;
-
-export interface BaseURISetEventObject {
-  newBaseURI: string;
+export namespace BaseURILockedEvent {
+  export type InputTuple = [];
+  export type OutputTuple = [];
+  export interface OutputObject {}
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type BaseURISetEvent = TypedEvent<[string], BaseURISetEventObject>;
 
-export type BaseURISetEventFilter = TypedEventFilter<BaseURISetEvent>;
-
-export interface PublicMintStateSetEventObject {
-  newPublicState: boolean;
+export namespace BaseURISetEvent {
+  export type InputTuple = [newBaseURI: string];
+  export type OutputTuple = [newBaseURI: string];
+  export interface OutputObject {
+    newBaseURI: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type PublicMintStateSetEvent = TypedEvent<
-  [boolean],
-  PublicMintStateSetEventObject
->;
 
-export type PublicMintStateSetEventFilter =
-  TypedEventFilter<PublicMintStateSetEvent>;
-
-export interface RoyaltyFeeSetEventObject {
-  newRoyaltyFee: BigNumber;
+export namespace PublicMintStateSetEvent {
+  export type InputTuple = [newPublicState: boolean];
+  export type OutputTuple = [newPublicState: boolean];
+  export interface OutputObject {
+    newPublicState: boolean;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type RoyaltyFeeSetEvent = TypedEvent<
-  [BigNumber],
-  RoyaltyFeeSetEventObject
->;
 
-export type RoyaltyFeeSetEventFilter = TypedEventFilter<RoyaltyFeeSetEvent>;
-
-export interface RoyaltyRecipientSetEventObject {
-  newRecipient: string;
+export namespace RoyaltyFeeSetEvent {
+  export type InputTuple = [newRoyaltyFee: BigNumberish];
+  export type OutputTuple = [newRoyaltyFee: bigint];
+  export interface OutputObject {
+    newRoyaltyFee: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type RoyaltyRecipientSetEvent = TypedEvent<
-  [string],
-  RoyaltyRecipientSetEventObject
->;
 
-export type RoyaltyRecipientSetEventFilter =
-  TypedEventFilter<RoyaltyRecipientSetEvent>;
+export namespace RoyaltyRecipientSetEvent {
+  export type InputTuple = [newRecipient: AddressLike];
+  export type OutputTuple = [newRecipient: string];
+  export interface OutputObject {
+    newRecipient: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
 
 export interface ImplBaseEventsAndErrors extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(runner?: ContractRunner | null): ImplBaseEventsAndErrors;
+  waitForDeployment(): Promise<this>;
 
   interface: ImplBaseEventsAndErrorsInterface;
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
+  queryFilter<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  queryFilter<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+  on<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  on<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  functions: {};
+  once<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  once<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  callStatic: {};
+  listeners<TCEvent extends TypedContractEvent>(
+    event: TCEvent
+  ): Promise<Array<TypedListener<TCEvent>>>;
+  listeners(eventName?: string): Promise<Array<Listener>>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(
+    event?: TCEvent
+  ): Promise<this>;
+
+  getFunction<T extends ContractMethod = ContractMethod>(
+    key: string | FunctionFragment
+  ): T;
+
+  getEvent(
+    key: "BaseURILocked"
+  ): TypedContractEvent<
+    BaseURILockedEvent.InputTuple,
+    BaseURILockedEvent.OutputTuple,
+    BaseURILockedEvent.OutputObject
+  >;
+  getEvent(
+    key: "BaseURISet"
+  ): TypedContractEvent<
+    BaseURISetEvent.InputTuple,
+    BaseURISetEvent.OutputTuple,
+    BaseURISetEvent.OutputObject
+  >;
+  getEvent(
+    key: "PublicMintStateSet"
+  ): TypedContractEvent<
+    PublicMintStateSetEvent.InputTuple,
+    PublicMintStateSetEvent.OutputTuple,
+    PublicMintStateSetEvent.OutputObject
+  >;
+  getEvent(
+    key: "RoyaltyFeeSet"
+  ): TypedContractEvent<
+    RoyaltyFeeSetEvent.InputTuple,
+    RoyaltyFeeSetEvent.OutputTuple,
+    RoyaltyFeeSetEvent.OutputObject
+  >;
+  getEvent(
+    key: "RoyaltyRecipientSet"
+  ): TypedContractEvent<
+    RoyaltyRecipientSetEvent.InputTuple,
+    RoyaltyRecipientSetEvent.OutputTuple,
+    RoyaltyRecipientSetEvent.OutputObject
+  >;
 
   filters: {
-    "BaseURILocked()"(): BaseURILockedEventFilter;
-    BaseURILocked(): BaseURILockedEventFilter;
+    "BaseURILocked()": TypedContractEvent<
+      BaseURILockedEvent.InputTuple,
+      BaseURILockedEvent.OutputTuple,
+      BaseURILockedEvent.OutputObject
+    >;
+    BaseURILocked: TypedContractEvent<
+      BaseURILockedEvent.InputTuple,
+      BaseURILockedEvent.OutputTuple,
+      BaseURILockedEvent.OutputObject
+    >;
 
-    "BaseURISet(string)"(
-      newBaseURI?: PromiseOrValue<string> | null
-    ): BaseURISetEventFilter;
-    BaseURISet(
-      newBaseURI?: PromiseOrValue<string> | null
-    ): BaseURISetEventFilter;
+    "BaseURISet(string)": TypedContractEvent<
+      BaseURISetEvent.InputTuple,
+      BaseURISetEvent.OutputTuple,
+      BaseURISetEvent.OutputObject
+    >;
+    BaseURISet: TypedContractEvent<
+      BaseURISetEvent.InputTuple,
+      BaseURISetEvent.OutputTuple,
+      BaseURISetEvent.OutputObject
+    >;
 
-    "PublicMintStateSet(bool)"(
-      newPublicState?: PromiseOrValue<boolean> | null
-    ): PublicMintStateSetEventFilter;
-    PublicMintStateSet(
-      newPublicState?: PromiseOrValue<boolean> | null
-    ): PublicMintStateSetEventFilter;
+    "PublicMintStateSet(bool)": TypedContractEvent<
+      PublicMintStateSetEvent.InputTuple,
+      PublicMintStateSetEvent.OutputTuple,
+      PublicMintStateSetEvent.OutputObject
+    >;
+    PublicMintStateSet: TypedContractEvent<
+      PublicMintStateSetEvent.InputTuple,
+      PublicMintStateSetEvent.OutputTuple,
+      PublicMintStateSetEvent.OutputObject
+    >;
 
-    "RoyaltyFeeSet(uint256)"(
-      newRoyaltyFee?: PromiseOrValue<BigNumberish> | null
-    ): RoyaltyFeeSetEventFilter;
-    RoyaltyFeeSet(
-      newRoyaltyFee?: PromiseOrValue<BigNumberish> | null
-    ): RoyaltyFeeSetEventFilter;
+    "RoyaltyFeeSet(uint256)": TypedContractEvent<
+      RoyaltyFeeSetEvent.InputTuple,
+      RoyaltyFeeSetEvent.OutputTuple,
+      RoyaltyFeeSetEvent.OutputObject
+    >;
+    RoyaltyFeeSet: TypedContractEvent<
+      RoyaltyFeeSetEvent.InputTuple,
+      RoyaltyFeeSetEvent.OutputTuple,
+      RoyaltyFeeSetEvent.OutputObject
+    >;
 
-    "RoyaltyRecipientSet(address)"(
-      newRecipient?: PromiseOrValue<string> | null
-    ): RoyaltyRecipientSetEventFilter;
-    RoyaltyRecipientSet(
-      newRecipient?: PromiseOrValue<string> | null
-    ): RoyaltyRecipientSetEventFilter;
+    "RoyaltyRecipientSet(address)": TypedContractEvent<
+      RoyaltyRecipientSetEvent.InputTuple,
+      RoyaltyRecipientSetEvent.OutputTuple,
+      RoyaltyRecipientSetEvent.OutputObject
+    >;
+    RoyaltyRecipientSet: TypedContractEvent<
+      RoyaltyRecipientSetEvent.InputTuple,
+      RoyaltyRecipientSetEvent.OutputTuple,
+      RoyaltyRecipientSetEvent.OutputObject
+    >;
   };
-
-  estimateGas: {};
-
-  populateTransaction: {};
 }

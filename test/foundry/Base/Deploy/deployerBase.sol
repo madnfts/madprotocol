@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 
-import "forge-std/src/Test.sol";
+import "test/lib/forge-std/src/Test.sol";
 import { DeployERC20 } from "test/foundry/Base/Tokens/ERC20/deployMockERC20.sol";
 
 import { DeployMarketplaceBase } from
@@ -48,10 +48,10 @@ abstract contract DeployerBase is
     address recipientRouter = makeAddr("RecipientRouter");
     address swapRouter = makeAddr("SwapRouter");
 
-    uint256 erc20MintFee = 1 ether;
-    uint256 erc20BurnFee = 1 ether;
-    uint256 erc20CreateSplitterFee = 1 ether;
-    uint256 erc20CreateCollectionFee = 1 ether;
+    uint256 public erc20MintFee = 1 ether;
+    uint256 public erc20BurnFee = 1 ether;
+    uint256 public erc20CreateSplitterFee = 1 ether;
+    uint256 public erc20CreateCollectionFee = 1 ether;
 
     function deployAll(ercTypes ercType, bool isERC20)
         public
@@ -77,9 +77,7 @@ abstract contract DeployerBase is
 
         // Deploy Factory
         factory = IFactory(
-            factoryDeployer.deployFactoryCustom(
-                ercType, currentSigner, factorySigner, address(paymentToken)
-            )
+            factoryDeployer.deployFactoryCustom(currentSigner, factorySigner)
         );
 
         // Deploy Router
@@ -99,18 +97,15 @@ abstract contract DeployerBase is
 
         factoryDeployer.setRouter(factory, address(router), currentSigner);
 
-        // Set the token type for the factory
-        if (ercType == ercTypes.ERC721) {
-            factoryDeployer.setTokenType(
-                factory, currentSigner, 1, type(ERC721Basic).creationCode
-            );
-        } else if (ercType == ercTypes.ERC1155) {
-            factoryDeployer.setTokenType(
-                factory, currentSigner, 2, type(ERC1155Basic).creationCode
-            );
-        } else {
-            revert("Invalid token type");
-        }
+        // Set the token types for the factory
+
+        factoryDeployer.setTokenType(
+            factory, currentSigner, 1, type(ERC721Basic).creationCode
+        );
+
+        factoryDeployer.setTokenType(
+            factory, currentSigner, 2, type(ERC1155Basic).creationCode
+        );
 
         if (isERC20) {
             // Set the fees for the factory

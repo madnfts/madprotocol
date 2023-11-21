@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 
 // solhint-disable-next-line
 import { MADBase, IERC20 } from "contracts/Shared/MADBase.sol";
@@ -35,15 +35,8 @@ abstract contract MADRouterBase is MADBase, FeeHandler, RouterEvents {
     /// @notice Constructor requires a valid factory address and an optional
     /// erc20 payment token
     /// address.
-    /// @param _paymentTokenAddress erc20 token address.
     /// @param _recipient Public mint fee recipient address.
-    // B.1 - Remove maxFeeMint &  maxFeeBurn from constructor
-    constructor(
-        FactoryVerifier _factory,
-        address _paymentTokenAddress,
-        address _recipient
-    ) {
-        _setPaymentToken(_paymentTokenAddress);
+    constructor(FactoryVerifier _factory, address _recipient) {
         setFactory(_factory);
         setRecipient(_recipient);
     }
@@ -92,12 +85,13 @@ abstract contract MADRouterBase is MADBase, FeeHandler, RouterEvents {
     /// @notice Change the Routers mint and burn fees for erc20 Tokens.
     /// @param _feeMint New mint fee.
     /// @param _feeBurn New burn fee.
-    function setFees(uint256 _feeMint, uint256 _feeBurn, address erc20Address)
-        public
-        onlyOwner
-    {
-        _setFees(_feeMint, _feeBurn, erc20Address);
-        emit FeesUpdated(_feeMint, _feeBurn);
+    function setFees(
+        uint256 _feeMint,
+        uint256 _feeBurn,
+        address madFeeTokenAddress
+    ) public onlyOwner {
+        _setFees(_feeMint, _feeBurn, madFeeTokenAddress);
+        emit FeesUpdated(_feeMint, _feeBurn, madFeeTokenAddress);
     }
 
     ////////////////////////////////////////////////////////////////
@@ -110,8 +104,8 @@ abstract contract MADRouterBase is MADBase, FeeHandler, RouterEvents {
     ///      Function Sighash := 0xdbf62b2e
     /// @param collectionId 721 / 1155 token address.
     function _tokenRender(address collectionId) internal view {
-        if (!madFactory.creatorCheck(collectionId, msg.sender)) {
-            revert NotCallersCollection();
+        if (!madFactory.collectionCheck(collectionId)) {
+            revert NotValidCollection();
         }
     }
 }

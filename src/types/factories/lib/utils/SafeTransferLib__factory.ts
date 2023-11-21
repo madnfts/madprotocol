@@ -3,13 +3,18 @@
 /* tslint:disable */
 
 /* eslint-disable */
-import type { PromiseOrValue } from "../../../common";
+import type { NonPayableOverrides } from "../../../common";
 import type {
   SafeTransferLib,
   SafeTransferLibInterface,
 } from "../../../lib/utils/SafeTransferLib";
-import type { Provider, TransactionRequest } from "@ethersproject/providers";
-import { Signer, utils, Contract, ContractFactory, Overrides } from "ethers";
+import {
+  Contract,
+  ContractFactory,
+  ContractTransactionResponse,
+  Interface,
+} from "ethers";
+import type { Signer, ContractDeployTransaction, ContractRunner } from "ethers";
 
 const _abi = [
   {
@@ -35,7 +40,7 @@ const _abi = [
 ] as const;
 
 const _bytecode =
-  "0x60808060405234601757603a9081601d823930815050f35b600080fdfe600080fdfea26469706673582212203e9a5d2ff2f4869b5bff763a398a23082e85c3816fb739110a2462b1c48490ce64736f6c63430008130033";
+  "0x60808060405234601757603a9081601d823930815050f35b600080fdfe600080fdfea26469706673582212205ab6f2edce17e5016a59bf28395509d94cbd6d63b00b9338def444bc28b64cf864736f6c63430008160033";
 
 type SafeTransferLibConstructorParams =
   | [signer?: Signer]
@@ -54,32 +59,31 @@ export class SafeTransferLib__factory extends ContractFactory {
     }
   }
 
-  override deploy(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<SafeTransferLib> {
-    return super.deploy(overrides || {}) as Promise<SafeTransferLib>;
-  }
   override getDeployTransaction(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): TransactionRequest {
+    overrides?: NonPayableOverrides & { from?: string }
+  ): Promise<ContractDeployTransaction> {
     return super.getDeployTransaction(overrides || {});
   }
-  override attach(address: string): SafeTransferLib {
-    return super.attach(address) as SafeTransferLib;
+  override deploy(overrides?: NonPayableOverrides & { from?: string }) {
+    return super.deploy(overrides || {}) as Promise<
+      SafeTransferLib & {
+        deploymentTransaction(): ContractTransactionResponse;
+      }
+    >;
   }
-  override connect(signer: Signer): SafeTransferLib__factory {
-    return super.connect(signer) as SafeTransferLib__factory;
+  override connect(runner: ContractRunner | null): SafeTransferLib__factory {
+    return super.connect(runner) as SafeTransferLib__factory;
   }
 
   static readonly bytecode = _bytecode;
   static readonly abi = _abi;
   static createInterface(): SafeTransferLibInterface {
-    return new utils.Interface(_abi) as SafeTransferLibInterface;
+    return new Interface(_abi) as SafeTransferLibInterface;
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    runner?: ContractRunner | null
   ): SafeTransferLib {
-    return new Contract(address, _abi, signerOrProvider) as SafeTransferLib;
+    return new Contract(address, _abi, runner) as unknown as SafeTransferLib;
   }
 }

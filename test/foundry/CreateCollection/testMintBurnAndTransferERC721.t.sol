@@ -1,6 +1,6 @@
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 
-import "forge-std/src/Test.sol";
+import "test/lib/forge-std/src/Test.sol";
 import {
     ISplitter,
     Deployer,
@@ -17,7 +17,6 @@ import {
 } from "test/foundry/CreateCollection/createCollectionHelpers.sol";
 
 import { IERC721Basic } from "test/foundry/Base/Tokens/ERC721/IERC721Basic.sol";
-import { MockERC20 } from "test/foundry/Base/Tokens/ERC20/deployMockERC20.sol";
 
 contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
     IDeployer.DeployedContracts deployedContracts;
@@ -44,6 +43,7 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
 
         // Create array of deployed contracts instances for ERC721
         deployedContracts = deployer.deployAll(ercTypes.ERC721, isERC20);
+        erc20Token = deployedContracts.paymentToken;
     }
 
     function testMintTo_DefaultSingle() public {
@@ -362,7 +362,8 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
             deployedContracts.factory,
             splitterDeployer,
             _nftMinter,
-            _nftPublicMintPrice
+            _nftPublicMintPrice,
+            address(erc20Token)
         );
 
         IERC721Basic collection = IERC721Basic(_collectionAddress);

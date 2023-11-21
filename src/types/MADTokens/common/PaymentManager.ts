@@ -4,35 +4,26 @@
 
 /* eslint-disable */
 import type {
-  TypedEventFilter,
-  TypedEvent,
+  TypedContractEvent,
+  TypedDeferredTopicFilter,
+  TypedEventLog,
   TypedListener,
-  OnEvent,
+  TypedContractMethod,
 } from "../../common";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   BaseContract,
-  BigNumber,
   BytesLike,
-  CallOverrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
+  FunctionFragment,
+  Result,
+  Interface,
+  ContractRunner,
+  ContractMethod,
+  Listener,
 } from "ethers";
 
-export interface PaymentManagerInterface extends utils.Interface {
-  functions: {
-    "erc20()": FunctionFragment;
-    "erc20PaymentsEnabled()": FunctionFragment;
-    "feeCount()": FunctionFragment;
-    "feeCountERC20()": FunctionFragment;
-    "price()": FunctionFragment;
-    "splitter()": FunctionFragment;
-  };
-
+export interface PaymentManagerInterface extends Interface {
   getFunction(
-    nameOrSignatureOrTopic:
+    nameOrSignature:
       | "erc20"
       | "erc20PaymentsEnabled"
       | "feeCount"
@@ -66,105 +57,85 @@ export interface PaymentManagerInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "price", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "splitter", data: BytesLike): Result;
-
-  events: {};
 }
 
 export interface PaymentManager extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(runner?: ContractRunner | null): PaymentManager;
+  waitForDeployment(): Promise<this>;
 
   interface: PaymentManagerInterface;
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
+  queryFilter<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  queryFilter<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+  on<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  on<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  functions: {
-    erc20(overrides?: CallOverrides): Promise<[string]>;
+  once<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  once<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-    erc20PaymentsEnabled(overrides?: CallOverrides): Promise<[boolean]>;
+  listeners<TCEvent extends TypedContractEvent>(
+    event: TCEvent
+  ): Promise<Array<TypedListener<TCEvent>>>;
+  listeners(eventName?: string): Promise<Array<Listener>>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(
+    event?: TCEvent
+  ): Promise<this>;
 
-    feeCount(overrides?: CallOverrides): Promise<[BigNumber]>;
+  erc20: TypedContractMethod<[], [string], "view">;
 
-    feeCountERC20(overrides?: CallOverrides): Promise<[BigNumber]>;
+  erc20PaymentsEnabled: TypedContractMethod<[], [boolean], "view">;
 
-    price(overrides?: CallOverrides): Promise<[BigNumber]>;
+  feeCount: TypedContractMethod<[], [bigint], "view">;
 
-    splitter(overrides?: CallOverrides): Promise<[string]>;
-  };
+  feeCountERC20: TypedContractMethod<[], [bigint], "view">;
 
-  erc20(overrides?: CallOverrides): Promise<string>;
+  price: TypedContractMethod<[], [bigint], "view">;
 
-  erc20PaymentsEnabled(overrides?: CallOverrides): Promise<boolean>;
+  splitter: TypedContractMethod<[], [string], "view">;
 
-  feeCount(overrides?: CallOverrides): Promise<BigNumber>;
+  getFunction<T extends ContractMethod = ContractMethod>(
+    key: string | FunctionFragment
+  ): T;
 
-  feeCountERC20(overrides?: CallOverrides): Promise<BigNumber>;
-
-  price(overrides?: CallOverrides): Promise<BigNumber>;
-
-  splitter(overrides?: CallOverrides): Promise<string>;
-
-  callStatic: {
-    erc20(overrides?: CallOverrides): Promise<string>;
-
-    erc20PaymentsEnabled(overrides?: CallOverrides): Promise<boolean>;
-
-    feeCount(overrides?: CallOverrides): Promise<BigNumber>;
-
-    feeCountERC20(overrides?: CallOverrides): Promise<BigNumber>;
-
-    price(overrides?: CallOverrides): Promise<BigNumber>;
-
-    splitter(overrides?: CallOverrides): Promise<string>;
-  };
+  getFunction(
+    nameOrSignature: "erc20"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "erc20PaymentsEnabled"
+  ): TypedContractMethod<[], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "feeCount"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "feeCountERC20"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "price"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "splitter"
+  ): TypedContractMethod<[], [string], "view">;
 
   filters: {};
-
-  estimateGas: {
-    erc20(overrides?: CallOverrides): Promise<BigNumber>;
-
-    erc20PaymentsEnabled(overrides?: CallOverrides): Promise<BigNumber>;
-
-    feeCount(overrides?: CallOverrides): Promise<BigNumber>;
-
-    feeCountERC20(overrides?: CallOverrides): Promise<BigNumber>;
-
-    price(overrides?: CallOverrides): Promise<BigNumber>;
-
-    splitter(overrides?: CallOverrides): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    erc20(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    erc20PaymentsEnabled(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    feeCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    feeCountERC20(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    price(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    splitter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-  };
 }

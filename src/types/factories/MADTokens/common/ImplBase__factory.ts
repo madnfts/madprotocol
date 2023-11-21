@@ -7,8 +7,7 @@ import type {
   ImplBase,
   ImplBaseInterface,
 } from "../../../MADTokens/common/ImplBase";
-import type { Provider } from "@ethersproject/providers";
-import { Contract, Signer, utils } from "ethers";
+import { Contract, Interface, type ContractRunner } from "ethers";
 
 const _abi = [
   {
@@ -490,12 +489,9 @@ const _abi = [
 export class ImplBase__factory {
   static readonly abi = _abi;
   static createInterface(): ImplBaseInterface {
-    return new utils.Interface(_abi) as ImplBaseInterface;
+    return new Interface(_abi) as ImplBaseInterface;
   }
-  static connect(
-    address: string,
-    signerOrProvider: Signer | Provider
-  ): ImplBase {
-    return new Contract(address, _abi, signerOrProvider) as ImplBase;
+  static connect(address: string, runner?: ContractRunner | null): ImplBase {
+    return new Contract(address, _abi, runner) as unknown as ImplBase;
   }
 }

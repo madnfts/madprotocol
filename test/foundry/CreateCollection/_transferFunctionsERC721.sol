@@ -1,6 +1,6 @@
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 
-import "forge-std/src/Test.sol";
+import "test/lib/forge-std/src/Test.sol";
 import { IERC721Basic } from "test/foundry/Base/Tokens/ERC721/IERC721Basic.sol";
 import { ICollection } from "test/foundry/CreateCollection/ICollection.sol";
 

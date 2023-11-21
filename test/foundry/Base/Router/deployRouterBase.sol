@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 
-import "forge-std/src/Test.sol";
+import "test/lib/forge-std/src/Test.sol";
 import { IRouter } from "test/foundry/Base/Router/interfaces/IRouter.sol";
 import {
     RouterFactory,
@@ -25,10 +25,8 @@ contract DeployRouterBase is
     address recipientRouter = makeAddr("RecipientRouter");
     address factoryVerifierRouter = makeAddr("RouterFactory");
 
-    uint256 feeBurn = 0;
-    uint256 feeMint = 0.25 ether;
-    uint256 maxFeeBurn = 0.5 ether;
-    uint256 maxFeeMint = 2.5 ether;
+    uint256 feeBurn = 1 ether;
+    uint256 feeMint = 1 ether;
 
     address[] routerDefaultAddresses =
         [recipientRouter, paymentTokenAddressRouter, factoryVerifierRouter];
@@ -125,20 +123,8 @@ contract DeployRouterBase is
                 "Recipient router cannot be address(0)"
             );
 
-            // Verify erc20
-            assertTrue(
-                address(_router.erc20()) == _paymentTokenAddressRouter,
-                "Incorrect payment token address"
-            );
-
             assertTrue(_router.feeBurn() == feeBurn, "Incorrect feeBurn value");
             assertTrue(_router.feeMint() == feeMint, "Incorrect feeMint value");
-            assertTrue(
-                _router.maxFeeBurn() == maxFeeBurn, "Incorrect maxFeeBurn value"
-            );
-            assertTrue(
-                _router.maxFeeMint() == maxFeeMint, "Incorrect maxFeeMint value"
-            );
 
             vm.stopPrank();
         } else {

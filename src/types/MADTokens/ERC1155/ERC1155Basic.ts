@@ -4,117 +4,69 @@
 
 /* eslint-disable */
 import type {
-  TypedEventFilter,
-  TypedEvent,
+  TypedContractEvent,
+  TypedDeferredTopicFilter,
+  TypedEventLog,
+  TypedLogDescription,
   TypedListener,
-  OnEvent,
-  PromiseOrValue,
+  TypedContractMethod,
 } from "../../common";
 import type {
-  FunctionFragment,
-  Result,
-  EventFragment,
-} from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
-import type {
   BaseContract,
-  BigNumber,
   BigNumberish,
   BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PayableOverrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
+  FunctionFragment,
+  Result,
+  Interface,
+  EventFragment,
+  AddressLike,
+  ContractRunner,
+  ContractMethod,
+  Listener,
 } from "ethers";
 
-export declare namespace Types {
+export declare namespace FactoryTypes {
   export type CollectionArgsStruct = {
-    _name: PromiseOrValue<string>;
-    _symbol: PromiseOrValue<string>;
-    _baseURI: PromiseOrValue<string>;
-    _price: PromiseOrValue<BigNumberish>;
-    _maxSupply: PromiseOrValue<BigNumberish>;
-    _splitter: PromiseOrValue<string>;
-    _royaltyPercentage: PromiseOrValue<BigNumberish>;
-    _router: PromiseOrValue<string>;
-    _erc20: PromiseOrValue<string>;
-    _owner: PromiseOrValue<string>;
+    _name: string;
+    _symbol: string;
+    _baseURI: string;
+    _price: BigNumberish;
+    _maxSupply: BigNumberish;
+    _splitter: AddressLike;
+    _royaltyPercentage: BigNumberish;
+    _router: AddressLike;
+    _erc20: AddressLike;
+    _owner: AddressLike;
   };
 
   export type CollectionArgsStructOutput = [
-    string,
-    string,
-    string,
-    BigNumber,
-    BigNumber,
-    string,
-    BigNumber,
-    string,
-    string,
-    string
+    _name: string,
+    _symbol: string,
+    _baseURI: string,
+    _price: bigint,
+    _maxSupply: bigint,
+    _splitter: string,
+    _royaltyPercentage: bigint,
+    _router: string,
+    _erc20: string,
+    _owner: string
   ] & {
     _name: string;
     _symbol: string;
     _baseURI: string;
-    _price: BigNumber;
-    _maxSupply: BigNumber;
+    _price: bigint;
+    _maxSupply: bigint;
     _splitter: string;
-    _royaltyPercentage: BigNumber;
+    _royaltyPercentage: bigint;
     _router: string;
     _erc20: string;
     _owner: string;
   };
 }
 
-export interface ERC1155BasicInterface extends utils.Interface {
-  functions: {
-    "_royaltyFee()": FunctionFragment;
-    "balanceCount(uint256)": FunctionFragment;
-    "balanceOf(address,uint256)": FunctionFragment;
-    "balanceOfBatch(address[],uint256[])": FunctionFragment;
-    "baseURI()": FunctionFragment;
-    "burn(address[],uint128[],uint128[])": FunctionFragment;
-    "burnBatch(address,uint128[],uint128[])": FunctionFragment;
-    "erc20()": FunctionFragment;
-    "erc20PaymentsEnabled()": FunctionFragment;
-    "feeCount()": FunctionFragment;
-    "feeCountERC20()": FunctionFragment;
-    "getOwner()": FunctionFragment;
-    "getRouter()": FunctionFragment;
-    "isApprovedForAll(address,address)": FunctionFragment;
-    "liveBalance(uint256)": FunctionFragment;
-    "maxSupply()": FunctionFragment;
-    "mint(address,uint128,uint128)": FunctionFragment;
-    "mint(uint128,uint128)": FunctionFragment;
-    "mintBatch(address,uint128[],uint128[])": FunctionFragment;
-    "mintBatch(uint128[],uint128[])": FunctionFragment;
-    "mintBatchTo(address,uint128[],uint128[])": FunctionFragment;
-    "mintTo(address,uint128,uint128)": FunctionFragment;
-    "price()": FunctionFragment;
-    "publicMintState()": FunctionFragment;
-    "routerHasAuthority()": FunctionFragment;
-    "royaltyInfo(uint256,uint256)": FunctionFragment;
-    "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
-    "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
-    "setApprovalForAll(address,bool)": FunctionFragment;
-    "setBaseURI(string)": FunctionFragment;
-    "setBaseURILock()": FunctionFragment;
-    "setOwnership(address)": FunctionFragment;
-    "setPublicMintState(bool)": FunctionFragment;
-    "setRouterHasAuthority(bool)": FunctionFragment;
-    "splitter()": FunctionFragment;
-    "supportsInterface(bytes4)": FunctionFragment;
-    "uri(uint256)": FunctionFragment;
-    "uriLock()": FunctionFragment;
-    "withdraw()": FunctionFragment;
-    "withdrawERC20(address)": FunctionFragment;
-  };
-
+export interface ERC1155BasicInterface extends Interface {
   getFunction(
-    nameOrSignatureOrTopic:
+    nameOrSignature:
       | "_royaltyFee"
       | "balanceCount"
       | "balanceOf"
@@ -133,8 +85,7 @@ export interface ERC1155BasicInterface extends utils.Interface {
       | "maxSupply"
       | "mint(address,uint128,uint128)"
       | "mint(uint128,uint128)"
-      | "mintBatch(address,uint128[],uint128[])"
-      | "mintBatch(uint128[],uint128[])"
+      | "mintBatch"
       | "mintBatchTo"
       | "mintTo"
       | "price"
@@ -157,38 +108,45 @@ export interface ERC1155BasicInterface extends utils.Interface {
       | "withdrawERC20"
   ): FunctionFragment;
 
+  getEvent(
+    nameOrSignatureOrTopic:
+      | "ApprovalForAll"
+      | "BaseURILocked"
+      | "BaseURISet"
+      | "OwnerUpdated"
+      | "PublicMintStateSet"
+      | "RouterSet"
+      | "RoyaltyFeeSet"
+      | "RoyaltyRecipientSet"
+      | "TransferBatch"
+      | "TransferSingle"
+      | "URI"
+  ): EventFragment;
+
   encodeFunctionData(
     functionFragment: "_royaltyFee",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "balanceCount",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "balanceOf",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+    values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "balanceOfBatch",
-    values: [PromiseOrValue<string>[], PromiseOrValue<BigNumberish>[]]
+    values: [AddressLike[], BigNumberish[]]
   ): string;
   encodeFunctionData(functionFragment: "baseURI", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "burn",
-    values: [
-      PromiseOrValue<string>[],
-      PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<BigNumberish>[]
-    ]
+    values: [AddressLike[], BigNumberish[], BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "burnBatch",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<BigNumberish>[]
-    ]
+    values: [AddressLike, BigNumberish[], BigNumberish[]]
   ): string;
   encodeFunctionData(functionFragment: "erc20", values?: undefined): string;
   encodeFunctionData(
@@ -204,52 +162,32 @@ export interface ERC1155BasicInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "getRouter", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "isApprovedForAll",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+    values: [AddressLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "liveBalance",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "maxSupply", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "mint(address,uint128,uint128)",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
-    ]
+    values: [AddressLike, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "mint(uint128,uint128)",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "mintBatch(address,uint128[],uint128[])",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<BigNumberish>[]
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "mintBatch(uint128[],uint128[])",
-    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BigNumberish>[]]
+    functionFragment: "mintBatch",
+    values: [AddressLike, BigNumberish[], BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "mintBatchTo",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<BigNumberish>[]
-    ]
+    values: [AddressLike, BigNumberish[], BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "mintTo",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
-    ]
+    values: [AddressLike, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "price", values?: undefined): string;
   encodeFunctionData(
@@ -262,66 +200,54 @@ export interface ERC1155BasicInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "royaltyInfo",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "safeBatchTransferFrom",
     values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<BigNumberish>[],
-      PromiseOrValue<BytesLike>
+      AddressLike,
+      AddressLike,
+      BigNumberish[],
+      BigNumberish[],
+      BytesLike
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "safeTransferFrom",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BytesLike>
-    ]
+    values: [AddressLike, AddressLike, BigNumberish, BigNumberish, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "setApprovalForAll",
-    values: [PromiseOrValue<string>, PromiseOrValue<boolean>]
+    values: [AddressLike, boolean]
   ): string;
-  encodeFunctionData(
-    functionFragment: "setBaseURI",
-    values: [PromiseOrValue<string>]
-  ): string;
+  encodeFunctionData(functionFragment: "setBaseURI", values: [string]): string;
   encodeFunctionData(
     functionFragment: "setBaseURILock",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "setOwnership",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "setPublicMintState",
-    values: [PromiseOrValue<boolean>]
+    values: [boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "setRouterHasAuthority",
-    values: [PromiseOrValue<boolean>]
+    values: [boolean]
   ): string;
   encodeFunctionData(functionFragment: "splitter", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
-    values: [PromiseOrValue<BytesLike>]
+    values: [BytesLike]
   ): string;
-  encodeFunctionData(
-    functionFragment: "uri",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
+  encodeFunctionData(functionFragment: "uri", values: [BigNumberish]): string;
   encodeFunctionData(functionFragment: "uriLock", values?: undefined): string;
   encodeFunctionData(functionFragment: "withdraw", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "withdrawERC20",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
 
   decodeFunctionResult(
@@ -369,14 +295,7 @@ export interface ERC1155BasicInterface extends utils.Interface {
     functionFragment: "mint(uint128,uint128)",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "mintBatch(address,uint128[],uint128[])",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "mintBatch(uint128[],uint128[])",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "mintBatch", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "mintBatchTo",
     data: BytesLike
@@ -436,1190 +355,779 @@ export interface ERC1155BasicInterface extends utils.Interface {
     functionFragment: "withdrawERC20",
     data: BytesLike
   ): Result;
-
-  events: {
-    "ApprovalForAll(address,address,bool)": EventFragment;
-    "BaseURILocked()": EventFragment;
-    "BaseURISet(string)": EventFragment;
-    "OwnerUpdated(address,address)": EventFragment;
-    "PublicMintStateSet(bool)": EventFragment;
-    "RouterSet(address)": EventFragment;
-    "RoyaltyFeeSet(uint256)": EventFragment;
-    "RoyaltyRecipientSet(address)": EventFragment;
-    "TransferBatch(address,address,address,uint256[],uint256[])": EventFragment;
-    "TransferSingle(address,address,address,uint256,uint256)": EventFragment;
-    "URI(string,uint256)": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "BaseURILocked"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "BaseURISet"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "OwnerUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PublicMintStateSet"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RouterSet"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RoyaltyFeeSet"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RoyaltyRecipientSet"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TransferBatch"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TransferSingle"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "URI"): EventFragment;
 }
 
-export interface ApprovalForAllEventObject {
-  owner: string;
-  operator: string;
-  isApproved: boolean;
+export namespace ApprovalForAllEvent {
+  export type InputTuple = [
+    owner: AddressLike,
+    operator: AddressLike,
+    isApproved: boolean
+  ];
+  export type OutputTuple = [
+    owner: string,
+    operator: string,
+    isApproved: boolean
+  ];
+  export interface OutputObject {
+    owner: string;
+    operator: string;
+    isApproved: boolean;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type ApprovalForAllEvent = TypedEvent<
-  [string, string, boolean],
-  ApprovalForAllEventObject
->;
 
-export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
-
-export interface BaseURILockedEventObject {}
-export type BaseURILockedEvent = TypedEvent<[], BaseURILockedEventObject>;
-
-export type BaseURILockedEventFilter = TypedEventFilter<BaseURILockedEvent>;
-
-export interface BaseURISetEventObject {
-  newBaseURI: string;
+export namespace BaseURILockedEvent {
+  export type InputTuple = [];
+  export type OutputTuple = [];
+  export interface OutputObject {}
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type BaseURISetEvent = TypedEvent<[string], BaseURISetEventObject>;
 
-export type BaseURISetEventFilter = TypedEventFilter<BaseURISetEvent>;
-
-export interface OwnerUpdatedEventObject {
-  user: string;
-  newOwner: string;
+export namespace BaseURISetEvent {
+  export type InputTuple = [newBaseURI: string];
+  export type OutputTuple = [newBaseURI: string];
+  export interface OutputObject {
+    newBaseURI: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type OwnerUpdatedEvent = TypedEvent<
-  [string, string],
-  OwnerUpdatedEventObject
->;
 
-export type OwnerUpdatedEventFilter = TypedEventFilter<OwnerUpdatedEvent>;
-
-export interface PublicMintStateSetEventObject {
-  newPublicState: boolean;
+export namespace OwnerUpdatedEvent {
+  export type InputTuple = [user: AddressLike, newOwner: AddressLike];
+  export type OutputTuple = [user: string, newOwner: string];
+  export interface OutputObject {
+    user: string;
+    newOwner: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type PublicMintStateSetEvent = TypedEvent<
-  [boolean],
-  PublicMintStateSetEventObject
->;
 
-export type PublicMintStateSetEventFilter =
-  TypedEventFilter<PublicMintStateSetEvent>;
-
-export interface RouterSetEventObject {
-  newRouter: string;
+export namespace PublicMintStateSetEvent {
+  export type InputTuple = [newPublicState: boolean];
+  export type OutputTuple = [newPublicState: boolean];
+  export interface OutputObject {
+    newPublicState: boolean;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type RouterSetEvent = TypedEvent<[string], RouterSetEventObject>;
 
-export type RouterSetEventFilter = TypedEventFilter<RouterSetEvent>;
-
-export interface RoyaltyFeeSetEventObject {
-  newRoyaltyFee: BigNumber;
+export namespace RouterSetEvent {
+  export type InputTuple = [newRouter: AddressLike];
+  export type OutputTuple = [newRouter: string];
+  export interface OutputObject {
+    newRouter: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type RoyaltyFeeSetEvent = TypedEvent<
-  [BigNumber],
-  RoyaltyFeeSetEventObject
->;
 
-export type RoyaltyFeeSetEventFilter = TypedEventFilter<RoyaltyFeeSetEvent>;
-
-export interface RoyaltyRecipientSetEventObject {
-  newRecipient: string;
+export namespace RoyaltyFeeSetEvent {
+  export type InputTuple = [newRoyaltyFee: BigNumberish];
+  export type OutputTuple = [newRoyaltyFee: bigint];
+  export interface OutputObject {
+    newRoyaltyFee: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type RoyaltyRecipientSetEvent = TypedEvent<
-  [string],
-  RoyaltyRecipientSetEventObject
->;
 
-export type RoyaltyRecipientSetEventFilter =
-  TypedEventFilter<RoyaltyRecipientSetEvent>;
-
-export interface TransferBatchEventObject {
-  operator: string;
-  from: string;
-  to: string;
-  ids: BigNumber[];
-  amounts: BigNumber[];
+export namespace RoyaltyRecipientSetEvent {
+  export type InputTuple = [newRecipient: AddressLike];
+  export type OutputTuple = [newRecipient: string];
+  export interface OutputObject {
+    newRecipient: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type TransferBatchEvent = TypedEvent<
-  [string, string, string, BigNumber[], BigNumber[]],
-  TransferBatchEventObject
->;
 
-export type TransferBatchEventFilter = TypedEventFilter<TransferBatchEvent>;
-
-export interface TransferSingleEventObject {
-  operator: string;
-  from: string;
-  to: string;
-  id: BigNumber;
-  amount: BigNumber;
+export namespace TransferBatchEvent {
+  export type InputTuple = [
+    operator: AddressLike,
+    from: AddressLike,
+    to: AddressLike,
+    ids: BigNumberish[],
+    amounts: BigNumberish[]
+  ];
+  export type OutputTuple = [
+    operator: string,
+    from: string,
+    to: string,
+    ids: bigint[],
+    amounts: bigint[]
+  ];
+  export interface OutputObject {
+    operator: string;
+    from: string;
+    to: string;
+    ids: bigint[];
+    amounts: bigint[];
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type TransferSingleEvent = TypedEvent<
-  [string, string, string, BigNumber, BigNumber],
-  TransferSingleEventObject
->;
 
-export type TransferSingleEventFilter = TypedEventFilter<TransferSingleEvent>;
-
-export interface URIEventObject {
-  value: string;
-  id: BigNumber;
+export namespace TransferSingleEvent {
+  export type InputTuple = [
+    operator: AddressLike,
+    from: AddressLike,
+    to: AddressLike,
+    id: BigNumberish,
+    amount: BigNumberish
+  ];
+  export type OutputTuple = [
+    operator: string,
+    from: string,
+    to: string,
+    id: bigint,
+    amount: bigint
+  ];
+  export interface OutputObject {
+    operator: string;
+    from: string;
+    to: string;
+    id: bigint;
+    amount: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type URIEvent = TypedEvent<[string, BigNumber], URIEventObject>;
 
-export type URIEventFilter = TypedEventFilter<URIEvent>;
+export namespace URIEvent {
+  export type InputTuple = [value: string, id: BigNumberish];
+  export type OutputTuple = [value: string, id: bigint];
+  export interface OutputObject {
+    value: string;
+    id: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
 
 export interface ERC1155Basic extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(runner?: ContractRunner | null): ERC1155Basic;
+  waitForDeployment(): Promise<this>;
 
   interface: ERC1155BasicInterface;
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
+  queryFilter<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
-
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
-
-  functions: {
-    _royaltyFee(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    balanceCount(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    balanceOf(
-      owner: PromiseOrValue<string>,
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { result: BigNumber }>;
-
-    balanceOfBatch(
-      owners: PromiseOrValue<string>[],
-      ids: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<[BigNumber[]] & { balances: BigNumber[] }>;
-
-    baseURI(overrides?: CallOverrides): Promise<[string]>;
-
-    burn(
-      from: PromiseOrValue<string>[],
-      ids: PromiseOrValue<BigNumberish>[],
-      balances: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    burnBatch(
-      from: PromiseOrValue<string>,
-      ids: PromiseOrValue<BigNumberish>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    erc20(overrides?: CallOverrides): Promise<[string]>;
-
-    erc20PaymentsEnabled(overrides?: CallOverrides): Promise<[boolean]>;
-
-    feeCount(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    feeCountERC20(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    getOwner(overrides?: CallOverrides): Promise<[string]>;
-
-    getRouter(overrides?: CallOverrides): Promise<[string]>;
-
-    isApprovedForAll(
-      owner: PromiseOrValue<string>,
-      operator: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[boolean] & { result: boolean }>;
-
-    liveBalance(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    maxSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    "mint(address,uint128,uint128)"(
-      _to: PromiseOrValue<string>,
-      _id: PromiseOrValue<BigNumberish>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "mint(uint128,uint128)"(
-      _id: PromiseOrValue<BigNumberish>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "mintBatch(address,uint128[],uint128[])"(
-      _to: PromiseOrValue<string>,
-      ids: PromiseOrValue<BigNumberish>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    "mintBatch(uint128[],uint128[])"(
-      ids: PromiseOrValue<BigNumberish>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    mintBatchTo(
-      to: PromiseOrValue<string>,
-      ids: PromiseOrValue<BigNumberish>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    mintTo(
-      to: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      _id: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    price(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    publicMintState(overrides?: CallOverrides): Promise<[boolean]>;
-
-    routerHasAuthority(overrides?: CallOverrides): Promise<[boolean]>;
-
-    royaltyInfo(
-      arg0: PromiseOrValue<BigNumberish>,
-      salePrice: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber] & { receiver: string; royaltyAmount: BigNumber }
-    >;
-
-    safeBatchTransferFrom(
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      ids: PromiseOrValue<BigNumberish>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      data: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    safeTransferFrom(
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      id: PromiseOrValue<BigNumberish>,
-      amount: PromiseOrValue<BigNumberish>,
-      data: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setApprovalForAll(
-      operator: PromiseOrValue<string>,
-      isApproved: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setBaseURI(
-      _baseURI: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setBaseURILock(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setOwnership(
-      _owner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setPublicMintState(
-      _publicMintState: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setRouterHasAuthority(
-      _hasAuthority: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    splitter(overrides?: CallOverrides): Promise<[string]>;
-
-    supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    uri(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    uriLock(overrides?: CallOverrides): Promise<[boolean]>;
-
-    withdraw(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    withdrawERC20(
-      _erc20: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-  };
-
-  _royaltyFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-  balanceCount(
-    id: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  balanceOf(
-    owner: PromiseOrValue<string>,
-    id: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  balanceOfBatch(
-    owners: PromiseOrValue<string>[],
-    ids: PromiseOrValue<BigNumberish>[],
-    overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
-
-  baseURI(overrides?: CallOverrides): Promise<string>;
-
-  burn(
-    from: PromiseOrValue<string>[],
-    ids: PromiseOrValue<BigNumberish>[],
-    balances: PromiseOrValue<BigNumberish>[],
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  burnBatch(
-    from: PromiseOrValue<string>,
-    ids: PromiseOrValue<BigNumberish>[],
-    amounts: PromiseOrValue<BigNumberish>[],
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  erc20(overrides?: CallOverrides): Promise<string>;
-
-  erc20PaymentsEnabled(overrides?: CallOverrides): Promise<boolean>;
-
-  feeCount(overrides?: CallOverrides): Promise<BigNumber>;
-
-  feeCountERC20(overrides?: CallOverrides): Promise<BigNumber>;
-
-  getOwner(overrides?: CallOverrides): Promise<string>;
-
-  getRouter(overrides?: CallOverrides): Promise<string>;
-
-  isApprovedForAll(
-    owner: PromiseOrValue<string>,
-    operator: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  liveBalance(
-    id: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  maxSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "mint(address,uint128,uint128)"(
-    _to: PromiseOrValue<string>,
-    _id: PromiseOrValue<BigNumberish>,
-    amount: PromiseOrValue<BigNumberish>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "mint(uint128,uint128)"(
-    _id: PromiseOrValue<BigNumberish>,
-    amount: PromiseOrValue<BigNumberish>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "mintBatch(address,uint128[],uint128[])"(
-    _to: PromiseOrValue<string>,
-    ids: PromiseOrValue<BigNumberish>[],
-    amounts: PromiseOrValue<BigNumberish>[],
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  "mintBatch(uint128[],uint128[])"(
-    ids: PromiseOrValue<BigNumberish>[],
-    amounts: PromiseOrValue<BigNumberish>[],
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  mintBatchTo(
-    to: PromiseOrValue<string>,
-    ids: PromiseOrValue<BigNumberish>[],
-    amounts: PromiseOrValue<BigNumberish>[],
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  mintTo(
-    to: PromiseOrValue<string>,
-    amount: PromiseOrValue<BigNumberish>,
-    _id: PromiseOrValue<BigNumberish>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  price(overrides?: CallOverrides): Promise<BigNumber>;
-
-  publicMintState(overrides?: CallOverrides): Promise<boolean>;
-
-  routerHasAuthority(overrides?: CallOverrides): Promise<boolean>;
-
-  royaltyInfo(
-    arg0: PromiseOrValue<BigNumberish>,
-    salePrice: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<
-    [string, BigNumber] & { receiver: string; royaltyAmount: BigNumber }
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  queryFilter<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+
+  on<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  on<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+
+  once<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  once<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+
+  listeners<TCEvent extends TypedContractEvent>(
+    event: TCEvent
+  ): Promise<Array<TypedListener<TCEvent>>>;
+  listeners(eventName?: string): Promise<Array<Listener>>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(
+    event?: TCEvent
+  ): Promise<this>;
+
+  _royaltyFee: TypedContractMethod<[], [bigint], "view">;
+
+  balanceCount: TypedContractMethod<[id: BigNumberish], [bigint], "view">;
+
+  balanceOf: TypedContractMethod<
+    [owner: AddressLike, id: BigNumberish],
+    [bigint],
+    "view"
   >;
 
-  safeBatchTransferFrom(
-    from: PromiseOrValue<string>,
-    to: PromiseOrValue<string>,
-    ids: PromiseOrValue<BigNumberish>[],
-    amounts: PromiseOrValue<BigNumberish>[],
-    data: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  balanceOfBatch: TypedContractMethod<
+    [owners: AddressLike[], ids: BigNumberish[]],
+    [bigint[]],
+    "view"
+  >;
 
-  safeTransferFrom(
-    from: PromiseOrValue<string>,
-    to: PromiseOrValue<string>,
-    id: PromiseOrValue<BigNumberish>,
-    amount: PromiseOrValue<BigNumberish>,
-    data: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  baseURI: TypedContractMethod<[], [string], "view">;
 
-  setApprovalForAll(
-    operator: PromiseOrValue<string>,
-    isApproved: PromiseOrValue<boolean>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  burn: TypedContractMethod<
+    [from: AddressLike[], ids: BigNumberish[], balances: BigNumberish[]],
+    [void],
+    "payable"
+  >;
 
-  setBaseURI(
-    _baseURI: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  burnBatch: TypedContractMethod<
+    [from: AddressLike, ids: BigNumberish[], amounts: BigNumberish[]],
+    [void],
+    "payable"
+  >;
 
-  setBaseURILock(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  erc20: TypedContractMethod<[], [string], "view">;
 
-  setOwnership(
-    _owner: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  erc20PaymentsEnabled: TypedContractMethod<[], [boolean], "view">;
 
-  setPublicMintState(
-    _publicMintState: PromiseOrValue<boolean>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  feeCount: TypedContractMethod<[], [bigint], "view">;
 
-  setRouterHasAuthority(
-    _hasAuthority: PromiseOrValue<boolean>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  feeCountERC20: TypedContractMethod<[], [bigint], "view">;
 
-  splitter(overrides?: CallOverrides): Promise<string>;
+  getOwner: TypedContractMethod<[], [string], "view">;
 
-  supportsInterface(
-    interfaceId: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+  getRouter: TypedContractMethod<[], [string], "view">;
 
-  uri(
-    id: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
+  isApprovedForAll: TypedContractMethod<
+    [owner: AddressLike, operator: AddressLike],
+    [boolean],
+    "view"
+  >;
 
-  uriLock(overrides?: CallOverrides): Promise<boolean>;
+  liveBalance: TypedContractMethod<[id: BigNumberish], [bigint], "view">;
 
-  withdraw(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  maxSupply: TypedContractMethod<[], [bigint], "view">;
 
-  withdrawERC20(
-    _erc20: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  "mint(address,uint128,uint128)": TypedContractMethod<
+    [_to: AddressLike, _id: BigNumberish, amount: BigNumberish],
+    [void],
+    "payable"
+  >;
 
-  callStatic: {
-    _royaltyFee(overrides?: CallOverrides): Promise<BigNumber>;
+  "mint(uint128,uint128)": TypedContractMethod<
+    [_id: BigNumberish, amount: BigNumberish],
+    [void],
+    "payable"
+  >;
 
-    balanceCount(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+  mintBatch: TypedContractMethod<
+    [_to: AddressLike, ids: BigNumberish[], amounts: BigNumberish[]],
+    [void],
+    "payable"
+  >;
 
-    balanceOf(
-      owner: PromiseOrValue<string>,
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+  mintBatchTo: TypedContractMethod<
+    [to: AddressLike, ids: BigNumberish[], amounts: BigNumberish[]],
+    [void],
+    "payable"
+  >;
 
-    balanceOfBatch(
-      owners: PromiseOrValue<string>[],
-      ids: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
+  mintTo: TypedContractMethod<
+    [to: AddressLike, amount: BigNumberish, _id: BigNumberish],
+    [void],
+    "payable"
+  >;
 
-    baseURI(overrides?: CallOverrides): Promise<string>;
+  price: TypedContractMethod<[], [bigint], "view">;
 
-    burn(
-      from: PromiseOrValue<string>[],
-      ids: PromiseOrValue<BigNumberish>[],
-      balances: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<void>;
+  publicMintState: TypedContractMethod<[], [boolean], "view">;
 
-    burnBatch(
-      from: PromiseOrValue<string>,
-      ids: PromiseOrValue<BigNumberish>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<void>;
+  routerHasAuthority: TypedContractMethod<[], [boolean], "view">;
 
-    erc20(overrides?: CallOverrides): Promise<string>;
+  royaltyInfo: TypedContractMethod<
+    [arg0: BigNumberish, salePrice: BigNumberish],
+    [[string, bigint] & { receiver: string; royaltyAmount: bigint }],
+    "view"
+  >;
 
-    erc20PaymentsEnabled(overrides?: CallOverrides): Promise<boolean>;
+  safeBatchTransferFrom: TypedContractMethod<
+    [
+      from: AddressLike,
+      to: AddressLike,
+      ids: BigNumberish[],
+      amounts: BigNumberish[],
+      data: BytesLike
+    ],
+    [void],
+    "nonpayable"
+  >;
 
-    feeCount(overrides?: CallOverrides): Promise<BigNumber>;
+  safeTransferFrom: TypedContractMethod<
+    [
+      from: AddressLike,
+      to: AddressLike,
+      id: BigNumberish,
+      amount: BigNumberish,
+      data: BytesLike
+    ],
+    [void],
+    "nonpayable"
+  >;
 
-    feeCountERC20(overrides?: CallOverrides): Promise<BigNumber>;
+  setApprovalForAll: TypedContractMethod<
+    [operator: AddressLike, isApproved: boolean],
+    [void],
+    "nonpayable"
+  >;
 
-    getOwner(overrides?: CallOverrides): Promise<string>;
+  setBaseURI: TypedContractMethod<[_baseURI: string], [void], "nonpayable">;
 
-    getRouter(overrides?: CallOverrides): Promise<string>;
+  setBaseURILock: TypedContractMethod<[], [void], "nonpayable">;
 
-    isApprovedForAll(
-      owner: PromiseOrValue<string>,
-      operator: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+  setOwnership: TypedContractMethod<
+    [_owner: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-    liveBalance(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+  setPublicMintState: TypedContractMethod<
+    [_publicMintState: boolean],
+    [void],
+    "nonpayable"
+  >;
 
-    maxSupply(overrides?: CallOverrides): Promise<BigNumber>;
+  setRouterHasAuthority: TypedContractMethod<
+    [_hasAuthority: boolean],
+    [void],
+    "nonpayable"
+  >;
 
-    "mint(address,uint128,uint128)"(
-      _to: PromiseOrValue<string>,
-      _id: PromiseOrValue<BigNumberish>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
+  splitter: TypedContractMethod<[], [string], "view">;
 
-    "mint(uint128,uint128)"(
-      _id: PromiseOrValue<BigNumberish>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
+  supportsInterface: TypedContractMethod<
+    [interfaceId: BytesLike],
+    [boolean],
+    "view"
+  >;
 
-    "mintBatch(address,uint128[],uint128[])"(
-      _to: PromiseOrValue<string>,
-      ids: PromiseOrValue<BigNumberish>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<void>;
+  uri: TypedContractMethod<[id: BigNumberish], [string], "view">;
 
-    "mintBatch(uint128[],uint128[])"(
-      ids: PromiseOrValue<BigNumberish>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<void>;
+  uriLock: TypedContractMethod<[], [boolean], "view">;
 
-    mintBatchTo(
-      to: PromiseOrValue<string>,
-      ids: PromiseOrValue<BigNumberish>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<void>;
+  withdraw: TypedContractMethod<[], [void], "nonpayable">;
 
-    mintTo(
-      to: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      _id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
+  withdrawERC20: TypedContractMethod<
+    [_erc20: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-    price(overrides?: CallOverrides): Promise<BigNumber>;
+  getFunction<T extends ContractMethod = ContractMethod>(
+    key: string | FunctionFragment
+  ): T;
 
-    publicMintState(overrides?: CallOverrides): Promise<boolean>;
+  getFunction(
+    nameOrSignature: "_royaltyFee"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "balanceCount"
+  ): TypedContractMethod<[id: BigNumberish], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "balanceOf"
+  ): TypedContractMethod<
+    [owner: AddressLike, id: BigNumberish],
+    [bigint],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "balanceOfBatch"
+  ): TypedContractMethod<
+    [owners: AddressLike[], ids: BigNumberish[]],
+    [bigint[]],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "baseURI"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "burn"
+  ): TypedContractMethod<
+    [from: AddressLike[], ids: BigNumberish[], balances: BigNumberish[]],
+    [void],
+    "payable"
+  >;
+  getFunction(
+    nameOrSignature: "burnBatch"
+  ): TypedContractMethod<
+    [from: AddressLike, ids: BigNumberish[], amounts: BigNumberish[]],
+    [void],
+    "payable"
+  >;
+  getFunction(
+    nameOrSignature: "erc20"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "erc20PaymentsEnabled"
+  ): TypedContractMethod<[], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "feeCount"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "feeCountERC20"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "getOwner"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "getRouter"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "isApprovedForAll"
+  ): TypedContractMethod<
+    [owner: AddressLike, operator: AddressLike],
+    [boolean],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "liveBalance"
+  ): TypedContractMethod<[id: BigNumberish], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "maxSupply"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "mint(address,uint128,uint128)"
+  ): TypedContractMethod<
+    [_to: AddressLike, _id: BigNumberish, amount: BigNumberish],
+    [void],
+    "payable"
+  >;
+  getFunction(
+    nameOrSignature: "mint(uint128,uint128)"
+  ): TypedContractMethod<
+    [_id: BigNumberish, amount: BigNumberish],
+    [void],
+    "payable"
+  >;
+  getFunction(
+    nameOrSignature: "mintBatch"
+  ): TypedContractMethod<
+    [_to: AddressLike, ids: BigNumberish[], amounts: BigNumberish[]],
+    [void],
+    "payable"
+  >;
+  getFunction(
+    nameOrSignature: "mintBatchTo"
+  ): TypedContractMethod<
+    [to: AddressLike, ids: BigNumberish[], amounts: BigNumberish[]],
+    [void],
+    "payable"
+  >;
+  getFunction(
+    nameOrSignature: "mintTo"
+  ): TypedContractMethod<
+    [to: AddressLike, amount: BigNumberish, _id: BigNumberish],
+    [void],
+    "payable"
+  >;
+  getFunction(
+    nameOrSignature: "price"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "publicMintState"
+  ): TypedContractMethod<[], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "routerHasAuthority"
+  ): TypedContractMethod<[], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "royaltyInfo"
+  ): TypedContractMethod<
+    [arg0: BigNumberish, salePrice: BigNumberish],
+    [[string, bigint] & { receiver: string; royaltyAmount: bigint }],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "safeBatchTransferFrom"
+  ): TypedContractMethod<
+    [
+      from: AddressLike,
+      to: AddressLike,
+      ids: BigNumberish[],
+      amounts: BigNumberish[],
+      data: BytesLike
+    ],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "safeTransferFrom"
+  ): TypedContractMethod<
+    [
+      from: AddressLike,
+      to: AddressLike,
+      id: BigNumberish,
+      amount: BigNumberish,
+      data: BytesLike
+    ],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "setApprovalForAll"
+  ): TypedContractMethod<
+    [operator: AddressLike, isApproved: boolean],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "setBaseURI"
+  ): TypedContractMethod<[_baseURI: string], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setBaseURILock"
+  ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setOwnership"
+  ): TypedContractMethod<[_owner: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setPublicMintState"
+  ): TypedContractMethod<[_publicMintState: boolean], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setRouterHasAuthority"
+  ): TypedContractMethod<[_hasAuthority: boolean], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "splitter"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "supportsInterface"
+  ): TypedContractMethod<[interfaceId: BytesLike], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "uri"
+  ): TypedContractMethod<[id: BigNumberish], [string], "view">;
+  getFunction(
+    nameOrSignature: "uriLock"
+  ): TypedContractMethod<[], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "withdraw"
+  ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "withdrawERC20"
+  ): TypedContractMethod<[_erc20: AddressLike], [void], "nonpayable">;
 
-    routerHasAuthority(overrides?: CallOverrides): Promise<boolean>;
-
-    royaltyInfo(
-      arg0: PromiseOrValue<BigNumberish>,
-      salePrice: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber] & { receiver: string; royaltyAmount: BigNumber }
-    >;
-
-    safeBatchTransferFrom(
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      ids: PromiseOrValue<BigNumberish>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      data: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    safeTransferFrom(
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      id: PromiseOrValue<BigNumberish>,
-      amount: PromiseOrValue<BigNumberish>,
-      data: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setApprovalForAll(
-      operator: PromiseOrValue<string>,
-      isApproved: PromiseOrValue<boolean>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setBaseURI(
-      _baseURI: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setBaseURILock(overrides?: CallOverrides): Promise<void>;
-
-    setOwnership(
-      _owner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setPublicMintState(
-      _publicMintState: PromiseOrValue<boolean>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setRouterHasAuthority(
-      _hasAuthority: PromiseOrValue<boolean>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    splitter(overrides?: CallOverrides): Promise<string>;
-
-    supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    uri(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    uriLock(overrides?: CallOverrides): Promise<boolean>;
-
-    withdraw(overrides?: CallOverrides): Promise<void>;
-
-    withdrawERC20(
-      _erc20: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-  };
+  getEvent(
+    key: "ApprovalForAll"
+  ): TypedContractEvent<
+    ApprovalForAllEvent.InputTuple,
+    ApprovalForAllEvent.OutputTuple,
+    ApprovalForAllEvent.OutputObject
+  >;
+  getEvent(
+    key: "BaseURILocked"
+  ): TypedContractEvent<
+    BaseURILockedEvent.InputTuple,
+    BaseURILockedEvent.OutputTuple,
+    BaseURILockedEvent.OutputObject
+  >;
+  getEvent(
+    key: "BaseURISet"
+  ): TypedContractEvent<
+    BaseURISetEvent.InputTuple,
+    BaseURISetEvent.OutputTuple,
+    BaseURISetEvent.OutputObject
+  >;
+  getEvent(
+    key: "OwnerUpdated"
+  ): TypedContractEvent<
+    OwnerUpdatedEvent.InputTuple,
+    OwnerUpdatedEvent.OutputTuple,
+    OwnerUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "PublicMintStateSet"
+  ): TypedContractEvent<
+    PublicMintStateSetEvent.InputTuple,
+    PublicMintStateSetEvent.OutputTuple,
+    PublicMintStateSetEvent.OutputObject
+  >;
+  getEvent(
+    key: "RouterSet"
+  ): TypedContractEvent<
+    RouterSetEvent.InputTuple,
+    RouterSetEvent.OutputTuple,
+    RouterSetEvent.OutputObject
+  >;
+  getEvent(
+    key: "RoyaltyFeeSet"
+  ): TypedContractEvent<
+    RoyaltyFeeSetEvent.InputTuple,
+    RoyaltyFeeSetEvent.OutputTuple,
+    RoyaltyFeeSetEvent.OutputObject
+  >;
+  getEvent(
+    key: "RoyaltyRecipientSet"
+  ): TypedContractEvent<
+    RoyaltyRecipientSetEvent.InputTuple,
+    RoyaltyRecipientSetEvent.OutputTuple,
+    RoyaltyRecipientSetEvent.OutputObject
+  >;
+  getEvent(
+    key: "TransferBatch"
+  ): TypedContractEvent<
+    TransferBatchEvent.InputTuple,
+    TransferBatchEvent.OutputTuple,
+    TransferBatchEvent.OutputObject
+  >;
+  getEvent(
+    key: "TransferSingle"
+  ): TypedContractEvent<
+    TransferSingleEvent.InputTuple,
+    TransferSingleEvent.OutputTuple,
+    TransferSingleEvent.OutputObject
+  >;
+  getEvent(
+    key: "URI"
+  ): TypedContractEvent<
+    URIEvent.InputTuple,
+    URIEvent.OutputTuple,
+    URIEvent.OutputObject
+  >;
 
   filters: {
-    "ApprovalForAll(address,address,bool)"(
-      owner?: PromiseOrValue<string> | null,
-      operator?: PromiseOrValue<string> | null,
-      isApproved?: null
-    ): ApprovalForAllEventFilter;
-    ApprovalForAll(
-      owner?: PromiseOrValue<string> | null,
-      operator?: PromiseOrValue<string> | null,
-      isApproved?: null
-    ): ApprovalForAllEventFilter;
-
-    "BaseURILocked()"(): BaseURILockedEventFilter;
-    BaseURILocked(): BaseURILockedEventFilter;
-
-    "BaseURISet(string)"(
-      newBaseURI?: PromiseOrValue<string> | null
-    ): BaseURISetEventFilter;
-    BaseURISet(
-      newBaseURI?: PromiseOrValue<string> | null
-    ): BaseURISetEventFilter;
-
-    "OwnerUpdated(address,address)"(
-      user?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnerUpdatedEventFilter;
-    OwnerUpdated(
-      user?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnerUpdatedEventFilter;
-
-    "PublicMintStateSet(bool)"(
-      newPublicState?: PromiseOrValue<boolean> | null
-    ): PublicMintStateSetEventFilter;
-    PublicMintStateSet(
-      newPublicState?: PromiseOrValue<boolean> | null
-    ): PublicMintStateSetEventFilter;
-
-    "RouterSet(address)"(
-      newRouter?: PromiseOrValue<string> | null
-    ): RouterSetEventFilter;
-    RouterSet(newRouter?: PromiseOrValue<string> | null): RouterSetEventFilter;
-
-    "RoyaltyFeeSet(uint256)"(
-      newRoyaltyFee?: PromiseOrValue<BigNumberish> | null
-    ): RoyaltyFeeSetEventFilter;
-    RoyaltyFeeSet(
-      newRoyaltyFee?: PromiseOrValue<BigNumberish> | null
-    ): RoyaltyFeeSetEventFilter;
-
-    "RoyaltyRecipientSet(address)"(
-      newRecipient?: PromiseOrValue<string> | null
-    ): RoyaltyRecipientSetEventFilter;
-    RoyaltyRecipientSet(
-      newRecipient?: PromiseOrValue<string> | null
-    ): RoyaltyRecipientSetEventFilter;
-
-    "TransferBatch(address,address,address,uint256[],uint256[])"(
-      operator?: PromiseOrValue<string> | null,
-      from?: PromiseOrValue<string> | null,
-      to?: PromiseOrValue<string> | null,
-      ids?: null,
-      amounts?: null
-    ): TransferBatchEventFilter;
-    TransferBatch(
-      operator?: PromiseOrValue<string> | null,
-      from?: PromiseOrValue<string> | null,
-      to?: PromiseOrValue<string> | null,
-      ids?: null,
-      amounts?: null
-    ): TransferBatchEventFilter;
-
-    "TransferSingle(address,address,address,uint256,uint256)"(
-      operator?: PromiseOrValue<string> | null,
-      from?: PromiseOrValue<string> | null,
-      to?: PromiseOrValue<string> | null,
-      id?: null,
-      amount?: null
-    ): TransferSingleEventFilter;
-    TransferSingle(
-      operator?: PromiseOrValue<string> | null,
-      from?: PromiseOrValue<string> | null,
-      to?: PromiseOrValue<string> | null,
-      id?: null,
-      amount?: null
-    ): TransferSingleEventFilter;
-
-    "URI(string,uint256)"(
-      value?: null,
-      id?: PromiseOrValue<BigNumberish> | null
-    ): URIEventFilter;
-    URI(value?: null, id?: PromiseOrValue<BigNumberish> | null): URIEventFilter;
-  };
-
-  estimateGas: {
-    _royaltyFee(overrides?: CallOverrides): Promise<BigNumber>;
-
-    balanceCount(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    balanceOf(
-      owner: PromiseOrValue<string>,
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    balanceOfBatch(
-      owners: PromiseOrValue<string>[],
-      ids: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    baseURI(overrides?: CallOverrides): Promise<BigNumber>;
-
-    burn(
-      from: PromiseOrValue<string>[],
-      ids: PromiseOrValue<BigNumberish>[],
-      balances: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    burnBatch(
-      from: PromiseOrValue<string>,
-      ids: PromiseOrValue<BigNumberish>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    erc20(overrides?: CallOverrides): Promise<BigNumber>;
-
-    erc20PaymentsEnabled(overrides?: CallOverrides): Promise<BigNumber>;
-
-    feeCount(overrides?: CallOverrides): Promise<BigNumber>;
-
-    feeCountERC20(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getOwner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getRouter(overrides?: CallOverrides): Promise<BigNumber>;
-
-    isApprovedForAll(
-      owner: PromiseOrValue<string>,
-      operator: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    liveBalance(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    maxSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "mint(address,uint128,uint128)"(
-      _to: PromiseOrValue<string>,
-      _id: PromiseOrValue<BigNumberish>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "mint(uint128,uint128)"(
-      _id: PromiseOrValue<BigNumberish>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "mintBatch(address,uint128[],uint128[])"(
-      _to: PromiseOrValue<string>,
-      ids: PromiseOrValue<BigNumberish>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    "mintBatch(uint128[],uint128[])"(
-      ids: PromiseOrValue<BigNumberish>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    mintBatchTo(
-      to: PromiseOrValue<string>,
-      ids: PromiseOrValue<BigNumberish>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    mintTo(
-      to: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      _id: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    price(overrides?: CallOverrides): Promise<BigNumber>;
-
-    publicMintState(overrides?: CallOverrides): Promise<BigNumber>;
-
-    routerHasAuthority(overrides?: CallOverrides): Promise<BigNumber>;
-
-    royaltyInfo(
-      arg0: PromiseOrValue<BigNumberish>,
-      salePrice: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    safeBatchTransferFrom(
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      ids: PromiseOrValue<BigNumberish>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      data: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    safeTransferFrom(
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      id: PromiseOrValue<BigNumberish>,
-      amount: PromiseOrValue<BigNumberish>,
-      data: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setApprovalForAll(
-      operator: PromiseOrValue<string>,
-      isApproved: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setBaseURI(
-      _baseURI: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setBaseURILock(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setOwnership(
-      _owner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setPublicMintState(
-      _publicMintState: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setRouterHasAuthority(
-      _hasAuthority: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    splitter(overrides?: CallOverrides): Promise<BigNumber>;
-
-    supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    uri(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    uriLock(overrides?: CallOverrides): Promise<BigNumber>;
-
-    withdraw(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    withdrawERC20(
-      _erc20: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    _royaltyFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    balanceCount(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    balanceOf(
-      owner: PromiseOrValue<string>,
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    balanceOfBatch(
-      owners: PromiseOrValue<string>[],
-      ids: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    baseURI(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    burn(
-      from: PromiseOrValue<string>[],
-      ids: PromiseOrValue<BigNumberish>[],
-      balances: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    burnBatch(
-      from: PromiseOrValue<string>,
-      ids: PromiseOrValue<BigNumberish>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    erc20(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    erc20PaymentsEnabled(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    feeCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    feeCountERC20(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getRouter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    isApprovedForAll(
-      owner: PromiseOrValue<string>,
-      operator: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    liveBalance(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    maxSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "mint(address,uint128,uint128)"(
-      _to: PromiseOrValue<string>,
-      _id: PromiseOrValue<BigNumberish>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "mint(uint128,uint128)"(
-      _id: PromiseOrValue<BigNumberish>,
-      amount: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "mintBatch(address,uint128[],uint128[])"(
-      _to: PromiseOrValue<string>,
-      ids: PromiseOrValue<BigNumberish>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "mintBatch(uint128[],uint128[])"(
-      ids: PromiseOrValue<BigNumberish>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    mintBatchTo(
-      to: PromiseOrValue<string>,
-      ids: PromiseOrValue<BigNumberish>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    mintTo(
-      to: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
-      _id: PromiseOrValue<BigNumberish>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    price(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    publicMintState(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    routerHasAuthority(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    royaltyInfo(
-      arg0: PromiseOrValue<BigNumberish>,
-      salePrice: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    safeBatchTransferFrom(
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      ids: PromiseOrValue<BigNumberish>[],
-      amounts: PromiseOrValue<BigNumberish>[],
-      data: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    safeTransferFrom(
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      id: PromiseOrValue<BigNumberish>,
-      amount: PromiseOrValue<BigNumberish>,
-      data: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setApprovalForAll(
-      operator: PromiseOrValue<string>,
-      isApproved: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setBaseURI(
-      _baseURI: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setBaseURILock(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setOwnership(
-      _owner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setPublicMintState(
-      _publicMintState: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setRouterHasAuthority(
-      _hasAuthority: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    splitter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    supportsInterface(
-      interfaceId: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    uri(
-      id: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    uriLock(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    withdraw(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    withdrawERC20(
-      _erc20: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+    "ApprovalForAll(address,address,bool)": TypedContractEvent<
+      ApprovalForAllEvent.InputTuple,
+      ApprovalForAllEvent.OutputTuple,
+      ApprovalForAllEvent.OutputObject
+    >;
+    ApprovalForAll: TypedContractEvent<
+      ApprovalForAllEvent.InputTuple,
+      ApprovalForAllEvent.OutputTuple,
+      ApprovalForAllEvent.OutputObject
+    >;
+
+    "BaseURILocked()": TypedContractEvent<
+      BaseURILockedEvent.InputTuple,
+      BaseURILockedEvent.OutputTuple,
+      BaseURILockedEvent.OutputObject
+    >;
+    BaseURILocked: TypedContractEvent<
+      BaseURILockedEvent.InputTuple,
+      BaseURILockedEvent.OutputTuple,
+      BaseURILockedEvent.OutputObject
+    >;
+
+    "BaseURISet(string)": TypedContractEvent<
+      BaseURISetEvent.InputTuple,
+      BaseURISetEvent.OutputTuple,
+      BaseURISetEvent.OutputObject
+    >;
+    BaseURISet: TypedContractEvent<
+      BaseURISetEvent.InputTuple,
+      BaseURISetEvent.OutputTuple,
+      BaseURISetEvent.OutputObject
+    >;
+
+    "OwnerUpdated(address,address)": TypedContractEvent<
+      OwnerUpdatedEvent.InputTuple,
+      OwnerUpdatedEvent.OutputTuple,
+      OwnerUpdatedEvent.OutputObject
+    >;
+    OwnerUpdated: TypedContractEvent<
+      OwnerUpdatedEvent.InputTuple,
+      OwnerUpdatedEvent.OutputTuple,
+      OwnerUpdatedEvent.OutputObject
+    >;
+
+    "PublicMintStateSet(bool)": TypedContractEvent<
+      PublicMintStateSetEvent.InputTuple,
+      PublicMintStateSetEvent.OutputTuple,
+      PublicMintStateSetEvent.OutputObject
+    >;
+    PublicMintStateSet: TypedContractEvent<
+      PublicMintStateSetEvent.InputTuple,
+      PublicMintStateSetEvent.OutputTuple,
+      PublicMintStateSetEvent.OutputObject
+    >;
+
+    "RouterSet(address)": TypedContractEvent<
+      RouterSetEvent.InputTuple,
+      RouterSetEvent.OutputTuple,
+      RouterSetEvent.OutputObject
+    >;
+    RouterSet: TypedContractEvent<
+      RouterSetEvent.InputTuple,
+      RouterSetEvent.OutputTuple,
+      RouterSetEvent.OutputObject
+    >;
+
+    "RoyaltyFeeSet(uint256)": TypedContractEvent<
+      RoyaltyFeeSetEvent.InputTuple,
+      RoyaltyFeeSetEvent.OutputTuple,
+      RoyaltyFeeSetEvent.OutputObject
+    >;
+    RoyaltyFeeSet: TypedContractEvent<
+      RoyaltyFeeSetEvent.InputTuple,
+      RoyaltyFeeSetEvent.OutputTuple,
+      RoyaltyFeeSetEvent.OutputObject
+    >;
+
+    "RoyaltyRecipientSet(address)": TypedContractEvent<
+      RoyaltyRecipientSetEvent.InputTuple,
+      RoyaltyRecipientSetEvent.OutputTuple,
+      RoyaltyRecipientSetEvent.OutputObject
+    >;
+    RoyaltyRecipientSet: TypedContractEvent<
+      RoyaltyRecipientSetEvent.InputTuple,
+      RoyaltyRecipientSetEvent.OutputTuple,
+      RoyaltyRecipientSetEvent.OutputObject
+    >;
+
+    "TransferBatch(address,address,address,uint256[],uint256[])": TypedContractEvent<
+      TransferBatchEvent.InputTuple,
+      TransferBatchEvent.OutputTuple,
+      TransferBatchEvent.OutputObject
+    >;
+    TransferBatch: TypedContractEvent<
+      TransferBatchEvent.InputTuple,
+      TransferBatchEvent.OutputTuple,
+      TransferBatchEvent.OutputObject
+    >;
+
+    "TransferSingle(address,address,address,uint256,uint256)": TypedContractEvent<
+      TransferSingleEvent.InputTuple,
+      TransferSingleEvent.OutputTuple,
+      TransferSingleEvent.OutputObject
+    >;
+    TransferSingle: TypedContractEvent<
+      TransferSingleEvent.InputTuple,
+      TransferSingleEvent.OutputTuple,
+      TransferSingleEvent.OutputObject
+    >;
+
+    "URI(string,uint256)": TypedContractEvent<
+      URIEvent.InputTuple,
+      URIEvent.OutputTuple,
+      URIEvent.OutputObject
+    >;
+    URI: TypedContractEvent<
+      URIEvent.InputTuple,
+      URIEvent.OutputTuple,
+      URIEvent.OutputObject
+    >;
   };
 }

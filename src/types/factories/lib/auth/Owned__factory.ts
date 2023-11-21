@@ -4,8 +4,7 @@
 
 /* eslint-disable */
 import type { Owned, OwnedInterface } from "../../../lib/auth/Owned";
-import type { Provider } from "@ethersproject/providers";
-import { Contract, Signer, utils } from "ethers";
+import { Contract, Interface, type ContractRunner } from "ethers";
 
 const _abi = [
   {
@@ -63,9 +62,9 @@ const _abi = [
 export class Owned__factory {
   static readonly abi = _abi;
   static createInterface(): OwnedInterface {
-    return new utils.Interface(_abi) as OwnedInterface;
+    return new Interface(_abi) as OwnedInterface;
   }
-  static connect(address: string, signerOrProvider: Signer | Provider): Owned {
-    return new Contract(address, _abi, signerOrProvider) as Owned;
+  static connect(address: string, runner?: ContractRunner | null): Owned {
+    return new Contract(address, _abi, runner) as unknown as Owned;
   }
 }

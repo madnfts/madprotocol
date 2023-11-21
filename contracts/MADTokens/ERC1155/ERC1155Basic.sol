@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 // solhint-disable-next-line
 
 import {
     ImplBase,
     ERC2981,
     Strings,
-    Types
+    FactoryTypes
 } from "contracts/MADTokens/common/ImplBase.sol";
 import { ERC1155 } from "contracts/lib/tokens/ERC1155/Base/ERC1155.sol";
 
 contract ERC1155Basic is ERC1155, ImplBase {
-    using Types for Types.CollectionArgs;
+    using FactoryTypes for FactoryTypes.CollectionArgs;
     using Strings for uint256;
 
     ////////////////////////////////////////////////////////////////
@@ -31,7 +31,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    constructor(Types.CollectionArgs memory args) ImplBase(args) {
+    constructor(FactoryTypes.CollectionArgs memory args) ImplBase(args) {
         emit URI(args._baseURI, 0x00);
     }
 
@@ -56,8 +56,6 @@ contract ERC1155Basic is ERC1155, ImplBase {
         uint128[] memory ids,
         uint128[] memory amounts
     ) public payable authorised {
-        uint256 len = ids.length;
-
         uint256[] memory _ids;
         uint256[] memory _amounts;
         assembly {
@@ -81,14 +79,9 @@ contract ERC1155Basic is ERC1155, ImplBase {
             } // ArrayLengthsMismatch()
         }
 
-        uint256 i;
-        for (i; i < len;) {
+        for (uint256 i = 0; i < len; ++i) {
             _burn(from[i], uint256(ids[i]), uint256(balances[i]));
-            unchecked {
-                ++i;
-            }
         }
-        _loopOverflow(i, len);
     }
 
     /// @dev Transfer event emitted by parent ERC1155 contract.
@@ -113,13 +106,16 @@ contract ERC1155Basic is ERC1155, ImplBase {
 
     /// @dev Transfer events emitted by parent ERC1155 contract.
     function mint(uint128 _id, uint128 amount) public payable {
+        if (routerHasAuthority) {
+            revert RouterIsEnabled();
+        }
         _publicMint(msg.sender, _id, amount, msg.sender);
     }
 
     function mint(address _to, uint128 _id, uint128 amount)
         external
         payable
-        authorised
+        routerOrPublic
     {
         _publicMint(_to, _id, amount, _to);
     }
@@ -128,25 +124,18 @@ contract ERC1155Basic is ERC1155, ImplBase {
         address to,
         uint128 _id,
         uint128 amount,
-        address _buyer
+        address _minter
     ) private {
-        _preparePublicMint(uint256(amount), uint256(amount), _buyer);
+        _preparePublicMint(uint256(amount), _minter);
         mintTo(to, _id, amount);
     }
 
     /// @dev Transfer event emitted by parent ERC1155 contract.
-    function mintBatch(uint128[] memory ids, uint128[] calldata amounts)
-        public
-        payable
-    {
-        _publicMintBatch(msg.sender, ids, amounts);
-    }
-
     function mintBatch(
         address _to,
         uint128[] memory ids,
         uint128[] calldata amounts
-    ) external payable authorised {
+    ) external payable routerOrPublic {
         _publicMintBatch(_to, ids, amounts);
     }
 
@@ -156,7 +145,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
         uint128[] calldata amounts
     ) private {
         uint256 len = ids.length;
-        _preparePublicMint(len, uint256(len * _sumAmounts(amounts)), _to);
+        _preparePublicMint(uint256(len * _sumAmounts(amounts)), _to);
 
         mintBatchTo(_to, ids, amounts);
     }

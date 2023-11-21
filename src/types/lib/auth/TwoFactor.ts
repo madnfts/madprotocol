@@ -4,47 +4,37 @@
 
 /* eslint-disable */
 import type {
-  TypedEventFilter,
-  TypedEvent,
+  TypedContractEvent,
+  TypedDeferredTopicFilter,
+  TypedEventLog,
+  TypedLogDescription,
   TypedListener,
-  OnEvent,
-  PromiseOrValue,
+  TypedContractMethod,
 } from "../../common";
 import type {
+  BaseContract,
+  BytesLike,
   FunctionFragment,
   Result,
+  Interface,
   EventFragment,
-} from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
-import type {
-  BaseContract,
-  BigNumber,
-  BytesLike,
-  CallOverrides,
-  ContractTransaction,
-  Overrides,
-  PopulatedTransaction,
-  Signer,
-  utils,
+  AddressLike,
+  ContractRunner,
+  ContractMethod,
+  Listener,
 } from "ethers";
 
-export interface TwoFactorInterface extends utils.Interface {
-  functions: {
-    "getOwner()": FunctionFragment;
-    "getRouter()": FunctionFragment;
-    "routerHasAuthority()": FunctionFragment;
-    "setOwnership(address)": FunctionFragment;
-    "setRouterHasAuthority(bool)": FunctionFragment;
-  };
-
+export interface TwoFactorInterface extends Interface {
   getFunction(
-    nameOrSignatureOrTopic:
+    nameOrSignature:
       | "getOwner"
       | "getRouter"
       | "routerHasAuthority"
       | "setOwnership"
       | "setRouterHasAuthority"
   ): FunctionFragment;
+
+  getEvent(nameOrSignatureOrTopic: "OwnerUpdated" | "RouterSet"): EventFragment;
 
   encodeFunctionData(functionFragment: "getOwner", values?: undefined): string;
   encodeFunctionData(functionFragment: "getRouter", values?: undefined): string;
@@ -54,11 +44,11 @@ export interface TwoFactorInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setOwnership",
-    values: [PromiseOrValue<string>]
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "setRouterHasAuthority",
-    values: [PromiseOrValue<boolean>]
+    values: [boolean]
   ): string;
 
   decodeFunctionResult(functionFragment: "getOwner", data: BytesLike): Result;
@@ -75,163 +65,150 @@ export interface TwoFactorInterface extends utils.Interface {
     functionFragment: "setRouterHasAuthority",
     data: BytesLike
   ): Result;
-
-  events: {
-    "OwnerUpdated(address,address)": EventFragment;
-    "RouterSet(address)": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "OwnerUpdated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RouterSet"): EventFragment;
 }
 
-export interface OwnerUpdatedEventObject {
-  user: string;
-  newOwner: string;
+export namespace OwnerUpdatedEvent {
+  export type InputTuple = [user: AddressLike, newOwner: AddressLike];
+  export type OutputTuple = [user: string, newOwner: string];
+  export interface OutputObject {
+    user: string;
+    newOwner: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type OwnerUpdatedEvent = TypedEvent<
-  [string, string],
-  OwnerUpdatedEventObject
->;
 
-export type OwnerUpdatedEventFilter = TypedEventFilter<OwnerUpdatedEvent>;
-
-export interface RouterSetEventObject {
-  newRouter: string;
+export namespace RouterSetEvent {
+  export type InputTuple = [newRouter: AddressLike];
+  export type OutputTuple = [newRouter: string];
+  export interface OutputObject {
+    newRouter: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
-export type RouterSetEvent = TypedEvent<[string], RouterSetEventObject>;
-
-export type RouterSetEventFilter = TypedEventFilter<RouterSetEvent>;
 
 export interface TwoFactor extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(runner?: ContractRunner | null): TwoFactor;
+  waitForDeployment(): Promise<this>;
 
   interface: TwoFactorInterface;
 
-  queryFilter<TEvent extends TypedEvent>(
-    event: TypedEventFilter<TEvent>,
+  queryFilter<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
     fromBlockOrBlockhash?: string | number | undefined,
     toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
+  queryFilter<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    fromBlockOrBlockhash?: string | number | undefined,
+    toBlock?: string | number | undefined
+  ): Promise<Array<TypedEventLog<TCEvent>>>;
 
-  listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
-  removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+  on<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  on<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-  functions: {
-    getOwner(overrides?: CallOverrides): Promise<[string]>;
+  once<TCEvent extends TypedContractEvent>(
+    event: TCEvent,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
+  once<TCEvent extends TypedContractEvent>(
+    filter: TypedDeferredTopicFilter<TCEvent>,
+    listener: TypedListener<TCEvent>
+  ): Promise<this>;
 
-    getRouter(overrides?: CallOverrides): Promise<[string]>;
+  listeners<TCEvent extends TypedContractEvent>(
+    event: TCEvent
+  ): Promise<Array<TypedListener<TCEvent>>>;
+  listeners(eventName?: string): Promise<Array<Listener>>;
+  removeAllListeners<TCEvent extends TypedContractEvent>(
+    event?: TCEvent
+  ): Promise<this>;
 
-    routerHasAuthority(overrides?: CallOverrides): Promise<[boolean]>;
+  getOwner: TypedContractMethod<[], [string], "view">;
 
-    setOwnership(
-      _owner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+  getRouter: TypedContractMethod<[], [string], "view">;
 
-    setRouterHasAuthority(
-      _hasAuthority: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-  };
+  routerHasAuthority: TypedContractMethod<[], [boolean], "view">;
 
-  getOwner(overrides?: CallOverrides): Promise<string>;
+  setOwnership: TypedContractMethod<
+    [_owner: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-  getRouter(overrides?: CallOverrides): Promise<string>;
+  setRouterHasAuthority: TypedContractMethod<
+    [_hasAuthority: boolean],
+    [void],
+    "nonpayable"
+  >;
 
-  routerHasAuthority(overrides?: CallOverrides): Promise<boolean>;
+  getFunction<T extends ContractMethod = ContractMethod>(
+    key: string | FunctionFragment
+  ): T;
 
-  setOwnership(
-    _owner: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  getFunction(
+    nameOrSignature: "getOwner"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "getRouter"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "routerHasAuthority"
+  ): TypedContractMethod<[], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "setOwnership"
+  ): TypedContractMethod<[_owner: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setRouterHasAuthority"
+  ): TypedContractMethod<[_hasAuthority: boolean], [void], "nonpayable">;
 
-  setRouterHasAuthority(
-    _hasAuthority: PromiseOrValue<boolean>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  callStatic: {
-    getOwner(overrides?: CallOverrides): Promise<string>;
-
-    getRouter(overrides?: CallOverrides): Promise<string>;
-
-    routerHasAuthority(overrides?: CallOverrides): Promise<boolean>;
-
-    setOwnership(
-      _owner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setRouterHasAuthority(
-      _hasAuthority: PromiseOrValue<boolean>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-  };
+  getEvent(
+    key: "OwnerUpdated"
+  ): TypedContractEvent<
+    OwnerUpdatedEvent.InputTuple,
+    OwnerUpdatedEvent.OutputTuple,
+    OwnerUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "RouterSet"
+  ): TypedContractEvent<
+    RouterSetEvent.InputTuple,
+    RouterSetEvent.OutputTuple,
+    RouterSetEvent.OutputObject
+  >;
 
   filters: {
-    "OwnerUpdated(address,address)"(
-      user?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnerUpdatedEventFilter;
-    OwnerUpdated(
-      user?: PromiseOrValue<string> | null,
-      newOwner?: PromiseOrValue<string> | null
-    ): OwnerUpdatedEventFilter;
+    "OwnerUpdated(address,address)": TypedContractEvent<
+      OwnerUpdatedEvent.InputTuple,
+      OwnerUpdatedEvent.OutputTuple,
+      OwnerUpdatedEvent.OutputObject
+    >;
+    OwnerUpdated: TypedContractEvent<
+      OwnerUpdatedEvent.InputTuple,
+      OwnerUpdatedEvent.OutputTuple,
+      OwnerUpdatedEvent.OutputObject
+    >;
 
-    "RouterSet(address)"(
-      newRouter?: PromiseOrValue<string> | null
-    ): RouterSetEventFilter;
-    RouterSet(newRouter?: PromiseOrValue<string> | null): RouterSetEventFilter;
-  };
-
-  estimateGas: {
-    getOwner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getRouter(overrides?: CallOverrides): Promise<BigNumber>;
-
-    routerHasAuthority(overrides?: CallOverrides): Promise<BigNumber>;
-
-    setOwnership(
-      _owner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setRouterHasAuthority(
-      _hasAuthority: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-  };
-
-  populateTransaction: {
-    getOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getRouter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    routerHasAuthority(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    setOwnership(
-      _owner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setRouterHasAuthority(
-      _hasAuthority: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+    "RouterSet(address)": TypedContractEvent<
+      RouterSetEvent.InputTuple,
+      RouterSetEvent.OutputTuple,
+      RouterSetEvent.OutputObject
+    >;
+    RouterSet: TypedContractEvent<
+      RouterSetEvent.InputTuple,
+      RouterSetEvent.OutputTuple,
+      RouterSetEvent.OutputObject
+    >;
   };
 }

@@ -1,9 +1,10 @@
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 
-import "forge-std/src/Test.sol";
+import "test/lib/forge-std/src/Test.sol";
 import {
     ISplitter,
-    Deployer
+    Deployer,
+    IDeployer
 } from "test/foundry/Base/Splitter/deploySplitterBase.sol";
 
 import { Enums } from "test/foundry/utils/enums.sol";
@@ -20,6 +21,8 @@ contract TestCreateCollection is CreateCollectionHelpers, Enums {
     Deployer deployer;
     DeploySplitterBase splitterDeployer;
 
+    address[] madFeeTokenAddresses = [address(0), address(0)];
+
     function setUp() public {
         // Instantiate deployer contracts
         deployer = new Deployer();
@@ -27,11 +30,16 @@ contract TestCreateCollection is CreateCollectionHelpers, Enums {
         // Instantiate splitter deployer contract
         splitterDeployer = new DeploySplitterBase();
 
+        IDeployer.DeployedContracts memory erc721 =
+            deployer.deployAll(ercTypes.ERC721, isERC20);
+        IDeployer.DeployedContracts memory erc1155 =
+            deployer.deployAll(ercTypes.ERC1155, isERC20);
+
         // Create array of Factory instances to cover both 721 & 1155 Factories
-        deployedContracts = [
-            deployer.deployAll(ercTypes.ERC721, isERC20).factory
-            // deployer.deployAll(ercTypes.ERC1155).factory
-        ];
+        deployedContracts = [erc721.factory, erc1155.factory];
+
+        madFeeTokenAddresses =
+            [address(erc721.paymentToken), address(erc1155.paymentToken)];
     }
 
     function testCreateCollectionDefaultFuzzy(uint8 x) public {
@@ -39,7 +47,11 @@ contract TestCreateCollection is CreateCollectionHelpers, Enums {
         vm.deal(currentSigner, 1000 ether);
 
         _createCollectionDefault(
-            deployedContracts[x], splitterDeployer, currentSigner, 1 ether
+            deployedContracts[x],
+            splitterDeployer,
+            currentSigner,
+            1 ether,
+            madFeeTokenAddresses[x]
         );
     }
 
@@ -84,7 +96,8 @@ contract TestCreateCollection is CreateCollectionHelpers, Enums {
             address(factory),
             2000,
             1000,
-            "https://example.com"
+            "https://example.com",
+            madFeeTokenAddresses[x]
         );
     }
 }

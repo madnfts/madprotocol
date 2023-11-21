@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 
 import { MADBase, IERC20 } from "contracts/Shared/MADBase.sol";
 import {
@@ -59,6 +59,9 @@ abstract contract MADMarketplaceBase is
 
     FactoryVerifier public madFactory;
 
+    /// @notice ERC20 payment token address.
+    IERC20 public erc20;
+
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
@@ -80,7 +83,7 @@ abstract contract MADMarketplaceBase is
 
         swapRouter = ISwapRouter(_swapRouter);
 
-        _setPaymentToken(_paymentTokenAddress);
+        erc20 = IERC20(_paymentTokenAddress);
         if (address(swapRouter) == address(0)) revert ZeroAddress();
 
         // Approve the router to spend the ERC20 payment token.

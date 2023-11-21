@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 
-import "forge-std/src/Test.sol";
+import "test/lib/forge-std/src/Test.sol";
 import {
     DeployFactoryBase,
     IFactory
@@ -18,16 +18,12 @@ contract DeployFactory is AddressesHelp, DeployFactoryBase {
         vm.deal(factoryOwner, 1000 ether);
     }
 
-    function testERC721DeployFactoryDefault() public {
-        deployDefault(ercTypes.ERC721);
+    function testDeployFactoryDefault() public {
+        deployDefault();
     }
 
-    function testERC1155DeployFactoryDefault() public {
-        deployDefault(ercTypes.ERC1155);
-    }
-
-    function deployDefault(ercTypes ercType) public {
-        address factory = deployFactoryDefault(ercType);
+    function deployDefault() public {
+        address factory = deployFactoryDefault();
         setRouter(IFactory(factory), factoryRouterAddress, factoryOwner);
         setFactoryFees(
             factoryOwner,

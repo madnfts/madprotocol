@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 
-import "forge-std/src/Test.sol";
+import "test/lib/forge-std/src/Test.sol";
 
 abstract contract SplitterModifiers is Test {
     /// _ambassador != address(0) && _project == address(0)
@@ -28,6 +28,7 @@ abstract contract SplitterModifiers is Test {
     ) {
         vm.assume(_ambassadorShare > 99 && _ambassadorShare < 2001);
         vm.assume(_projectShare > 99 && _projectShare < 10_001);
+        vm.assume(_ambassadorShare + _projectShare < 10_001);
         _;
     }
 }

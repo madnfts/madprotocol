@@ -1,14 +1,15 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 
 import { FactoryVerifier } from "contracts/lib/auth/FactoryVerifier.sol";
-import { IERC721, IERC1155 } from "contracts/Shared/Types.sol";
+import { IERC721, IERC1155 } from "contracts/Shared/MarketplaceTypes.sol";
 
 interface EventsAndErrorsBase {
     event PaymentTokenUpdated(address indexed newPaymentToken);
     event RecipientUpdated(address indexed newRecipient);
     event FeesUpdated(uint256 feeVal2, uint256 feeVal3);
+    event FeesUpdated(uint256 feeVal2, uint256 feeVal3, address erc20Token);
 
     /// @dev Only the token owner or an approved account can manage the tokens.
     error NotOwnerNorApproved();
@@ -24,7 +25,6 @@ interface FactoryEventsAndErrorsBase is EventsAndErrorsBase {
     //                           EVENTS                           //
     ////////////////////////////////////////////////////////////////
 
-    event MarketplaceUpdated(address indexed newMarket);
     event RouterUpdated(address indexed newRouter);
     event CollectionTypeAdded(uint256 indexed index);
     event SplitterCreated(
@@ -33,6 +33,17 @@ interface FactoryEventsAndErrorsBase is EventsAndErrorsBase {
         address[] payees,
         address indexed splitter,
         uint256 flag
+    );
+    event CollectionCreated(
+        address indexed newSplitter,
+        address indexed newCollection,
+        string collectionName,
+        string collectionSymbol,
+        uint256 royalties,
+        uint256 maxSupply,
+        uint256 mintPrice,
+        uint8 tokenType,
+        address collectionToken
     );
 
     ////////////////////////////////////////////////////////////////
@@ -49,16 +60,6 @@ interface FactoryEventsAndErrorsBase is EventsAndErrorsBase {
     error InvalidTokenType();
     /// @dev 0x4ca88867
     error ZeroMaxSupply();
-
-    event CollectionCreated(
-        address indexed newSplitter,
-        address indexed newCollection,
-        string name,
-        string symbol,
-        uint256 royalties,
-        uint256 maxSupply,
-        uint256 mintPrice
-    );
 }
 
 interface MarketplaceEventsAndErrorsBase is EventsAndErrorsBase {
@@ -199,7 +200,7 @@ interface RouterEvents is EventsAndErrorsBase {
     error InvalidType();
     error NoFunds();
     /// @dev 0x18fda3e7
-    error NotCallersCollection();
-    /// @dev 0x2d8768f9
+    error NotValidCollection();
+    /// @dev 0xd23f9521
     error AddressNotValid();
 }

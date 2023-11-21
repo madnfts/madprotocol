@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 
 /// @title Factory Verifier
 /// @notice Core contract binding interface that connect both
@@ -25,10 +25,8 @@ interface FactoryVerifier {
     /// withdraw functions.
     /// @dev Function Sighash := 0xb64bd5eb
     /// @param _collectionId address collection ID value.
-    /// @param _creator address of the collection creator.
-    /// @return check Boolean output to either approve or reject call's
-    /// `tx.origin` function access.
-    function creatorCheck(address _collectionId, address _creator)
+    /// @return check Boolean output
+    function collectionCheck(address _collectionId)
         external
         view
         returns (bool check);

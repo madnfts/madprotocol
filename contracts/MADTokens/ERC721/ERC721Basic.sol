@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 
 // solhint-disable-next-line
 import {
     ImplBase,
     ERC2981,
     Strings,
-    Types
+    FactoryTypes
 } from "contracts/MADTokens/common/ImplBase.sol";
 import { ERC721 } from "contracts/lib/tokens/ERC721/Base/ERC721.sol";
 
@@ -18,7 +18,7 @@ contract ERC721Basic is ERC721, ImplBase {
     bytes32 private constant _SYMBOL_SLOT = /*  */
         0x30ec9400a6906cefbe2888cc908b6b5efeceee7bcd5438fa93fc189e1bbe64ac;
 
-    using Types for Types.CollectionArgs;
+    using FactoryTypes for FactoryTypes.CollectionArgs;
     using Strings for uint256;
 
     ////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ contract ERC721Basic is ERC721, ImplBase {
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    constructor(Types.CollectionArgs memory args) ImplBase(args) {
+    constructor(FactoryTypes.CollectionArgs memory args) ImplBase(args) {
         _setStringMemory(args._name, _NAME_SLOT);
         _setStringMemory(args._symbol, _SYMBOL_SLOT);
     }
@@ -51,10 +51,9 @@ contract ERC721Basic is ERC721, ImplBase {
     function mintTo(address to, uint128 amount) public payable authorised {
         _hasReachedMax(uint256(amount));
         (uint256 curId, uint256 endId) = _incrementCounter(uint256(amount));
-        unchecked {
-            do {
-                _mint(to, curId);
-            } while (curId++ != endId);
+
+        for (uint256 i = curId; i < endId; ++i) {
+            _mint(to, i);
         }
     }
 
@@ -73,7 +72,7 @@ contract ERC721Basic is ERC721, ImplBase {
         if (routerHasAuthority) {
             revert RouterIsEnabled();
         }
-        _publicMint(msg.sender, amount, msg.sender);
+        _publicMint(msg.sender, amount);
     }
 
     /// @notice public mint function if madRouter is authorised.
@@ -81,19 +80,17 @@ contract ERC721Basic is ERC721, ImplBase {
     /// @dev Function Sighash := 0xbe29184f
     /// @param to The address to mint to.
     /// @param amount The amount of tokens to mint.
-    function mint(address to, uint128 amount) external payable authorised {
-        _publicMint(to, amount, to);
+    function mint(address to, uint128 amount) external payable routerOrPublic {
+        _publicMint(to, amount);
     }
 
-    function _publicMint(address to, uint128 amount, address _buyer) private {
+    function _publicMint(address _minter, uint128 amount) private {
         _hasReachedMax(uint256(amount));
-        _preparePublicMint(uint256(amount), uint256(amount), _buyer);
+        _preparePublicMint(uint256(amount), _minter);
         (uint256 curId, uint256 endId) = _incrementCounter(uint256(amount));
 
-        unchecked {
-            do {
-                _mint(to, curId);
-            } while (curId++ != endId);
+        for (uint256 i = curId; i < endId; ++i) {
+            _mint(_minter, i);
         }
     }
 
@@ -103,15 +100,9 @@ contract ERC721Basic is ERC721, ImplBase {
         uint256 len = ids.length;
         _decSupply(len);
 
-        uint256 i;
-        for (i; i < len;) {
+        for (uint256 i = 0; i < len; ++i) {
             _burn(uint256(ids[i]));
-            unchecked {
-                ++i;
-            }
         }
-
-        _loopOverflow(i, len);
     }
 
     ////////////////////////////////////////////////////////////////
@@ -158,7 +149,7 @@ contract ERC721Basic is ERC721, ImplBase {
 
     function _incrementCounter(uint256 _amount)
         private
-        returns (uint256 _nextId, uint256 _mintCount)
+        returns (uint256 curId, uint256 endId)
     {
         // liveSupply = liveSupply + amount;
         // mintCount = mintCount + amount;
@@ -167,13 +158,15 @@ contract ERC721Basic is ERC721, ImplBase {
             let _prev := shr(_MINTCOUNT_BITPOS, sload(_supplyRegistrar.slot))
             let _liveSupply :=
                 add(and(_SR_UPPERBITS, sload(_supplyRegistrar.slot)), _amount)
-            _nextId := add(_prev, 0x01)
-            _mintCount := add(_prev, _amount)
+            curId := add(_prev, 0x01)
+            endId := add(_prev, _amount)
 
             sstore(
                 _supplyRegistrar.slot,
-                or(_liveSupply, shl(_MINTCOUNT_BITPOS, _mintCount))
+                or(_liveSupply, shl(_MINTCOUNT_BITPOS, endId))
             )
+            // + 1 for the loop
+            endId := add(endId, 0x01)
         }
     }
 

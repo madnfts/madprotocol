@@ -3,13 +3,18 @@
 /* tslint:disable */
 
 /* eslint-disable */
-import type { PromiseOrValue } from "../../../../../../../common";
+import type { NonPayableOverrides } from "../../../../../../../common";
 import type {
   ERC1155Holder,
   ERC1155HolderInterface,
 } from "../../../../../../../lib/tokens/ERC1155/Base/utils/ERC1155Holder.sol/ERC1155Holder";
-import type { Provider, TransactionRequest } from "@ethersproject/providers";
-import { Signer, utils, Contract, ContractFactory, Overrides } from "ethers";
+import {
+  Contract,
+  ContractFactory,
+  ContractTransactionResponse,
+  Interface,
+} from "ethers";
+import type { Signer, ContractDeployTransaction, ContractRunner } from "ethers";
 
 const _abi = [
   {
@@ -93,7 +98,7 @@ const _abi = [
 ] as const;
 
 const _bytecode =
-  "0x6080806040523461001657610351908161001c8239f35b600080fdfe6080604052600436101561001257600080fd5b6000803560e01c8063bc197c81146100c65763f23a6e611461003357600080fd5b346100c35760a07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc3601126100c35761006a61018a565b506100736101b2565b5060843567ffffffffffffffff81116100bf576100949036906004016102aa565b5060206040517ff23a6e61000000000000000000000000000000000000000000000000000000008152f35b5080fd5b80fd5b50346100c35760a07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc3601126100c3576100fe61018a565b506101076101b2565b5067ffffffffffffffff60443581811161018657610129903690600401610248565b5060643581811161018657610142903690600401610248565b506084359081116100bf5761015b9036906004016102aa565b5060206040517fbc197c81000000000000000000000000000000000000000000000000000000008152f35b8280fd5b6004359073ffffffffffffffffffffffffffffffffffffffff821682036101ad57565b600080fd5b6024359073ffffffffffffffffffffffffffffffffffffffff821682036101ad57565b907fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0601f604051930116820182811067ffffffffffffffff82111761021957604052565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fd5b81601f820112156101ad5780359167ffffffffffffffff8311610219578260051b60209283806102798185016101d5565b8097815201928201019283116101ad578301905b82821061029b575050505090565b8135815290830190830161028d565b81601f820112156101ad5780359067ffffffffffffffff8211610219576102f860207fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0601f850116016101d5565b92828452602083830101116101ad5781600092602080930183860137830101529056fea26469706673582212206374969425e820ce8d4869bb9b864ba6a90f9626927366251d14be390ca9387664736f6c63430008130033";
+  "0x6080806040523461001657610352908161001c8239f35b600080fdfe6080604052600436101561001257600080fd5b6000803560e01c8063bc197c81146100c65763f23a6e611461003357600080fd5b346100c35760a07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc3601126100c35761006a61018a565b506100736101b2565b5060843567ffffffffffffffff81116100bf576100949036906004016102ab565b5060206040517ff23a6e61000000000000000000000000000000000000000000000000000000008152f35b5080fd5b80fd5b50346100c35760a07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc3601126100c3576100fe61018a565b506101076101b2565b5067ffffffffffffffff60443581811161018657610129903690600401610248565b5060643581811161018657610142903690600401610248565b506084359081116100bf5761015b9036906004016102ab565b5060206040517fbc197c81000000000000000000000000000000000000000000000000000000008152f35b8280fd5b6004359073ffffffffffffffffffffffffffffffffffffffff821682036101ad57565b600080fd5b6024359073ffffffffffffffffffffffffffffffffffffffff821682036101ad57565b907fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0601f604051930116820182811067ffffffffffffffff82111761021957604052565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fd5b81601f820112156101ad5780359160209167ffffffffffffffff8411610219578360051b90838061027a8185016101d5565b8097815201928201019283116101ad578301905b82821061029c575050505090565b8135815290830190830161028e565b81601f820112156101ad5780359067ffffffffffffffff8211610219576102f960207fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0601f850116016101d5565b92828452602083830101116101ad5781600092602080930183860137830101529056fea26469706673582212206becef2cf328955214a21ded76f7c295db2f088e686319bbd80ee76d36bf553664736f6c63430008160033";
 
 type ERC1155HolderConstructorParams =
   | [signer?: Signer]
@@ -112,32 +117,31 @@ export class ERC1155Holder__factory extends ContractFactory {
     }
   }
 
-  override deploy(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ERC1155Holder> {
-    return super.deploy(overrides || {}) as Promise<ERC1155Holder>;
-  }
   override getDeployTransaction(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): TransactionRequest {
+    overrides?: NonPayableOverrides & { from?: string }
+  ): Promise<ContractDeployTransaction> {
     return super.getDeployTransaction(overrides || {});
   }
-  override attach(address: string): ERC1155Holder {
-    return super.attach(address) as ERC1155Holder;
+  override deploy(overrides?: NonPayableOverrides & { from?: string }) {
+    return super.deploy(overrides || {}) as Promise<
+      ERC1155Holder & {
+        deploymentTransaction(): ContractTransactionResponse;
+      }
+    >;
   }
-  override connect(signer: Signer): ERC1155Holder__factory {
-    return super.connect(signer) as ERC1155Holder__factory;
+  override connect(runner: ContractRunner | null): ERC1155Holder__factory {
+    return super.connect(runner) as ERC1155Holder__factory;
   }
 
   static readonly bytecode = _bytecode;
   static readonly abi = _abi;
   static createInterface(): ERC1155HolderInterface {
-    return new utils.Interface(_abi) as ERC1155HolderInterface;
+    return new Interface(_abi) as ERC1155HolderInterface;
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    runner?: ContractRunner | null
   ): ERC1155Holder {
-    return new Contract(address, _abi, signerOrProvider) as ERC1155Holder;
+    return new Contract(address, _abi, runner) as unknown as ERC1155Holder;
   }
 }

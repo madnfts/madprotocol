@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pragma solidity 0.8.19;
+pragma solidity 0.8.22;
 
 import { IERC20 } from "contracts/lib/tokens/IERC20.sol";
-import { SplitterImpl } from "contracts/lib/splitter/SplitterImpl.sol";
+import { SplitterImpl } from "contracts/Splitter/SplitterImpl.sol";
 import { SafeTransferLib } from "contracts/lib/utils/SafeTransferLib.sol";
 
 abstract contract PaymentManager {
@@ -92,45 +92,40 @@ abstract contract PaymentManager {
         SafeTransferLib.safeTransfer(_token, address(splitter), balance);
     }
 
-    function _publicPaymentHandler(uint256 _value) internal {
+    function _publicPaymentHandler(uint256 _mintAmount, address _minter)
+        internal
+    {
         if (erc20PaymentsEnabled) {
-            feeCountERC20 = feeCountERC20 + _value;
+            feeCountERC20 = feeCountERC20 + _mintAmount;
             SafeTransferLib.safeTransferFrom(
-                erc20, msg.sender, address(splitter), _value
+                erc20, _minter, address(splitter), _mintAmount
             );
         } else {
-            feeCount = feeCount + _value;
+            feeCount = feeCount + _mintAmount;
             // Relay the msg.value to the splitter.
-            SafeTransferLib.safeTransferETH(address(splitter), _value);
+            SafeTransferLib.safeTransferETH(address(splitter), _mintAmount);
         }
     }
 
     ////////////////////////////////////////////////////////////////
     //                     INTERNAL HELPERS                       //
     ////////////////////////////////////////////////////////////////
-    function _publicMintPriceCheck(uint256 _amount, address _buyer)
+    function _publicMintPriceCheck(uint256 _amount, address _minter)
         internal
         view
         returns (uint256 _value)
     {
         // No point in doing any calcluations if the price is 0 (Free).
-        // Also it upsets the underlying _getPriceValue() function.
         if (price == 0) {
             return 0;
         }
-        _value = _getPriceValue(_buyer);
-        if ((price * _amount) != _value) revert IncorrectPriceAmount();
-    }
 
-    function _getPriceValue(address _buyer)
-        internal
-        view
-        returns (uint256 _value)
-    {
         if (!erc20PaymentsEnabled) {
             _value = msg.value;
+            if ((price * _amount) != _value) revert IncorrectPriceAmount();
         } else {
-            _value = erc20.allowance(_buyer, address(this));
+            _value = erc20.allowance(_minter, address(this));
+            if ((price * _amount) > _value) revert IncorrectPriceAmount();
         }
     }
 }

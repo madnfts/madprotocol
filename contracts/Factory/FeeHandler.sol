@@ -124,4 +124,12 @@ abstract contract FeeHandlerFactory {
         _feeCreateSplitterErc20[madFeeTokenAddress] =
             Fee(_madFeeCreateSplitterErc20, true);
     }
+
+    function invalidFee(address madFeeTokenAddress) internal {
+        if (madFeeTokenAddress == address(0)) {
+            revert AddressNotValid();
+        }
+        _feeCreateCollectionErc20[madFeeTokenAddress] = Fee(0, false);
+        _feeCreateSplitterErc20[madFeeTokenAddress] = Fee(0, false);
+    }
 }

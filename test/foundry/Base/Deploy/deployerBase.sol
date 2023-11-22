@@ -49,7 +49,7 @@ abstract contract DeployerBase is
     address swapRouter = makeAddr("SwapRouter");
 
     uint256 public erc20MintFee = 1 ether;
-    uint256 public erc20BurnFee = 0.5 ether;
+    uint256 public erc20BurnFee = 1 ether;
     uint256 public erc20CreateSplitterFee = 1 ether;
     uint256 public erc20CreateCollectionFee = 0.5 ether;
 

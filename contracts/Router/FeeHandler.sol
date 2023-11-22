@@ -148,4 +148,13 @@ abstract contract FeeHandler {
         _feeMintErc20[madFeeTokenAddress] = Fee(_feeMint, true);
         _feeBurnErc20[madFeeTokenAddress] = Fee(_feeBurn, true);
     }
+
+    function invalidateFee(address madFeeTokenAddress) internal {
+        if (madFeeTokenAddress == address(0)) {
+            revert RouterEvents.AddressNotValid();
+        }
+
+        _feeMintErc20[madFeeTokenAddress] = Fee(0, false);
+        _feeBurnErc20[madFeeTokenAddress] = Fee(0, false);
+    }
 }

@@ -125,11 +125,19 @@ abstract contract FeeHandlerFactory {
             Fee(_madFeeCreateSplitterErc20, true);
     }
 
-    function invalidFee(address madFeeTokenAddress) internal {
+    function _invalidateFee(
+        address madFeeTokenAddress,
+        bool invalidateCollectionFee,
+        bool invalidateSplitterFee
+    ) internal {
         if (madFeeTokenAddress == address(0)) {
             revert AddressNotValid();
         }
-        _feeCreateCollectionErc20[madFeeTokenAddress] = Fee(0, false);
-        _feeCreateSplitterErc20[madFeeTokenAddress] = Fee(0, false);
+        if (invalidateCollectionFee) {
+            _feeCreateCollectionErc20[madFeeTokenAddress] = Fee(0, false);
+        }
+        if (invalidateSplitterFee) {
+            _feeCreateSplitterErc20[madFeeTokenAddress] = Fee(0, false);
+        }
     }
 }

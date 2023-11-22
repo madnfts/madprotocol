@@ -23,14 +23,15 @@ abstract contract ImplBase is
     TwoFactor,
     PaymentManager
 {
+    bytes32 internal constant _BASE_URI_SLOT = /*  */
+        0xdd05fcb58e4c0a1a429c1a9d6607c399731f1ef0b81be85c3f7701c0333c82fc;
+
     /// @dev An account can hold up to 4294967295 tokens.
     uint256 internal constant _SR_UPPERBITS = (1 << 128) - 1;
     uint256 internal constant _MAXSUPPLY_BOUND = 1 << 32;
     uint256 internal constant _MINTCOUNT_BITPOS = 128;
 
     using Strings for uint256;
-
-    string public baseURI;
 
     ////////////////////////////////////////////////////////////////
     //                          IMMUTABLE                         //
@@ -66,7 +67,7 @@ abstract contract ImplBase is
         // immutable
         maxSupply = uint128(args._maxSupply);
 
-        setBaseURI(args._baseURI);
+        _setStringMemory(args._baseURI, _BASE_URI_SLOT);
 
         emit RoyaltyFeeSet(uint256(args._royaltyPercentage));
         emit RoyaltyRecipientSet(payable(args._splitter));
@@ -76,10 +77,10 @@ abstract contract ImplBase is
     //                         OWNER FX                           //
     ////////////////////////////////////////////////////////////////
 
-    function setBaseURI(string memory _baseURI) public onlyOwner {
+    function setBaseURI(string calldata _baseURI) public onlyOwner {
         if (uriLock) revert URILocked();
         // bytes(_baseURI).length > 32 ? revert() : baseURI = _baseURI;
-        baseURI = _baseURI;
+        _setStringCalldata(_baseURI, _BASE_URI_SLOT);
         emit BaseURISet(_baseURI);
     }
 
@@ -129,6 +130,10 @@ abstract contract ImplBase is
     //                           VIEW FX                          //
     ////////////////////////////////////////////////////////////////
 
+    function baseURI() public view returns (string memory) {
+        return _readString(_BASE_URI_SLOT);
+    }
+
     function royaltyInfo(uint256, uint256 salePrice)
         public
         view
@@ -164,6 +169,15 @@ abstract contract ImplBase is
             mstore(_string, shr(0x01, and(len, 0xFF)))
             mstore(add(_string, 0x20), and(len, not(0xFF)))
             mstore(0x40, add(_string, 0x40))
+        }
+    }
+
+    function _setStringCalldata(string calldata _string, bytes32 _slot)
+        internal
+    {
+        assembly {
+            if lt(0x1f, _string.length) { invalid() }
+            sstore(_slot, or(calldataload(0x44), shl(0x01, calldataload(0x24))))
         }
     }
 

@@ -371,6 +371,16 @@ abstract contract MADFactoryBase is
         );
     }
 
+    function invalidateFee(
+        address madFeeTokenAddress,
+        bool invalidateCollectionFee,
+        bool invalidateSplitterFee
+    ) public onlyOwner {
+        _invalidateFee(
+            madFeeTokenAddress, invalidateCollectionFee, invalidateSplitterFee
+        );
+    }
+
     /// @dev Setter for public mint / burn fee _recipient.
     /// @dev Function Sighash := 0x3bbed4a0
     function setRecipient(address _recipient) public onlyOwner {

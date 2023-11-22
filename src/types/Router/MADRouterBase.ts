@@ -25,6 +25,15 @@ import type {
   Listener,
 } from "ethers";
 
+export declare namespace FeeHandler {
+  export type FeeStruct = { feeAmount: BigNumberish; isValid: boolean };
+
+  export type FeeStructOutput = [feeAmount: bigint, isValid: boolean] & {
+    feeAmount: bigint;
+    isValid: boolean;
+  };
+}
+
 export interface MADRouterBaseInterface extends Interface {
   getFunction(
     nameOrSignature:
@@ -303,16 +312,16 @@ export interface MADRouterBase extends BaseContract {
   feeBurn: TypedContractMethod<[], [bigint], "view">;
 
   feeBurnErc20: TypedContractMethod<
-    [erc20token: AddressLike],
-    [[bigint, boolean] & { feeAmount: bigint; isValid: boolean }],
+    [madFeeTokenAddress: AddressLike],
+    [FeeHandler.FeeStructOutput],
     "view"
   >;
 
   feeMint: TypedContractMethod<[], [bigint], "view">;
 
   feeMintErc20: TypedContractMethod<
-    [erc20token: AddressLike],
-    [[bigint, boolean] & { feeAmount: bigint; isValid: boolean }],
+    [madFeeTokenAddress: AddressLike],
+    [FeeHandler.FeeStructOutput],
     "view"
   >;
 
@@ -364,8 +373,8 @@ export interface MADRouterBase extends BaseContract {
   getFunction(
     nameOrSignature: "feeBurnErc20"
   ): TypedContractMethod<
-    [erc20token: AddressLike],
-    [[bigint, boolean] & { feeAmount: bigint; isValid: boolean }],
+    [madFeeTokenAddress: AddressLike],
+    [FeeHandler.FeeStructOutput],
     "view"
   >;
   getFunction(
@@ -374,8 +383,8 @@ export interface MADRouterBase extends BaseContract {
   getFunction(
     nameOrSignature: "feeMintErc20"
   ): TypedContractMethod<
-    [erc20token: AddressLike],
-    [[bigint, boolean] & { feeAmount: bigint; isValid: boolean }],
+    [madFeeTokenAddress: AddressLike],
+    [FeeHandler.FeeStructOutput],
     "view"
   >;
   getFunction(

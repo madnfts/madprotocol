@@ -9,6 +9,11 @@ import { Contract, Interface, type ContractRunner } from "ethers";
 const _abi = [
   {
     inputs: [],
+    name: "AddressNotValid",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "feeBurn",
     outputs: [
       {
@@ -24,21 +29,28 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "erc20token",
+        name: "madFeeTokenAddress",
         type: "address",
       },
     ],
     name: "feeBurnErc20",
     outputs: [
       {
-        internalType: "uint256",
-        name: "feeAmount",
-        type: "uint256",
-      },
-      {
-        internalType: "bool",
-        name: "isValid",
-        type: "bool",
+        components: [
+          {
+            internalType: "uint256",
+            name: "feeAmount",
+            type: "uint256",
+          },
+          {
+            internalType: "bool",
+            name: "isValid",
+            type: "bool",
+          },
+        ],
+        internalType: "struct FeeHandler.Fee",
+        name: "",
+        type: "tuple",
       },
     ],
     stateMutability: "view",
@@ -61,21 +73,28 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "erc20token",
+        name: "madFeeTokenAddress",
         type: "address",
       },
     ],
     name: "feeMintErc20",
     outputs: [
       {
-        internalType: "uint256",
-        name: "feeAmount",
-        type: "uint256",
-      },
-      {
-        internalType: "bool",
-        name: "isValid",
-        type: "bool",
+        components: [
+          {
+            internalType: "uint256",
+            name: "feeAmount",
+            type: "uint256",
+          },
+          {
+            internalType: "bool",
+            name: "isValid",
+            type: "bool",
+          },
+        ],
+        internalType: "struct FeeHandler.Fee",
+        name: "",
+        type: "tuple",
       },
     ],
     stateMutability: "view",

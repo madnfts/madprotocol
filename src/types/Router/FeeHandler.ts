@@ -12,6 +12,7 @@ import type {
 } from "../common";
 import type {
   BaseContract,
+  BigNumberish,
   BytesLike,
   FunctionFragment,
   Result,
@@ -21,6 +22,15 @@ import type {
   ContractMethod,
   Listener,
 } from "ethers";
+
+export declare namespace FeeHandler {
+  export type FeeStruct = { feeAmount: BigNumberish; isValid: boolean };
+
+  export type FeeStructOutput = [feeAmount: bigint, isValid: boolean] & {
+    feeAmount: bigint;
+    isValid: boolean;
+  };
+}
 
 export interface FeeHandlerInterface extends Interface {
   getFunction(
@@ -103,16 +113,16 @@ export interface FeeHandler extends BaseContract {
   feeBurn: TypedContractMethod<[], [bigint], "view">;
 
   feeBurnErc20: TypedContractMethod<
-    [erc20token: AddressLike],
-    [[bigint, boolean] & { feeAmount: bigint; isValid: boolean }],
+    [madFeeTokenAddress: AddressLike],
+    [FeeHandler.FeeStructOutput],
     "view"
   >;
 
   feeMint: TypedContractMethod<[], [bigint], "view">;
 
   feeMintErc20: TypedContractMethod<
-    [erc20token: AddressLike],
-    [[bigint, boolean] & { feeAmount: bigint; isValid: boolean }],
+    [madFeeTokenAddress: AddressLike],
+    [FeeHandler.FeeStructOutput],
     "view"
   >;
 
@@ -128,8 +138,8 @@ export interface FeeHandler extends BaseContract {
   getFunction(
     nameOrSignature: "feeBurnErc20"
   ): TypedContractMethod<
-    [erc20token: AddressLike],
-    [[bigint, boolean] & { feeAmount: bigint; isValid: boolean }],
+    [madFeeTokenAddress: AddressLike],
+    [FeeHandler.FeeStructOutput],
     "view"
   >;
   getFunction(
@@ -138,8 +148,8 @@ export interface FeeHandler extends BaseContract {
   getFunction(
     nameOrSignature: "feeMintErc20"
   ): TypedContractMethod<
-    [erc20token: AddressLike],
-    [[bigint, boolean] & { feeAmount: bigint; isValid: boolean }],
+    [madFeeTokenAddress: AddressLike],
+    [FeeHandler.FeeStructOutput],
     "view"
   >;
   getFunction(

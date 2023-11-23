@@ -47,6 +47,7 @@ export interface MADRouterInterface extends Interface {
       | "feeBurnErc20"
       | "feeMint"
       | "feeMintErc20"
+      | "invalidateFee"
       | "madFactory"
       | "mint(address,address,uint128,uint128,address)"
       | "mint(address,address,uint128,uint128)"
@@ -126,6 +127,10 @@ export interface MADRouterInterface extends Interface {
   encodeFunctionData(
     functionFragment: "feeMintErc20",
     values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "invalidateFee",
+    values: [AddressLike, boolean, boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "madFactory",
@@ -233,6 +238,10 @@ export interface MADRouterInterface extends Interface {
   decodeFunctionResult(functionFragment: "feeMint", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "feeMintErc20",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "invalidateFee",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "madFactory", data: BytesLike): Result;
@@ -549,6 +558,16 @@ export interface MADRouter extends BaseContract {
     "view"
   >;
 
+  invalidateFee: TypedContractMethod<
+    [
+      madFeeTokenAddress: AddressLike,
+      invalidateBurnFee: boolean,
+      invalidateMintFee: boolean
+    ],
+    [void],
+    "nonpayable"
+  >;
+
   madFactory: TypedContractMethod<[], [string], "view">;
 
   "mint(address,address,uint128,uint128,address)": TypedContractMethod<
@@ -780,6 +799,17 @@ export interface MADRouter extends BaseContract {
     [madFeeTokenAddress: AddressLike],
     [FeeHandler.FeeStructOutput],
     "view"
+  >;
+  getFunction(
+    nameOrSignature: "invalidateFee"
+  ): TypedContractMethod<
+    [
+      madFeeTokenAddress: AddressLike,
+      invalidateBurnFee: boolean,
+      invalidateMintFee: boolean
+    ],
+    [void],
+    "nonpayable"
   >;
   getFunction(
     nameOrSignature: "madFactory"

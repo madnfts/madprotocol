@@ -547,6 +547,29 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "address",
+        name: "madFeeTokenAddress",
+        type: "address",
+      },
+      {
+        internalType: "bool",
+        name: "invalidateCollectionFee",
+        type: "bool",
+      },
+      {
+        internalType: "bool",
+        name: "invalidateSplitterFee",
+        type: "bool",
+      },
+    ],
+    name: "invalidateFee",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "name",
     outputs: [

@@ -320,6 +320,29 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "address",
+        name: "madFeeTokenAddress",
+        type: "address",
+      },
+      {
+        internalType: "bool",
+        name: "invalidateBurnFee",
+        type: "bool",
+      },
+      {
+        internalType: "bool",
+        name: "invalidateMintFee",
+        type: "bool",
+      },
+    ],
+    name: "invalidateFee",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "madFactory",
     outputs: [

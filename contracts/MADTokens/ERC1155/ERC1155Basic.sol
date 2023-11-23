@@ -187,7 +187,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
                 revert(28, 4)
             }
         }
-        return string(abi.encodePacked(baseURI(), Strings.toString(id), ".json"));
+        return string(abi.encodePacked(baseURI, Strings.toString(id), ".json"));
     }
 
     function liveBalance(uint256 id) public view returns (uint256) {

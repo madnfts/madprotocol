@@ -194,7 +194,7 @@ contract ERC721Basic is ERC721, ImplBase {
     {
         if (id > mintCount()) revert NotMintedYet();
 
-        return string(abi.encodePacked(baseURI(), Strings.toString(id), ".json"));
+        return string(abi.encodePacked(baseURI, Strings.toString(id), ".json"));
     }
 
     function name()

@@ -90,6 +90,18 @@ To check if an ERC20 token is valid, the following functions can be called:
 ```
 Each will return if the token is valid and the fee amount.
 
+## Invalidate ERC20 Token
+
+To invalidate an ERC20 token, the following function can be called:
+
+```javascript
+invalidateFee(
+        address madFeeTokenAddress,
+        bool invalidateCollectionFee,
+        bool invalidateSplitterFee
+    ) 
+```
+
 # Router
 
 - Accept either Native (ETH) or ERC20 Tokens as Fee Payment
@@ -153,3 +165,16 @@ To check if an ERC20 token is valid, the following functions can be called:
 ```
 
 Each will return if the token is valid and the fee amount.
+
+## Invalidate ERC20 Token
+
+To invalidate an ERC20 token, the following function can be called:
+
+```javascript   
+    invalidateFee(
+        address madFeeTokenAddress,
+        bool invalidateBurnFee,
+        bool invalidateMintFee
+        
+    ) 
+```

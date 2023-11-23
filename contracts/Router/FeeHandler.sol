@@ -38,25 +38,28 @@ abstract contract FeeHandler {
     /// @notice ERC20 Burn fee store.
     mapping(address madFeeTokenAddress => Fee burnPrice) private _feeBurnErc20;
 
+    modifier isZeroAddress(address _address) {
+        if (_address == address(0)) {
+            revert RouterEvents.AddressNotValid();
+        }
+        _;
+    }
+
     function feeMintErc20(address madFeeTokenAddress)
         public
         view
+        isZeroAddress(madFeeTokenAddress)
         returns (Fee memory)
     {
-        if (madFeeTokenAddress == address(0)) {
-            revert RouterEvents.AddressNotValid();
-        }
         return _feeMintErc20[madFeeTokenAddress];
     }
 
     function feeBurnErc20(address madFeeTokenAddress)
         public
         view
+        isZeroAddress(madFeeTokenAddress)
         returns (Fee memory)
     {
-        if (madFeeTokenAddress == address(0)) {
-            revert RouterEvents.AddressNotValid();
-        }
         return _feeBurnErc20[madFeeTokenAddress];
     }
 
@@ -140,11 +143,7 @@ abstract contract FeeHandler {
         uint256 _feeMint,
         uint256 _feeBurn,
         address madFeeTokenAddress
-    ) internal {
-        if (madFeeTokenAddress == address(0)) {
-            revert RouterEvents.AddressNotValid();
-        }
-
+    ) internal isZeroAddress(madFeeTokenAddress) {
         _feeMintErc20[madFeeTokenAddress] = Fee(_feeMint, true);
         _feeBurnErc20[madFeeTokenAddress] = Fee(_feeBurn, true);
     }
@@ -153,10 +152,7 @@ abstract contract FeeHandler {
         address madFeeTokenAddress,
         bool invalidateBurnFee,
         bool invalidateMintFee
-    ) internal {
-        if (madFeeTokenAddress == address(0)) {
-            revert RouterEvents.AddressNotValid();
-        }
+    ) internal isZeroAddress(madFeeTokenAddress) {
         if (invalidateMintFee) {
             _feeMintErc20[madFeeTokenAddress] = Fee(0, false);
         }

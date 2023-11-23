@@ -33,25 +33,28 @@ abstract contract FeeHandlerFactory {
     mapping(address madFeeTokenAddress => Fee splitterPrice) private
         _feeCreateSplitterErc20;
 
+    modifier isZeroAddress(address _address) {
+        if (_address == address(0)) {
+            revert AddressNotValid();
+        }
+        _;
+    }
+
     function feeCreateCollectionErc20(address madFeeTokenAddress)
         public
         view
+        isZeroAddress(madFeeTokenAddress)
         returns (Fee memory)
     {
-        if (madFeeTokenAddress == address(0)) {
-            revert AddressNotValid();
-        }
         return _feeCreateCollectionErc20[madFeeTokenAddress];
     }
 
     function feeCreateSplitterErc20(address madFeeTokenAddress)
         public
         view
+        isZeroAddress(madFeeTokenAddress)
         returns (Fee memory)
     {
-        if (madFeeTokenAddress == address(0)) {
-            revert AddressNotValid();
-        }
         return _feeCreateSplitterErc20[madFeeTokenAddress];
     }
 
@@ -115,10 +118,7 @@ abstract contract FeeHandlerFactory {
         uint256 _madFeeCreateCollectionErc20,
         uint256 _madFeeCreateSplitterErc20,
         address madFeeTokenAddress
-    ) internal {
-        if (madFeeTokenAddress == address(0)) {
-            revert AddressNotValid();
-        }
+    ) internal isZeroAddress(madFeeTokenAddress) {
         _feeCreateCollectionErc20[madFeeTokenAddress] =
             Fee(_madFeeCreateCollectionErc20, true);
         _feeCreateSplitterErc20[madFeeTokenAddress] =
@@ -129,10 +129,7 @@ abstract contract FeeHandlerFactory {
         address madFeeTokenAddress,
         bool invalidateCollectionFee,
         bool invalidateSplitterFee
-    ) internal {
-        if (madFeeTokenAddress == address(0)) {
-            revert AddressNotValid();
-        }
+    ) internal isZeroAddress(madFeeTokenAddress) {
         if (invalidateCollectionFee) {
             _feeCreateCollectionErc20[madFeeTokenAddress] = Fee(0, false);
         }

@@ -86,7 +86,7 @@ abstract contract ImplBase is
     //     _setStringCalldata(_baseURI, _BASE_URI_SLOT);
     //     emit BaseURISet(_baseURI);
     // }
-        function setBaseURI(string calldata _baseURI) public onlyOwner {
+    function setBaseURI(string calldata _baseURI) public onlyOwner {
         if (uriLock) revert URILocked();
         // bytes(_baseURI).length > 32 ? revert() : baseURI = _baseURI;
         baseURI = _baseURI;

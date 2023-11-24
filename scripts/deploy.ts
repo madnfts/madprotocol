@@ -1,6 +1,16 @@
 import { config } from "dotenv";
 import { ethers } from "hardhat";
 import { resolve } from "path";
+import fs from 'fs';
+
+const logStream = fs.createWriteStream('scripts/deploy.log', { flags: 'a' });
+
+console.log = function(message: any) {
+  const timestamp = new Date().toISOString();
+  const logMessage = `${timestamp}: ${message}`;
+  logStream.write(logMessage + '\n');
+  process.stdout.write(logMessage + '\n');
+};
 
 config({ path: resolve(__dirname, "./.env") });
 
@@ -353,11 +363,12 @@ const main = async () => {
 
     deployedDisplay();
     console.log("Deployment completed successfully...\n");
-
+    logStream.end()
     process.exit(0);
 
   } catch (error) {
     console.error(error);
+    logStream.end()
     process.exit(1);
   }
 };

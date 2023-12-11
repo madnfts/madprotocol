@@ -15,7 +15,7 @@ console.log = function(message: any) {
 config({ path: resolve(__dirname, "./.env") });
 
 const {
-  UNISWAP_ROUTER,
+  // UNISWAP_ROUTER,
   ERC20_TOKEN,
   FACTORY,
   ROUTER,

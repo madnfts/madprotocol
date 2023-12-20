@@ -14,12 +14,7 @@ contract RouterFactory is Enums {
         address _paymentTokenAddressRouter,
         address _recipientRouter
     ) public returns (address newRouter) {
-        return address(
-            new MADRouter(
-                    _factoryVerifier,
-                    _recipientRouter
-                )
-        );
+        return address(new MADRouter(_factoryVerifier, _recipientRouter));
 
         // if (ercType == ercTypes.ERC721) {
         //     return address(

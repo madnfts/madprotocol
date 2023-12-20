@@ -355,29 +355,35 @@ contract TestROUTERMintBurnAndTransferERC721_Erc20 is
 
         // Turn off router authority
         vm.prank(mintData.nftMinter);
-        collection.setRouterHasAuthority(false);
+        collection.setRouterHasAuthority(true);
 
         uint256 _nftPublicMintPrice =
             mintData.nftPublicMintPrice * mintData.amountToMint;
 
-        uint256 val = _nftPublicMintPrice
-            + (
-                deployedContracts.router.feeMintErc20(address(erc20Token)).feeAmount
-                    * mintData.amountToMint + collection.price() * mintData.amountToMint
-            );
+        uint256 expectedPublicMintPrice =
+            collection.price() * mintData.amountToMint;
+
+        uint256 feeAmount = deployedContracts.router.feeMintErc20(
+            address(erc20Token)
+        ).feeAmount * mintData.amountToMint;
 
         emit log_named_uint(
             "nftPublicMintPrice AFTER", mintData.nftPublicMintPrice
         );
 
-        emit log_named_uint("val", val);
+        emit log_named_uint("feeAmount", feeAmount);
 
         vm.startPrank(mintData.nftReceiver);
 
-        erc20Token.approve(address(collection), val);
-        erc20Token.approve(address(deployedContracts.router), val);
+        erc20Token.approve(address(collection), _nftPublicMintPrice);
+        erc20Token.approve(address(deployedContracts.router), feeAmount);
 
-        if (_errorSelector != 0x00000000) {
+        if (_errorSelector == 0x00000000) {
+            assertTrue(
+                _nftPublicMintPrice == expectedPublicMintPrice,
+                "_nftPublicMintPrice == expectedPublicMintPrice ::  do not match"
+            );
+        } else {
             vm.expectRevert(_errorSelector);
         }
         deployedContracts.router.mint(

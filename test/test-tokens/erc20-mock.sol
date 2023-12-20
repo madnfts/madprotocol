@@ -198,9 +198,9 @@ abstract contract ERC20 {
     /*//////////////////////////////////////////////////////////////
                         INTERNAL MINT/BURN LOGIC
     //////////////////////////////////////////////////////////////*/
-
+    
     function _mint(address to, uint256 amount) internal virtual {
-        totalSupply += amount;
+        totalSupply = totalSupply + amount;
 
         // Cannot overflow because the sum of all user
         // balances can't exceed the max uint256 value.

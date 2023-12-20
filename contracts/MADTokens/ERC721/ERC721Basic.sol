@@ -68,10 +68,7 @@ contract ERC721Basic is ERC721, ImplBase {
     /// @dev Transfer event emitted by parent ERC721 contract.
     /// @dev Function Sighash := 0xa0712d68
     /// @param amount The amount of tokens to mint.
-    function mint(uint128 amount) public payable {
-        if (routerHasAuthority) {
-            revert RouterIsEnabled();
-        }
+    function mint(uint128 amount) public payable routerOrPublic {
         _publicMint(msg.sender, amount);
     }
 
@@ -197,8 +194,7 @@ contract ERC721Basic is ERC721, ImplBase {
     {
         if (id > mintCount()) revert NotMintedYet();
 
-        return
-            string(abi.encodePacked(baseURI(), Strings.toString(id), ".json"));
+        return string(abi.encodePacked(baseURI, Strings.toString(id), ".json"));
     }
 
     function name()

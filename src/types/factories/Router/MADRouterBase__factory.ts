@@ -248,21 +248,28 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "erc20token",
+        name: "madFeeTokenAddress",
         type: "address",
       },
     ],
     name: "feeBurnErc20",
     outputs: [
       {
-        internalType: "uint256",
-        name: "feeAmount",
-        type: "uint256",
-      },
-      {
-        internalType: "bool",
-        name: "isValid",
-        type: "bool",
+        components: [
+          {
+            internalType: "uint256",
+            name: "feeAmount",
+            type: "uint256",
+          },
+          {
+            internalType: "bool",
+            name: "isValid",
+            type: "bool",
+          },
+        ],
+        internalType: "struct FeeHandler.Fee",
+        name: "",
+        type: "tuple",
       },
     ],
     stateMutability: "view",
@@ -285,24 +292,54 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "erc20token",
+        name: "madFeeTokenAddress",
         type: "address",
       },
     ],
     name: "feeMintErc20",
     outputs: [
       {
-        internalType: "uint256",
-        name: "feeAmount",
-        type: "uint256",
-      },
-      {
-        internalType: "bool",
-        name: "isValid",
-        type: "bool",
+        components: [
+          {
+            internalType: "uint256",
+            name: "feeAmount",
+            type: "uint256",
+          },
+          {
+            internalType: "bool",
+            name: "isValid",
+            type: "bool",
+          },
+        ],
+        internalType: "struct FeeHandler.Fee",
+        name: "",
+        type: "tuple",
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "madFeeTokenAddress",
+        type: "address",
+      },
+      {
+        internalType: "bool",
+        name: "invalidateBurnFee",
+        type: "bool",
+      },
+      {
+        internalType: "bool",
+        name: "invalidateMintFee",
+        type: "bool",
+      },
+    ],
+    name: "invalidateFee",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {

@@ -22,11 +22,6 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "BadCall",
-    type: "error",
-  },
-  {
-    inputs: [],
     name: "InsufficientBalance",
     type: "error",
   },
@@ -437,21 +432,28 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "erc20token",
+        name: "madFeeTokenAddress",
         type: "address",
       },
     ],
     name: "feeCreateCollectionErc20",
     outputs: [
       {
-        internalType: "uint256",
-        name: "feeAmount",
-        type: "uint256",
-      },
-      {
-        internalType: "bool",
-        name: "isValid",
-        type: "bool",
+        components: [
+          {
+            internalType: "uint256",
+            name: "feeAmount",
+            type: "uint256",
+          },
+          {
+            internalType: "bool",
+            name: "isValid",
+            type: "bool",
+          },
+        ],
+        internalType: "struct FeeHandlerFactory.Fee",
+        name: "",
+        type: "tuple",
       },
     ],
     stateMutability: "view",
@@ -474,21 +476,28 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "erc20token",
+        name: "madFeeTokenAddress",
         type: "address",
       },
     ],
     name: "feeCreateSplitterErc20",
     outputs: [
       {
-        internalType: "uint256",
-        name: "feeAmount",
-        type: "uint256",
-      },
-      {
-        internalType: "bool",
-        name: "isValid",
-        type: "bool",
+        components: [
+          {
+            internalType: "uint256",
+            name: "feeAmount",
+            type: "uint256",
+          },
+          {
+            internalType: "bool",
+            name: "isValid",
+            type: "bool",
+          },
+        ],
+        internalType: "struct FeeHandlerFactory.Fee",
+        name: "",
+        type: "tuple",
       },
     ],
     stateMutability: "view",
@@ -535,6 +544,29 @@ const _abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "madFeeTokenAddress",
+        type: "address",
+      },
+      {
+        internalType: "bool",
+        name: "invalidateCollectionFee",
+        type: "bool",
+      },
+      {
+        internalType: "bool",
+        name: "invalidateSplitterFee",
+        type: "bool",
+      },
+    ],
+    name: "invalidateFee",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {

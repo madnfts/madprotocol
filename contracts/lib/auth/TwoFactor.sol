@@ -1,5 +1,17 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
+// The TwoFactor contract uses a combination of msg.sender and tx.origin for
+// authorisation in the authorised modifier. This is a unique approach, and it's
+// designed to ensure that only the owner or a trusted router can call certain
+// functions.
+
+// Here are the two scenarios where authorisation is granted:
+
+// msg.sender AND tx.origin are both the owner. This means the owner is directly
+// interacting with the contract.
+
+// msg.sender is the router AND tx.origin is the owner. This means the owner is
+// interacting with the contract through a trusted contract (the router).
 pragma solidity 0.8.22;
 
 //prettier-ignore
@@ -82,7 +94,6 @@ abstract contract TwoFactor {
     /// 1. msg.sender AND tx.origin == owner
     /// 2. msg.sender == router AND tx.origin == owner
     modifier authorised() {
-        routerAuthorised();
         bool isAuthorised;
         assembly {
             let _origin := shl(12, origin())
@@ -115,16 +126,6 @@ abstract contract TwoFactor {
             }
         }
         _;
-    }
-
-    function routerAuthorised() internal view {
-        assembly {
-            if iszero(sload(routerHasAuthority.slot)) {
-                // revert NotAuthorised()
-                mstore(0, _NOT_AUTHORISED)
-                revert(28, 4)
-            }
-        }
     }
 
     ////////////////////////////////////////////////////////////////

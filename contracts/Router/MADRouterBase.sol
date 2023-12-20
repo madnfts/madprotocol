@@ -94,6 +94,14 @@ abstract contract MADRouterBase is MADBase, FeeHandler, RouterEvents {
         emit FeesUpdated(_feeMint, _feeBurn, madFeeTokenAddress);
     }
 
+    function invalidateFee(
+        address madFeeTokenAddress,
+        bool invalidateBurnFee,
+        bool invalidateMintFee
+    ) public onlyOwner {
+        _invalidateFee(madFeeTokenAddress, invalidateBurnFee, invalidateMintFee);
+    }
+
     ////////////////////////////////////////////////////////////////
     //                         HELPERS                            //
     ////////////////////////////////////////////////////////////////

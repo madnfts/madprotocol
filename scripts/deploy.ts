@@ -1,11 +1,21 @@
 import { config } from "dotenv";
 import { ethers } from "hardhat";
 import { resolve } from "path";
+import fs from 'fs';
+
+const logStream = fs.createWriteStream('scripts/deploy.log', { flags: 'a' });
+
+console.log = function(message: any) {
+  const timestamp = new Date().toISOString();
+  const logMessage = `${timestamp}: ${message}`;
+  logStream.write(logMessage + '\n');
+  process.stdout.write(logMessage + '\n');
+};
 
 config({ path: resolve(__dirname, "./.env") });
 
 const {
-  UNISWAP_ROUTER,
+  // UNISWAP_ROUTER,
   ERC20_TOKEN,
   FACTORY,
   ROUTER,
@@ -38,14 +48,21 @@ const _feeBurn = ethers.parseEther(feeBurn);
 const _feeMintErc20 = ethers.parseEther(feeMintErc20);
 const _feeBurnErc20 = ethers.parseEther(feeBurnErc20);
 
+var deployerAddress = '';
 var deployedFactoryAddress = "";
 var deployedRouterAddress = "";
-var deployedErc20Address = "";
+var deployedErc20Address = ethers.ZeroAddress;
 var deployedMarketplaceAddress = "";
+
+const gasArgs = {
+  gasLimit: 0x1000000,
+  gasPrice: 0x7a120,
+  gas: 1000000
+}
 
 const deployedDisplay = () => {
   console.log(
-    `Deployed Factory Address: ${deployedFactoryAddress ? deployedFactoryAddress : FACTORY}`,
+    `\nDeployed Factory Address: ${deployedFactoryAddress ? deployedFactoryAddress : FACTORY}`,
   );
   console.log(
     `Deployed Router Address: ${deployedRouterAddress ? deployedRouterAddress : ROUTER}`,
@@ -54,137 +71,66 @@ const deployedDisplay = () => {
     `Deployed ERC20 Address: ${deployedErc20Address ? deployedErc20Address : ERC20_TOKEN}`,
   );
   console.log(
-    `Deployed Marketplace Address: ${deployedMarketplaceAddress}`,
+    `Deployed Marketplace Address: ${deployedMarketplaceAddress}\n`,
   );
 };
-// const deployMarketplace = async erc20Address => {
-//   const MADMarketplace721 = await ethers.getContractFactory(
-//     "MADMarketplace721",
-//   );
-//   const m721 = await MADMarketplace721.deploy(
-//     erc20Address,
-//     UNISWAP_ROUTER,
-//   );
-//   console.log(`ERC721 Marketplace address: ${m721.target}`);
-
-//   const MADMarketplace1155 = await ethers.getContractFactory(
-//     "MADMarketplace1155",
-//   );
-//   const m1155 = await MADMarketplace1155.deploy(
-//     erc20Address,
-//     UNISWAP_ROUTER,
-//   );
-//   deployedMarketplaceAddress = m721.target;
-//   return { m721, m1155 };
-// };
 
 const deployERC20 = async () => {
-  const ERC20 = await ethers.getContractFactory("MockERC20");
-  const erc20 = await ERC20.deploy(
+  console.log(
+    `Deploying contract ERC20 with ${deployerAddress}`,
+  );
+  const erc20 = await ethers.deployContract("MockERC20", [
     "Mad Mock Token",
     "MAD",
     18,
     10
+  ],
+    gasArgs
   );
   await erc20.waitForDeployment();
   deployedErc20Address = erc20.target;
   return erc20;
 };
 
-const deployFactory = async (erc20Address) => {
-  
+const deployFactory = async () => {
+  console.log(
+    `Deploying contracts Factory with ${deployerAddress}`,
+  );
   const factory = await ethers.deployContract(
     "MADFactory", [RECIPIENT],
-         {
-              gasLimit: 0x1000000,
-              gasPrice: 0x7a120,
-              gas:1000000
-            }
+    gasArgs
   );
   await factory.waitForDeployment();
   deployedFactoryAddress = factory.target;
-  const factoryErc20 = await factory.erc20();
-  console.log(`factory.erc20: ${factoryErc20}`);
-  console.log(`factory.erc20 == erc20Address: ${factoryErc20 == erc20Address}`);
   return factory;
 };
 
 const deployRouter = async (
-  erc20Address,
-  factoryAddress,
-  deployerAddress,
+  factoryAddress
 ) => {
-  const MADRouter = await ethers.getContractFactory(
-    "MADRouter",
+  console.log(
+    `Deploying contracts Router with ${deployerAddress}`,
   );
-  const router = await MADRouter.deploy(
-    factoryAddress,
-    erc20Address,
-    deployerAddress,
+  const router = await ethers.deployContract(
+    "MADRouter", [factoryAddress,
+    RECIPIENT],
+    gasArgs
   );
   await router.waitForDeployment();
   deployedRouterAddress = router.target;
   return router;
 };
 
-const setRouterFees = async (
-  router,
-  erc20Address,
-  _feeMint,
-  _feeBurn,
-  _feeMintErc20,
-  _feeBurnErc20,
-) => {
-  console.log(`SETTING ROUTER FEES`);
-  await router["setFees(uint256,uint256)"](
-    _feeMint,
-    _feeBurn,
-  );
-  let setFeesMint = await router.feeMint();
-  let setFeesBurn = await router.feeBurn();
-  if (!setFeesBurn === _feeBurn) {
-    console.log(
-      `Error setting Router Burn Fee Not Set\nExpected Fee: ${_feeBurn}\nActual Fee:   ${setFeesBurn}`,
-    );
-  } else {
-    console.log(`Router Burn Fee Set`);
-  }
-  if (!setFeesMint === _feeMint) {
-    console.log(
-      `Error setting Router Mint Fee Not Set\nExpected Fee: ${_feeMint}\nActual Fee:   ${setFeesMint}`,
-    );
-  } else {
-    console.log(`Router Mint Fee Set`);
-  }
+const setRouterAddress = async (factory) => {
+  // Set router address
+  const tx = await factory.setRouter(deployedRouterAddress);
+  await tx.wait();
+  console.log(`[OK] Router Address Set..`);
 
-  if (erc20Address != ethers.ZeroAddress) {
-    await router["setFees(uint256,uint256,address)"](
-      _feeMint,
-      _feeBurn,
-      erc20Address,
-    );
-
-    let setFeesMintErc20 = await router.feeMintErc20(
-      erc20Address,
-    );
-    let setFeesBurnErc20 = await router.feeBurnErc20(
-      erc20Address,
-    );
-
-    if (!setFeesBurnErc20 === _feeBurnErc20) {
-      console.log(
-        `Error setting Router Burn Fee ERC20 Not Set\nExpected Fee: ${_feeBurnErc20}\nActual Fee:   ${setFeesBurnErc20}`,
-      );
-    } else {
-      console.log(`Router Burn ERC20 Fee Set`);
-    }
-    if (!setFeesMintErc20 === _feeMintErc20) {
-      console.log(
-        `Error setting Router Mint Fee ERC20 Not Set\nExpected Fee: ${_feeMintErc20}\nActual Fee:   ${setFeesMintErc20}`,
-      );
-    } else {
-      console.log(`Router Mint ERC20 Fee Set`);
-    }
+  // Check router address
+  let calledRouterAddress = await factory.router();
+  if (calledRouterAddress != deployedRouterAddress) {
+    console.log(`\n***[ ERROR ]*** setting Router Address..\nExpected Address: ${deployedRouterAddress}\nActual Address:   ${calledRouterAddress}`);
   }
 };
 
@@ -196,84 +142,159 @@ const setFactoryFees = async (
   _feeCreateCollectionErc20,
   _feeCreateSplitterErc20,
 ) => {
-  console.log(`SETTING FACTORY FEES`);
+  console.log(`\nSETTING FACTORY FEES`);
 
-  await factory["setFees(uint256,uint256)"](
+  let tx = await factory["setFees(uint256,uint256)"](
     _feeCreateCollection,
     _feeCreateSplitter,
   );
+  await tx.wait();
 
   let setCreateFees = await factory.feeCreateCollection();
   let setCreateSplitterFees =
     await factory.feeCreateSplitter();
 
-  if (!setCreateFees === _feeCreateCollection) {
+  if (setCreateFees != _feeCreateCollection) {
     console.log(
-      `Error setting Factory Fees Not Set\nExpected Fee: ${_feeCreateCollection}\nActual Fee:   ${setCreateFees}`,
+      `\n***[ ERROR ]*** setting Factory Create Collection Fees NOT Set\nExpected Fee: ${_feeCreateCollection}\nActual Fee:   ${setCreateFees}`,
     );
   } else {
-    console.log(`Factory Fees Set`);
+    console.log(`[OK] Factory Create Collection Fees Set\nExpected Fee: ${_feeCreateCollection}\nActual Fee:   ${setCreateFees}`,
+    );
   }
 
-  if (!setCreateSplitterFees === _feeCreateSplitter) {
+  if (setCreateSplitterFees != _feeCreateSplitter) {
     console.log(
-      `Error setting Factory Splitter Fees Not Set\nExpected Fee: ${_feeCreateSplitter}\nActual Fee:   ${setCreateSplitterFees}`,
+      `\n***[ ERROR ]*** setting Factory Splitter Fees NOT Set\nExpected Fee: ${_feeCreateSplitter}\nActual Fee:   ${setCreateSplitterFees}`,
     );
   } else {
-    console.log(`Factory Splitter Fees Set`);
+    console.log(`[OK] Factory Splitter Fees Set\nExpected Fee: ${_feeCreateSplitter}\nActual Fee:   ${setCreateSplitterFees}`,
+    );
   }
 
   if (erc20Address != ethers.ZeroAddress) {
-    await factory["setFees(uint256,uint256,address)"](
+    let tx = await factory["setFees(uint256,uint256,address)"](
       _feeCreateCollectionErc20,
       _feeCreateSplitterErc20,
       erc20Address,
     );
+
+    await tx.wait();
 
     let setCreateFeesErc20 =
       await factory.feeCreateCollectionErc20(erc20Address);
     let setCreateSplitterFeesErc20 =
       await factory.feeCreateSplitterErc20(erc20Address);
 
-    if (!setCreateFeesErc20 === _feeCreateCollectionErc20) {
+    if (setCreateFeesErc20[0] != _feeCreateCollectionErc20) {
       console.log(
-        `Error setting Factory Fees Not Set\nExpected Fee: ${_feeCreateCollectionErc20}\nActual Fee:   ${setCreateFeesErc20}`,
+        `\n***[ ERROR ]*** setting Factory CreateCollection ERC20 Fees NOT Set\nExpected Fee: ${_feeCreateCollectionErc20}\nActual Fee:   ${setCreateFeesErc20[0]}`,
       );
     } else {
-      console.log(`Factory ERC20 Fees Set`);
+      console.log(`[OK] Factory CreateCollection ERC20 Fees Set\nExpected Fee: ${_feeCreateCollectionErc20}\nActual Fee:   ${setCreateFeesErc20[0]}`,
+      );
     }
     if (
-      !setCreateSplitterFeesErc20 === _feeCreateSplitterErc20
+      setCreateSplitterFeesErc20[0] != _feeCreateSplitterErc20
     ) {
       console.log(
-        `Error setting Factory Splitter Fees Not Set\nExpected Fee: ${_feeCreateSplitterErc20}\nActual Fee:   ${setCreateSplitterFeesErc20}`,
+        `\n***[ ERROR ]*** setting Factory Splitter Fees NOT Set\nExpected Fee: ${_feeCreateSplitterErc20}\nActual Fee:   ${setCreateSplitterFeesErc20[0]}`,
       );
     } else {
-      console.log(`Factory Splitter ERC20 Fees Set`);
+      console.log(`[OK] Factory Splitter ERC20 Fees Set\nExpected Fee: ${_feeCreateSplitterErc20}\nActual Fee:   ${setCreateSplitterFeesErc20[0]}`,
+      );
     }
   }
 };
 
+const setRouterFees = async (
+  router,
+  erc20Address,
+  _feeMint,
+  _feeBurn,
+  _feeMintErc20,
+  _feeBurnErc20,
+) => {
+  console.log(`\nSETTING ROUTER FEES`);
+  let tx = await router["setFees(uint256,uint256)"](
+    _feeMint,
+    _feeBurn,
+  );
+  await tx.wait();
+
+  let setFeesMint = await router.feeMint();
+  let setFeesBurn = await router.feeBurn();
+
+  if (setFeesBurn != _feeBurn) {
+    console.log(
+      `\n***[ ERROR ]*** setting Router Burn Fee NOT Set\nExpected Fee: ${_feeBurn}\nActual Fee:   ${setFeesBurn}`,
+    );
+  } else {
+    console.log(`[OK] Router Burn Fee Set\nExpected Fee: ${_feeBurn}\nActual Fee:   ${setFeesBurn}`,
+    );
+  }
+  if (setFeesMint != _feeMint) {
+    console.log(
+      `\n***[ ERROR ]*** setting Router Mint Fee NOT Set\nExpected Fee: ${_feeMint}\nActual Fee:   ${setFeesMint}`,
+    );
+  } else {
+    console.log(`[OK] Router Mint Fee Set\nExpected Fee: ${_feeMint}\nActual Fee:   ${setFeesMint}`,
+    );
+  }
+
+  if (erc20Address != ethers.ZeroAddress) {
+    let tx = await router["setFees(uint256,uint256,address)"](
+      _feeMintErc20,
+      _feeBurnErc20,
+      erc20Address,
+    );
+    await tx.wait();
+
+    let setFeesMintErc20 = await router.feeMintErc20(
+      erc20Address,
+    );
+    let setFeesBurnErc20 = await router.feeBurnErc20(
+      erc20Address,
+    );
+
+    if (setFeesBurnErc20[0] != _feeBurnErc20) {
+      console.log(
+        `\n***[ ERROR ]*** setting Router Burn Fee ERC20 NOT Set\nExpected Fee: ${_feeBurnErc20}\nActual Fee:   ${setFeesBurnErc20[0]}`,
+      );
+    } else {
+      console.log(`[OK] Router Burn ERC20 Fee Set\nExpected Fee: ${_feeBurnErc20}\nActual Fee:   ${setFeesBurnErc20[0]}`,
+      );
+    }
+    if (setFeesMintErc20[0] != _feeMintErc20) {
+      console.log(
+        `\n***[ ERROR ]*** setting Router Mint Fee ERC20 NOT Set\nExpected Fee: ${_feeMintErc20}\nActual Fee:   ${setFeesMintErc20[0]}`,
+      );
+    } else {
+      console.log(`[OK] Router Mint ERC20 Fee Set\nExpected Fee: ${_feeMintErc20}\nActual Fee:   ${setFeesMintErc20[0]}`,
+      );
+    }
+  }
+};
 const setCollectionType = async (
   factory,
   collectionType,
   bytecode,
   name,
 ) => {
-  console.log(`SETTING COLLECTION TYPE ${name}`);
-  await factory.addCollectionType(collectionType, bytecode);
+  console.log(`\nSETTING COLLECTION TYPE ${name}`);
+  const tx = await factory.addCollectionType(collectionType, bytecode);
+  await tx.wait();
   var isDeployed =
     (await factory.collectionTypes(collectionType)) ===
     bytecode;
   if (!isDeployed) {
-    console.log(`Collection Type ${name} Not Added..`);
+    console.log(`\n***[ ERROR ]*** Collection Type ${name} NOT Added..`);
   } else {
-    console.log(`Collection Type ${name} Added..`);
+    console.log(`[OK] Collection Type ${name} Added..`);
   }
 };
 
 const main = async () => {
-  let erc20Address = ethers.ZeroAddress;
   const ERC721Basic = await ethers.getContractFactory(
     "ERC721Basic",
   );
@@ -283,41 +304,28 @@ const main = async () => {
 
   const [deployer] = await ethers.getSigners();
 
+  deployerAddress = deployer.address;
+
   try {
     // Check token address
-    console.log(
-      `Deploying contract ERC20 with ${deployer.address}`,
-    );
     if (ERC20_TOKEN === "mock") {
       let erc20 = await deployERC20();
-      erc20Address = erc20.getAddress();
+      deployedErc20Address = await erc20.getAddress();
     } else if (ERC20_TOKEN) {
-      erc20Address = ERC20_TOKEN;
-      console.log(`ERC20 address: ${erc20Address}`);
+      deployedErc20Address = ERC20_TOKEN;
+      console.log(`ERC20 address: ${deployedErc20Address}`);
     }
 
     // Deploy Contracts
-    // const { m721, m1155 } = await deployMarketplace(erc20Address);
-
-    console.log(
-      `Deploying contracts Factory with ${deployer.address}`,
-    );
-    const factory = await deployFactory(erc20Address)
-
-    console.log(
-      `Deploying contracts Router with ${deployer.address}`,
-    );
+    const factory = await deployFactory()
     const router = await deployRouter(
-      erc20Address,
-      factory.target,
-      deployer.address,
+      factory.target
     );
 
     deployedDisplay();
 
     // Set router address
-    await factory.connect(deployer).setRouter(router.getAddress());
-    console.log(`Router Address Set..`);
+    await setRouterAddress(factory);
 
     // Add Collection Types
     await setCollectionType(
@@ -336,7 +344,7 @@ const main = async () => {
     // Set fees for Factory
     await setFactoryFees(
       factory.connect(deployer),
-      erc20Address,
+      deployedErc20Address,
       _feeCreateCollection,
       _feeCreateSplitter,
       _feeCreateCollectionErc20,
@@ -346,19 +354,21 @@ const main = async () => {
     // Set fees for Router
     await setRouterFees(
       router.connect(deployer),
-      erc20Address,
+      deployedErc20Address,
       _feeMint,
       _feeBurn,
       _feeMintErc20,
       _feeBurnErc20,
     );
 
-    console.log("Deployment completed successfully...\n");
     deployedDisplay();
+    console.log("Deployment completed successfully...\n");
+    logStream.end()
     process.exit(0);
 
   } catch (error) {
     console.error(error);
+    logStream.end()
     process.exit(1);
   }
 };

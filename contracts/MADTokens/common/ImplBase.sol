@@ -23,8 +23,10 @@ abstract contract ImplBase is
     TwoFactor,
     PaymentManager
 {
-    bytes32 internal constant _BASE_URI_SLOT = /*  */
-        0xdd05fcb58e4c0a1a429c1a9d6607c399731f1ef0b81be85c3f7701c0333c82fc;
+    // bytes32 internal constant _BASE_URI_SLOT = /*  */
+    //     0xdd05fcb58e4c0a1a429c1a9d6607c399731f1ef0b81be85c3f7701c0333c82fc;
+
+    string public baseURI;
 
     /// @dev An account can hold up to 4294967295 tokens.
     uint256 internal constant _SR_UPPERBITS = (1 << 128) - 1;
@@ -67,7 +69,8 @@ abstract contract ImplBase is
         // immutable
         maxSupply = uint128(args._maxSupply);
 
-        _setStringMemory(args._baseURI, _BASE_URI_SLOT);
+        // _setStringMemory(args._baseURI, _BASE_URI_SLOT);
+        baseURI = args._baseURI;
 
         emit RoyaltyFeeSet(uint256(args._royaltyPercentage));
         emit RoyaltyRecipientSet(payable(args._splitter));
@@ -77,10 +80,16 @@ abstract contract ImplBase is
     //                         OWNER FX                           //
     ////////////////////////////////////////////////////////////////
 
+    // function setBaseURI(string calldata _baseURI) public onlyOwner {
+    //     if (uriLock) revert URILocked();
+    //     // bytes(_baseURI).length > 32 ? revert() : baseURI = _baseURI;
+    //     _setStringCalldata(_baseURI, _BASE_URI_SLOT);
+    //     emit BaseURISet(_baseURI);
+    // }
     function setBaseURI(string calldata _baseURI) public onlyOwner {
         if (uriLock) revert URILocked();
         // bytes(_baseURI).length > 32 ? revert() : baseURI = _baseURI;
-        _setStringCalldata(_baseURI, _BASE_URI_SLOT);
+        baseURI = _baseURI;
         emit BaseURISet(_baseURI);
     }
 
@@ -130,9 +139,9 @@ abstract contract ImplBase is
     //                           VIEW FX                          //
     ////////////////////////////////////////////////////////////////
 
-    function baseURI() public view returns (string memory) {
-        return _readString(_BASE_URI_SLOT);
-    }
+    // function baseURI() public view returns (string memory) {
+    //     return _readString(_BASE_URI_SLOT);
+    // }
 
     function royaltyInfo(uint256, uint256 salePrice)
         public

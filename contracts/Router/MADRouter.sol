@@ -49,15 +49,15 @@ contract MADRouter is MADRouterBase {
     /// @param collection 721 token address.
     /// @param _to Receiver token address.
     /// @param _amount Num tokens to mint and send.
-    /// @param erc20Token ERC20 token address.
+    /// @param madFeeTokenAddress ERC20 token address.
     function mintTo(
         address collection,
         address _to,
         uint128 _amount,
-        address erc20Token
+        address madFeeTokenAddress
     ) public payable {
         _tokenRender(collection);
-        _handleFees(_FEE_MINT, _amount, erc20Token);
+        _handleFees(uint256(_amount), madFeeTokenAddress, this.feeMintErc20);
         ERC721Basic(collection).mintTo(_to, _amount);
     }
 
@@ -78,13 +78,14 @@ contract MADRouter is MADRouterBase {
     /// @param collection 721 token address.
     /// @param _ids The token IDs of each token to be burnt;
     ///        should be left empty for the `ERC721Minimal` type.
-    /// @param erc20Token ERC20 token address.
-    function burn(address collection, uint128[] memory _ids, address erc20Token)
-        public
-        payable
-    {
+    /// @param madFeeTokenAddress ERC20 token address.
+    function burn(
+        address collection,
+        uint128[] memory _ids,
+        address madFeeTokenAddress
+    ) public payable {
         _tokenRender(collection);
-        _handleFees(_FEE_BURN, _ids.length, erc20Token);
+        _handleFees(_ids.length, madFeeTokenAddress, this.feeMintErc20);
         ERC721Basic(collection).burn(_ids);
     }
 
@@ -113,13 +114,14 @@ contract MADRouter is MADRouterBase {
     /// @dev Function Sighash := 0xa0712d68
     /// @dev collection 721 token address.
     /// @param _amount The amount of tokens to mint.
-    /// @param erc20Token ERC20 token address.
-    function mint(address collection, uint128 _amount, address erc20Token)
-        public
-        payable
-    {
+    /// @param madFeeTokenAddress ERC20 token address.
+    function mint(
+        address collection,
+        uint128 _amount,
+        address madFeeTokenAddress
+    ) public payable {
         _tokenRender(collection);
-        _handleFees(_FEE_MINT, _amount, erc20Token);
+        _handleFees(_amount, madFeeTokenAddress, this.feeMintErc20);
         ERC721Basic(collection).mint(msg.sender, _amount);
     }
 
@@ -151,16 +153,16 @@ contract MADRouter is MADRouterBase {
     /// @param _to Receiver token address.
     /// @param _amount Num tokens to mint and send.
     /// @param _balance Receiver token balance.
-    /// @param erc20Token ERC20 token address.
+    /// @param madFeeTokenAddress ERC20 token address.
     function mintTo(
         address collection,
         address _to,
         uint128 _amount,
         uint128 _balance,
-        address erc20Token
+        address madFeeTokenAddress
     ) public payable {
         _tokenRender(collection);
-        _handleFees(_FEE_MINT, _amount, erc20Token);
+        _handleFees(_amount, madFeeTokenAddress, this.feeMintErc20);
         ERC1155Basic(collection).mintTo(_to, _amount, _balance);
     }
 
@@ -189,17 +191,17 @@ contract MADRouter is MADRouterBase {
     /// @param _to Token receiver address.
     /// @param _ids Receiver token _ids array.
     /// @param _balances Receiver token balances array, length should be =
-    /// @param erc20Token ERC20 token address.
+    /// @param madFeeTokenAddress ERC20 token address.
     /// _ids.length.
     function mintBatchTo(
         address collection,
         address _to,
         uint128[] memory _ids,
         uint128[] memory _balances,
-        address erc20Token
+        address madFeeTokenAddress
     ) public payable {
         _tokenRender(collection);
-        _handleFees(_FEE_MINT, _ids.length, erc20Token);
+        _handleFees(_ids.length, madFeeTokenAddress, this.feeMintErc20);
         ERC1155Basic(collection).mintBatchTo(_to, _ids, _balances);
     }
 
@@ -229,16 +231,16 @@ contract MADRouter is MADRouterBase {
     ///        should be left empty for the `ERC1155Minimal` type.
     /// @param to Array of addresses who own each token.
     /// @param _amount Array of receiver token balances array.
-    /// @param erc20Token ERC20 token address.
+    /// @param madFeeTokenAddress ERC20 token address.
     function burn(
         address collection,
         uint128[] memory _ids,
         address[] memory to,
         uint128[] memory _amount,
-        address erc20Token
+        address madFeeTokenAddress
     ) public payable {
         _tokenRender(collection);
-        _handleFees(_FEE_BURN, _ids.length, erc20Token);
+        _handleFees(_ids.length, madFeeTokenAddress, this.feeMintErc20);
         ERC1155Basic(collection).burn(to, _ids, _amount);
     }
 
@@ -272,16 +274,16 @@ contract MADRouter is MADRouterBase {
     /// @param _ids The token IDs of each token to be burnt;
     ///        should be left empty for the `ERC1155Minimal` type.
     /// @param _balances Array of corresponding token balances to burn.
-    /// @param erc20Token ERC20 token address.
+    /// @param madFeeTokenAddress ERC20 token address.
     function batchBurn(
         address collection,
         address _from,
         uint128[] memory _ids,
         uint128[] memory _balances,
-        address erc20Token
+        address madFeeTokenAddress
     ) public payable {
         _tokenRender(collection);
-        _handleFees(_FEE_BURN, _ids.length, erc20Token);
+        _handleFees(_ids.length, madFeeTokenAddress, this.feeMintErc20);
         ERC1155Basic(collection).burnBatch(_from, _ids, _balances);
     }
 
@@ -309,16 +311,16 @@ contract MADRouter is MADRouterBase {
     /// @param collection 1155 token address.
     /// @param _to Receiver token address.
     /// @param _amount Num tokens to mint and send.
-    /// @param erc20Token ERC20 token address.
+    /// @param madFeeTokenAddress ERC20 token address.
     function mint(
         address collection,
         address _to,
         uint128 _id,
         uint128 _amount,
-        address erc20Token
+        address madFeeTokenAddress
     ) public payable {
         _tokenRender(collection);
-        _handleFees(_FEE_MINT, _amount, erc20Token);
+        _handleFees(_amount, madFeeTokenAddress, this.feeMintErc20);
         ERC1155Basic(collection).mint(_to, _id, _amount);
     }
 }

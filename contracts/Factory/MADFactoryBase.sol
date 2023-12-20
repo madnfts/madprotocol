@@ -7,7 +7,6 @@ import {
     FactoryEventsAndErrorsBase,
     FactoryVerifier
 } from "contracts/Shared/EventsAndErrors.sol";
-import { DCPrevent } from "contracts/lib/security/DCPrevent.sol";
 import { FactoryTypes } from "contracts/Shared/FactoryTypes.sol";
 import { SplitterImpl } from "contracts/Splitter/SplitterImpl.sol";
 import { CREATE3, Bytes32AddressLib } from "contracts/lib/utils/CREATE3.sol";
@@ -20,7 +19,6 @@ abstract contract MADFactoryBase is
     MADBase,
     FactoryEventsAndErrorsBase,
     FactoryVerifier,
-    DCPrevent,
     FeeHandlerFactory
 {
     using FactoryTypes for FactoryTypes.CollectionArgs;
@@ -80,7 +78,7 @@ abstract contract MADFactoryBase is
     function _createCollection(
         FactoryTypes.CreateCollectionParams calldata params,
         address collectionToken
-    ) internal isThisOg returns (address) {
+    ) internal returns (address) {
         if (params.maxSupply == 0) {
             revert ZeroMaxSupply();
         }
@@ -92,10 +90,7 @@ abstract contract MADFactoryBase is
         if (madFeeTokenAddress == ADDRESS_ZERO) {
             _handleFees(feeCreateCollection);
         } else {
-            _handleFees(
-                feeCreateCollectionErc20[madFeeTokenAddress].feeAmount,
-                madFeeTokenAddress
-            );
+            _handleFees(madFeeTokenAddress, this.feeCreateCollectionErc20);
         }
         address deployedCollection = _collectionDeploy(
             params.tokenType,
@@ -139,10 +134,7 @@ abstract contract MADFactoryBase is
         if (madFeeTokenAddress == ADDRESS_ZERO) {
             _handleFees(feeCreateSplitter);
         } else {
-            _handleFees(
-                feeCreateSplitterErc20[madFeeTokenAddress].feeAmount,
-                madFeeTokenAddress
-            );
+            _handleFees(madFeeTokenAddress, this.feeCreateSplitterErc20);
         }
 
         uint256 projectShareParsed =
@@ -376,6 +368,16 @@ abstract contract MADFactoryBase is
             _feeCreateCollectionErc20,
             _feeCreateSplitterErc20,
             madFeeTokenAddress
+        );
+    }
+
+    function invalidateFee(
+        address madFeeTokenAddress,
+        bool invalidateCollectionFee,
+        bool invalidateSplitterFee
+    ) public onlyOwner {
+        _invalidateFee(
+            madFeeTokenAddress, invalidateCollectionFee, invalidateSplitterFee
         );
     }
 

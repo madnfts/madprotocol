@@ -196,18 +196,6 @@ contract TestMintBurnAndTransferERC721_Erc20 is
     //     _doMintTo(mintData, 0xf7760f25); // error WrongPrice();
     // }
 
-    function testPublicMint_RouterAuthorisedRevert() public {
-        uint128 _amountToMint = 1;
-        MintData memory mintData = _setupMint(
-            nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
-        );
-
-        erc20Token.approve(mintData.collectionAddress, _amountToMint);
-
-        vm.expectRevert(0xf56dc29c); // error RouterIsEnabled();
-        IERC721Basic(mintData.collectionAddress).mint(_amountToMint);
-    }
-
     function testMintTo_UnAuthorised() public {
         uint128 _amountToMint = 1;
         MintData memory mintData = _setupMint(
@@ -384,6 +372,10 @@ contract TestMintBurnAndTransferERC721_Erc20 is
         IERC721Basic collection = IERC721Basic(_collectionAddress);
         // ISplitter splitter = ISplitter(_splitterAddress);
 
+        // Turn off router authority
+        vm.prank(_nftMinter);
+        collection.setRouterHasAuthority(false);
+
         // Add Ether to Accounts
         vm.deal(_nftMinter, 20_000 ether);
         erc20Token.mint(_nftMinter, 20_000 ether);
@@ -434,10 +426,6 @@ contract TestMintBurnAndTransferERC721_Erc20 is
 
         vm.prank(mintData.nftMinter, mintData.nftMinter);
         collection.setPublicMintState(_mintState);
-
-        // Turn off router authority
-        vm.prank(mintData.nftMinter);
-        collection.setRouterHasAuthority(false);
 
         uint256 _nftPublicMintPrice =
             mintData.nftPublicMintPrice * mintData.amountToMint;

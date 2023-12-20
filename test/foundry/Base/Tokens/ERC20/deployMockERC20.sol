@@ -2,7 +2,7 @@
 pragma solidity ^0.8.16;
 
 import "test/lib/forge-std/src/Test.sol";
-import { MockERC20 } from "contracts/lib/test/erc20-mock.sol";
+import { MockERC20 } from "test/test-tokens/erc20-mock.sol";
 import { AddressesHelp } from "test/foundry/utils/addressesHelp.sol";
 
 contract DeployERC20 is Test, AddressesHelp {

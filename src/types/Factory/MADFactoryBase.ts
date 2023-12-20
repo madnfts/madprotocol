@@ -25,6 +25,15 @@ import type {
   Listener,
 } from "ethers";
 
+export declare namespace FeeHandlerFactory {
+  export type FeeStruct = { feeAmount: BigNumberish; isValid: boolean };
+
+  export type FeeStructOutput = [feeAmount: bigint, isValid: boolean] & {
+    feeAmount: bigint;
+    isValid: boolean;
+  };
+}
+
 export interface MADFactoryBaseInterface extends Interface {
   getFunction(
     nameOrSignature:
@@ -40,6 +49,7 @@ export interface MADFactoryBaseInterface extends Interface {
       | "feeCreateSplitterErc20"
       | "getDeployedAddress"
       | "getIDsLength"
+      | "invalidateFee"
       | "name"
       | "owner"
       | "recipient"
@@ -113,6 +123,10 @@ export interface MADFactoryBaseInterface extends Interface {
   encodeFunctionData(
     functionFragment: "getIDsLength",
     values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "invalidateFee",
+    values: [AddressLike, boolean, boolean]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
@@ -193,6 +207,10 @@ export interface MADFactoryBaseInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getIDsLength",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "invalidateFee",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
@@ -471,16 +489,16 @@ export interface MADFactoryBase extends BaseContract {
   feeCreateCollection: TypedContractMethod<[], [bigint], "view">;
 
   feeCreateCollectionErc20: TypedContractMethod<
-    [erc20token: AddressLike],
-    [[bigint, boolean] & { feeAmount: bigint; isValid: boolean }],
+    [madFeeTokenAddress: AddressLike],
+    [FeeHandlerFactory.FeeStructOutput],
     "view"
   >;
 
   feeCreateSplitter: TypedContractMethod<[], [bigint], "view">;
 
   feeCreateSplitterErc20: TypedContractMethod<
-    [erc20token: AddressLike],
-    [[bigint, boolean] & { feeAmount: bigint; isValid: boolean }],
+    [madFeeTokenAddress: AddressLike],
+    [FeeHandlerFactory.FeeStructOutput],
     "view"
   >;
 
@@ -491,6 +509,16 @@ export interface MADFactoryBase extends BaseContract {
   >;
 
   getIDsLength: TypedContractMethod<[_user: AddressLike], [bigint], "view">;
+
+  invalidateFee: TypedContractMethod<
+    [
+      madFeeTokenAddress: AddressLike,
+      invalidateCollectionFee: boolean,
+      invalidateSplitterFee: boolean
+    ],
+    [void],
+    "nonpayable"
+  >;
 
   name: TypedContractMethod<[], [string], "view">;
 
@@ -597,8 +625,8 @@ export interface MADFactoryBase extends BaseContract {
   getFunction(
     nameOrSignature: "feeCreateCollectionErc20"
   ): TypedContractMethod<
-    [erc20token: AddressLike],
-    [[bigint, boolean] & { feeAmount: bigint; isValid: boolean }],
+    [madFeeTokenAddress: AddressLike],
+    [FeeHandlerFactory.FeeStructOutput],
     "view"
   >;
   getFunction(
@@ -607,8 +635,8 @@ export interface MADFactoryBase extends BaseContract {
   getFunction(
     nameOrSignature: "feeCreateSplitterErc20"
   ): TypedContractMethod<
-    [erc20token: AddressLike],
-    [[bigint, boolean] & { feeAmount: bigint; isValid: boolean }],
+    [madFeeTokenAddress: AddressLike],
+    [FeeHandlerFactory.FeeStructOutput],
     "view"
   >;
   getFunction(
@@ -621,6 +649,17 @@ export interface MADFactoryBase extends BaseContract {
   getFunction(
     nameOrSignature: "getIDsLength"
   ): TypedContractMethod<[_user: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "invalidateFee"
+  ): TypedContractMethod<
+    [
+      madFeeTokenAddress: AddressLike,
+      invalidateCollectionFee: boolean,
+      invalidateSplitterFee: boolean
+    ],
+    [void],
+    "nonpayable"
+  >;
   getFunction(
     nameOrSignature: "name"
   ): TypedContractMethod<[], [string], "view">;

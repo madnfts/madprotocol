@@ -12,6 +12,7 @@ import type {
 } from "../../common";
 import type {
   BaseContract,
+  BigNumberish,
   BytesLike,
   FunctionFragment,
   Result,
@@ -21,6 +22,15 @@ import type {
   ContractMethod,
   Listener,
 } from "ethers";
+
+export declare namespace FeeHandlerFactory {
+  export type FeeStruct = { feeAmount: BigNumberish; isValid: boolean };
+
+  export type FeeStructOutput = [feeAmount: bigint, isValid: boolean] & {
+    feeAmount: bigint;
+    isValid: boolean;
+  };
+}
 
 export interface FeeHandlerFactoryInterface extends Interface {
   getFunction(
@@ -115,16 +125,16 @@ export interface FeeHandlerFactory extends BaseContract {
   feeCreateCollection: TypedContractMethod<[], [bigint], "view">;
 
   feeCreateCollectionErc20: TypedContractMethod<
-    [erc20token: AddressLike],
-    [[bigint, boolean] & { feeAmount: bigint; isValid: boolean }],
+    [madFeeTokenAddress: AddressLike],
+    [FeeHandlerFactory.FeeStructOutput],
     "view"
   >;
 
   feeCreateSplitter: TypedContractMethod<[], [bigint], "view">;
 
   feeCreateSplitterErc20: TypedContractMethod<
-    [erc20token: AddressLike],
-    [[bigint, boolean] & { feeAmount: bigint; isValid: boolean }],
+    [madFeeTokenAddress: AddressLike],
+    [FeeHandlerFactory.FeeStructOutput],
     "view"
   >;
 
@@ -140,8 +150,8 @@ export interface FeeHandlerFactory extends BaseContract {
   getFunction(
     nameOrSignature: "feeCreateCollectionErc20"
   ): TypedContractMethod<
-    [erc20token: AddressLike],
-    [[bigint, boolean] & { feeAmount: bigint; isValid: boolean }],
+    [madFeeTokenAddress: AddressLike],
+    [FeeHandlerFactory.FeeStructOutput],
     "view"
   >;
   getFunction(
@@ -150,8 +160,8 @@ export interface FeeHandlerFactory extends BaseContract {
   getFunction(
     nameOrSignature: "feeCreateSplitterErc20"
   ): TypedContractMethod<
-    [erc20token: AddressLike],
-    [[bigint, boolean] & { feeAmount: bigint; isValid: boolean }],
+    [madFeeTokenAddress: AddressLike],
+    [FeeHandlerFactory.FeeStructOutput],
     "view"
   >;
   getFunction(

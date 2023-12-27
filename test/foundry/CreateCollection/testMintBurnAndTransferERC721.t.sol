@@ -69,8 +69,10 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
     function testMintTo_DefaultMultiple() public {
         for (uint256 i = 0; i < 10; i++) {
             uint128 _amountToMint = 10;
+            address _nftReceiver =
+                makeAddr(string(abi.encodePacked("NFTReceiver", i)));
             MintData memory mintData =
-                _setupMint(nftMinter, nftReceiver, 0, _amountToMint);
+                _setupMint(nftMinter, _nftReceiver, 0, _amountToMint);
             _doMintTo(mintData, 0);
 
             _checkMint(mintData);

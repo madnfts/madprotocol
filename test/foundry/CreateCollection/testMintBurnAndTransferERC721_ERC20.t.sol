@@ -91,9 +91,11 @@ contract TestMintBurnAndTransferERC721_Erc20 is
 
     function TestPublicMint_DefaultMultiple() public {
         for (uint256 i = 0; i < 10; i++) {
-            uint128 _amountToMint = 10;
+            uint128 _amountToMint = 1;
+            address _nftReceiver =
+                makeAddr(string(abi.encodePacked("NFTReceiver", i)));
             MintData memory mintData = _setupMint(
-                nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
+                nftMinter, _nftReceiver, nftPublicMintPrice, _amountToMint
             );
             _doPublicMint(mintData, true, 0);
             _checkMint(mintData);

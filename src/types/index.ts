@@ -5,7 +5,6 @@
 /* eslint-disable */
 import type * as factory from "./Factory";
 import type * as madTokens from "./MADTokens";
-import type * as marketplace from "./Marketplace";
 import type * as router from "./Router";
 import type * as shared from "./Shared";
 import type * as splitter from "./Splitter";
@@ -14,8 +13,6 @@ import type * as lib from "./lib";
 export type { factory };
 
 export type { madTokens };
-
-export type { marketplace };
 
 export type { router };
 
@@ -79,12 +76,6 @@ export type { ERC1155Basic } from "./MADTokens/ERC1155/ERC1155Basic";
 export { ERC1155Basic__factory } from "./factories/MADTokens/ERC1155/ERC1155Basic__factory";
 export type { ERC721Basic } from "./MADTokens/ERC721/ERC721Basic";
 export { ERC721Basic__factory } from "./factories/MADTokens/ERC721/ERC721Basic__factory";
-export type { MADMarketplace1155 } from "./Marketplace/MADMarketplace1155";
-export { MADMarketplace1155__factory } from "./factories/Marketplace/MADMarketplace1155__factory";
-export type { MADMarketplace721 } from "./Marketplace/MADMarketplace721";
-export { MADMarketplace721__factory } from "./factories/Marketplace/MADMarketplace721__factory";
-export type { MADMarketplaceBase } from "./Marketplace/MADMarketplaceBase";
-export { MADMarketplaceBase__factory } from "./factories/Marketplace/MADMarketplaceBase__factory";
 export type { FeeHandler } from "./Router/FeeHandler";
 export { FeeHandler__factory } from "./factories/Router/FeeHandler__factory";
 export type { MADRouter } from "./Router/MADRouter";

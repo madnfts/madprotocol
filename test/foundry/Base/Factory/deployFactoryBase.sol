@@ -129,7 +129,7 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
 
         vm.prank(_owner);
         _factory.addCollectionType(collectionType, _tokenType);
-        assertEq(_factory.collectionTypes(collectionType), _tokenType);
+        assertEq(_factory.collectionTypes(collectionType), _tokenType, "collectionTypes(collectionType) == _tokenType");
     }
 
     function setRouter(
@@ -145,7 +145,7 @@ contract DeployFactoryBase is Test, FactoryFactory, Helpers {
 
         vm.prank(_owner);
         _factory.setRouter(_routerAddress);
-        assertEq(_factory.router(), _routerAddress);
+        assertEq(_factory.router(), _routerAddress, "router() == _routerAddress");
     }
 
     function setFactoryFees(

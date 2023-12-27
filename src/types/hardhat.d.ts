@@ -122,18 +122,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC721Basic__factory>;
     getContractFactory(
-      name: "MADMarketplace1155",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.MADMarketplace1155__factory>;
-    getContractFactory(
-      name: "MADMarketplace721",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.MADMarketplace721__factory>;
-    getContractFactory(
-      name: "MADMarketplaceBase",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.MADMarketplaceBase__factory>;
-    getContractFactory(
       name: "FeeHandler",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.FeeHandler__factory>;
@@ -318,21 +306,6 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ERC721Basic>;
     getContractAt(
-      name: "MADMarketplace1155",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.MADMarketplace1155>;
-    getContractAt(
-      name: "MADMarketplace721",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.MADMarketplace721>;
-    getContractAt(
-      name: "MADMarketplaceBase",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.MADMarketplaceBase>;
-    getContractAt(
       name: "FeeHandler",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -501,18 +474,6 @@ declare module "hardhat/types/runtime" {
       name: "ERC721Basic",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ERC721Basic>;
-    deployContract(
-      name: "MADMarketplace1155",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.MADMarketplace1155>;
-    deployContract(
-      name: "MADMarketplace721",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.MADMarketplace721>;
-    deployContract(
-      name: "MADMarketplaceBase",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.MADMarketplaceBase>;
     deployContract(
       name: "FeeHandler",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -697,21 +658,6 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ERC721Basic>;
-    deployContract(
-      name: "MADMarketplace1155",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.MADMarketplace1155>;
-    deployContract(
-      name: "MADMarketplace721",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.MADMarketplace721>;
-    deployContract(
-      name: "MADMarketplaceBase",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.MADMarketplaceBase>;
     deployContract(
       name: "FeeHandler",
       args: any[],

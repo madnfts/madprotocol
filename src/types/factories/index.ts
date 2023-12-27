@@ -3,7 +3,6 @@
 /* eslint-disable */
 export * as factory from "./Factory";
 export * as madTokens from "./MADTokens";
-export * as marketplace from "./Marketplace";
 export * as router from "./Router";
 export * as shared from "./Shared";
 export * as splitter from "./Splitter";

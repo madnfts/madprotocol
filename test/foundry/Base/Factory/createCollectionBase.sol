@@ -195,13 +195,13 @@ abstract contract CreateCollectionBase is
         address collectionOwner
     ) internal {
         // baseURI()
-        assertEq(collection.baseURI(), params.uri);
+        assertEq(collection.baseURI(), params.uri, "Incorrect baseURI");
 
         // isApprovedForAll(address, address)
         assertFalse(
             collection.isApprovedForAll(
                 makeAddr("WorldAddress"), makeAddr("HelloAddress")
-            )
+            ), "Incorrect isApprovedForAll"
         );
 
         // totalSupply()

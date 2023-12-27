@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.16;
+pragma solidity 0.8.22;
 
 import "test/lib/forge-std/src/Test.sol";
 import { MockERC20 } from "test/test-tokens/erc20-mock.sol";
@@ -47,7 +47,7 @@ contract DeployERC20 is Test, AddressesHelp {
         // emit log_named_address("ercHolder", ercHolder);
         // emit log_named_address("owner", owner);
 
-        assert(_mockERC20.balanceOf(ercHolder) == amountToMint);
-        assert(_mockERC20.balanceOf(owner) == amountToMint);
+        assertTrue(_mockERC20.balanceOf(ercHolder) == amountToMint, "_mockERC20.balanceOf(ercHolder) == amountToMint :: do not match");
+        assertTrue(_mockERC20.balanceOf(owner) == amountToMint, "_mockERC20.balanceOf(owner) == amountToMint :: do not match");
     }
 }

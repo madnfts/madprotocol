@@ -72,9 +72,7 @@ contract DeployRouterBase is
         vm.prank(_owner);
 
         routerAddress = createRouter(
-            _ercType,
             _factoryVerifier,
-            _paymentTokenAddressRouter,
             _recipientRouter
         );
 
@@ -84,7 +82,6 @@ contract DeployRouterBase is
             madRouter,
             _owner,
             _recipientRouter,
-            _paymentTokenAddressRouter,
             _factoryVerifier
         );
     }
@@ -93,7 +90,6 @@ contract DeployRouterBase is
         IRouter _router,
         address _owner,
         address _recipientRouter,
-        address _paymentTokenAddressRouter,
         FactoryVerifier _factoryVerifier
     ) public {
         if (address(_router) != address(1)) {

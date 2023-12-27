@@ -24,7 +24,7 @@ abstract contract AddressesHelp is Test, Enums {
         setAddressFunc(newAddress);
 
         // Check that the address is set correctly
-        assertTrue(newAddress == expectedAddressFunction());
+        assertTrue(newAddress == expectedAddressFunction(), "newAddress == expectedAddressFunction() :: do not match");
 
         // Reset the address to the original address if not address(0)
         if (originalAddress != address(0)) {

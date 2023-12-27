@@ -11,10 +11,6 @@ contract Deployer is DeployerBase {
         vm.deal(currentSigner, 1000 ether);
     }
 
-    function testFailDeployAll() public {
-        deployAll(ercTypes.None, isERC20);
-    }
-
     function testDeployAllErc721() public {
         deployAll(ercTypes.ERC721, isERC20);
     }

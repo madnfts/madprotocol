@@ -181,15 +181,6 @@ abstract contract ImplBase is
         }
     }
 
-    function _setStringCalldata(string calldata _string, bytes32 _slot)
-        internal
-    {
-        assembly {
-            if lt(0x1f, _string.length) { invalid() }
-            sstore(_slot, or(calldataload(0x44), shl(0x01, calldataload(0x24))))
-        }
-    }
-
     function _setStringMemory(string memory _string, bytes32 _slot) internal {
         assembly {
             let len := mload(_string)

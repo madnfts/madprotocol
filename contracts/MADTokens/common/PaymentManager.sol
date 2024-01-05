@@ -86,7 +86,7 @@ abstract contract PaymentManager {
     /// @notice Owner Withdraw ERC20 Tokens.
     /// @dev If any ERC20 Tokens are trapped in the contract, owner can withdraw
     /// it to the splitter.
-    function _withdrawERC20(address _erc20) internal {
+    function _withdrawERC20(address _erc20) internal _isZeroAddr(_erc20) {
         IERC20 _token = IERC20(_erc20);
         uint256 balance = _token.balanceOf(address(this));
         SafeTransferLib.safeTransfer(_token, address(splitter), balance);

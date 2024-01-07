@@ -7,14 +7,20 @@ pragma solidity 0.8.22;
 // (https://etherscan.io/address/0x0faed6ddef3773f3ee5828383aaeeaca2a94564a#code)
 
 abstract contract ERC2981 {
+    // event RoyaltyRecipientSet(address indexed newRecipient);
+    // event RoyaltyFeeSet(uint256 indexed newRoyaltyFee);
+
     /// @dev one global fee for all royalties.
     uint256 public immutable _royaltyFee;
 
     /// @dev one global recipient for all royalties.
-    // address internal _royaltyRecipient;
+    address internal _royaltyRecipient;
 
-    constructor(uint256 royaltyFee) {
+    constructor(uint256 royaltyFee, address royaltyRecipient) {
         _royaltyFee = royaltyFee;
+        _royaltyRecipient = royaltyRecipient;
+        // emit RoyaltyFeeSet(royaltyFee);
+        // emit RoyaltyRecipientSet(royaltyRecipient);
     }
 
     // solhint-disable-line no-unused-vars
@@ -24,10 +30,10 @@ abstract contract ERC2981 {
         virtual
         returns (address receiver, uint256 royaltyAmount);
 
-    // {
-    // receiver = _royaltyRecipient;
-    // royaltyAmount = (salePrice * royaltyFee) / 10000;
-    // }
+    {
+        receiver = _royaltyRecipient;
+        royaltyAmount = (salePrice * _royaltyFee) / 10000;
+    }
 
     function supportsInterface(bytes4 interfaceId)
         public

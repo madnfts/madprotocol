@@ -62,7 +62,7 @@ abstract contract ImplBase is
         /*  */
         TwoFactor(args._router, args._owner)
         PaymentManager(args._splitter, args._erc20, args._price)
-        ERC2981(uint256(args._royaltyPercentage))
+        ERC2981(uint256(args._royaltyPercentage), args._splitter)
     {
         if (args._maxSupply > _MAXSUPPLY_BOUND) revert MaxSupplyBoundExceeded();
 
@@ -80,12 +80,6 @@ abstract contract ImplBase is
     //                         OWNER FX                           //
     ////////////////////////////////////////////////////////////////
 
-    // function setBaseURI(string calldata _baseURI) public onlyOwner {
-    //     if (uriLock) revert URILocked();
-    //     // bytes(_baseURI).length > 32 ? revert() : baseURI = _baseURI;
-    //     _setStringCalldata(_baseURI, _BASE_URI_SLOT);
-    //     emit BaseURISet(_baseURI);
-    // }
     function setBaseURI(string calldata _baseURI) public onlyOwner {
         if (uriLock) revert URILocked();
         // bytes(_baseURI).length > 32 ? revert() : baseURI = _baseURI;
@@ -135,24 +129,7 @@ abstract contract ImplBase is
         _withdrawERC20(_erc20);
     }
 
-    ////////////////////////////////////////////////////////////////
-    //                           VIEW FX                          //
-    ////////////////////////////////////////////////////////////////
-
-    // function baseURI() public view returns (string memory) {
-    //     return _readString(_BASE_URI_SLOT);
-    // }
-
-    function royaltyInfo(uint256, uint256 salePrice)
-        public
-        view
-        virtual
-        override(ERC2981)
-        returns (address receiver, uint256 royaltyAmount)
-    {
-        receiver = payable(splitter);
-        royaltyAmount = (salePrice * _royaltyFee) / 10_000;
-    }
+ 
 
     ////////////////////////////////////////////////////////////////
     //                     INTERNAL FUNCTIONS                     //

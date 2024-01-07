@@ -28,12 +28,11 @@ abstract contract ERC2981 {
         public
         view
         virtual
-        returns (address receiver, uint256 royaltyAmount);
-
-    {
-        receiver = _royaltyRecipient;
-        royaltyAmount = (salePrice * _royaltyFee) / 10000;
-    }
+        returns (address receiver, uint256 royaltyAmount)
+        {
+            receiver = _royaltyRecipient;
+            royaltyAmount = (salePrice * _royaltyFee) / 10000;
+        }
 
     function supportsInterface(bytes4 interfaceId)
         public

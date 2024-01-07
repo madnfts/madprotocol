@@ -3,7 +3,6 @@
 pragma solidity 0.8.22;
 
 import { FactoryVerifier } from "contracts/lib/auth/FactoryVerifier.sol";
-import { IERC721, IERC1155 } from "contracts/Shared/MarketplaceTypes.sol";
 
 interface EventsAndErrorsBase {
     event PaymentTokenUpdated(address indexed newPaymentToken);

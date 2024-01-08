@@ -47,7 +47,13 @@ contract DeployERC20 is Test, AddressesHelp {
         // emit log_named_address("ercHolder", ercHolder);
         // emit log_named_address("owner", owner);
 
-        assertTrue(_mockERC20.balanceOf(ercHolder) == amountToMint, "_mockERC20.balanceOf(ercHolder) == amountToMint :: do not match");
-        assertTrue(_mockERC20.balanceOf(owner) == amountToMint, "_mockERC20.balanceOf(owner) == amountToMint :: do not match");
+        assertTrue(
+            _mockERC20.balanceOf(ercHolder) == amountToMint,
+            "_mockERC20.balanceOf(ercHolder) == amountToMint :: do not match"
+        );
+        assertTrue(
+            _mockERC20.balanceOf(owner) == amountToMint,
+            "_mockERC20.balanceOf(owner) == amountToMint :: do not match"
+        );
     }
 }

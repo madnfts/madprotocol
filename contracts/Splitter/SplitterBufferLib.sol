@@ -3,8 +3,15 @@
 pragma solidity 0.8.22;
 
 library SplitterBufferLib {
-    /// @dev Builds payees dynamic sized array buffer for `createSplitter`
-    /// cases.
+    /**
+     * @notice Payees buffer, an internal view library function.
+     * @dev Builds payees dynamic sized array buffer for `createSplitter`cases.
+     * @param _amb The amb address.
+     * @param _project The project address.
+     * @return memOffset List of addresses.
+     * @custom:signature payeesBuffer(address,address)
+     * @custom:selector 0x3c5e46ec
+     */
     function payeesBuffer(address _amb, address _project)
         internal
         view
@@ -32,8 +39,15 @@ library SplitterBufferLib {
         }
     }
 
-    /// @dev Builds shares dynamic sized array buffer for `createSplitter`
-    /// cases.
+    /**
+     * @notice Shares buffer, an internal pure library function.
+     * @dev Builds shares dynamic sized array buffer for `createSplitter` cases.
+     * @param _ambassadorShare The ambassador share (uint256).
+     * @param _projectShare The project share (uint256).
+     * @return memOffset List of uint256s.
+     * @custom:signature sharesBuffer(uint256,uint256)
+     * @custom:selector 0x7f571c29
+     */
     function sharesBuffer(uint256 _ambassadorShare, uint256 _projectShare)
         internal
         pure

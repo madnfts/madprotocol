@@ -13,6 +13,5 @@ contract RouterFactory is Enums {
         address _recipientRouter
     ) public returns (address newRouter) {
         return address(new MADRouter(_factoryVerifier, _recipientRouter));
-
     }
 }

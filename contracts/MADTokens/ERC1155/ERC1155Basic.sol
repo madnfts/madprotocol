@@ -50,7 +50,17 @@ contract ERC1155Basic is ERC1155, ImplBase {
         _mint(to, _id, uint256(amount), "");
     }
 
-    /// @dev Transfer event emitted by parent ERC1155 contract.
+    /**
+     * @notice Mint batch to, a public state-modifying function.
+     * @notice Accepts ether.
+     * @dev Has modifiers: authorised.
+     * @dev Transfer event emitted by parent ERC1155 contract.
+     * @param to The to address.
+     * @param ids List of uint128s.
+     * @param amounts List of uint128s.
+     * @custom:signature mintBatchTo(address,uint128[],uint128[])
+     * @custom:selector 0x685d2ca5
+     */
     function mintBatchTo(
         address to,
         uint128[] memory ids,
@@ -65,7 +75,17 @@ contract ERC1155Basic is ERC1155, ImplBase {
         _batchMint(to, _ids, _amounts, "");
     }
 
-    /// @dev Transfer events emitted by parent ERC1155 contract.
+    /**
+     * @notice Burn, a public state-modifying function.
+     * @notice Accepts ether.
+     * @dev Has modifiers: authorised.
+     * @dev Transfer event emitted by parent ERC1155 contract.
+     * @param from List of addresses.
+     * @param ids List of uint128s.
+     * @param balances List of uint128s.
+     * @custom:signature burn(address[],uint128[],uint128[])
+     * @custom:selector 0xa4ddb2a3
+     */
     function burn(
         address[] memory from,
         uint128[] memory ids,
@@ -84,7 +104,17 @@ contract ERC1155Basic is ERC1155, ImplBase {
         }
     }
 
-    /// @dev Transfer event emitted by parent ERC1155 contract.
+    /**
+     * @notice Burn batch, a public state-modifying function.
+     * @notice Accepts ether.
+     * @dev Has modifiers: authorised.
+     * @dev Transfer event emitted by parent ERC1155 contract.
+     * @param from The from address.
+     * @param ids List of uint128s.
+     * @param amounts List of uint128s.
+     * @custom:signature burnBatch(address,uint128[],uint128[])
+     * @custom:selector 0x7cc22f70
+     */
     function burnBatch(
         address from,
         uint128[] memory ids,
@@ -104,11 +134,31 @@ contract ERC1155Basic is ERC1155, ImplBase {
     //                          PUBLIC FX                         //
     ////////////////////////////////////////////////////////////////
 
-    /// @dev Transfer events emitted by parent ERC1155 contract.
+    /**
+     * @notice Mint, a public state-modifying function.
+     * @notice Accepts ether.
+     * @dev Has modifiers: routerOrPublic.
+     * @dev Transfer event emitted by parent ERC1155 contract.
+     * @param _id The id (uint128).
+     * @param amount The amount (uint128).
+     * @custom:signature mint(uint128,uint128)
+     * @custom:selector 0xdfe7a8e5
+     */
     function mint(uint128 _id, uint128 amount) public payable routerOrPublic {
         _publicMint(msg.sender, _id, amount, msg.sender);
     }
 
+    /**
+     * @notice Mint, an external state-modifying function.
+     * @notice Accepts ether.
+     * @dev Has modifiers: routerOrPublic.
+     * @dev Transfer event emitted by parent ERC1155 contract.
+     * @param _to The to address.
+     * @param _id The id (uint128).
+     * @param amount The amount (uint128).
+     * @custom:signature mint(address,uint128,uint128)
+     * @custom:selector 0x97622870
+     */
     function mint(address _to, uint128 _id, uint128 amount)
         external
         payable
@@ -117,6 +167,15 @@ contract ERC1155Basic is ERC1155, ImplBase {
         _publicMint(_to, _id, amount, _to);
     }
 
+    /**
+     * @notice Public mint, a private state-modifying function.
+     * @param to The to address.
+     * @param _id The id (uint128).
+     * @param amount The amount (uint128).
+     * @param _minter The minter address.
+     * @custom:signature _publicMint(address,uint128,uint128,address)
+     * @custom:selector 0xb255074f
+     */
     function _publicMint(
         address to,
         uint128 _id,
@@ -127,7 +186,17 @@ contract ERC1155Basic is ERC1155, ImplBase {
         mintTo(to, _id, amount);
     }
 
-    /// @dev Transfer event emitted by parent ERC1155 contract.
+    /**
+     * @notice Mint batch, an external state-modifying function.
+     * @notice Accepts ether.
+     * @dev Has modifiers: routerOrPublic.
+     * @dev Transfer event emitted by parent ERC1155 contract.
+     * @param _to The to address.
+     * @param ids List of uint128s.
+     * @param amounts List of uint128s.
+     * @custom:signature mintBatch(address,uint128[],uint128[])
+     * @custom:selector 0x2c8701a4
+     */
     function mintBatch(
         address _to,
         uint128[] memory ids,
@@ -136,6 +205,14 @@ contract ERC1155Basic is ERC1155, ImplBase {
         _publicMintBatch(_to, ids, amounts);
     }
 
+    /**
+     * @notice Public mint batch, a private state-modifying function.
+     * @param _to The to address.
+     * @param ids List of uint128s.
+     * @param amounts List of uint128s.
+     * @custom:signature _publicMintBatch(address,uint128[],uint128[])
+     * @custom:selector 0xb4f59617
+     */
     function _publicMintBatch(
         address _to,
         uint128[] memory ids,
@@ -147,6 +224,13 @@ contract ERC1155Basic is ERC1155, ImplBase {
         mintBatchTo(_to, ids, amounts);
     }
 
+    /**
+     * @notice Sum amounts, a private pure function.
+     * @param amounts List of uint128 amounts.
+     * @return result An uint256 value.
+     * @custom:signature _sumAmounts(uint128[])
+     * @custom:selector 0x05b479ea
+     */
     function _sumAmounts(uint128[] calldata amounts)
         private
         pure
@@ -173,6 +257,13 @@ contract ERC1155Basic is ERC1155, ImplBase {
     //                           VIEW FX                          //
     ////////////////////////////////////////////////////////////////
 
+    /**
+     * @notice Uri, a public view function.
+     * @param id The id (uint256).
+     * @return string Result of uri.
+     * @custom:signature uri(uint256)
+     * @custom:selector 0x0e89341c
+     */
     function uri(uint256 id)
         public
         view
@@ -190,10 +281,24 @@ contract ERC1155Basic is ERC1155, ImplBase {
         return string(abi.encodePacked(baseURI, Strings.toString(id), ".json"));
     }
 
+    /**
+     * @notice Live balance, a public view function.
+     * @param id The id (uint256).
+     * @return uint256 Result of liveBalance.
+     * @custom:signature liveBalance(uint256)
+     * @custom:selector 0x1a759141
+     */
     function liveBalance(uint256 id) public view returns (uint256) {
         return _balanceRegistrar[id] & _SR_UPPERBITS;
     }
 
+    /**
+     * @notice Balance count, a public view function.
+     * @param id The id (uint256).
+     * @return uint256 Result of balanceCount.
+     * @custom:signature balanceCount(uint256)
+     * @custom:selector 0x42abcd66
+     */
     function balanceCount(uint256 id) public view returns (uint256) {
         return _balanceRegistrar[id] >> _MINTCOUNT_BITPOS;
     }
@@ -202,6 +307,13 @@ contract ERC1155Basic is ERC1155, ImplBase {
     //                     REQUIRED OVERRIDES                     //
     ////////////////////////////////////////////////////////////////
 
+    /**
+     * @notice Before token mint, an internal state-modifying function.
+     * @param id The id (uint256).
+     * @param amount The amount (uint256).
+     * @custom:signature _beforeTokenMint(uint256,uint256)
+     * @custom:selector 0xf2c5b6ef
+     */
     function _beforeTokenMint(uint256 id, uint256 amount)
         internal
         virtual
@@ -233,6 +345,13 @@ contract ERC1155Basic is ERC1155, ImplBase {
         }
     }
 
+    /**
+     * @notice Before token batch mint, an internal state-modifying function.
+     * @param ids List of uint256s.
+     * @param amounts List of uint256s.
+     * @custom:signature _beforeTokenBatchMint(uint256[],uint256[])
+     * @custom:selector 0x456aa33c
+     */
     function _beforeTokenBatchMint(
         uint256[] memory ids,
         uint256[] memory amounts
@@ -272,6 +391,13 @@ contract ERC1155Basic is ERC1155, ImplBase {
         }
     }
 
+    /**
+     * @notice Before token burn, an internal state-modifying function.
+     * @param id The id (uint256).
+     * @param amount The amount (uint256).
+     * @custom:signature _beforeTokenBurn(uint256,uint256)
+     * @custom:selector 0xd703ad60
+     */
     function _beforeTokenBurn(uint256 id, uint256 amount)
         internal
         virtual
@@ -292,6 +418,13 @@ contract ERC1155Basic is ERC1155, ImplBase {
         }
     }
 
+    /**
+     * @notice Before token batch burn, an internal state-modifying function.
+     * @param ids List of uint256s.
+     * @param amounts List of uint256s.
+     * @custom:signature _beforeTokenBatchBurn(uint256[],uint256[])
+     * @custom:selector 0x5cf7a560
+     */
     function _beforeTokenBatchBurn(
         uint256[] memory ids,
         uint256[] memory amounts
@@ -324,6 +457,13 @@ contract ERC1155Basic is ERC1155, ImplBase {
         }
     }
 
+    /**
+     * @notice Supports interface, a public pure function.
+     * @param interfaceId The interface id (bytes4).
+     * @return bool Result of supportsInterface.
+     * @custom:signature supportsInterface(bytes4)
+     * @custom:selector 0x01ffc9a7
+     */
     function supportsInterface(bytes4 interfaceId)
         public
         pure

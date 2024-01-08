@@ -45,9 +45,17 @@ contract ERC721Basic is ERC721, ImplBase {
     //                       OWNER MINTING                        //
     ////////////////////////////////////////////////////////////////
 
-    /// @dev Transfer event emitted by parent ERC721 contract.
-    /// @dev Function Sighash := 0x438b1b4b
-    /// @dev Loop runs out of gas before overflowing.
+    /**
+     * @notice Mint to, a public state-modifying function.
+     * @notice Accepts ether.
+     * @dev Has modifiers: authorised.
+     * @dev Transfer event emitted by parent ERC721 contract.
+     * @dev Loop runs out of gas before overflowing.
+     * @param to The to address.
+     * @param amount The amount (uint128).
+     * @custom:signature mintTo(address,uint128)
+     * @custom:selector 0xa7fcf7b5
+     */
     function mintTo(address to, uint128 amount) public payable authorised {
         _hasReachedMax(uint256(amount));
         (uint256 curId, uint256 endId) = _incrementCounter(uint256(amount));
@@ -61,26 +69,46 @@ contract ERC721Basic is ERC721, ImplBase {
     //                          PUBLIC FX                         //
     ////////////////////////////////////////////////////////////////
 
-    /// @notice public mint function if madRouter is not authorised.
-    /// This will open up public minting to any contract or EOA if the owner has
-    /// disabled the authorisation for the router.
-    /// Otherwise, Mad Protocol will handle the public minting.
-    /// @dev Transfer event emitted by parent ERC721 contract.
-    /// @dev Function Sighash := 0xa0712d68
-    /// @param amount The amount of tokens to mint.
+    /**
+     * @notice Mint, a public state-modifying function.
+     * @notice Accepts ether.
+     * @notice public mint function if madRouter is not authorised.
+     * This will open up public minting to any contract or EOA if the owner
+     * has
+     * disabled the authorisation for the router.
+     * Otherwise, Mad Protocol will handle the public minting.
+     * @dev Transfer event emitted by parent ERC721 contract.
+     * @dev Has modifiers: routerOrPublic.
+     * @param amount The amount of tokens to mint.(uint128).
+     * @custom:signature mint(uint128)
+     * @custom:selector 0x69d3e20e
+     */
     function mint(uint128 amount) public payable routerOrPublic {
         _publicMint(msg.sender, amount);
     }
 
-    /// @notice public mint function if madRouter is authorised.
-    /// @dev Transfer event emitted by parent ERC721 contract.
-    /// @dev Function Sighash := 0xbe29184f
-    /// @param to The address to mint to.
-    /// @param amount The amount of tokens to mint.
+    /**
+     * @notice Mint, an external state-modifying function.
+     * @notice Accepts ether.
+     * @notice public mint function if madRouter is authorised.
+     * @dev Transfer event emitted by parent ERC721 contract.
+     * @dev Has modifiers: routerOrPublic.
+     *  @param to The address to mint to.
+     * @param amount The amount of tokens to mint.
+     * @custom:signature mint(address,uint128)
+     * @custom:selector 0xbe29184f
+     */
     function mint(address to, uint128 amount) external payable routerOrPublic {
         _publicMint(to, amount);
     }
 
+    /**
+     * @notice Public mint, a private state-modifying function.
+     * @param _minter The minter address.
+     * @param amount The amount (uint128).
+     * @custom:signature _publicMint(address,uint128)
+     * @custom:selector 0xda1cbcbd
+     */
     function _publicMint(address _minter, uint128 amount) private {
         _hasReachedMax(uint256(amount));
         _preparePublicMint(uint256(amount), _minter);
@@ -91,8 +119,14 @@ contract ERC721Basic is ERC721, ImplBase {
         }
     }
 
-    /// @dev Transfer event emitted by parent ERC721 contract.
-    /// @dev Function Sighash := 0x362c0cb5
+    /**
+     * @notice Burn, an external state-modifying function.
+     * @notice Accepts ether.
+     * @dev Transfer event emitted by parent ERC721 contract.
+     * @param ids List of uint128s.
+     * @custom:signature burn(uint128[])
+     * @custom:selector 0x40475c16
+     */
     function burn(uint128[] calldata ids) external payable {
         uint256 len = ids.length;
         _decSupply(len);
@@ -106,16 +140,34 @@ contract ERC721Basic is ERC721, ImplBase {
     //                           VIEW FX                          //
     ////////////////////////////////////////////////////////////////
 
+    /**
+     * @notice Total supply, a public view function.
+     * @return uint256 Result of totalSupply.
+     * @custom:signature totalSupply()
+     * @custom:selector 0x18160ddd
+     */
     function totalSupply() public view returns (uint256) {
         return liveSupply();
     }
 
+    /**
+     * @notice Live supply, a public view function.
+     * @return _liveSupply An uint256 value.
+     * @custom:signature liveSupply()
+     * @custom:selector 0xcb4f1c18
+     */
     function liveSupply() public view returns (uint256 _liveSupply) {
         assembly {
             _liveSupply := and(_SR_UPPERBITS, sload(_supplyRegistrar.slot))
         }
     }
 
+    /**
+     * @notice Mint count, a public view function.
+     * @return _mintCount An uint256 value.
+     * @custom:signature mintCount()
+     * @custom:selector 0x9659867e
+     */
     function mintCount() public view returns (uint256 _mintCount) {
         assembly {
             _mintCount := shr(_MINTCOUNT_BITPOS, sload(_supplyRegistrar.slot))
@@ -126,6 +178,12 @@ contract ERC721Basic is ERC721, ImplBase {
     //                     PRIVATE FUNCTIONS                     //
     ////////////////////////////////////////////////////////////////
 
+    /**
+     * @notice Has reached max, a private view function.
+     * @param _amount The amount (uint256).
+     * @custom:signature _hasReachedMax(uint256)
+     * @custom:selector 0x9b726b8b
+     */
     function _hasReachedMax(uint256 _amount) private view {
         uint256 _maxSupply = maxSupply;
         assembly {
@@ -144,6 +202,14 @@ contract ERC721Basic is ERC721, ImplBase {
         }
     }
 
+    /**
+     * @notice Increment counter, a private state-modifying function.
+     * @param _amount The amount (uint256).
+     * @return curId An uint256 value.
+     * @return endId An uint256 value.
+     * @custom:signature _incrementCounter(uint256)
+     * @custom:selector 0xefa21954
+     */
     function _incrementCounter(uint256 _amount)
         private
         returns (uint256 curId, uint256 endId)
@@ -167,6 +233,12 @@ contract ERC721Basic is ERC721, ImplBase {
         }
     }
 
+    /**
+     * @notice Dec supply, a private state-modifying function.
+     * @param _amount The amount (uint256).
+     * @custom:signature _decSupply(uint256)
+     * @custom:selector 0xbc133549
+     */
     function _decSupply(uint256 _amount) private {
         assembly {
             let _liveSupply := and(_SR_UPPERBITS, sload(_supplyRegistrar.slot))
@@ -185,6 +257,13 @@ contract ERC721Basic is ERC721, ImplBase {
     //                     OVERRIDES                     //
     ////////////////////////////////////////////////////////////////
 
+    /**
+     * @notice Token URI, a public view function.
+     * @param id The id (uint256).
+     * @return string Result of tokenURI.
+     * @custom:signature tokenURI(uint256)
+     * @custom:selector 0xc87b56dd
+     */
     function tokenURI(uint256 id)
         public
         view
@@ -197,6 +276,12 @@ contract ERC721Basic is ERC721, ImplBase {
         return string(abi.encodePacked(baseURI, Strings.toString(id), ".json"));
     }
 
+    /**
+     * @notice Name, a public view function.
+     * @return string Result of name.
+     * @custom:signature name()
+     * @custom:selector 0x06fdde03
+     */
     function name()
         public
         view
@@ -207,6 +292,12 @@ contract ERC721Basic is ERC721, ImplBase {
         return _readString(_NAME_SLOT);
     }
 
+    /**
+     * @notice Symbol, a public view function.
+     * @return string Result of symbol.
+     * @custom:signature symbol()
+     * @custom:selector 0x95d89b41
+     */
     function symbol()
         public
         view
@@ -217,6 +308,13 @@ contract ERC721Basic is ERC721, ImplBase {
         return _readString(_SYMBOL_SLOT);
     }
 
+    /**
+     * @notice Supports interface, a public pure function.
+     * @param interfaceId The interface id (bytes4).
+     * @return bool Result of supportsInterface.
+     * @custom:signature supportsInterface(bytes4)
+     * @custom:selector 0x01ffc9a7
+     */
     function supportsInterface(bytes4 interfaceId)
         public
         pure

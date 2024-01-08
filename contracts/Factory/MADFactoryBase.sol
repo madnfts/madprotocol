@@ -65,7 +65,7 @@ abstract contract MADFactoryBase is
     /// @dev Instance of `MADRouter` being passed as parameter of collection's
     /// constructor.
     address public router;
-    address public ADDRESS_ZERO = address(0);
+    address public constant ADDRESS_ZERO = address(0);
 
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
@@ -75,6 +75,14 @@ abstract contract MADFactoryBase is
         setRecipient(_recipient);
     }
 
+    /**
+     * @notice Create collection, an internal state-modifying function.
+     * @param params The params (CreateCollectionParams).
+     * @param collectionToken The collection token address.
+     * @return address Result of _createCollection.
+     * @custom:signature _createCollection(address,address)
+     * @custom:selector 0x279bd0e5
+     */
     function _createCollection(
         FactoryTypes.CreateCollectionParams calldata params,
         address collectionToken
@@ -126,6 +134,13 @@ abstract contract MADFactoryBase is
     //                           HELPERS                          //
     ///////////////////////////////////////////////////////////////
 
+    /**
+     * @notice Create splitter, an internal state-modifying function.
+     * @param params The params (CreateSplitterParams).
+     * @param _flag The flag (uint256).
+     * @custom:signature _createSplitter(address,uint256)
+     * @custom:selector 0x7e308ce4
+     */
     function _createSplitter(
         FactoryTypes.CreateSplitterParams calldata params,
         uint256 _flag
@@ -174,6 +189,15 @@ abstract contract MADFactoryBase is
         emit SplitterCreated(msg.sender, _shares, _payees, splitter, _flag);
     }
 
+    /**
+     * @notice Collection deploy, an internal state-modifying function.
+     * @param _tokenType The token type (uint8).
+     * @param _tokenSalt The token salt (bytes32).
+     * @param _args The args (CollectionArgs).
+     * @return deployed An address value.
+     * @custom:signature _collectionDeploy(uint8,bytes32,address)
+     * @custom:selector 0x29eb98ce
+     */
     function _collectionDeploy(
         uint8 _tokenType,
         bytes32 _tokenSalt,
@@ -190,6 +214,15 @@ abstract contract MADFactoryBase is
         );
     }
 
+    /**
+     * @notice Splitter deploy, an internal state-modifying function.
+     * @param _salt The salt (bytes32).
+     * @param _payees List of addresses.
+     * @param _shares List of uint256s.
+     * @return deployed An address value.
+     * @custom:signature _splitterDeploy(bytes32,address[],uint256[])
+     * @custom:selector 0x9b7300e0
+     */
     function _splitterDeploy(
         bytes32 _salt,
         address[] memory _payees,
@@ -204,17 +237,30 @@ abstract contract MADFactoryBase is
         );
     }
 
-    /// @notice Everything in storage can be fetch through the
-    /// getters natively provided by all public mappings.
-    /// @dev This public getter serves as a hook to ease frontend
-    /// fetching whilst estimating user's collectionId indexes.
-
-    /// @dev Function Sighash := 0x8691fe46
+    /**
+     * @notice Get ids length I, a public view function.
+     * @notice Everything in storage can be fetch through the
+     * getters natively provided by all public mappings.
+     * @dev This public getter serves as a hook to ease frontend
+     * fetching whilst estimating user's collectionId indexes.
+     * @param _user The user address.
+     * @return uint256 Result of getIDsLength.
+     * @custom:signature getIDsLength(address)
+     * @custom:selector 0x8691fe46
+     */
     function getIDsLength(address _user) public view returns (uint256) {
         return userTokens[_user].length;
     }
 
     /// @inheritdoc FactoryVerifier
+    /**
+     * @notice Creator auth, an external state-modifying function.
+     * @param _token The token address.
+     * @param _user The user address.
+     * @return stdout A bool value.
+     * @custom:signature creatorAuth(address,address)
+     * @custom:selector 0x76de0f3d
+     */
     function creatorAuth(address _token, address _user)
         external
         view
@@ -233,9 +279,14 @@ abstract contract MADFactoryBase is
         }
     }
 
-    /// @dev Reverts if provided share is greater
-    /// than 1000 or does not fit the tick (i.e., 25).
-    /// @dev Function Sighash := 0xe04dc3ca
+    /**
+     * @notice Royalty locker, an internal pure function.
+     * @dev Reverts if provided share is greater
+     * than 1000 or does not fit the tick (i.e., 25).
+     * @param _share The share (uint96).
+     * @custom:signature _royaltyLocker(uint96)
+     * @custom:selector 0xe04dc3ca
+     */
     function _royaltyLocker(uint96 _share) internal pure {
         assembly {
             // (_share > 1000) || (_share % 25 != 0)
@@ -246,7 +297,13 @@ abstract contract MADFactoryBase is
         }
     }
 
-    /// @dev Function Sighash := 0x485a1cff
+    /**
+     * @notice Limiter, an internal view function.
+     * @param _tokenType The token type (uint8).
+     * @param _splitter The splitter address.
+     * @custom:signature _limiter(uint8,address)
+     * @custom:selector 0x485a1cff
+     */
     function _limiter(uint8 _tokenType, address _splitter) internal view {
         bool isValid = splitterInfo[msg.sender][_splitter].valid;
         if (!isValid) revert InvalidSplitter();
@@ -262,6 +319,12 @@ abstract contract MADFactoryBase is
         }
     }
 
+    /**
+     * @notice Is zero addr, a private pure function.
+     * @param _addr The addr address.
+     * @custom:signature _isZeroAddr(address)
+     * @custom:selector 0x13e92334
+     */
     function _isZeroAddr(address _addr) private pure {
         assembly {
             if iszero(_addr) {
@@ -272,11 +335,15 @@ abstract contract MADFactoryBase is
         }
     }
 
-    /// @notice Private view helper that checks an user against `userTokens`
-    /// storage slot.
-    /// @dev Function Sighash := 0xbe749257
-    /// @dev `creatorAuth` method extension.
-    /// @return _stdout := 1 as boolean standard output.
+    /**
+     * @notice Private view helper that checks an user against `userTokens`
+     * storage slot.
+     * @dev Function Sighash := 0xbe749257
+     * @dev `creatorAuth` method extension.
+     * @return _stdout := 1 as boolean standard output.
+     * @custom:signature _userRender(address)
+     * @custom:selector 0xbe749257
+     */
     function _userRender(address _user) private view returns (bool _stdout) {
         assembly {
             _stdout := true
@@ -288,8 +355,14 @@ abstract contract MADFactoryBase is
         }
     }
 
-    /// @dev External getter for deployed splitters and collections.
-    /// @dev Function Sighash := 0x499945ef
+    /**
+     * @notice External getter for deployed splitters and collections.
+     * @param _salt The salt (bytes32).
+     * @param _addr The addr address.
+     * @return address Result of getDeployedAddress.
+     * @custom:signature getDeployedAddress(bytes32,address)
+     * @custom:selector 0xc661d4b1
+     */
     function getDeployedAddress(bytes32 _salt, address _addr)
         public
         view
@@ -303,8 +376,13 @@ abstract contract MADFactoryBase is
     //                         OWNER FX                           //
     ////////////////////////////////////////////////////////////////
 
-    /// @dev `MADRouter` instance setter.
-    /// @dev Function Sighash := 0xc0d78655
+    /**
+     * @notice Set MadRouter, a public state-modifying function.
+     * @dev Has modifiers: onlyOwner.
+     * @param _router The router address.
+     * @custom:signature setRouter(address)
+     * @custom:selector 0xc0d78655
+     */
     function setRouter(address _router) public onlyOwner {
         _isZeroAddr(_router);
         assembly {
@@ -314,10 +392,16 @@ abstract contract MADFactoryBase is
         emit RouterUpdated(_router);
     }
 
-    /// @dev Setter for Collection types.
-    /// @dev We allow a collectionType to be set as the zeroAddr,
-    /// so its slot can be reset to default value.
-    /// @dev Function Sighash := 0x7ebbf770
+    /**
+     * @notice Add collection type, a public state-modifying function.
+     * @dev Has modifiers: onlyOwner.
+     * @dev We allow a collectionType to be set as the zeroAddr,
+     *      so its slot can be reset to default value.
+     * @param index The index (uint256).
+     * @param impl The impl (bytes).
+     * @custom:signature addCollectionType(uint256,bytes)
+     * @custom:selector 0x71337391
+     */
     function addCollectionType(uint256 index, bytes calldata impl)
         public
         onlyOwner
@@ -331,12 +415,17 @@ abstract contract MADFactoryBase is
     //                           HELPERS                          //
     ////////////////////////////////////////////////////////////////
 
-    /// @inheritdoc FactoryVerifier
-    /// @notice This function is used by `MADRouter` to check if a  collection
-    /// is a vliad MAD collection.
-    /// @dev Function Sighash := 97cf65af
-    /// @param _collectionId address of the collection.
-    /// @return Boolean output to either approve or reject call's
+    /**
+     * @notice Collection check, an external state-modifying function.
+     * @inheritdoc FactoryVerifier
+     * @notice This function is used by `MADRouter` to check if a  collection
+     *  is a valid MAD collection.
+     * @dev Function Sighash := 97cf65af
+     * @param _collectionId address of the collection.
+     * @return Boolean output to either approve or reject call's
+     * @custom:signature collectionCheck(address)
+     * @custom:selector 0x97cf65af
+     */
     function collectionCheck(address _collectionId)
         external
         view
@@ -346,31 +435,57 @@ abstract contract MADFactoryBase is
         return collectionInfo[_collectionId].isValid;
     }
 
-    function setFees(uint256 _feeCreateCollection, uint256 _feeCreateSplitter)
-        public
-        onlyOwner
-    {
-        _setFees(_feeCreateCollection, _feeCreateSplitter);
-        emit FeesUpdated(_feeCreateCollection, _feeCreateSplitter);
+    /**
+     * @notice Set fees, a public state-modifying function.
+     * @dev Has modifiers: onlyOwner.
+     * @param _feeCreateCollectionNew The fee create collection new (uint256).
+     * @param _feeCreateSplitterNew The fee create splitter new (uint256).
+     * @custom:signature setFees(uint256,uint256)
+     * @custom:selector 0x0b78f9c0
+     */
+    function setFees(
+        uint256 _feeCreateCollectionNew,
+        uint256 _feeCreateSplitterNew
+    ) public onlyOwner {
+        _setFees(_feeCreateCollectionNew, _feeCreateSplitterNew);
+        emit FeesUpdated(_feeCreateCollectionNew, _feeCreateSplitterNew);
     }
 
+    /**
+     * @notice Set fees, a public state-modifying function.
+     * @dev Has modifiers: onlyOwner.
+     * @param _feeCreateCollectionErc20New The fee create collection erc20 new
+     * (uint256).
+     * @param _feeCreateSplitterErc20New The fee create splitter erc20 new
+     * (uint256).
+     * @param madFeeTokenAddress The mad fee token address.
+     * @custom:signature setFees(uint256,uint256,address)
+     * @custom:selector 0xe4d73e59
+     */
     function setFees(
-        uint256 _feeCreateCollectionErc20,
-        uint256 _feeCreateSplitterErc20,
+        uint256 _feeCreateCollectionErc20New,
+        uint256 _feeCreateSplitterErc20New,
         address madFeeTokenAddress
     ) public onlyOwner {
         _setFees(
-            _feeCreateCollectionErc20,
-            _feeCreateSplitterErc20,
+            _feeCreateCollectionErc20New,
+            _feeCreateSplitterErc20New,
             madFeeTokenAddress
         );
         emit FeesUpdated(
-            _feeCreateCollectionErc20,
-            _feeCreateSplitterErc20,
+            _feeCreateCollectionErc20New,
+            _feeCreateSplitterErc20New,
             madFeeTokenAddress
         );
     }
 
+    /**
+     * @notice Invalidate fee, a public state-modifying function.
+     * @dev Has modifiers: onlyOwner.
+     * @param madFeeTokenAddress The mad fee token address.
+     * @param invalidateCollectionFee The invalidate collection fee (bool).
+     * @param invalidateSplitterFee The invalidate splitter fee (bool).
+     */
     function invalidateFee(
         address madFeeTokenAddress,
         bool invalidateCollectionFee,
@@ -381,8 +496,14 @@ abstract contract MADFactoryBase is
         );
     }
 
-    /// @dev Setter for public mint / burn fee _recipient.
-    /// @dev Function Sighash := 0x3bbed4a0
+    /**
+     * @notice Set recipient, a public state-modifying function.
+     * @notice Setter for public mint / burn fee _recipient.
+     * @dev Has modifiers: onlyOwner.
+     * @param _recipient The recipient address.
+     * @custom:signature setRecipient(address)
+     * @custom:selector 0x3bbed4a0
+     */
     function setRecipient(address _recipient) public onlyOwner {
         // require(_recipient != address(0), "Invalid address");
 

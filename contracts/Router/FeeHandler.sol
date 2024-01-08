@@ -45,6 +45,14 @@ abstract contract FeeHandler {
         _;
     }
 
+    /**
+     * @notice Fee mint erc20, a public view function.
+     * @dev Has modifiers: isZeroAddress.
+     * @param madFeeTokenAddress The mad fee token address.
+     * @return Fee Result of feeMintErc20.
+     * @custom:signature feeMintErc20(address)
+     * @custom:selector 0x42b4d2fa
+     */
     function feeMintErc20(address madFeeTokenAddress)
         public
         view
@@ -54,6 +62,14 @@ abstract contract FeeHandler {
         return _feeMintErc20[madFeeTokenAddress];
     }
 
+    /**
+     * @notice Fee burn erc20, a public view function.
+     * @dev Has modifiers: isZeroAddress.
+     * @param madFeeTokenAddress The mad fee token address.
+     * @return Fee Result of feeBurnErc20.
+     * @custom:signature feeBurnErc20(address)
+     * @custom:selector 0x6a3a2c1b
+     */
     function feeBurnErc20(address madFeeTokenAddress)
         public
         view
@@ -67,9 +83,13 @@ abstract contract FeeHandler {
     //                         HELPERS                            //
     ////////////////////////////////////////////////////////////////
 
-    /// @notice Mint and burn fee lookup.
-    /// @dev Function Sighash := 0xedc9e7a4
-    /// @param sigHash _FEE_MINT | _FEE_BURN
+    /**
+     * @notice Mint and burn fee lookup, an internal view function.
+     * @param sigHash The sig hash (bytes4) _FEE_MINT | _FEE_BURN.
+     * @return uint256 Result of feeLookup.
+     * @custom:signature feeLookup(bytes4)
+     * @custom:selector 0xedc9e7a4
+     */
     function feeLookup(bytes4 sigHash) internal view returns (uint256) {
         if (sigHash == _FEE_MINT) {
             return feeMint;
@@ -80,9 +100,15 @@ abstract contract FeeHandler {
         }
     }
 
-    /// @notice Payment handler for mint and burn functions.
-    /// @dev Function Sighash := 0x3bbed4a0
-    /// @param _feeType _FEE_MINT | _FEE_BURN
+    /**
+     * @notice Handle fees, an internal state-modifying function.
+     * @notice Payment handler for mint and burn functions.
+     * @param _feeType The fee type (bytes4) _FEE_MINT | _FEE_BURN
+     * @param _amount The Amount of tokens to be minted or burned. (uint256).
+     * @return _fee An uint256 value.
+     * @custom:signature _handleFees(bytes4,uint256)
+     * @custom:selector 0xa9c8aed5
+     */
     function _handleFees(bytes4 _feeType, uint256 _amount)
         internal
         returns (uint256 _fee)
@@ -97,12 +123,21 @@ abstract contract FeeHandler {
         SafeTransferLib.safeTransferETH(payable(recipient), _fee);
     }
 
-    /// @notice Payment handler for mint and burn functions.
-    /// @param _amount  Amount of tokens to be minted or burned.
-    /// @param madFeeTokenAddress  Address of the ERC20 token to be used as
-    /// payment token.
+    ///
+    /// @param madFeeTokenAddress
     /// @param _feeErc20  Function to return the fee amount and validity of the
     /// fee token.
+
+    /**
+     * @notice Handle fees, an internal state-modifying function.
+     * @notice Payment handler for mint and burn functions.
+     * @param _amount  Amount of tokens to be minted or burned. (uint256).
+     * @param madFeeTokenAddress Address of the ERC20 token to be used as
+     * payment token..
+     * @param _feeErc20 The fee erc20 (function).
+     * @custom:signature _handleFees(uint256,address,address)
+     * @custom:selector 0xb5bd392e
+     */
     function _handleFees(
         uint256 _amount,
         address madFeeTokenAddress,
@@ -126,19 +161,30 @@ abstract contract FeeHandler {
         );
     }
 
-    /// @notice Change the Routers mint and burn fees.
-    /// @dev access control / events are handled in MADRouterBase
-    /// @param _feeMint New mint fee.
-    /// @param _feeBurn New burn fee.
+    /**
+     * @notice Set fees, an internal state-modifying function.
+     * @notice Change the Routers mint and burn fees.
+     * @dev access control / events are handled in MADRouterBase
+     * @param _feeMint New fee mint (uint256).
+     * @param _feeBurn New fee burn (uint256).
+     * @custom:signature _setFees(uint256,uint256)
+     * @custom:selector 0x305e85ba
+     */
     function _setFees(uint256 _feeMint, uint256 _feeBurn) internal {
         feeMint = _feeMint;
         feeBurn = _feeBurn;
     }
+    /**
+     * @notice Set fees, an internal state-modifying function.
+     * @notice Change the Routers mint and burn fees for erc20 tokens.
+     * @dev access control / events are handled in MADRouterBase
+     * @param _feeMint New fee mint (uint256).
+     * @param _feeBurn New fee burn (uint256).
+     * @param madFeeTokenAddress The mad fee token address.
+     * @custom:signature _setFees(uint256,uint256,address)
+     * @custom:selector 0x7a52ee16
+     */
 
-    /// @notice Change the Routers mint and burn fees for erc20 tokens.
-    /// @dev access control / events are handled in MADRouterBase
-    /// @param _feeMint New mint fee.
-    /// @param _feeBurn New burn fee.
     function _setFees(
         uint256 _feeMint,
         uint256 _feeBurn,
@@ -148,6 +194,13 @@ abstract contract FeeHandler {
         _feeBurnErc20[madFeeTokenAddress] = Fee(_feeBurn, true);
     }
 
+    /**
+     * @notice Invalidate fee, an internal state-modifying function.
+     * @dev Has modifiers: isZeroAddress.
+     * @param madFeeTokenAddress The mad fee token address.
+     * @param invalidateBurnFee invalidate the burn fee (bool).
+     * @param invalidateMintFee invalidate the mint fee (bool).
+     */
     function _invalidateFee(
         address madFeeTokenAddress,
         bool invalidateBurnFee,

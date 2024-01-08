@@ -201,7 +201,8 @@ abstract contract CreateCollectionBase is
         assertFalse(
             collection.isApprovedForAll(
                 makeAddr("WorldAddress"), makeAddr("HelloAddress")
-            ), "Incorrect isApprovedForAll"
+            ),
+            "Incorrect isApprovedForAll"
         );
 
         // totalSupply()

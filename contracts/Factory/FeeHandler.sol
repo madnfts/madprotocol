@@ -40,6 +40,14 @@ abstract contract FeeHandlerFactory {
         _;
     }
 
+    /**
+     * @notice Fee create collection erc20, a public state-modifying function.
+     * @dev Has modifiers: isZeroAddress.
+     * @param madFeeTokenAddress The mad fee token address.
+     * @return Fee Result of feeCreateCollectionErc20.
+     * @custom:signature feeCreateCollectionErc20(address)
+     * @custom:selector 0xfec89cd8
+     */
     function feeCreateCollectionErc20(address madFeeTokenAddress)
         public
         view
@@ -49,6 +57,14 @@ abstract contract FeeHandlerFactory {
         return _feeCreateCollectionErc20[madFeeTokenAddress];
     }
 
+    /**
+     * @notice Fee create splitter erc20, a public state-modifying function.
+     * @dev Has modifiers: isZeroAddress.
+     * @param madFeeTokenAddress The mad fee token address.
+     * @return Fee Result of feeCreateSplitterErc20.
+     * @custom:signature feeCreateSplitterErc20(address)
+     * @custom:selector 0xcbf71c1c
+     */
     function feeCreateSplitterErc20(address madFeeTokenAddress)
         public
         view
@@ -62,8 +78,13 @@ abstract contract FeeHandlerFactory {
     //                         HELPERS                            //
     ////////////////////////////////////////////////////////////////
 
-    /// @notice Payment handler for mint and burn functions.
-    /// @dev Function Sighash := 0x3bbed4a0
+    /**
+     * @notice Handle fees, an internal state-modifying function.
+     * @notice Payment handler for mint and burn functions.
+     * @param _fee The fee (uint256).
+     * @custom:signature _handleFees(uint256)
+     * @custom:selector 0x6e92f8ca
+     */
     function _handleFees(uint256 _fee) internal {
         // Check if msg.sender balance is less than the fee.. logic to check the
         // price
@@ -74,8 +95,14 @@ abstract contract FeeHandlerFactory {
         SafeTransferLib.safeTransferETH(payable(recipient), _fee);
     }
 
-    /// @notice Payment handler for mint and burn functions.
-    /// @dev Function Sighash := 0x3bbed4a0
+    /**
+     * @notice Handle fees, an internal state-modifying function.
+     * @notice Payment handler for mint and burn functions.
+     * @param madFeeTokenAddress The mad fee token address.
+     * @param _feeErc20 The fee erc20 (function).
+     * @custom:signature _handleFees(address,address)
+     * @custom:selector 0xfbdb8dd3
+     */
     function _handleFees(
         address madFeeTokenAddress,
         function(address) external view returns (Fee memory) _feeErc20
@@ -99,10 +126,15 @@ abstract contract FeeHandlerFactory {
         );
     }
 
-    /// @notice Change the Factorys mint and burn fees.
-    /// @dev access control / events are handled in MADFactoryBase
-    /// @param _feeCreateCollection fee for creating a new collection
-    /// @param _feeCreateSplitter fee for creating a new splitter
+    /**
+     * @notice Set fees, an internal state-modifying function.
+     * @notice Change the Factorys mint and burn fees.
+     * @dev access control / events are handled in MADFactoryBase
+     * @param _feeCreateCollection fee for creating a new collection (uint256).
+     * @param _feeCreateSplitter fee for creating a new splitter (uint256).
+     * @custom:signature _setFees(uint256,uint256)
+     * @custom:selector 0x305e85ba
+     */
     function _setFees(uint256 _feeCreateCollection, uint256 _feeCreateSplitter)
         internal
     {
@@ -110,10 +142,23 @@ abstract contract FeeHandlerFactory {
         feeCreateSplitter = _feeCreateSplitter;
     }
 
-    /// @notice Change the Factorys mint and burn fees for erc20 tokens.
-    /// @dev access control / events are handled in MADFactoryBase
+    ///
     /// @param _madFeeCreateCollectionErc20 fee for creating a new collection
     /// @param _madFeeCreateSplitterErc20 fee for creating a new splitter
+
+    /**
+     * @notice Set fees, an internal state-modifying function.
+     * @notice Change the Factorys mint and burn fees for erc20 tokens.
+     * @dev Has modifiers: isZeroAddress.     *
+     * @dev access control / events are handled in MADFactoryBase
+     * @param _madFeeCreateCollectionErc20 The mad fee create collection erc20
+     * (uint256).
+     * @param _madFeeCreateSplitterErc20 The mad fee create splitter erc20
+     * (uint256).
+     * @param madFeeTokenAddress The mad fee token address.
+     * @custom:signature _setFees(uint256,uint256,address)
+     * @custom:selector 0x7a52ee16
+     */
     function _setFees(
         uint256 _madFeeCreateCollectionErc20,
         uint256 _madFeeCreateSplitterErc20,
@@ -125,6 +170,15 @@ abstract contract FeeHandlerFactory {
             Fee(_madFeeCreateSplitterErc20, true);
     }
 
+    /**
+     * @notice Invalidate fee, an internal state-modifying function.
+     * @dev Has modifiers: isZeroAddress.
+     * @param madFeeTokenAddress The mad fee token address.
+     * @param invalidateCollectionFee The invalidate collection fee (bool).
+     * @param invalidateSplitterFee The invalidate splitter fee (bool).
+     * @custom:signature _invalidateFee(address,bool,bool)
+     * @custom:selector 0xbc076e7e
+     */
     function _invalidateFee(
         address madFeeTokenAddress,
         bool invalidateCollectionFee,

@@ -152,7 +152,13 @@ abstract contract TwoFactor {
     //                       OWNERSHIP LOGIC                      //
     ////////////////////////////////////////////////////////////////
 
-    /// @dev Function Signature := 0xa7016023
+    /**
+     * @notice Set ownership, a public state-modifying function.
+     * @dev Has modifiers: authorised, noZeroAddr.
+     * @param _owner The owner address.
+     * @custom:signature setOwnership(address)
+     * @custom:selector 0xa7016023
+     */
     function setOwnership(address _owner)
         public
         authorised
@@ -166,8 +172,15 @@ abstract contract TwoFactor {
         }
     }
 
-    ///@notice function to set the router has authority to access certain
-    /// functions
+    /**
+     * @notice Set router has authority, a public state-modifying function.
+     * @notice function to set the router has authority to access certain
+     * functions
+     * @dev Has modifiers: onlyOwner.
+     * @param _hasAuthority The has authority (bool).
+     * @custom:signature setRouterHasAuthority(bool)
+     * @custom:selector 0xd139e612
+     */
     function setRouterHasAuthority(bool _hasAuthority) public onlyOwner {
         assembly {
             sstore(routerHasAuthority.slot, _hasAuthority)
@@ -178,7 +191,12 @@ abstract contract TwoFactor {
     //                        PUBLIC GETTERS                      //
     ////////////////////////////////////////////////////////////////
 
-    /// @dev Function Signature := 0xb0f479a1
+    /**
+     * @notice Get router, a public view function.
+     * @return address Result of getRouter.
+     * @custom:signature getRouter()
+     * @custom:selector 0xb0f479a1
+     */
     function getRouter() public view returns (address) {
         assembly {
             mstore(0, shr(12, sload(router.slot)))
@@ -186,7 +204,12 @@ abstract contract TwoFactor {
         }
     }
 
-    /// @dev Function Signature := 0x893d20e8
+    /**
+     * @notice Get owner, a public view function.
+     * @return address Result of getOwner.
+     * @custom:signature getOwner()
+     * @custom:selector 0x893d20e8
+     */
     function getOwner() public view returns (address) {
         assembly {
             mstore(0, shr(12, sload(owner.slot)))

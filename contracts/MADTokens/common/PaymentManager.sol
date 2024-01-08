@@ -42,7 +42,7 @@ abstract contract PaymentManager {
     uint256 public feeCountERC20;
 
     /// @notice boolean check if ERC20 Payments are enabled.
-    bool public erc20PaymentsEnabled;
+    bool public immutable erc20PaymentsEnabled;
 
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
@@ -75,23 +75,44 @@ abstract contract PaymentManager {
     //                       OWNER WITHDRAW                       //
     ////////////////////////////////////////////////////////////////
 
-    /// @notice Owner Withdraw ETH.
-    /// @dev If any Eth is trapped in the contract, owner can withdraw it to the
-    /// splitter.
+    ///
+
+    /**
+     * @notice Withdraw, an internal state-modifying function.
+     * @dev Withdraws the balance of the contract to the splitter.
+     * @notice Owner Withdraw ETH.
+     * @dev If any Eth is trapped in the contract, owner can withdraw it to the
+     * splitter.
+     * @custom:signature _withdraw()
+     * @custom:selector 0xc10eb14d
+     */
     function _withdraw() internal {
         uint256 balance = address(this).balance;
         SafeTransferLib.safeTransferETH(payable(address(splitter)), balance);
     }
 
-    /// @notice Owner Withdraw ERC20 Tokens.
-    /// @dev If any ERC20 Tokens are trapped in the contract, owner can withdraw
-    /// it to the splitter.
+    /**
+     * @notice Owner Withdraw ERC20 Tokens.
+     * @dev If any ERC20 Tokens are trapped in the contract, owner can withdraw
+     * it to the splitter.
+     * @dev Has modifiers: _isZeroAddr.
+     * @param _erc20 The erc20 address.
+     * @custom:signature _withdrawERC20(address)
+     * @custom:selector 0xa1b2cf01
+     */
     function _withdrawERC20(address _erc20) internal _isZeroAddr(_erc20) {
         IERC20 _token = IERC20(_erc20);
         uint256 balance = _token.balanceOf(address(this));
         SafeTransferLib.safeTransfer(_token, address(splitter), balance);
     }
 
+    /**
+     * @notice Public payment handler, an internal state-modifying function.
+     * @param _mintAmount The mint amount (uint256).
+     * @param _minter The minter address.
+     * @custom:signature _publicPaymentHandler(uint256,address)
+     * @custom:selector 0xab242a31
+     */
     function _publicPaymentHandler(uint256 _mintAmount, address _minter)
         internal
     {
@@ -110,6 +131,15 @@ abstract contract PaymentManager {
     ////////////////////////////////////////////////////////////////
     //                     INTERNAL HELPERS                       //
     ////////////////////////////////////////////////////////////////
+
+    /**
+     * @notice Public mint price check, an internal view function.
+     * @param _amount The amount (uint256).
+     * @param _minter The minter address.
+     * @return _value An uint256 value.
+     * @custom:signature _publicMintPriceCheck(uint256,address)
+     * @custom:selector 0x18dbe601
+     */
     function _publicMintPriceCheck(uint256 _amount, address _minter)
         internal
         view

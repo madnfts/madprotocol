@@ -71,19 +71,11 @@ contract DeployRouterBase is
 
         vm.prank(_owner);
 
-        routerAddress = createRouter(
-            _factoryVerifier,
-            _recipientRouter
-        );
+        routerAddress = createRouter(_factoryVerifier, _recipientRouter);
 
         IRouter madRouter = IRouter(routerAddress);
 
-        verifyRouter(
-            madRouter,
-            _owner,
-            _recipientRouter,
-            _factoryVerifier
-        );
+        verifyRouter(madRouter, _owner, _recipientRouter, _factoryVerifier);
     }
 
     function verifyRouter(

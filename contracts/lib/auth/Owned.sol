@@ -52,6 +52,13 @@ abstract contract Owned {
                              OWNERSHIP LOGIC
     //////////////////////////////////////////////////////////////*/
 
+    /**
+     * @notice Set owner, a public state-modifying function.
+     * @dev Has modifiers: onlyOwner, notZeroAddress.
+     * @param newOwner The new owner address.
+     * @custom:signature setOwner(address)
+     * @custom:selector 0x13af4035
+     */
     function setOwner(address newOwner)
         public
         onlyOwner

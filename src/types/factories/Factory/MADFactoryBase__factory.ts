@@ -625,12 +625,12 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_feeCreateCollection",
+        name: "_feeCreateCollectionNew",
         type: "uint256",
       },
       {
         internalType: "uint256",
-        name: "_feeCreateSplitter",
+        name: "_feeCreateSplitterNew",
         type: "uint256",
       },
     ],
@@ -643,12 +643,12 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_feeCreateCollectionErc20",
+        name: "_feeCreateCollectionErc20New",
         type: "uint256",
       },
       {
         internalType: "uint256",
-        name: "_feeCreateSplitterErc20",
+        name: "_feeCreateSplitterErc20New",
         type: "uint256",
       },
       {

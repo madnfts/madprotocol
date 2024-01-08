@@ -104,7 +104,7 @@ contract TestROUTERMintBurnAndTransferERC721_Erc20 is
         }
     }
 
-    function test_ROUTER_ERC20_MintTo_DefaultFuzzy(uint256 x) public {
+    function test_ROUTER_ERC20_MintTo_DefaultFuzzy(uint256) public {
         uint128 _amountToMint = 10;
         MintData memory mintData =
             _setupMint(nftMinter, nftReceiver, 0, _amountToMint);

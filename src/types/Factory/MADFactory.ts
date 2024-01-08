@@ -641,15 +641,18 @@ export interface MADFactory extends BaseContract {
   router: TypedContractMethod<[], [string], "view">;
 
   "setFees(uint256,uint256)": TypedContractMethod<
-    [_feeCreateCollection: BigNumberish, _feeCreateSplitter: BigNumberish],
+    [
+      _feeCreateCollectionNew: BigNumberish,
+      _feeCreateSplitterNew: BigNumberish
+    ],
     [void],
     "nonpayable"
   >;
 
   "setFees(uint256,uint256,address)": TypedContractMethod<
     [
-      _feeCreateCollectionErc20: BigNumberish,
-      _feeCreateSplitterErc20: BigNumberish,
+      _feeCreateCollectionErc20New: BigNumberish,
+      _feeCreateSplitterErc20New: BigNumberish,
       madFeeTokenAddress: AddressLike
     ],
     [void],
@@ -811,7 +814,10 @@ export interface MADFactory extends BaseContract {
   getFunction(
     nameOrSignature: "setFees(uint256,uint256)"
   ): TypedContractMethod<
-    [_feeCreateCollection: BigNumberish, _feeCreateSplitter: BigNumberish],
+    [
+      _feeCreateCollectionNew: BigNumberish,
+      _feeCreateSplitterNew: BigNumberish
+    ],
     [void],
     "nonpayable"
   >;
@@ -819,8 +825,8 @@ export interface MADFactory extends BaseContract {
     nameOrSignature: "setFees(uint256,uint256,address)"
   ): TypedContractMethod<
     [
-      _feeCreateCollectionErc20: BigNumberish,
-      _feeCreateSplitterErc20: BigNumberish,
+      _feeCreateCollectionErc20New: BigNumberish,
+      _feeCreateSplitterErc20New: BigNumberish,
       madFeeTokenAddress: AddressLike
     ],
     [void],

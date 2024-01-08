@@ -35,7 +35,7 @@ const DEFAULT_MNEMONIC =
 (async () => {
   const argv = await parser.argv;
   if (
-    ["goerli", "mainnet"].includes(argv.network) &&
+    ["goerli", "mainnet", "sepolia"].includes(argv.network) &&
     INFURA_API_KEY === undefined
   ) {
     throw new Error(
@@ -110,6 +110,15 @@ const chains: Array<NetworkUserConfig> = [
         },
   },
   {
+    chainId: 11155111, // sepolia
+    url: "https://sepolia.infura.io/v3/" + INFURA_API_KEY,
+    accounts: PK
+      ? [PK]
+      : {
+          mnemonic: MNEMONIC || DEFAULT_MNEMONIC,
+        },
+  },
+  {
     chainId: 1337, // ganache
     url: "http://localhost:7545",
     accounts: PK
@@ -130,6 +139,7 @@ const config: HardhatUserConfig = {
     apiKey: {
       mainnet: ETHERSCAN_API_KEY || "",
       goerli: ETHERSCAN_API_KEY || "",
+      sepolia: ETHERSCAN_API_KEY || "",
     },
     customChains: [
       {
@@ -164,6 +174,7 @@ const config: HardhatUserConfig = {
     skaleDevnet: getChainConfig(344106930),
     skaleChaos: getChainConfig(1351057110),
     goerli: getChainConfig(5),
+    sepolia: getChainConfig(11155111),
     ganache: getChainConfig(1337),
     hardhat: {
       forking: {

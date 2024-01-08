@@ -102,7 +102,7 @@ contract TestMintBurnAndTransferERC721_Erc20 is
         }
     }
 
-    function testMintTo_DefaultFuzzy(uint256 x) public {
+    function testMintTo_DefaultFuzzy(uint256) public {
         uint128 _amountToMint = 10;
         MintData memory mintData =
             _setupMint(nftMinter, nftReceiver, 0, _amountToMint);
@@ -110,7 +110,7 @@ contract TestMintBurnAndTransferERC721_Erc20 is
         _checkMint(mintData);
     }
 
-    function testPublicMint_DefaultFuzzy(uint256 x) public {
+    function testPublicMint_DefaultFuzzy(uint256) public {
         uint128 _amountToMint = 10;
         MintData memory mintData = _setupMint(
             nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint

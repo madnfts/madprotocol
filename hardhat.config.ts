@@ -1,6 +1,7 @@
 import "@nomicfoundation/hardhat-chai-matchers";
 import "@nomicfoundation/hardhat-ethers";
 import "@nomicfoundation/hardhat-toolbox";
+import "@nomicfoundation/hardhat-ignition-ethers";
 import "@typechain/hardhat";
 import { config as dotenvConfig } from "dotenv";
 import { HardhatUserConfig } from "hardhat/config";
@@ -110,8 +111,11 @@ const chains: Array<NetworkUserConfig> = [
         },
   },
   {
-    chainId: 11155111, // sepolia
-    url: "https://sepolia.infura.io/v3/" + INFURA_API_KEY,
+
+  chainId: 11155111, // sepolia
+  // url: "https://sepolia.infura.io/v3/" + INFURA_API_KEY,
+    
+    url: "https://eth-sepolia.g.alchemy.com/v2/" + ALCHEMY_KEY,
     accounts: PK
       ? [PK]
       : {

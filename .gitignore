@@ -2,6 +2,7 @@
 abi2json/
 flat/
 test/Flattened/
+ignition/
 flat.sol
 
 .yarn/*

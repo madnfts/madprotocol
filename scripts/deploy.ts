@@ -5,7 +5,7 @@ import fs from 'fs';
 
 const logStream = fs.createWriteStream('scripts/deploy.log', { flags: 'a' });
 
-console.log = function(message: any) {
+console.log = function (message: any) {
   const timestamp = new Date().toISOString();
   const logMessage = `${timestamp}: ${message}`;
   logStream.write(logMessage + '\n');
@@ -55,9 +55,9 @@ var deployedErc20Address = ethers.ZeroAddress;
 var deployedMarketplaceAddress = "";
 
 const gasArgs = {
-  gasLimit: 0x1000000,
-  gasPrice: 0x7a120,
-  gas: 1000000
+  // gasLimit: 0x1000000,
+  // gasPrice: 50_000_000_000,
+  // gas: 1000000
 }
 
 const deployedDisplay = () => {
@@ -70,9 +70,9 @@ const deployedDisplay = () => {
   console.log(
     `Deployed ERC20 Address: ${deployedErc20Address ? deployedErc20Address : ERC20_TOKEN}`,
   );
-  console.log(
-    `Deployed Marketplace Address: ${deployedMarketplaceAddress}\n`,
-  );
+  // console.log(
+  //   `Deployed Marketplace Address: ${deployedMarketplaceAddress}\n`,
+  // );
 };
 
 const deployERC20 = async () => {
@@ -84,9 +84,11 @@ const deployERC20 = async () => {
     "MAD",
     18,
     10
-  ],
-    gasArgs
+  ]
+    // ,gasArgs
   );
+  console.log('have we deployed?')
+  console.log(erc20.transactionHash)
   await erc20.waitForDeployment();
   deployedErc20Address = erc20.target;
   return erc20;
@@ -122,11 +124,16 @@ const deployRouter = async (
 };
 
 const setRouterAddress = async (factory) => {
-  // Set router address
-  const tx = await factory.setRouter(deployedRouterAddress);
-  await tx.wait();
-  console.log(`[OK] Router Address Set..`);
-
+  const routerAddress = await factory.router()
+  if (routerAddress != deployedRouterAddress) {
+    // Set router address
+    const tx = await factory.setRouter(deployedRouterAddress);
+    await tx.wait();
+    console.log(`[OK] Router Address Set..`);
+  }
+  else {
+    console.log(`[OK] Router Address Already Set..`);
+  }
   // Check router address
   let calledRouterAddress = await factory.router();
   if (calledRouterAddress != deployedRouterAddress) {
@@ -282,15 +289,23 @@ const setCollectionType = async (
   name,
 ) => {
   console.log(`\nSETTING COLLECTION TYPE ${name}`);
-  const tx = await factory.addCollectionType(collectionType, bytecode);
-  await tx.wait();
-  var isDeployed =
+  let isDeployed =
     (await factory.collectionTypes(collectionType)) ===
     bytecode;
-  if (!isDeployed) {
-    console.log(`\n***[ ERROR ]*** Collection Type ${name} NOT Added..`);
-  } else {
-    console.log(`[OK] Collection Type ${name} Added..`);
+  if (isDeployed) {
+    console.log(`[OK] Collection Type ${name} Already Added..`);
+  }
+  else {
+    const tx = await factory.addCollectionType(collectionType, bytecode);
+    await tx.wait();
+    isDeployed =
+      (await factory.collectionTypes(collectionType)) ===
+      bytecode;
+    if (!isDeployed) {
+      console.log(`\n***[ ERROR ]*** Collection Type ${name} NOT Added..`);
+    } else {
+      console.log(`[OK] Collection Type ${name} Added..`);
+    }
   }
 };
 
@@ -305,6 +320,8 @@ const main = async () => {
   const [deployer] = await ethers.getSigners();
 
   deployerAddress = deployer.address;
+  let factory;
+  let router;
 
   try {
     // Check token address
@@ -317,10 +334,25 @@ const main = async () => {
     }
 
     // Deploy Contracts
-    const factory = await deployFactory()
-    const router = await deployRouter(
-      factory.target
-    );
+    if (!FACTORY) {
+      factory = await deployFactory();
+      deployedFactoryAddress = factory.target;
+    }
+    else {
+      deployedFactoryAddress = FACTORY;
+      factory = await ethers.getContractAt("MADFactory", FACTORY);
+    }
+
+    if (!ROUTER) {
+      router = await deployRouter(
+        deployedFactoryAddress
+      );
+      deployedRouterAddress = router.target;
+    }
+    else {
+      deployedRouterAddress = ROUTER;
+      router = await ethers.getContractAt("MADRouter", ROUTER);
+    }
 
     deployedDisplay();
 

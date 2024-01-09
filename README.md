@@ -17,6 +17,13 @@
 
 ## Usage
 
+## Sepolia
+
+Deployed contracts with 0xe1fe7A4DBF33e6dA8c9e2628d102c67FB9E94549
+Deployed Factory Address: 0x09c8Dc3c8D85f6d128F29A91BeE718D647B78bD4
+Deployed Router Address: 0xA90Ff82851ed5594DEfE3BF9b2F5142e60575987
+Deployed ERC20 Address: 0x70D3Ee80802873D724E3a4F4cF44F99a15743d9c
+
 ## Skale Chaos Contracts:
 
 Deploying contracts with 0xe1fe7A4DBF33e6dA8c9e2628d102c67FB9E94549

@@ -3,5 +3,4 @@
 /* eslint-disable */
 export * as auth from "./auth";
 export * as tokens from "./tokens";
-export * as uniswap from "./uniswap";
 export * as utils from "./utils";

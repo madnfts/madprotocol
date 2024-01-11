@@ -153,7 +153,10 @@ abstract contract FeeHandler {
         // Check if msg.sender balance is less than the fee.. logic to check the
         // price
         // (if any) will be handled in the NFT contract itself.
-        if (erc20.balanceOf(msg.sender) < _fee || erc20.allowance(msg.sender, address(this)) < _fee) {
+        if (
+            erc20.balanceOf(msg.sender) < _fee
+                || erc20.allowance(msg.sender, address(this)) < _fee
+        ) {
             revert RouterEvents.InvalidFees();
         }
 

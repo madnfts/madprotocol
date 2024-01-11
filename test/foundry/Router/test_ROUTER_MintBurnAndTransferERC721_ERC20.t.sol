@@ -380,13 +380,14 @@ contract TestROUTERMintBurnAndTransferERC721_Erc20 is
 
         vm.startPrank(mintData.nftReceiver);
 
-        if (_errorSelector == 0x68e26200) // error IncorrectPriceAmount()
-        {
+        if (
+            _errorSelector == 0x68e26200 // error IncorrectPriceAmount()
+        ) {
             // change mint fee to more than 1 ether
-            _nftPublicMintPrice += 10000;
-             emit log_named_uint(
-            "nftPublicMintPrice to revert", _nftPublicMintPrice
-        );
+            _nftPublicMintPrice += 10_000;
+            emit log_named_uint(
+                "nftPublicMintPrice to revert", _nftPublicMintPrice
+            );
         }
 
         erc20Token.approve(address(collection), _nftPublicMintPrice);

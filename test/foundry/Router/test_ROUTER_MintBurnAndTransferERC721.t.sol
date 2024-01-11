@@ -347,8 +347,9 @@ contract TestROUTERMintBurnAndTransferERC721 is
             "nftPublicMintPrice AFTER", mintData.nftPublicMintPrice
         );
 
-        if (_errorSelector == 0x68e26200) // error IncorrectPriceAmount()
-        {
+        if (
+            _errorSelector == 0x68e26200 // error IncorrectPriceAmount()
+        ) {
             _nftPublicMintPrice += 100;
         }
 

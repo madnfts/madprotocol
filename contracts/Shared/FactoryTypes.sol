@@ -17,7 +17,6 @@ library FactoryTypes {
         uint96 royalty;
     }
 
-  
     struct CreateSplitterParams {
         bytes32 splitterSalt;
         address ambassador;
@@ -27,7 +26,7 @@ library FactoryTypes {
         address madFeeTokenAddress;
     }
 
-       struct CollectionArgs {
+    struct CollectionArgs {
         string _name;
         string _symbol;
         string _baseURI;

@@ -432,8 +432,13 @@ contract TestMintBurnAndTransferERC721_Erc20 is
         uint256 _nftPublicMintPrice =
             mintData.nftPublicMintPrice * mintData.amountToMint;
 
+        if (_errorSelector == 0x68e26200) // error IncorrectPriceAmount()
+        {
+            _nftPublicMintPrice += 100;
+        }
+
         emit log_named_uint(
-            "nftPublicMintPrice AFTER", mintData.nftPublicMintPrice
+            "nftPublicMintPrice * amount to mint", _nftPublicMintPrice
         );
 
         vm.startPrank(mintData.nftReceiver);

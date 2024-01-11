@@ -154,8 +154,9 @@ abstract contract PaymentManager {
             _value = msg.value;
             if ((price * _amount) != _value) revert IncorrectPriceAmount();
         } else {
-            _value = erc20.allowance(_minter, address(this));
-            if ((price * _amount) > _value) revert IncorrectPriceAmount();
+            uint256 allowed = erc20.allowance(_minter, address(this));
+            _value = price * _amount;
+            if (allowed < _value) revert IncorrectPriceAmount();
         }
     }
 }

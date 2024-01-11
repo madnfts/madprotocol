@@ -419,6 +419,11 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
             "nftPublicMintPrice AFTER", mintData.nftPublicMintPrice
         );
 
+        if (_errorSelector == 0x68e26200) // error IncorrectPriceAmount()
+        {
+            _nftPublicMintPrice += 100;
+        }
+
         vm.startPrank(mintData.nftReceiver);
         if (_errorSelector != 0x00000000) {
             vm.expectRevert(_errorSelector);

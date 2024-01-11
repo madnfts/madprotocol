@@ -175,12 +175,12 @@ contract TestROUTERMintBurnAndTransferERC721_Erc20 is
         );
 
         // change mint fee to more than 1 ether
-        mintData.nftPublicMintPrice = _nftPublicMintPrice + 50_000 ether;
+        mintData.nftPublicMintPrice = _nftPublicMintPrice;
 
         _doPublicMint(
             mintData,
             true,
-            0x7939f424 // error TransferFromFailed();
+            0x68e26200 // error IncorrectPriceAmount();
         );
     }
 
@@ -373,12 +373,21 @@ contract TestROUTERMintBurnAndTransferERC721_Erc20 is
         ).feeAmount * mintData.amountToMint;
 
         emit log_named_uint(
-            "nftPublicMintPrice AFTER", mintData.nftPublicMintPrice
+            "nftPublicMintPrice AFTER fees added", mintData.nftPublicMintPrice
         );
 
         emit log_named_uint("feeAmount", feeAmount);
 
         vm.startPrank(mintData.nftReceiver);
+
+        if (_errorSelector == 0x68e26200) // error IncorrectPriceAmount()
+        {
+            // change mint fee to more than 1 ether
+            _nftPublicMintPrice += 10000;
+             emit log_named_uint(
+            "nftPublicMintPrice to revert", _nftPublicMintPrice
+        );
+        }
 
         erc20Token.approve(address(collection), _nftPublicMintPrice);
         erc20Token.approve(address(deployedContracts.router), feeAmount);

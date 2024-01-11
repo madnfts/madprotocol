@@ -14,6 +14,15 @@ console.log = function (message: any) {
 
 config({ path: resolve(__dirname, "./.env") });
 
+const updateSettings = {
+  setRouterAddress: false,
+  setCollectionType721: true,
+  setCollectionType1155: false,
+  setFactoryFees: false,
+  setRouterFees: false,
+
+};
+
 const {
   // UNISWAP_ROUTER,
   ERC20_TOKEN,
@@ -62,7 +71,7 @@ const gasArgs = {
 
 const deployedDisplay = () => {
   console.log(
-    `\nDeployed Factory Address: ${deployedFactoryAddress ? deployedFactoryAddress : FACTORY}`,
+    `Deployed Factory Address: ${deployedFactoryAddress ? deployedFactoryAddress : FACTORY}`,
   );
   console.log(
     `Deployed Router Address: ${deployedRouterAddress ? deployedRouterAddress : ROUTER}`,
@@ -357,41 +366,50 @@ const main = async () => {
     deployedDisplay();
 
     // Set router address
-    await setRouterAddress(factory);
+    if (updateSettings.setRouterAddress) {
+      await setRouterAddress(factory);
+    }
 
     // Add Collection Types
-    await setCollectionType(
-      factory,
-      1,
-      ERC721Basic.bytecode,
-      "ERC721",
-    );
-    await setCollectionType(
-      factory,
-      2,
-      ERC1155Basic.bytecode,
-      "ERC1155",
-    );
+    if (updateSettings.setCollectionType721) {
+      await setCollectionType(
+        factory,
+        1,
+        ERC721Basic.bytecode,
+        "ERC721",
+      );
+    }
+    if (updateSettings.setCollectionType1155) {
+      await setCollectionType(
+        factory,
+        2,
+        ERC1155Basic.bytecode,
+        "ERC1155",
+      );
+    }
 
     // Set fees for Factory
-    await setFactoryFees(
-      factory.connect(deployer),
-      deployedErc20Address,
-      _feeCreateCollection,
-      _feeCreateSplitter,
-      _feeCreateCollectionErc20,
-      _feeCreateSplitterErc20,
-    );
-
+    if (updateSettings.setFactoryFees) {
+      await setFactoryFees(
+        factory.connect(deployer),
+        deployedErc20Address,
+        _feeCreateCollection,
+        _feeCreateSplitter,
+        _feeCreateCollectionErc20,
+        _feeCreateSplitterErc20,
+      );
+    }
     // Set fees for Router
-    await setRouterFees(
-      router.connect(deployer),
-      deployedErc20Address,
-      _feeMint,
-      _feeBurn,
-      _feeMintErc20,
-      _feeBurnErc20,
-    );
+    if (updateSettings.setRouterFees) {
+      await setRouterFees(
+        router.connect(deployer),
+        deployedErc20Address,
+        _feeMint,
+        _feeBurn,
+        _feeMintErc20,
+        _feeBurnErc20,
+      );
+    }
 
     deployedDisplay();
     console.log("Deployment completed successfully...\n");

@@ -37,7 +37,7 @@ abstract contract CreateCollectionParams {
 
         return IFactory.CreateCollectionParams({
             madFeeTokenAddress: madFeeTokenAddress,
-            tokenType: uint8(_tokenType),
+            tokenType: _tokenType,
             tokenSalt: updateCreateCollectionSalt(),
             collectionName: name,
             collectionSymbol: symbol,

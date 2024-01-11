@@ -347,6 +347,11 @@ contract TestROUTERMintBurnAndTransferERC721 is
             "nftPublicMintPrice AFTER", mintData.nftPublicMintPrice
         );
 
+        if (_errorSelector == 0x68e26200) // error IncorrectPriceAmount()
+        {
+            _nftPublicMintPrice += 100;
+        }
+
         vm.startPrank(mintData.nftReceiver);
         vm.deal(mintData.nftReceiver, val);
         if (_errorSelector != 0x00000000) {

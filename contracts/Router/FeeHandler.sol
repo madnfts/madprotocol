@@ -148,10 +148,12 @@ abstract contract FeeHandler {
             revert RouterEvents.AddressNotValid();
         }
         uint256 _fee = feeErc20.feeAmount * _amount;
+
+        IERC20 erc20 = IERC20(madFeeTokenAddress);
         // Check if msg.sender balance is less than the fee.. logic to check the
         // price
         // (if any) will be handled in the NFT contract itself.
-        if (IERC20(madFeeTokenAddress).balanceOf(msg.sender) < _fee) {
+        if (erc20.balanceOf(msg.sender) < _fee || erc20.allowance(msg.sender, address(this)) < _fee) {
             revert RouterEvents.InvalidFees();
         }
 

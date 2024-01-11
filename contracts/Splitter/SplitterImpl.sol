@@ -75,7 +75,7 @@ contract SplitterImpl is SplitterEventsAndErrors {
         if (pLen != shares_.length) {
             revert LengthMismatch();
         }
-        if (pLen < 1) {
+        if (pLen == 0) {
             revert NoPayees();
         }
 
@@ -112,11 +112,11 @@ contract SplitterImpl is SplitterEventsAndErrors {
      * @custom:selector 0x304cef2d
      */
     function release(address payable account) public {
-        if (_shares[account] < 1) revert NoShares();
+        if (_shares[account] == 0) revert NoShares();
 
         uint256 payment = releasable(account);
 
-        if (payment < 1) revert DeniedAccount();
+        if (payment == 0) revert DeniedAccount();
         /// audit GAS
         _released[account] = _released[account] + payment;
         _totalReleased = _totalReleased + payment;
@@ -156,11 +156,11 @@ contract SplitterImpl is SplitterEventsAndErrors {
      * @custom:selector 0x48b75044
      */
     function release(IERC20 token, address account) public {
-        if (_shares[account] < 1) {
+        if (_shares[account] == 0) {
             revert NoShares();
         }
         uint256 payment = releasable(token, account);
-        if (payment < 1) {
+        if (payment == 0) {
             revert DeniedAccount();
         }
 
@@ -228,7 +228,7 @@ contract SplitterImpl is SplitterEventsAndErrors {
         if (account == address(0)) {
             revert DeadAddress();
         }
-        if (shares_ < 1) {
+        if (shares_ == 0) {
             revert InvalidShare();
         }
         if (_shares[account] > 0) {

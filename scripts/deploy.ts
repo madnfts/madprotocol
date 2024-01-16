@@ -94,7 +94,6 @@ const deployERC20 = async () => {
     // ,gasArgs
   );
   console.log('have we deployed?')
-  console.log(erc20.transactionHash)
   await erc20.deploymentTransaction().wait(6);
   deployedErc20Address = erc20.target;
   await verifyContract(deployedErc20Address, args)

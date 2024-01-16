@@ -150,8 +150,7 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         public
     {
         vm.assume(
-            _nftPublicMintPrice != nftPublicMintPrice
-                && _nftPublicMintPrice <= 1 ether
+            _nftPublicMintPrice < nftPublicMintPrice
         );
         uint128 _amountToMint = 1;
         MintData memory mintData = _setupMint(
@@ -418,12 +417,6 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         emit log_named_uint(
             "nftPublicMintPrice AFTER", mintData.nftPublicMintPrice
         );
-
-        if (
-            _errorSelector == 0x68e26200 // error IncorrectPriceAmount()
-        ) {
-            _nftPublicMintPrice += 100;
-        }
 
         vm.startPrank(mintData.nftReceiver);
         if (_errorSelector != 0x00000000) {

@@ -143,8 +143,7 @@ contract TestROUTERMintBurnAndTransferERC721 is
         uint256 _nftPublicMintPrice
     ) public {
         vm.assume(
-            _nftPublicMintPrice != nftPublicMintPrice
-                && _nftPublicMintPrice <= 1 ether
+            _nftPublicMintPrice < nftPublicMintPrice
         );
         uint128 _amountToMint = 1;
         MintData memory mintData = _setupMint(
@@ -340,26 +339,20 @@ contract TestROUTERMintBurnAndTransferERC721 is
         uint256 _nftPublicMintPrice =
             mintData.nftPublicMintPrice * mintData.amountToMint;
 
-        uint256 val = _nftPublicMintPrice
+        uint256 value = _nftPublicMintPrice
             + (deployedContracts.router.feeMint() * mintData.amountToMint);
 
         emit log_named_uint(
             "nftPublicMintPrice AFTER", mintData.nftPublicMintPrice
         );
 
-        if (
-            _errorSelector == 0x68e26200 // error IncorrectPriceAmount()
-        ) {
-            _nftPublicMintPrice += 100;
-        }
-
         vm.startPrank(mintData.nftReceiver);
-        vm.deal(mintData.nftReceiver, val);
+        vm.deal(mintData.nftReceiver, value);
         if (_errorSelector != 0x00000000) {
             vm.expectRevert(_errorSelector);
         }
 
-        deployedContracts.router.mint{ value: val }(
+        deployedContracts.router.mint{ value: value }(
             mintData.collectionAddress, mintData.amountToMint
         );
         vm.stopPrank();

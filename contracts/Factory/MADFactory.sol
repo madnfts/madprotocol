@@ -47,8 +47,7 @@ contract MADFactory is MADFactoryBase {
 
     /**
      * @notice Handle create collection, a private state-modifying function.
-     *
-     *      @notice Core public token types deployment pusher.
+     * @notice Core public token types deployment pusher.
      * @dev Function Sighash := 0x73fd6808
      * @dev Params passed in this function serve as common denominator
      * for all token types.

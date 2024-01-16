@@ -2,6 +2,7 @@ import { config } from "dotenv";
 import { ethers } from "hardhat";
 import { resolve } from "path";
 import fs from 'fs';
+import { verifyContract } from './verify';
 
 const logStream = fs.createWriteStream('scripts/deploy.log', { flags: 'a' });
 
@@ -15,16 +16,15 @@ console.log = function (message: any) {
 config({ path: resolve(__dirname, "./.env") });
 
 const updateSettings = {
-  setRouterAddress: false,
+  setRouterAddress: true,
   setCollectionType721: true,
-  setCollectionType1155: false,
-  setFactoryFees: false,
-  setRouterFees: false,
+  setCollectionType1155: true,
+  setFactoryFees: true,
+  setRouterFees: true,
 
 };
 
 const {
-  // UNISWAP_ROUTER,
   ERC20_TOKEN,
   FACTORY,
   ROUTER,
@@ -57,11 +57,10 @@ const _feeBurn = ethers.parseEther(feeBurn);
 const _feeMintErc20 = ethers.parseEther(feeMintErc20);
 const _feeBurnErc20 = ethers.parseEther(feeBurnErc20);
 
-var deployerAddress = '';
-var deployedFactoryAddress = "";
-var deployedRouterAddress = "";
-var deployedErc20Address = ethers.ZeroAddress;
-var deployedMarketplaceAddress = "";
+let deployerAddress = '';
+let deployedFactoryAddress = "";
+let deployedRouterAddress = "";
+let deployedErc20Address = ethers.ZeroAddress;
 
 const gasArgs = {
   // gasLimit: 0x1000000,
@@ -79,27 +78,26 @@ const deployedDisplay = () => {
   console.log(
     `Deployed ERC20 Address: ${deployedErc20Address ? deployedErc20Address : ERC20_TOKEN}`,
   );
-  // console.log(
-  //   `Deployed Marketplace Address: ${deployedMarketplaceAddress}\n`,
-  // );
 };
 
 const deployERC20 = async () => {
   console.log(
     `Deploying contract ERC20 with ${deployerAddress}`,
   );
-  const erc20 = await ethers.deployContract("MockERC20", [
+  const args = [
     "Mad Mock Token",
     "MAD",
     18,
     10
   ]
+  const erc20 = await ethers.deployContract("MockERC20", args
     // ,gasArgs
   );
   console.log('have we deployed?')
   console.log(erc20.transactionHash)
-  await erc20.waitForDeployment();
+  await erc20.deploymentTransaction().wait(6);
   deployedErc20Address = erc20.target;
+  await verifyContract(deployedErc20Address, args)
   return erc20;
 };
 
@@ -107,12 +105,14 @@ const deployFactory = async () => {
   console.log(
     `Deploying contracts Factory with ${deployerAddress}`,
   );
+  const args = [RECIPIENT]
   const factory = await ethers.deployContract(
-    "MADFactory", [RECIPIENT],
-    gasArgs
+    "MADFactory", args,
+    // gasArgs
   );
-  await factory.waitForDeployment();
+  await factory.deploymentTransaction().wait(6);
   deployedFactoryAddress = factory.target;
+  await verifyContract(deployedFactoryAddress, args)
   return factory;
 };
 
@@ -122,13 +122,14 @@ const deployRouter = async (
   console.log(
     `Deploying contracts Router with ${deployerAddress}`,
   );
+  const args = [factoryAddress, RECIPIENT]
   const router = await ethers.deployContract(
-    "MADRouter", [factoryAddress,
-    RECIPIENT],
-    gasArgs
+    "MADRouter", args,
+    // gasArgs
   );
-  await router.waitForDeployment();
+  await router.deploymentTransaction().wait(6);
   deployedRouterAddress = router.target;
+  await verifyContract(deployedRouterAddress, args)
   return router;
 };
 

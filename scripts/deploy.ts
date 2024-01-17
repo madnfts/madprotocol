@@ -2,6 +2,12 @@ import { config } from "dotenv";
 import { ethers } from "hardhat";
 import { resolve } from "path";
 import fs from 'fs';
+import type {
+  BigNumberish,
+  AddressLike,
+  BytesLike
+} from "ethers";
+
 import { verifyContract } from './verify';
 
 const logStream = fs.createWriteStream('scripts/deploy.log', { flags: 'a' });
@@ -16,11 +22,18 @@ console.log = function (message: any) {
 config({ path: resolve(__dirname, "./.env") });
 
 const updateSettings = {
-  setRouterAddress: true,
+  deployErcToken: false,
+  deployFactory: false,
+  deployRouter: false,
+  setRouterAddress: false,
   setCollectionType721: true,
-  setCollectionType1155: true,
-  setFactoryFees: true,
-  setRouterFees: true,
+  setCollectionType1155: false,
+  setFactoryFees: false,
+  setRouterFees: false,
+  deployErc721: false,
+  deployErc1155: false,
+  createCollectionSplitter: false
+
 
 };
 
@@ -57,16 +70,93 @@ const _feeBurn = ethers.parseEther(feeBurn);
 const _feeMintErc20 = ethers.parseEther(feeMintErc20);
 const _feeBurnErc20 = ethers.parseEther(feeBurnErc20);
 
-let deployerAddress = '';
-let deployedFactoryAddress = "";
-let deployedRouterAddress = "";
+let deployerAddress = RECIPIENT;
+let deployedFactoryAddress = FACTORY;
+let deployedRouterAddress = ROUTER;
 let deployedErc20Address = ethers.ZeroAddress;
+let deployedErc721Address = ethers.ZeroAddress;
+let deployedErc1155Address = ethers.ZeroAddress;
+let deployedSplitterAddress = "0x82b260Cd2351bEF6BC0d5F92faa073A3cA499f8a";
+let deployedFactoryErc721Address = ethers.ZeroAddress;
+let deployedFactoryErc1155Address = ethers.ZeroAddress;
 
-const gasArgs = {
-  // gasLimit: 0x1000000,
-  // gasPrice: 50_000_000_000,
-  // gas: 1000000
+const currentTimeHex = () => {
+  let currentTimeHex = (Date.now()).toString(16);
+  currentTimeHex = currentTimeHex.padStart(64, '0');
+  return '0x' + currentTimeHex;
 }
+
+
+type CollectionArgsStruct = {
+  _name: string;
+  _symbol: string;
+  _baseURI: string;
+  _price: BigNumberish;
+  _maxSupply: BigNumberish;
+  _splitter: AddressLike;
+  _royaltyPercentage: BigNumberish;
+  _router: AddressLike;
+  _erc20: AddressLike;
+  _owner: AddressLike;
+};
+
+const mockArgs: CollectionArgsStruct = {
+  _name: "Mock Collection",
+  _symbol: "MCK",
+  _baseURI: "https://mock-collection-params-uri.com/",
+  _price: ethers.parseEther("0.001"),
+  _maxSupply: 10000,
+  _splitter: deployedSplitterAddress,
+  _royaltyPercentage: 1000, // 10%
+  _router: deployedRouterAddress as AddressLike,
+  _erc20: deployedErc20Address as AddressLike,
+  _owner: deployerAddress as AddressLike,
+};
+
+type CreateCollectionParamsStruct = {
+  madFeeTokenAddress: AddressLike;
+  tokenType: BigNumberish;
+  tokenSalt: BytesLike;
+  collectionName: string;
+  collectionSymbol: string;
+  price: BigNumberish;
+  maxSupply: BigNumberish;
+  uri: string;
+  splitter: AddressLike;
+  royalty: BigNumberish;
+};
+
+const mockCollectionParams: CreateCollectionParamsStruct = {
+  madFeeTokenAddress: ethers.ZeroAddress,
+  tokenType: 1, // Assuming token type as 1 for the mock
+  tokenSalt: currentTimeHex(),
+  collectionName: "Mock Collection",
+  collectionSymbol: "MCK",
+  price: ethers.parseEther("0.001"),
+  maxSupply: 10000,
+  uri: "https://mock-collection-params-uri.com/",
+  splitter: deployedSplitterAddress,
+  royalty: 1000, // 10%
+};
+
+type CreateSplitterParamsStruct = {
+  splitterSalt: BytesLike;
+  ambassador: AddressLike;
+  project: AddressLike;
+  ambassadorShare: BigNumberish;
+  projectShare: BigNumberish;
+  madFeeTokenAddress: AddressLike;
+};
+
+const mockSplitterParams: CreateSplitterParamsStruct = {
+  splitterSalt: currentTimeHex(),
+  ambassador: ethers.ZeroAddress as AddressLike ,
+  project: ethers.ZeroAddress as AddressLike,
+  ambassadorShare: '0', // 10%
+  projectShare: '0', // 10%
+  madFeeTokenAddress: ethers.ZeroAddress,
+};
+
 
 const deployedDisplay = () => {
   console.log(
@@ -78,6 +168,75 @@ const deployedDisplay = () => {
   console.log(
     `Deployed ERC20 Address: ${deployedErc20Address ? deployedErc20Address : ERC20_TOKEN}`,
   );
+  console.log(
+    `Deployed ERC721 Address: ${deployedErc721Address ? deployedErc721Address : ERC20_TOKEN}`,
+  );
+  console.log(
+    `Deployed ERC1155 Address: ${deployedErc1155Address ? deployedErc1155Address : ERC20_TOKEN}`,
+  );
+  console.log(
+    `Deployed Splitter Address: ${deployedSplitterAddress ? deployedSplitterAddress : ERC20_TOKEN}`,
+  );
+  console.log(
+    `Deployed Factory ERC721 Address: ${deployedFactoryErc721Address ? deployedFactoryErc721Address : FACTORY}`,
+  );
+  console.log(
+    `Deployed Factory ERC1155 Address: ${deployedFactoryErc1155Address ? deployedFactoryErc1155Address : FACTORY}`,
+  );
+};
+
+const createCollectionSplitter = async (factory) => {
+  console.log("Creating Collection Splitter...");
+  const splitter = await factory.createSplitter(
+    mockSplitterParams, { value: _feeCreateSplitter });
+  await splitter.wait(6);
+
+  deployedSplitterAddress = await factory.getDeployedAddress(mockSplitterParams.splitterSalt, deployerAddress);
+  await verifyContract(deployedSplitterAddress, [[deployerAddress as AddressLike], [10000]])
+  mockCollectionParams.splitter = deployedSplitterAddress
+
+  console.log("Creating Collection...")
+  const collection = await factory["createCollection((address,uint8,bytes32,string,string,uint256,uint256,string,address,uint96))"](
+    mockCollectionParams,
+    { value: _feeCreateCollection }
+  )
+  await collection.wait(6)
+  deployedErc721Address = await factory.getDeployedAddress(mockCollectionParams.tokenSalt, deployerAddress);
+  await verifyContract(deployedErc721Address, [mockArgs])
+};
+
+const deployERC721 = async () => {
+  console.log(
+    `Deploying contract ERC721 with ${deployerAddress}`,
+  );
+  const args = [
+    mockArgs
+  ]
+  const erc721 = await ethers.deployContract("ERC721Basic", args
+    // ,gasArgs
+  );
+  console.log('have we deployed?')
+  await erc721.deploymentTransaction().wait(6);
+  deployedErc721Address = erc721.target;
+  await verifyContract(deployedErc721Address, args)
+  return erc721;
+};
+
+const deployERC1155 = async () => {
+  console.log(
+    `Deploying contract ERC1155 with ${deployerAddress}`,
+  );
+  const args = [
+    mockArgs
+  ]
+  const erc1155 = await ethers.deployContract("ERC721Basic", args
+    // ,gasArgs
+  );
+  console.log('have we deployed?')
+  await erc1155.deploymentTransaction().wait(6);
+  deployedErc1155Address = erc1155.target;
+  await verifyContract(deployedErc1155Address, args)
+  return erc1155;
 };
 
 const deployERC20 = async () => {
@@ -334,7 +493,7 @@ const main = async () => {
 
   try {
     // Check token address
-    if (ERC20_TOKEN === "mock") {
+    if (updateSettings.deployErcToken) {
       let erc20 = await deployERC20();
       deployedErc20Address = await erc20.getAddress();
     } else if (ERC20_TOKEN) {
@@ -343,7 +502,7 @@ const main = async () => {
     }
 
     // Deploy Contracts
-    if (!FACTORY) {
+    if (updateSettings.deployFactory) {
       factory = await deployFactory();
       deployedFactoryAddress = factory.target;
     }
@@ -352,7 +511,7 @@ const main = async () => {
       factory = await ethers.getContractAt("MADFactory", FACTORY);
     }
 
-    if (!ROUTER) {
+    if (updateSettings.deployRouter) {
       router = await deployRouter(
         deployedFactoryAddress
       );
@@ -409,6 +568,19 @@ const main = async () => {
         _feeMintErc20,
         _feeBurnErc20,
       );
+    }
+
+    // deploy and verify ERC721 /1155
+    if (updateSettings.deployErc721) {
+      await deployERC721()
+    }
+    if (updateSettings.deployErc1155) {
+      await deployERC1155()
+    }
+
+    // create and verify collection / splitter
+    if (updateSettings.createCollectionSplitter) {
+      await createCollectionSplitter(factory)
     }
 
     deployedDisplay();

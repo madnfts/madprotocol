@@ -26,16 +26,17 @@ const updateSettings = {
   deployFactory: false,
   deployRouter: false,
   setRouterAddress: false,
-  setCollectionType721: true,
+  setCollectionType721: false,
   setCollectionType1155: false,
   setFactoryFees: false,
   setRouterFees: false,
   deployErc721: false,
   deployErc1155: false,
-  createCollectionSplitter: false
-
-
+  createCollectionSplitter: false,
+  verifyCollectionSplitter: true,
+  verifyErc721: false
 };
+
 
 const {
   ERC20_TOKEN,
@@ -76,8 +77,8 @@ let deployedRouterAddress = ROUTER;
 let deployedErc20Address = ethers.ZeroAddress;
 let deployedErc721Address = ethers.ZeroAddress;
 let deployedErc1155Address = ethers.ZeroAddress;
-let deployedSplitterAddress = "0x82b260Cd2351bEF6BC0d5F92faa073A3cA499f8a";
-let deployedFactoryErc721Address = ethers.ZeroAddress;
+let deployedSplitterAddress = "0x65D6d519Cde0BcB0C04F8f9f106559A8e7DF1dD2"; // ethers.ZeroAddress;
+let deployedFactoryErc721Address = "0xCe48d9d9b6D2Bd198453fD68de5ddbea502Cf636"; //ethers.ZeroAddress;
 let deployedFactoryErc1155Address = ethers.ZeroAddress;
 
 const currentTimeHex = () => {
@@ -101,15 +102,15 @@ type CollectionArgsStruct = {
 };
 
 const mockArgs: CollectionArgsStruct = {
-  _name: "Mock Collection",
-  _symbol: "MCK",
-  _baseURI: "https://mock-collection-params-uri.com/",
-  _price: ethers.parseEther("0.001"),
-  _maxSupply: 10000,
-  _splitter: deployedSplitterAddress,
-  _royaltyPercentage: 1000, // 10%
+  _name: "Verify Me Please",
+  _symbol: "VMP",
+  _baseURI: "https://json.madnfts.io/0xce48d9d9b6d2bd198453fd68de5ddbea502cf636/",
+  _price: ethers.parseEther("0"),
+  _maxSupply: 1,
+  _splitter: deployedSplitterAddress as AddressLike,
+  _royaltyPercentage: 600, // 10%
   _router: deployedRouterAddress as AddressLike,
-  _erc20: deployedErc20Address as AddressLike,
+  _erc20: ethers.ZeroAddress, //deployedErc20Address as AddressLike,
   _owner: deployerAddress as AddressLike,
 };
 
@@ -191,18 +192,12 @@ const createCollectionSplitter = async (factory) => {
     mockSplitterParams, { value: _feeCreateSplitter });
   await splitter.wait(6);
 
-  deployedSplitterAddress = await factory.getDeployedAddress(mockSplitterParams.splitterSalt, deployerAddress);
-  await verifyContract(deployedSplitterAddress, [[deployerAddress as AddressLike], [10000]])
-  mockCollectionParams.splitter = deployedSplitterAddress
-
   console.log("Creating Collection...")
   const collection = await factory["createCollection((address,uint8,bytes32,string,string,uint256,uint256,string,address,uint96))"](
     mockCollectionParams,
     { value: _feeCreateCollection }
   )
   await collection.wait(6)
-  deployedErc721Address = await factory.getDeployedAddress(mockCollectionParams.tokenSalt, deployerAddress);
-  await verifyContract(deployedErc721Address, [mockArgs])
 };
 
 const deployERC721 = async () => {
@@ -581,6 +576,16 @@ const main = async () => {
     // create and verify collection / splitter
     if (updateSettings.createCollectionSplitter) {
       await createCollectionSplitter(factory)
+    }
+
+    if (updateSettings.verifyCollectionSplitter) {
+      await verifyContract(deployedSplitterAddress, [[deployerAddress as AddressLike], [10000]])      
+      
+    }
+    
+    if (updateSettings.verifyErc721) {
+      mockCollectionParams.splitter = deployedSplitterAddress
+      await verifyContract(deployedFactoryErc721Address, [mockArgs])
     }
 
     deployedDisplay();

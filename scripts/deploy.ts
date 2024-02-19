@@ -21,19 +21,21 @@ console.log = function (message: any) {
 
 config({ path: resolve(__dirname, "./.env") });
 
+const WAIT = 6
+
 const updateSettings = {
-  deployErcToken: false,
-  deployFactory: false,
-  deployRouter: false,
-  setRouterAddress: false,
-  setCollectionType721: false,
-  setCollectionType1155: false,
-  setFactoryFees: false,
-  setRouterFees: false,
-  deployErc721: false,
-  deployErc1155: false,
-  createCollectionSplitter: false,
-  verifyCollectionSplitter: true,
+  deployErcToken: true,
+  deployFactory: true,
+  deployRouter: true,
+  setRouterAddress: true,
+  setCollectionType721: true,
+  setCollectionType1155: true,
+  setFactoryFees: true,
+  setRouterFees: true,
+  deployErc721: true,
+  deployErc1155: true,
+  createCollectionSplitter: true,
+  verifyCollectionSplitter: false,
   verifyErc721: false
 };
 
@@ -190,14 +192,14 @@ const createCollectionSplitter = async (factory) => {
   console.log("Creating Collection Splitter...");
   const splitter = await factory.createSplitter(
     mockSplitterParams, { value: _feeCreateSplitter });
-  await splitter.wait(6);
+  await splitter.wait(WAIT);
 
   console.log("Creating Collection...")
   const collection = await factory["createCollection((address,uint8,bytes32,string,string,uint256,uint256,string,address,uint96))"](
     mockCollectionParams,
     { value: _feeCreateCollection }
   )
-  await collection.wait(6)
+  await collection.wait(WAIT)
 };
 
 const deployERC721 = async () => {
@@ -211,7 +213,7 @@ const deployERC721 = async () => {
     // ,gasArgs
   );
   console.log('have we deployed?')
-  await erc721.deploymentTransaction().wait(6);
+  await erc721.deploymentTransaction().wait(WAIT);
   deployedErc721Address = erc721.target;
   await verifyContract(deployedErc721Address, args)
   return erc721;
@@ -228,7 +230,7 @@ const deployERC1155 = async () => {
     // ,gasArgs
   );
   console.log('have we deployed?')
-  await erc1155.deploymentTransaction().wait(6);
+  await erc1155.deploymentTransaction().wait(WAIT);
   deployedErc1155Address = erc1155.target;
   await verifyContract(deployedErc1155Address, args)
   return erc1155;
@@ -248,7 +250,7 @@ const deployERC20 = async () => {
     // ,gasArgs
   );
   console.log('have we deployed?')
-  await erc20.deploymentTransaction().wait(6);
+  await erc20.deploymentTransaction().wait(WAIT);
   deployedErc20Address = erc20.target;
   await verifyContract(deployedErc20Address, args)
   return erc20;
@@ -263,7 +265,7 @@ const deployFactory = async () => {
     "MADFactory", args,
     // gasArgs
   );
-  await factory.deploymentTransaction().wait(6);
+  await factory.deploymentTransaction().wait(WAIT);
   deployedFactoryAddress = factory.target;
   await verifyContract(deployedFactoryAddress, args)
   return factory;
@@ -280,7 +282,7 @@ const deployRouter = async (
     "MADRouter", args,
     // gasArgs
   );
-  await router.deploymentTransaction().wait(6);
+  await router.deploymentTransaction().wait(WAIT);
   deployedRouterAddress = router.target;
   await verifyContract(deployedRouterAddress, args)
   return router;

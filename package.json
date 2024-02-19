@@ -42,8 +42,8 @@
     "typechain": "^8.3.2",
     "typescript": "^5.3.3",
     "chai": "^4.2.0",
-    "ethers": "^6.9.2",
-    "hardhat": "^2.19.1",
+    "ethers": "^6.11.1",
+    "hardhat": "^2.20.1",
     "hardhat-gas-reporter":"^1.0.8"
   },
   "files": [
@@ -72,6 +72,8 @@
     "deploy:skaleChaos": "hardhat run scripts/deploy.ts --network skaleChaos",
     "deploy:goerli": "hardhat run scripts/deploy.ts --network goerli",
     "deploy:sepolia": "hardhat run scripts/deploy.ts --network sepolia",
+    "deploy:serv": "hardhat run scripts/deploy.ts --network serv",
+    "deploy:hedera": "hardhat run scripts/deploy.ts --network hedera",
     "deploy:ganache": "hardhat run scripts/deploy.ts --network ganache",
     "clean": "rimraf ./artifacts ./cache ./coverage ./src/types ./coverage.json && pnpm typechain",
     "compile": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat compile",

@@ -41,9 +41,16 @@ Deployed Factory Address: 0x4b6D7Ad325247618E413690e94094d43d03c9faf
 Deployed Router Address: 0x45df25Dc886e8fd7D4284e036651AeE49aa927fD
 Deployed ERC20 Address: 0xd7c8Ec52eF844A40344684691eE181000F2Ce73C
 
+## SERV contracts
+Deployed contracts with 0x263eCFccbA81214D625B5743aaF121A657847294
+Deployed Factory Address: 0xC3963ACcD36Fc19b8b7bd4000E4439b993A5c0aB
+Deployed Router Address: 0x73b880f9c93b98F33f78ED321FD1DEC89265978e
+Deployed ERC20 Address: 0x7d29c9d21aE49d441E4a2F7Fb66D5445B1DCF6E7
+  
+
 ### Pre Requisites
 
-Before installing, create a `.env` file and set criteria as in `.env.example`.
+Before installing, create a `.env` file and set criteria as in `.env.exar mple`.
 
 ### Install
 

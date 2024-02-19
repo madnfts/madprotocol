@@ -75,6 +75,15 @@ const chains: Array<NetworkUserConfig> = [
         },
   },
   {
+    chainId: 43970, // SERV
+    url: "https://rpc-testnet.serv.services",
+    accounts: PK
+      ? [PK]
+      : {
+        mnemonic: MNEMONIC || DEFAULT_MNEMONIC,
+      },
+  },
+  {
     chainId: 1564830818, // skale
     url: "https://mainnet.skalenodes.com/v1/honorable-steel-rasalhague",
     accounts: PK
@@ -123,6 +132,15 @@ const chains: Array<NetworkUserConfig> = [
         },
   },
   {
+  chainId: 296, // Hedera
+  url: "https://testnet.hedera.io/api/",
+  accounts: PK
+    ? [PK]
+    : {
+      mnemonic: MNEMONIC || DEFAULT_MNEMONIC,
+    },
+  },
+  {
     chainId: 1337, // ganache
     url: "http://localhost:7545",
     accounts: PK
@@ -155,6 +173,22 @@ const config: HardhatUserConfig = {
           browserURL: "https://api.s0.ps.hmny.io",
         },
       },
+      {
+        network: "SERV",
+        chainId: 43970,
+        urls: {
+          apiURL: "https://rpc-testnet.serv.services",
+          browserURL: "https://tserv-explorer.tryethernal.com/",
+        },
+      },
+      {
+      network: "hedera",
+      chainId: 296, // Hedera
+      urls: {
+        apiURL: "https://testnet.hedera.io/api/",
+        browserURL: "https://hashscan.io/testnet",
+      },
+  },
     ],
   },
   gasReporter: {
@@ -173,6 +207,8 @@ const config: HardhatUserConfig = {
   networks: {
     harmony: getChainConfig(1666600000),
     harmonyDevnet: getChainConfig(1666900000),
+    serv: getChainConfig(43970),
+    hedera: getChainConfig(296),
     polygon: getChainConfig(137),
     skale: getChainConfig(1564830818),
     skaleDevnet: getChainConfig(344106930),

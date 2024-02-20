@@ -146,6 +146,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MADBase__factory>;
     getContractFactory(
+      name: "SimpleTest",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.SimpleTest__factory>;
+    getContractFactory(
       name: "SplitterEventsAndErrors",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.SplitterEventsAndErrors__factory>;
@@ -320,6 +324,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.MADBase>;
     getContractAt(
+      name: "SimpleTest",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.SimpleTest>;
+    getContractAt(
       name: "SplitterEventsAndErrors",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -463,6 +472,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.MADBase>;
     deployContract(
+      name: "SimpleTest",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SimpleTest>;
+    deployContract(
       name: "SplitterEventsAndErrors",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.SplitterEventsAndErrors>;
@@ -636,6 +649,11 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.MADBase>;
+    deployContract(
+      name: "SimpleTest",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SimpleTest>;
     deployContract(
       name: "SplitterEventsAndErrors",
       args: any[],

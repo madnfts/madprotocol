@@ -132,13 +132,16 @@ const chains: Array<NetworkUserConfig> = [
         },
   },
   {
-  chainId: 296, // Hedera
-  url: "https://testnet.hedera.io/api/",
+  chainId: 296, // Hedera testnet
+  url: "https://testnet.hashio.io/api/",
   accounts: PK
     ? [PK]
     : {
       mnemonic: MNEMONIC || DEFAULT_MNEMONIC,
     },
+    timeout: 200000,
+    
+    allowUnlimitedContractSize: true
   },
   {
     chainId: 1337, // ganache
@@ -161,7 +164,7 @@ const config: HardhatUserConfig = {
     apiKey: {
       mainnet: ETHERSCAN_API_KEY || "",
       goerli: ETHERSCAN_API_KEY || "",
-      sepolia: ETHERSCAN_API_KEY || "",
+      sepolia: ETHERSCAN_API_KEY || ""
     },
     customChains: [
       {
@@ -185,8 +188,8 @@ const config: HardhatUserConfig = {
       network: "hedera",
       chainId: 296, // Hedera
       urls: {
-        apiURL: "https://testnet.hedera.io/api/",
-        browserURL: "https://hashscan.io/testnet",
+        apiURL: "https://testnet.hashio.io/api/",
+        browserURL: "https://server-verify.hashscan.io", // "https://hashscan.io/testnet"
       },
   },
     ],
@@ -217,6 +220,7 @@ const config: HardhatUserConfig = {
     sepolia: getChainConfig(11155111),
     ganache: getChainConfig(1337),
     hardhat: {
+      allowUnlimitedContractSize: true,
       forking: {
         url: `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`,
         blockNumber: 39835000,
@@ -246,6 +250,7 @@ const config: HardhatUserConfig = {
     version: "0.8.22",
     settings: {
       viaIR: true,
+      evmVersion: "shanghai",
       optimizer: {
         enabled: true,
         runs: 20_000,

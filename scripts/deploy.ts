@@ -2,10 +2,10 @@ import { config } from "dotenv";
 import { ethers } from "hardhat";
 import { resolve } from "path";
 import fs from 'fs';
-import type {
-  BigNumberish,
-  AddressLike,
-  BytesLike
+import {
+  type BigNumberish,
+  type AddressLike,
+  type BytesLike,
 } from "ethers";
 
 import { verifyContract } from './verify';
@@ -21,20 +21,22 @@ console.log = function (message: any) {
 
 config({ path: resolve(__dirname, "./.env") });
 
-const WAIT = 6
+const WAIT = 1 // 5 confirmations to verify
 
 const updateSettings = {
-  deployErcToken: true,
+  deployErcToken: false,
   deployFactory: true,
   deployRouter: true,
   setRouterAddress: true,
-  setCollectionType721: true,
-  setCollectionType1155: true,
+  setCollectionType721: false,
+  setCollectionType1155: false,
+  setCollectionTypeSimpleTest: true,
   setFactoryFees: true,
   setRouterFees: true,
-  deployErc721: true,
-  deployErc1155: true,
-  createCollectionSplitter: true,
+  deployErc721: false,
+  deployErc1155: false,
+  createCollectionSplitter: true,  
+  createCollectionCollection: true,
   verifyCollectionSplitter: false,
   verifyErc721: false
 };
@@ -132,7 +134,7 @@ type CreateCollectionParamsStruct = {
 const mockCollectionParams: CreateCollectionParamsStruct = {
   madFeeTokenAddress: ethers.ZeroAddress,
   tokenType: 1, // Assuming token type as 1 for the mock
-  tokenSalt: currentTimeHex(),
+  tokenSalt: currentTimeHex() as BytesLike,
   collectionName: "Mock Collection",
   collectionSymbol: "MCK",
   price: ethers.parseEther("0.001"),
@@ -152,12 +154,12 @@ type CreateSplitterParamsStruct = {
 };
 
 const mockSplitterParams: CreateSplitterParamsStruct = {
-  splitterSalt: currentTimeHex(),
+  splitterSalt: currentTimeHex() as BytesLike,
   ambassador: ethers.ZeroAddress as AddressLike ,
   project: ethers.ZeroAddress as AddressLike,
-  ambassadorShare: '0', // 10%
-  projectShare: '0', // 10%
-  madFeeTokenAddress: ethers.ZeroAddress,
+  ambassadorShare: '0' as BigNumberish, // 10%
+  projectShare: '0' as BigNumberish, // 10%
+  madFeeTokenAddress: ethers.ZeroAddress as AddressLike,
 };
 
 
@@ -189,12 +191,14 @@ const deployedDisplay = () => {
 };
 
 const createCollectionSplitter = async (factory) => {
-  console.log("Creating Collection Splitter...");
+  console.log(`Creating Collection Splitter......with args ${Object.values(mockSplitterParams)}`)
   const splitter = await factory.createSplitter(
     mockSplitterParams, { value: _feeCreateSplitter });
   await splitter.wait(WAIT);
+  }
 
-  console.log("Creating Collection...")
+const createCollectionCollection = async (factory: unknown) => {
+  console.log(`Creating Collection...with args ${Object.values(mockCollectionParams)}`)
   const collection = await factory["createCollection((address,uint8,bytes32,string,string,uint256,uint256,string,address,uint96))"](
     mockCollectionParams,
     { value: _feeCreateCollection }
@@ -481,6 +485,9 @@ const main = async () => {
   const ERC1155Basic = await ethers.getContractFactory(
     "ERC1155Basic",
   );
+  const SimpleTest = await ethers.getContractFactory(
+    "SimpleTest",
+  );
 
   const [deployer] = await ethers.getSigners();
 
@@ -544,6 +551,15 @@ const main = async () => {
       );
     }
 
+    if (updateSettings.setCollectionTypeSimpleTest) {
+      await setCollectionType(
+        factory,
+        3,
+        SimpleTest.bytecode,
+        "SimpleTest",
+      );
+    }
+
     // Set fees for Factory
     if (updateSettings.setFactoryFees) {
       await setFactoryFees(
@@ -582,7 +598,10 @@ const main = async () => {
 
     if (updateSettings.verifyCollectionSplitter) {
       await verifyContract(deployedSplitterAddress, [[deployerAddress as AddressLike], [10000]])      
-      
+    }
+
+    if (updateSettings.createCollectionCollection) {
+      await createCollectionCollection(factory)
     }
     
     if (updateSettings.verifyErc721) {

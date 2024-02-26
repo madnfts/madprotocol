@@ -29,7 +29,7 @@ solc_version = "0.8.22"
     # // Affects type checking and code generation. Can be homestead,
     # // tangerineWhistle, spuriousDragon, byzantium, constantinople,
     # // petersburg, istanbul, berlin, london, paris or shanghai (default)
-# evm_version="london"
+# evm_version="shanghai"
 
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config
 

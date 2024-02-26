@@ -26,7 +26,7 @@ interface ImplBaseEventsAndErrors {
     event BaseURISet(string indexed newBaseURI);
 
     /// @dev 0x8f0a54da7ee5bbe880036935fcef1dc9f0568cbde68bcbd5e1eedd56df052ca0
-    event BaseURILocked(); /* string indexed baseURI */
+    event BaseURILocked(string indexed baseURI); /* string indexed baseURI */
 
     /// @dev 0x2a5a1009e36beb67c3a1ada61dd1343d7e9ec62c70965492fbaa06234f8316b1
     event RoyaltyRecipientSet(address indexed newRecipient);

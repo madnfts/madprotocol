@@ -102,10 +102,8 @@ abstract contract ImplBase is
      */
     function setBaseURILock() public onlyOwner {
         uriLock = true;
-        assembly {
-            // emit BaseURILocked(baseURI);
-            log1(0, 0, _BASE_URI_LOCKED)
-        }
+        emit BaseURILocked(baseURI);
+
     }
 
     /**

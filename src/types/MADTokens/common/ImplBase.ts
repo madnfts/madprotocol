@@ -184,9 +184,11 @@ export interface ImplBaseInterface extends Interface {
 }
 
 export namespace BaseURILockedEvent {
-  export type InputTuple = [];
-  export type OutputTuple = [];
-  export interface OutputObject {}
+  export type InputTuple = [baseURI: string];
+  export type OutputTuple = [baseURI: string];
+  export interface OutputObject {
+    baseURI: string;
+  }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
   export type Log = TypedEventLog<Event>;
@@ -508,7 +510,7 @@ export interface ImplBase extends BaseContract {
   >;
 
   filters: {
-    "BaseURILocked()": TypedContractEvent<
+    "BaseURILocked(string)": TypedContractEvent<
       BaseURILockedEvent.InputTuple,
       BaseURILockedEvent.OutputTuple,
       BaseURILockedEvent.OutputObject

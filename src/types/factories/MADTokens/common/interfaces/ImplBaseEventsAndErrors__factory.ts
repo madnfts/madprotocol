@@ -61,7 +61,14 @@ const _abi = [
   },
   {
     anonymous: false,
-    inputs: [],
+    inputs: [
+      {
+        indexed: true,
+        internalType: "string",
+        name: "baseURI",
+        type: "string",
+      },
+    ],
     name: "BaseURILocked",
     type: "event",
   },

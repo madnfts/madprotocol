@@ -11,7 +11,7 @@ import yargs from "yargs";
 
 import "./tasks/accounts";
 
-// // Set script args
+// Set script args
 const parser = yargs
   .option("network", {
     type: "string",

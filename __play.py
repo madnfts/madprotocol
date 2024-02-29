@@ -28,8 +28,5 @@ print(creator + ambassador + project == 10000)
 
 assert creator + ambassador + project == 10000
 
-
-
-
-# if __name__ == "__main__":
-#     process_files()
+if __name__ == "__main__":
+    print('Hello World')

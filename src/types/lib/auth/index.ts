@@ -3,3 +3,4 @@
 /* eslint-disable */
 export type { FactoryVerifier } from "./FactoryVerifier";
 export type { Owned } from "./Owned";
+export type { TwoFactor } from "./TwoFactor";

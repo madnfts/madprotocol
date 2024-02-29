@@ -1,14 +1,12 @@
 import "@nomicfoundation/hardhat-chai-matchers";
-import "@nomiclabs/hardhat-etherscan";
-import "@primitivefi/hardhat-dodoc";
+import "@nomicfoundation/hardhat-ethers";
+import "@nomicfoundation/hardhat-toolbox";
+import "@nomicfoundation/hardhat-ignition-ethers";
 import "@typechain/hardhat";
 import { config as dotenvConfig } from "dotenv";
-import "hardhat-gas-reporter";
-import "hardhat-tracer";
 import { HardhatUserConfig } from "hardhat/config";
 import { NetworkUserConfig } from "hardhat/types";
 import { resolve } from "path";
-import "solidity-coverage";
 import yargs from "yargs";
 
 import "./tasks/accounts";
@@ -24,14 +22,21 @@ const parser = yargs
 
 // Load and validate .env configs
 dotenvConfig({ path: resolve(__dirname, "./.env") });
-const { INFURA_API_KEY, MNEMONIC, ETHERSCAN_API_KEY, PK } =
-  process.env;
+
+const {
+  INFURA_API_KEY,
+  MNEMONIC,
+  ETHERSCAN_API_KEY,
+  PK,
+  ALCHEMY_KEY,
+} = process.env;
+
 const DEFAULT_MNEMONIC =
   "candy maple cake sugar pudding cream honey rich smooth crumble sweet treat";
 (async () => {
   const argv = await parser.argv;
   if (
-    ["goerli", "mainnet"].includes(argv.network) &&
+    ["goerli", "mainnet", "sepolia"].includes(argv.network) &&
     INFURA_API_KEY === undefined
   ) {
     throw new Error(
@@ -49,8 +54,8 @@ const chains: Array<NetworkUserConfig> = [
       ? [PK]
       : {
           mnemonic: MNEMONIC || DEFAULT_MNEMONIC,
+        }
         },
-  },
   {
     chainId: 1666900000, // harmonyDevnet
     url: "https://api.s0.ps.hmny.io",
@@ -59,6 +64,24 @@ const chains: Array<NetworkUserConfig> = [
       : {
           mnemonic: MNEMONIC || DEFAULT_MNEMONIC,
         },
+  },
+  {
+    chainId: 137, // Polygon
+    url: "https://polygon-rpc.com/",
+    accounts: PK
+      ? [PK]
+      : {
+          mnemonic: MNEMONIC || DEFAULT_MNEMONIC,
+        },
+  },
+  {
+    chainId: 43970, // SERV
+    url: "https://rpc-testnet.serv.services",
+    accounts: PK
+      ? [PK]
+      : {
+        mnemonic: MNEMONIC || DEFAULT_MNEMONIC,
+      },
   },
   {
     chainId: 1564830818, // skale
@@ -79,6 +102,15 @@ const chains: Array<NetworkUserConfig> = [
         },
   },
   {
+    chainId: 1351057110, // skale CHAOS
+    url: "https://staging-v3.skalenodes.com/v1/staging-fast-active-bellatrix",
+    accounts: PK
+      ? [PK]
+      : {
+          mnemonic: MNEMONIC || DEFAULT_MNEMONIC,
+        },
+  },
+  {
     chainId: 5, // goerli
     url: "https://goerli.infura.io/v3/" + INFURA_API_KEY,
     accounts: PK
@@ -86,6 +118,30 @@ const chains: Array<NetworkUserConfig> = [
       : {
           mnemonic: MNEMONIC || DEFAULT_MNEMONIC,
         },
+  },
+  {
+
+  chainId: 11155111, // sepolia
+  // url: "https://sepolia.infura.io/v3/" + INFURA_API_KEY,
+    
+    url: "https://eth-sepolia.g.alchemy.com/v2/" + ALCHEMY_KEY,
+    accounts: PK
+      ? [PK]
+      : {
+          mnemonic: MNEMONIC || DEFAULT_MNEMONIC,
+        },
+  },
+  {
+  chainId: 296, // Hedera testnet
+  url: "https://testnet.hashio.io/api/",
+  accounts: PK
+    ? [PK]
+    : {
+      mnemonic: MNEMONIC || DEFAULT_MNEMONIC,
+    },
+    timeout: 200000,
+    
+    allowUnlimitedContractSize: true
   },
   {
     chainId: 1337, // ganache
@@ -108,6 +164,7 @@ const config: HardhatUserConfig = {
     apiKey: {
       mainnet: ETHERSCAN_API_KEY || "",
       goerli: ETHERSCAN_API_KEY || "",
+      sepolia: ETHERSCAN_API_KEY || ""
     },
     customChains: [
       {
@@ -119,6 +176,22 @@ const config: HardhatUserConfig = {
           browserURL: "https://api.s0.ps.hmny.io",
         },
       },
+      {
+        network: "SERV",
+        chainId: 43970,
+        urls: {
+          apiURL: "https://rpc-testnet.serv.services",
+          browserURL: "https://tserv-explorer.tryethernal.com/",
+        },
+      },
+      {
+      network: "hedera",
+      chainId: 296, // Hedera
+      urls: {
+        apiURL: "https://testnet.hashio.io/api/",
+        browserURL: "https://server-verify.hashscan.io", // "https://hashscan.io/testnet"
+      },
+  },
     ],
   },
   gasReporter: {
@@ -137,10 +210,22 @@ const config: HardhatUserConfig = {
   networks: {
     harmony: getChainConfig(1666600000),
     harmonyDevnet: getChainConfig(1666900000),
+    serv: getChainConfig(43970),
+    hedera: getChainConfig(296),
+    polygon: getChainConfig(137),
     skale: getChainConfig(1564830818),
     skaleDevnet: getChainConfig(344106930),
+    skaleChaos: getChainConfig(1351057110),
     goerli: getChainConfig(5),
+    sepolia: getChainConfig(11155111),
     ganache: getChainConfig(1337),
+    hardhat: {
+      allowUnlimitedContractSize: true,
+      forking: {
+        url: `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`,
+        blockNumber: 39835000,
+      },
+    },
   },
   paths: {
     artifacts: "./artifacts",
@@ -148,27 +233,45 @@ const config: HardhatUserConfig = {
     sources: "./contracts",
     tests: "./test",
   },
+
+  // solidity: {
+  //   version: "0.8.22",
+  //   settings: {
+  //     metadata: {
+  //       bytecodeHash: "none",
+  //     },
+  //     optimizer: {
+  //       enabled: true,
+  //       runs: 800,
+  //     },
+  //   },
+  // },
   solidity: {
-    version: "0.8.16",
+    version: "0.8.22",
     settings: {
-      metadata: {
-        bytecodeHash: "none",
-      },
+      viaIR: true,
+      evmVersion: "shanghai",
       optimizer: {
         enabled: true,
-        runs: 800,
+        runs: 20_000,
+        details: {
+          yul: true,
+          yulDetails: {
+            stackAllocation: true,
+          },
+        },
       },
     },
   },
   typechain: {
     outDir: "src/types",
-    target: "ethers-v5",
+    target: "ethers-v6",
   },
-  dodoc: {
-    runOnCompile: !!(
-      process.env.GEN_DOCS && process.env.GEN_DOCS != "false"
-    ),
-  },
+  // dodoc: {
+  //   runOnCompile: !!(
+  //     process.env.GEN_DOCS && process.env.GEN_DOCS != "false"
+  //   ),
+  // },
 };
 
 export default config;

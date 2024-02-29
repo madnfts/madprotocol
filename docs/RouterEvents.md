@@ -1,32 +1,19 @@
 # RouterEvents
 
-
-
-
-
-
-
-
-
-
 ## Events
 
-### BaseURI
+### baseURI
 
 ```solidity
 event BaseURI(bytes32 indexed _id, string indexed _baseURI)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _id `indexed` | bytes32 | undefined |
-| _baseURI `indexed` | string | undefined |
+| Name                | Type    | Description |
+| ------------------- | ------- | ----------- |
+| \_id `indexed`      | bytes32 | undefined   |
+| \_baseURI `indexed` | string  | undefined   |
 
 ### FeesUpdated
 
@@ -34,16 +21,12 @@ event BaseURI(bytes32 indexed _id, string indexed _baseURI)
 event FeesUpdated(uint256 burnFees, uint256 mintFees)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| burnFees  | uint256 | undefined |
-| mintFees  | uint256 | undefined |
+| Name     | Type    | Description |
+| -------- | ------- | ----------- |
+| burnFees | uint256 | undefined   |
+| mintFees | uint256 | undefined   |
 
 ### FreeClaimState
 
@@ -51,17 +34,13 @@ event FeesUpdated(uint256 burnFees, uint256 mintFees)
 event FreeClaimState(bytes32 indexed _id, uint8 indexed _type, bool indexed _state)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _id `indexed` | bytes32 | undefined |
-| _type `indexed` | uint8 | undefined |
-| _state `indexed` | bool | undefined |
+| Name              | Type    | Description |
+| ----------------- | ------- | ----------- |
+| \_id `indexed`    | bytes32 | undefined   |
+| \_type `indexed`  | uint8   | undefined   |
+| \_state `indexed` | bool    | undefined   |
 
 ### PaymentTokenUpdated
 
@@ -69,15 +48,11 @@ event FreeClaimState(bytes32 indexed _id, uint8 indexed _type, bool indexed _sta
 event PaymentTokenUpdated(address indexed newPaymentToken)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newPaymentToken `indexed` | address | undefined |
+| Name                      | Type    | Description |
+| ------------------------- | ------- | ----------- |
+| newPaymentToken `indexed` | address | undefined   |
 
 ### PublicMintState
 
@@ -85,17 +60,13 @@ event PaymentTokenUpdated(address indexed newPaymentToken)
 event PublicMintState(bytes32 indexed _id, uint8 indexed _type, bool indexed _state)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _id `indexed` | bytes32 | undefined |
-| _type `indexed` | uint8 | undefined |
-| _state `indexed` | bool | undefined |
+| Name              | Type    | Description |
+| ----------------- | ------- | ----------- |
+| \_id `indexed`    | bytes32 | undefined   |
+| \_type `indexed`  | uint8   | undefined   |
+| \_state `indexed` | bool    | undefined   |
 
 ### RecipientUpdated
 
@@ -103,15 +74,11 @@ event PublicMintState(bytes32 indexed _id, uint8 indexed _type, bool indexed _st
 event RecipientUpdated(address indexed newRecipient)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newRecipient `indexed` | address | undefined |
+| Name                   | Type    | Description |
+| ---------------------- | ------- | ----------- |
+| newRecipient `indexed` | address | undefined   |
 
 ### TokenFundsWithdrawn
 
@@ -119,17 +86,13 @@ event RecipientUpdated(address indexed newRecipient)
 event TokenFundsWithdrawn(bytes32 indexed _id, uint8 indexed _type, address indexed _payee)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _id `indexed` | bytes32 | undefined |
-| _type `indexed` | uint8 | undefined |
-| _payee `indexed` | address | undefined |
+| Name              | Type    | Description |
+| ----------------- | ------- | ----------- |
+| \_id `indexed`    | bytes32 | undefined   |
+| \_type `indexed`  | uint8   | undefined   |
+| \_payee `indexed` | address | undefined   |
 
 ### WhitelistMintState
 
@@ -137,19 +100,13 @@ event TokenFundsWithdrawn(bytes32 indexed _id, uint8 indexed _type, address inde
 event WhitelistMintState(bytes32 indexed _id, uint8 indexed _type, bool indexed _state)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _id `indexed` | bytes32 | undefined |
-| _type `indexed` | uint8 | undefined |
-| _state `indexed` | bool | undefined |
-
-
+| Name              | Type    | Description |
+| ----------------- | ------- | ----------- |
+| \_id `indexed`    | bytes32 | undefined   |
+| \_type `indexed`  | uint8   | undefined   |
+| \_state `indexed` | bool    | undefined   |
 
 ## Errors
 
@@ -159,9 +116,4 @@ event WhitelistMintState(bytes32 indexed _id, uint8 indexed _type, bool indexed 
 error WrongPrice()
 ```
 
-
-
-*0xf7760f25*
-
-
-
+_0xf7760f25_

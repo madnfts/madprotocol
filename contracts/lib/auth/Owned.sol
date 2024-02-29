@@ -1,19 +1,20 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
-pragma solidity 0.8.16;
+pragma solidity 0.8.22;
 
 /// @notice Simple single owner authorization mixin.
-/// @author Modified from Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/auth/Owned.sol)
+/// @author Modified from Solmate
+/// (https://github.com/Rari-Capital/solmate/blob/main/src/auth/Owned.sol)
 
 abstract contract Owned {
     /*//////////////////////////////////////////////////////////////
                                  EVENTS
     //////////////////////////////////////////////////////////////*/
 
-    event OwnerUpdated(
-        address indexed user,
-        address indexed newOwner
-    );
+    /// @dev 0x1648fd01
+    error NotAuthorised();
+
+    event OwnerUpdated(address indexed user, address indexed newOwner);
 
     /*//////////////////////////////////////////////////////////////
                             OWNERSHIP STORAGE
@@ -22,8 +23,18 @@ abstract contract Owned {
     address public owner;
 
     modifier onlyOwner() virtual {
-        require(msg.sender == owner, "UNAUTHORIZED");
+        if (msg.sender != owner) revert NotAuthorised();
+        _;
+    }
 
+    modifier notZeroAddress(address _owner) {
+        assembly {
+            if iszero(_owner) {
+                // Revert ZeroAddress()
+                mstore(0x00, 0xd92e233d)
+                revert(0x1c, 0x04)
+            }
+        }
         _;
     }
 
@@ -31,7 +42,7 @@ abstract contract Owned {
                                CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
-    constructor(address _owner) {
+    constructor(address _owner) notZeroAddress(_owner) {
         owner = _owner;
 
         emit OwnerUpdated(address(0), _owner);
@@ -41,12 +52,21 @@ abstract contract Owned {
                              OWNERSHIP LOGIC
     //////////////////////////////////////////////////////////////*/
 
+    /**
+     * @notice Set owner, a public state-modifying function.
+     * @dev Has modifiers: onlyOwner, notZeroAddress.
+     * @param newOwner The new owner address.
+     * @custom:signature setOwner(address)
+     * @custom:selector 0x13af4035
+     */
     function setOwner(address newOwner)
         public
-        virtual
         onlyOwner
+        notZeroAddress(newOwner)
     {
-        owner = newOwner;
+        assembly {
+            sstore(owner.slot, newOwner)
+        }
 
         emit OwnerUpdated(msg.sender, newOwner);
     }

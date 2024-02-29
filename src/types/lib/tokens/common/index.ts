@@ -2,4 +2,3 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { ERC2981 } from "./ERC2981";
-export type { FeeOracle } from "./FeeOracle";

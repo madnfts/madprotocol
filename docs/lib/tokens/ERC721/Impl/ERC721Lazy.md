@@ -1,13 +1,5 @@
 # ERC721Lazy
 
-
-
-
-
-
-
-
-
 ## Methods
 
 ### DOMAIN_SEPARATOR
@@ -16,66 +8,53 @@
 function DOMAIN_SEPARATOR() external view returns (bytes32)
 ```
 
-
-
-
-
-
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | bytes32 | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | bytes32 | undefined   |
 
-### _verify
+### \_verify
 
 ```solidity
 function _verify(Types.Voucher _voucher, uint8 v, bytes32 r, bytes32 s) external view returns (address recovered)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _voucher | Types.Voucher | undefined |
-| v | uint8 | undefined |
-| r | bytes32 | undefined |
-| s | bytes32 | undefined |
+| Name      | Type          | Description |
+| --------- | ------------- | ----------- |
+| \_voucher | Types.Voucher | undefined   |
+| v         | uint8         | undefined   |
+| r         | bytes32       | undefined   |
+| s         | bytes32       | undefined   |
 
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| recovered | address | undefined |
+| Name      | Type    | Description |
+| --------- | ------- | ----------- |
+| recovered | address | undefined   |
 
-### _verifyVoucher
+### \_verifyVoucher
 
 ```solidity
 function _verifyVoucher(Types.Voucher _voucher, uint8 v, bytes32 r, bytes32 s) external view returns (address recovered)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _voucher | Types.Voucher | undefined |
-| v | uint8 | undefined |
-| r | bytes32 | undefined |
-| s | bytes32 | undefined |
+| Name      | Type          | Description |
+| --------- | ------------- | ----------- |
+| \_voucher | Types.Voucher | undefined   |
+| v         | uint8         | undefined   |
+| r         | bytes32       | undefined   |
+| s         | bytes32       | undefined   |
 
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| recovered | address | undefined |
+| Name      | Type    | Description |
+| --------- | ------- | ----------- |
+| recovered | address | undefined   |
 
 ### approve
 
@@ -83,16 +62,12 @@ function _verifyVoucher(Types.Voucher _voucher, uint8 v, bytes32 r, bytes32 s) e
 function approve(address spender, uint256 id) external nonpayable
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| spender | address | undefined |
-| id | uint256 | undefined |
+| Name    | Type    | Description |
+| ------- | ------- | ----------- |
+| spender | address | undefined   |
+| id      | uint256 | undefined   |
 
 ### balanceOf
 
@@ -100,21 +75,17 @@ function approve(address spender, uint256 id) external nonpayable
 function balanceOf(address owner) external view returns (uint256)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| owner | address | undefined |
+| Name  | Type    | Description |
+| ----- | ------- | ----------- |
+| owner | address | undefined   |
 
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | uint256 | undefined   |
 
 ### baseURILock
 
@@ -124,14 +95,11 @@ function baseURILock() external view returns (bool)
 
 Lock the URI default := false.
 
-
-
-
 #### Returns
 
 | Name | Type | Description |
-|---|---|---|
-| _0 | bool | undefined |
+| ---- | ---- | ----------- |
+| \_0  | bool | undefined   |
 
 ### burn
 
@@ -139,16 +107,12 @@ Lock the URI default := false.
 function burn(uint256[] ids, address erc20Owner) external payable
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| ids | uint256[] | undefined |
-| erc20Owner | address | undefined |
+| Name       | Type      | Description |
+| ---------- | --------- | ----------- |
+| ids        | uint256[] | undefined   |
+| erc20Owner | address   | undefined   |
 
 ### erc20
 
@@ -158,14 +122,11 @@ function erc20() external view returns (contract ERC20)
 
 ERC20 payment token address.
 
-
-
-
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | contract ERC20 | undefined |
+| Name | Type           | Description |
+| ---- | -------------- | ----------- |
+| \_0  | contract ERC20 | undefined   |
 
 ### feeCount
 
@@ -175,14 +136,11 @@ function feeCount() external view returns (uint256)
 
 Fee counter.
 
-
-
-
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | uint256 | undefined   |
 
 ### getApproved
 
@@ -190,55 +148,41 @@ Fee counter.
 function getApproved(uint256) external view returns (address)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | uint256 | undefined   |
 
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | address | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | address | undefined   |
 
-### getBaseURI
+### baseURI
 
 ```solidity
-function getBaseURI() external view returns (string)
+function baseURI() external view returns (string)
 ```
-
-
-
-
-
 
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | string | undefined |
+| Name | Type   | Description |
+| ---- | ------ | ----------- |
+| \_0  | string | undefined   |
 
-### getMintCount
+### mintCount
 
 ```solidity
-function getMintCount() external view returns (uint256)
+function mintCount() external view returns (uint256)
 ```
-
-
-
-
-
 
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | uint256 | undefined   |
 
 ### isApprovedForAll
 
@@ -246,22 +190,18 @@ function getMintCount() external view returns (uint256)
 function isApprovedForAll(address, address) external view returns (bool)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | address | undefined |
-| _1 | address | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | address | undefined   |
+| \_1  | address | undefined   |
 
 #### Returns
 
 | Name | Type | Description |
-|---|---|---|
-| _0 | bool | undefined |
+| ---- | ---- | ----------- |
+| \_0  | bool | undefined   |
 
 ### lazyMint
 
@@ -269,18 +209,14 @@ function isApprovedForAll(address, address) external view returns (bool)
 function lazyMint(Types.Voucher voucher, uint8 v, bytes32 r, bytes32 s) external payable
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| voucher | Types.Voucher | undefined |
-| v | uint8 | undefined |
-| r | bytes32 | undefined |
-| s | bytes32 | undefined |
+| Name    | Type          | Description |
+| ------- | ------------- | ----------- |
+| voucher | Types.Voucher | undefined   |
+| v       | uint8         | undefined   |
+| r       | bytes32       | undefined   |
+| s       | bytes32       | undefined   |
 
 ### name
 
@@ -288,16 +224,11 @@ function lazyMint(Types.Voucher voucher, uint8 v, bytes32 r, bytes32 s) external
 function name() external view returns (string)
 ```
 
-
-
-
-
-
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | string | undefined |
+| Name | Type   | Description |
+| ---- | ------ | ----------- |
+| \_0  | string | undefined   |
 
 ### onERC721Received
 
@@ -305,24 +236,20 @@ function name() external view returns (string)
 function onERC721Received(address, address, uint256, bytes) external nonpayable returns (bytes4)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | address | undefined |
-| _1 | address | undefined |
-| _2 | uint256 | undefined |
-| _3 | bytes | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | address | undefined   |
+| \_1  | address | undefined   |
+| \_2  | uint256 | undefined   |
+| \_3  | bytes   | undefined   |
 
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | bytes4 | undefined |
+| Name | Type   | Description |
+| ---- | ------ | ----------- |
+| \_0  | bytes4 | undefined   |
 
 ### owner
 
@@ -330,16 +257,11 @@ function onERC721Received(address, address, uint256, bytes) external nonpayable 
 function owner() external view returns (address)
 ```
 
-
-
-
-
-
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | address | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | address | undefined   |
 
 ### ownerOf
 
@@ -347,21 +269,17 @@ function owner() external view returns (address)
 function ownerOf(uint256 id) external view returns (address owner)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| id | uint256 | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| id   | uint256 | undefined   |
 
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| owner | address | undefined |
+| Name  | Type    | Description |
+| ----- | ------- | ----------- |
+| owner | address | undefined   |
 
 ### royaltyInfo
 
@@ -369,23 +287,19 @@ function ownerOf(uint256 id) external view returns (address owner)
 function royaltyInfo(uint256, uint256 salePrice) external view returns (address receiver, uint256 royaltyAmount)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined |
-| salePrice | uint256 | undefined |
+| Name      | Type    | Description |
+| --------- | ------- | ----------- |
+| \_0       | uint256 | undefined   |
+| salePrice | uint256 | undefined   |
 
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| receiver | address | undefined |
-| royaltyAmount | uint256 | undefined |
+| Name          | Type    | Description |
+| ------------- | ------- | ----------- |
+| receiver      | address | undefined   |
+| royaltyAmount | uint256 | undefined   |
 
 ### safeTransferFrom
 
@@ -393,17 +307,13 @@ function royaltyInfo(uint256, uint256 salePrice) external view returns (address 
 function safeTransferFrom(address from, address to, uint256 id) external nonpayable
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| from | address | undefined |
-| to | address | undefined |
-| id | uint256 | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| from | address | undefined   |
+| to   | address | undefined   |
+| id   | uint256 | undefined   |
 
 ### safeTransferFrom
 
@@ -411,18 +321,14 @@ function safeTransferFrom(address from, address to, uint256 id) external nonpaya
 function safeTransferFrom(address from, address to, uint256 id, bytes data) external nonpayable
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| from | address | undefined |
-| to | address | undefined |
-| id | uint256 | undefined |
-| data | bytes | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| from | address | undefined   |
+| to   | address | undefined   |
+| id   | uint256 | undefined   |
+| data | bytes   | undefined   |
 
 ### setApprovalForAll
 
@@ -430,16 +336,12 @@ function safeTransferFrom(address from, address to, uint256 id, bytes data) exte
 function setApprovalForAll(address operator, bool approved) external nonpayable
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| operator | address | undefined |
-| approved | bool | undefined |
+| Name     | Type    | Description |
+| -------- | ------- | ----------- |
+| operator | address | undefined   |
+| approved | bool    | undefined   |
 
 ### setBaseURI
 
@@ -447,15 +349,11 @@ function setApprovalForAll(address operator, bool approved) external nonpayable
 function setBaseURI(string _baseURI) external nonpayable
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _baseURI | string | undefined |
+| Name      | Type   | Description |
+| --------- | ------ | ----------- |
+| \_baseURI | string | undefined   |
 
 ### setBaseURILock
 
@@ -463,26 +361,17 @@ function setBaseURI(string _baseURI) external nonpayable
 function setBaseURILock() external nonpayable
 ```
 
-
-
-
-
-
 ### setOwner
 
 ```solidity
 function setOwner(address newOwner) external nonpayable
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newOwner | address | undefined |
+| Name     | Type    | Description |
+| -------- | ------- | ----------- |
+| newOwner | address | undefined   |
 
 ### setSigner
 
@@ -490,15 +379,11 @@ function setOwner(address newOwner) external nonpayable
 function setSigner(address _signer) external nonpayable
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _signer | address | undefined |
+| Name     | Type    | Description |
+| -------- | ------- | ----------- |
+| \_signer | address | undefined   |
 
 ### signer
 
@@ -508,14 +393,11 @@ function signer() external view returns (address)
 
 The signer address used for lazy minting voucher validation.
 
-
-
-
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | address | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | address | undefined   |
 
 ### splitter
 
@@ -525,14 +407,11 @@ function splitter() external view returns (contract SplitterImpl)
 
 Splitter address relationship.
 
-
-
-
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | contract SplitterImpl | undefined |
+| Name | Type                  | Description |
+| ---- | --------------------- | ----------- |
+| \_0  | contract SplitterImpl | undefined   |
 
 ### supportsInterface
 
@@ -540,21 +419,17 @@ Splitter address relationship.
 function supportsInterface(bytes4 interfaceId) external pure returns (bool)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| interfaceId | bytes4 | undefined |
+| Name        | Type   | Description |
+| ----------- | ------ | ----------- |
+| interfaceId | bytes4 | undefined   |
 
 #### Returns
 
 | Name | Type | Description |
-|---|---|---|
-| _0 | bool | undefined |
+| ---- | ---- | ----------- |
+| \_0  | bool | undefined   |
 
 ### symbol
 
@@ -562,16 +437,11 @@ function supportsInterface(bytes4 interfaceId) external pure returns (bool)
 function symbol() external view returns (string)
 ```
 
-
-
-
-
-
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | string | undefined |
+| Name | Type   | Description |
+| ---- | ------ | ----------- |
+| \_0  | string | undefined   |
 
 ### tokenURI
 
@@ -579,21 +449,17 @@ function symbol() external view returns (string)
 function tokenURI(uint256 id) external view returns (string)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| id | uint256 | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| id   | uint256 | undefined   |
 
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | string | undefined |
+| Name | Type   | Description |
+| ---- | ------ | ----------- |
+| \_0  | string | undefined   |
 
 ### totalSupply
 
@@ -601,16 +467,11 @@ function tokenURI(uint256 id) external view returns (string)
 function totalSupply() external view returns (uint256)
 ```
 
-
-
-
-
-
 #### Returns
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | uint256 | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | uint256 | undefined   |
 
 ### transferFrom
 
@@ -618,17 +479,13 @@ function totalSupply() external view returns (uint256)
 function transferFrom(address from, address to, uint256 id) external nonpayable
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| from | address | undefined |
-| to | address | undefined |
-| id | uint256 | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| from | address | undefined   |
+| to   | address | undefined   |
+| id   | uint256 | undefined   |
 
 ### usedVouchers
 
@@ -638,19 +495,17 @@ function usedVouchers(bytes32) external view returns (bool)
 
 Mapping for used vouchers.
 
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _0 | bytes32 | undefined |
+| Name | Type    | Description |
+| ---- | ------- | ----------- |
+| \_0  | bytes32 | undefined   |
 
 #### Returns
 
 | Name | Type | Description |
-|---|---|---|
-| _0 | bool | undefined |
+| ---- | ---- | ----------- |
+| \_0  | bool | undefined   |
 
 ### withdraw
 
@@ -658,15 +513,11 @@ Mapping for used vouchers.
 function withdraw(address recipient) external nonpayable
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| recipient | address | undefined |
+| Name      | Type    | Description |
+| --------- | ------- | ----------- |
+| recipient | address | undefined   |
 
 ### withdrawERC20
 
@@ -674,18 +525,12 @@ function withdraw(address recipient) external nonpayable
 function withdrawERC20(contract ERC20 _token, address recipient) external nonpayable
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| _token | contract ERC20 | undefined |
-| recipient | address | undefined |
-
-
+| Name      | Type           | Description |
+| --------- | -------------- | ----------- |
+| \_token   | contract ERC20 | undefined   |
+| recipient | address        | undefined   |
 
 ## Events
 
@@ -695,17 +540,13 @@ function withdrawERC20(contract ERC20 _token, address recipient) external nonpay
 event Approval(address indexed owner, address indexed spender, uint256 indexed id)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| owner `indexed` | address | undefined |
-| spender `indexed` | address | undefined |
-| id `indexed` | uint256 | undefined |
+| Name              | Type    | Description |
+| ----------------- | ------- | ----------- |
+| owner `indexed`   | address | undefined   |
+| spender `indexed` | address | undefined   |
+| id `indexed`      | uint256 | undefined   |
 
 ### ApprovalForAll
 
@@ -713,17 +554,13 @@ event Approval(address indexed owner, address indexed spender, uint256 indexed i
 event ApprovalForAll(address indexed owner, address indexed operator, bool approved)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| owner `indexed` | address | undefined |
-| operator `indexed` | address | undefined |
-| approved  | bool | undefined |
+| Name               | Type    | Description |
+| ------------------ | ------- | ----------- |
+| owner `indexed`    | address | undefined   |
+| operator `indexed` | address | undefined   |
+| approved           | bool    | undefined   |
 
 ### BaseURILocked
 
@@ -731,15 +568,11 @@ event ApprovalForAll(address indexed owner, address indexed operator, bool appro
 event BaseURILocked(string indexed baseURI)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| baseURI `indexed` | string | undefined |
+| Name              | Type   | Description |
+| ----------------- | ------ | ----------- |
+| baseURI `indexed` | string | undefined   |
 
 ### BaseURISet
 
@@ -747,15 +580,11 @@ event BaseURILocked(string indexed baseURI)
 event BaseURISet(string indexed newBaseURI)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newBaseURI `indexed` | string | undefined |
+| Name                 | Type   | Description |
+| -------------------- | ------ | ----------- |
+| newBaseURI `indexed` | string | undefined   |
 
 ### OwnerUpdated
 
@@ -763,16 +592,12 @@ event BaseURISet(string indexed newBaseURI)
 event OwnerUpdated(address indexed user, address indexed newOwner)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| user `indexed` | address | undefined |
-| newOwner `indexed` | address | undefined |
+| Name               | Type    | Description |
+| ------------------ | ------- | ----------- |
+| user `indexed`     | address | undefined   |
+| newOwner `indexed` | address | undefined   |
 
 ### RoyaltyFeeSet
 
@@ -780,15 +605,11 @@ event OwnerUpdated(address indexed user, address indexed newOwner)
 event RoyaltyFeeSet(uint256 indexed newRoyaltyFee)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newRoyaltyFee `indexed` | uint256 | undefined |
+| Name                    | Type    | Description |
+| ----------------------- | ------- | ----------- |
+| newRoyaltyFee `indexed` | uint256 | undefined   |
 
 ### RoyaltyRecipientSet
 
@@ -796,15 +617,11 @@ event RoyaltyFeeSet(uint256 indexed newRoyaltyFee)
 event RoyaltyRecipientSet(address indexed newRecipient)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newRecipient `indexed` | address | undefined |
+| Name                   | Type    | Description |
+| ---------------------- | ------- | ----------- |
+| newRecipient `indexed` | address | undefined   |
 
 ### SignerUpdated
 
@@ -812,15 +629,11 @@ event RoyaltyRecipientSet(address indexed newRecipient)
 event SignerUpdated(address indexed newSigner)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newSigner `indexed` | address | undefined |
+| Name                | Type    | Description |
+| ------------------- | ------- | ----------- |
+| newSigner `indexed` | address | undefined   |
 
 ### Transfer
 
@@ -828,19 +641,13 @@ event SignerUpdated(address indexed newSigner)
 event Transfer(address indexed from, address indexed to, uint256 indexed id)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| from `indexed` | address | undefined |
-| to `indexed` | address | undefined |
-| id `indexed` | uint256 | undefined |
-
-
+| Name           | Type    | Description |
+| -------------- | ------- | ----------- |
+| from `indexed` | address | undefined   |
+| to `indexed`   | address | undefined   |
+| id `indexed`   | uint256 | undefined   |
 
 ## Errors
 
@@ -850,10 +657,7 @@ event Transfer(address indexed from, address indexed to, uint256 indexed id)
 error InvalidSigner()
 ```
 
-
-
-*0x815e1d64*
-
+_0x815e1d64_
 
 ### NotMintedYet
 
@@ -861,21 +665,15 @@ error InvalidSigner()
 error NotMintedYet()
 ```
 
+_0xbad086ea_
 
-
-*0xbad086ea*
-
-
-### UriLocked
+### BaseURILocked
 
 ```solidity
-error UriLocked()
+error BaseURILocked()
 ```
 
-
-
-*?*
-
+_?_
 
 ### UsedVoucher
 
@@ -883,10 +681,7 @@ error UriLocked()
 error UsedVoucher()
 ```
 
-
-
-*0xe647f413*
-
+_0xe647f413_
 
 ### WrongPrice
 
@@ -894,9 +689,4 @@ error UsedVoucher()
 error WrongPrice()
 ```
 
-
-
-*0xf7760f25*
-
-
-
+_0xf7760f25_

@@ -1,14 +1,5 @@
 # ERC1155WhitelistEventsAndErrors
 
-
-
-
-
-
-
-
-
-
 ## Events
 
 ### BaseURILocked
@@ -17,15 +8,11 @@
 event BaseURILocked(string indexed baseURI)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| baseURI `indexed` | string | undefined |
+| Name              | Type   | Description |
+| ----------------- | ------ | ----------- |
+| baseURI `indexed` | string | undefined   |
 
 ### BaseURISet
 
@@ -33,15 +20,11 @@ event BaseURILocked(string indexed baseURI)
 event BaseURISet(string indexed newBaseURI)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newBaseURI `indexed` | string | undefined |
+| Name                 | Type   | Description |
+| -------------------- | ------ | ----------- |
+| newBaseURI `indexed` | string | undefined   |
 
 ### FreeClaimStateSet
 
@@ -49,15 +32,11 @@ event BaseURISet(string indexed newBaseURI)
 event FreeClaimStateSet(bool indexed freeClaimState)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| freeClaimState `indexed` | bool | undefined |
+| Name                     | Type | Description |
+| ------------------------ | ---- | ----------- |
+| freeClaimState `indexed` | bool | undefined   |
 
 ### FreeConfigSet
 
@@ -65,17 +44,13 @@ event FreeClaimStateSet(bool indexed freeClaimState)
 event FreeConfigSet(uint256 newFreeAmount, uint256 indexed newMaxFree, bytes32 indexed newMerkleRoot)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newFreeAmount  | uint256 | undefined |
-| newMaxFree `indexed` | uint256 | undefined |
-| newMerkleRoot `indexed` | bytes32 | undefined |
+| Name                    | Type    | Description |
+| ----------------------- | ------- | ----------- |
+| newFreeAmount           | uint256 | undefined   |
+| newMaxFree `indexed`    | uint256 | undefined   |
+| newMerkleRoot `indexed` | bytes32 | undefined   |
 
 ### PublicMintStateSet
 
@@ -83,15 +58,11 @@ event FreeConfigSet(uint256 newFreeAmount, uint256 indexed newMaxFree, bytes32 i
 event PublicMintStateSet(bool indexed newPublicState)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newPublicState `indexed` | bool | undefined |
+| Name                     | Type | Description |
+| ------------------------ | ---- | ----------- |
+| newPublicState `indexed` | bool | undefined   |
 
 ### RoyaltyFeeSet
 
@@ -99,15 +70,11 @@ event PublicMintStateSet(bool indexed newPublicState)
 event RoyaltyFeeSet(uint256 indexed newRoyaltyFee)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newRoyaltyFee `indexed` | uint256 | undefined |
+| Name                    | Type    | Description |
+| ----------------------- | ------- | ----------- |
+| newRoyaltyFee `indexed` | uint256 | undefined   |
 
 ### RoyaltyRecipientSet
 
@@ -115,15 +82,11 @@ event RoyaltyFeeSet(uint256 indexed newRoyaltyFee)
 event RoyaltyRecipientSet(address indexed newRecipient)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newRecipient `indexed` | address | undefined |
+| Name                   | Type    | Description |
+| ---------------------- | ------- | ----------- |
+| newRecipient `indexed` | address | undefined   |
 
 ### WhitelistConfigSet
 
@@ -131,17 +94,13 @@ event RoyaltyRecipientSet(address indexed newRecipient)
 event WhitelistConfigSet(uint256 indexed newWhitelistPrice, uint256 indexed newMaxWhitelistSupply, bytes32 indexed newMerkleRoot)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newWhitelistPrice `indexed` | uint256 | undefined |
-| newMaxWhitelistSupply `indexed` | uint256 | undefined |
-| newMerkleRoot `indexed` | bytes32 | undefined |
+| Name                            | Type    | Description |
+| ------------------------------- | ------- | ----------- |
+| newWhitelistPrice `indexed`     | uint256 | undefined   |
+| newMaxWhitelistSupply `indexed` | uint256 | undefined   |
+| newMerkleRoot `indexed`         | bytes32 | undefined   |
 
 ### WhitelistMintStateSet
 
@@ -149,17 +108,11 @@ event WhitelistConfigSet(uint256 indexed newWhitelistPrice, uint256 indexed newM
 event WhitelistMintStateSet(bool indexed newWhitelistState)
 ```
 
-
-
-
-
 #### Parameters
 
-| Name | Type | Description |
-|---|---|---|
-| newWhitelistState `indexed` | bool | undefined |
-
-
+| Name                        | Type | Description |
+| --------------------------- | ---- | ----------- |
+| newWhitelistState `indexed` | bool | undefined   |
 
 ## Errors
 
@@ -169,10 +122,7 @@ event WhitelistMintStateSet(bool indexed newWhitelistState)
 error AddressDenied()
 ```
 
-
-
-*0x3b8474be*
-
+_0x3b8474be_
 
 ### AlreadyClaimed
 
@@ -180,10 +130,7 @@ error AddressDenied()
 error AlreadyClaimed()
 ```
 
-
-
-*0x646cf558*
-
+_0x646cf558_
 
 ### FreeClaimClosed
 
@@ -191,10 +138,7 @@ error AlreadyClaimed()
 error FreeClaimClosed()
 ```
 
-
-
-*0xf44170cb*
-
+_0xf44170cb_
 
 ### LoopOverflow
 
@@ -202,10 +146,7 @@ error FreeClaimClosed()
 error LoopOverflow()
 ```
 
-
-
-*0xdfb035c9*
-
+_0xdfb035c9_
 
 ### MaxFreeReached
 
@@ -213,10 +154,7 @@ error LoopOverflow()
 error MaxFreeReached()
 ```
 
-
-
-*0xf90c1bdb*
-
+_0xf90c1bdb_
 
 ### MaxMintReached
 
@@ -224,10 +162,7 @@ error MaxFreeReached()
 error MaxMintReached()
 ```
 
-
-
-*0xfc3fc71f*
-
+_0xfc3fc71f_
 
 ### MaxWhitelistReached
 
@@ -235,10 +170,7 @@ error MaxMintReached()
 error MaxWhitelistReached()
 ```
 
-
-
-*0xa554e6e1*
-
+_0xa554e6e1_
 
 ### NotMintedYet
 
@@ -246,10 +178,7 @@ error MaxWhitelistReached()
 error NotMintedYet()
 ```
 
-
-
-*0xbad086ea*
-
+_0xbad086ea_
 
 ### PublicMintClosed
 
@@ -257,21 +186,15 @@ error NotMintedYet()
 error PublicMintClosed()
 ```
 
+_0x2d0a3f8e_
 
-
-*0x2d0a3f8e*
-
-
-### UriLocked
+### BaseURILocked
 
 ```solidity
-error UriLocked()
+error BaseURILocked()
 ```
 
-
-
-*?*
-
+_?_
 
 ### WhitelistMintClosed
 
@@ -279,10 +202,7 @@ error UriLocked()
 error WhitelistMintClosed()
 ```
 
-
-
-*0x700a6c1f*
-
+_0x700a6c1f_
 
 ### WrongPrice
 
@@ -290,9 +210,4 @@ error WhitelistMintClosed()
 error WrongPrice()
 ```
 
-
-
-*0xf7760f25*
-
-
-
+_0xf7760f25_

@@ -25,20 +25,20 @@ const WAIT = 1 // 5 confirmations to verify
 
 const updateSettings = {
   deployErcToken: false,
-  deployFactory: true,
-  deployRouter: true,
-  setRouterAddress: true,
-  setCollectionType721: false,
-  setCollectionType1155: false,
-  setCollectionTypeSimpleTest: true,
-  setFactoryFees: true,
-  setRouterFees: true,
-  deployErc721: false,
-  deployErc1155: false,
-  createCollectionSplitter: true,  
-  createCollectionCollection: true,
+  deployFactory: false,
+  deployRouter: false,
+  setRouterAddress: false,
+  setCollectionType721: true,
+  setCollectionType1155: true,
+  setCollectionTypeSimpleTest: false,
+  setFactoryFees: false,
+  setRouterFees: false,
+  deployErc721: true,
+  deployErc1155: true,
+  createCollectionSplitter: false,  
+  createCollectionCollection: false,
   verifyCollectionSplitter: false,
-  verifyErc721: false
+  verifyErc721: true
 };
 
 
@@ -608,6 +608,11 @@ const main = async () => {
       mockCollectionParams.splitter = deployedSplitterAddress
       await verifyContract(deployedFactoryErc721Address, [mockArgs])
     }
+
+    // if (updateSettings.verifyErc1155) {
+    //   mockCollectionParams.splitter = deployedSplitterAddress
+    //   await verifyContract(deployedFactoryErc1155Address, [mockArgs])
+    // }
 
     deployedDisplay();
     console.log("Deployment completed successfully...\n");

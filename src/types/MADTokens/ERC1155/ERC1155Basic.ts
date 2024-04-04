@@ -140,7 +140,7 @@ export interface ERC1155BasicInterface extends Interface {
   encodeFunctionData(functionFragment: "baseURI", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "burn",
-    values: [AddressLike[], BigNumberish[], BigNumberish[]]
+    values: [AddressLike, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "burnBatch",
@@ -593,7 +593,7 @@ export interface ERC1155Basic extends BaseContract {
   baseURI: TypedContractMethod<[], [string], "view">;
 
   burn: TypedContractMethod<
-    [from: AddressLike[], ids: BigNumberish[], balances: BigNumberish[]],
+    [from: AddressLike, id: BigNumberish, amount: BigNumberish],
     [void],
     "payable"
   >;
@@ -651,7 +651,7 @@ export interface ERC1155Basic extends BaseContract {
   >;
 
   mintTo: TypedContractMethod<
-    [to: AddressLike, amount: BigNumberish, _id: BigNumberish],
+    [to: AddressLike, _id: BigNumberish, amount: BigNumberish],
     [void],
     "payable"
   >;
@@ -770,7 +770,7 @@ export interface ERC1155Basic extends BaseContract {
   getFunction(
     nameOrSignature: "burn"
   ): TypedContractMethod<
-    [from: AddressLike[], ids: BigNumberish[], balances: BigNumberish[]],
+    [from: AddressLike, id: BigNumberish, amount: BigNumberish],
     [void],
     "payable"
   >;
@@ -843,7 +843,7 @@ export interface ERC1155Basic extends BaseContract {
   getFunction(
     nameOrSignature: "mintTo"
   ): TypedContractMethod<
-    [to: AddressLike, amount: BigNumberish, _id: BigNumberish],
+    [to: AddressLike, _id: BigNumberish, amount: BigNumberish],
     [void],
     "payable"
   >;

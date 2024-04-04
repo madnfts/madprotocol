@@ -37,8 +37,8 @@ export interface MADRouterInterface extends Interface {
     nameOrSignature:
       | "batchBurn(address,address,uint128[],uint128[],address)"
       | "batchBurn(address,address,uint128[],uint128[])"
-      | "burn(address,uint128[],address[],uint128[])"
-      | "burn(address,uint128[],address[],uint128[],address)"
+      | "burn(address,address,uint128,uint128,address)"
+      | "burn(address,address,uint128,uint128)"
       | "burn(address,uint128[],address)"
       | "burn(address,uint128[])"
       | "feeBurn"
@@ -51,6 +51,8 @@ export interface MADRouterInterface extends Interface {
       | "mint(address,address,uint128,uint128)"
       | "mint(address,uint128,address)"
       | "mint(address,uint128)"
+      | "mintBatch(address,address,uint128[],uint128[])"
+      | "mintBatch(address,address,uint128[],uint128[],address)"
       | "mintBatchTo(address,address,uint128[],uint128[],address)"
       | "mintBatchTo(address,address,uint128[],uint128[])"
       | "mintTo(address,address,uint128,uint128,address)"
@@ -95,18 +97,12 @@ export interface MADRouterInterface extends Interface {
     values: [AddressLike, AddressLike, BigNumberish[], BigNumberish[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "burn(address,uint128[],address[],uint128[])",
-    values: [AddressLike, BigNumberish[], AddressLike[], BigNumberish[]]
+    functionFragment: "burn(address,address,uint128,uint128,address)",
+    values: [AddressLike, AddressLike, BigNumberish, BigNumberish, AddressLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "burn(address,uint128[],address[],uint128[],address)",
-    values: [
-      AddressLike,
-      BigNumberish[],
-      AddressLike[],
-      BigNumberish[],
-      AddressLike
-    ]
+    functionFragment: "burn(address,address,uint128,uint128)",
+    values: [AddressLike, AddressLike, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "burn(address,uint128[],address)",
@@ -149,6 +145,20 @@ export interface MADRouterInterface extends Interface {
   encodeFunctionData(
     functionFragment: "mint(address,uint128)",
     values: [AddressLike, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "mintBatch(address,address,uint128[],uint128[])",
+    values: [AddressLike, AddressLike, BigNumberish[], BigNumberish[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "mintBatch(address,address,uint128[],uint128[],address)",
+    values: [
+      AddressLike,
+      AddressLike,
+      BigNumberish[],
+      BigNumberish[],
+      AddressLike
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "mintBatchTo(address,address,uint128[],uint128[],address)",
@@ -213,11 +223,11 @@ export interface MADRouterInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "burn(address,uint128[],address[],uint128[])",
+    functionFragment: "burn(address,address,uint128,uint128,address)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "burn(address,uint128[],address[],uint128[],address)",
+    functionFragment: "burn(address,address,uint128,uint128)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -257,6 +267,14 @@ export interface MADRouterInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "mint(address,uint128)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "mintBatch(address,address,uint128[],uint128[])",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "mintBatch(address,address,uint128[],uint128[],address)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -483,7 +501,7 @@ export interface MADRouter extends BaseContract {
       collection: AddressLike,
       _from: AddressLike,
       _ids: BigNumberish[],
-      _balances: BigNumberish[],
+      _amounts: BigNumberish[],
       madFeeTokenAddress: AddressLike
     ],
     [void],
@@ -495,30 +513,30 @@ export interface MADRouter extends BaseContract {
       collection: AddressLike,
       _from: AddressLike,
       _ids: BigNumberish[],
-      _balances: BigNumberish[]
+      _amounts: BigNumberish[]
     ],
     [void],
     "payable"
   >;
 
-  "burn(address,uint128[],address[],uint128[])": TypedContractMethod<
+  "burn(address,address,uint128,uint128,address)": TypedContractMethod<
     [
       collection: AddressLike,
-      _ids: BigNumberish[],
-      to: AddressLike[],
-      _amount: BigNumberish[]
-    ],
-    [void],
-    "payable"
-  >;
-
-  "burn(address,uint128[],address[],uint128[],address)": TypedContractMethod<
-    [
-      collection: AddressLike,
-      _ids: BigNumberish[],
-      to: AddressLike[],
-      _amount: BigNumberish[],
+      from: AddressLike,
+      _id: BigNumberish,
+      _amount: BigNumberish,
       madFeeTokenAddress: AddressLike
+    ],
+    [void],
+    "payable"
+  >;
+
+  "burn(address,address,uint128,uint128)": TypedContractMethod<
+    [
+      collection: AddressLike,
+      from: AddressLike,
+      _id: BigNumberish,
+      _amount: BigNumberish
     ],
     [void],
     "payable"
@@ -607,12 +625,35 @@ export interface MADRouter extends BaseContract {
     "payable"
   >;
 
+  "mintBatch(address,address,uint128[],uint128[])": TypedContractMethod<
+    [
+      collection: AddressLike,
+      _to: AddressLike,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[]
+    ],
+    [void],
+    "payable"
+  >;
+
+  "mintBatch(address,address,uint128[],uint128[],address)": TypedContractMethod<
+    [
+      collection: AddressLike,
+      _to: AddressLike,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      madFeeTokenAddress: AddressLike
+    ],
+    [void],
+    "payable"
+  >;
+
   "mintBatchTo(address,address,uint128[],uint128[],address)": TypedContractMethod<
     [
       collection: AddressLike,
       _to: AddressLike,
       _ids: BigNumberish[],
-      _balances: BigNumberish[],
+      _amounts: BigNumberish[],
       madFeeTokenAddress: AddressLike
     ],
     [void],
@@ -624,7 +665,7 @@ export interface MADRouter extends BaseContract {
       collection: AddressLike,
       _to: AddressLike,
       _ids: BigNumberish[],
-      _balances: BigNumberish[]
+      _amounts: BigNumberish[]
     ],
     [void],
     "payable"
@@ -634,8 +675,8 @@ export interface MADRouter extends BaseContract {
     [
       collection: AddressLike,
       _to: AddressLike,
+      _id: BigNumberish,
       _amount: BigNumberish,
-      _balance: BigNumberish,
       madFeeTokenAddress: AddressLike
     ],
     [void],
@@ -646,8 +687,8 @@ export interface MADRouter extends BaseContract {
     [
       collection: AddressLike,
       _to: AddressLike,
-      _amount: BigNumberish,
-      _balance: BigNumberish
+      _id: BigNumberish,
+      _amount: BigNumberish
     ],
     [void],
     "payable"
@@ -717,7 +758,7 @@ export interface MADRouter extends BaseContract {
       collection: AddressLike,
       _from: AddressLike,
       _ids: BigNumberish[],
-      _balances: BigNumberish[],
+      _amounts: BigNumberish[],
       madFeeTokenAddress: AddressLike
     ],
     [void],
@@ -730,32 +771,32 @@ export interface MADRouter extends BaseContract {
       collection: AddressLike,
       _from: AddressLike,
       _ids: BigNumberish[],
-      _balances: BigNumberish[]
+      _amounts: BigNumberish[]
     ],
     [void],
     "payable"
   >;
   getFunction(
-    nameOrSignature: "burn(address,uint128[],address[],uint128[])"
+    nameOrSignature: "burn(address,address,uint128,uint128,address)"
   ): TypedContractMethod<
     [
       collection: AddressLike,
-      _ids: BigNumberish[],
-      to: AddressLike[],
-      _amount: BigNumberish[]
-    ],
-    [void],
-    "payable"
-  >;
-  getFunction(
-    nameOrSignature: "burn(address,uint128[],address[],uint128[],address)"
-  ): TypedContractMethod<
-    [
-      collection: AddressLike,
-      _ids: BigNumberish[],
-      to: AddressLike[],
-      _amount: BigNumberish[],
+      from: AddressLike,
+      _id: BigNumberish,
+      _amount: BigNumberish,
       madFeeTokenAddress: AddressLike
+    ],
+    [void],
+    "payable"
+  >;
+  getFunction(
+    nameOrSignature: "burn(address,address,uint128,uint128)"
+  ): TypedContractMethod<
+    [
+      collection: AddressLike,
+      from: AddressLike,
+      _id: BigNumberish,
+      _amount: BigNumberish
     ],
     [void],
     "payable"
@@ -856,13 +897,38 @@ export interface MADRouter extends BaseContract {
     "payable"
   >;
   getFunction(
+    nameOrSignature: "mintBatch(address,address,uint128[],uint128[])"
+  ): TypedContractMethod<
+    [
+      collection: AddressLike,
+      _to: AddressLike,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[]
+    ],
+    [void],
+    "payable"
+  >;
+  getFunction(
+    nameOrSignature: "mintBatch(address,address,uint128[],uint128[],address)"
+  ): TypedContractMethod<
+    [
+      collection: AddressLike,
+      _to: AddressLike,
+      _ids: BigNumberish[],
+      _amounts: BigNumberish[],
+      madFeeTokenAddress: AddressLike
+    ],
+    [void],
+    "payable"
+  >;
+  getFunction(
     nameOrSignature: "mintBatchTo(address,address,uint128[],uint128[],address)"
   ): TypedContractMethod<
     [
       collection: AddressLike,
       _to: AddressLike,
       _ids: BigNumberish[],
-      _balances: BigNumberish[],
+      _amounts: BigNumberish[],
       madFeeTokenAddress: AddressLike
     ],
     [void],
@@ -875,7 +941,7 @@ export interface MADRouter extends BaseContract {
       collection: AddressLike,
       _to: AddressLike,
       _ids: BigNumberish[],
-      _balances: BigNumberish[]
+      _amounts: BigNumberish[]
     ],
     [void],
     "payable"
@@ -886,8 +952,8 @@ export interface MADRouter extends BaseContract {
     [
       collection: AddressLike,
       _to: AddressLike,
+      _id: BigNumberish,
       _amount: BigNumberish,
-      _balance: BigNumberish,
       madFeeTokenAddress: AddressLike
     ],
     [void],
@@ -899,8 +965,8 @@ export interface MADRouter extends BaseContract {
     [
       collection: AddressLike,
       _to: AddressLike,
-      _amount: BigNumberish,
-      _balance: BigNumberish
+      _id: BigNumberish,
+      _amount: BigNumberish
     ],
     [void],
     "payable"

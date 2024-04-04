@@ -155,7 +155,7 @@ contract MADRouter is MADRouterBase {
         address madFeeTokenAddress
     ) public payable {
         _tokenRender(collection);
-        _handleFees(_ids.length, madFeeTokenAddress, this.feeMintErc20);
+        _handleFees(_ids.length, madFeeTokenAddress, this.feeBurnErc20);
         ERC721Basic(collection).burn(_ids);
     }
 
@@ -323,8 +323,8 @@ contract MADRouter is MADRouterBase {
      * @param _to Receiver token address.
      * @param _ids Token IDs array.
      * @param _amounts Token amounts array.
-     * @custom:signature mint(address,address,uint128,uint128)
-     * @custom:selector 0x66431b2d
+     * @custom:signature mintBatch(address,address,uint128[],uint128[])
+     * @custom:selector 0xa2e12fd8
      */
     function mintBatch(
         address collection,
@@ -348,7 +348,7 @@ contract MADRouter is MADRouterBase {
      * @param _amounts Token amounts array.
      * @param madFeeTokenAddress ERC20 token address.
      * @custom:signature mint(address,address,uint128,uint128,address)
-     * @custom:selector 0x0d9bd2aa
+     * @custom:selector 0xbce7092d
      */
     function mintBatch(
         address collection,
@@ -372,23 +372,22 @@ contract MADRouter is MADRouterBase {
      * @notice Global token burn controller/single pusher for 1155 token
      * types.
      * @param collection 1155 token address.
-     * @param _id The token IDs of each token to be burnt;
-     *        should be left empty for the `ERC1155Minimal` type.
-     * @param to Array of addresses who own each token.
-     * @param _amount Array of receiver token balances array.
-     * @custom:signature burn(address,uint128[],address[],uint128[])
-     * @custom:selector 0x21d501b9
+     * @param _id The token ID of each token to be burnt;
+     * @param from address of who owns the token.
+     * @param _amount receiver token balance .
+     * @custom:signature burn(address,uint128,address,uint128)
+     * @custom:selector 0x9c4c7818
      */
     function burn(
         address collection,
-        uint128[] memory _id,
-        address[] memory to,
-        uint128[] memory _amount
+        address from,
+        uint128 _id,
+        uint128 _amount
     ) public payable {
         _tokenRender(collection);
-        uint256 _fee = _handleFees(_FEE_BURN, _id.length);
+        uint256 _fee = _handleFees(_FEE_BURN, 1);
         uint256 _value = msg.value - _fee;
-        ERC1155Basic(collection).burn{ value: _value }(to, _id, _amount);
+        ERC1155Basic(collection).burn{ value: _value }(from, _id, _amount);
     }
 
     /**
@@ -396,24 +395,23 @@ contract MADRouter is MADRouterBase {
      * @notice Accepts ether.
      * @notice Global token burn controller/single pusher for 1155 token types.
      * @param collection 1155 token address.
-     * @param _ids The token IDs of each token to be burnt;
-     *        should be left empty for the `ERC1155Minimal` type.
-     * @param to Array of addresses who own each token.
-     * @param _amount Array of receiver token balances array.
+     * @param _id The token ID of each token to be burnt;
+     * @param from address of who owns the token.
+     * @param _amount receiver token balance .
      * @param madFeeTokenAddress ERC20 token address.
-     * @custom:signature burn(address,uint128[],address[],uint128[],address)
+     * @custom:signature burn(address,uint128,address,uint128)
      * @custom:selector 0xb5533845
      */
     function burn(
         address collection,
-        uint128[] memory _ids,
-        address[] memory to,
-        uint128[] memory _amount,
+        address from,
+        uint128 _id,
+        uint128 _amount,
         address madFeeTokenAddress
     ) public payable {
         _tokenRender(collection);
-        _handleFees(_ids.length, madFeeTokenAddress, this.feeMintErc20);
-        ERC1155Basic(collection).burn(to, _ids, _amount);
+        _handleFees(1, madFeeTokenAddress, this.feeBurnErc20);
+        ERC1155Basic(collection).burn(from, _id, _amount);
     }
 
     ////////////////////////////////////////////////////////////////
@@ -469,7 +467,7 @@ contract MADRouter is MADRouterBase {
         address madFeeTokenAddress
     ) public payable {
         _tokenRender(collection);
-        _handleFees(_ids.length, madFeeTokenAddress, this.feeMintErc20);
+        _handleFees(_ids.length, madFeeTokenAddress, this.feeBurnErc20);
         ERC1155Basic(collection).burnBatch(_from, _ids, _amounts);
     }
 }

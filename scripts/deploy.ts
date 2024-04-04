@@ -28,17 +28,17 @@ const updateSettings = {
   deployFactory: false,
   deployRouter: false,
   setRouterAddress: false,
-  setCollectionType721: true,
+  setCollectionType721: false,
   setCollectionType1155: true,
   setCollectionTypeSimpleTest: false,
   setFactoryFees: false,
   setRouterFees: false,
   deployErc721: false,
   deployErc1155: false,
-  createCollectionSplitter: true,
-  createCollectionCollection: true,
-  verifyCollectionSplitter: true,
-  verifyErc721: true,
+  createCollectionSplitter: false,
+  createCollectionCollection: false,
+  verifyCollectionSplitter: false,
+  verifyErc721: false,
   verifyErc1155: true
 };
 
@@ -156,7 +156,7 @@ type CreateSplitterParamsStruct = {
 
 const mockSplitterParams: CreateSplitterParamsStruct = {
   splitterSalt: currentTimeHex() as BytesLike,
-  ambassador: ethers.ZeroAddress as AddressLike ,
+  ambassador: ethers.ZeroAddress as AddressLike,
   project: ethers.ZeroAddress as AddressLike,
   ambassadorShare: '0' as BigNumberish, // 10%
   projectShare: '0' as BigNumberish, // 10%
@@ -193,11 +193,13 @@ const deployedDisplay = () => {
 
 const createCollectionSplitter = async (factory) => {
   console.log(`Creating Collection Splitter......with args ${Object.values(mockSplitterParams)}`)
-  const splitter = await factory.createSplitter(
-    mockSplitterParams, { value: _feeCreateSplitter });
-  await splitter.wait(WAIT);
-  return splitter;
-  }
+  const tx = await factory.createSplitter(mockSplitterParams, { value: _feeCreateSplitter })
+  const receipt = await tx.wait(WAIT)
+  const splitterEvent = receipt.events?.find(event => event.event === 'SplitterCreated')
+  if (!splitterEvent) throw new Error('SplitterCreated event not found')
+  const splitterAddress = splitterEvent.args[0]
+  return ethers.getContractAt('SplitterContract', splitterAddress)
+}
 
 const createCollectionCollection = async (factory: unknown) => {
   console.log(`Creating Collection...with args ${Object.values(mockCollectionParams)}`)
@@ -233,7 +235,7 @@ const deployERC1155 = async () => {
   const args = [
     mockArgs
   ]
-  const erc1155 = await ethers.deployContract("ERC721Basic", args
+  const erc1155 = await ethers.deployContract("ERC1155Basic", args
     // ,gasArgs
   );
   console.log('have we deployed?')

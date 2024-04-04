@@ -80,28 +80,18 @@ contract ERC1155Basic is ERC1155, ImplBase {
      * @notice Accepts ether.
      * @dev Has modifiers: authorised.
      * @dev Transfer event emitted by parent ERC1155 contract.
-     * @param from List of addresses.
-     * @param ids List of uint128s.
-     * @param amounts List of uint128s.
-     * @custom:signature burn(address[],uint128[],uint128[])
-     * @custom:selector 0xa4ddb2a3
+     * @param from owner address.
+     * @param id id of the token.
+     * @param amount balance of the token.
+     * @custom:signature burn(address,uint128,uint128)
+     * @custom:selector 0xf06f04f2
      */
-    function burn(
-        address[] memory from,
-        uint128[] memory ids,
-        uint128[] memory amounts
-    ) public payable authorised {
-        uint256 len = ids.length;
-        assembly {
-            if iszero(and(eq(len, mload(amounts)), eq(len, mload(from)))) {
-                mstore(0, 0x3b800a46)
-                revert(28, 4)
-            } // ArrayLengthsMismatch()
-        }
-
-        for (uint256 i = 0; i < len; ++i) {
-            _burn(from[i], uint256(ids[i]), uint256(amounts[i]));
-        }
+    function burn(address from, uint128 id, uint128 amount)
+        public
+        payable
+        authorised
+    {
+        _burn(from, uint256(id), uint256(amount));
     }
 
     /**

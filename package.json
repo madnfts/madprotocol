@@ -64,6 +64,8 @@
     "access": "public"
   },
   "scripts": {
+    "deploy:base": "hardhat run scripts/deploy.ts --network base",
+    "deploy:baseSepolia": "hardhat run scripts/deploy.ts --network baseSepolia",
     "deploy:harmony": "hardhat run scripts/deploy.ts --network harmony",
     "deploy:harmonyDevnet": "hardhat run scripts/deploy.ts --network harmonyDevnet",
     "deploy:polygon": "hardhat run scripts/deploy.ts --network polygon",

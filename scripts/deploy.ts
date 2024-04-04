@@ -21,7 +21,7 @@ console.log = function (message: any) {
 
 config({ path: resolve(__dirname, "./.env") });
 
-const WAIT = 1 // 5 confirmations to verify
+const WAIT = 5 // 5 confirmations to verify
 
 const updateSettings = {
   deployErcToken: false,
@@ -33,12 +33,13 @@ const updateSettings = {
   setCollectionTypeSimpleTest: false,
   setFactoryFees: false,
   setRouterFees: false,
-  deployErc721: true,
-  deployErc1155: true,
-  createCollectionSplitter: false,  
-  createCollectionCollection: false,
-  verifyCollectionSplitter: false,
-  verifyErc721: true
+  deployErc721: false,
+  deployErc1155: false,
+  createCollectionSplitter: true,
+  createCollectionCollection: true,
+  verifyCollectionSplitter: true,
+  verifyErc721: true,
+  verifyErc1155: true
 };
 
 
@@ -81,8 +82,8 @@ let deployedRouterAddress = ROUTER;
 let deployedErc20Address = ethers.ZeroAddress;
 let deployedErc721Address = ethers.ZeroAddress;
 let deployedErc1155Address = ethers.ZeroAddress;
-let deployedSplitterAddress = "0x65D6d519Cde0BcB0C04F8f9f106559A8e7DF1dD2"; // ethers.ZeroAddress;
-let deployedFactoryErc721Address = "0xCe48d9d9b6D2Bd198453fD68de5ddbea502Cf636"; //ethers.ZeroAddress;
+let deployedSplitterAddress = ethers.ZeroAddress;
+let deployedFactoryErc721Address = ethers.ZeroAddress;
 let deployedFactoryErc1155Address = ethers.ZeroAddress;
 
 const currentTimeHex = () => {
@@ -195,6 +196,7 @@ const createCollectionSplitter = async (factory) => {
   const splitter = await factory.createSplitter(
     mockSplitterParams, { value: _feeCreateSplitter });
   await splitter.wait(WAIT);
+  return splitter;
   }
 
 const createCollectionCollection = async (factory: unknown) => {
@@ -204,6 +206,7 @@ const createCollectionCollection = async (factory: unknown) => {
     { value: _feeCreateCollection }
   )
   await collection.wait(WAIT)
+  return collection;
 };
 
 const deployERC721 = async () => {
@@ -593,26 +596,28 @@ const main = async () => {
 
     // create and verify collection / splitter
     if (updateSettings.createCollectionSplitter) {
-      await createCollectionSplitter(factory)
+      const splitter = await createCollectionSplitter(factory)
+      deployedSplitterAddress = splitter.target;
     }
 
     if (updateSettings.verifyCollectionSplitter) {
-      await verifyContract(deployedSplitterAddress, [[deployerAddress as AddressLike], [10000]])      
+      await verifyContract(deployedSplitterAddress, [[deployerAddress as AddressLike], [10000]])
     }
 
     if (updateSettings.createCollectionCollection) {
-      await createCollectionCollection(factory)
+      const collection = await createCollectionCollection(factory)
+      deployedCollectionAddress = collection.target;
     }
-    
+
     if (updateSettings.verifyErc721) {
       mockCollectionParams.splitter = deployedSplitterAddress
       await verifyContract(deployedFactoryErc721Address, [mockArgs])
     }
 
-    // if (updateSettings.verifyErc1155) {
-    //   mockCollectionParams.splitter = deployedSplitterAddress
-    //   await verifyContract(deployedFactoryErc1155Address, [mockArgs])
-    // }
+    if (updateSettings.verifyErc1155) {
+      mockCollectionParams.splitter = deployedSplitterAddress
+      await verifyContract(deployedFactoryErc1155Address, [mockArgs])
+    }
 
     deployedDisplay();
     console.log("Deployment completed successfully...\n");
@@ -622,6 +627,7 @@ const main = async () => {
   } catch (error) {
     console.error(error);
     logStream.end()
+    deployedDisplay();
     process.exit(1);
   }
 };

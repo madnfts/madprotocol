@@ -142,9 +142,7 @@ contract TestROUTERMintBurnAndTransferERC721 is
     function test_ROUTER_PublicMint_IncorrectPriceAmountSingleFuzzy(
         uint256 _nftPublicMintPrice
     ) public {
-        vm.assume(
-            _nftPublicMintPrice < nftPublicMintPrice
-        );
+        vm.assume(_nftPublicMintPrice < nftPublicMintPrice);
         uint128 _amountToMint = 1;
         MintData memory mintData = _setupMint(
             nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint

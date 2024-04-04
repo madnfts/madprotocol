@@ -755,10 +755,10 @@ abstract contract ERC1155 {
         _beforeTokenBatchBurn(ids, amounts);
         /// @solidity memory-safe-assembly
         assembly {
-            // if iszero(eq(mload(ids), mload(amounts))) {
-            //     mstore(0x00, 0x3b800a46) // `ArrayLengthsMismatch()`.
-            //     revert(0x1c, 0x04)
-            // }
+            if iszero(eq(mload(ids), mload(amounts))) {
+                mstore(0x00, 0x3b800a46) // `ArrayLengthsMismatch()`.
+                revert(0x1c, 0x04)
+            }
             let from_ := shl(96, from)
             mstore(0x20, or(_ERC1155_MASTER_SLOT_SEED, from_))
             // If `by` is not the zero address, and not equal to `from`,

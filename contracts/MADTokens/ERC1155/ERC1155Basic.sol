@@ -42,7 +42,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
     /// @dev Transfer event emitted by parent ERC1155 contract.
     /// @dev Loop runs out of gas before overflowing.
     /// @dev Function Signature := 0xf745586f
-    function mintTo(address to, uint128 amount, uint128 _id)
+    function mintTo(address to, uint128 _id, uint128 amount)
         public
         payable
         authorised
@@ -82,25 +82,25 @@ contract ERC1155Basic is ERC1155, ImplBase {
      * @dev Transfer event emitted by parent ERC1155 contract.
      * @param from List of addresses.
      * @param ids List of uint128s.
-     * @param balances List of uint128s.
+     * @param amounts List of uint128s.
      * @custom:signature burn(address[],uint128[],uint128[])
      * @custom:selector 0xa4ddb2a3
      */
     function burn(
         address[] memory from,
         uint128[] memory ids,
-        uint128[] memory balances
+        uint128[] memory amounts
     ) public payable authorised {
         uint256 len = ids.length;
         assembly {
-            if iszero(and(eq(len, mload(balances)), eq(len, mload(from)))) {
+            if iszero(and(eq(len, mload(amounts)), eq(len, mload(from)))) {
                 mstore(0, 0x3b800a46)
                 revert(28, 4)
             } // ArrayLengthsMismatch()
         }
 
         for (uint256 i = 0; i < len; ++i) {
-            _burn(from[i], uint256(ids[i]), uint256(balances[i]));
+            _burn(from[i], uint256(ids[i]), uint256(amounts[i]));
         }
     }
 

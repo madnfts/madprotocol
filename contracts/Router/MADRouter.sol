@@ -52,7 +52,7 @@ contract MADRouter is MADRouterBase {
     /**
      * @notice Mint to, a public state-modifying function.
      * @notice Accepts ether.
-     *  @notice ERC721Basic creator mint function handler.
+     * @notice ERC721Basic creator mint function handler.
      * @param collection 721 token address.
      * @param _to Receiver token address.
      * @param _amount Num tokens to mint and send. (uint128)
@@ -69,48 +69,6 @@ contract MADRouter is MADRouterBase {
         _tokenRender(collection);
         _handleFees(uint256(_amount), madFeeTokenAddress, this.feeMintErc20);
         ERC721Basic(collection).mintTo(_to, _amount);
-    }
-
-    ///
-
-    /**
-     * @notice Burn, a public state-modifying function.
-     * @notice Accepts ether.
-     * @notice Global token burn controller/single pusher for ERC721 token
-     * types.
-     * @param collection 721 token address.
-     * @param _ids The token IDs of each token to be burnt;uint128s.
-     * @custom:signature burn(address,uint128[])
-     * @custom:selector 0xf12bd09e
-     */
-    function burn(address collection, uint128[] memory _ids) public payable {
-        _tokenRender(collection);
-        uint256 _fee = _handleFees(_FEE_BURN, _ids.length);
-        uint256 _value = msg.value - _fee;
-        ERC721Basic(collection).burn{ value: _value }(_ids);
-    }
-
-    ///
-
-    /**
-     * @notice Burn, a public state-modifying function.
-     * @notice Global token burn controller/single pusher for ERC721 token
-     * types.
-     * @notice Accepts ether.
-     * @param collection 721 token address.
-     * @param _ids The token IDs of each token to be burnt;
-     * @param madFeeTokenAddress ERC20 token address for Mad Fees.
-     * @custom:signature burn(address,uint128[],address)
-     * @custom:selector 0xbb05d8ef
-     */
-    function burn(
-        address collection,
-        uint128[] memory _ids,
-        address madFeeTokenAddress
-    ) public payable {
-        _tokenRender(collection);
-        _handleFees(_ids.length, madFeeTokenAddress, this.feeMintErc20);
-        ERC721Basic(collection).burn(_ids);
     }
 
     ////////////////////////////////////////////////////////////////
@@ -139,7 +97,7 @@ contract MADRouter is MADRouterBase {
     /**
      * @notice Mint, a public state-modifying function.
      * @notice Accepts ether.
-     * 	 @notice public mint function if madRouter is authorised.
+     * @notice public mint function if madRouter is authorised.
      * This will open up public minting to this contract if the owner has
      * enabled the authorisation for the router.
      * @dev Transfer event emitted by parent ERC721 contract.
@@ -160,30 +118,72 @@ contract MADRouter is MADRouterBase {
     }
 
     ////////////////////////////////////////////////////////////////
+    //                   BURNING ERC721                           //
+    ////////////////////////////////////////////////////////////////
+
+    /**
+     * @notice Burn, a public state-modifying function.
+     * @notice Accepts ether.
+     * @notice Global token burn controller/single pusher for ERC721 token
+     * types.
+     * @param collection 721 token address.
+     * @param _ids The token IDs of each token to be burnt;uint128s.
+     * @custom:signature burn(address,uint128[])
+     * @custom:selector 0xf12bd09e
+     */
+    function burn(address collection, uint128[] memory _ids) public payable {
+        _tokenRender(collection);
+        uint256 _fee = _handleFees(_FEE_BURN, _ids.length);
+        uint256 _value = msg.value - _fee;
+        ERC721Basic(collection).burn{ value: _value }(_ids);
+    }
+
+    /**
+     * @notice Burn, a public state-modifying function.
+     * @notice Global token burn controller/single pusher for ERC721 token
+     * types.
+     * @notice Accepts ether.
+     * @param collection 721 token address.
+     * @param _ids The token IDs of each token to be burnt;
+     * @param madFeeTokenAddress ERC20 token address for Mad Fees.
+     * @custom:signature burn(address,uint128[],address)
+     * @custom:selector 0xbb05d8ef
+     */
+    function burn(
+        address collection,
+        uint128[] memory _ids,
+        address madFeeTokenAddress
+    ) public payable {
+        _tokenRender(collection);
+        _handleFees(_ids.length, madFeeTokenAddress, this.feeMintErc20);
+        ERC721Basic(collection).burn(_ids);
+    }
+
+    ////////////////////////////////////////////////////////////////
     //                   CREATOR MINTING  ERC1155                 //
     ////////////////////////////////////////////////////////////////
 
     /**
      * @notice Mint to, a public state-modifying function.
      * @notice Accepts ether.
-     * 	 @notice ERC1155Basic creator mint function handler.
+     * @notice ERC1155Basic creator mint function handler.
      * @param collection 1155 token address.
      * @param _to Receiver token address.
+     * @param _id Token ID.
      * @param _amount Num tokens to mint and send.
-     * @param _balance Receiver token balance.
      * @custom:signature mintTo(address,address,uint128,uint128)
      * @custom:selector 0x292af4be
      */
     function mintTo(
         address collection,
         address _to,
-        uint128 _amount,
-        uint128 _balance
+        uint128 _id,
+        uint128 _amount
     ) public payable {
         _tokenRender(collection);
         uint256 _fee = _handleFees(_FEE_MINT, _amount);
         uint256 _value = msg.value - _fee;
-        ERC1155Basic(collection).mintTo{ value: _value }(_to, _amount, _balance);
+        ERC1155Basic(collection).mintTo{ value: _value }(_to, _id, _amount);
     }
 
     /**
@@ -192,8 +192,8 @@ contract MADRouter is MADRouterBase {
      * @notice ERC1155Basic creator mint function handler.
      * @param collection 1155 token address.
      * @param _to Receiver token address.
+     * @param _id Token ID.
      * @param _amount Num tokens to mint and send.
-     * @param _balance Receiver token balance.
      * @param madFeeTokenAddress ERC20 token address.
      * @custom:signature mintTo(address,address,uint128,uint128,address)
      * @custom:selector 0x0a7309b2
@@ -201,14 +201,18 @@ contract MADRouter is MADRouterBase {
     function mintTo(
         address collection,
         address _to,
+        uint128 _id,
         uint128 _amount,
-        uint128 _balance,
         address madFeeTokenAddress
     ) public payable {
         _tokenRender(collection);
         _handleFees(_amount, madFeeTokenAddress, this.feeMintErc20);
-        ERC1155Basic(collection).mintTo(_to, _amount, _balance);
+        ERC1155Basic(collection).mintTo(_to, _id, _amount);
     }
+
+    ////////////////////////////////////////////////////////////////
+    //                    CREATOR BATCH MINTING ERC1155            //
+    ////////////////////////////////////////////////////////////////
 
     /**
      * @notice Mint batch to, a public state-modifying function.
@@ -216,7 +220,7 @@ contract MADRouter is MADRouterBase {
      * @param collection 1155 token address.
      * @param _to Token receiver address.
      * @param _ids Receiver token _ids array.
-     * @param _balances Receiver token balances array, length should be ==
+     * @param _amounts Receiver token balances array, length should be ==
      * _ids.length.
      * @custom:signature mintBatchTo(address,address,uint128[],uint128[])
      * @custom:selector 0xbfa33dd8
@@ -225,13 +229,13 @@ contract MADRouter is MADRouterBase {
         address collection,
         address _to,
         uint128[] memory _ids,
-        uint128[] memory _balances
+        uint128[] memory _amounts
     ) public payable {
         _tokenRender(collection);
         uint256 _fee = _handleFees(_FEE_MINT, _ids.length);
         uint256 _value = msg.value - _fee;
         ERC1155Basic(collection).mintBatchTo{ value: _value }(
-            _to, _ids, _balances
+            _to, _ids, _amounts
         );
     }
 
@@ -241,7 +245,7 @@ contract MADRouter is MADRouterBase {
      * @param collection 1155 token address.
      * @param _to Token receiver address.
      * @param _ids Receiver token _ids array.
-     * @param _balances Receiver token balances array, length should be ==
+     * @param _amounts Receiver token balances array, length should be ==
      * _ids.length.
      * @param madFeeTokenAddress ERC20 token address.
      * @custom:signature
@@ -252,115 +256,12 @@ contract MADRouter is MADRouterBase {
         address collection,
         address _to,
         uint128[] memory _ids,
-        uint128[] memory _balances,
+        uint128[] memory _amounts,
         address madFeeTokenAddress
     ) public payable {
         _tokenRender(collection);
         _handleFees(_ids.length, madFeeTokenAddress, this.feeMintErc20);
-        ERC1155Basic(collection).mintBatchTo(_to, _ids, _balances);
-    }
-
-    /**
-     * @notice Burn, a public state-modifying function.
-     * @notice Accepts ether.
-     * 	  @notice Global token burn controller/single pusher for 1155 token
-     * types.
-     * @param collection 1155 token address.
-     * @param _ids The token IDs of each token to be burnt;
-     *        should be left empty for the `ERC1155Minimal` type.
-     * @param to Array of addresses who own each token.
-     * @param _amount Array of receiver token balances array.
-     * @custom:signature burn(address,uint128[],address[],uint128[])
-     * @custom:selector 0x21d501b9
-     */
-    function burn(
-        address collection,
-        uint128[] memory _ids,
-        address[] memory to,
-        uint128[] memory _amount
-    ) public payable {
-        _tokenRender(collection);
-        uint256 _fee = _handleFees(_FEE_BURN, _ids.length);
-        uint256 _value = msg.value - _fee;
-        ERC1155Basic(collection).burn{ value: _value }(to, _ids, _amount);
-    }
-
-    /**
-     * @notice Burn, a public state-modifying function.
-     * @notice Accepts ether.
-     * @notice Global token burn controller/single pusher for 1155 token types.
-     * @param collection 1155 token address.
-     * @param _ids The token IDs of each token to be burnt;
-     *        should be left empty for the `ERC1155Minimal` type.
-     * @param to Array of addresses who own each token.
-     * @param _amount Array of receiver token balances array.
-     * @param madFeeTokenAddress ERC20 token address.
-     * @custom:signature burn(address,uint128[],address[],uint128[],address)
-     * @custom:selector 0xb5533845
-     */
-    function burn(
-        address collection,
-        uint128[] memory _ids,
-        address[] memory to,
-        uint128[] memory _amount,
-        address madFeeTokenAddress
-    ) public payable {
-        _tokenRender(collection);
-        _handleFees(_ids.length, madFeeTokenAddress, this.feeMintErc20);
-        ERC1155Basic(collection).burn(to, _ids, _amount);
-    }
-
-    /**
-     * @notice Batch burn, a public state-modifying function.
-     * @notice Accepts ether.
-     * @notice Global token batch burn controller/single pusher for 1155 token
-     * types.
-     * @param collection 1155 token address.
-     * @param _from Array of addresses who own each token.
-     * @param _ids The token IDs of each token to be burnt;
-     *       should be left empty for the `ERC1155Minimal` type.
-     * @param _balances Array of corresponding token balances to burn.
-     * @custom:signature batchBurn(address,address,uint128[],uint128[])
-     * @custom:selector 0x7f82d7e5
-     */
-    function batchBurn(
-        address collection,
-        address _from,
-        uint128[] memory _ids,
-        uint128[] memory _balances
-    ) public payable {
-        _tokenRender(collection);
-        uint256 _fee = _handleFees(_FEE_BURN, _ids.length);
-        uint256 _value = msg.value - _fee;
-        ERC1155Basic(collection).burnBatch{ value: _value }(
-            _from, _ids, _balances
-        );
-    }
-
-    /**
-     * @notice Batch burn, a public state-modifying function.
-     * @notice Accepts ether.
-     * @notice Global token batch burn controller/single pusher for 1155 token
-     * types.
-     * @param collection 1155 token address.
-     * @param _from Array of addresses who own each token.
-     * @param _ids The token IDs of each token to be burnt;
-     *        should be left empty for the `ERC1155Minimal` type.
-     * @param _balances Array of corresponding token balances to burn.
-     * @param madFeeTokenAddress ERC20 token address.
-     * @custom:signature batchBurn(address,address,uint128[],uint128[],address)
-     * @custom:selector 0x4a6e87a8
-     */
-    function batchBurn(
-        address collection,
-        address _from,
-        uint128[] memory _ids,
-        uint128[] memory _balances,
-        address madFeeTokenAddress
-    ) public payable {
-        _tokenRender(collection);
-        _handleFees(_ids.length, madFeeTokenAddress, this.feeMintErc20);
-        ERC1155Basic(collection).burnBatch(_from, _ids, _balances);
+        ERC1155Basic(collection).mintBatchTo(_to, _ids, _amounts);
     }
 
     ////////////////////////////////////////////////////////////////
@@ -408,5 +309,167 @@ contract MADRouter is MADRouterBase {
         _tokenRender(collection);
         _handleFees(_amount, madFeeTokenAddress, this.feeMintErc20);
         ERC1155Basic(collection).mint(_to, _id, _amount);
+    }
+
+    ////////////////////////////////////////////////////////////////
+    //                    PUBLIC BATCH MINTING ERC1155            //
+    ////////////////////////////////////////////////////////////////
+
+    /**
+     * @notice Mint, a public state-modifying function.
+     * @notice Accepts ether.
+     * @notice ERC1155Basic creator mint function handler.
+     * @param collection 1155 token address.
+     * @param _to Receiver token address.
+     * @param _ids Token IDs array.
+     * @param _amounts Token amounts array.
+     * @custom:signature mint(address,address,uint128,uint128)
+     * @custom:selector 0x66431b2d
+     */
+    function mintBatch(
+        address collection,
+        address _to,
+        uint128[] memory _ids,
+        uint128[] calldata _amounts
+    ) public payable {
+        _tokenRender(collection);
+        uint256 _fee = _handleFees(_FEE_MINT, _ids.length);
+        uint256 _value = msg.value - _fee;
+        ERC1155Basic(collection).mintBatch{ value: _value }(_to, _ids, _amounts);
+    }
+
+    /**
+     * @notice Mint, a public state-modifying function.
+     * @notice Accepts ether.
+     * @notice ERC1155Basic creator mint function handler.
+     * @param collection 1155 token address.
+     * @param _to Receiver token address.
+     * @param _ids Token IDs array.
+     * @param _amounts Token amounts array.
+     * @param madFeeTokenAddress ERC20 token address.
+     * @custom:signature mint(address,address,uint128,uint128,address)
+     * @custom:selector 0x0d9bd2aa
+     */
+    function mintBatch(
+        address collection,
+        address _to,
+        uint128[] memory _ids,
+        uint128[] memory _amounts,
+        address madFeeTokenAddress
+    ) public payable {
+        _tokenRender(collection);
+        _handleFees(_ids.length, madFeeTokenAddress, this.feeMintErc20);
+        ERC1155Basic(collection).mintBatch(_to, _ids, _amounts);
+    }
+
+    ////////////////////////////////////////////////////////////////
+    //                    PUBLIC BURNING ERC1155                  //
+    ////////////////////////////////////////////////////////////////
+
+    /**
+     * @notice Burn, a public state-modifying function.
+     * @notice Accepts ether.
+     * @notice Global token burn controller/single pusher for 1155 token
+     * types.
+     * @param collection 1155 token address.
+     * @param _id The token IDs of each token to be burnt;
+     *        should be left empty for the `ERC1155Minimal` type.
+     * @param to Array of addresses who own each token.
+     * @param _amount Array of receiver token balances array.
+     * @custom:signature burn(address,uint128[],address[],uint128[])
+     * @custom:selector 0x21d501b9
+     */
+    function burn(
+        address collection,
+        uint128[] memory _id,
+        address[] memory to,
+        uint128[] memory _amount
+    ) public payable {
+        _tokenRender(collection);
+        uint256 _fee = _handleFees(_FEE_BURN, _id.length);
+        uint256 _value = msg.value - _fee;
+        ERC1155Basic(collection).burn{ value: _value }(to, _id, _amount);
+    }
+
+    /**
+     * @notice Burn, a public state-modifying function.
+     * @notice Accepts ether.
+     * @notice Global token burn controller/single pusher for 1155 token types.
+     * @param collection 1155 token address.
+     * @param _ids The token IDs of each token to be burnt;
+     *        should be left empty for the `ERC1155Minimal` type.
+     * @param to Array of addresses who own each token.
+     * @param _amount Array of receiver token balances array.
+     * @param madFeeTokenAddress ERC20 token address.
+     * @custom:signature burn(address,uint128[],address[],uint128[],address)
+     * @custom:selector 0xb5533845
+     */
+    function burn(
+        address collection,
+        uint128[] memory _ids,
+        address[] memory to,
+        uint128[] memory _amount,
+        address madFeeTokenAddress
+    ) public payable {
+        _tokenRender(collection);
+        _handleFees(_ids.length, madFeeTokenAddress, this.feeMintErc20);
+        ERC1155Basic(collection).burn(to, _ids, _amount);
+    }
+
+    ////////////////////////////////////////////////////////////////
+    //                    PUBLIC BATCH BURNING ERC1155            //
+    ////////////////////////////////////////////////////////////////
+
+    /**
+     * @notice Batch burn, a public state-modifying function.
+     * @notice Accepts ether.
+     * @notice Global token batch burn controller/single pusher for 1155 token
+     * types.
+     * @param collection 1155 token address.
+     * @param _from Array of addresses who own each token.
+     * @param _ids The token IDs of each token to be burnt;
+     *       should be left empty for the `ERC1155Minimal` type.
+     * @param _amounts Array of corresponding token balances to burn.
+     * @custom:signature batchBurn(address,address,uint128[],uint128[])
+     * @custom:selector 0x7f82d7e5
+     */
+    function batchBurn(
+        address collection,
+        address _from,
+        uint128[] memory _ids,
+        uint128[] memory _amounts
+    ) public payable {
+        _tokenRender(collection);
+        uint256 _fee = _handleFees(_FEE_BURN, _ids.length);
+        uint256 _value = msg.value - _fee;
+        ERC1155Basic(collection).burnBatch{ value: _value }(
+            _from, _ids, _amounts
+        );
+    }
+
+    /**
+     * @notice Batch burn, a public state-modifying function.
+     * @notice Accepts ether.
+     * @notice Global token batch burn controller/single pusher for 1155 token
+     * types.
+     * @param collection 1155 token address.
+     * @param _from Array of addresses who own each token.
+     * @param _ids The token IDs of each token to be burnt;
+     *        should be left empty for the `ERC1155Minimal` type.
+     * @param _amounts Array of corresponding token balances to burn.
+     * @param madFeeTokenAddress ERC20 token address.
+     * @custom:signature batchBurn(address,address,uint128[],uint128[],address)
+     * @custom:selector 0x4a6e87a8
+     */
+    function batchBurn(
+        address collection,
+        address _from,
+        uint128[] memory _ids,
+        uint128[] memory _amounts,
+        address madFeeTokenAddress
+    ) public payable {
+        _tokenRender(collection);
+        _handleFees(_ids.length, madFeeTokenAddress, this.feeMintErc20);
+        ERC1155Basic(collection).burnBatch(_from, _ids, _amounts);
     }
 }

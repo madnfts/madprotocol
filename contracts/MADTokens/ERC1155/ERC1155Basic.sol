@@ -15,6 +15,16 @@ contract ERC1155Basic is ERC1155, ImplBase {
     using FactoryTypes for FactoryTypes.CollectionArgs;
     using Strings for uint256;
 
+    uint256 public constant MAX_BATCH_AMOUNT = 1000;
+
+    error MaxBatchAmountExceeded();
+
+    event PublicMintStateSet(uint256 indexed _id, bool _publicMintState);
+    event BatchPublicMintStateSet(
+        uint128[] indexed _ids, bool[] _publicMintStates
+    );
+    event MaxSupplySet(uint256 indexed _id, uint256 _maxSupply);
+
     ////////////////////////////////////////////////////////////////
     //                           STORAGE                          //
     ////////////////////////////////////////////////////////////////
@@ -25,7 +35,11 @@ contract ERC1155Basic is ERC1155, ImplBase {
     /// `uint128`  [0...127]   := liveBalance
     /// `uint128`  [128...255] := mintCount
     /// (id) => (_balanceRegistrar{`uint128`,`uint128`})
-    mapping(uint256 => uint256) internal _balanceRegistrar;
+    mapping(uint256 id => uint256 balanceRegistrar) internal _balanceRegistrar;
+
+    mapping(uint256 id => uint256 maxSupply) public maxSupply;
+
+    mapping(uint256 id => bool publicMintState) public publicMintState;
 
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
@@ -35,13 +49,101 @@ contract ERC1155Basic is ERC1155, ImplBase {
         emit URI(args._baseURI, 0x00);
     }
 
+    /**
+     * @notice Set max supply, a public state-modifying function.
+     * @param id The id (uint256).
+     * @param _maxSupply The max supply (uint256).
+     * @custom:signature _setMaxSupply(uint256,uint256)
+     * @custom:selector 0xfe61a3ac
+     */
+    function setMaxSupply(uint128 id, uint256 _maxSupply) public authorised {
+        if (maxSupply[id] > 0) return; // MaxSupplyAlreadySet();
+        if (_maxSupply > _MAXSUPPLY_BOUND) revert MaxSupplyBoundExceeded();
+        if (_maxSupply == 0) revert ZeroMaxSupply();
+        maxSupply[id] = _maxSupply;
+        emit MaxSupplySet(id, _maxSupply);
+    }
+
+    /**
+     * @notice Set max supply, a public state-modifying function.
+     * @param ids List of uint256s.
+     * @param _maxSupplies List of uint256s.
+     * @custom:signature _batchSetMaxSupply(uint256[],uint256[])
+     * @custom:selector 0x1cce9d3e
+     */
+    function batchSetMaxSupply(
+        uint128[] calldata ids,
+        uint256[] calldata _maxSupplies
+    ) public authorised {
+        uint256 idsLength = ids.length;
+        if (idsLength > MAX_BATCH_AMOUNT) revert MaxBatchAmountExceeded();
+        if (_maxSupplies.length != idsLength) revert ArrayLengthsMismatch();
+        for (uint256 i = 0; i < idsLength; i++) {
+            setMaxSupply(ids[i], _maxSupplies[i]);
+        }
+    }
+
+    /**
+     * @notice Set public mint state, a public state-modifying function.
+     * @dev Has modifiers: onlyOwner.
+     * @dev Emits PublicMintStateSet event.
+     * @param _id The id (uint256).
+     * @param _publicMintState The public mint state (bool).
+     * @param _maxSupply The max supply of the id passed (can be 0 if already
+     * set.) (uint256).
+     * @custom:signature setPublicMintState(uint256,bool,uint256)
+     * @custom:selector 0xb17e8bb9
+     */
+    function setPublicMintState(
+        uint128 _id,
+        bool _publicMintState,
+        uint128 _maxSupply
+    ) public onlyOwner {
+        setMaxSupply(_id, _maxSupply);
+        publicMintState[_id] = _publicMintState;
+
+        emit PublicMintStateSet(_id, _publicMintState);
+    }
+
+    /**
+     * @notice Set public mint state, a public state-modifying function.
+     * @dev Has modifiers: onlyOwner.
+     * @dev Emits PublicMintStateSet event.
+     * @param _ids List of uint256s.
+     * @param _publicMintStates List of bools.
+     * @param _maxSupplies List of uint256s.
+     * @custom:signature batchSetPublicMintState(uint256[],bool[],uint256[])
+     * @custom:selector 0x73952a1c
+     */
+    function batchSetPublicMintState(
+        uint128[] calldata _ids,
+        bool[] calldata _publicMintStates,
+        uint256[] calldata _maxSupplies
+    ) public onlyOwner {
+        uint256 idsLength = _ids.length;
+        if (idsLength > MAX_BATCH_AMOUNT) revert MaxBatchAmountExceeded();
+        for (uint256 i = 0; i < idsLength; i++) {
+            setMaxSupply(_ids[i], _maxSupplies[i]);
+            publicMintState[_ids[i]] = _publicMintStates[i];
+        }
+        emit BatchPublicMintStateSet(_ids, _publicMintStates);
+    }
+
     ////////////////////////////////////////////////////////////////
     //                       OWNER MINTING                        //
     ////////////////////////////////////////////////////////////////
 
-    /// @dev Transfer event emitted by parent ERC1155 contract.
-    /// @dev Loop runs out of gas before overflowing.
-    /// @dev Function Signature := 0xf745586f
+    /**
+     * @notice Mint to, a public state-modifying function.
+     * @notice Accepts ether.
+     * @dev Has modifiers: authorised.
+     * @dev maxSupply must be set before calling this function
+     * @param to The to address.
+     * @param _id The id (uint128).
+     * @param amount The amount (uint128).
+     * @custom:signature mintTo(address,uint128,uint128)
+     * @custom:selector 0xf204ed59
+     */
     function mintTo(address to, uint128 _id, uint128 amount)
         public
         payable
@@ -54,6 +156,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
      * @notice Mint batch to, a public state-modifying function.
      * @notice Accepts ether.
      * @dev Has modifiers: authorised.
+     *  @dev maxSupply must be set before calling this function
      * @dev Transfer event emitted by parent ERC1155 contract.
      * @param to The to address.
      * @param ids List of uint128s.
@@ -129,6 +232,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
      * @notice Accepts ether.
      * @dev Has modifiers: routerOrPublic.
      * @dev Transfer event emitted by parent ERC1155 contract.
+     * @dev maxSupply must be set before calling this function
      * @param _id The id (uint128).
      * @param amount The amount (uint128).
      * @custom:signature mint(uint128,uint128)
@@ -143,6 +247,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
      * @notice Accepts ether.
      * @dev Has modifiers: routerOrPublic.
      * @dev Transfer event emitted by parent ERC1155 contract.
+     * @dev maxSupply must be set before calling this function
      * @param _to The to address.
      * @param _id The id (uint128).
      * @param amount The amount (uint128).
@@ -172,7 +277,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
         uint128 amount,
         address _minter
     ) private {
-        _preparePublicMint(uint256(amount), _minter);
+        _preparePublicMint(uint256(amount), _minter, publicMintState[_id]);
         mintTo(to, _id, amount);
     }
 
@@ -209,8 +314,16 @@ contract ERC1155Basic is ERC1155, ImplBase {
         uint128[] calldata amounts
     ) private {
         uint256 len = ids.length;
-        _preparePublicMint(uint256(len * _sumAmounts(amounts)), _to);
-
+        // Check every Public mint is true
+        bool publicMintStateCheck = true;
+        for (uint256 i = 0; i < len; i++) {
+            if (publicMintState[ids[i]] == false) {
+                publicMintStateCheck = false;
+            }
+        }
+        _preparePublicMint(
+            uint256(len * _sumAmounts(amounts)), _to, publicMintStateCheck
+        );
         mintBatchTo(_to, ids, amounts);
     }
 
@@ -273,6 +386,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
 
     /**
      * @notice Live balance, a public view function.
+     * @dev Live supply counter for each id's balance, excludes burned tokens.
      * @param id The id (uint256).
      * @return uint256 Result of liveBalance.
      * @custom:signature liveBalance(uint256)
@@ -284,6 +398,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
 
     /**
      * @notice Balance count, a public view function.
+     * @dev Mint counter for each id's balance, includes burnt count.
      * @param id The id (uint256).
      * @return uint256 Result of balanceCount.
      * @custom:signature balanceCount(uint256)
@@ -309,7 +424,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
         virtual
         override(ERC1155)
     {
-        uint128 maxBal = maxSupply;
+        uint128 maxBal = uint128(maxSupply[id]);
         assembly {
             mstore(32, _balanceRegistrar.slot)
             mstore(0, id)
@@ -346,7 +461,6 @@ contract ERC1155Basic is ERC1155, ImplBase {
         uint256[] memory ids,
         uint256[] memory amounts
     ) internal virtual override(ERC1155) {
-        uint128 maxBal = maxSupply;
         assembly {
             let idsLen := mload(ids)
             if iszero(eq(idsLen, mload(amounts))) {
@@ -360,18 +474,30 @@ contract ERC1155Basic is ERC1155, ImplBase {
                 iLoc := add(iLoc, 32)
                 aLoc := add(aLoc, 32)
             } {
+                let id := mload(iLoc)
+                // Compute the storage slot for the current id's entry in
+                // _maxSupply
+                mstore(0, id)
+                mstore(32, maxSupply.slot)
+                let maxSupplySlot := keccak256(0, 64)
+
+                // Compute the storage slot for the current id's entry in
+                // _balanceRegistrar
+                mstore(0, id)
                 mstore(32, _balanceRegistrar.slot)
-                mstore(0, mload(iLoc))
-                let sLoc := keccak256(0, 64)
-                let rawBal := sload(sLoc)
+                let balanceRegistrarSlot := keccak256(0, 64)
+
+                let maxBal := sload(maxSupplySlot)
+                let rawBal := sload(balanceRegistrarSlot)
                 let newBal := add(mload(aLoc), shr(_MINTCOUNT_BITPOS, rawBal))
+
                 if gt(newBal, maxBal) {
                     // MaxSupplyReached()
                     mstore(0, 0xd05cb609)
                     revert(28, 4)
                 }
                 sstore(
-                    sLoc,
+                    balanceRegistrarSlot,
                     or(
                         add(and(_SR_UPPERBITS, rawBal), mload(aLoc)),
                         shl(_MINTCOUNT_BITPOS, newBal)

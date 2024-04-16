@@ -171,6 +171,7 @@ contract MADRouter is MADRouterBase {
      * @param _to Receiver token address.
      * @param _id Token ID.
      * @param _amount Num tokens to mint and send.
+     *
      * @custom:signature mintTo(address,address,uint128,uint128)
      * @custom:selector 0x292af4be
      */
@@ -178,12 +179,17 @@ contract MADRouter is MADRouterBase {
         address collection,
         address _to,
         uint128 _id,
-        uint128 _amount
+        uint128 _amount,
+        uint128 _maxSupply
     ) public payable {
         _tokenRender(collection);
-        uint256 _fee = _handleFees(_FEE_MINT, _amount);
+        // Charge per ID so the amount here is 1
+        uint256 _fee = _handleFees(_FEE_MINT, 1);
         uint256 _value = msg.value - _fee;
-        ERC1155Basic(collection).mintTo{ value: _value }(_to, _id, _amount);
+        ERC1155Basic erc1155Contract = ERC1155Basic(collection);
+        // set max supply of the id, can be left as 0 if already set.
+        erc1155Contract.setMaxSupply(_id, _maxSupply);
+        erc1155Contract.mintTo{ value: _value }(_to, _id, _amount);
     }
 
     /**
@@ -195,6 +201,7 @@ contract MADRouter is MADRouterBase {
      * @param _id Token ID.
      * @param _amount Num tokens to mint and send.
      * @param madFeeTokenAddress ERC20 token address.
+     * @param _maxSupply Max supply of the id.
      * @custom:signature mintTo(address,address,uint128,uint128,address)
      * @custom:selector 0x0a7309b2
      */
@@ -203,11 +210,16 @@ contract MADRouter is MADRouterBase {
         address _to,
         uint128 _id,
         uint128 _amount,
-        address madFeeTokenAddress
+        address madFeeTokenAddress,
+        uint256 _maxSupply
     ) public payable {
         _tokenRender(collection);
-        _handleFees(_amount, madFeeTokenAddress, this.feeMintErc20);
-        ERC1155Basic(collection).mintTo(_to, _id, _amount);
+        // Charge per ID so the amount here is 1
+        _handleFees(1, madFeeTokenAddress, this.feeMintErc20);
+        ERC1155Basic erc1155Contract = ERC1155Basic(collection);
+        // set max supply of the id, can be left as 0 if already set.
+        erc1155Contract.setMaxSupply(_id, _maxSupply);
+        erc1155Contract.mintTo(_to, _id, _amount);
     }
 
     ////////////////////////////////////////////////////////////////
@@ -222,19 +234,24 @@ contract MADRouter is MADRouterBase {
      * @param _ids Receiver token _ids array.
      * @param _amounts Receiver token balances array, length should be ==
      * _ids.length.
-     * @custom:signature mintBatchTo(address,address,uint128[],uint128[])
+     * @param _maxSupplies Max supply of each token in the batch.
+     * length should be == _ids.length.
+     * @custom:signature mintBatchTo(address,address,uint128[],uint128[],uint128[])
      * @custom:selector 0xbfa33dd8
      */
     function mintBatchTo(
         address collection,
         address _to,
         uint128[] memory _ids,
-        uint128[] memory _amounts
+        uint128[] memory _amounts,
+        uint256[] memory _maxSupplies
     ) public payable {
         _tokenRender(collection);
         uint256 _fee = _handleFees(_FEE_MINT, _ids.length);
         uint256 _value = msg.value - _fee;
-        ERC1155Basic(collection).mintBatchTo{ value: _value }(
+        ERC1155Basic erc1155Contract = ERC1155Basic(collection);
+        erc1155Contract.batchSetMaxSupply(_ids, _maxSupplies);
+        erc1155Contract.mintBatchTo{ value: _value }(
             _to, _ids, _amounts
         );
     }
@@ -248,6 +265,8 @@ contract MADRouter is MADRouterBase {
      * @param _amounts Receiver token balances array, length should be ==
      * _ids.length.
      * @param madFeeTokenAddress ERC20 token address.
+     * @param _maxSupplies Max supply of each token in the batch.
+     * length should be == _ids.length.
      * @custom:signature
      * mintBatchTo(address,address,uint128[],uint128[],address)
      * @custom:selector 0x18c9fb16
@@ -257,11 +276,16 @@ contract MADRouter is MADRouterBase {
         address _to,
         uint128[] memory _ids,
         uint128[] memory _amounts,
-        address madFeeTokenAddress
+        address madFeeTokenAddress,
+        uint256[] memory _maxSupplies
     ) public payable {
         _tokenRender(collection);
         _handleFees(_ids.length, madFeeTokenAddress, this.feeMintErc20);
-        ERC1155Basic(collection).mintBatchTo(_to, _ids, _amounts);
+        ERC1155Basic erc1155Contract = ERC1155Basic(collection);
+        erc1155Contract.batchSetMaxSupply(_ids, _maxSupplies);
+        erc1155Contract.mintBatchTo(
+            _to, _ids, _amounts
+        );
     }
 
     ////////////////////////////////////////////////////////////////
@@ -283,7 +307,8 @@ contract MADRouter is MADRouterBase {
         payable
     {
         _tokenRender(collection);
-        uint256 _fee = _handleFees(_FEE_MINT, _amount);
+        // Charge per ID so the amount here is 1
+        uint256 _fee = _handleFees(_FEE_MINT, 1);
         uint256 _value = msg.value - _fee;
         ERC1155Basic(collection).mint{ value: _value }(_to, _id, _amount);
     }
@@ -307,7 +332,8 @@ contract MADRouter is MADRouterBase {
         address madFeeTokenAddress
     ) public payable {
         _tokenRender(collection);
-        _handleFees(_amount, madFeeTokenAddress, this.feeMintErc20);
+        // Charge per ID so the amount here is 1
+        _handleFees(1, madFeeTokenAddress, this.feeMintErc20);
         ERC1155Basic(collection).mint(_to, _id, _amount);
     }
 
@@ -385,6 +411,7 @@ contract MADRouter is MADRouterBase {
         uint128 _amount
     ) public payable {
         _tokenRender(collection);
+        // Charge per ID so the amount here is 1
         uint256 _fee = _handleFees(_FEE_BURN, 1);
         uint256 _value = msg.value - _fee;
         ERC1155Basic(collection).burn{ value: _value }(from, _id, _amount);
@@ -410,6 +437,7 @@ contract MADRouter is MADRouterBase {
         address madFeeTokenAddress
     ) public payable {
         _tokenRender(collection);
+        // Charge per ID so the amount here is 1
         _handleFees(1, madFeeTokenAddress, this.feeBurnErc20);
         ERC1155Basic(collection).burn(from, _id, _amount);
     }

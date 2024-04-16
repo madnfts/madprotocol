@@ -4,6 +4,7 @@ pragma solidity 0.8.22;
 // solhint-disable-next-line
 import {
     ImplBase,
+    _PUBLIC_MINT_STATE_SET,
     ERC2981,
     Strings,
     FactoryTypes
@@ -20,6 +21,16 @@ contract ERC721Basic is ERC721, ImplBase {
 
     using FactoryTypes for FactoryTypes.CollectionArgs;
     using Strings for uint256;
+
+    /// @notice Public mint state default := false.
+    bool public publicMintState;
+
+    ////////////////////////////////////////////////////////////////
+    //                          IMMUTABLE                         //
+    ////////////////////////////////////////////////////////////////
+
+    /// @notice Capped max supply.
+    uint128 public immutable maxSupply;
 
     ////////////////////////////////////////////////////////////////
     //                           STORAGE                          //
@@ -39,6 +50,28 @@ contract ERC721Basic is ERC721, ImplBase {
     constructor(FactoryTypes.CollectionArgs memory args) ImplBase(args) {
         _setStringMemory(args._name, _NAME_SLOT);
         _setStringMemory(args._symbol, _SYMBOL_SLOT);
+        if (args._maxSupply == 0) {
+            revert ZeroMaxSupply();
+        }
+        if (args._maxSupply > _MAXSUPPLY_BOUND) revert MaxSupplyBoundExceeded();
+
+        // immutable
+        maxSupply = uint128(args._maxSupply);
+    }
+
+    /**
+     * @notice Set public mint state, a public state-modifying function.
+     * @dev Has modifiers: onlyOwner.
+     * @param _publicMintState The public mint state (bool).
+     * @custom:signature setPublicMintState(bool)
+     * @custom:selector 0x879fbedf
+     */
+    function setPublicMintState(bool _publicMintState) public onlyOwner {
+        publicMintState = _publicMintState;
+        assembly {
+            // emit PublicMintStateSet(_publicMintState);
+            log2(0, 0, _PUBLIC_MINT_STATE_SET, _publicMintState)
+        }
     }
 
     ////////////////////////////////////////////////////////////////
@@ -111,7 +144,7 @@ contract ERC721Basic is ERC721, ImplBase {
      */
     function _publicMint(address _minter, uint128 amount) private {
         _hasReachedMax(uint256(amount));
-        _preparePublicMint(uint256(amount), _minter);
+        _preparePublicMint(uint256(amount), _minter, publicMintState);
         (uint256 curId, uint256 endId) = _incrementCounter(uint256(amount));
 
         for (uint256 i = curId; i < endId; ++i) {

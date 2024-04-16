@@ -45,6 +45,8 @@ interface ImplBaseEventsAndErrors {
     error PublicMintClosed();
     /// @dev 0xd05cb609
     error MaxSupplyReached();
+    /// @dev 0xd9fda788
+    error MaxSupplyAlreadySet();
     /// @dev 0xbad086ea
     error NotMintedYet();
     /// @dev 0xf7760f25
@@ -59,6 +61,8 @@ interface ImplBaseEventsAndErrors {
     error DecOverflow();
     /// @dev 0xf56dc29c
     error RouterIsEnabled();
-
+    ///@dev 0xd5b3df7a
     error MaxSupplyBoundExceeded();
+    /// @dev 0x4ca88867
+    error ZeroMaxSupply();
 }

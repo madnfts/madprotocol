@@ -25,6 +25,11 @@ contract ERC721Basic is ERC721, ImplBase {
     /// @notice Public mint state default := false.
     bool public publicMintState;
 
+    /// max that public can mint per address
+    uint256 public publicMintLimit = 10;
+
+    mapping(address minter => uint256 minted) public mintedByAddress;
+
     ////////////////////////////////////////////////////////////////
     //                          IMMUTABLE                         //
     ////////////////////////////////////////////////////////////////
@@ -72,6 +77,13 @@ contract ERC721Basic is ERC721, ImplBase {
             // emit PublicMintStateSet(_publicMintState);
             log2(0, 0, _PUBLIC_MINT_STATE_SET, _publicMintState)
         }
+    }
+
+    function setPublicMintLimit(uint256 _limit) public onlyOwner {
+        if (_limit == 0) {
+            revert ZeroPublicMintLimit();
+        }
+        publicMintLimit = _limit;
     }
 
     ////////////////////////////////////////////////////////////////
@@ -144,6 +156,7 @@ contract ERC721Basic is ERC721, ImplBase {
      */
     function _publicMint(address _minter, uint128 amount) private {
         _hasReachedMax(uint256(amount));
+        _publicMinted(_minter, amount);
         _preparePublicMint(uint256(amount), _minter, publicMintState);
         (uint256 curId, uint256 endId) = _incrementCounter(uint256(amount));
 
@@ -210,6 +223,24 @@ contract ERC721Basic is ERC721, ImplBase {
     ////////////////////////////////////////////////////////////////
     //                     PRIVATE FUNCTIONS                     //
     ////////////////////////////////////////////////////////////////
+
+    /**
+     * @notice Public minted, a private state-modifying function.
+     * @dev Increments the amount of tokens minted by the minter.
+     * @dev Reverts if the amount minted by the minter exceeds the public mint
+     * limit.
+     * @param _minter The minter address.
+     * @param _amount The amount (uint256).
+     * @custom:signature _publicMinted(address,uint256)
+     * @custom:selector 0x0b53529a
+     */
+    function _publicMinted(address _minter, uint256 _amount) private {
+        uint256 amountMinted = mintedByAddress[_minter];
+        if (amountMinted + _amount > publicMintLimit) {
+            revert MintLimitReached();
+        }
+        mintedByAddress[_minter] += _amount;
+    }
 
     /**
      * @notice Has reached max, a private view function.

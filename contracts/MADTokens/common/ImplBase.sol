@@ -128,7 +128,8 @@ abstract contract ImplBase is
      * @notice Prepare public mint, an internal state-modifying function.
      * @param totalAmount The total amount (uint256).
      * @param _minter The minter address.
-     * @custom:signature _preparePublicMint(uint256,address)
+     * @param publicMintState The public mint state (bool).
+     * @custom:signature _preparePublicMint(uint256,address,bool)
      * @custom:selector 0x78585ee7
      */
     function _preparePublicMint(

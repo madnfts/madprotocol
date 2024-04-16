@@ -41,12 +41,31 @@ contract ERC1155Basic is ERC1155, ImplBase {
 
     mapping(uint256 id => bool publicMintState) public publicMintState;
 
+    /// max that public can mint per address
+    uint256 public publicMintLimitDefault = 10;
+    mapping(uint256 id => uint256 publicMintLimit) public publicMintLimit;
+    mapping(uint256 id => mapping(address minter => uint256 minted)) public
+        mintedByAddress;
+
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
     constructor(FactoryTypes.CollectionArgs memory args) ImplBase(args) {
         emit URI(args._baseURI, 0x00);
+    }
+
+    /**
+     * @notice Set public mint limit, a private state-modifying function.
+     * @dev Has modifiers: onlyOwner.
+     * @param _id The id (uint256).
+     * @param _limit The limit (uint256).
+     * @custom:signature _setPublicMintLimit(uint256,uint256)
+     * @custom:selector 0x8854696a
+     */
+    function setPublicMintLimit(uint256 _id, uint256 _limit) public onlyOwner {
+        if (_limit == 0) revert ZeroPublicMintLimit();
+        publicMintLimit[_id] = _limit;
     }
 
     /**
@@ -406,6 +425,31 @@ contract ERC1155Basic is ERC1155, ImplBase {
      */
     function balanceCount(uint256 id) public view returns (uint256) {
         return _balanceRegistrar[id] >> _MINTCOUNT_BITPOS;
+    }
+
+    ////////////////////////////////////////////////////////////////
+    //                     PRIVATE FUNCTIONS                     //
+    ////////////////////////////////////////////////////////////////
+
+    /**
+     * @notice Public minted, a private state-modifying function.
+     * @dev Increments the amount of tokens minted by the minter.
+     * @dev Reverts if the amount minted by the minter exceeds the public mint
+     * limit.
+     * @param id The id (uint256).
+     * @param _minter The minter address.
+     * @param _amount The amount (uint256).
+     * @custom:signature _publicMinted(uint256,address,uint256)
+     * @custom:selector 0xd85a62bb
+     */
+    function _publicMinted(uint256 id, address _minter, uint256 _amount)
+        private
+    {
+        uint256 amountMinted = mintedByAddress[id][_minter];
+        if (amountMinted + _amount > publicMintLimit[id]) {
+            revert MintLimitReached();
+        }
+        mintedByAddress[id][_minter] += _amount;
     }
 
     ////////////////////////////////////////////////////////////////

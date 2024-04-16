@@ -186,8 +186,8 @@ const config: HardhatUserConfig = {
       mainnet: ETHERSCAN_API_KEY || "",
       goerli: ETHERSCAN_API_KEY || "",
       sepolia: ETHERSCAN_API_KEY || "",
-      base: ETHERSCAN_API_KEY || "",
-      baseSepolia: ETHERSCAN_API_KEY || "",
+      base: ETHERSCAN_API_KEY,
+      baseSepolia: ETHERSCAN_API_KEY,
     },
     customChains: [
 

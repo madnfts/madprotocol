@@ -28,17 +28,18 @@ const updateSettings = {
   deployFactory: false,
   deployRouter: false,
   setRouterAddress: false,
-  setCollectionType721: true,
-  setCollectionType1155: true,
+  setFactoryAddress: false,
+  setCollectionType721: false,
+  setCollectionType1155: false,
   setCollectionTypeSimpleTest: false,
   setFactoryFees: false,
   setRouterFees: false,
-  deployErc721: false,
-  deployErc1155: false,
+  deployErc721: true,
+  deployErc1155: true,
   createCollectionSplitter: false,
   createCollectionCollection: false,
   verifyCollectionSplitter: false,
-  verifyErc721: true,
+  verifyErc721: false,
   verifyErc1155: false
 };
 

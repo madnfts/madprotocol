@@ -65,4 +65,8 @@ interface ImplBaseEventsAndErrors {
     error MaxSupplyBoundExceeded();
     /// @dev 0x4ca88867
     error ZeroMaxSupply();
+    /// @dev 0xef81d165
+    error ZeroPublicMintLimit();
+    /// @dev 0x303b682f
+    error MintLimitReached();
 }

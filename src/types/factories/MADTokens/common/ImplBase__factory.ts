@@ -26,12 +26,22 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "MaxSupplyAlreadySet",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "MaxSupplyBoundExceeded",
     type: "error",
   },
   {
     inputs: [],
     name: "MaxSupplyReached",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "MintLimitReached",
     type: "error",
   },
   {
@@ -82,6 +92,16 @@ const _abi = [
   {
     inputs: [],
     name: "ZeroAddress",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "ZeroMaxSupply",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "ZeroPublicMintLimit",
     type: "error",
   },
   {
@@ -287,38 +307,12 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "maxSupply",
-    outputs: [
-      {
-        internalType: "uint128",
-        name: "",
-        type: "uint128",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
     name: "price",
     outputs: [
       {
         internalType: "uint256",
         name: "",
         type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "publicMintState",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
       },
     ],
     stateMutability: "view",
@@ -395,19 +389,6 @@ const _abi = [
       },
     ],
     name: "setOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bool",
-        name: "_publicMintState",
-        type: "bool",
-      },
-    ],
-    name: "setPublicMintState",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

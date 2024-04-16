@@ -236,7 +236,8 @@ contract MADRouter is MADRouterBase {
      * _ids.length.
      * @param _maxSupplies Max supply of each token in the batch.
      * length should be == _ids.length.
-     * @custom:signature mintBatchTo(address,address,uint128[],uint128[],uint128[])
+     * @custom:signature
+     * mintBatchTo(address,address,uint128[],uint128[],uint128[])
      * @custom:selector 0xbfa33dd8
      */
     function mintBatchTo(
@@ -251,9 +252,7 @@ contract MADRouter is MADRouterBase {
         uint256 _value = msg.value - _fee;
         ERC1155Basic erc1155Contract = ERC1155Basic(collection);
         erc1155Contract.batchSetMaxSupply(_ids, _maxSupplies);
-        erc1155Contract.mintBatchTo{ value: _value }(
-            _to, _ids, _amounts
-        );
+        erc1155Contract.mintBatchTo{ value: _value }(_to, _ids, _amounts);
     }
 
     /**
@@ -283,9 +282,7 @@ contract MADRouter is MADRouterBase {
         _handleFees(_ids.length, madFeeTokenAddress, this.feeMintErc20);
         ERC1155Basic erc1155Contract = ERC1155Basic(collection);
         erc1155Contract.batchSetMaxSupply(_ids, _maxSupplies);
-        erc1155Contract.mintBatchTo(
-            _to, _ids, _amounts
-        );
+        erc1155Contract.mintBatchTo(_to, _ids, _amounts);
     }
 
     ////////////////////////////////////////////////////////////////

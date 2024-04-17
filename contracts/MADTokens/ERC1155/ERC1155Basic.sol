@@ -471,6 +471,9 @@ contract ERC1155Basic is ERC1155, ImplBase {
         virtual
         override(ERC1155)
     {
+        if (amount == 0) {
+            revert ZeroAmount();
+        }
         uint128 maxBal = uint128(maxSupply[id]);
         assembly {
             mstore(32, _balanceRegistrar.slot)
@@ -522,6 +525,14 @@ contract ERC1155Basic is ERC1155, ImplBase {
                 aLoc := add(aLoc, 32)
             } {
                 let id := mload(iLoc)
+                let amount := mload(aLoc)
+
+                if eq(amount, 0) {
+                    // ZeroAmount()
+                    mstore(0, 0x1f2a2005)
+                    revert(28, 4)
+                }
+
                 // Compute the storage slot for the current id's entry in
                 // _maxSupply
                 mstore(0, id)
@@ -536,7 +547,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
 
                 let maxBal := sload(maxSupplySlot)
                 let rawBal := sload(balanceRegistrarSlot)
-                let newBal := add(mload(aLoc), shr(_MINTCOUNT_BITPOS, rawBal))
+                let newBal := add(amount, shr(_MINTCOUNT_BITPOS, rawBal))
 
                 if gt(newBal, maxBal) {
                     // MaxSupplyReached()

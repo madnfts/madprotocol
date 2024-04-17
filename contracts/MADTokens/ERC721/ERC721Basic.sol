@@ -105,7 +105,7 @@ contract ERC721Basic is ERC721, ImplBase {
      * @custom:selector 0xa7fcf7b5
      */
     function mintTo(address to, uint128 amount) public payable authorised {
-        _hasReachedMax(uint256(amount));
+        _hasReachedMaxOrZeroAmount(uint256(amount));
         (uint256 curId, uint256 endId) = _incrementCounter(uint256(amount));
 
         for (uint256 i = curId; i < endId; ++i) {
@@ -158,7 +158,7 @@ contract ERC721Basic is ERC721, ImplBase {
      * @custom:selector 0xda1cbcbd
      */
     function _publicMint(address _minter, uint128 amount) private {
-        _hasReachedMax(uint256(amount));
+        _hasReachedMaxOrZeroAmount(uint256(amount));
         _publicMinted(_minter, amount);
         _preparePublicMint(uint256(amount), _minter, publicMintState);
         (uint256 curId, uint256 endId) = _incrementCounter(uint256(amount));
@@ -248,10 +248,13 @@ contract ERC721Basic is ERC721, ImplBase {
     /**
      * @notice Has reached max, a private view function.
      * @param _amount The amount (uint256).
-     * @custom:signature _hasReachedMax(uint256)
+     * @custom:signature _hasReachedMaxOrZeroAmount(uint256)
      * @custom:selector 0x9b726b8b
      */
-    function _hasReachedMax(uint256 _amount) private view {
+    function _hasReachedMaxOrZeroAmount(uint256 _amount) private view {
+        if (_amount == 0) {
+            revert ZeroAmount();
+        }
         uint256 _maxSupply = maxSupply;
         assembly {
             // if (mintCount + amount > maxSupply)

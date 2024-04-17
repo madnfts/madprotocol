@@ -26,6 +26,11 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "MaxLoopAmountExceeded",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "MaxSupplyAlreadySet",
     type: "error",
   },
@@ -92,6 +97,11 @@ const _abi = [
   {
     inputs: [],
     name: "ZeroAddress",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "ZeroAmount",
     type: "error",
   },
   {

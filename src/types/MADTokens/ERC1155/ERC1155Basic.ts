@@ -65,13 +65,13 @@ export declare namespace FactoryTypes {
 export interface ERC1155BasicInterface extends Interface {
   getFunction(
     nameOrSignature:
-      | "MAX_BATCH_AMOUNT"
       | "_royaltyFee"
       | "balanceCount"
       | "balanceOf"
       | "balanceOfBatch"
       | "baseURI"
       | "batchSetMaxSupply"
+      | "batchSetPublicMintLimit"
       | "batchSetPublicMintState"
       | "burn"
       | "burnBatch"
@@ -84,8 +84,8 @@ export interface ERC1155BasicInterface extends Interface {
       | "isApprovedForAll"
       | "liveBalance"
       | "maxSupply"
-      | "mint(address,uint128,uint128)"
-      | "mint(uint128,uint128)"
+      | "mint(address,uint256,uint256)"
+      | "mint(uint256,uint256)"
       | "mintBatch"
       | "mintBatchTo"
       | "mintTo"
@@ -119,6 +119,8 @@ export interface ERC1155BasicInterface extends Interface {
       | "ApprovalForAll"
       | "BaseURILocked"
       | "BaseURISet"
+      | "BatchMaxSupplySet"
+      | "BatchPublicMintLimitSet"
       | "BatchPublicMintStateSet"
       | "MaxSupplySet"
       | "OwnerUpdated"
@@ -133,10 +135,6 @@ export interface ERC1155BasicInterface extends Interface {
       | "URI"
   ): EventFragment;
 
-  encodeFunctionData(
-    functionFragment: "MAX_BATCH_AMOUNT",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "_royaltyFee",
     values?: undefined
@@ -159,8 +157,12 @@ export interface ERC1155BasicInterface extends Interface {
     values: [BigNumberish[], BigNumberish[]]
   ): string;
   encodeFunctionData(
+    functionFragment: "batchSetPublicMintLimit",
+    values: [BigNumberish[], BigNumberish[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "batchSetPublicMintState",
-    values: [BigNumberish[], boolean[], BigNumberish[]]
+    values: [BigNumberish[], boolean[]]
   ): string;
   encodeFunctionData(
     functionFragment: "burn",
@@ -195,11 +197,11 @@ export interface ERC1155BasicInterface extends Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "mint(address,uint128,uint128)",
+    functionFragment: "mint(address,uint256,uint256)",
     values: [AddressLike, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "mint(uint128,uint128)",
+    functionFragment: "mint(uint256,uint256)",
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
@@ -276,7 +278,7 @@ export interface ERC1155BasicInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setPublicMintState",
-    values: [BigNumberish, boolean, BigNumberish]
+    values: [BigNumberish, boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "setRouterHasAuthority",
@@ -296,10 +298,6 @@ export interface ERC1155BasicInterface extends Interface {
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "MAX_BATCH_AMOUNT",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "_royaltyFee",
     data: BytesLike
   ): Result;
@@ -315,6 +313,10 @@ export interface ERC1155BasicInterface extends Interface {
   decodeFunctionResult(functionFragment: "baseURI", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "batchSetMaxSupply",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "batchSetPublicMintLimit",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -345,11 +347,11 @@ export interface ERC1155BasicInterface extends Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "maxSupply", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "mint(address,uint128,uint128)",
+    functionFragment: "mint(address,uint256,uint256)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "mint(uint128,uint128)",
+    functionFragment: "mint(uint256,uint256)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "mintBatch", data: BytesLike): Result;
@@ -473,6 +475,32 @@ export namespace BaseURISetEvent {
   export type OutputTuple = [newBaseURI: string];
   export interface OutputObject {
     newBaseURI: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace BatchMaxSupplySetEvent {
+  export type InputTuple = [_ids: BigNumberish[], _maxSupplies: BigNumberish[]];
+  export type OutputTuple = [_ids: bigint[], _maxSupplies: bigint[]];
+  export interface OutputObject {
+    _ids: bigint[];
+    _maxSupplies: bigint[];
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace BatchPublicMintLimitSetEvent {
+  export type InputTuple = [_ids: BigNumberish[], _limits: BigNumberish[]];
+  export type OutputTuple = [_ids: bigint[], _limits: bigint[]];
+  export interface OutputObject {
+    _ids: bigint[];
+    _limits: bigint[];
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -705,8 +733,6 @@ export interface ERC1155Basic extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  MAX_BATCH_AMOUNT: TypedContractMethod<[], [bigint], "view">;
-
   _royaltyFee: TypedContractMethod<[], [bigint], "view">;
 
   balanceCount: TypedContractMethod<[id: BigNumberish], [bigint], "view">;
@@ -731,12 +757,14 @@ export interface ERC1155Basic extends BaseContract {
     "nonpayable"
   >;
 
+  batchSetPublicMintLimit: TypedContractMethod<
+    [_ids: BigNumberish[], _limits: BigNumberish[]],
+    [void],
+    "nonpayable"
+  >;
+
   batchSetPublicMintState: TypedContractMethod<
-    [
-      _ids: BigNumberish[],
-      _publicMintStates: boolean[],
-      _maxSupplies: BigNumberish[]
-    ],
+    [_ids: BigNumberish[], _publicMintStates: boolean[]],
     [void],
     "nonpayable"
   >;
@@ -775,13 +803,13 @@ export interface ERC1155Basic extends BaseContract {
 
   maxSupply: TypedContractMethod<[id: BigNumberish], [bigint], "view">;
 
-  "mint(address,uint128,uint128)": TypedContractMethod<
+  "mint(address,uint256,uint256)": TypedContractMethod<
     [_to: AddressLike, _id: BigNumberish, amount: BigNumberish],
     [void],
     "payable"
   >;
 
-  "mint(uint128,uint128)": TypedContractMethod<
+  "mint(uint256,uint256)": TypedContractMethod<
     [_id: BigNumberish, amount: BigNumberish],
     [void],
     "payable"
@@ -880,7 +908,7 @@ export interface ERC1155Basic extends BaseContract {
   >;
 
   setPublicMintState: TypedContractMethod<
-    [_id: BigNumberish, _publicMintState: boolean, _maxSupply: BigNumberish],
+    [_id: BigNumberish, _publicMintState: boolean],
     [void],
     "nonpayable"
   >;
@@ -916,9 +944,6 @@ export interface ERC1155Basic extends BaseContract {
   ): T;
 
   getFunction(
-    nameOrSignature: "MAX_BATCH_AMOUNT"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
     nameOrSignature: "_royaltyFee"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
@@ -949,13 +974,16 @@ export interface ERC1155Basic extends BaseContract {
     "nonpayable"
   >;
   getFunction(
+    nameOrSignature: "batchSetPublicMintLimit"
+  ): TypedContractMethod<
+    [_ids: BigNumberish[], _limits: BigNumberish[]],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
     nameOrSignature: "batchSetPublicMintState"
   ): TypedContractMethod<
-    [
-      _ids: BigNumberish[],
-      _publicMintStates: boolean[],
-      _maxSupplies: BigNumberish[]
-    ],
+    [_ids: BigNumberish[], _publicMintStates: boolean[]],
     [void],
     "nonpayable"
   >;
@@ -1005,14 +1033,14 @@ export interface ERC1155Basic extends BaseContract {
     nameOrSignature: "maxSupply"
   ): TypedContractMethod<[id: BigNumberish], [bigint], "view">;
   getFunction(
-    nameOrSignature: "mint(address,uint128,uint128)"
+    nameOrSignature: "mint(address,uint256,uint256)"
   ): TypedContractMethod<
     [_to: AddressLike, _id: BigNumberish, amount: BigNumberish],
     [void],
     "payable"
   >;
   getFunction(
-    nameOrSignature: "mint(uint128,uint128)"
+    nameOrSignature: "mint(uint256,uint256)"
   ): TypedContractMethod<
     [_id: BigNumberish, amount: BigNumberish],
     [void],
@@ -1127,7 +1155,7 @@ export interface ERC1155Basic extends BaseContract {
   getFunction(
     nameOrSignature: "setPublicMintState"
   ): TypedContractMethod<
-    [_id: BigNumberish, _publicMintState: boolean, _maxSupply: BigNumberish],
+    [_id: BigNumberish, _publicMintState: boolean],
     [void],
     "nonpayable"
   >;
@@ -1173,6 +1201,20 @@ export interface ERC1155Basic extends BaseContract {
     BaseURISetEvent.InputTuple,
     BaseURISetEvent.OutputTuple,
     BaseURISetEvent.OutputObject
+  >;
+  getEvent(
+    key: "BatchMaxSupplySet"
+  ): TypedContractEvent<
+    BatchMaxSupplySetEvent.InputTuple,
+    BatchMaxSupplySetEvent.OutputTuple,
+    BatchMaxSupplySetEvent.OutputObject
+  >;
+  getEvent(
+    key: "BatchPublicMintLimitSet"
+  ): TypedContractEvent<
+    BatchPublicMintLimitSetEvent.InputTuple,
+    BatchPublicMintLimitSetEvent.OutputTuple,
+    BatchPublicMintLimitSetEvent.OutputObject
   >;
   getEvent(
     key: "BatchPublicMintStateSet"
@@ -1293,7 +1335,29 @@ export interface ERC1155Basic extends BaseContract {
       BaseURISetEvent.OutputObject
     >;
 
-    "BatchPublicMintStateSet(uint128[],bool[])": TypedContractEvent<
+    "BatchMaxSupplySet(uint256[],uint256[])": TypedContractEvent<
+      BatchMaxSupplySetEvent.InputTuple,
+      BatchMaxSupplySetEvent.OutputTuple,
+      BatchMaxSupplySetEvent.OutputObject
+    >;
+    BatchMaxSupplySet: TypedContractEvent<
+      BatchMaxSupplySetEvent.InputTuple,
+      BatchMaxSupplySetEvent.OutputTuple,
+      BatchMaxSupplySetEvent.OutputObject
+    >;
+
+    "BatchPublicMintLimitSet(uint256[],uint256[])": TypedContractEvent<
+      BatchPublicMintLimitSetEvent.InputTuple,
+      BatchPublicMintLimitSetEvent.OutputTuple,
+      BatchPublicMintLimitSetEvent.OutputObject
+    >;
+    BatchPublicMintLimitSet: TypedContractEvent<
+      BatchPublicMintLimitSetEvent.InputTuple,
+      BatchPublicMintLimitSetEvent.OutputTuple,
+      BatchPublicMintLimitSetEvent.OutputObject
+    >;
+
+    "BatchPublicMintStateSet(uint256[],bool[])": TypedContractEvent<
       BatchPublicMintStateSetEvent.InputTuple,
       BatchPublicMintStateSetEvent.OutputTuple,
       BatchPublicMintStateSetEvent.OutputObject

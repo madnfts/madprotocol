@@ -171,16 +171,16 @@ contract MADRouter is MADRouterBase {
      * @param _to Receiver token address.
      * @param _id Token ID.
      * @param _amount Num tokens to mint and send.
-     *
-     * @custom:signature mintTo(address,address,uint128,uint128)
+     * @param _maxSupply Max supply of the id.
+     * @custom:signature mintTo(address,address,uint256,uint256)
      * @custom:selector 0x292af4be
      */
     function mintTo(
         address collection,
         address _to,
-        uint128 _id,
-        uint128 _amount,
-        uint128 _maxSupply
+        uint256 _id,
+        uint256 _amount,
+        uint256 _maxSupply
     ) public payable {
         _tokenRender(collection);
         // Charge per ID so the amount here is 1
@@ -202,14 +202,14 @@ contract MADRouter is MADRouterBase {
      * @param _amount Num tokens to mint and send.
      * @param madFeeTokenAddress ERC20 token address.
      * @param _maxSupply Max supply of the id.
-     * @custom:signature mintTo(address,address,uint128,uint128,address)
+     * @custom:signature mintTo(address,address,uint256,uint256,address)
      * @custom:selector 0x0a7309b2
      */
     function mintTo(
         address collection,
         address _to,
-        uint128 _id,
-        uint128 _amount,
+        uint256 _id,
+        uint256 _amount,
         address madFeeTokenAddress,
         uint256 _maxSupply
     ) public payable {
@@ -229,6 +229,7 @@ contract MADRouter is MADRouterBase {
     /**
      * @notice Mint batch to, a public state-modifying function.
      * @notice Accepts ether.
+     * @notice ERC1155Basic creator mint function handler.
      * @param collection 1155 token address.
      * @param _to Token receiver address.
      * @param _ids Receiver token _ids array.
@@ -237,14 +238,14 @@ contract MADRouter is MADRouterBase {
      * @param _maxSupplies Max supply of each token in the batch.
      * length should be == _ids.length.
      * @custom:signature
-     * mintBatchTo(address,address,uint128[],uint128[],uint128[])
-     * @custom:selector 0xbfa33dd8
+     * mintBatchTo(address,address,uint256[],uint256[],uint256[])
+     * @custom:selector 0x5ec5a434
      */
     function mintBatchTo(
         address collection,
         address _to,
-        uint128[] memory _ids,
-        uint128[] memory _amounts,
+        uint256[] memory _ids,
+        uint256[] memory _amounts,
         uint256[] memory _maxSupplies
     ) public payable {
         _tokenRender(collection);
@@ -258,6 +259,7 @@ contract MADRouter is MADRouterBase {
     /**
      * @notice Mint batch to, a public state-modifying function.
      * @notice Accepts ether.
+     * @notice ERC115Basic creator mint function handler.
      * @param collection 1155 token address.
      * @param _to Token receiver address.
      * @param _ids Receiver token _ids array.
@@ -267,14 +269,14 @@ contract MADRouter is MADRouterBase {
      * @param _maxSupplies Max supply of each token in the batch.
      * length should be == _ids.length.
      * @custom:signature
-     * mintBatchTo(address,address,uint128[],uint128[],address)
-     * @custom:selector 0x18c9fb16
+     * mintBatchTo(address,address,uint256[],uint256[],address)
+     * @custom:selector 0x6308ec41
      */
     function mintBatchTo(
         address collection,
         address _to,
-        uint128[] memory _ids,
-        uint128[] memory _amounts,
+        uint256[] memory _ids,
+        uint256[] memory _amounts,
         address madFeeTokenAddress,
         uint256[] memory _maxSupplies
     ) public payable {
@@ -292,14 +294,16 @@ contract MADRouter is MADRouterBase {
     /**
      * @notice Mint, a public state-modifying function.
      * @notice Accepts ether.
-     * @notice ERC1155Basic creator mint function handler.
+     * @notice public mint function if madRouter is authorised.
+     * This will open up public minting to this contract if the owner has
+     * enabled the authorisation for the router.
      * @param collection 1155 token address.
      * @param _to Receiver token address.
      * @param _amount Num tokens to mint and send.
-     * @custom:signature mint(address,address,uint128,uint128)
-     * @custom:selector 0x66431b2d
+     * @custom:signature mint(address,address,uint256,uint256)
+     * @custom:selector 0xb3f1c93d
      */
-    function mint(address collection, address _to, uint128 _id, uint128 _amount)
+    function mint(address collection, address _to, uint256 _id, uint256 _amount)
         public
         payable
     {
@@ -313,19 +317,21 @@ contract MADRouter is MADRouterBase {
     /**
      * @notice Mint, a public state-modifying function.
      * @notice Accepts ether.
-     * @notice ERC1155Basic creator mint function handler.
+     * @notice public mint function if madRouter is authorised.
+     * This will open up public minting to this contract if the owner has
+     * enabled the authorisation for the router.
      * @param collection 1155 token address.
      * @param _to Receiver token address.
      * @param _amount Num tokens to mint and send.
      * @param madFeeTokenAddress ERC20 token address.
-     * @custom:signature mint(address,address,uint128,uint128,address)
-     * @custom:selector 0x0d9bd2aa
+     * @custom:signature mint(address,address,uint256,uint256,address)
+     * @custom:selector 0xfa28d692
      */
     function mint(
         address collection,
         address _to,
-        uint128 _id,
-        uint128 _amount,
+        uint256 _id,
+        uint256 _amount,
         address madFeeTokenAddress
     ) public payable {
         _tokenRender(collection);
@@ -341,19 +347,21 @@ contract MADRouter is MADRouterBase {
     /**
      * @notice Mint, a public state-modifying function.
      * @notice Accepts ether.
-     * @notice ERC1155Basic creator mint function handler.
+     * @notice public mint function if madRouter is authorised.
+     * This will open up public minting to this contract if the owner has
+     * enabled the authorisation for the router.
      * @param collection 1155 token address.
      * @param _to Receiver token address.
      * @param _ids Token IDs array.
      * @param _amounts Token amounts array.
-     * @custom:signature mintBatch(address,address,uint128[],uint128[])
-     * @custom:selector 0xa2e12fd8
+     * @custom:signature mintBatch(address,address,uint256[],uint256[])
+     * @custom:selector 0x3b3f62fa
      */
     function mintBatch(
         address collection,
         address _to,
-        uint128[] memory _ids,
-        uint128[] calldata _amounts
+        uint256[] memory _ids,
+        uint256[] calldata _amounts
     ) public payable {
         _tokenRender(collection);
         uint256 _fee = _handleFees(_FEE_MINT, _ids.length);
@@ -364,20 +372,22 @@ contract MADRouter is MADRouterBase {
     /**
      * @notice Mint, a public state-modifying function.
      * @notice Accepts ether.
-     * @notice ERC1155Basic creator mint function handler.
+     * @notice public mint function if madRouter is authorised.
+     * This will open up public minting to this contract if the owner has
+     * enabled the authorisation for the router.
      * @param collection 1155 token address.
      * @param _to Receiver token address.
      * @param _ids Token IDs array.
      * @param _amounts Token amounts array.
      * @param madFeeTokenAddress ERC20 token address.
-     * @custom:signature mint(address,address,uint128,uint128,address)
-     * @custom:selector 0xbce7092d
+     * @custom:signature mint(address,address,uint256,uint256,address)
+     * @custom:selector 0x787282ce
      */
     function mintBatch(
         address collection,
         address _to,
-        uint128[] memory _ids,
-        uint128[] memory _amounts,
+        uint256[] memory _ids,
+        uint256[] memory _amounts,
         address madFeeTokenAddress
     ) public payable {
         _tokenRender(collection);
@@ -398,14 +408,14 @@ contract MADRouter is MADRouterBase {
      * @param _id The token ID of each token to be burnt;
      * @param from address of who owns the token.
      * @param _amount receiver token balance .
-     * @custom:signature burn(address,uint128,address,uint128)
-     * @custom:selector 0x9c4c7818
+     * @custom:signature burn(address,uint256,address,uint256)
+     * @custom:selector 0xd7020d0a
      */
     function burn(
         address collection,
         address from,
-        uint128 _id,
-        uint128 _amount
+        uint256 _id,
+        uint256 _amount
     ) public payable {
         _tokenRender(collection);
         // Charge per ID so the amount here is 1
@@ -423,14 +433,14 @@ contract MADRouter is MADRouterBase {
      * @param from address of who owns the token.
      * @param _amount receiver token balance .
      * @param madFeeTokenAddress ERC20 token address.
-     * @custom:signature burn(address,uint128,address,uint128)
-     * @custom:selector 0xb5533845
+     * @custom:signature burn(address,uint256,address,uint256)
+     * @custom:selector 0xbaa26e61
      */
     function burn(
         address collection,
         address from,
-        uint128 _id,
-        uint128 _amount,
+        uint256 _id,
+        uint256 _amount,
         address madFeeTokenAddress
     ) public payable {
         _tokenRender(collection);
@@ -453,14 +463,14 @@ contract MADRouter is MADRouterBase {
      * @param _ids The token IDs of each token to be burnt;
      *       should be left empty for the `ERC1155Minimal` type.
      * @param _amounts Array of corresponding token balances to burn.
-     * @custom:signature batchBurn(address,address,uint128[],uint128[])
-     * @custom:selector 0x7f82d7e5
+     * @custom:signature batchBurn(address,address,uint256[],uint256[])
+     * @custom:selector 0x8b9f1815
      */
     function batchBurn(
         address collection,
         address _from,
-        uint128[] memory _ids,
-        uint128[] memory _amounts
+        uint256[] memory _ids,
+        uint256[] memory _amounts
     ) public payable {
         _tokenRender(collection);
         uint256 _fee = _handleFees(_FEE_BURN, _ids.length);
@@ -481,14 +491,14 @@ contract MADRouter is MADRouterBase {
      *        should be left empty for the `ERC1155Minimal` type.
      * @param _amounts Array of corresponding token balances to burn.
      * @param madFeeTokenAddress ERC20 token address.
-     * @custom:signature batchBurn(address,address,uint128[],uint128[],address)
-     * @custom:selector 0x4a6e87a8
+     * @custom:signature batchBurn(address,address,uint256[],uint256[],address)
+     * @custom:selector 0x940f5598
      */
     function batchBurn(
         address collection,
         address _from,
-        uint128[] memory _ids,
-        uint128[] memory _amounts,
+        uint256[] memory _ids,
+        uint256[] memory _amounts,
         address madFeeTokenAddress
     ) public payable {
         _tokenRender(collection);

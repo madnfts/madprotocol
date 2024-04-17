@@ -105,6 +105,9 @@ contract ERC721Basic is ERC721, ImplBase {
      * @custom:selector 0xa7fcf7b5
      */
     function mintTo(address to, uint128 amount) public payable authorised {
+        if (amount > _MAX_LOOP_AMOUNT) {
+            revert MaxLoopAmountExceeded();
+        }
         _hasReachedMaxOrZeroAmount(uint256(amount));
         (uint256 curId, uint256 endId) = _incrementCounter(uint256(amount));
 
@@ -158,6 +161,9 @@ contract ERC721Basic is ERC721, ImplBase {
      * @custom:selector 0xda1cbcbd
      */
     function _publicMint(address _minter, uint128 amount) private {
+        if (amount > _MAX_LOOP_AMOUNT) {
+            revert MaxLoopAmountExceeded();
+        }
         _hasReachedMaxOrZeroAmount(uint256(amount));
         _publicMinted(_minter, amount);
         _preparePublicMint(uint256(amount), _minter, publicMintState);
@@ -178,6 +184,9 @@ contract ERC721Basic is ERC721, ImplBase {
      */
     function burn(uint128[] calldata ids) external payable {
         uint256 len = ids.length;
+        if (len > _MAX_LOOP_AMOUNT) {
+            revert MaxLoopAmountExceeded();
+        }
         _decSupply(len);
 
         for (uint256 i = 0; i < len; ++i) {

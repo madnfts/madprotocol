@@ -71,4 +71,6 @@ interface ImplBaseEventsAndErrors {
     error MintLimitReached();
     /// @dev 0x1f2a2005
     error ZeroAmount();
+    /// @dev 0xfe37c8dc
+    error MaxLoopAmountExceeded();
 }

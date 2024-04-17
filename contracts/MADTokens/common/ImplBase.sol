@@ -23,15 +23,13 @@ abstract contract ImplBase is
     TwoFactor,
     PaymentManager
 {
-    // bytes32 internal constant _BASE_URI_SLOT = /*  */
-    //     0xdd05fcb58e4c0a1a429c1a9d6607c399731f1ef0b81be85c3f7701c0333c82fc;
-
     string public baseURI;
 
     /// @dev An account can hold up to 4294967295 tokens.
     uint256 internal constant _SR_UPPERBITS = (1 << 128) - 1;
     uint256 internal constant _MAXSUPPLY_BOUND = 1 << 32;
     uint256 internal constant _MINTCOUNT_BITPOS = 128;
+    uint256 internal constant _MAX_LOOP_AMOUNT = 10_000;
 
     using Strings for uint256;
 

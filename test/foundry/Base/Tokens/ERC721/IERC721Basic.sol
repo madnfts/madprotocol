@@ -31,4 +31,7 @@ interface IERC721Basic is IImplBase {
 
     function withdraw() external payable;
     function withdrawERC20(address erc20) external;
+
+    function publicMintLimit() external view returns (uint256);
+    function setPublicMintLimit(uint256 limit) external;
 }

@@ -17,11 +17,16 @@
 
 ## Usage
 
-## Sepolia
+## Sepolia BASE
+Deployed Factory Address: 0xC29A0F9792c41Bfb58324aDd19Ba305f64DBBC7D
+Deployed Router Address: 0x56BBaD08B7a210FdDDCA267e97eD336453E9356C
+Deployed ERC20 Address: 0x19E689e473EA387667149bb0C7c99c3E3201BE50
+
+## Sepolia Ethereum
 
 Deployed contracts with 0xe1fe7A4DBF33e6dA8c9e2628d102c67FB9E94549
 Deployed Factory Address: 0x09c8Dc3c8D85f6d128F29A91BeE718D647B78bD4
-Deployed Router Address: 0xA90Ff82851ed5594DEfE3BF9b2F5142e60575987
+Deployed Router Address: 0x830BDDd15D9CD076c520330c59e3805D3aE0BD94
 Deployed ERC20 Address: 0x70D3Ee80802873D724E3a4F4cF44F99a15743d9c
 
 ## SERV TESTNET contracts
@@ -49,7 +54,7 @@ Deployed contracts with 0xe1fe7A4DBF33e6dA8c9e2628d102c67FB9E94549
 Deployed Factory Address: 0x4b6D7Ad325247618E413690e94094d43d03c9faf
 Deployed Router Address: 0x45df25Dc886e8fd7D4284e036651AeE49aa927fD
 Deployed ERC20 Address: 0xd7c8Ec52eF844A40344684691eE181000F2Ce73C
-  
+
 
 ### Pre Requisites
 

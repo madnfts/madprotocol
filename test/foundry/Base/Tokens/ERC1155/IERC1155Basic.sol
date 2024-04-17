@@ -62,4 +62,6 @@ interface IERC1155Basic is IImplBase {
 
     function withdraw() external payable;
     function withdrawERC20(address erc20) external;
+    function publicMintLimit(uint256 _id) external view returns (uint256);
+    function setPublicMintLimit(uint256 _id, uint256 _limit) external;
 }

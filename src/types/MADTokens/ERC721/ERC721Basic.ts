@@ -119,6 +119,7 @@ export interface ERC721BasicInterface extends Interface {
       | "BaseURILocked"
       | "BaseURISet"
       | "OwnerUpdated"
+      | "PublicMintLimitSet"
       | "PublicMintStateSet"
       | "RouterSet"
       | "RoyaltyFeeSet"
@@ -454,6 +455,18 @@ export namespace OwnerUpdatedEvent {
   export interface OutputObject {
     user: string;
     newOwner: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace PublicMintLimitSetEvent {
+  export type InputTuple = [limit: BigNumberish];
+  export type OutputTuple = [limit: bigint];
+  export interface OutputObject {
+    limit: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -936,6 +949,13 @@ export interface ERC721Basic extends BaseContract {
     OwnerUpdatedEvent.OutputObject
   >;
   getEvent(
+    key: "PublicMintLimitSet"
+  ): TypedContractEvent<
+    PublicMintLimitSetEvent.InputTuple,
+    PublicMintLimitSetEvent.OutputTuple,
+    PublicMintLimitSetEvent.OutputObject
+  >;
+  getEvent(
     key: "PublicMintStateSet"
   ): TypedContractEvent<
     PublicMintStateSetEvent.InputTuple,
@@ -1025,6 +1045,17 @@ export interface ERC721Basic extends BaseContract {
       OwnerUpdatedEvent.InputTuple,
       OwnerUpdatedEvent.OutputTuple,
       OwnerUpdatedEvent.OutputObject
+    >;
+
+    "PublicMintLimitSet(uint256)": TypedContractEvent<
+      PublicMintLimitSetEvent.InputTuple,
+      PublicMintLimitSetEvent.OutputTuple,
+      PublicMintLimitSetEvent.OutputObject
+    >;
+    PublicMintLimitSet: TypedContractEvent<
+      PublicMintLimitSetEvent.InputTuple,
+      PublicMintLimitSetEvent.OutputTuple,
+      PublicMintLimitSetEvent.OutputObject
     >;
 
     "PublicMintStateSet(bool)": TypedContractEvent<

@@ -25,6 +25,8 @@ contract ERC1155Basic is ERC1155, ImplBase {
     );
     event MaxSupplySet(uint256 indexed _id, uint256 _maxSupply);
 
+    event PublicMintLimitSet(uint256 indexed _id, uint256 _limit);
+
     ////////////////////////////////////////////////////////////////
     //                           STORAGE                          //
     ////////////////////////////////////////////////////////////////
@@ -66,6 +68,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
     function setPublicMintLimit(uint256 _id, uint256 _limit) public onlyOwner {
         if (_limit == 0) revert ZeroPublicMintLimit();
         publicMintLimit[_id] = _limit;
+        emit PublicMintLimitSet(_id, _limit);
     }
 
     /**

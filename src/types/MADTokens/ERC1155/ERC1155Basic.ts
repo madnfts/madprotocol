@@ -122,6 +122,7 @@ export interface ERC1155BasicInterface extends Interface {
       | "BatchPublicMintStateSet"
       | "MaxSupplySet"
       | "OwnerUpdated"
+      | "PublicMintLimitSet"
       | "PublicMintStateSet(uint256,bool)"
       | "PublicMintStateSet(bool)"
       | "RouterSet"
@@ -511,6 +512,19 @@ export namespace OwnerUpdatedEvent {
   export interface OutputObject {
     user: string;
     newOwner: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace PublicMintLimitSetEvent {
+  export type InputTuple = [_id: BigNumberish, _limit: BigNumberish];
+  export type OutputTuple = [_id: bigint, _limit: bigint];
+  export interface OutputObject {
+    _id: bigint;
+    _limit: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -1182,6 +1196,13 @@ export interface ERC1155Basic extends BaseContract {
     OwnerUpdatedEvent.OutputObject
   >;
   getEvent(
+    key: "PublicMintLimitSet"
+  ): TypedContractEvent<
+    PublicMintLimitSetEvent.InputTuple,
+    PublicMintLimitSetEvent.OutputTuple,
+    PublicMintLimitSetEvent.OutputObject
+  >;
+  getEvent(
     key: "PublicMintStateSet(uint256,bool)"
   ): TypedContractEvent<
     PublicMintStateSet_uint256_bool_Event.InputTuple,
@@ -1303,6 +1324,17 @@ export interface ERC1155Basic extends BaseContract {
       OwnerUpdatedEvent.InputTuple,
       OwnerUpdatedEvent.OutputTuple,
       OwnerUpdatedEvent.OutputObject
+    >;
+
+    "PublicMintLimitSet(uint256,uint256)": TypedContractEvent<
+      PublicMintLimitSetEvent.InputTuple,
+      PublicMintLimitSetEvent.OutputTuple,
+      PublicMintLimitSetEvent.OutputObject
+    >;
+    PublicMintLimitSet: TypedContractEvent<
+      PublicMintLimitSetEvent.InputTuple,
+      PublicMintLimitSetEvent.OutputTuple,
+      PublicMintLimitSetEvent.OutputObject
     >;
 
     "PublicMintStateSet(uint256,bool)": TypedContractEvent<

@@ -34,7 +34,6 @@ export interface ImplBaseInterface extends Interface {
       | "feeCountERC20"
       | "getOwner"
       | "getRouter"
-      | "price"
       | "routerHasAuthority"
       | "royaltyInfo"
       | "setBaseURI"
@@ -53,7 +52,6 @@ export interface ImplBaseInterface extends Interface {
       | "BaseURILocked"
       | "BaseURISet"
       | "OwnerUpdated"
-      | "PublicMintStateSet"
       | "RouterSet"
       | "RoyaltyFeeSet"
       | "RoyaltyRecipientSet"
@@ -76,7 +74,6 @@ export interface ImplBaseInterface extends Interface {
   ): string;
   encodeFunctionData(functionFragment: "getOwner", values?: undefined): string;
   encodeFunctionData(functionFragment: "getRouter", values?: undefined): string;
-  encodeFunctionData(functionFragment: "price", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "routerHasAuthority",
     values?: undefined
@@ -127,7 +124,6 @@ export interface ImplBaseInterface extends Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "getOwner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getRouter", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "price", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "routerHasAuthority",
     data: BytesLike
@@ -192,18 +188,6 @@ export namespace OwnerUpdatedEvent {
   export interface OutputObject {
     user: string;
     newOwner: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace PublicMintStateSetEvent {
-  export type InputTuple = [newPublicState: boolean];
-  export type OutputTuple = [newPublicState: boolean];
-  export interface OutputObject {
-    newPublicState: boolean;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -306,8 +290,6 @@ export interface ImplBase extends BaseContract {
 
   getRouter: TypedContractMethod<[], [string], "view">;
 
-  price: TypedContractMethod<[], [bigint], "view">;
-
   routerHasAuthority: TypedContractMethod<[], [boolean], "view">;
 
   royaltyInfo: TypedContractMethod<
@@ -379,9 +361,6 @@ export interface ImplBase extends BaseContract {
     nameOrSignature: "getRouter"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "price"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
     nameOrSignature: "routerHasAuthority"
   ): TypedContractMethod<[], [boolean], "view">;
   getFunction(
@@ -441,13 +420,6 @@ export interface ImplBase extends BaseContract {
     OwnerUpdatedEvent.OutputObject
   >;
   getEvent(
-    key: "PublicMintStateSet"
-  ): TypedContractEvent<
-    PublicMintStateSetEvent.InputTuple,
-    PublicMintStateSetEvent.OutputTuple,
-    PublicMintStateSetEvent.OutputObject
-  >;
-  getEvent(
     key: "RouterSet"
   ): TypedContractEvent<
     RouterSetEvent.InputTuple,
@@ -501,17 +473,6 @@ export interface ImplBase extends BaseContract {
       OwnerUpdatedEvent.InputTuple,
       OwnerUpdatedEvent.OutputTuple,
       OwnerUpdatedEvent.OutputObject
-    >;
-
-    "PublicMintStateSet(bool)": TypedContractEvent<
-      PublicMintStateSetEvent.InputTuple,
-      PublicMintStateSetEvent.OutputTuple,
-      PublicMintStateSetEvent.OutputObject
-    >;
-    PublicMintStateSet: TypedContractEvent<
-      PublicMintStateSetEvent.InputTuple,
-      PublicMintStateSetEvent.OutputTuple,
-      PublicMintStateSetEvent.OutputObject
     >;
 
     "RouterSet(address)": TypedContractEvent<

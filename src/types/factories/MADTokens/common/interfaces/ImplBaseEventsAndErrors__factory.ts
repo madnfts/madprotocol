@@ -120,19 +120,6 @@ const _abi = [
     inputs: [
       {
         indexed: true,
-        internalType: "bool",
-        name: "newPublicState",
-        type: "bool",
-      },
-    ],
-    name: "PublicMintStateSet",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
         internalType: "uint256",
         name: "newRoyaltyFee",
         type: "uint256",

@@ -120,7 +120,6 @@ export interface ERC721BasicInterface extends Interface {
       | "BaseURISet"
       | "OwnerUpdated"
       | "PublicMintLimitSet"
-      | "PublicMintStateSet"
       | "RouterSet"
       | "RoyaltyFeeSet"
       | "RoyaltyRecipientSet"
@@ -474,18 +473,6 @@ export namespace PublicMintLimitSetEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export namespace PublicMintStateSetEvent {
-  export type InputTuple = [newPublicState: boolean];
-  export type OutputTuple = [newPublicState: boolean];
-  export interface OutputObject {
-    newPublicState: boolean;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
 export namespace RouterSetEvent {
   export type InputTuple = [newRouter: AddressLike];
   export type OutputTuple = [newRouter: string];
@@ -643,6 +630,7 @@ export interface ERC721Basic extends BaseContract {
 
   mintedByAddress: TypedContractMethod<[minter: AddressLike], [bigint], "view">;
 
+
   name: TypedContractMethod<[], [string], "view">;
 
   ownerOf: TypedContractMethod<[id: BigNumberish], [string], "view">;
@@ -650,6 +638,7 @@ export interface ERC721Basic extends BaseContract {
   price: TypedContractMethod<[], [bigint], "view">;
 
   publicMintLimit: TypedContractMethod<[], [bigint], "view">;
+
 
   publicMintState: TypedContractMethod<[], [boolean], "view">;
 
@@ -694,6 +683,7 @@ export interface ERC721Basic extends BaseContract {
     [void],
     "nonpayable"
   >;
+
 
   setPublicMintState: TypedContractMethod<
     [_publicMintState: boolean],
@@ -956,13 +946,6 @@ export interface ERC721Basic extends BaseContract {
     PublicMintLimitSetEvent.OutputObject
   >;
   getEvent(
-    key: "PublicMintStateSet"
-  ): TypedContractEvent<
-    PublicMintStateSetEvent.InputTuple,
-    PublicMintStateSetEvent.OutputTuple,
-    PublicMintStateSetEvent.OutputObject
-  >;
-  getEvent(
     key: "RouterSet"
   ): TypedContractEvent<
     RouterSetEvent.InputTuple,
@@ -1056,17 +1039,6 @@ export interface ERC721Basic extends BaseContract {
       PublicMintLimitSetEvent.InputTuple,
       PublicMintLimitSetEvent.OutputTuple,
       PublicMintLimitSetEvent.OutputObject
-    >;
-
-    "PublicMintStateSet(bool)": TypedContractEvent<
-      PublicMintStateSetEvent.InputTuple,
-      PublicMintStateSetEvent.OutputTuple,
-      PublicMintStateSetEvent.OutputObject
-    >;
-    PublicMintStateSet: TypedContractEvent<
-      PublicMintStateSetEvent.InputTuple,
-      PublicMintStateSetEvent.OutputTuple,
-      PublicMintStateSetEvent.OutputObject
     >;
 
     "RouterSet(address)": TypedContractEvent<

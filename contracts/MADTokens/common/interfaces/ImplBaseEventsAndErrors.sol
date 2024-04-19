@@ -35,7 +35,7 @@ interface ImplBaseEventsAndErrors {
     event RoyaltyFeeSet(uint256 indexed newRoyaltyFee);
 
     /// @dev 0x2f3b349e2956d565a50532dcc875a49be7f558411642122cf5e50ca9b4bb14e6
-    event PublicMintStateSet(bool indexed newPublicState);
+    // event PublicMintStateSet(bool indexed newPublicState);
 
     ////////////////////////////////////////////////////////////////
     //                           ERRORS                           //
@@ -63,7 +63,7 @@ interface ImplBaseEventsAndErrors {
     error RouterIsEnabled();
     ///@dev 0xd5b3df7a
     error MaxSupplyBoundExceeded();
-    /// @dev 0x4ca88867
+    /// @dev 0x31c93643
     error ZeroMaxSupply();
     /// @dev 0xa3f7d515
     error ZeroPublicMintLimit();

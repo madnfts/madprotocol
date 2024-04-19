@@ -26,7 +26,6 @@ export interface PaymentManagerInterface extends Interface {
       | "erc20PaymentsEnabled"
       | "feeCount"
       | "feeCountERC20"
-      | "price"
       | "splitter"
   ): FunctionFragment;
 
@@ -40,7 +39,6 @@ export interface PaymentManagerInterface extends Interface {
     functionFragment: "feeCountERC20",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "price", values?: undefined): string;
   encodeFunctionData(functionFragment: "splitter", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "erc20", data: BytesLike): Result;
@@ -53,7 +51,6 @@ export interface PaymentManagerInterface extends Interface {
     functionFragment: "feeCountERC20",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "price", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "splitter", data: BytesLike): Result;
 }
 
@@ -108,8 +105,6 @@ export interface PaymentManager extends BaseContract {
 
   feeCountERC20: TypedContractMethod<[], [bigint], "view">;
 
-  price: TypedContractMethod<[], [bigint], "view">;
-
   splitter: TypedContractMethod<[], [string], "view">;
 
   getFunction<T extends ContractMethod = ContractMethod>(
@@ -127,9 +122,6 @@ export interface PaymentManager extends BaseContract {
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "feeCountERC20"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "price"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "splitter"

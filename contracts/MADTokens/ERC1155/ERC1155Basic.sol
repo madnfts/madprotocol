@@ -246,15 +246,20 @@ contract ERC1155Basic is ERC1155, ImplBase {
     ) private {
         uint256 len = ids.length;
         _loopArrayChecks(len, amounts.length);
-
+        uint256 price = 0;
+        // Check every Public mint is true
+        bool publicMintStateCheck = true;
         for (uint256 i = 0; i < len; i++) {
-            _preparePublicMint(
-                uint256(len * _sumAmounts(amounts)),
-                _to,
-                publicMintState[ids[i]],
-                publicMintPrice[ids[i]]
-            );
+            if (publicMintState[ids[i]] == false) {
+                publicMintStateCheck = false;
+                break; // Breakout and send false to _preparePublicMint for
+                    // revert action.
+            }
+            price += publicMintPrice[ids[i]];
         }
+        _preparePublicMint(
+            uint256(len * _sumAmounts(amounts)), _to, publicMintStateCheck, price
+        );
 
         mintBatchTo(_to, ids, amounts);
     }

@@ -50,6 +50,9 @@ contract ERC721Basic is ERC721, ImplBase {
     /// `uint128`  [128...255] := mintCount
     uint256 internal _supplyRegistrar;
 
+    /// @notice Public mint price.
+    uint256 public price;
+
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
@@ -64,6 +67,8 @@ contract ERC721Basic is ERC721, ImplBase {
 
         // immutable
         maxSupply = uint128(args._maxSupply);
+
+        price = args._price;
     }
 
     /**
@@ -81,6 +86,13 @@ contract ERC721Basic is ERC721, ImplBase {
         }
     }
 
+    /**
+     * @notice Set public mint limit, a public state-modifying function.
+     * @dev Has modifiers: onlyOwner.
+     * @param _limit The limit (uint256).
+     * @custom:signature setPublicMintLimit(uint256)
+     * @custom:selector 0xef3e067c
+     */
     function setPublicMintLimit(uint256 _limit) public onlyOwner {
         if (_limit == 0) {
             revert ZeroPublicMintLimit();
@@ -166,7 +178,7 @@ contract ERC721Basic is ERC721, ImplBase {
         }
         _hasReachedMaxOrZeroAmount(uint256(amount));
         _publicMinted(_minter, amount);
-        _preparePublicMint(uint256(amount), _minter, publicMintState);
+        _preparePublicMint(uint256(amount), _minter, publicMintState, price);
         (uint256 curId, uint256 endId) = _incrementCounter(uint256(amount));
 
         for (uint256 i = curId; i < endId; ++i) {

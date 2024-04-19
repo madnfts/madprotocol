@@ -22,9 +22,6 @@ abstract contract PaymentManager {
     //                          IMMUTABLE                         //
     ////////////////////////////////////////////////////////////////
 
-    /// @notice Public mint price.
-    uint256 public immutable price;
-
     /// @notice Splitter address relationship.
     SplitterImpl public immutable splitter;
 
@@ -47,13 +44,12 @@ abstract contract PaymentManager {
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
-    constructor(address _splitter, address _erc20, uint256 _price) {
+    constructor(address _splitter, address _erc20) {
         splitter = SplitterImpl(payable(_splitter));
         erc20 = IERC20(_erc20);
         if (address(_erc20) != address(0)) {
             erc20PaymentsEnabled = true;
         }
-        price = _price;
     }
 
     ////////////////////////////////////////////////////////////////
@@ -140,22 +136,22 @@ abstract contract PaymentManager {
      * @custom:signature _publicMintPriceCheck(uint256,address)
      * @custom:selector 0x18dbe601
      */
-    function _publicMintPriceCheck(uint256 _amount, address _minter)
-        internal
-        view
-        returns (uint256 _value)
-    {
+    function _publicMintPriceCheck(
+        uint256 _amount,
+        address _minter,
+        uint256 _price
+    ) internal view returns (uint256 _value) {
         // No point in doing any calcluations if the price is 0 (Free).
-        if (price == 0) {
+        if (_price == 0) {
             return 0;
         }
 
         if (!erc20PaymentsEnabled) {
             _value = msg.value;
-            if ((price * _amount) != _value) revert IncorrectPriceAmount();
+            if ((_price * _amount) != _value) revert IncorrectPriceAmount();
         } else {
             uint256 allowed = erc20.allowance(_minter, address(this));
-            _value = price * _amount;
+            _value = _price * _amount;
             if (allowed < _value) revert IncorrectPriceAmount();
         }
     }

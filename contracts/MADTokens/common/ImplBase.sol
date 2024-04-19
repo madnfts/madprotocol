@@ -49,7 +49,7 @@ abstract contract ImplBase is
         payable
         /*  */
         TwoFactor(args._router, args._owner)
-        PaymentManager(args._splitter, args._erc20, args._price)
+        PaymentManager(args._splitter, args._erc20)
         ERC2981(uint256(args._royaltyPercentage), args._splitter)
     {
         baseURI = args._baseURI;
@@ -133,10 +133,11 @@ abstract contract ImplBase is
     function _preparePublicMint(
         uint256 totalAmount,
         address _minter,
-        bool publicMintState
+        bool publicMintState,
+        uint256 _mintPrice
     ) internal {
         if (!publicMintState) revert PublicMintClosed();
-        uint256 _price = _publicMintPriceCheck(totalAmount, _minter);
+        uint256 _price = _publicMintPriceCheck(totalAmount, _minter, _mintPrice);
         // msg.value could be 0 and _value = 0 but still be expecting ETH (Free
         // Mint)
         if (_price > 0) _publicPaymentHandler(_price, _minter);

@@ -1250,15 +1250,4 @@ abstract contract ERC1155 {
             }
         }
     }
-
-    /// @dev Returns `x` in an array with a single element.
-    // function _single(uint256 x) private pure returns (uint256[] memory
-    // result) {
-    //     assembly {
-    //         result := mload(0x40)
-    //         mstore(0x40, add(result, 0x40))
-    //         mstore(result, 1)
-    //         mstore(add(result, 0x20), x)
-    //     }
-    // }
 }

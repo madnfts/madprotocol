@@ -29,6 +29,9 @@ contract ERC1155Basic is ERC1155, ImplBase {
     event PublicMintLimitSet(uint256 indexed _id, uint256 _limit);
     event BatchPublicMintLimitSet(uint256[] indexed _ids, uint256[] _limits);
 
+    event PublicMintPriceSet(uint256 indexed _id, uint256 _price);
+    event BatchPublicMintPriceSet(uint256[] indexed _ids, uint256[] _prices);
+
     ////////////////////////////////////////////////////////////////
     //                           STORAGE                          //
     ////////////////////////////////////////////////////////////////
@@ -44,6 +47,8 @@ contract ERC1155Basic is ERC1155, ImplBase {
     mapping(uint256 id => uint256 maxSupply) public maxSupply;
 
     mapping(uint256 id => bool publicMintState) public publicMintState;
+
+    mapping(uint256 id => uint256 publicMintPrice) public publicMintPrice;
 
     /// max that public can mint per address
     uint256 public publicMintLimitDefault = 10;
@@ -201,7 +206,9 @@ contract ERC1155Basic is ERC1155, ImplBase {
         uint256 amount,
         address _minter
     ) private {
-        _preparePublicMint(uint256(amount), _minter, publicMintState[_id]);
+        _preparePublicMint(
+            uint256(amount), _minter, publicMintState[_id], publicMintPrice[_id]
+        );
         mintTo(to, _id, amount);
     }
 
@@ -239,18 +246,16 @@ contract ERC1155Basic is ERC1155, ImplBase {
     ) private {
         uint256 len = ids.length;
         _loopArrayChecks(len, amounts.length);
-        // Check every Public mint is true
-        bool publicMintStateCheck = true;
+
         for (uint256 i = 0; i < len; i++) {
-            if (publicMintState[ids[i]] == false) {
-                publicMintStateCheck = false;
-                break; // Breakout and send false to _preparePublicMint for
-                    // revert action.
-            }
+            _preparePublicMint(
+                uint256(len * _sumAmounts(amounts)),
+                _to,
+                publicMintState[ids[i]],
+                publicMintPrice[ids[i]]
+            );
         }
-        _preparePublicMint(
-            uint256(len * _sumAmounts(amounts)), _to, publicMintStateCheck
-        );
+
         mintBatchTo(_to, ids, amounts);
     }
 
@@ -338,6 +343,41 @@ contract ERC1155Basic is ERC1155, ImplBase {
     ////////////////////////////////////////////////////////////////
     //                           SETTERS                          //
     ////////////////////////////////////////////////////////////////
+
+    /**
+     * @notice Set public mint price, a public state-modifying function.
+     * @dev Has modifiers: onlyOwner.
+     * @param _id The id (uint256).
+     * @param _price The price (uint256).
+     * @custom:signature setPublicMintPrice(uint256,uint256)
+     * @custom:selector 0x91c8df12
+     */
+    function setPublicMintPrice(uint256 _id, uint256 _price) public onlyOwner {
+        publicMintPrice[_id] = _price;
+        emit PublicMintPriceSet(_id, _price);
+    }
+
+    /**
+     * @notice Batch set public mint price, a public state-modifying function.
+     * @dev Has modifiers: onlyOwner.
+     * @param _ids List of uint256s.
+     * @param _prices List of uint256s.
+     * @custom:signature batchSetPublicMintPrice(uint256[],uint256[])
+     * @custom:selector 0xa15e7171
+     */
+    function batchSetPublicMintPrice(
+        uint256[] calldata _ids,
+        uint256[] calldata _prices
+    ) public onlyOwner {
+        uint256 idsLength = _ids.length;
+        _loopArrayChecks(idsLength, _prices.length);
+        for (uint256 i = 0; i < idsLength; i++) {
+            if (_prices[i] != 0) {
+                publicMintPrice[_ids[i]] = _prices[i];
+            }
+        }
+        emit BatchPublicMintPriceSet(_ids, _prices);
+    }
 
     /**
      * @notice Set public mint limit, a private state-modifying function.

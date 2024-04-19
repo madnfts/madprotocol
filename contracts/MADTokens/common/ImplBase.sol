@@ -23,24 +23,15 @@ abstract contract ImplBase is
     TwoFactor,
     PaymentManager
 {
-    // bytes32 internal constant _BASE_URI_SLOT = /*  */
-    //     0xdd05fcb58e4c0a1a429c1a9d6607c399731f1ef0b81be85c3f7701c0333c82fc;
-
     string public baseURI;
 
     /// @dev An account can hold up to 4294967295 tokens.
     uint256 internal constant _SR_UPPERBITS = (1 << 128) - 1;
     uint256 internal constant _MAXSUPPLY_BOUND = 1 << 32;
     uint256 internal constant _MINTCOUNT_BITPOS = 128;
+    uint256 internal constant _MAX_LOOP_AMOUNT = 10_000;
 
     using Strings for uint256;
-
-    ////////////////////////////////////////////////////////////////
-    //                          IMMUTABLE                         //
-    ////////////////////////////////////////////////////////////////
-
-    /// @notice Capped max supply.
-    uint128 public immutable maxSupply;
 
     ////////////////////////////////////////////////////////////////
     //                           STORAGE                          //
@@ -50,9 +41,6 @@ abstract contract ImplBase is
     /// @dev The URI can't be unlocked.
     bool public uriLock;
 
-    /// @notice Public mint state default := false.
-    bool public publicMintState;
-
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
@@ -61,15 +49,9 @@ abstract contract ImplBase is
         payable
         /*  */
         TwoFactor(args._router, args._owner)
-        PaymentManager(args._splitter, args._erc20, args._price)
+        PaymentManager(args._splitter, args._erc20)
         ERC2981(uint256(args._royaltyPercentage), args._splitter)
     {
-        if (args._maxSupply > _MAXSUPPLY_BOUND) revert MaxSupplyBoundExceeded();
-
-        // immutable
-        maxSupply = uint128(args._maxSupply);
-
-        // _setStringMemory(args._baseURI, _BASE_URI_SLOT);
         baseURI = args._baseURI;
 
         emit RoyaltyFeeSet(uint256(args._royaltyPercentage));
@@ -103,22 +85,6 @@ abstract contract ImplBase is
     function setBaseURILock() public onlyOwner {
         uriLock = true;
         emit BaseURILocked(baseURI);
-
-    }
-
-    /**
-     * @notice Set public mint state, a public state-modifying function.
-     * @dev Has modifiers: onlyOwner.
-     * @param _publicMintState The public mint state (bool).
-     * @custom:signature setPublicMintState(bool)
-     * @custom:selector 0x879fbedf
-     */
-    function setPublicMintState(bool _publicMintState) public onlyOwner {
-        publicMintState = _publicMintState;
-        assembly {
-            // emit PublicMintStateSet(_publicMintState);
-            log2(0, 0, _PUBLIC_MINT_STATE_SET, _publicMintState)
-        }
     }
 
     ////////////////////////////////////////////////////////////////
@@ -160,14 +126,18 @@ abstract contract ImplBase is
      * @notice Prepare public mint, an internal state-modifying function.
      * @param totalAmount The total amount (uint256).
      * @param _minter The minter address.
-     * @custom:signature _preparePublicMint(uint256,address)
+     * @param publicMintState The public mint state (bool).
+     * @custom:signature _preparePublicMint(uint256,address,bool)
      * @custom:selector 0x78585ee7
      */
-    function _preparePublicMint(uint256 totalAmount, address _minter)
-        internal
-    {
+    function _preparePublicMint(
+        uint256 totalAmount,
+        address _minter,
+        bool publicMintState,
+        uint256 _mintPrice
+    ) internal {
         if (!publicMintState) revert PublicMintClosed();
-        uint256 _price = _publicMintPriceCheck(totalAmount, _minter);
+        uint256 _price = _publicMintPriceCheck(totalAmount, _minter, _mintPrice);
         // msg.value could be 0 and _value = 0 but still be expecting ETH (Free
         // Mint)
         if (_price > 0) _publicPaymentHandler(_price, _minter);

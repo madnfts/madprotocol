@@ -34,15 +34,11 @@ export interface ImplBaseInterface extends Interface {
       | "feeCountERC20"
       | "getOwner"
       | "getRouter"
-      | "maxSupply"
-      | "price"
-      | "publicMintState"
       | "routerHasAuthority"
       | "royaltyInfo"
       | "setBaseURI"
       | "setBaseURILock"
       | "setOwnership"
-      | "setPublicMintState"
       | "setRouterHasAuthority"
       | "splitter"
       | "supportsInterface"
@@ -56,7 +52,6 @@ export interface ImplBaseInterface extends Interface {
       | "BaseURILocked"
       | "BaseURISet"
       | "OwnerUpdated"
-      | "PublicMintStateSet"
       | "RouterSet"
       | "RoyaltyFeeSet"
       | "RoyaltyRecipientSet"
@@ -79,12 +74,6 @@ export interface ImplBaseInterface extends Interface {
   ): string;
   encodeFunctionData(functionFragment: "getOwner", values?: undefined): string;
   encodeFunctionData(functionFragment: "getRouter", values?: undefined): string;
-  encodeFunctionData(functionFragment: "maxSupply", values?: undefined): string;
-  encodeFunctionData(functionFragment: "price", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "publicMintState",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "routerHasAuthority",
     values?: undefined
@@ -101,10 +90,6 @@ export interface ImplBaseInterface extends Interface {
   encodeFunctionData(
     functionFragment: "setOwnership",
     values: [AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setPublicMintState",
-    values: [boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "setRouterHasAuthority",
@@ -139,12 +124,6 @@ export interface ImplBaseInterface extends Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "getOwner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getRouter", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "maxSupply", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "price", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "publicMintState",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "routerHasAuthority",
     data: BytesLike
@@ -160,10 +139,6 @@ export interface ImplBaseInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "setOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setPublicMintState",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -213,18 +188,6 @@ export namespace OwnerUpdatedEvent {
   export interface OutputObject {
     user: string;
     newOwner: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace PublicMintStateSetEvent {
-  export type InputTuple = [newPublicState: boolean];
-  export type OutputTuple = [newPublicState: boolean];
-  export interface OutputObject {
-    newPublicState: boolean;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -327,12 +290,6 @@ export interface ImplBase extends BaseContract {
 
   getRouter: TypedContractMethod<[], [string], "view">;
 
-  maxSupply: TypedContractMethod<[], [bigint], "view">;
-
-  price: TypedContractMethod<[], [bigint], "view">;
-
-  publicMintState: TypedContractMethod<[], [boolean], "view">;
-
   routerHasAuthority: TypedContractMethod<[], [boolean], "view">;
 
   royaltyInfo: TypedContractMethod<
@@ -347,12 +304,6 @@ export interface ImplBase extends BaseContract {
 
   setOwnership: TypedContractMethod<
     [_owner: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-
-  setPublicMintState: TypedContractMethod<
-    [_publicMintState: boolean],
     [void],
     "nonpayable"
   >;
@@ -410,15 +361,6 @@ export interface ImplBase extends BaseContract {
     nameOrSignature: "getRouter"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "maxSupply"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "price"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "publicMintState"
-  ): TypedContractMethod<[], [boolean], "view">;
-  getFunction(
     nameOrSignature: "routerHasAuthority"
   ): TypedContractMethod<[], [boolean], "view">;
   getFunction(
@@ -437,9 +379,6 @@ export interface ImplBase extends BaseContract {
   getFunction(
     nameOrSignature: "setOwnership"
   ): TypedContractMethod<[_owner: AddressLike], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "setPublicMintState"
-  ): TypedContractMethod<[_publicMintState: boolean], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "setRouterHasAuthority"
   ): TypedContractMethod<[_hasAuthority: boolean], [void], "nonpayable">;
@@ -479,13 +418,6 @@ export interface ImplBase extends BaseContract {
     OwnerUpdatedEvent.InputTuple,
     OwnerUpdatedEvent.OutputTuple,
     OwnerUpdatedEvent.OutputObject
-  >;
-  getEvent(
-    key: "PublicMintStateSet"
-  ): TypedContractEvent<
-    PublicMintStateSetEvent.InputTuple,
-    PublicMintStateSetEvent.OutputTuple,
-    PublicMintStateSetEvent.OutputObject
   >;
   getEvent(
     key: "RouterSet"
@@ -541,17 +473,6 @@ export interface ImplBase extends BaseContract {
       OwnerUpdatedEvent.InputTuple,
       OwnerUpdatedEvent.OutputTuple,
       OwnerUpdatedEvent.OutputObject
-    >;
-
-    "PublicMintStateSet(bool)": TypedContractEvent<
-      PublicMintStateSetEvent.InputTuple,
-      PublicMintStateSetEvent.OutputTuple,
-      PublicMintStateSetEvent.OutputObject
-    >;
-    PublicMintStateSet: TypedContractEvent<
-      PublicMintStateSetEvent.InputTuple,
-      PublicMintStateSetEvent.OutputTuple,
-      PublicMintStateSetEvent.OutputObject
     >;
 
     "RouterSet(address)": TypedContractEvent<

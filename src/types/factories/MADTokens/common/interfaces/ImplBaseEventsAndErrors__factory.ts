@@ -21,12 +21,27 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "MaxLoopAmountExceeded",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "MaxSupplyAlreadySet",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "MaxSupplyBoundExceeded",
     type: "error",
   },
   {
     inputs: [],
     name: "MaxSupplyReached",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "MintLimitReached",
     type: "error",
   },
   {
@@ -60,6 +75,21 @@ const _abi = [
     type: "error",
   },
   {
+    inputs: [],
+    name: "ZeroAmount",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "ZeroMaxSupply",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "ZeroPublicMintLimit",
+    type: "error",
+  },
+  {
     anonymous: false,
     inputs: [
       {
@@ -83,19 +113,6 @@ const _abi = [
       },
     ],
     name: "BaseURISet",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "bool",
-        name: "newPublicState",
-        type: "bool",
-      },
-    ],
-    name: "PublicMintStateSet",
     type: "event",
   },
   {

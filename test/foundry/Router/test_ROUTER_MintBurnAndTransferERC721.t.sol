@@ -66,7 +66,7 @@ contract TestROUTERMintBurnAndTransferERC721 is
             nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
         );
 
-        _doPublicMint(mintData, true, 0);
+        _doPublicMint(mintData, true, 0, _amountToMint);
 
         _checkMint(mintData);
     }
@@ -91,7 +91,7 @@ contract TestROUTERMintBurnAndTransferERC721 is
                 nftMinter, _nftReceiver, nftPublicMintPrice, _amountToMint
             );
 
-            _doPublicMint(mintData, true, 0);
+            _doPublicMint(mintData, true, 0, _amountToMint);
 
             _checkMint(mintData);
         }
@@ -112,7 +112,7 @@ contract TestROUTERMintBurnAndTransferERC721 is
         MintData memory mintData = _setupMint(
             nftMinter, _nftReceiver, nftPublicMintPrice, _amountToMint
         );
-        _doPublicMint(mintData, true, 0);
+        _doPublicMint(mintData, true, 0, _amountToMint);
         _checkMint(mintData);
     }
 
@@ -123,7 +123,7 @@ contract TestROUTERMintBurnAndTransferERC721 is
             nftMinter, nftReceiver, _nftPublicMintPrice, _amountToMint
         );
 
-        _doPublicMint(mintData, true, 0);
+        _doPublicMint(mintData, true, 0, _amountToMint);
     }
 
     function test_ROUTER_PublicMint_PublicMintClosed() public {
@@ -135,16 +135,15 @@ contract TestROUTERMintBurnAndTransferERC721 is
         _doPublicMint(
             mintData,
             false,
-            0x2d0a3f8e // error PublicMintClosed();
+            0x2d0a3f8e, // error PublicMintClosed();
+            _amountToMint
         );
     }
 
     function test_ROUTER_PublicMint_IncorrectPriceAmountSingleFuzzy(
         uint256 _nftPublicMintPrice
     ) public {
-        vm.assume(
-            _nftPublicMintPrice < nftPublicMintPrice
-        );
+        vm.assume(_nftPublicMintPrice < nftPublicMintPrice);
         uint128 _amountToMint = 1;
         MintData memory mintData = _setupMint(
             nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
@@ -155,7 +154,8 @@ contract TestROUTERMintBurnAndTransferERC721 is
         _doPublicMint(
             mintData,
             true,
-            0x68e26200 // error IncorrectPriceAmount();
+            0x68e26200, // error IncorrectPriceAmount();
+            _amountToMint
         );
     }
 
@@ -251,10 +251,11 @@ contract TestROUTERMintBurnAndTransferERC721 is
         mintData = _setupMint(
             nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
         );
-        _doPublicMint(mintData, true, 0);
+        _doPublicMint(mintData, true, 0, _amountToMint + 10);
 
         // Try and mint more..
-        _doPublicMint(mintData, true, 0xd05cb609); // error MaxSupplyReached();
+        _doPublicMint(mintData, true, 0xd05cb609, 5); // error
+            // MaxSupplyReached();
     }
 
     function _setupMint(
@@ -321,19 +322,30 @@ contract TestROUTERMintBurnAndTransferERC721 is
     function _doPublicMint(
         MintData memory mintData,
         bool _mintState,
-        bytes4 _errorSelector
+        bytes4 _errorSelector,
+        uint256 _mintLimit
     ) internal {
         IERC721Basic collection = IERC721Basic(mintData.collectionAddress);
 
         emit log_named_uint("nftPublicMintPrice", mintData.nftPublicMintPrice);
         emit log_named_uint("Price", collection.price());
         emit log_named_uint("amountToMint", mintData.amountToMint);
+        emit log_named_uint("_mintLimit", _mintLimit);
 
-        vm.prank(mintData.nftMinter, mintData.nftMinter);
+        vm.startPrank(mintData.nftMinter, mintData.nftMinter);
         collection.setPublicMintState(_mintState);
+        if (_errorSelector == 0xa3f7d515) {
+            // error ZeroPublicMintLimit();
+            vm.expectRevert(_errorSelector);
+            collection.setPublicMintLimit(_mintLimit);
+            return;
+        }
+        collection.setPublicMintLimit(_mintLimit);
+
+        emit log_named_uint("PublicMintLimit", collection.publicMintLimit());
 
         // Turn on router authority
-        vm.prank(mintData.nftMinter);
+        vm.startPrank(mintData.nftMinter, mintData.nftMinter);
         collection.setRouterHasAuthority(true);
 
         uint256 _nftPublicMintPrice =

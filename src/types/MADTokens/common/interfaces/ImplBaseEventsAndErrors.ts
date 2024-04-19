@@ -25,7 +25,6 @@ export interface ImplBaseEventsAndErrorsInterface extends Interface {
     nameOrSignatureOrTopic:
       | "BaseURILocked"
       | "BaseURISet"
-      | "PublicMintStateSet"
       | "RoyaltyFeeSet"
       | "RoyaltyRecipientSet"
   ): EventFragment;
@@ -48,18 +47,6 @@ export namespace BaseURISetEvent {
   export type OutputTuple = [newBaseURI: string];
   export interface OutputObject {
     newBaseURI: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace PublicMintStateSetEvent {
-  export type InputTuple = [newPublicState: boolean];
-  export type OutputTuple = [newPublicState: boolean];
-  export interface OutputObject {
-    newPublicState: boolean;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -153,13 +140,6 @@ export interface ImplBaseEventsAndErrors extends BaseContract {
     BaseURISetEvent.OutputObject
   >;
   getEvent(
-    key: "PublicMintStateSet"
-  ): TypedContractEvent<
-    PublicMintStateSetEvent.InputTuple,
-    PublicMintStateSetEvent.OutputTuple,
-    PublicMintStateSetEvent.OutputObject
-  >;
-  getEvent(
     key: "RoyaltyFeeSet"
   ): TypedContractEvent<
     RoyaltyFeeSetEvent.InputTuple,
@@ -195,17 +175,6 @@ export interface ImplBaseEventsAndErrors extends BaseContract {
       BaseURISetEvent.InputTuple,
       BaseURISetEvent.OutputTuple,
       BaseURISetEvent.OutputObject
-    >;
-
-    "PublicMintStateSet(bool)": TypedContractEvent<
-      PublicMintStateSetEvent.InputTuple,
-      PublicMintStateSetEvent.OutputTuple,
-      PublicMintStateSetEvent.OutputObject
-    >;
-    PublicMintStateSet: TypedContractEvent<
-      PublicMintStateSetEvent.InputTuple,
-      PublicMintStateSetEvent.OutputTuple,
-      PublicMintStateSetEvent.OutputObject
     >;
 
     "RoyaltyFeeSet(uint256)": TypedContractEvent<

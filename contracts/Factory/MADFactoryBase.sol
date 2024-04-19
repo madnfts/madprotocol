@@ -87,9 +87,6 @@ abstract contract MADFactoryBase is
         FactoryTypes.CreateCollectionParams calldata params,
         address collectionToken
     ) internal returns (address) {
-        if (params.maxSupply == 0) {
-            revert ZeroMaxSupply();
-        }
         _isZeroAddr(router);
         _limiter(params.tokenType, params.splitter);
         _royaltyLocker(params.royalty);

@@ -26,12 +26,27 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "MaxLoopAmountExceeded",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "MaxSupplyAlreadySet",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "MaxSupplyBoundExceeded",
     type: "error",
   },
   {
     inputs: [],
     name: "MaxSupplyReached",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "MintLimitReached",
     type: "error",
   },
   {
@@ -85,6 +100,21 @@ const _abi = [
     type: "error",
   },
   {
+    inputs: [],
+    name: "ZeroAmount",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "ZeroMaxSupply",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "ZeroPublicMintLimit",
+    type: "error",
+  },
+  {
     anonymous: false,
     inputs: [
       {
@@ -127,19 +157,6 @@ const _abi = [
       },
     ],
     name: "OwnerUpdated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "bool",
-        name: "newPublicState",
-        type: "bool",
-      },
-    ],
-    name: "PublicMintStateSet",
     type: "event",
   },
   {
@@ -287,45 +304,6 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "maxSupply",
-    outputs: [
-      {
-        internalType: "uint128",
-        name: "",
-        type: "uint128",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "price",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "publicMintState",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
     name: "routerHasAuthority",
     outputs: [
       {
@@ -395,19 +373,6 @@ const _abi = [
       },
     ],
     name: "setOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bool",
-        name: "_publicMintState",
-        type: "bool",
-      },
-    ],
-    name: "setPublicMintState",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

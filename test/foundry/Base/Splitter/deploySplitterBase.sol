@@ -244,7 +244,7 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
                 }),
                 payeesExpected: SplitterHelpers.getExpectedSplitterAddresses(
                     currentSigner, address(0), address(0)
-                    ),
+                ),
                 paymentToken: madFeeTokenAddress
             })
         );
@@ -269,7 +269,7 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
                 }),
                 payeesExpected: SplitterHelpers.getExpectedSplitterAddresses(
                     currentSigner, ambassador, address(0)
-                    ),
+                ),
                 paymentToken: madFeeTokenAddress
             })
         );
@@ -294,7 +294,7 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
                 }),
                 payeesExpected: SplitterHelpers.getExpectedSplitterAddresses(
                     currentSigner, address(0), project
-                    ),
+                ),
                 paymentToken: madFeeTokenAddress
             })
         );
@@ -320,7 +320,7 @@ contract DeploySplitterBase is Enums, SettersToggle("defaultSplitterSigner") {
                 }),
                 payeesExpected: SplitterHelpers.getExpectedSplitterAddresses(
                     currentSigner, ambassador, project
-                    ),
+                ),
                 paymentToken: madFeeTokenAddress
             })
         );

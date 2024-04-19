@@ -35,7 +35,7 @@ interface ImplBaseEventsAndErrors {
     event RoyaltyFeeSet(uint256 indexed newRoyaltyFee);
 
     /// @dev 0x2f3b349e2956d565a50532dcc875a49be7f558411642122cf5e50ca9b4bb14e6
-    event PublicMintStateSet(bool indexed newPublicState);
+    // event PublicMintStateSet(bool indexed newPublicState);
 
     ////////////////////////////////////////////////////////////////
     //                           ERRORS                           //
@@ -45,6 +45,8 @@ interface ImplBaseEventsAndErrors {
     error PublicMintClosed();
     /// @dev 0xd05cb609
     error MaxSupplyReached();
+    /// @dev 0xd9fda788
+    error MaxSupplyAlreadySet();
     /// @dev 0xbad086ea
     error NotMintedYet();
     /// @dev 0xf7760f25
@@ -59,6 +61,16 @@ interface ImplBaseEventsAndErrors {
     error DecOverflow();
     /// @dev 0xf56dc29c
     error RouterIsEnabled();
-
+    ///@dev 0xd5b3df7a
     error MaxSupplyBoundExceeded();
+    /// @dev 0x31c93643
+    error ZeroMaxSupply();
+    /// @dev 0xa3f7d515
+    error ZeroPublicMintLimit();
+    /// @dev 0x303b682f
+    error MintLimitReached();
+    /// @dev 0x1f2a2005
+    error ZeroAmount();
+    /// @dev 0xfe37c8dc
+    error MaxLoopAmountExceeded();
 }

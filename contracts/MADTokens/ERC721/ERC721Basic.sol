@@ -4,6 +4,7 @@ pragma solidity 0.8.22;
 // solhint-disable-next-line
 import {
     ImplBase,
+    _PUBLIC_MINT_STATE_SET,
     ERC2981,
     Strings,
     FactoryTypes
@@ -21,6 +22,23 @@ contract ERC721Basic is ERC721, ImplBase {
     using FactoryTypes for FactoryTypes.CollectionArgs;
     using Strings for uint256;
 
+    /// @notice Public mint state default := false.
+    bool public publicMintState;
+
+    /// max that public can mint per address
+    uint256 public publicMintLimit = 10;
+
+    mapping(address minter => uint256 minted) public mintedByAddress;
+
+    event PublicMintLimitSet(uint256 limit);
+
+    ////////////////////////////////////////////////////////////////
+    //                          IMMUTABLE                         //
+    ////////////////////////////////////////////////////////////////
+
+    /// @notice Capped max supply.
+    uint128 public immutable maxSupply;
+
     ////////////////////////////////////////////////////////////////
     //                           STORAGE                          //
     ////////////////////////////////////////////////////////////////
@@ -32,6 +50,9 @@ contract ERC721Basic is ERC721, ImplBase {
     /// `uint128`  [128...255] := mintCount
     uint256 internal _supplyRegistrar;
 
+    /// @notice Public mint price.
+    uint256 public price;
+
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
@@ -39,6 +60,45 @@ contract ERC721Basic is ERC721, ImplBase {
     constructor(FactoryTypes.CollectionArgs memory args) ImplBase(args) {
         _setStringMemory(args._name, _NAME_SLOT);
         _setStringMemory(args._symbol, _SYMBOL_SLOT);
+        if (args._maxSupply == 0) {
+            revert ZeroMaxSupply();
+        }
+        if (args._maxSupply > _MAXSUPPLY_BOUND) revert MaxSupplyBoundExceeded();
+
+        // immutable
+        maxSupply = uint128(args._maxSupply);
+
+        price = args._price;
+    }
+
+    /**
+     * @notice Set public mint state, a public state-modifying function.
+     * @dev Has modifiers: onlyOwner.
+     * @param _publicMintState The public mint state (bool).
+     * @custom:signature setPublicMintState(bool)
+     * @custom:selector 0x879fbedf
+     */
+    function setPublicMintState(bool _publicMintState) public onlyOwner {
+        publicMintState = _publicMintState;
+        assembly {
+            // emit PublicMintStateSet(_publicMintState);
+            log2(0, 0, _PUBLIC_MINT_STATE_SET, _publicMintState)
+        }
+    }
+
+    /**
+     * @notice Set public mint limit, a public state-modifying function.
+     * @dev Has modifiers: onlyOwner.
+     * @param _limit The limit (uint256).
+     * @custom:signature setPublicMintLimit(uint256)
+     * @custom:selector 0xef3e067c
+     */
+    function setPublicMintLimit(uint256 _limit) public onlyOwner {
+        if (_limit == 0) {
+            revert ZeroPublicMintLimit();
+        }
+        publicMintLimit = _limit;
+        emit PublicMintLimitSet(_limit);
     }
 
     ////////////////////////////////////////////////////////////////
@@ -57,7 +117,10 @@ contract ERC721Basic is ERC721, ImplBase {
      * @custom:selector 0xa7fcf7b5
      */
     function mintTo(address to, uint128 amount) public payable authorised {
-        _hasReachedMax(uint256(amount));
+        if (amount > _MAX_LOOP_AMOUNT) {
+            revert MaxLoopAmountExceeded();
+        }
+        _hasReachedMaxOrZeroAmount(uint256(amount));
         (uint256 curId, uint256 endId) = _incrementCounter(uint256(amount));
 
         for (uint256 i = curId; i < endId; ++i) {
@@ -110,8 +173,12 @@ contract ERC721Basic is ERC721, ImplBase {
      * @custom:selector 0xda1cbcbd
      */
     function _publicMint(address _minter, uint128 amount) private {
-        _hasReachedMax(uint256(amount));
-        _preparePublicMint(uint256(amount), _minter);
+        if (amount > _MAX_LOOP_AMOUNT) {
+            revert MaxLoopAmountExceeded();
+        }
+        _hasReachedMaxOrZeroAmount(uint256(amount));
+        _publicMinted(_minter, amount);
+        _preparePublicMint(uint256(amount), _minter, publicMintState, price);
         (uint256 curId, uint256 endId) = _incrementCounter(uint256(amount));
 
         for (uint256 i = curId; i < endId; ++i) {
@@ -129,6 +196,9 @@ contract ERC721Basic is ERC721, ImplBase {
      */
     function burn(uint128[] calldata ids) external payable {
         uint256 len = ids.length;
+        if (len > _MAX_LOOP_AMOUNT) {
+            revert MaxLoopAmountExceeded();
+        }
         _decSupply(len);
 
         for (uint256 i = 0; i < len; ++i) {
@@ -179,12 +249,33 @@ contract ERC721Basic is ERC721, ImplBase {
     ////////////////////////////////////////////////////////////////
 
     /**
+     * @notice Public minted, a private state-modifying function.
+     * @dev Increments the amount of tokens minted by the minter.
+     * @dev Reverts if the amount minted by the minter exceeds the public mint
+     * limit.
+     * @param _minter The minter address.
+     * @param _amount The amount (uint256).
+     * @custom:signature _publicMinted(address,uint256)
+     * @custom:selector 0x0b53529a
+     */
+    function _publicMinted(address _minter, uint256 _amount) private {
+        uint256 amountMinted = mintedByAddress[_minter];
+        if (amountMinted + _amount > publicMintLimit) {
+            revert MintLimitReached();
+        }
+        mintedByAddress[_minter] += _amount;
+    }
+
+    /**
      * @notice Has reached max, a private view function.
      * @param _amount The amount (uint256).
-     * @custom:signature _hasReachedMax(uint256)
+     * @custom:signature _hasReachedMaxOrZeroAmount(uint256)
      * @custom:selector 0x9b726b8b
      */
-    function _hasReachedMax(uint256 _amount) private view {
+    function _hasReachedMaxOrZeroAmount(uint256 _amount) private view {
+        if (_amount == 0) {
+            revert ZeroAmount();
+        }
         uint256 _maxSupply = maxSupply;
         assembly {
             // if (mintCount + amount > maxSupply)

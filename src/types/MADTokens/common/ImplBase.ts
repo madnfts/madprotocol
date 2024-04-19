@@ -34,10 +34,6 @@ export interface ImplBaseInterface extends Interface {
       | "feeCountERC20"
       | "getOwner"
       | "getRouter"
-<<<<<<< HEAD
-=======
-      | "price"
->>>>>>> main
       | "routerHasAuthority"
       | "royaltyInfo"
       | "setBaseURI"
@@ -78,10 +74,6 @@ export interface ImplBaseInterface extends Interface {
   ): string;
   encodeFunctionData(functionFragment: "getOwner", values?: undefined): string;
   encodeFunctionData(functionFragment: "getRouter", values?: undefined): string;
-<<<<<<< HEAD
-=======
-  encodeFunctionData(functionFragment: "price", values?: undefined): string;
->>>>>>> main
   encodeFunctionData(
     functionFragment: "routerHasAuthority",
     values?: undefined
@@ -132,10 +124,6 @@ export interface ImplBaseInterface extends Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "getOwner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getRouter", data: BytesLike): Result;
-<<<<<<< HEAD
-=======
-  decodeFunctionResult(functionFragment: "price", data: BytesLike): Result;
->>>>>>> main
   decodeFunctionResult(
     functionFragment: "routerHasAuthority",
     data: BytesLike
@@ -302,11 +290,6 @@ export interface ImplBase extends BaseContract {
 
   getRouter: TypedContractMethod<[], [string], "view">;
 
-<<<<<<< HEAD
-=======
-  price: TypedContractMethod<[], [bigint], "view">;
-
->>>>>>> main
   routerHasAuthority: TypedContractMethod<[], [boolean], "view">;
 
   royaltyInfo: TypedContractMethod<
@@ -378,12 +361,6 @@ export interface ImplBase extends BaseContract {
     nameOrSignature: "getRouter"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-<<<<<<< HEAD
-=======
-    nameOrSignature: "price"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
->>>>>>> main
     nameOrSignature: "routerHasAuthority"
   ): TypedContractMethod<[], [boolean], "view">;
   getFunction(

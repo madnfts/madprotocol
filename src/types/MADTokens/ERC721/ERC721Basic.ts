@@ -630,7 +630,6 @@ export interface ERC721Basic extends BaseContract {
 
   mintedByAddress: TypedContractMethod<[minter: AddressLike], [bigint], "view">;
 
-
   name: TypedContractMethod<[], [string], "view">;
 
   ownerOf: TypedContractMethod<[id: BigNumberish], [string], "view">;
@@ -638,7 +637,6 @@ export interface ERC721Basic extends BaseContract {
   price: TypedContractMethod<[], [bigint], "view">;
 
   publicMintLimit: TypedContractMethod<[], [bigint], "view">;
-
 
   publicMintState: TypedContractMethod<[], [boolean], "view">;
 
@@ -683,7 +681,6 @@ export interface ERC721Basic extends BaseContract {
     [void],
     "nonpayable"
   >;
-
 
   setPublicMintState: TypedContractMethod<
     [_publicMintState: boolean],

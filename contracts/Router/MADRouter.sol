@@ -187,9 +187,9 @@ contract MADRouter is MADRouterBase {
         uint256 _fee = _handleFees(_FEE_MINT, 1);
         uint256 _value = msg.value - _fee;
         ERC1155Basic erc1155Contract = ERC1155Basic(collection);
+        erc1155Contract.mintTo{ value: _value }(_to, _id, _amount);
         // set max supply of the id, can be left as 0 if already set.
         erc1155Contract.setMaxSupply(_id, _maxSupply);
-        erc1155Contract.mintTo{ value: _value }(_to, _id, _amount);
     }
 
     /**
@@ -217,9 +217,9 @@ contract MADRouter is MADRouterBase {
         // Charge per ID so the amount here is 1
         _handleFees(1, madFeeTokenAddress, this.feeMintErc20);
         ERC1155Basic erc1155Contract = ERC1155Basic(collection);
+        erc1155Contract.mintTo(_to, _id, _amount);
         // set max supply of the id, can be left as 0 if already set.
         erc1155Contract.setMaxSupply(_id, _maxSupply);
-        erc1155Contract.mintTo(_to, _id, _amount);
     }
 
     ////////////////////////////////////////////////////////////////
@@ -252,8 +252,8 @@ contract MADRouter is MADRouterBase {
         uint256 _fee = _handleFees(_FEE_MINT, _ids.length);
         uint256 _value = msg.value - _fee;
         ERC1155Basic erc1155Contract = ERC1155Basic(collection);
-        erc1155Contract.batchSetMaxSupply(_ids, _maxSupplies);
         erc1155Contract.mintBatchTo{ value: _value }(_to, _ids, _amounts);
+        erc1155Contract.batchSetMaxSupply(_ids, _maxSupplies);
     }
 
     /**
@@ -283,8 +283,8 @@ contract MADRouter is MADRouterBase {
         _tokenRender(collection);
         _handleFees(_ids.length, madFeeTokenAddress, this.feeMintErc20);
         ERC1155Basic erc1155Contract = ERC1155Basic(collection);
-        erc1155Contract.batchSetMaxSupply(_ids, _maxSupplies);
         erc1155Contract.mintBatchTo(_to, _ids, _amounts);
+        erc1155Contract.batchSetMaxSupply(_ids, _maxSupplies);
     }
 
     ////////////////////////////////////////////////////////////////

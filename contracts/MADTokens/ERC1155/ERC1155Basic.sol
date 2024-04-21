@@ -258,7 +258,10 @@ contract ERC1155Basic is ERC1155, ImplBase {
             mintPrice += publicMintPrice[ids[i]];
         }
         _preparePublicMint(
-            uint256(len * _sumAmounts(amounts)), _to, publicMintStateCheck, mintPrice
+            uint256(len * _sumAmounts(amounts)),
+            _to,
+            publicMintStateCheck,
+            mintPrice
         );
 
         mintBatchTo(_to, ids, amounts);
@@ -427,9 +430,11 @@ contract ERC1155Basic is ERC1155, ImplBase {
      */
 
     function setMaxSupply(uint256 id, uint256 _maxSupply) public authorised {
-        _maxSupplyChecks(id, _maxSupply);
-        maxSupply[id] = _maxSupply;
-        emit MaxSupplySet(id, _maxSupply);
+        if (_maxSupply > 0) {
+            _maxSupplyChecks(id, _maxSupply);
+            maxSupply[id] = _maxSupply;
+            emit MaxSupplySet(id, _maxSupply);
+        }
     }
 
     /**
@@ -446,8 +451,10 @@ contract ERC1155Basic is ERC1155, ImplBase {
         uint256 idsLength = ids.length;
         _loopArrayChecks(idsLength, _maxSupplies.length);
         for (uint256 i = 0; i < idsLength; i++) {
-            _maxSupplyChecks(ids[i], _maxSupplies[i]);
-            maxSupply[ids[i]] = _maxSupplies[i];
+            if (_maxSupplies[i] > 0) {
+                _maxSupplyChecks(ids[i], _maxSupplies[i]);
+                maxSupply[ids[i]] = _maxSupplies[i];
+            }
         }
         emit BatchMaxSupplySet(ids, _maxSupplies);
     }

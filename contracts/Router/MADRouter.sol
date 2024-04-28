@@ -298,12 +298,11 @@ contract MADRouter is MADRouterBase {
      * This will open up public minting to this contract if the owner has
      * enabled the authorisation for the router.
      * @param collection 1155 token address.
-     * @param _to Receiver token address.
      * @param _amount Num tokens to mint and send.
-     * @custom:signature mint(address,address,uint256,uint256)
-     * @custom:selector 0xb3f1c93d
+     * @custom:signature mint(address,uint256,uint256)
+     * @custom:selector 0x156e29f6
      */
-    function mint(address collection, address _to, uint256 _id, uint256 _amount)
+    function mint(address collection, uint256 _id, uint256 _amount)
         public
         payable
     {
@@ -311,7 +310,7 @@ contract MADRouter is MADRouterBase {
         // Charge per ID so the amount here is 1
         uint256 _fee = _handleFees(_FEE_MINT, 1);
         uint256 _value = msg.value - _fee;
-        ERC1155Basic(collection).mint{ value: _value }(_to, _id, _amount);
+        ERC1155Basic(collection).mint{ value: _value }(msg.sender, _id, _amount);
     }
 
     /**
@@ -321,15 +320,13 @@ contract MADRouter is MADRouterBase {
      * This will open up public minting to this contract if the owner has
      * enabled the authorisation for the router.
      * @param collection 1155 token address.
-     * @param _to Receiver token address.
      * @param _amount Num tokens to mint and send.
      * @param madFeeTokenAddress ERC20 token address.
-     * @custom:signature mint(address,address,uint256,uint256,address)
-     * @custom:selector 0xfa28d692
+     * @custom:signature mint(address,uint256,uint256,address)
+     * @custom:selector 0xf74bfe8e
      */
     function mint(
         address collection,
-        address _to,
         uint256 _id,
         uint256 _amount,
         address madFeeTokenAddress
@@ -337,7 +334,7 @@ contract MADRouter is MADRouterBase {
         _tokenRender(collection);
         // Charge per ID so the amount here is 1
         _handleFees(1, madFeeTokenAddress, this.feeMintErc20);
-        ERC1155Basic(collection).mint(_to, _id, _amount);
+        ERC1155Basic(collection).mint(msg.sender, _id, _amount);
     }
 
     ////////////////////////////////////////////////////////////////
@@ -351,22 +348,22 @@ contract MADRouter is MADRouterBase {
      * This will open up public minting to this contract if the owner has
      * enabled the authorisation for the router.
      * @param collection 1155 token address.
-     * @param _to Receiver token address.
      * @param _ids Token IDs array.
      * @param _amounts Token amounts array.
-     * @custom:signature mintBatch(address,address,uint256[],uint256[])
-     * @custom:selector 0x3b3f62fa
+     * @custom:signature mintBatch(address,uint256[],uint256[])
+     * @custom:selector 0xd81d0a15
      */
     function mintBatch(
         address collection,
-        address _to,
         uint256[] memory _ids,
         uint256[] calldata _amounts
     ) public payable {
         _tokenRender(collection);
         uint256 _fee = _handleFees(_FEE_MINT, _ids.length);
         uint256 _value = msg.value - _fee;
-        ERC1155Basic(collection).mintBatch{ value: _value }(_to, _ids, _amounts);
+        ERC1155Basic(collection).mintBatch{ value: _value }(
+            msg.sender, _ids, _amounts
+        );
     }
 
     /**
@@ -376,23 +373,21 @@ contract MADRouter is MADRouterBase {
      * This will open up public minting to this contract if the owner has
      * enabled the authorisation for the router.
      * @param collection 1155 token address.
-     * @param _to Receiver token address.
      * @param _ids Token IDs array.
      * @param _amounts Token amounts array.
      * @param madFeeTokenAddress ERC20 token address.
-     * @custom:signature mint(address,address,uint256,uint256,address)
-     * @custom:selector 0x787282ce
+     * @custom:signature mintBatch(address,uint256[],uint256[],address)
+     * @custom:selector 0x149b2228
      */
     function mintBatch(
         address collection,
-        address _to,
         uint256[] memory _ids,
         uint256[] memory _amounts,
         address madFeeTokenAddress
     ) public payable {
         _tokenRender(collection);
         _handleFees(_ids.length, madFeeTokenAddress, this.feeMintErc20);
-        ERC1155Basic(collection).mintBatch(_to, _ids, _amounts);
+        ERC1155Basic(collection).mintBatch(msg.sender, _ids, _amounts);
     }
 
     ////////////////////////////////////////////////////////////////

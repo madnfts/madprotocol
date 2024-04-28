@@ -206,6 +206,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
         uint256 amount,
         address _minter
     ) private {
+        _publicMinted(_id, _minter, amount);
         _preparePublicMint(
             uint256(amount), _minter, publicMintState[_id], publicMintPrice[_id]
         );
@@ -250,6 +251,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
         // Check every Public mint is true
         bool publicMintStateCheck = true;
         for (uint256 i = 0; i < len; i++) {
+            _publicMinted(ids[i], _to, amounts[i]);
             if (publicMintState[ids[i]] == false) {
                 publicMintStateCheck = false;
                 break; // Breakout and send false to _preparePublicMint for

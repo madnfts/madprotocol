@@ -5,7 +5,7 @@ import { IImplBase } from "test/foundry/Base/Tokens/common/IImplBase.sol";
 
 interface IERC1155Basic is IImplBase {
     // View Functions
-    function balanceCount(uint256 id) external view returns (uint256);
+    function mintCount(uint256 id) external view returns (uint256);
     function balanceOf(address owner, uint256 id)
         external
         view
@@ -16,7 +16,7 @@ interface IERC1155Basic is IImplBase {
         returns (uint256[] memory balances);
 
     // Difference between this and liveSupply ?
-    function liveBalance(uint256 id) external view returns (uint256);
+    function liveSupply(uint256 id) external view returns (uint256);
 
     function maxIdBalance() external view returns (uint128);
     function uri(uint256 id) external view returns (string memory);

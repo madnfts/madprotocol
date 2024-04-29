@@ -19,7 +19,7 @@
 
 ## Sepolia BASE
 Deployed Factory Address: 0xC29A0F9792c41Bfb58324aDd19Ba305f64DBBC7D
-Deployed Router Address: 0x56BBaD08B7a210FdDDCA267e97eD336453E9356C
+Deployed Router Address: 0x552226C57f7D1E327cC4995015B2ea703bbcFf68
 Deployed ERC20 Address: 0x19E689e473EA387667149bb0C7c99c3E3201BE50
 
 ## Sepolia Ethereum

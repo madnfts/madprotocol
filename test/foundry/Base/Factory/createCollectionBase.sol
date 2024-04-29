@@ -136,17 +136,17 @@ abstract contract CreateCollectionBase is
     ) internal {
         IERC1155Basic collection = IERC1155Basic(collectionAddress);
 
-        // Test balanceCount function
-        uint256 balanceCount = collection.balanceCount(1);
-        assertTrue(balanceCount == 0, "Incorrect balanceCount value");
+        // Test mintCount function
+        uint256 mintCount = collection.mintCount(1);
+        assertTrue(mintCount == 0, "Incorrect mintCount value");
 
         // Test balanceOf function
         uint256 balance = collection.balanceOf(collectionOwner, 1);
         assertTrue(balance == 0, "Incorrect balanceOf value");
 
-        // Test liveBalance function
-        uint256 liveBalance = collection.liveBalance(1);
-        assertTrue(liveBalance == 0, "Incorrect liveBalance value");
+        // Test liveSupply function
+        uint256 liveSupply = collection.liveSupply(1);
+        assertTrue(liveSupply == 0, "Incorrect liveSupply value");
 
         // Test maxIdBalance function
         uint128 maxIdBalance = collection.maxIdBalance();

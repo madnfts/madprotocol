@@ -21,7 +21,7 @@ import type {
   TypedLogDescription,
   TypedListener,
   TypedContractMethod,
-} from "../common";
+} from "../../common";
 
 export declare namespace FeeHandler {
   export type FeeStruct = { feeAmount: BigNumberish; isValid: boolean };

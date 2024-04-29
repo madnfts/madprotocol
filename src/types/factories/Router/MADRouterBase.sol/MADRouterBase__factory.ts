@@ -6,7 +6,7 @@ import { Contract, Interface, type ContractRunner } from "ethers";
 import type {
   MADRouterBase,
   MADRouterBaseInterface,
-} from "../../Router/MADRouterBase";
+} from "../../../Router/MADRouterBase.sol/MADRouterBase";
 
 const _abi = [
   {
@@ -37,6 +37,11 @@ const _abi = [
   {
     inputs: [],
     name: "NotAuthorised",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "NotCollectionOwner",
     type: "error",
   },
   {

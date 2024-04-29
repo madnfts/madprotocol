@@ -61,53 +61,6 @@ interface FactoryEventsAndErrorsBase is EventsAndErrorsBase {
     error ZeroMaxSupply();
 }
 
-interface MarketplaceEventsAndErrorsBase is EventsAndErrorsBase {
-    ////////////////////////////////////////////////////////////////
-    //                           EVENTS                           //
-    ////////////////////////////////////////////////////////////////
-
-    event FactoryUpdated(FactoryVerifier indexed newFactory);
-
-    event AuctionSettingsUpdated(
-        uint256 indexed newMinDuration,
-        uint256 indexed newIncrement,
-        uint256 newMinBidValue,
-        uint256 indexed newMaxDuration
-    );
-
-    event UserOutbid(address indexed user, address erc20, uint256 amount);
-    event WithdrawOutbid(address indexed user, address erc20, uint256 amount);
-
-    ////////////////////////////////////////////////////////////////
-    //                           ERRORS                           //
-    ////////////////////////////////////////////////////////////////
-
-    /// @dev 0xf7760f25
-    error WrongPrice();
-    /// @dev 0x90b8ec18
-    error TransferFailed();
-    /// @dev 0x0863b103
-    error InvalidBidder();
-    /// @dev 0xdf9428da
-    error CanceledOrder();
-    /// @dev 0x70f8f33a
-    error ExceedsMaxEP();
-    /// @dev 0x4ca88867
-    error AccessDenied();
-    /// @dev 0x921dbfec
-    error NeedMoreTime();
-    /// @dev 0x07ae5744
-    error NotBuyable();
-    /// @dev 0x3e0827ab
-    error BidExists();
-    /// @dev 0xf88b07a3
-    error SoldToken();
-    /// @dev 0x2af0c7f8
-    error Timeout();
-    /// @dev 0xffc96cb0
-    error EAOnly();
-}
-
 interface RouterEvents is EventsAndErrorsBase {
     ////////////////////////////////////////////////////////////////
     //                           EVENTS                           //
@@ -136,4 +89,6 @@ interface RouterEvents is EventsAndErrorsBase {
     error NotValidCollection();
     /// @dev 0xd23f9521
     error AddressNotValid();
+    /// @dev 0x4fd9af3e
+    error NotCollectionOwner();
 }

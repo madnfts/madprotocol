@@ -326,7 +326,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
         return string(abi.encodePacked(baseURI, Strings.toString(id), ".json"));
     }
 
-        /**
+    /**
      * @notice Total supply, a public view function.
      * @return uint256 Result of totalSupply.
      * @custom:signature totalSupply()

@@ -43,6 +43,7 @@ contract MADRouter is MADRouterBase {
         public
         payable
     {
+        _isCollectionOwner(collection);
         _tokenRender(collection);
         uint256 _fee = _handleFees(_FEE_MINT, _amount);
         uint256 _value = msg.value - _fee;
@@ -66,6 +67,7 @@ contract MADRouter is MADRouterBase {
         uint128 _amount,
         address madFeeTokenAddress
     ) public payable {
+        _isCollectionOwner(collection);
         _tokenRender(collection);
         _handleFees(uint256(_amount), madFeeTokenAddress, this.feeMintErc20);
         ERC721Basic(collection).mintTo(_to, _amount);
@@ -182,6 +184,7 @@ contract MADRouter is MADRouterBase {
         uint256 _amount,
         uint256 _maxSupply
     ) public payable {
+        _isCollectionOwner(collection);
         _tokenRender(collection);
         // Charge per ID so the amount here is 1
         uint256 _fee = _handleFees(_FEE_MINT, 1);
@@ -213,6 +216,7 @@ contract MADRouter is MADRouterBase {
         address madFeeTokenAddress,
         uint256 _maxSupply
     ) public payable {
+        _isCollectionOwner(collection);
         _tokenRender(collection);
         // Charge per ID so the amount here is 1
         _handleFees(1, madFeeTokenAddress, this.feeMintErc20);
@@ -248,6 +252,7 @@ contract MADRouter is MADRouterBase {
         uint256[] memory _amounts,
         uint256[] memory _maxSupplies
     ) public payable {
+        _isCollectionOwner(collection);
         _tokenRender(collection);
         uint256 _fee = _handleFees(_FEE_MINT, _ids.length);
         uint256 _value = msg.value - _fee;
@@ -280,6 +285,7 @@ contract MADRouter is MADRouterBase {
         address madFeeTokenAddress,
         uint256[] memory _maxSupplies
     ) public payable {
+        _isCollectionOwner(collection);
         _tokenRender(collection);
         _handleFees(_ids.length, madFeeTokenAddress, this.feeMintErc20);
         ERC1155Basic erc1155Contract = ERC1155Basic(collection);

@@ -10,6 +10,10 @@ import {
     RouterEvents, FactoryVerifier
 } from "contracts/Shared/EventsAndErrors.sol";
 
+interface IOwned {
+    function getOwner() external view returns (address);
+}
+
 abstract contract MADRouterBase is MADBase, FeeHandler, RouterEvents {
     /// @notice Contract name.
     /// @dev Function Sighash := 0x06fdde03
@@ -152,6 +156,19 @@ abstract contract MADRouterBase is MADBase, FeeHandler, RouterEvents {
     function _tokenRender(address collectionId) internal view {
         if (!madFactory.collectionCheck(collectionId)) {
             revert NotValidCollection();
+        }
+    }
+
+    /**
+     * @notice Is collection owner, an internal view function.
+     * @dev Checks if the msg.sender is the collection owner for mintTo calls.
+     * @param collectionId The collection id address.
+     * @custom:signature _isCollectionOwner(address)
+     * @custom:selector 0x69a58d80
+     */
+    function _isCollectionOwner(address collectionId) internal view {
+        if (msg.sender != IOwned(collectionId).getOwner()) {
+            revert NotCollectionOwner();
         }
     }
 }

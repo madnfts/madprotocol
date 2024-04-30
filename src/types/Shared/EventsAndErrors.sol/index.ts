@@ -3,5 +3,4 @@
 /* eslint-disable */
 export type { EventsAndErrorsBase } from "./EventsAndErrorsBase";
 export type { FactoryEventsAndErrorsBase } from "./FactoryEventsAndErrorsBase";
-export type { MarketplaceEventsAndErrorsBase } from "./MarketplaceEventsAndErrorsBase";
 export type { RouterEvents } from "./RouterEvents";

@@ -31,6 +31,8 @@ contract ERC721Basic is ERC721, ImplBase {
     mapping(address minter => uint256 minted) public mintedByAddress;
 
     event PublicMintLimitSet(uint256 limit);
+    /// @dev 0x2f3b349e2956d565a50532dcc875a49be7f558411642122cf5e50ca9b4bb14e6
+    event PublicMintStateSet(bool indexed newPublicState);
 
     ////////////////////////////////////////////////////////////////
     //                          IMMUTABLE                         //

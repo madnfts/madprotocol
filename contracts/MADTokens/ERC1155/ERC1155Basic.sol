@@ -39,7 +39,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
     /// @notice `_balanceRegistrar` bits layout.
     /// @dev Live supply counter for each id's balance, excludes burned tokens.
     /// @dev Mint counter for each id's balance, includes burnt count.
-    /// `uint128`  [0...127]   := liveBalance
+    /// `uint128`  [0...127]   := liveSupply
     /// `uint128`  [128...255] := mintCount
     /// (id) => (_balanceRegistrar{`uint128`,`uint128`})
     mapping(uint256 id => uint256 balanceRegistrar) internal _balanceRegistrar;
@@ -206,10 +206,11 @@ contract ERC1155Basic is ERC1155, ImplBase {
         uint256 amount,
         address _minter
     ) private {
+        _publicMinted(_id, _minter, amount);
         _preparePublicMint(
             uint256(amount), _minter, publicMintState[_id], publicMintPrice[_id]
         );
-        mintTo(to, _id, amount);
+        _mint(to, _id, amount, "");
     }
 
     /**
@@ -250,6 +251,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
         // Check every Public mint is true
         bool publicMintStateCheck = true;
         for (uint256 i = 0; i < len; i++) {
+            _publicMinted(ids[i], _to, amounts[i]);
             if (publicMintState[ids[i]] == false) {
                 publicMintStateCheck = false;
                 break; // Breakout and send false to _preparePublicMint for
@@ -258,10 +260,13 @@ contract ERC1155Basic is ERC1155, ImplBase {
             mintPrice += publicMintPrice[ids[i]];
         }
         _preparePublicMint(
-            uint256(len * _sumAmounts(amounts)), _to, publicMintStateCheck, mintPrice
+            uint256(len * _sumAmounts(amounts)),
+            _to,
+            publicMintStateCheck,
+            mintPrice
         );
 
-        mintBatchTo(_to, ids, amounts);
+        _batchMint(_to, ids, amounts, "");
     }
 
     /**
@@ -311,7 +316,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
         override(ERC1155)
         returns (string memory)
     {
-        if (balanceCount(id) == 0) {
+        if (mintCount(id) == 0) {
             // NotMintedYet()
             assembly {
                 mstore(0, 0xbad086ea)
@@ -322,14 +327,24 @@ contract ERC1155Basic is ERC1155, ImplBase {
     }
 
     /**
+     * @notice Total supply, a public view function.
+     * @return uint256 Result of totalSupply.
+     * @custom:signature totalSupply()
+     * @custom:selector 0xbd85b039
+     */
+    function totalSupply(uint256 id) public view returns (uint256) {
+        return liveSupply(id);
+    }
+
+    /**
      * @notice Live balance, a public view function.
      * @dev Live supply counter for each id's balance, excludes burned tokens.
      * @param id The id (uint256).
-     * @return uint256 Result of liveBalance.
-     * @custom:signature liveBalance(uint256)
-     * @custom:selector 0x1a759141
+     * @return uint256 Result of liveSupply.
+     * @custom:signature liveSupply(uint256)
+     * @custom:selector 0x8ac46c8e
      */
-    function liveBalance(uint256 id) public view returns (uint256) {
+    function liveSupply(uint256 id) public view returns (uint256) {
         return _balanceRegistrar[id] & _SR_UPPERBITS;
     }
 
@@ -337,11 +352,11 @@ contract ERC1155Basic is ERC1155, ImplBase {
      * @notice Balance count, a public view function.
      * @dev Mint counter for each id's balance, includes burnt count.
      * @param id The id (uint256).
-     * @return uint256 Result of balanceCount.
-     * @custom:signature balanceCount(uint256)
-     * @custom:selector 0x42abcd66
+     * @return uint256 Result of mintCount.
+     * @custom:signature mintCount(uint256)
+     * @custom:selector 0xfa1100f4
      */
-    function balanceCount(uint256 id) public view returns (uint256) {
+    function mintCount(uint256 id) public view returns (uint256) {
         return _balanceRegistrar[id] >> _MINTCOUNT_BITPOS;
     }
 
@@ -427,9 +442,11 @@ contract ERC1155Basic is ERC1155, ImplBase {
      */
 
     function setMaxSupply(uint256 id, uint256 _maxSupply) public authorised {
-        _maxSupplyChecks(id, _maxSupply);
-        maxSupply[id] = _maxSupply;
-        emit MaxSupplySet(id, _maxSupply);
+        if (_maxSupply > 0) {
+            _maxSupplyChecks(id, _maxSupply);
+            maxSupply[id] = _maxSupply;
+            emit MaxSupplySet(id, _maxSupply);
+        }
     }
 
     /**
@@ -446,8 +463,10 @@ contract ERC1155Basic is ERC1155, ImplBase {
         uint256 idsLength = ids.length;
         _loopArrayChecks(idsLength, _maxSupplies.length);
         for (uint256 i = 0; i < idsLength; i++) {
-            _maxSupplyChecks(ids[i], _maxSupplies[i]);
-            maxSupply[ids[i]] = _maxSupplies[i];
+            if (_maxSupplies[i] > 0) {
+                _maxSupplyChecks(ids[i], _maxSupplies[i]);
+                maxSupply[ids[i]] = _maxSupplies[i];
+            }
         }
         emit BatchMaxSupplySet(ids, _maxSupplies);
     }
@@ -685,9 +704,9 @@ contract ERC1155Basic is ERC1155, ImplBase {
             mstore(32, _balanceRegistrar.slot)
             mstore(0, id)
             let sLoc := keccak256(0, 64)
-            let _liveBalance := and(_SR_UPPERBITS, sload(sLoc))
-            let _newBalance := sub(_liveBalance, amount)
-            if or(iszero(_liveBalance), gt(_newBalance, _liveBalance)) {
+            let _liveSupply := and(_SR_UPPERBITS, sload(sLoc))
+            let _newBalance := sub(_liveSupply, amount)
+            if or(iszero(_liveSupply), gt(_newBalance, _liveSupply)) {
                 // DecOverflow()
                 mstore(0x00, 0xce3a3d37)
                 revert(0x1c, 0x04)
@@ -719,14 +738,14 @@ contract ERC1155Basic is ERC1155, ImplBase {
                 mstore(32, _balanceRegistrar.slot)
                 mstore(0, mload(iLoc))
                 let sLoc := keccak256(0, 64)
-                let _liveBalance := and(_SR_UPPERBITS, sload(sLoc))
-                let _newBalance := sub(_liveBalance, mload(aLoc))
-                if or(iszero(_liveBalance), gt(_newBalance, _liveBalance)) {
+                let _liveSupply := and(_SR_UPPERBITS, sload(sLoc))
+                let _newBalance := sub(_liveSupply, mload(aLoc))
+                if or(iszero(_liveSupply), gt(_newBalance, _liveSupply)) {
                     // DecOverflow()
                     mstore(0x00, 0xce3a3d37)
                     revert(0x1c, 0x04)
                 }
-                sstore(sLoc, _liveBalance)
+                sstore(sLoc, _liveSupply)
             }
         }
     }

@@ -3,5 +3,4 @@
 /* eslint-disable */
 export { EventsAndErrorsBase__factory } from "./EventsAndErrorsBase__factory";
 export { FactoryEventsAndErrorsBase__factory } from "./FactoryEventsAndErrorsBase__factory";
-export { MarketplaceEventsAndErrorsBase__factory } from "./MarketplaceEventsAndErrorsBase__factory";
 export { RouterEvents__factory } from "./RouterEvents__factory";

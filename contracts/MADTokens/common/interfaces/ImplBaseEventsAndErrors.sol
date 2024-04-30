@@ -34,9 +34,6 @@ interface ImplBaseEventsAndErrors {
     /// @dev 0xc36422dcc77a5c93a5c48743078f8130c9fcc2a0ff893904ee62a3565688117c
     event RoyaltyFeeSet(uint256 indexed newRoyaltyFee);
 
-    /// @dev 0x2f3b349e2956d565a50532dcc875a49be7f558411642122cf5e50ca9b4bb14e6
-    // event PublicMintStateSet(bool indexed newPublicState);
-
     ////////////////////////////////////////////////////////////////
     //                           ERRORS                           //
     ////////////////////////////////////////////////////////////////

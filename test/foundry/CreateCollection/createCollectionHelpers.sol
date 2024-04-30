@@ -16,9 +16,13 @@ import {
     ICollection
 } from "test/foundry/CreateCollection/_transferFunctionsERC721.sol";
 
+import { ERC1155TransferFunctions } from
+    "test/foundry/CreateCollection/_transferFunctions1155.sol";
+
 contract CreateCollectionHelpers is
     CreateCollectionBase,
     ERC721TransferFunctions,
+    ERC1155TransferFunctions,
     ICollection
 {
     function _createCollectionDefault(

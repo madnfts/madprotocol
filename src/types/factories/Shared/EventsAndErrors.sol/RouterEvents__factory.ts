@@ -36,6 +36,11 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "NotCollectionOwner",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "NotOwnerNorApproved",
     type: "error",
   },

@@ -122,6 +122,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MADRouter__factory>;
     getContractFactory(
+      name: "IOwned",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IOwned__factory>;
+    getContractFactory(
       name: "MADRouterBase",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MADRouterBase__factory>;
@@ -133,10 +137,6 @@ declare module "hardhat/types/runtime" {
       name: "FactoryEventsAndErrorsBase",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.FactoryEventsAndErrorsBase__factory>;
-    getContractFactory(
-      name: "MarketplaceEventsAndErrorsBase",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.MarketplaceEventsAndErrorsBase__factory>;
     getContractFactory(
       name: "RouterEvents",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -294,6 +294,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.MADRouter>;
     getContractAt(
+      name: "IOwned",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IOwned>;
+    getContractAt(
       name: "MADRouterBase",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -308,11 +313,6 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.FactoryEventsAndErrorsBase>;
-    getContractAt(
-      name: "MarketplaceEventsAndErrorsBase",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.MarketplaceEventsAndErrorsBase>;
     getContractAt(
       name: "RouterEvents",
       address: string | ethers.Addressable,
@@ -448,6 +448,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.MADRouter>;
     deployContract(
+      name: "IOwned",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IOwned>;
+    deployContract(
       name: "MADRouterBase",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.MADRouterBase>;
@@ -459,10 +463,6 @@ declare module "hardhat/types/runtime" {
       name: "FactoryEventsAndErrorsBase",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.FactoryEventsAndErrorsBase>;
-    deployContract(
-      name: "MarketplaceEventsAndErrorsBase",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.MarketplaceEventsAndErrorsBase>;
     deployContract(
       name: "RouterEvents",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -620,6 +620,11 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.MADRouter>;
     deployContract(
+      name: "IOwned",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IOwned>;
+    deployContract(
       name: "MADRouterBase",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -634,11 +639,6 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.FactoryEventsAndErrorsBase>;
-    deployContract(
-      name: "MarketplaceEventsAndErrorsBase",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.MarketplaceEventsAndErrorsBase>;
     deployContract(
       name: "RouterEvents",
       args: any[],

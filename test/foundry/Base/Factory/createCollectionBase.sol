@@ -136,6 +136,41 @@ abstract contract CreateCollectionBase is
     ) internal {
         IERC1155Basic collection = IERC1155Basic(collectionAddress);
 
+        // totalSupply()
+        assertTrue(
+            collection.totalSupply(1) == 0,
+            "collection.totalSupply(1) == 0 :: Incorrect totalSupply"
+        );
+        // liveSupply()
+        assertTrue(
+            collection.liveSupply(1) == 0,
+            "collection.liveSupply() == 0 :: Incorrect liveSupply"
+        );
+
+        // // maxSupply()
+        assertTrue(
+            collection.maxSupply(1) == 0,
+            "collection.maxSupply() == 0 :: Incorrect maxSupply"
+        );
+
+        // mintCount()
+        assertTrue(
+            collection.mintCount(1) == 0,
+            "collection.mintCount() == 0 :: Incorrect mintCount"
+        );
+
+        // price()
+        assertTrue(
+            collection.publicMintPrice(1) == 0,
+            "collection.price(1) == 0 :: Incorrect price"
+        );
+
+        // publicMintState()
+        assertTrue(
+            collection.publicMintState(1) == false,
+            "collection.publicMintState() == false :: Incorrect publicMintState"
+        );
+
         // Test mintCount function
         uint256 mintCount = collection.mintCount(1);
         assertTrue(mintCount == 0, "Incorrect mintCount value");
@@ -143,16 +178,6 @@ abstract contract CreateCollectionBase is
         // Test balanceOf function
         uint256 balance = collection.balanceOf(collectionOwner, 1);
         assertTrue(balance == 0, "Incorrect balanceOf value");
-
-        // Test liveSupply function
-        uint256 liveSupply = collection.liveSupply(1);
-        assertTrue(liveSupply == 0, "Incorrect liveSupply value");
-
-        // Test maxIdBalance function
-        uint128 maxIdBalance = collection.maxIdBalance();
-        assertTrue(
-            maxIdBalance == params.maxSupply, "Incorrect maxIdBalance value"
-        );
     }
 
     function _verifyCollectionERC721(
@@ -162,6 +187,41 @@ abstract contract CreateCollectionBase is
     ) internal {
         // Additional assertions specific to IERC721Basic interface
         IERC721Basic collection = IERC721Basic(collectionAddress);
+
+        // totalSupply()
+        assertTrue(
+            collection.totalSupply() == 0,
+            "collection.totalSupply() == 0 :: Incorrect totalSupply"
+        );
+        // liveSupply()
+        assertTrue(
+            collection.liveSupply() == 0,
+            "collection.liveSupply() == 0 :: Incorrect liveSupply"
+        );
+
+        // maxSupply()
+        assertTrue(
+            collection.maxSupply() == params.maxSupply,
+            "collection.maxSupply() == params.maxSupply :: Incorrect maxSupply"
+        );
+
+        // mintCount()
+        assertTrue(
+            collection.mintCount() == 0,
+            "collection.mintCount() == 0 :: Incorrect mintCount"
+        );
+
+        // price()
+        assertTrue(
+            collection.price() == params.price,
+            "collection.price() == params.price :: Incorrect price"
+        );
+
+        // publicMintState()
+        assertTrue(
+            collection.publicMintState() == false,
+            "collection.publicMintState() == false :: Incorrect publicMintState"
+        );
 
         // Test balanceOf function
         uint256 balance = collection.balanceOf(collectionAddress);
@@ -203,12 +263,6 @@ abstract contract CreateCollectionBase is
                 makeAddr("WorldAddress"), makeAddr("HelloAddress")
             ),
             "Incorrect isApprovedForAll"
-        );
-
-        // totalSupply()
-        assertTrue(
-            collection.totalSupply() == 0,
-            "collection.totalSupply() == 0 :: Incorrect totalSupply"
         );
 
         // _royaltyFee()
@@ -257,36 +311,6 @@ abstract contract CreateCollectionBase is
         assertTrue(
             collection.feeCountERC20() == 0,
             "collection.feeCountERC20() == 0 :: Incorrect feeCountERC20"
-        );
-
-        // liveSupply()
-        assertTrue(
-            collection.liveSupply() == 0,
-            "collection.liveSupply() == 0 :: Incorrect liveSupply"
-        );
-
-        // maxSupply()
-        assertTrue(
-            collection.maxSupply() == params.maxSupply,
-            "collection.maxSupply() == params.maxSupply :: Incorrect maxSupply"
-        );
-
-        // mintCount()
-        assertTrue(
-            collection.mintCount() == 0,
-            "collection.mintCount() == 0 :: Incorrect mintCount"
-        );
-
-        // price()
-        assertTrue(
-            collection.price() == params.price,
-            "collection.price() == params.price :: Incorrect price"
-        );
-
-        // publicMintState()
-        assertTrue(
-            collection.publicMintState() == false,
-            "collection.publicMintState() == false :: Incorrect publicMintState"
         );
 
         // royaltyInfo(uint256, uint256)

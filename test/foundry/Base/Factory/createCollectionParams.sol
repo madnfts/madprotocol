@@ -18,6 +18,10 @@ abstract contract CreateCollectionParams {
 
     uint256 public CreateCollectionSaltNonce = 12_345_678_912_346_589;
 
+    function changeTokenType(uint8 _tokenType) public {
+        defaultTokenType = _tokenType;
+    }
+
     function updateCreateCollectionSalt() public returns (bytes32) {
         CreateCollectionSaltNonce++;
         return bytes32(abi.encodePacked(CreateCollectionSaltNonce));

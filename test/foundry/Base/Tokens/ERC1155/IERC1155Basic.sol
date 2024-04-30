@@ -15,33 +15,44 @@ interface IERC1155Basic is IImplBase {
         view
         returns (uint256[] memory balances);
 
-    // Difference between this and liveSupply ?
+    function getOwner() external view returns (address);
+
+    function getRouter() external view returns (address);
     function liveSupply(uint256 id) external view returns (uint256);
 
-    function maxIdBalance() external view returns (uint128);
+    function totalSupply(uint256 id) external view returns (uint256);
+
+    function maxSupply(uint256 id) external view returns (uint256);
+
+    function publicMintPrice(uint256 id) external view returns (uint256);
+
+    function publicMintState(uint256 id) external view returns (bool);
+    function setPublicMintState(uint256 id, bool _state) external;
+
     function uri(uint256 id) external view returns (string memory);
 
     // Other Functions
     function burn(
         address[] memory from,
-        uint128[] memory ids,
-        uint128[] memory balances
+        uint256[] memory ids,
+        uint256[] memory balances
     ) external payable;
     function burnBatch(
         address from,
-        uint128[] memory ids,
-        uint128[] memory amounts
+        uint256[] memory ids,
+        uint256[] memory amounts
     ) external payable;
-    function mint(uint128 amount, uint128 balance) external payable;
-    function mintBatch(uint128[] memory ids, uint128[] memory amounts)
+    function mint(uint256 _id, uint256 _amount) external payable;
+    function mint(address _to, uint256 _id, uint256 amount) external payable;
+    function mintBatch(uint256[] memory ids, uint256[] memory amounts)
         external
         payable;
     function mintBatchTo(
         address to,
-        uint128[] memory ids,
-        uint128[] memory amounts
+        uint256[] memory ids,
+        uint256[] memory amounts
     ) external payable;
-    function mintTo(address to, uint128 amount, uint128 balance)
+    function mintTo(address to, uint256 amount, uint256 balance)
         external
         payable;
     function safeBatchTransferFrom(

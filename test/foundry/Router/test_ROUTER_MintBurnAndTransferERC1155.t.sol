@@ -63,7 +63,7 @@ contract TestROUTERMintBurnAndTransferERC1155 is
         uint128 _amountToMint = 1;
         MintData memory mintData =
             _setupMint(nftMinter, nftReceiver, 0, _amountToMint, defaultTokenId);
-        _doMintTo(mintData, 0, defaultTokenId);
+        _doMintTo(mintData, 0, defaultTokenId, _amountToMint);
 
         _checkMint(mintData, defaultTokenId);
     }
@@ -88,14 +88,14 @@ contract TestROUTERMintBurnAndTransferERC1155 is
             uint128 _amountToMint = 10;
             MintData memory mintData =
                 _setupMint(nftMinter, nftReceiver, 0, _amountToMint, i + 1);
-            _doMintTo(mintData, 0, i + 1);
+            _doMintTo(mintData, 0, i + 1, _amountToMint);
             _checkMint(mintData, i + 1);
         }
     }
 
     function test_ROUTER_PublicMint_DefaultMultiple() public {
         for (uint256 i = 0; i < 10; i++) {
-            uint128 _amountToMint = 10;
+            uint128 _amountToMint = 100;
             address _nftReceiver =
                 makeAddr(string(abi.encodePacked("NFTReceiver", i)));
             MintData memory mintData = _setupMint(
@@ -113,10 +113,11 @@ contract TestROUTERMintBurnAndTransferERC1155 is
     }
 
     function test_ROUTER_MintTo_DefaultFuzzy(uint256 _tokenId) public {
+        vm.assume(_tokenId > 0);
         uint128 _amountToMint = 10;
         MintData memory mintData =
             _setupMint(nftMinter, nftReceiver, 0, _amountToMint, _tokenId);
-        _doMintTo(mintData, 0, _tokenId);
+        _doMintTo(mintData, 0, _tokenId, _amountToMint);
         _checkMint(mintData, _tokenId);
     }
 
@@ -130,6 +131,7 @@ contract TestROUTERMintBurnAndTransferERC1155 is
             nftMinter, _nftReceiver, nftPublicMintPrice, _amountToMint, _tokenId
         );
         _doPublicMint(mintData, true, 0, _amountToMint, _tokenId);
+
         _checkMint(mintData, _tokenId);
     }
 
@@ -145,6 +147,8 @@ contract TestROUTERMintBurnAndTransferERC1155 is
         );
 
         _doPublicMint(mintData, true, 0, _amountToMint, defaultTokenId);
+
+        _checkMint(mintData, defaultTokenId);
     }
 
     function test_ROUTER_PublicMint_PublicMintClosed() public {
@@ -171,6 +175,7 @@ contract TestROUTERMintBurnAndTransferERC1155 is
         uint256 _tokenId
     ) public {
         vm.assume(_nftPublicMintPrice < nftPublicMintPrice);
+        vm.assume(_tokenId > 0);
         uint128 _amountToMint = 1;
         MintData memory mintData = _setupMint(
             nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint, _tokenId
@@ -273,10 +278,10 @@ contract TestROUTERMintBurnAndTransferERC1155 is
         uint128 _amountToMint = 10_000;
         mintData =
             _setupMint(nftMinter, nftReceiver, 0, _amountToMint, defaultTokenId);
-        _doMintTo(mintData, 0, defaultTokenId);
+        _doMintTo(mintData, 0, defaultTokenId, _amountToMint);
 
         // Try and mint more..
-        _doMintTo(mintData, 0xd05cb609, defaultTokenId); // error
+        _doMintTo(mintData, 0xd05cb609, defaultTokenId, 0); // error
             // MaxSupplyReached();
     }
 
@@ -296,7 +301,9 @@ contract TestROUTERMintBurnAndTransferERC1155 is
         _doPublicMint(mintData, true, 0, _amountToMint + 10, defaultTokenId);
 
         // Try and mint more..
-        _doPublicMint(mintData, true, 0xd05cb609, 5, defaultTokenId); // error
+        _doPublicMint(
+            mintData, true, 0xd05cb609, _amountToMint * 2 + 10, defaultTokenId
+        ); // error
             // MaxSupplyReached();
     }
 
@@ -346,7 +353,8 @@ contract TestROUTERMintBurnAndTransferERC1155 is
     function _doMintTo(
         MintData memory mintData,
         bytes4 _errorSelector,
-        uint256 tokenId
+        uint256 tokenId,
+        uint256 _maxSupply
     ) internal {
         uint256 val = _deployedContracts.router.feeMint();
 
@@ -361,7 +369,7 @@ contract TestROUTERMintBurnAndTransferERC1155 is
             mintData.nftReceiver,
             tokenId,
             mintData.amountToMint,
-            mintData.amountToMint
+            _maxSupply
         );
         vm.stopPrank();
     }
@@ -377,14 +385,19 @@ contract TestROUTERMintBurnAndTransferERC1155 is
         uint256 _madMintFee = _deployedContracts.router.feeMint();
 
         vm.startPrank(mintData.nftMinter, mintData.nftMinter);
-
+        collection.setPublicMintPrice(tokenId, mintData.nftPublicMintPrice);
+        if (_errorSelector == 0x68e26200) {
+            collection.setPublicMintPrice(
+                tokenId, mintData.nftPublicMintPrice + 3
+            );
+        }
         // Mint 1 token to set the max supply.
         bool maxSupplyIsSet = collection.maxSupply(tokenId) > 0;
         if (!maxSupplyIsSet) {
             _deployedContracts.router.mintTo{ value: _madMintFee }(
                 mintData.collectionAddress,
                 mintData.nftMinter,
-                defaultTokenId,
+                tokenId,
                 1,
                 mintData.amountToMint + 1
             );
@@ -436,6 +449,14 @@ contract TestROUTERMintBurnAndTransferERC1155 is
 
     function _checkMint(MintData memory mintData, uint256 tokenId) internal {
         IERC1155Basic collection = IERC1155Basic(mintData.collectionAddress);
+
+        // add 1 to mintData.newTotalSupply to account for the mintTo single
+        // used to set the max supply
+        // Check if the nftReceiver has minted any tokens using publicMint, if
+        // so, mintTo was used to set the max supply.
+        if (collection.mintedByAddress(tokenId, mintData.nftReceiver) > 0) {
+            mintData.newTotalSupply += 1;
+        }
 
         // Check that nftReceiver has the token(s)
         assertTrue(

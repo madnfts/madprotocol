@@ -25,9 +25,15 @@ interface IERC1155Basic is IImplBase {
     function maxSupply(uint256 id) external view returns (uint256);
 
     function publicMintPrice(uint256 id) external view returns (uint256);
+    function setPublicMintPrice(uint256 id, uint256 price) external;
 
     function publicMintState(uint256 id) external view returns (bool);
     function setPublicMintState(uint256 id, bool _state) external;
+
+    function mintedByAddress(uint256 id, address minter)
+        external
+        view
+        returns (uint256);
 
     function uri(uint256 id) external view returns (string memory);
 

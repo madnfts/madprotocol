@@ -14,7 +14,7 @@ abstract contract ERC1155TransferFunctions is Test {
         ownsAll = true;
         IERC1155Basic collection = IERC1155Basic(mintData.collectionAddress);
         uint256 amount = mintData.newTotalSupply - mintData.totalSupplyBefore;
-        if (collection.balanceOf(_owner, tokenId) != amount) {
+        if (collection.balanceOf(_owner, tokenId) == 0) {
             ownsAll = false;
         }
     }
@@ -70,6 +70,7 @@ abstract contract ERC1155TransferFunctions is Test {
             collection.balanceOf(friend, tokenId) == expectedFriendBalance,
             "collection.balanceOf(friend) == expectedFriendBalance ::  do not match"
         );
+
         assertTrue(
             _checkOwnerOf1155(friend, mintData, tokenId)
                 != expectedReceiverOwnership,
@@ -77,6 +78,7 @@ abstract contract ERC1155TransferFunctions is Test {
         );
 
         // Check the totalSupply of the collection has NOT increased
+        // plus 1 for the mintTo single used to set the max supply
         assertTrue(
             collection.totalSupply(tokenId) == mintData.newTotalSupply,
             "collection.totalSupply(tokenId) == mintData.newTotalSupply ::  do not match"

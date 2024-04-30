@@ -183,10 +183,8 @@ contract ERC1155Basic is ERC1155, ImplBase {
      * @custom:signature mint(address,uint256,uint256)
      * @custom:selector 0x156e29f6
      */
-    function mint(address _to, uint256 _id, uint256 amount)
-        external
-        payable
-        routerOrPublic
+    function mint(address _to, uint256 _id, uint256 amount) external payable
+    routerOrPublic
     {
         _publicMint(_to, _id, amount, _to);
     }
@@ -210,7 +208,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
         _preparePublicMint(
             uint256(amount), _minter, publicMintState[_id], publicMintPrice[_id]
         );
-        mintTo(to, _id, amount);
+        _mint(to, _id, amount, "");
     }
 
     /**
@@ -266,7 +264,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
             mintPrice
         );
 
-        mintBatchTo(_to, ids, amounts);
+        _batchMint(_to, ids, amounts, "");
     }
 
     /**

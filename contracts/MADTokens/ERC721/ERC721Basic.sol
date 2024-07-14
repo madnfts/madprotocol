@@ -2,13 +2,7 @@
 pragma solidity 0.8.22;
 
 // solhint-disable-next-line
-import {
-    ImplBase,
-    _PUBLIC_MINT_STATE_SET,
-    ERC2981,
-    Strings,
-    FactoryTypes
-} from "contracts/MADTokens/common/ImplBase.sol";
+import { ImplBase, ERC2981, Strings, FactoryTypes } from "contracts/MADTokens/common/ImplBase.sol";
 import { ERC721 } from "contracts/lib/tokens/ERC721/Base/ERC721.sol";
 
 //prettier-ignore
@@ -28,18 +22,26 @@ contract ERC721Basic is ERC721, ImplBase {
     /// max that public can mint per address
     uint256 public publicMintLimit = 10;
 
+    /// Current amount minted by address
     mapping(address minter => uint256 minted) public mintedByAddress;
 
+    /// public mint start date
+    uint128 public publicMintStartDate = 0;
+
+    /// public mint end date
+    uint128 public publicMintEndDate = type(uint128).max;
+
     event PublicMintLimitSet(uint256 limit);
-    /// @dev 0x2f3b349e2956d565a50532dcc875a49be7f558411642122cf5e50ca9b4bb14e6
+    /// @dev 0x2f3b349e2956d565a50532dcc875a49be7f58411642122cf5e50ca9b4bb14e6
     event PublicMintStateSet(bool indexed newPublicState);
+    event PublicMintPriceSet(uint256 indexed newPrice);
 
     ////////////////////////////////////////////////////////////////
     //                          IMMUTABLE                         //
     ////////////////////////////////////////////////////////////////
 
     /// @notice Capped max supply.
-    uint128 public immutable maxSupply;
+    uint128 private immutable _MAX_SUPPLY;
 
     ////////////////////////////////////////////////////////////////
     //                           STORAGE                          //
@@ -68,9 +70,21 @@ contract ERC721Basic is ERC721, ImplBase {
         if (args._maxSupply > _MAXSUPPLY_BOUND) revert MaxSupplyBoundExceeded();
 
         // immutable
-        maxSupply = uint128(args._maxSupply);
+        _MAX_SUPPLY = uint128(args._maxSupply);
 
         price = args._price;
+    }
+
+    /**
+     * @notice Set public mint price, a public state-modifying function.
+     * @dev Has modifiers: onlyOwner.
+     * @param _price The price (uint256).
+     * @custom:signature setPublicMintPrice(uint256)
+     * @custom:selector 0x5d82cf6e
+     */
+    function setPublicMintPrice(uint256 _price) public onlyOwner {
+        price = _price;
+        emit PublicMintPriceSet(_price);
     }
 
     /**
@@ -82,10 +96,7 @@ contract ERC721Basic is ERC721, ImplBase {
      */
     function setPublicMintState(bool _publicMintState) public onlyOwner {
         publicMintState = _publicMintState;
-        assembly {
-            // emit PublicMintStateSet(_publicMintState);
-            log2(0, 0, _PUBLIC_MINT_STATE_SET, _publicMintState)
-        }
+        emit PublicMintStateSet(_publicMintState);
     }
 
     /**
@@ -133,6 +144,10 @@ contract ERC721Basic is ERC721, ImplBase {
     ////////////////////////////////////////////////////////////////
     //                          PUBLIC FX                         //
     ////////////////////////////////////////////////////////////////
+
+    function maxSupply() public view returns (uint128) {
+        return _MAX_SUPPLY;
+    }
 
     /**
      * @notice Mint, a public state-modifying function.
@@ -278,9 +293,9 @@ contract ERC721Basic is ERC721, ImplBase {
         if (_amount == 0) {
             revert ZeroAmount();
         }
-        uint256 _maxSupply = maxSupply;
+        uint256 _maxSupply = _MAX_SUPPLY;
         assembly {
-            // if (mintCount + amount > maxSupply)
+            // if (mintCount + amount > _MAX_SUPPLY)
             if gt(
                 add(
                     shr(_MINTCOUNT_BITPOS, sload(_supplyRegistrar.slot)),

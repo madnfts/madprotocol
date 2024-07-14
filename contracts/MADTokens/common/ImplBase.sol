@@ -8,14 +8,8 @@ import { Strings } from "contracts/lib/utils/Strings.sol";
 import { FactoryTypes } from "contracts/Shared/FactoryTypes.sol";
 import { PaymentManager } from "contracts/MADTokens/common/PaymentManager.sol";
 // solhint-disable-next-line
-import {
-    ImplBaseEventsAndErrors,
-    _BASE_URI_LOCKED,
-    _PUBLIC_MINT_STATE_SET,
-    _BASE_URI_SET,
-    _ROYALTY_FEE_SET,
-    _ROYALTY_RECIPIENT_SET
-} from "contracts/MADTokens/common/interfaces/ImplBaseEventsAndErrors.sol";
+import { ImplBaseEventsAndErrors } from
+    "contracts/MADTokens/common/interfaces/ImplBaseEventsAndErrors.sol";
 
 abstract contract ImplBase is
     ERC2981,

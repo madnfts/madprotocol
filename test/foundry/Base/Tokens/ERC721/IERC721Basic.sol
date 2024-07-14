@@ -11,27 +11,46 @@ interface IERC721Basic is IImplBase {
     function getApproved(uint256 id) external view returns (address result);
 
     function name() external view returns (string memory);
+
     function ownerOf(uint256 id) external view returns (address result);
+
     function symbol() external view returns (string memory);
+
     function tokenURI(uint256 id) external view returns (string memory);
 
     // Other Functions
     function approve(address account, uint256 id) external;
+
     function burn(uint128[] memory ids) external payable;
+
     function mint(uint128 amount) external payable;
+
     function mintTo(address to, uint128 amount) external payable;
+
     function safeTransferFrom(address from, address to, uint256 id) external;
+
     function safeTransferFrom(
         address from,
         address to,
         uint256 id,
         bytes memory data
     ) external;
+
     function transferFrom(address from, address to, uint256 id) external;
 
     function withdraw() external payable;
+
     function withdrawERC20(address erc20) external;
 
     function publicMintLimit() external view returns (uint256);
+
     function setPublicMintLimit(uint256 limit) external;
+
+    function setPublicMintValues(
+        bool _publicMintState,
+        uint256 _price,
+        uint256 _limit,
+        uint256 _startDate,
+        uint256 _endDate
+    ) external;
 }

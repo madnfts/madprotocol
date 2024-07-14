@@ -2,7 +2,12 @@
 pragma solidity 0.8.22;
 
 // solhint-disable-next-line
-import { ImplBase, ERC2981, Strings, FactoryTypes } from "contracts/MADTokens/common/ImplBase.sol";
+import {
+    ImplBase,
+    ERC2981,
+    Strings,
+    FactoryTypes
+} from "contracts/MADTokens/common/ImplBase.sol";
 import { ERC721 } from "contracts/lib/tokens/ERC721/Base/ERC721.sol";
 
 //prettier-ignore
@@ -26,10 +31,10 @@ contract ERC721Basic is ERC721, ImplBase {
     mapping(address minter => uint256 minted) public mintedByAddress;
 
     /// public mint start date
-    uint128 public publicMintStartDate = 0;
+    uint256 public publicMintStartDate = 0;
 
     /// public mint end date
-    uint128 public publicMintEndDate = type(uint128).max;
+    uint256 public publicMintEndDate = type(uint128).max;
 
     event PublicMintLimitSet(uint256 limit);
     /// @dev 0x2f3b349e2956d565a50532dcc875a49be7f58411642122cf5e50ca9b4bb14e6
@@ -76,6 +81,31 @@ contract ERC721Basic is ERC721, ImplBase {
     }
 
     /**
+     * @notice Set public mint values, a public state-modifying function.
+     * @dev Has modifiers: onlyOwner.
+     * @param _publicMintState The public mint state (bool).
+     * @param _price The price (uint256).
+     * @param _limit The limit (uint256).
+     * @param _startDate The start date (uint256).
+     * @param _endDate The end date (uint256).
+     * @custom:signature
+     * setPublicMintValues(bool,uint256,uint256,uint256,uint256)
+     * @custom:selector 0xeb2a916a
+     */
+    function setPublicMintValues(
+        bool _publicMintState,
+        uint256 _price,
+        uint256 _limit,
+        uint256 _startDate,
+        uint256 _endDate
+    ) public onlyOwner {
+        setPublicMintPrice(_price);
+        setPublicMintDates(_startDate, _endDate);
+        setPublicMintState(_publicMintState);
+        setPublicMintLimit(_limit);
+    }
+
+    /**
      * @notice Set public mint price, a public state-modifying function.
      * @dev Has modifiers: onlyOwner.
      * @param _price The price (uint256).
@@ -100,6 +130,26 @@ contract ERC721Basic is ERC721, ImplBase {
     }
 
     /**
+     * @notice Set public mint dates, a public state-modifying function.
+     * @dev Has modifiers: onlyOwner.
+     * @param _startDate The start date (uint256).
+     * @param _endDate The end date (uint256).
+     * @custom:signature setPublicMintDates(uint256,uint256)
+     * @custom:selector 0xcb617809
+     */
+    function setPublicMintDates(uint256 _startDate, uint256 _endDate)
+        public
+        onlyOwner
+    {
+        if (_startDate > _endDate || _endDate == 0) {
+            revert InvalidPublicMintDates();
+        }
+
+        publicMintStartDate = _startDate;
+        publicMintEndDate = _endDate;
+    }
+
+    /**
      * @notice Set public mint limit, a public state-modifying function.
      * @dev Has modifiers: onlyOwner.
      * @param _limit The limit (uint256).
@@ -107,9 +157,7 @@ contract ERC721Basic is ERC721, ImplBase {
      * @custom:selector 0xef3e067c
      */
     function setPublicMintLimit(uint256 _limit) public onlyOwner {
-        if (_limit == 0) {
-            revert ZeroPublicMintLimit();
-        }
+        if (_limit == 0) revert ZeroPublicMintLimit();
         publicMintLimit = _limit;
         emit PublicMintLimitSet(_limit);
     }
@@ -190,9 +238,8 @@ contract ERC721Basic is ERC721, ImplBase {
      * @custom:selector 0xda1cbcbd
      */
     function _publicMint(address _minter, uint128 amount) private {
-        if (amount > _MAX_LOOP_AMOUNT) {
-            revert MaxLoopAmountExceeded();
-        }
+        _publicMintDatesInRange();
+        if (amount > _MAX_LOOP_AMOUNT) revert MaxLoopAmountExceeded();
         _hasReachedMaxOrZeroAmount(uint256(amount));
         _publicMinted(_minter, amount);
         _preparePublicMint(uint256(amount), _minter, publicMintState, price);
@@ -264,6 +311,18 @@ contract ERC721Basic is ERC721, ImplBase {
     ////////////////////////////////////////////////////////////////
     //                     PRIVATE FUNCTIONS                     //
     ////////////////////////////////////////////////////////////////
+
+    /**
+     * @notice Public mint open, a private view function.
+     * @dev Reverts if the public mint is not open.
+     * @custom:signature _publicMintDatesInRange()
+     * @custom:selector 0xa410bed6
+     */
+    function _publicMintDatesInRange() private view {
+        bool isOpen = block.timestamp >= publicMintStartDate
+            && block.timestamp <= publicMintEndDate;
+        if (!isOpen) revert PublicMintDatesOutOfRange();
+    }
 
     /**
      * @notice Public minted, a private state-modifying function.

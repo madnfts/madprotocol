@@ -21,25 +21,28 @@ contract ERC721Basic is ERC721, ImplBase {
     using FactoryTypes for FactoryTypes.CollectionArgs;
     using Strings for uint256;
 
-    /// @notice Public mint state default := false.
-    bool public publicMintState;
-
-    /// max that public can mint per address
-    uint256 public publicMintLimit = 10;
+    PublicMintValues public publicMintValues = PublicMintValues({
+        publicMintState: false,
+        price: 0,
+        limit: 10,
+        startDate: 0,
+        endDate: type(uint256).max
+    });
 
     /// Current amount minted by address
     mapping(address minter => uint256 minted) public mintedByAddress;
 
-    /// public mint start date
-    uint256 public publicMintStartDate = 0;
-
-    /// public mint end date
-    uint256 public publicMintEndDate = type(uint128).max;
-
     event PublicMintLimitSet(uint256 limit);
-    /// @dev 0x2f3b349e2956d565a50532dcc875a49be7f58411642122cf5e50ca9b4bb14e6
-    event PublicMintStateSet(bool indexed newPublicState);
-    event PublicMintPriceSet(uint256 indexed newPrice);
+    event PublicMintStateSet(bool newPublicState);
+    event PublicMintPriceSet(uint256 newPrice);
+    event PublicMintDatesSet(uint256 newStartDate, uint256 newEndDate);
+    event PublicMintValuesSet(
+        bool newPublicMintState,
+        uint256 newPrice,
+        uint256 newLimit,
+        uint256 newStartDate,
+        uint256 newEndDate
+    );
 
     ////////////////////////////////////////////////////////////////
     //                          IMMUTABLE                         //
@@ -59,9 +62,6 @@ contract ERC721Basic is ERC721, ImplBase {
     /// `uint128`  [128...255] := mintCount
     uint256 internal _supplyRegistrar;
 
-    /// @notice Public mint price.
-    uint256 public price;
-
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
@@ -77,32 +77,37 @@ contract ERC721Basic is ERC721, ImplBase {
         // immutable
         _MAX_SUPPLY = uint128(args._maxSupply);
 
-        price = args._price;
+        publicMintValues.price = args._price;
     }
+
+    ////////////////////////////////////////////////////////////////
+    //                          Admin Setters                     //
+    ////////////////////////////////////////////////////////////////
 
     /**
      * @notice Set public mint values, a public state-modifying function.
      * @dev Has modifiers: onlyOwner.
-     * @param _publicMintState The public mint state (bool).
-     * @param _price The price (uint256).
-     * @param _limit The limit (uint256).
-     * @param _startDate The start date (uint256).
-     * @param _endDate The end date (uint256).
+     * @param _values The values (PublicMintValues).
      * @custom:signature
-     * setPublicMintValues(bool,uint256,uint256,uint256,uint256)
-     * @custom:selector 0xeb2a916a
+     * setPublicMintValues((bool,uint256,uint256,uint256,uint256))
+     * @custom:selector 0x153ff478
      */
-    function setPublicMintValues(
-        bool _publicMintState,
-        uint256 _price,
-        uint256 _limit,
-        uint256 _startDate,
-        uint256 _endDate
-    ) public onlyOwner {
-        setPublicMintPrice(_price);
-        setPublicMintDates(_startDate, _endDate);
-        setPublicMintState(_publicMintState);
-        setPublicMintLimit(_limit);
+    function setPublicMintValues(PublicMintValues memory _values)
+        public
+        onlyOwner
+    {
+        if (_values.startDate > _values.endDate || _values.endDate == 0) {
+            revert InvalidPublicMintDates();
+        }
+        if (_values.limit == 0) revert ZeroPublicMintLimit();
+        publicMintValues = _values;
+        emit PublicMintValuesSet(
+            _values.publicMintState,
+            _values.price,
+            _values.limit,
+            _values.startDate,
+            _values.endDate
+        );
     }
 
     /**
@@ -113,7 +118,7 @@ contract ERC721Basic is ERC721, ImplBase {
      * @custom:selector 0x5d82cf6e
      */
     function setPublicMintPrice(uint256 _price) public onlyOwner {
-        price = _price;
+        publicMintValues.price = _price;
         emit PublicMintPriceSet(_price);
     }
 
@@ -125,7 +130,7 @@ contract ERC721Basic is ERC721, ImplBase {
      * @custom:selector 0x879fbedf
      */
     function setPublicMintState(bool _publicMintState) public onlyOwner {
-        publicMintState = _publicMintState;
+        publicMintValues.publicMintState = _publicMintState;
         emit PublicMintStateSet(_publicMintState);
     }
 
@@ -145,8 +150,9 @@ contract ERC721Basic is ERC721, ImplBase {
             revert InvalidPublicMintDates();
         }
 
-        publicMintStartDate = _startDate;
-        publicMintEndDate = _endDate;
+        publicMintValues.startDate = _startDate;
+        publicMintValues.endDate = _endDate;
+        emit PublicMintDatesSet(_startDate, _endDate);
     }
 
     /**
@@ -158,7 +164,7 @@ contract ERC721Basic is ERC721, ImplBase {
      */
     function setPublicMintLimit(uint256 _limit) public onlyOwner {
         if (_limit == 0) revert ZeroPublicMintLimit();
-        publicMintLimit = _limit;
+        publicMintValues.limit = _limit;
         emit PublicMintLimitSet(_limit);
     }
 
@@ -192,10 +198,6 @@ contract ERC721Basic is ERC721, ImplBase {
     ////////////////////////////////////////////////////////////////
     //                          PUBLIC FX                         //
     ////////////////////////////////////////////////////////////////
-
-    function maxSupply() public view returns (uint128) {
-        return _MAX_SUPPLY;
-    }
 
     /**
      * @notice Mint, a public state-modifying function.
@@ -242,7 +244,12 @@ contract ERC721Basic is ERC721, ImplBase {
         if (amount > _MAX_LOOP_AMOUNT) revert MaxLoopAmountExceeded();
         _hasReachedMaxOrZeroAmount(uint256(amount));
         _publicMinted(_minter, amount);
-        _preparePublicMint(uint256(amount), _minter, publicMintState, price);
+        _preparePublicMint(
+            uint256(amount),
+            _minter,
+            publicMintValues.publicMintState,
+            publicMintValues.price
+        );
         (uint256 curId, uint256 endId) = _incrementCounter(uint256(amount));
 
         for (uint256 i = curId; i < endId; ++i) {
@@ -273,6 +280,10 @@ contract ERC721Basic is ERC721, ImplBase {
     ////////////////////////////////////////////////////////////////
     //                           VIEW FX                          //
     ////////////////////////////////////////////////////////////////
+
+    function maxSupply() public view returns (uint128) {
+        return _MAX_SUPPLY;
+    }
 
     /**
      * @notice Total supply, a public view function.
@@ -308,6 +319,57 @@ contract ERC721Basic is ERC721, ImplBase {
         }
     }
 
+    /**
+     * @notice Price, a public view function.
+     * @return uint256 Result of price.
+     * @custom:signature price()
+     * @custom:selector 0xa035b1fe
+     */
+    function price() public view returns (uint256) {
+        return publicMintValues.price;
+    }
+
+    /**
+     * @notice Public mint state, a public view function.
+     * @return bool Result of publicMintState.
+     * @custom:signature publicMintState()
+     * @custom:selector 0x22ab47a1
+     */
+    function publicMintState() public view returns (bool) {
+        return publicMintValues.publicMintState;
+    }
+
+    /**
+     * @notice Public mint price, a public view function.
+     * @return uint256 Result of publicMintPrice.
+     * @custom:signature publicMintPrice()
+     * @custom:selector 0xdc53fd92
+     */
+    function publicMintPrice() public view returns (uint256) {
+        return publicMintValues.price;
+    }
+
+    /**
+     * @notice Public mint limit, a public view function.
+     * @return uint256 Result of publicMintLimit.
+     * @custom:signature publicMintLimit()
+     * @custom:selector 0xbb485b88
+     */
+    function publicMintLimit() public view returns (uint256) {
+        return publicMintValues.limit;
+    }
+
+    /**
+     * @notice Public mint dates, a public view function.
+     * @return uint256 Result of publicMintDates.
+     * @return uint256 Result of publicMintDates.
+     * @custom:signature publicMintDates()
+     * @custom:selector 0xbfc60ab6
+     */
+    function publicMintDates() public view returns (uint256, uint256) {
+        return (publicMintValues.startDate, publicMintValues.endDate);
+    }
+
     ////////////////////////////////////////////////////////////////
     //                     PRIVATE FUNCTIONS                     //
     ////////////////////////////////////////////////////////////////
@@ -319,8 +381,8 @@ contract ERC721Basic is ERC721, ImplBase {
      * @custom:selector 0xa410bed6
      */
     function _publicMintDatesInRange() private view {
-        bool isOpen = block.timestamp >= publicMintStartDate
-            && block.timestamp <= publicMintEndDate;
+        bool isOpen = block.timestamp >= publicMintValues.startDate
+            && block.timestamp <= publicMintValues.endDate;
         if (!isOpen) revert PublicMintDatesOutOfRange();
     }
 
@@ -336,7 +398,7 @@ contract ERC721Basic is ERC721, ImplBase {
      */
     function _publicMinted(address _minter, uint256 _amount) private {
         uint256 amountMinted = mintedByAddress[_minter];
-        if (amountMinted + _amount > publicMintLimit) {
+        if (amountMinted + _amount > publicMintValues.limit) {
             revert MintLimitReached();
         }
         mintedByAddress[_minter] += _amount;

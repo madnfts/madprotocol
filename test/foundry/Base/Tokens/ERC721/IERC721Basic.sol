@@ -46,11 +46,13 @@ interface IERC721Basic is IImplBase {
 
     function setPublicMintLimit(uint256 limit) external;
 
-    function setPublicMintValues(
-        bool _publicMintState,
-        uint256 _price,
-        uint256 _limit,
-        uint256 _startDate,
-        uint256 _endDate
-    ) external;
+    struct PublicMintValues {
+        bool publicMintState;
+        uint256 price;
+        uint256 limit;
+        uint256 startDate;
+        uint256 endDate;
+    }
+
+    function setPublicMintValues(PublicMintValues memory values) external;
 }

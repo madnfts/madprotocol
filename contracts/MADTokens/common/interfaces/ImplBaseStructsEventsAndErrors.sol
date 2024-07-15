@@ -2,7 +2,15 @@
 
 pragma solidity 0.8.22;
 
-interface ImplBaseEventsAndErrors {
+interface ImplBaseStructsEventsAndErrors {
+    struct PublicMintValues {
+        bool publicMintState;
+        uint256 price;
+        uint256 limit;
+        uint256 startDate;
+        uint256 endDate;
+    }
+
     ////////////////////////////////////////////////////////////////
     //                           EVENTS                           //
     ////////////////////////////////////////////////////////////////

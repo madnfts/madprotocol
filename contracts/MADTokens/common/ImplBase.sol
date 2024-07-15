@@ -8,16 +8,23 @@ import { Strings } from "contracts/lib/utils/Strings.sol";
 import { FactoryTypes } from "contracts/Shared/FactoryTypes.sol";
 import { PaymentManager } from "contracts/MADTokens/common/PaymentManager.sol";
 // solhint-disable-next-line
-import { ImplBaseEventsAndErrors } from "contracts/MADTokens/common/interfaces/ImplBaseEventsAndErrors.sol";
+import { ImplBaseStructsEventsAndErrors } from
+    "contracts/MADTokens/common/interfaces/ImplBaseStructsEventsAndErrors.sol";
 
-abstract contract ImplBase is ERC2981, ImplBaseEventsAndErrors, TwoFactor, PaymentManager {
+abstract contract ImplBase is
+    ERC2981,
+    ImplBaseStructsEventsAndErrors,
+    TwoFactor,
+    PaymentManager
+{
     string public baseURI;
 
     /// @dev An account can hold up to 4294967295 tokens.
     uint256 internal constant _SR_UPPERBITS = (1 << 128) - 1;
     uint256 internal constant _MAXSUPPLY_BOUND = 1 << 32;
     uint256 internal constant _MINTCOUNT_BITPOS = 128;
-    uint256 internal constant _MAX_LOOP_AMOUNT = 1_000;
+    uint256 internal constant _MAX_LOOP_AMOUNT = 10_000; // Should be configured
+        // to each chain that is deployed to..
 
     using Strings for uint256;
 
@@ -33,9 +40,7 @@ abstract contract ImplBase is ERC2981, ImplBaseEventsAndErrors, TwoFactor, Payme
     //                         CONSTRUCTOR                        //
     ////////////////////////////////////////////////////////////////
 
-    constructor(
-        FactoryTypes.CollectionArgs memory args
-    )
+    constructor(FactoryTypes.CollectionArgs memory args)
         payable
         /*  */
         TwoFactor(args._router, args._owner)
@@ -140,7 +145,11 @@ abstract contract ImplBase is ERC2981, ImplBaseEventsAndErrors, TwoFactor, Payme
      * @custom:signature _readString(bytes32)
      * @custom:selector 0x2de3c16f
      */
-    function _readString(bytes32 _slot) internal view returns (string memory _string) {
+    function _readString(bytes32 _slot)
+        internal
+        view
+        returns (string memory _string)
+    {
         assembly {
             let len := sload(_slot)
             mstore(_string, shr(0x01, and(len, 0xFF)))
@@ -159,9 +168,7 @@ abstract contract ImplBase is ERC2981, ImplBaseEventsAndErrors, TwoFactor, Payme
     function _setStringMemory(string memory _string, bytes32 _slot) internal {
         assembly {
             let len := mload(_string)
-            if lt(0x1f, len) {
-                invalid()
-            }
+            if lt(0x1f, len) { invalid() }
             sstore(_slot, or(mload(add(_string, 0x20)), shl(0x01, len)))
         }
     }

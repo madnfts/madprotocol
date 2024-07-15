@@ -421,11 +421,13 @@ contract TestROUTERMintBurnAndTransferERC721 is
             vm.expectRevert(_errorSelector);
         }
         collection.setPublicMintValues(
-            true,
-            nftPublicMintPrice,
-            mintData.amountToMint,
-            _startDate,
-            _endDate
+            IERC721Basic.PublicMintValues({
+                publicMintState: true,
+                price: nftPublicMintPrice,
+                limit: mintData.amountToMint,
+                startDate: _startDate,
+                endDate: _endDate
+            })
         );
     }
 

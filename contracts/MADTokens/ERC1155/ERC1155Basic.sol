@@ -2,12 +2,7 @@
 
 pragma solidity 0.8.22;
 
-import {
-    ImplBase,
-    ERC2981,
-    Strings,
-    FactoryTypes
-} from "contracts/MADTokens/common/ImplBase.sol";
+import { ImplBase, ERC2981, Strings, FactoryTypes } from "contracts/MADTokens/common/ImplBase.sol";
 import { ERC1155 } from "contracts/lib/tokens/ERC1155/Base/ERC1155.sol";
 
 contract ERC1155Basic is ERC1155, ImplBase {
@@ -20,9 +15,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
     error ZeroArrayLength();
 
     event PublicMintStateSet(uint256 indexed _id, bool _publicMintState);
-    event BatchPublicMintStateSet(
-        uint256[] indexed _ids, bool[] _publicMintStates
-    );
+    event BatchPublicMintStateSet(uint256[] indexed _ids, bool[] _publicMintStates);
     event MaxSupplySet(uint256 indexed _id, uint256 _maxSupply);
     event BatchMaxSupplySet(uint256[] indexed _ids, uint256[] _maxSupplies);
 
@@ -31,6 +24,9 @@ contract ERC1155Basic is ERC1155, ImplBase {
 
     event PublicMintPriceSet(uint256 indexed _id, uint256 _price);
     event BatchPublicMintPriceSet(uint256[] indexed _ids, uint256[] _prices);
+
+    event PublicMintDatesSet(uint256 indexed _id, uint256 _startDate, uint256 _endDate);
+    event BatchPublicMintDatesSet(uint256[] indexed _ids, uint256[] _startDates, uint256[] _endDates);
 
     ////////////////////////////////////////////////////////////////
     //                           STORAGE                          //
@@ -50,11 +46,13 @@ contract ERC1155Basic is ERC1155, ImplBase {
 
     mapping(uint256 id => uint256 publicMintPrice) public publicMintPrice;
 
+    mapping(uint256 id => uint256 publicMintStartDate) public publicMintStartDate;
+    mapping(uint256 id => uint256 publicMintEndDate) public publicMintEndDate;
+
     /// max that public can mint per address
     uint256 public publicMintLimitDefault = 10;
     mapping(uint256 id => uint256 publicMintLimit) public publicMintLimit;
-    mapping(uint256 id => mapping(address minter => uint256 minted)) public
-        mintedByAddress;
+    mapping(uint256 id => mapping(address minter => uint256 minted)) public mintedByAddress;
 
     ////////////////////////////////////////////////////////////////
     //                         CONSTRUCTOR                        //
@@ -79,11 +77,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
      * @custom:signature mintTo(address,uint256,uint256)
      * @custom:selector 0x2baf2acb
      */
-    function mintTo(address to, uint256 _id, uint256 amount)
-        public
-        payable
-        authorised
-    {
+    function mintTo(address to, uint256 _id, uint256 amount) public payable authorised {
         _mint(to, _id, amount, "");
     }
 
@@ -99,11 +93,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
      * @custom:signature mintBatchTo(address,uint256[],uint256[])
      * @custom:selector 0x3512639c
      */
-    function mintBatchTo(
-        address to,
-        uint256[] memory ids,
-        uint256[] memory amounts
-    ) public payable authorised {
+    function mintBatchTo(address to, uint256[] memory ids, uint256[] memory amounts) public payable authorised {
         _batchMint(to, ids, amounts, "");
     }
 
@@ -118,11 +108,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
      * @custom:signature burn(address,uint256,uint256)
      * @custom:selector 0xf5298aca
      */
-    function burn(address from, uint256 id, uint256 amount)
-        public
-        payable
-        authorised
-    {
+    function burn(address from, uint256 id, uint256 amount) public payable authorised {
         _burn(from, id, amount);
     }
 
@@ -137,11 +123,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
      * @custom:signature burnBatch(address,uint256[],uint256[])
      * @custom:selector 0x6b20c454
      */
-    function burnBatch(
-        address from,
-        uint256[] memory ids,
-        uint256[] memory amounts
-    ) public payable authorised {
+    function burnBatch(address from, uint256[] memory ids, uint256[] memory amounts) public payable authorised {
         uint256[] memory _ids;
         uint256[] memory _amounts;
         assembly {
@@ -183,11 +165,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
      * @custom:signature mint(address,uint256,uint256)
      * @custom:selector 0x156e29f6
      */
-    function mint(address _to, uint256 _id, uint256 amount)
-        external
-        payable
-        routerOrPublic
-    {
+    function mint(address _to, uint256 _id, uint256 amount) external payable routerOrPublic {
         _publicMint(_to, _id, amount, _to);
     }
 
@@ -200,16 +178,9 @@ contract ERC1155Basic is ERC1155, ImplBase {
      * @custom:signature _publicMint(address,uint256,uint256,address)
      * @custom:selector 0xb43627f3
      */
-    function _publicMint(
-        address to,
-        uint256 _id,
-        uint256 amount,
-        address _minter
-    ) private {
+    function _publicMint(address to, uint256 _id, uint256 amount, address _minter) private {
         _publicMinted(_id, _minter, amount);
-        _preparePublicMint(
-            uint256(amount), _minter, publicMintState[_id], publicMintPrice[_id]
-        );
+        _preparePublicMint(uint256(amount), _minter, publicMintState[_id], publicMintPrice[_id]);
         _mint(to, _id, amount, "");
     }
 
@@ -224,11 +195,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
      * @custom:signature mintBatch(address,uint256[],uint256[])
      * @custom:selector 0xd81d0a15
      */
-    function mintBatch(
-        address _to,
-        uint256[] memory ids,
-        uint256[] calldata amounts
-    ) external payable routerOrPublic {
+    function mintBatch(address _to, uint256[] memory ids, uint256[] calldata amounts) external payable routerOrPublic {
         _publicMintBatch(_to, ids, amounts);
     }
 
@@ -240,11 +207,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
      * @custom:signature _publicMintBatch(address,uint256[],uint256[])
      * @custom:selector 0x872078a6
      */
-    function _publicMintBatch(
-        address _to,
-        uint256[] memory ids,
-        uint256[] calldata amounts
-    ) private {
+    function _publicMintBatch(address _to, uint256[] memory ids, uint256[] calldata amounts) private {
         uint256 len = ids.length;
         _loopArrayChecks(len, amounts.length);
         uint256 mintPrice = 0;
@@ -255,16 +218,11 @@ contract ERC1155Basic is ERC1155, ImplBase {
             if (publicMintState[ids[i]] == false) {
                 publicMintStateCheck = false;
                 break; // Breakout and send false to _preparePublicMint for
-                    // revert action.
+                // revert action.
             }
             mintPrice += publicMintPrice[ids[i]];
         }
-        _preparePublicMint(
-            uint256(len * _sumAmounts(amounts)),
-            _to,
-            publicMintStateCheck,
-            mintPrice
-        );
+        _preparePublicMint(uint256(len * _sumAmounts(amounts)), _to, publicMintStateCheck, mintPrice);
 
         _batchMint(_to, ids, amounts, "");
     }
@@ -276,11 +234,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
      * @custom:signature _sumAmounts(uint256[])
      * @custom:selector 0x1541d23b
      */
-    function _sumAmounts(uint256[] calldata amounts)
-        private
-        pure
-        returns (uint256 result)
-    {
+    function _sumAmounts(uint256[] calldata amounts) private pure returns (uint256 result) {
         assembly {
             if amounts.length {
                 let end := add(amounts.offset, shl(0x05, amounts.length))
@@ -292,7 +246,9 @@ contract ERC1155Basic is ERC1155, ImplBase {
                 } {
                     result := add(result, calldataload(i))
                     i := add(i, 0x20)
-                    if iszero(lt(i, end)) { break }
+                    if iszero(lt(i, end)) {
+                        break
+                    }
                 }
             }
         }
@@ -309,13 +265,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
      * @custom:signature uri(uint256)
      * @custom:selector 0x0e89341c
      */
-    function uri(uint256 id)
-        public
-        view
-        virtual
-        override(ERC1155)
-        returns (string memory)
-    {
+    function uri(uint256 id) public view virtual override(ERC1155) returns (string memory) {
         if (mintCount(id) == 0) {
             // NotMintedYet()
             assembly {
@@ -385,10 +335,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
      * @custom:signature batchSetPublicMintPrice(uint256[],uint256[])
      * @custom:selector 0xa15e7171
      */
-    function batchSetPublicMintPrice(
-        uint256[] calldata _ids,
-        uint256[] calldata _prices
-    ) public onlyOwner {
+    function batchSetPublicMintPrice(uint256[] calldata _ids, uint256[] calldata _prices) public onlyOwner {
         uint256 idsLength = _ids.length;
         _loopArrayChecks(idsLength, _prices.length);
         for (uint256 i = 0; i < idsLength; i++) {
@@ -421,10 +368,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
      * @custom:signature batchSetPublicMintLimit(uint256[],uint256[])
      * @custom:selector 0x8f9f5782
      */
-    function batchSetPublicMintLimit(
-        uint256[] calldata _ids,
-        uint256[] calldata _limits
-    ) public onlyOwner {
+    function batchSetPublicMintLimit(uint256[] calldata _ids, uint256[] calldata _limits) public onlyOwner {
         uint256 idsLength = _ids.length;
         _loopArrayChecks(idsLength, _limits.length);
         for (uint256 i = 0; i < idsLength; i++) {
@@ -433,6 +377,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
         }
         emit BatchPublicMintLimitSet(_ids, _limits);
     }
+
     /**
      * @notice Set max supply, a public state-modifying function.
      * @param id The id (uint256).
@@ -456,10 +401,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
      * @custom:signature batchSetMaxSupply(uint256[],uint256[])
      * @custom:selector 0x1169e6a2
      */
-    function batchSetMaxSupply(
-        uint256[] calldata ids,
-        uint256[] calldata _maxSupplies
-    ) public authorised {
+    function batchSetMaxSupply(uint256[] calldata ids, uint256[] calldata _maxSupplies) public authorised {
         uint256 idsLength = ids.length;
         _loopArrayChecks(idsLength, _maxSupplies.length);
         for (uint256 i = 0; i < idsLength; i++) {
@@ -481,10 +423,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
      * @custom:signature setPublicMintState(uint256,bool,uint256)
      * @custom:selector 0x380a8c5f
      */
-    function setPublicMintState(uint256 _id, bool _publicMintState)
-        public
-        onlyOwner
-    {
+    function setPublicMintState(uint256 _id, bool _publicMintState) public onlyOwner {
         if (maxSupply[_id] == 0) revert MaxSupplyNotSet(_id);
         publicMintState[_id] = _publicMintState;
         emit PublicMintStateSet(_id, _publicMintState);
@@ -499,10 +438,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
      * @custom:signature batchSetPublicMintState(uint256[],bool[],uint256[])
      * @custom:selector 0xf657600b
      */
-    function batchSetPublicMintState(
-        uint256[] calldata _ids,
-        bool[] calldata _publicMintStates
-    ) public onlyOwner {
+    function batchSetPublicMintState(uint256[] calldata _ids, bool[] calldata _publicMintStates) public onlyOwner {
         uint256 idsLength = _ids.length;
         _loopArrayChecks(idsLength, _publicMintStates.length);
         for (uint256 i = 0; i < idsLength; i++) {
@@ -510,6 +446,33 @@ contract ERC1155Basic is ERC1155, ImplBase {
             publicMintState[_ids[i]] = _publicMintStates[i];
         }
         emit BatchPublicMintStateSet(_ids, _publicMintStates);
+    }
+
+    function setPublicMintDates(uint256 id, uint256 _startDate, uint256 _endDate) public onlyOwner {
+        if (_startDate > _endDate || _endDate == 0) {
+            revert InvalidPublicMintDates();
+        }
+        publicMintStartDate[id] = _startDate;
+        publicMintEndDate[id] = _endDate;
+        emit PublicMintDatesSet(id, _startDate, _endDate);
+    }
+
+    function batchSetPublicMintDates(
+        uint256[] calldata ids,
+        uint256[] calldata _startDates,
+        uint256[] calldata _endDates
+    ) public onlyOwner {
+        uint256 idsLength = ids.length;
+        _loopArrayChecks(idsLength, _startDates.length);
+        _loopArrayChecks(idsLength, _endDates.length);
+        for (uint256 i = 0; i < idsLength; i++) {
+            if (_startDates[i] > _endDates[i] || _endDates[i] == 0) {
+                revert InvalidPublicMintDates();
+            }
+            publicMintStartDate[ids[i]] = _startDates[i];
+            publicMintEndDate[ids[i]] = _endDates[i];
+        }
+        emit BatchPublicMintDatesSet(ids, _startDates, _endDates);
     }
 
     ////////////////////////////////////////////////////////////////
@@ -555,9 +518,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
      * @custom:signature _publicMinted(uint256,address,uint256)
      * @custom:selector 0xd85a62bb
      */
-    function _publicMinted(uint256 id, address _minter, uint256 _amount)
-        private
-    {
+    function _publicMinted(uint256 id, address _minter, uint256 _amount) private {
         uint256 amountMinted = mintedByAddress[id][_minter];
         if (amountMinted + _amount > publicMintLimit[id]) {
             revert MintLimitReached();
@@ -576,11 +537,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
      * @custom:signature _beforeTokenMint(uint256,uint256)
      * @custom:selector 0xf2c5b6ef
      */
-    function _beforeTokenMint(uint256 id, uint256 amount)
-        internal
-        virtual
-        override(ERC1155)
-    {
+    function _beforeTokenMint(uint256 id, uint256 amount) internal virtual override(ERC1155) {
         if (amount == 0) {
             revert ZeroAmount();
         }
@@ -601,13 +558,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
                 mstore(0, 0xd05cb609)
                 revert(28, 4)
             }
-            sstore(
-                sLoc,
-                or(
-                    add(and(_SR_UPPERBITS, rawBal), amount),
-                    shl(_MINTCOUNT_BITPOS, newBal)
-                )
-            )
+            sstore(sLoc, or(add(and(_SR_UPPERBITS, rawBal), amount), shl(_MINTCOUNT_BITPOS, newBal)))
         }
     }
 
@@ -618,16 +569,15 @@ contract ERC1155Basic is ERC1155, ImplBase {
      * @custom:signature _beforeTokenBatchMint(uint256[],uint256[])
      * @custom:selector 0x456aa33c
      */
-    function _beforeTokenBatchMint(
-        uint256[] memory ids,
-        uint256[] memory amounts
-    ) internal virtual override(ERC1155) {
+    function _beforeTokenBatchMint(uint256[] memory ids, uint256[] memory amounts) internal virtual override(ERC1155) {
         _loopArrayChecks(ids.length, amounts.length);
         assembly {
             let idsLen := mload(ids)
             let iLoc := add(ids, 32)
             let aLoc := add(amounts, 32)
-            for { let end := add(iLoc, shl(5, idsLen)) } iszero(eq(iLoc, end)) {
+            for {
+                let end := add(iLoc, shl(5, idsLen))
+            } iszero(eq(iLoc, end)) {
                 iLoc := add(iLoc, 32)
                 aLoc := add(aLoc, 32)
             } {
@@ -669,9 +619,9 @@ contract ERC1155Basic is ERC1155, ImplBase {
                     // "MaxSupplyNotSet(uint256)" to identify the error.
                     let ptr := mload(0x40) // Free memory pointer
                     mstore(ptr, 0x1a3ed2ab) // Error signature for
-                        // MaxSupplyNotSet(uint256)
+                    // MaxSupplyNotSet(uint256)
                     mstore(add(ptr, 4), id) // Append the _id parameter right
-                        // after the error signature
+                    // after the error signature
                     // Revert with the encoded error message.
                     // The total size is 4 bytes (error signature) + 32 bytes
                     // (uint256 _id) = 36 bytes
@@ -679,10 +629,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
                 }
                 sstore(
                     balanceRegistrarSlot,
-                    or(
-                        add(and(_SR_UPPERBITS, rawBal), mload(aLoc)),
-                        shl(_MINTCOUNT_BITPOS, newBal)
-                    )
+                    or(add(and(_SR_UPPERBITS, rawBal), mload(aLoc)), shl(_MINTCOUNT_BITPOS, newBal))
                 )
             }
         }
@@ -695,11 +642,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
      * @custom:signature _beforeTokenBurn(uint256,uint256)
      * @custom:selector 0xd703ad60
      */
-    function _beforeTokenBurn(uint256 id, uint256 amount)
-        internal
-        virtual
-        override(ERC1155)
-    {
+    function _beforeTokenBurn(uint256 id, uint256 amount) internal virtual override(ERC1155) {
         assembly {
             mstore(32, _balanceRegistrar.slot)
             mstore(0, id)
@@ -722,16 +665,15 @@ contract ERC1155Basic is ERC1155, ImplBase {
      * @custom:signature _beforeTokenBatchBurn(uint256[],uint256[])
      * @custom:selector 0x5cf7a560
      */
-    function _beforeTokenBatchBurn(
-        uint256[] memory ids,
-        uint256[] memory amounts
-    ) internal virtual override(ERC1155) {
+    function _beforeTokenBatchBurn(uint256[] memory ids, uint256[] memory amounts) internal virtual override(ERC1155) {
         _loopArrayChecks(ids.length, amounts.length);
         assembly {
             let idsLen := mload(ids)
             let iLoc := add(ids, 32)
             let aLoc := add(amounts, 32)
-            for { let end := add(iLoc, shl(5, idsLen)) } iszero(eq(iLoc, end)) {
+            for {
+                let end := add(iLoc, shl(5, idsLen))
+            } iszero(eq(iLoc, end)) {
                 iLoc := add(iLoc, 32)
                 aLoc := add(aLoc, 32)
             } {
@@ -757,21 +699,15 @@ contract ERC1155Basic is ERC1155, ImplBase {
      * @custom:signature supportsInterface(bytes4)
      * @custom:selector 0x01ffc9a7
      */
-    function supportsInterface(bytes4 interfaceId)
-        public
-        pure
-        virtual
-        override(ERC1155, ERC2981)
-        returns (bool)
-    {
+    function supportsInterface(bytes4 interfaceId) public pure virtual override(ERC1155, ERC2981) returns (bool) {
         return
-        // ERC165 Interface ID for ERC165
-        interfaceId == 0x01ffc9a7
-        // ERC165 Interface ID for ERC1155
-        || interfaceId == 0xd9b67a26
-        // ERC165 Interface ID for ERC1155MetadataURI
-        || interfaceId == 0x0e89341c
-        // ERC165 Interface ID for ERC2981
-        || interfaceId == 0x2a55205a;
+            // ERC165 Interface ID for ERC165
+            interfaceId == 0x01ffc9a7 ||
+            // ERC165 Interface ID for ERC1155
+            interfaceId == 0xd9b67a26 ||
+            // ERC165 Interface ID for ERC1155MetadataURI
+            interfaceId == 0x0e89341c ||
+            // ERC165 Interface ID for ERC2981
+            interfaceId == 0x2a55205a;
     }
 }

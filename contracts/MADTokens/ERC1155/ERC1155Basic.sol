@@ -315,6 +315,46 @@ contract ERC1155Basic is ERC1155, ImplBase {
     ////////////////////////////////////////////////////////////////
 
     /**
+     * @notice Set public mint values, a public state-modifying function.
+     * @dev Has modifiers: onlyOwner.
+     * @param _id The id (uint256).
+     * @param _publicMintState The public mint state (bool).
+     * @param _price The price (uint256).
+     * @param _limit The limit (uint256).
+     * @param _startDate The start date (uint256).
+     * @param _endDate The end date (uint256).
+     * @custom:signature setPublicMintValues(uint256,bool,uint256,uint256,uint256,uint256)
+     * @custom:selector 0xcca8c3fd
+     */
+    function setPublicMintValues(
+        uint256 _id,
+        bool _publicMintState,
+        uint256 _price,
+        uint256 _limit,
+        uint256 _startDate,
+        uint256 _endDate
+    ) public onlyOwner {
+        setPublicMintPrice(_id, _price);
+        setPublicMintDates(_id, _startDate, _endDate);
+        setPublicMintState(_id, _publicMintState);
+        setPublicMintLimit(_id, _limit);
+    }
+
+    function batchSetPublicMintValues(
+        uint256[] calldata _ids,
+        bool[] calldata _publicMintState,
+        uint256[] calldata _prices,
+        uint256[] calldata _limits,
+        uint256[] calldata _startDates,
+        uint256[] calldata _endDates
+    ) public onlyOwner {
+        batchSetPublicMintPrice(_ids, _prices);
+        batchSetPublicMintDates(_ids, _startDates, _endDates);
+        batchSetPublicMintState(_ids, _publicMintState);
+        batchSetPublicMintLimit(_ids, _limits);
+    }
+
+    /**
      * @notice Set public mint price, a public state-modifying function.
      * @dev Has modifiers: onlyOwner.
      * @param _id The id (uint256).
@@ -448,6 +488,15 @@ contract ERC1155Basic is ERC1155, ImplBase {
         emit BatchPublicMintStateSet(_ids, _publicMintStates);
     }
 
+    /**
+     * @notice Set public mint dates, a public state-modifying function.
+     * @dev Has modifiers: onlyOwner.
+     * @param id The id (uint256).
+     * @param _startDate The start date (uint256).
+     * @param _endDate The end date (uint256).
+     * @custom:signature setPublicMintDates(uint256,uint256,uint256)
+     * @custom:selector 0xe96c6b29
+     */
     function setPublicMintDates(uint256 id, uint256 _startDate, uint256 _endDate) public onlyOwner {
         if (_startDate > _endDate || _endDate == 0) {
             revert InvalidPublicMintDates();
@@ -457,6 +506,15 @@ contract ERC1155Basic is ERC1155, ImplBase {
         emit PublicMintDatesSet(id, _startDate, _endDate);
     }
 
+    /**
+     * @notice Batch set public mint dates, a public state-modifying function.
+     * @dev Has modifiers: onlyOwner.
+     * @param ids List of uint256s.
+     * @param _startDates List of uint256s.
+     * @param _endDates List of uint256s.
+     * @custom:signature batchSetPublicMintDates(uint256[],uint256[],uint256[])
+     * @custom:selector 0x8dccb1f3
+     */
     function batchSetPublicMintDates(
         uint256[] calldata ids,
         uint256[] calldata _startDates,

@@ -55,7 +55,7 @@ interface ImplBaseEventsAndErrors {
     error ZeroAmount();
     /// @dev 0xfe37c8dc
     error MaxLoopAmountExceeded();
-    /// @dev 0x22e3aa08
+    /// @dev 0xe4719bd6
     error PublicMintDatesOutOfRange();
     /// @dev 0xc0caac2c
     error InvalidPublicMintDates();

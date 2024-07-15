@@ -125,9 +125,35 @@ contract TestMintBurnAndTransferERC721_Erc20 is
             nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
         );
 
-        _updatePublicMintValues(mintData);
+        _updatePublicMintValues(
+            mintData, 0, block.timestamp, block.timestamp + 100
+        );
         _doPublicMint(mintData, true, 0, _amountToMint);
         _checkMint(mintData);
+    }
+
+    function testSetPublicMintValues_PublicMintDatesOutOfRange() public {
+        uint128 _amountToMint = 10;
+        MintData memory mintData = _setupMint(
+            nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
+        );
+
+        _updatePublicMintValues(
+            mintData, 0, block.timestamp, block.timestamp + 1
+        );
+        vm.warp(block.timestamp + 100);
+        _doPublicMint(mintData, true, 0xe4719bd6, _amountToMint);
+    }
+
+    function testSetPublicMintValues_InvalidPublicMintDatesZeroEndDate()
+        public
+    {
+        uint128 _amountToMint = 10;
+        MintData memory mintData = _setupMint(
+            nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
+        );
+
+        _updatePublicMintValues(mintData, 0xc0caac2c, block.timestamp, 0);
     }
 
     function testPublicMint_FreeMintZeroPrice() public {
@@ -499,15 +525,23 @@ contract TestMintBurnAndTransferERC721_Erc20 is
         vm.stopPrank();
     }
 
-    function _updatePublicMintValues(MintData memory mintData) internal {
+    function _updatePublicMintValues(
+        MintData memory mintData,
+        bytes4 _errorSelector,
+        uint256 _startDate,
+        uint256 _endDate
+    ) internal {
         IERC721Basic collection = IERC721Basic(mintData.collectionAddress);
         vm.startPrank(mintData.nftMinter, mintData.nftMinter);
+        if (_errorSelector != 0x00000000) {
+            vm.expectRevert(_errorSelector);
+        }
         collection.setPublicMintValues(
             true,
             nftPublicMintPrice,
             mintData.amountToMint,
-            block.timestamp,
-            block.timestamp + 100
+            _startDate,
+            _endDate
         );
     }
 

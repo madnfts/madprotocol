@@ -285,13 +285,7 @@ abstract contract MADFactoryBase is
      * @custom:selector 0xe04dc3ca
      */
     function _royaltyLocker(uint96 _share) internal pure {
-        assembly {
-            // (_share > 1000) || (_share % 25 != 0)
-            if or(gt(_share, 0x3E8), iszero(iszero(mod(_share, 0x19)))) {
-                mstore(0x00, 0xe0e54ced)
-                revert(0x1c, 0x04)
-            }
-        }
+        if (_share > 1000 || _share % 25 != 0) revert InvalidRoyalty();
     }
 
     /**

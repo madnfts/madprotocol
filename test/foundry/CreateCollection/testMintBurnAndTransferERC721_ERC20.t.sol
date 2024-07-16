@@ -119,6 +119,43 @@ contract TestMintBurnAndTransferERC721_Erc20 is
         _checkMint(mintData);
     }
 
+    function testSetPublicMintValues_DefaultFuzzy(uint256) public {
+        uint128 _amountToMint = 10;
+        MintData memory mintData = _setupMint(
+            nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
+        );
+
+        _updatePublicMintValues(
+            mintData, 0, block.timestamp, block.timestamp + 100
+        );
+        _doPublicMint(mintData, true, 0, _amountToMint);
+        _checkMint(mintData);
+    }
+
+    function testSetPublicMintValues_PublicMintDatesOutOfRange() public {
+        uint128 _amountToMint = 10;
+        MintData memory mintData = _setupMint(
+            nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
+        );
+
+        _updatePublicMintValues(
+            mintData, 0, block.timestamp, block.timestamp + 1
+        );
+        vm.warp(block.timestamp + 100);
+        _doPublicMint(mintData, true, 0xe4719bd6, _amountToMint);
+    }
+
+    function testSetPublicMintValues_InvalidPublicMintDatesZeroEndDate()
+        public
+    {
+        uint128 _amountToMint = 10;
+        MintData memory mintData = _setupMint(
+            nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
+        );
+
+        _updatePublicMintValues(mintData, 0xc0caac2c, block.timestamp, 0);
+    }
+
     function testPublicMint_FreeMintZeroPrice() public {
         uint128 _amountToMint = 10;
         uint256 _nftPublicMintPrice = 0;
@@ -375,7 +412,7 @@ contract TestMintBurnAndTransferERC721_Erc20 is
             nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
         );
         _doPublicMint(mintData, true, 0, _amountToMint + 10); // make sure the
-            // limit is over the maxSupply to induce the revert
+        // limit is over the maxSupply to induce the revert
 
         // Try and mint more..
         vm.deal(nftMinter, 20_000 ether);
@@ -486,6 +523,28 @@ contract TestMintBurnAndTransferERC721_Erc20 is
         }
         collection.mint(mintData.amountToMint);
         vm.stopPrank();
+    }
+
+    function _updatePublicMintValues(
+        MintData memory mintData,
+        bytes4 _errorSelector,
+        uint256 _startDate,
+        uint256 _endDate
+    ) internal {
+        IERC721Basic collection = IERC721Basic(mintData.collectionAddress);
+        vm.startPrank(mintData.nftMinter, mintData.nftMinter);
+        if (_errorSelector != 0x00000000) {
+            vm.expectRevert(_errorSelector);
+        }
+        collection.setPublicMintValues(
+            IERC721Basic.PublicMintValues({
+                publicMintState: true,
+                price: nftPublicMintPrice,
+                limit: mintData.amountToMint,
+                startDate: _startDate,
+                endDate: _endDate
+            })
+        );
     }
 
     function _checkMint(MintData memory mintData) internal {

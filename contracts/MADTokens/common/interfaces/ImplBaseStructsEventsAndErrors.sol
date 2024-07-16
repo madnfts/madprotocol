@@ -2,22 +2,15 @@
 
 pragma solidity 0.8.22;
 
-uint256 constant _BASE_URI_LOCKED =
-    0x8f0a54da7ee5bbe880036935fcef1dc9f0568cbde68bcbd5e1eedd56df052ca0;
+interface ImplBaseStructsEventsAndErrors {
+    struct PublicMintValues {
+        bool publicMintState;
+        uint256 price;
+        uint256 limit;
+        uint256 startDate;
+        uint256 endDate;
+    }
 
-uint256 constant _PUBLIC_MINT_STATE_SET =
-    0x2f3b349e2956d565a50532dcc875a49be7f558411642122cf5e50ca9b4bb14e6;
-
-uint256 constant _BASE_URI_SET =
-    0xf9c7803e94e0d3c02900d8a90893a6d5e90dd04d32a4cfe825520f82bf9f32f6;
-
-uint256 constant _ROYALTY_FEE_SET =
-    0xc36422dcc77a5c93a5c48743078f8130c9fcc2a0ff893904ee62a3565688117c;
-
-uint256 constant _ROYALTY_RECIPIENT_SET =
-    0x2a5a1009e36beb67c3a1ada61dd1343d7e9ec62c70965492fbaa06234f8316b1;
-
-interface ImplBaseEventsAndErrors {
     ////////////////////////////////////////////////////////////////
     //                           EVENTS                           //
     ////////////////////////////////////////////////////////////////
@@ -70,4 +63,8 @@ interface ImplBaseEventsAndErrors {
     error ZeroAmount();
     /// @dev 0xfe37c8dc
     error MaxLoopAmountExceeded();
+    /// @dev 0xe4719bd6
+    error PublicMintDatesOutOfRange();
+    /// @dev 0xc0caac2c
+    error InvalidPublicMintDates();
 }

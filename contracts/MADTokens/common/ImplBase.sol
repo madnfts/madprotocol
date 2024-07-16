@@ -8,18 +8,12 @@ import { Strings } from "contracts/lib/utils/Strings.sol";
 import { FactoryTypes } from "contracts/Shared/FactoryTypes.sol";
 import { PaymentManager } from "contracts/MADTokens/common/PaymentManager.sol";
 // solhint-disable-next-line
-import {
-    ImplBaseEventsAndErrors,
-    _BASE_URI_LOCKED,
-    _PUBLIC_MINT_STATE_SET,
-    _BASE_URI_SET,
-    _ROYALTY_FEE_SET,
-    _ROYALTY_RECIPIENT_SET
-} from "contracts/MADTokens/common/interfaces/ImplBaseEventsAndErrors.sol";
+import { ImplBaseStructsEventsAndErrors } from
+    "contracts/MADTokens/common/interfaces/ImplBaseStructsEventsAndErrors.sol";
 
 abstract contract ImplBase is
     ERC2981,
-    ImplBaseEventsAndErrors,
+    ImplBaseStructsEventsAndErrors,
     TwoFactor,
     PaymentManager
 {
@@ -29,7 +23,8 @@ abstract contract ImplBase is
     uint256 internal constant _SR_UPPERBITS = (1 << 128) - 1;
     uint256 internal constant _MAXSUPPLY_BOUND = 1 << 32;
     uint256 internal constant _MINTCOUNT_BITPOS = 128;
-    uint256 internal constant _MAX_LOOP_AMOUNT = 10_000;
+    uint256 internal constant _MAX_LOOP_AMOUNT = 10_000; // Should be configured
+        // to each chain that is deployed to..
 
     using Strings for uint256;
 

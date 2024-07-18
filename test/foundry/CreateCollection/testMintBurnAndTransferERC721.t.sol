@@ -142,8 +142,12 @@ contract TestMintBurnAndTransferERC721 is CreateCollectionHelpers, Enums {
         MintData memory mintData = _setupMint(
             nftMinter, nftReceiver, nftPublicMintPrice, _amountToMint
         );
-
+        // end date 0
         _updatePublicMintValues(mintData, 0xc0caac2c, block.timestamp, 0);
+        // start date > end date
+        _updatePublicMintValues(
+            mintData, 0xc0caac2c, block.timestamp + 100, block.timestamp
+        );
     }
 
     function testPublicMint_FreeMintZeroPrice() public {

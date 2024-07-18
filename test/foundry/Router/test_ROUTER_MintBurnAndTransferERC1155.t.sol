@@ -78,7 +78,15 @@ contract TestROUTERMintBurnAndTransferERC1155 is
             defaultTokenId
         );
 
-        _doPublicMint(mintData, true, 0, _amountToMint, defaultTokenId);
+        _doPublicMint(
+            mintData,
+            true,
+            0,
+            _amountToMint,
+            defaultTokenId,
+            block.timestamp,
+            block.timestamp + 100
+        );
 
         _checkMint(mintData, defaultTokenId);
     }
@@ -106,7 +114,15 @@ contract TestROUTERMintBurnAndTransferERC1155 is
                 i + 1
             );
 
-            _doPublicMint(mintData, true, 0, _amountToMint, i + 1);
+            _doPublicMint(
+                mintData,
+                true,
+                0,
+                _amountToMint,
+                i + 1,
+                block.timestamp,
+                block.timestamp + 100
+            );
 
             _checkMint(mintData, i + 1);
         }
@@ -130,9 +146,96 @@ contract TestROUTERMintBurnAndTransferERC1155 is
         MintData memory mintData = _setupMint(
             nftMinter, _nftReceiver, nftPublicMintPrice, _amountToMint, _tokenId
         );
-        _doPublicMint(mintData, true, 0, _amountToMint, _tokenId);
+        _doPublicMint(
+            mintData,
+            true,
+            0,
+            _amountToMint,
+            _tokenId,
+            block.timestamp,
+            block.timestamp + 100
+        );
 
         _checkMint(mintData, _tokenId);
+    }
+
+    function test_ROUTER_SetPublicMintValues_DefaultFuzzy(
+        uint256 x,
+        uint256 _tokenId
+    ) public {
+        uint128 _amountToMint = 10;
+        address _nftReceiver =
+            makeAddr(string(abi.encodePacked("NFTReceiver", x)));
+        MintData memory mintData = _setupMint(
+            nftMinter, _nftReceiver, nftPublicMintPrice, _amountToMint, _tokenId
+        );
+
+        _updatePublicMintValues(
+            _tokenId, mintData, 0, block.timestamp, block.timestamp + 100
+        );
+        _doPublicMint(
+            mintData,
+            true,
+            0,
+            _amountToMint,
+            _tokenId,
+            block.timestamp,
+            block.timestamp + 100
+        );
+        _checkMint(mintData, _tokenId);
+    }
+
+    function test_ROUTER_SetPublicMintValues_PublicMintDatesOutOfRange()
+        public
+    {
+        uint128 _amountToMint = 1;
+        MintData memory mintData = _setupMint(
+            nftMinter,
+            nftReceiver,
+            nftPublicMintPrice,
+            _amountToMint,
+            defaultTokenId
+        );
+        uint256 _start = block.timestamp;
+        uint256 _end = block.timestamp + 100;
+        _updatePublicMintValues(defaultTokenId, mintData, 0, _start, _end);
+        vm.warp(block.timestamp + 1000);
+        _doPublicMint(
+            mintData,
+            true,
+            0xe4719bd6,
+            _amountToMint,
+            defaultTokenId,
+            _start,
+            _end
+        );
+    }
+
+    function test_ROUTER_SetPublicMintValues_InvalidPublicMintDatesZeroEndDate()
+        public
+    {
+        uint128 _amountToMint = 1;
+        MintData memory mintData = _setupMint(
+            nftMinter,
+            nftReceiver,
+            nftPublicMintPrice,
+            _amountToMint,
+            defaultTokenId
+        );
+
+        // end date 0
+        _updatePublicMintValues(
+            defaultTokenId, mintData, 0xc0caac2c, block.timestamp, 0
+        );
+
+        // start date > end date
+        _updatePublicMintValues(
+            defaultTokenId,
+            mintData,
+            0xc0caac2c,
+            block.timestamp + 100,
+            block.timestamp
+        );
     }
 
     function test_ROUTER_PublicMint_FreeMintZeroPrice() public {
@@ -146,7 +249,15 @@ contract TestROUTERMintBurnAndTransferERC1155 is
             defaultTokenId
         );
 
-        _doPublicMint(mintData, true, 0, _amountToMint, defaultTokenId);
+        _doPublicMint(
+            mintData,
+            true,
+            0,
+            _amountToMint,
+            defaultTokenId,
+            block.timestamp,
+            block.timestamp + 100
+        );
 
         _checkMint(mintData, defaultTokenId);
     }
@@ -166,7 +277,9 @@ contract TestROUTERMintBurnAndTransferERC1155 is
             false,
             0x2d0a3f8e, // error PublicMintClosed();
             _amountToMint,
-            defaultTokenId
+            defaultTokenId,
+            block.timestamp,
+            block.timestamp + 100
         );
     }
 
@@ -188,7 +301,9 @@ contract TestROUTERMintBurnAndTransferERC1155 is
             true,
             0x68e26200, // error IncorrectPriceAmount();
             _amountToMint,
-            _tokenId
+            _tokenId,
+            block.timestamp,
+            block.timestamp + 100
         );
     }
 
@@ -298,11 +413,25 @@ contract TestROUTERMintBurnAndTransferERC1155 is
             _amountToMint,
             defaultTokenId
         );
-        _doPublicMint(mintData, true, 0, _amountToMint + 10, defaultTokenId);
+        _doPublicMint(
+            mintData,
+            true,
+            0,
+            _amountToMint + 10,
+            defaultTokenId,
+            block.timestamp,
+            block.timestamp + 100
+        );
 
         // Try and mint more..
         _doPublicMint(
-            mintData, true, 0xd05cb609, _amountToMint * 2 + 10, defaultTokenId
+            mintData,
+            true,
+            0xd05cb609,
+            _amountToMint * 2 + 10,
+            defaultTokenId,
+            block.timestamp,
+            block.timestamp + 100
         ); // error
             // MaxSupplyReached();
     }
@@ -379,7 +508,9 @@ contract TestROUTERMintBurnAndTransferERC1155 is
         bool _mintState,
         bytes4 _errorSelector,
         uint256 _mintLimit,
-        uint256 tokenId
+        uint256 tokenId,
+        uint256 _startDate,
+        uint256 _endDate
     ) internal {
         IERC1155Basic collection = IERC1155Basic(mintData.collectionAddress);
         uint256 _madMintFee = _deployedContracts.router.feeMint();
@@ -391,6 +522,11 @@ contract TestROUTERMintBurnAndTransferERC1155 is
                 tokenId, mintData.nftPublicMintPrice + 3
             );
         }
+
+        if (_errorSelector != 0xe4719bd6) {
+            collection.setPublicMintDates(tokenId, _startDate, _endDate);
+        }
+
         // Mint 1 token to set the max supply.
         bool maxSupplyIsSet = collection.maxSupply(tokenId) > 0;
         if (!maxSupplyIsSet) {
@@ -445,6 +581,42 @@ contract TestROUTERMintBurnAndTransferERC1155 is
             mintData.collectionAddress, tokenId, mintData.amountToMint
         );
         vm.stopPrank();
+    }
+
+    function _updatePublicMintValues(
+        uint256 tokenId,
+        MintData memory mintData,
+        bytes4 _errorSelector,
+        uint256 _startDate,
+        uint256 _endDate
+    ) internal {
+        vm.startPrank(mintData.nftMinter, mintData.nftMinter);
+        IERC1155Basic collection = IERC1155Basic(mintData.collectionAddress);
+        uint256 _madMintFee = _deployedContracts.router.feeMint();
+        // Mint 1 token to set the max supply.
+        bool maxSupplyIsSet = collection.maxSupply(tokenId) > 0;
+        if (!maxSupplyIsSet) {
+            _deployedContracts.router.mintTo{ value: _madMintFee }(
+                mintData.collectionAddress,
+                mintData.nftMinter,
+                tokenId,
+                1,
+                mintData.amountToMint + 1
+            );
+        }
+        if (_errorSelector != 0x00000000) {
+            vm.expectRevert(_errorSelector);
+        }
+        collection.setPublicMintValues(
+            tokenId,
+            IERC1155Basic.PublicMintValues({
+                publicMintState: true,
+                price: nftPublicMintPrice,
+                limit: mintData.amountToMint,
+                startDate: _startDate,
+                endDate: _endDate
+            })
+        );
     }
 
     function _checkMint(MintData memory mintData, uint256 tokenId) internal {

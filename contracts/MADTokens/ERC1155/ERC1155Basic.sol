@@ -220,6 +220,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
         address _minter
     ) private {
         _publicMinted(_id, _minter, amount);
+        _publicMintDatesInRange(_id);
         _preparePublicMint(
             uint256(amount),
             _minter,
@@ -687,6 +688,18 @@ contract ERC1155Basic is ERC1155, ImplBase {
         ) {
             revert InvalidPublicMintDates();
         }
+    }
+
+    /**
+     * @notice Public mint open, a private view function.
+     * @dev Reverts if the public mint is not open.
+     * @custom:signature _publicMintDatesInRange()
+     * @custom:selector 0xa410bed6
+     */
+    function _publicMintDatesInRange(uint256 _id) private view {
+        bool isOpen = block.timestamp >= publicMintValues[_id].startDate
+            && block.timestamp <= publicMintValues[_id].endDate;
+        if (!isOpen) revert PublicMintDatesOutOfRange();
     }
 
     /**

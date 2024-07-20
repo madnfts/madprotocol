@@ -27,8 +27,8 @@ contract ERC721Basic is ERC721, ImplBase, IERC721EventsStructsAndErrors {
         publicMintState: false,
         price: 0,
         limit: 10,
-        startDate: 0,
-        endDate: type(uint256).max
+        startDate: block.timestamp,
+        endDate: block.timestamp + 28 days
     });
 
     /// Current amount minted by address

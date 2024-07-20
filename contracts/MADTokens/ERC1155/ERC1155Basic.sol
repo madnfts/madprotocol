@@ -9,43 +9,12 @@ import {
     FactoryTypes
 } from "contracts/MADTokens/common/ImplBase.sol";
 import { ERC1155 } from "contracts/lib/tokens/ERC1155/Base/ERC1155.sol";
+import { IERC1155EventsStructsAndErrors } from
+    "contracts/MADTokens/common/interfaces/IERC1155EventsStructsAndErrors.sol";
 
-contract ERC1155Basic is ERC1155, ImplBase {
+contract ERC1155Basic is ERC1155, ImplBase, IERC1155EventsStructsAndErrors {
     using FactoryTypes for FactoryTypes.CollectionArgs;
     using Strings for uint256;
-
-    /// @dev 0x1a3ed2ab
-    error MaxSupplyNotSet(uint256 _id);
-
-    error ZeroArrayLength();
-
-    event PublicMintStateSet(uint256 indexed _id, bool _publicMintState);
-    event BatchPublicMintStateSet(
-        uint256[] indexed _ids, bool[] _publicMintStates
-    );
-    event MaxSupplySet(uint256 indexed _id, uint256 _maxSupply);
-    event BatchMaxSupplySet(uint256[] indexed _ids, uint256[] _maxSupplies);
-
-    event PublicMintLimitSet(uint256 indexed _id, uint256 _limit);
-    event BatchPublicMintLimitSet(uint256[] indexed _ids, uint256[] _limits);
-
-    event PublicMintPriceSet(uint256 indexed _id, uint256 _price);
-    event BatchPublicMintPriceSet(uint256[] indexed _ids, uint256[] _prices);
-
-    event PublicMintDatesSet(
-        uint256 indexed _id, uint256 _startDate, uint256 _endDate
-    );
-    event BatchPublicMintDatesSet(
-        uint256[] indexed _ids, uint256[] _startDates, uint256[] _endDates
-    );
-
-    event PublicMintValuesSet(
-        uint256 indexed _id, PublicMintValues _publicMintValues
-    );
-
-    event BatchPublicMintValuesSet(
-        uint256[] indexed _ids, PublicMintValues[] _publicMintValues
-    );
 
     ////////////////////////////////////////////////////////////////
     //                           STORAGE                          //
@@ -691,8 +660,8 @@ contract ERC1155Basic is ERC1155, ImplBase {
     }
 
     /**
-     * @notice Public mint open, a private view function.
-     * @dev Reverts if the public mint is not open.
+     * @notice Public mint dates in range, a private view function.
+     * @dev Reverts if the public mint dates are not in range.
      * @custom:signature _publicMintDatesInRange()
      * @custom:selector 0xa410bed6
      */
@@ -913,6 +882,7 @@ contract ERC1155Basic is ERC1155, ImplBase {
         uint256[] memory amounts
     ) internal virtual override(ERC1155) {
         _loopArrayChecks(ids.length, amounts.length);
+
         assembly {
             let idsLen := mload(ids)
             let iLoc := add(ids, 32)

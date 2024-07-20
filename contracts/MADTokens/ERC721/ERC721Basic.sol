@@ -9,9 +9,11 @@ import {
     FactoryTypes
 } from "contracts/MADTokens/common/ImplBase.sol";
 import { ERC721 } from "contracts/lib/tokens/ERC721/Base/ERC721.sol";
+import { IERC721EventsStructsAndErrors } from
+    "contracts/MADTokens/common/interfaces/IERC721EventsStructsAndErrors.sol";
 
 //prettier-ignore
-contract ERC721Basic is ERC721, ImplBase {
+contract ERC721Basic is ERC721, ImplBase, IERC721EventsStructsAndErrors {
     bytes32 private constant _NAME_SLOT = /*  */
         0x897572a87d0174092695c4d573af60ba2f538ab1e5fe57428eebc5ce7dad72bb;
 
@@ -31,18 +33,6 @@ contract ERC721Basic is ERC721, ImplBase {
 
     /// Current amount minted by address
     mapping(address minter => uint256 minted) public mintedByAddress;
-
-    event PublicMintLimitSet(uint256 limit);
-    event PublicMintStateSet(bool newPublicState);
-    event PublicMintPriceSet(uint256 newPrice);
-    event PublicMintDatesSet(uint256 newStartDate, uint256 newEndDate);
-    event PublicMintValuesSet(
-        bool newPublicMintState,
-        uint256 newPrice,
-        uint256 newLimit,
-        uint256 newStartDate,
-        uint256 newEndDate
-    );
 
     ////////////////////////////////////////////////////////////////
     //                          IMMUTABLE                         //

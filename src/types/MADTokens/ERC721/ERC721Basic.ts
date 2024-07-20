@@ -62,6 +62,30 @@ export declare namespace FactoryTypes {
   };
 }
 
+export declare namespace IPublicMint {
+  export type PublicMintValuesStruct = {
+    publicMintState: boolean;
+    price: BigNumberish;
+    limit: BigNumberish;
+    startDate: BigNumberish;
+    endDate: BigNumberish;
+  };
+
+  export type PublicMintValuesStructOutput = [
+    publicMintState: boolean,
+    price: bigint,
+    limit: bigint,
+    startDate: bigint,
+    endDate: bigint
+  ] & {
+    publicMintState: boolean;
+    price: bigint;
+    limit: bigint;
+    startDate: bigint;
+    endDate: bigint;
+  };
+}
+
 export interface ERC721BasicInterface extends Interface {
   getFunction(
     nameOrSignature:
@@ -88,8 +112,11 @@ export interface ERC721BasicInterface extends Interface {
       | "name"
       | "ownerOf"
       | "price"
+      | "publicMintDates"
       | "publicMintLimit"
+      | "publicMintPrice"
       | "publicMintState"
+      | "publicMintValues"
       | "routerHasAuthority"
       | "royaltyInfo"
       | "safeTransferFrom(address,address,uint256)"
@@ -98,8 +125,11 @@ export interface ERC721BasicInterface extends Interface {
       | "setBaseURI"
       | "setBaseURILock"
       | "setOwnership"
+      | "setPublicMintDates"
       | "setPublicMintLimit"
+      | "setPublicMintPrice"
       | "setPublicMintState"
+      | "setPublicMintValues"
       | "setRouterHasAuthority"
       | "splitter"
       | "supportsInterface"
@@ -119,8 +149,11 @@ export interface ERC721BasicInterface extends Interface {
       | "BaseURILocked"
       | "BaseURISet"
       | "OwnerUpdated"
+      | "PublicMintDatesSet"
       | "PublicMintLimitSet"
+      | "PublicMintPriceSet"
       | "PublicMintStateSet"
+      | "PublicMintValuesSet"
       | "RouterSet"
       | "RoyaltyFeeSet"
       | "RoyaltyRecipientSet"
@@ -193,11 +226,23 @@ export interface ERC721BasicInterface extends Interface {
   ): string;
   encodeFunctionData(functionFragment: "price", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "publicMintDates",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "publicMintLimit",
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "publicMintPrice",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "publicMintState",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "publicMintValues",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -230,12 +275,24 @@ export interface ERC721BasicInterface extends Interface {
     values: [AddressLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "setPublicMintDates",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setPublicMintLimit",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setPublicMintPrice",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setPublicMintState",
     values: [boolean]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setPublicMintValues",
+    values: [IPublicMint.PublicMintValuesStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "setRouterHasAuthority",
@@ -314,11 +371,23 @@ export interface ERC721BasicInterface extends Interface {
   decodeFunctionResult(functionFragment: "ownerOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "price", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "publicMintDates",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "publicMintLimit",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "publicMintPrice",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "publicMintState",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "publicMintValues",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -351,11 +420,23 @@ export interface ERC721BasicInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setPublicMintDates",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setPublicMintLimit",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setPublicMintPrice",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setPublicMintState",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setPublicMintValues",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -462,6 +543,22 @@ export namespace OwnerUpdatedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
+export namespace PublicMintDatesSetEvent {
+  export type InputTuple = [
+    newStartDate: BigNumberish,
+    newEndDate: BigNumberish
+  ];
+  export type OutputTuple = [newStartDate: bigint, newEndDate: bigint];
+  export interface OutputObject {
+    newStartDate: bigint;
+    newEndDate: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
 export namespace PublicMintLimitSetEvent {
   export type InputTuple = [limit: BigNumberish];
   export type OutputTuple = [limit: bigint];
@@ -474,11 +571,51 @@ export namespace PublicMintLimitSetEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
+export namespace PublicMintPriceSetEvent {
+  export type InputTuple = [newPrice: BigNumberish];
+  export type OutputTuple = [newPrice: bigint];
+  export interface OutputObject {
+    newPrice: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
 export namespace PublicMintStateSetEvent {
   export type InputTuple = [newPublicState: boolean];
   export type OutputTuple = [newPublicState: boolean];
   export interface OutputObject {
     newPublicState: boolean;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace PublicMintValuesSetEvent {
+  export type InputTuple = [
+    newPublicMintState: boolean,
+    newPrice: BigNumberish,
+    newLimit: BigNumberish,
+    newStartDate: BigNumberish,
+    newEndDate: BigNumberish
+  ];
+  export type OutputTuple = [
+    newPublicMintState: boolean,
+    newPrice: bigint,
+    newLimit: bigint,
+    newStartDate: bigint,
+    newEndDate: bigint
+  ];
+  export interface OutputObject {
+    newPublicMintState: boolean;
+    newPrice: bigint;
+    newLimit: bigint;
+    newStartDate: bigint;
+    newEndDate: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -649,9 +786,27 @@ export interface ERC721Basic extends BaseContract {
 
   price: TypedContractMethod<[], [bigint], "view">;
 
+  publicMintDates: TypedContractMethod<[], [[bigint, bigint]], "view">;
+
   publicMintLimit: TypedContractMethod<[], [bigint], "view">;
 
+  publicMintPrice: TypedContractMethod<[], [bigint], "view">;
+
   publicMintState: TypedContractMethod<[], [boolean], "view">;
+
+  publicMintValues: TypedContractMethod<
+    [],
+    [
+      [boolean, bigint, bigint, bigint, bigint] & {
+        publicMintState: boolean;
+        price: bigint;
+        limit: bigint;
+        startDate: bigint;
+        endDate: bigint;
+      }
+    ],
+    "view"
+  >;
 
   routerHasAuthority: TypedContractMethod<[], [boolean], "view">;
 
@@ -689,14 +844,32 @@ export interface ERC721Basic extends BaseContract {
     "nonpayable"
   >;
 
+  setPublicMintDates: TypedContractMethod<
+    [_startDate: BigNumberish, _endDate: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+
   setPublicMintLimit: TypedContractMethod<
     [_limit: BigNumberish],
     [void],
     "nonpayable"
   >;
 
+  setPublicMintPrice: TypedContractMethod<
+    [_price: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+
   setPublicMintState: TypedContractMethod<
     [_publicMintState: boolean],
+    [void],
+    "nonpayable"
+  >;
+
+  setPublicMintValues: TypedContractMethod<
+    [_values: IPublicMint.PublicMintValuesStruct],
     [void],
     "nonpayable"
   >;
@@ -827,11 +1000,32 @@ export interface ERC721Basic extends BaseContract {
     nameOrSignature: "price"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
+    nameOrSignature: "publicMintDates"
+  ): TypedContractMethod<[], [[bigint, bigint]], "view">;
+  getFunction(
     nameOrSignature: "publicMintLimit"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "publicMintPrice"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "publicMintState"
   ): TypedContractMethod<[], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "publicMintValues"
+  ): TypedContractMethod<
+    [],
+    [
+      [boolean, bigint, bigint, bigint, bigint] & {
+        publicMintState: boolean;
+        price: bigint;
+        limit: bigint;
+        startDate: bigint;
+        endDate: bigint;
+      }
+    ],
+    "view"
+  >;
   getFunction(
     nameOrSignature: "routerHasAuthority"
   ): TypedContractMethod<[], [boolean], "view">;
@@ -873,11 +1067,28 @@ export interface ERC721Basic extends BaseContract {
     nameOrSignature: "setOwnership"
   ): TypedContractMethod<[_owner: AddressLike], [void], "nonpayable">;
   getFunction(
+    nameOrSignature: "setPublicMintDates"
+  ): TypedContractMethod<
+    [_startDate: BigNumberish, _endDate: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
     nameOrSignature: "setPublicMintLimit"
   ): TypedContractMethod<[_limit: BigNumberish], [void], "nonpayable">;
   getFunction(
+    nameOrSignature: "setPublicMintPrice"
+  ): TypedContractMethod<[_price: BigNumberish], [void], "nonpayable">;
+  getFunction(
     nameOrSignature: "setPublicMintState"
   ): TypedContractMethod<[_publicMintState: boolean], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setPublicMintValues"
+  ): TypedContractMethod<
+    [_values: IPublicMint.PublicMintValuesStruct],
+    [void],
+    "nonpayable"
+  >;
   getFunction(
     nameOrSignature: "setRouterHasAuthority"
   ): TypedContractMethod<[_hasAuthority: boolean], [void], "nonpayable">;
@@ -949,6 +1160,13 @@ export interface ERC721Basic extends BaseContract {
     OwnerUpdatedEvent.OutputObject
   >;
   getEvent(
+    key: "PublicMintDatesSet"
+  ): TypedContractEvent<
+    PublicMintDatesSetEvent.InputTuple,
+    PublicMintDatesSetEvent.OutputTuple,
+    PublicMintDatesSetEvent.OutputObject
+  >;
+  getEvent(
     key: "PublicMintLimitSet"
   ): TypedContractEvent<
     PublicMintLimitSetEvent.InputTuple,
@@ -956,11 +1174,25 @@ export interface ERC721Basic extends BaseContract {
     PublicMintLimitSetEvent.OutputObject
   >;
   getEvent(
+    key: "PublicMintPriceSet"
+  ): TypedContractEvent<
+    PublicMintPriceSetEvent.InputTuple,
+    PublicMintPriceSetEvent.OutputTuple,
+    PublicMintPriceSetEvent.OutputObject
+  >;
+  getEvent(
     key: "PublicMintStateSet"
   ): TypedContractEvent<
     PublicMintStateSetEvent.InputTuple,
     PublicMintStateSetEvent.OutputTuple,
     PublicMintStateSetEvent.OutputObject
+  >;
+  getEvent(
+    key: "PublicMintValuesSet"
+  ): TypedContractEvent<
+    PublicMintValuesSetEvent.InputTuple,
+    PublicMintValuesSetEvent.OutputTuple,
+    PublicMintValuesSetEvent.OutputObject
   >;
   getEvent(
     key: "RouterSet"
@@ -1047,6 +1279,17 @@ export interface ERC721Basic extends BaseContract {
       OwnerUpdatedEvent.OutputObject
     >;
 
+    "PublicMintDatesSet(uint256,uint256)": TypedContractEvent<
+      PublicMintDatesSetEvent.InputTuple,
+      PublicMintDatesSetEvent.OutputTuple,
+      PublicMintDatesSetEvent.OutputObject
+    >;
+    PublicMintDatesSet: TypedContractEvent<
+      PublicMintDatesSetEvent.InputTuple,
+      PublicMintDatesSetEvent.OutputTuple,
+      PublicMintDatesSetEvent.OutputObject
+    >;
+
     "PublicMintLimitSet(uint256)": TypedContractEvent<
       PublicMintLimitSetEvent.InputTuple,
       PublicMintLimitSetEvent.OutputTuple,
@@ -1058,6 +1301,17 @@ export interface ERC721Basic extends BaseContract {
       PublicMintLimitSetEvent.OutputObject
     >;
 
+    "PublicMintPriceSet(uint256)": TypedContractEvent<
+      PublicMintPriceSetEvent.InputTuple,
+      PublicMintPriceSetEvent.OutputTuple,
+      PublicMintPriceSetEvent.OutputObject
+    >;
+    PublicMintPriceSet: TypedContractEvent<
+      PublicMintPriceSetEvent.InputTuple,
+      PublicMintPriceSetEvent.OutputTuple,
+      PublicMintPriceSetEvent.OutputObject
+    >;
+
     "PublicMintStateSet(bool)": TypedContractEvent<
       PublicMintStateSetEvent.InputTuple,
       PublicMintStateSetEvent.OutputTuple,
@@ -1067,6 +1321,17 @@ export interface ERC721Basic extends BaseContract {
       PublicMintStateSetEvent.InputTuple,
       PublicMintStateSetEvent.OutputTuple,
       PublicMintStateSetEvent.OutputObject
+    >;
+
+    "PublicMintValuesSet(bool,uint256,uint256,uint256,uint256)": TypedContractEvent<
+      PublicMintValuesSetEvent.InputTuple,
+      PublicMintValuesSetEvent.OutputTuple,
+      PublicMintValuesSetEvent.OutputObject
+    >;
+    PublicMintValuesSet: TypedContractEvent<
+      PublicMintValuesSetEvent.InputTuple,
+      PublicMintValuesSetEvent.OutputTuple,
+      PublicMintValuesSetEvent.OutputObject
     >;
 
     "RouterSet(address)": TypedContractEvent<

@@ -57,8 +57,14 @@ export { SafeTransferLib__factory } from "./factories/lib/utils/SafeTransferLib_
 export { MAD__factory } from "./factories/MAD__factory";
 export type { ImplBase } from "./MADTokens/common/ImplBase";
 export { ImplBase__factory } from "./factories/MADTokens/common/ImplBase__factory";
+export type { IERC1155EventsStructsAndErrors } from "./MADTokens/common/interfaces/IERC1155EventsStructsAndErrors";
+export { IERC1155EventsStructsAndErrors__factory } from "./factories/MADTokens/common/interfaces/IERC1155EventsStructsAndErrors__factory";
+export type { IERC721EventsStructsAndErrors } from "./MADTokens/common/interfaces/IERC721EventsStructsAndErrors";
+export { IERC721EventsStructsAndErrors__factory } from "./factories/MADTokens/common/interfaces/IERC721EventsStructsAndErrors__factory";
 export type { ImplBaseEventsAndErrors } from "./MADTokens/common/interfaces/ImplBaseEventsAndErrors";
 export { ImplBaseEventsAndErrors__factory } from "./factories/MADTokens/common/interfaces/ImplBaseEventsAndErrors__factory";
+export type { ImplBaseStructsEventsAndErrors } from "./MADTokens/common/interfaces/ImplBaseStructsEventsAndErrors";
+export { ImplBaseStructsEventsAndErrors__factory } from "./factories/MADTokens/common/interfaces/ImplBaseStructsEventsAndErrors__factory";
 export type { PaymentManager } from "./MADTokens/common/PaymentManager";
 export { PaymentManager__factory } from "./factories/MADTokens/common/PaymentManager__factory";
 export type { ERC1155Basic } from "./MADTokens/ERC1155/ERC1155Basic";

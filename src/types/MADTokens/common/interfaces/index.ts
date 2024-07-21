@@ -3,5 +3,4 @@
 /* eslint-disable */
 export type { IERC1155EventsStructsAndErrors } from "./IERC1155EventsStructsAndErrors";
 export type { IERC721EventsStructsAndErrors } from "./IERC721EventsStructsAndErrors";
-export type { ImplBaseEventsAndErrors } from "./ImplBaseEventsAndErrors";
 export type { ImplBaseStructsEventsAndErrors } from "./ImplBaseStructsEventsAndErrors";

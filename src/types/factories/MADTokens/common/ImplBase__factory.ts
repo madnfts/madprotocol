@@ -21,6 +21,11 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "InvalidPublicMintDates",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "LoopOverflow",
     type: "error",
   },
@@ -67,6 +72,11 @@ const _abi = [
   {
     inputs: [],
     name: "PublicMintClosed",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "PublicMintDatesOutOfRange",
     type: "error",
   },
   {

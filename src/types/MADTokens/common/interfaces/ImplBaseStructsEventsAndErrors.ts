@@ -20,7 +20,7 @@ import type {
   TypedListener,
 } from "../../../common";
 
-export interface ImplBaseEventsAndErrorsInterface extends Interface {
+export interface ImplBaseStructsEventsAndErrorsInterface extends Interface {
   getEvent(
     nameOrSignatureOrTopic:
       | "BaseURILocked"
@@ -78,11 +78,11 @@ export namespace RoyaltyRecipientSetEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export interface ImplBaseEventsAndErrors extends BaseContract {
-  connect(runner?: ContractRunner | null): ImplBaseEventsAndErrors;
+export interface ImplBaseStructsEventsAndErrors extends BaseContract {
+  connect(runner?: ContractRunner | null): ImplBaseStructsEventsAndErrors;
   waitForDeployment(): Promise<this>;
 
-  interface: ImplBaseEventsAndErrorsInterface;
+  interface: ImplBaseStructsEventsAndErrorsInterface;
 
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,

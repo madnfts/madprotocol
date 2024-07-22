@@ -98,9 +98,17 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ImplBase__factory>;
     getContractFactory(
-      name: "ImplBaseEventsAndErrors",
+      name: "IERC1155EventsStructsAndErrors",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ImplBaseEventsAndErrors__factory>;
+    ): Promise<Contracts.IERC1155EventsStructsAndErrors__factory>;
+    getContractFactory(
+      name: "IERC721EventsStructsAndErrors",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC721EventsStructsAndErrors__factory>;
+    getContractFactory(
+      name: "ImplBaseStructsEventsAndErrors",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ImplBaseStructsEventsAndErrors__factory>;
     getContractFactory(
       name: "PaymentManager",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -145,10 +153,6 @@ declare module "hardhat/types/runtime" {
       name: "MADBase",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MADBase__factory>;
-    getContractFactory(
-      name: "SimpleTest",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.SimpleTest__factory>;
     getContractFactory(
       name: "SplitterEventsAndErrors",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -264,10 +268,20 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ImplBase>;
     getContractAt(
-      name: "ImplBaseEventsAndErrors",
+      name: "IERC1155EventsStructsAndErrors",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.ImplBaseEventsAndErrors>;
+    ): Promise<Contracts.IERC1155EventsStructsAndErrors>;
+    getContractAt(
+      name: "IERC721EventsStructsAndErrors",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC721EventsStructsAndErrors>;
+    getContractAt(
+      name: "ImplBaseStructsEventsAndErrors",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ImplBaseStructsEventsAndErrors>;
     getContractAt(
       name: "PaymentManager",
       address: string | ethers.Addressable,
@@ -323,11 +337,6 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.MADBase>;
-    getContractAt(
-      name: "SimpleTest",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.SimpleTest>;
     getContractAt(
       name: "SplitterEventsAndErrors",
       address: string | ethers.Addressable,
@@ -424,9 +433,17 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ImplBase>;
     deployContract(
-      name: "ImplBaseEventsAndErrors",
+      name: "IERC1155EventsStructsAndErrors",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ImplBaseEventsAndErrors>;
+    ): Promise<Contracts.IERC1155EventsStructsAndErrors>;
+    deployContract(
+      name: "IERC721EventsStructsAndErrors",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IERC721EventsStructsAndErrors>;
+    deployContract(
+      name: "ImplBaseStructsEventsAndErrors",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ImplBaseStructsEventsAndErrors>;
     deployContract(
       name: "PaymentManager",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -471,10 +488,6 @@ declare module "hardhat/types/runtime" {
       name: "MADBase",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.MADBase>;
-    deployContract(
-      name: "SimpleTest",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.SimpleTest>;
     deployContract(
       name: "SplitterEventsAndErrors",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -590,10 +603,20 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ImplBase>;
     deployContract(
-      name: "ImplBaseEventsAndErrors",
+      name: "IERC1155EventsStructsAndErrors",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ImplBaseEventsAndErrors>;
+    ): Promise<Contracts.IERC1155EventsStructsAndErrors>;
+    deployContract(
+      name: "IERC721EventsStructsAndErrors",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IERC721EventsStructsAndErrors>;
+    deployContract(
+      name: "ImplBaseStructsEventsAndErrors",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ImplBaseStructsEventsAndErrors>;
     deployContract(
       name: "PaymentManager",
       args: any[],
@@ -649,11 +672,6 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.MADBase>;
-    deployContract(
-      name: "SimpleTest",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.SimpleTest>;
     deployContract(
       name: "SplitterEventsAndErrors",
       args: any[],

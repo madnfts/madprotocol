@@ -4,14 +4,19 @@
 
 import { Contract, Interface, type ContractRunner } from "ethers";
 import type {
-  ImplBaseEventsAndErrors,
-  ImplBaseEventsAndErrorsInterface,
-} from "../../../../MADTokens/common/interfaces/ImplBaseEventsAndErrors";
+  ImplBaseStructsEventsAndErrors,
+  ImplBaseStructsEventsAndErrorsInterface,
+} from "../../../../MADTokens/common/interfaces/ImplBaseStructsEventsAndErrors";
 
 const _abi = [
   {
     inputs: [],
     name: "DecOverflow",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "InvalidPublicMintDates",
     type: "error",
   },
   {
@@ -52,6 +57,11 @@ const _abi = [
   {
     inputs: [],
     name: "PublicMintClosed",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "PublicMintDatesOutOfRange",
     type: "error",
   },
   {
@@ -143,19 +153,19 @@ const _abi = [
   },
 ] as const;
 
-export class ImplBaseEventsAndErrors__factory {
+export class ImplBaseStructsEventsAndErrors__factory {
   static readonly abi = _abi;
-  static createInterface(): ImplBaseEventsAndErrorsInterface {
-    return new Interface(_abi) as ImplBaseEventsAndErrorsInterface;
+  static createInterface(): ImplBaseStructsEventsAndErrorsInterface {
+    return new Interface(_abi) as ImplBaseStructsEventsAndErrorsInterface;
   }
   static connect(
     address: string,
     runner?: ContractRunner | null
-  ): ImplBaseEventsAndErrors {
+  ): ImplBaseStructsEventsAndErrors {
     return new Contract(
       address,
       _abi,
       runner
-    ) as unknown as ImplBaseEventsAndErrors;
+    ) as unknown as ImplBaseStructsEventsAndErrors;
   }
 }

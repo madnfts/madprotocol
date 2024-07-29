@@ -415,12 +415,72 @@ contract ERC1155Basic is ERC1155, ImplBase, IERC1155EventsStructsAndErrors {
         emit PublicMintValuesSet(_id, _publicMintValues);
     }
 
+    /**
+     * @notice Batch set public mint values, a public state-modifying function.
+     * @dev Has modifiers: onlyOwner.
+     * @param _ids List of uint256s.
+     * @param _publicMintValues List of PublicMintValueses.
+     * @custom:signature
+     * batchSetPublicMintValues(uint256[],(bool,uint256,uint256,uint256,uint256)[])
+     * @custom:selector 0x9877a9b4
+     */
     function batchSetPublicMintValues(
         uint256[] calldata _ids,
         PublicMintValues[] calldata _publicMintValues
     ) public onlyOwner {
         uint256 idsLength = _ids.length;
         _loopArrayChecks(idsLength, _publicMintValues.length);
+
+        for (uint256 i = 0; i < idsLength; i++) {
+            _setPublicMintValues(_ids[i], _publicMintValues[i]);
+        }
+
+        emit BatchPublicMintValuesSet(_ids, _publicMintValues);
+    }
+
+    /**
+     * @notice Set public mint values with a max supply, used to create a public
+     * mint with nothing minted yet
+     *  a public state-modifying function.
+     * @dev Has modifiers: onlyOwner.
+     * @param _id The id (uint256).
+     * @param _maxSupply The max supply (uint256).
+     * @param _publicMintValues The public mint values (PublicMintValues).
+     * @custom:signature
+     * setPublicMintValuesMaxSupply(uint256,uint256,(bool,uint256,uint256,uint256,uint256))
+     * @custom:selector 0x2a0e6518
+     */
+    function setPublicMintValuesMaxSupply(
+        uint256 _id,
+        uint256 _maxSupply,
+        PublicMintValues calldata _publicMintValues
+    ) public onlyOwner {
+        setMaxSupply(_id, _maxSupply);
+        _setPublicMintValues(_id, _publicMintValues);
+        emit PublicMintValuesSet(_id, _publicMintValues);
+    }
+
+    /**
+     * @notice Batch set public mint values with a max supply, used to create a
+     * public mint with nothing minted yet
+     *  a public state-modifying function.
+     * @dev Has modifiers: onlyOwner.
+     * @param _ids List of uint256s.
+     * @param _maxSupplies List of uint256s.
+     * @param _publicMintValues List of PublicMintValueses.
+     * @custom:signature
+     * batchSetPublicMintValuesMaxSupply(uint256[],uint256[],(bool,uint256,uint256,uint256,uint256)[])
+     * @custom:selector 0x40095dd0
+     */
+    function batchSetPublicMintValuesMaxSupply(
+        uint256[] calldata _ids,
+        uint256[] calldata _maxSupplies,
+        PublicMintValues[] calldata _publicMintValues
+    ) public onlyOwner {
+        uint256 idsLength = _ids.length;
+        _loopArrayChecks(idsLength, _publicMintValues.length);
+
+        batchSetMaxSupply(_ids, _maxSupplies);
 
         for (uint256 i = 0; i < idsLength; i++) {
             _setPublicMintValues(_ids[i], _publicMintValues[i]);

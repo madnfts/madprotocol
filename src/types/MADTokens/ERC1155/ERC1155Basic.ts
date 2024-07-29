@@ -99,6 +99,7 @@ export interface ERC1155BasicInterface extends Interface {
       | "batchSetPublicMintPrice"
       | "batchSetPublicMintState"
       | "batchSetPublicMintValues"
+      | "batchSetPublicMintValuesMaxSupply"
       | "burn"
       | "burnBatch"
       | "erc20"
@@ -137,6 +138,7 @@ export interface ERC1155BasicInterface extends Interface {
       | "setPublicMintPrice"
       | "setPublicMintState"
       | "setPublicMintValues"
+      | "setPublicMintValuesMaxSupply"
       | "setRouterHasAuthority"
       | "splitter"
       | "supportsInterface"
@@ -209,6 +211,14 @@ export interface ERC1155BasicInterface extends Interface {
   encodeFunctionData(
     functionFragment: "batchSetPublicMintValues",
     values: [BigNumberish[], IPublicMint.PublicMintValuesStruct[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "batchSetPublicMintValuesMaxSupply",
+    values: [
+      BigNumberish[],
+      BigNumberish[],
+      IPublicMint.PublicMintValuesStruct[]
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "burn",
@@ -354,6 +364,10 @@ export interface ERC1155BasicInterface extends Interface {
     values: [BigNumberish, IPublicMint.PublicMintValuesStruct]
   ): string;
   encodeFunctionData(
+    functionFragment: "setPublicMintValuesMaxSupply",
+    values: [BigNumberish, BigNumberish, IPublicMint.PublicMintValuesStruct]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setRouterHasAuthority",
     values: [boolean]
   ): string;
@@ -406,6 +420,10 @@ export interface ERC1155BasicInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "batchSetPublicMintValues",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "batchSetPublicMintValuesMaxSupply",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
@@ -522,6 +540,10 @@ export interface ERC1155BasicInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "setPublicMintValues",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setPublicMintValuesMaxSupply",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -994,6 +1016,16 @@ export interface ERC1155Basic extends BaseContract {
     "nonpayable"
   >;
 
+  batchSetPublicMintValuesMaxSupply: TypedContractMethod<
+    [
+      _ids: BigNumberish[],
+      _maxSupplies: BigNumberish[],
+      _publicMintValues: IPublicMint.PublicMintValuesStruct[]
+    ],
+    [void],
+    "nonpayable"
+  >;
+
   burn: TypedContractMethod<
     [from: AddressLike, id: BigNumberish, amount: BigNumberish],
     [void],
@@ -1178,6 +1210,16 @@ export interface ERC1155Basic extends BaseContract {
     "nonpayable"
   >;
 
+  setPublicMintValuesMaxSupply: TypedContractMethod<
+    [
+      _id: BigNumberish,
+      _maxSupply: BigNumberish,
+      _publicMintValues: IPublicMint.PublicMintValuesStruct
+    ],
+    [void],
+    "nonpayable"
+  >;
+
   setRouterHasAuthority: TypedContractMethod<
     [_hasAuthority: boolean],
     [void],
@@ -1274,6 +1316,17 @@ export interface ERC1155Basic extends BaseContract {
   ): TypedContractMethod<
     [
       _ids: BigNumberish[],
+      _publicMintValues: IPublicMint.PublicMintValuesStruct[]
+    ],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "batchSetPublicMintValuesMaxSupply"
+  ): TypedContractMethod<
+    [
+      _ids: BigNumberish[],
+      _maxSupplies: BigNumberish[],
       _publicMintValues: IPublicMint.PublicMintValuesStruct[]
     ],
     [void],
@@ -1490,6 +1543,17 @@ export interface ERC1155Basic extends BaseContract {
     nameOrSignature: "setPublicMintValues"
   ): TypedContractMethod<
     [_id: BigNumberish, _publicMintValues: IPublicMint.PublicMintValuesStruct],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "setPublicMintValuesMaxSupply"
+  ): TypedContractMethod<
+    [
+      _id: BigNumberish,
+      _maxSupply: BigNumberish,
+      _publicMintValues: IPublicMint.PublicMintValuesStruct
+    ],
     [void],
     "nonpayable"
   >;

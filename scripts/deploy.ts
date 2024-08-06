@@ -28,20 +28,21 @@ const WAIT = 5; // 5 confirmations to verify
 const updateSettings = {
   deployErcToken: false,
   deployFactory: false,
-  deployRouter: false,
-  setRouterAddress: false,
-  setFactoryAddress: false,
+  deployRouter: true,
+  setRouterAddress: true,
+  setFactoryAddress: true,
   setCollectionType721: false,
-  setCollectionType1155: true,
+  setCollectionType1155: false,
   setFactoryFees: false,
-  setRouterFees: false,
-  deployErc721: true,
-  deployErc1155: true,
+  setRouterFees: true,
+  deployErc721: false,
+  deployErc1155: false,
   createCollectionSplitter: false,
   createCollectionCollection: false,
   verifyCollectionSplitter: false,
-  verifyErc721: true,
-  verifyErc1155: true,
+  verifyErc721: false,
+  verifyErc1155: false,
+  verifyErc20: true,
 };
 
 const {
@@ -563,6 +564,16 @@ const main = async () => {
     } else if (ERC20_TOKEN) {
       deployedErc20Address = ERC20_TOKEN;
       console.log(`ERC20 address: ${deployedErc20Address}`);
+    }
+
+    // verify erc20
+    if (updateSettings.verifyErc20) {
+      await verifyContract(deployedErc20Address, [
+        "Mad Mock Token",
+        "MAD",
+        18,
+        10,
+      ]);
     }
 
     // Deploy Contracts

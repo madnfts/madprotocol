@@ -150,20 +150,11 @@ abstract contract FeeHandler {
         uint256 _fee = feeErc20.feeAmount * _amount;
 
         IERC20 erc20 = IERC20(madFeeTokenAddress);
-        // Check if msg.sender balance is less than the fee.. logic to check the
-        // price
-        // (if any) will be handled in the NFT contract itself.
-        if (
-            erc20.balanceOf(msg.sender) < _fee
-                || erc20.allowance(msg.sender, address(this)) < _fee
-        ) {
-            revert RouterEvents.InvalidFees();
-        }
+        // logic to check the
+        // mint price (if any) will be handled in the NFT contract itself.
 
         // Transfer Fees to recipient..
-        SafeTransferLib.safeTransferFrom(
-            IERC20(madFeeTokenAddress), msg.sender, recipient, _fee
-        );
+        SafeTransferLib.safeTransferFrom(erc20, msg.sender, recipient, _fee);
     }
 
     /**

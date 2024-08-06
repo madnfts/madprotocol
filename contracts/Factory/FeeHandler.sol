@@ -89,7 +89,7 @@ abstract contract FeeHandlerFactory {
         // Check if msg.sender balance is less than the fee.. logic to check the
         // price
         // (if any) will be handled in the NFT contract itself.
-        if (msg.value < _fee) revert RouterEvents.InvalidFees();
+        if (msg.value != _fee) revert RouterEvents.InvalidFees();
 
         // Transfer Fees to recipient..
         SafeTransferLib.safeTransferETH(payable(recipient), _fee);
@@ -117,13 +117,10 @@ abstract contract FeeHandlerFactory {
             revert AddressNotValid();
         }
 
-        if (IERC20(madFeeTokenAddress).balanceOf(msg.sender) < _fee) {
-            revert RouterEvents.InvalidFees();
-        }
+        IERC20 erc20 = IERC20(madFeeTokenAddress);
+
         // Transfer Fees to recipient..
-        SafeTransferLib.safeTransferFrom(
-            IERC20(madFeeTokenAddress), msg.sender, recipient, _fee
-        );
+        SafeTransferLib.safeTransferFrom(erc20, msg.sender, recipient, _fee);
     }
 
     /**

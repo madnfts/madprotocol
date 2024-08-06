@@ -45,7 +45,7 @@ contract MADRouter is MADRouterBase {
     {
         _isCollectionOwner(collection);
         _tokenRender(collection);
-        uint256 _fee = _handleFees(_FEE_MINT, _amount);
+        uint256 _fee = _handleFees(_FEE_MINT, 1);
         uint256 _value = msg.value - _fee;
         ERC721Basic(collection).mintTo{ value: _value }(_to, _amount);
     }
@@ -69,7 +69,7 @@ contract MADRouter is MADRouterBase {
     ) public payable {
         _isCollectionOwner(collection);
         _tokenRender(collection);
-        _handleFees(uint256(_amount), madFeeTokenAddress, this.feeMintErc20);
+        _handleFees(1, madFeeTokenAddress, this.feeMintErc20);
         ERC721Basic(collection).mintTo(_to, _amount);
     }
 
@@ -91,7 +91,7 @@ contract MADRouter is MADRouterBase {
      */
     function mint(address collection, uint128 _amount) public payable {
         _tokenRender(collection);
-        uint256 _fee = _handleFees(_FEE_MINT, _amount);
+        uint256 _fee = _handleFees(_FEE_MINT, 1);
         uint256 _value = msg.value - _fee;
         ERC721Basic(collection).mint{ value: _value }(msg.sender, _amount);
     }
@@ -115,7 +115,7 @@ contract MADRouter is MADRouterBase {
         address madFeeTokenAddress
     ) public payable {
         _tokenRender(collection);
-        _handleFees(_amount, madFeeTokenAddress, this.feeMintErc20);
+        _handleFees(1, madFeeTokenAddress, this.feeMintErc20);
         ERC721Basic(collection).mint(msg.sender, _amount);
     }
 
@@ -135,7 +135,7 @@ contract MADRouter is MADRouterBase {
      */
     function burn(address collection, uint128[] memory _ids) public payable {
         _tokenRender(collection);
-        uint256 _fee = _handleFees(_FEE_BURN, _ids.length);
+        uint256 _fee = _handleFees(_FEE_BURN, 1);
         uint256 _value = msg.value - _fee;
         ERC721Basic(collection).burn{ value: _value }(_ids);
     }
@@ -157,7 +157,7 @@ contract MADRouter is MADRouterBase {
         address madFeeTokenAddress
     ) public payable {
         _tokenRender(collection);
-        _handleFees(_ids.length, madFeeTokenAddress, this.feeBurnErc20);
+        _handleFees(1, madFeeTokenAddress, this.feeBurnErc20);
         ERC721Basic(collection).burn(_ids);
     }
 

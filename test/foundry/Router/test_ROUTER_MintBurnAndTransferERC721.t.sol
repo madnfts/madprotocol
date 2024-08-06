@@ -233,7 +233,7 @@ contract TestROUTERMintBurnAndTransferERC721 is
 
     function _doBurn(MintData memory mintData, address _tokenOwner) internal {
         uint256 idsToBurnLength = idsToBurn.length;
-        uint256 val = deployedContracts.router.feeBurn() * idsToBurnLength;
+        uint256 val = deployedContracts.router.feeBurn();
 
         // Burn tokens
         IERC721Basic collection = IERC721Basic(mintData.collectionAddress);
@@ -347,7 +347,7 @@ contract TestROUTERMintBurnAndTransferERC721 is
     function _doMintTo(MintData memory mintData, bytes4 _errorSelector)
         internal
     {
-        uint256 val = deployedContracts.router.feeMint() * mintData.amountToMint;
+        uint256 val = deployedContracts.router.feeMint();
 
         vm.startPrank(mintData.nftMinter, mintData.nftMinter);
 
@@ -395,8 +395,7 @@ contract TestROUTERMintBurnAndTransferERC721 is
         uint256 _nftPublicMintPrice =
             mintData.nftPublicMintPrice * mintData.amountToMint;
 
-        uint256 value = _nftPublicMintPrice
-            + (deployedContracts.router.feeMint() * mintData.amountToMint);
+        uint256 value = _nftPublicMintPrice + deployedContracts.router.feeMint();
 
         emit log_named_uint(
             "nftPublicMintPrice AFTER", mintData.nftPublicMintPrice
